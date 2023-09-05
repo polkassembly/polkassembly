@@ -30,6 +30,7 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
         totalCount
       }
       convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, limit: $limit, offset: $offset) {
+        id
         decision
         voter
         balance {
@@ -46,7 +47,7 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
         lockPeriod
         selfVotingPower
         totalVotingPower
-        delegatedVotes {
+        delegatedVotes(limit: 10, orderBy: votingPower_DESC) {
           decision
           lockPeriod
           voter
@@ -63,6 +64,62 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
         }
       }
 }
+`;
+
+export const GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID = `
+query ConvictionVotesListingByTypeAndIndex(
+  $orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC,
+  $index_eq: Int = 264,
+  $type_eq: VoteType = ReferendumV2,
+  $limit: Int = 10,
+  $offset: Int = 0,
+  $decision: VoteDecision = yes,
+  $voter_eq: String = "") {
+  convictionVotes(orderBy: $orderBy,
+      where: {
+        type_eq: $type_eq,
+          proposal: {
+            index_eq: $index_eq
+          },
+        removedAtBlock_isNull: true,
+        voter_eq: $voter_eq
+      },
+      limit: 1) {
+      delegatedVotes(limit: $limit, orderBy: votingPower_DESC, offset: $offset, where:{
+        decision_eq: $decision
+      }) {
+        decision
+        lockPeriod
+        voter
+        votingPower
+        balance {
+          ... on StandardVoteBalance {
+            value
+          }
+          ... on SplitVoteBalance {
+            aye
+            nay
+          }
+        }
+        proposalIndex
+        delegatedTo {
+          voter
+        }
+      }
+    }
+    convictionDelegatedVotesConnection(orderBy: id_ASC,
+      where: {
+        decision_eq: $decision,
+        proposalIndex_eq: $index_eq,
+        removedAtBlock_isNull: true,
+          delegatedTo:{
+            voter_eq: $voter_eq,
+            removedAt_isNull: true
+          }
+      }) {
+      totalCount
+    }
+  }
 `;
 
 export const GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX = `

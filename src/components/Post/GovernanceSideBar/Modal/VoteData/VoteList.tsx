@@ -10,12 +10,11 @@ import {
 	RightOutlined
 } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Pagination, PaginationProps, Segmented, Spin } from 'antd';
+import { Divider, Modal, Pagination, PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
 import { useNetworkContext, usePostDataContext } from '~src/context';
-import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
@@ -24,6 +23,10 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import styled from 'styled-components';
 import VoterRow from './VoterRow';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
+import ChartIcon from '~assets/chart-icon.svg';
+import ThresholdGraph from './ThresholdGraph';
+import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
+import CloseIcon from '~assets/icons/close-icon.svg';
 
 const StyledSegmented = styled(Segmented)`
   .ant-segmented-group > label {
@@ -31,20 +34,32 @@ const StyledSegmented = styled(Segmented)`
   }
 `;
 
+const Container = styled.div`
+@media(max-width: 1024px) {
+    display: none !important;
+}
+`;
+
 interface IVotersListProps {
   className?: string;
   referendumId: number;
   voteType: VoteType;
+  thresholdData?: any;
+  onlyDelegation?:{isOpen: boolean, voter:string | null}
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
 
+const VOTES_LISTING_LIMIT = 5;
+
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkContext();
 	const firstRef = useRef(true);
-	const { postData:{ postType } }= usePostDataContext();
+	const {
+		postData: { postType }
+	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
-	const { className, referendumId, voteType } = props;
+	const { className, referendumId, voteType, thresholdData, onlyDelegation } = props;
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: true,
@@ -57,15 +72,17 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [balanceIsAsc, setBalanceIsAsc] = useState<boolean>(false);
 	const [votingIsAsc, setVotingIsAsc] = useState<boolean>(false);
 	const [convictionIsAsc, setConvictionIsAsc] = useState<boolean>(false);
+	const [delegationVoteModal, setDelegationVoteModal] =useState<{isOpen: boolean, voter:string | null}>({ isOpen:false, voter: null });
 
 	useEffect(() => {
 		setLoadingStatus({
 			isLoading: true,
 			message: 'Loading votes'
 		});
-		nextApiClientFetch<IVotesResponse>(
-			`api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`
-		)
+		const url = onlyDelegation?.isOpen
+			? `api/v1/votes/delegationVoteList?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&page=${currentPage}&sortBy=${votesSortValues.BALANCE_DESC}&decision=${decision||'yes'}&type=${voteType}&voter=${onlyDelegation.voter}`
+			: `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
+		nextApiClientFetch<IVotesResponse>(url)
 			.then((res) => {
 				if (res.error) {
 					console.log(res.error);
@@ -95,7 +112,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					message: ''
 				});
 			});
-	}, [referendumId, currentPage, voteType, sortBy]);
+	}, [referendumId, currentPage, voteType, sortBy, onlyDelegation, decision]);
 
 	const decisionOptions = [
 		{
@@ -134,133 +151,196 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		setSortBy(key);
 	};
 	return (
-		<>
+		<div>
 			<Spin
 				className={className}
 				spinning={loadingStatus.isLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<div className='w-full flex items-center justify-center mb-8'>
-					<StyledSegmented
-						block
-						className='px-3 py-2 rounded-[30px] w-full'
-						size='large'
-						value={decision}
-						onChange={(value) => {
-							setDecision(String(value) as DecisionType);
-							setCurrentPage(1);
-						}}
-						options={decisionOptions}
-					/>
-				</div>
-
-				<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-x-auto'>
-					<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
-						<div className={`${isReferendum2 ? 'w-[220px]' : 'w-[250px]'} text-lightBlue text-sm font-medium`}>
-							Voter
-						</div>
-						<div
-							className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex items-center gap-1 text-lightBlue`}
-							onClick={() => {
-								handleSortByClick({
-									key: balanceIsAsc
-										? votesSortValues.BALANCE_ASC
-										: votesSortValues.BALANCE_DESC
-								});
-								setBalanceIsAsc(!balanceIsAsc);
-							}}
-						>
-							Amount <ExpandIcon className={balanceIsAsc ? 'rotate-180':''}/>
-						</div>
-						{network !== AllNetworks.COLLECTIVES ? (
-							<div
-								className={`${isReferendum2 ? 'w-[120px]' : 'w-[150px]'} flex items-center gap-1 text-lightBlue`}
-								onClick={() => {
-									handleSortByClick({
-										key: convictionIsAsc
-											? votesSortValues.CONVICTION_ASC
-											: votesSortValues.CONVICTION_DESC
-									});
-									setConvictionIsAsc(!convictionIsAsc);
+				<div className='flex gap-6'>
+					<div className='md:overflow-visible overflow-x-auto'>
+						<div className='w-full flex items-center justify-center mb-8'>
+							<StyledSegmented
+								block
+								className='px-3 py-2 rounded-[30px] w-full'
+								size='large'
+								value={decision}
+								onChange={(value) => {
+									setDecision(String(value) as DecisionType);
+									setCurrentPage(1);
 								}}
-							>
-								Conviction <ExpandIcon className={convictionIsAsc ? 'rotate-180':''} />
-							</div>
-						) : null}
-						{ isReferendum2 &&
-							<div className='w-[110px] flex items-center gap-1 text-lightBlue' onClick={() => {
-								handleSortByClick({
-									key: votingIsAsc
-										? votesSortValues.VOTING_POWER_ASC
-										: votesSortValues.VOTING_POWER_DESC
-								});
-								setVotingIsAsc(!votingIsAsc);
-							}}>
-								Voting Power <ExpandIcon className={ votingIsAsc ? 'rotate-180':''} />
-							</div>
-						}
-					</div>
-
-					{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
-						votesRes[decision]?.votes.map((voteData: any, index: number) => (
-							<VoterRow
-								className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${
-									index === votesRes[decision]?.votes.length - 1
-										? 'border-b'
-										: ''
-								}`}
-								key={index}
-								voteType={voteType}
-								voteData={voteData}
-								index={index}
-								isReferendum2={isReferendum2}
+								options={decisionOptions}
 							/>
-						))
-					) : (
-						<PostEmptyState />
-					)}
-				</div>
+						</div>
 
-				<div className='flex justify-between items-center pt-6 bg-white z-10'>
-					<p className='text-xs text-[#96A4B6] m-0'>
-            d: Delegation s: Split sa: Split Abstain
-					</p>
-					<Pagination
-						size='small'
-						defaultCurrent={1}
-						current={currentPage}
-						onChange={onChange}
-						total={votesRes && decision ? votesRes[decision]?.count || 0 : 0}
-						showSizeChanger={false}
-						pageSize={VOTES_LISTING_LIMIT}
-						responsive={true}
-						hideOnSinglePage={true}
-						nextIcon={
-							<div
-								className={`ml-1 ${
-									currentPage >
-                  Math.floor( (votesRes && decision ? votesRes[decision]?.count || 0 : 0) / VOTES_LISTING_LIMIT
-                  )
-										? 'text-grey_secondary'
-										: ''
-								}`}
-							>
-								<RightOutlined />
+						<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-x-auto'>
+							<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
+								<div
+									className={`${
+										isReferendum2 ? 'w-[220px]' : 'w-[250px]'
+									} text-lightBlue text-sm font-medium`}
+								>
+                  Voter
+								</div>
+								<div
+									className={`${
+										isReferendum2 ? 'w-[110px]' : 'w-[140px]'
+									} flex items-center gap-1 text-lightBlue`}
+									onClick={() => {
+										handleSortByClick({
+											key: balanceIsAsc
+												? votesSortValues.BALANCE_ASC
+												: votesSortValues.BALANCE_DESC
+										});
+										setBalanceIsAsc(!balanceIsAsc);
+									}}
+								>
+                  Amount
+									<ExpandIcon className={balanceIsAsc ? 'rotate-180' : ''} />
+								</div>
+								{network !== AllNetworks.COLLECTIVES ? (
+									<div
+										className={`${
+											isReferendum2 ? 'w-[120px]' : 'w-[150px]'
+										} flex items-center gap-1 text-lightBlue`}
+										onClick={() => {
+											handleSortByClick({
+												key: convictionIsAsc
+													? votesSortValues.CONVICTION_ASC
+													: votesSortValues.CONVICTION_DESC
+											});
+											setConvictionIsAsc(!convictionIsAsc);
+										}}
+									>
+                    Conviction
+										<ExpandIcon
+											className={convictionIsAsc ? 'rotate-180' : ''}
+										/>
+									</div>
+								) : null}
+								{isReferendum2 && (
+									<div
+										className='w-[110px] flex items-center gap-1 text-lightBlue'
+										onClick={() => {
+											handleSortByClick({
+												key: votingIsAsc
+													? votesSortValues.VOTING_POWER_ASC
+													: votesSortValues.VOTING_POWER_DESC
+											});
+											setVotingIsAsc(!votingIsAsc);
+										}}
+									>
+                    Voting Power
+										<ExpandIcon className={votingIsAsc ? 'rotate-180' : ''} />
+									</div>
+								)}
 							</div>
-						}
-						prevIcon={
-							<div
-								className={`mr-1 ${
-									currentPage <= 1 ? 'text-grey_secondary' : ''
-								}`}
-							>
-								<LeftOutlined />
-							</div>
-						}
-					/>
+
+							{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
+								votesRes[decision]?.votes.map(
+									(voteData: any, index: number) => (
+										<VoterRow
+											className={`${
+												index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'
+											} ${
+												index === votesRes[decision]?.votes.length - 1
+													? 'border-b'
+													: ''
+											}`}
+											key={index}
+											voteType={voteType}
+											voteData={voteData}
+											index={index}
+											isReferendum2={isReferendum2}
+											setDelegationVoteModal={setDelegationVoteModal}
+										/>
+									)
+								)
+							) : (
+								<PostEmptyState />
+							)}
+						</div>
+
+						<div className='flex justify-between items-center pt-6 bg-white z-10'>
+							<p className='text-xs text-[#96A4B6] m-0'>
+                d: Delegation s: Split sa: Split Abstain
+							</p>
+							<Pagination
+								size='small'
+								defaultCurrent={1}
+								current={currentPage}
+								onChange={onChange}
+								total={
+									votesRes && decision ? votesRes[decision]?.count || 0 : 0
+								}
+								showSizeChanger={false}
+								pageSize={VOTES_LISTING_LIMIT}
+								responsive={true}
+								hideOnSinglePage={true}
+								nextIcon={
+									<div
+										className={`ml-1 ${
+											currentPage > Math.floor((votesRes && decision? votesRes[decision]?.count || 0 : 0) / VOTES_LISTING_LIMIT)
+												? 'text-grey_secondary'
+												: ''
+										}`}
+									>
+										<RightOutlined />
+									</div>
+								}
+								prevIcon={
+									<div
+										className={`mr-1 ${
+											currentPage <= 1 ? 'text-grey_secondary' : ''
+										}`}
+									>
+										<LeftOutlined />
+									</div>
+								}
+							/>
+						</div>
+					</div>
+					{thresholdData && <Container className='flex flex-col gap-10 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
+						<p className='flex row gap-1 text-sm font-medium text-bodyBlue m-0'>
+							<span>
+								<ChartIcon />
+							</span>
+							Proposal is failing as both support and approval are below the threshold
+						</p>
+						<ThresholdGraph {...thresholdData} />
+					</Container>}
 				</div>
 			</Spin>
-		</>
+			{delegationVoteModal.isOpen && <Modal
+				title={
+					<div className='mr-[-24px] ml-[-24px] text-[18px]'>
+						<h3 className='ml-[24px] mb-0 font-semibold text-[#243A57] flex align-center gap-2'>
+							<span className='top-1 relative'>
+								<VoteDataIcon />
+							</span>
+							<span className='text-xl font-semibold text-bodyBlue'>
+							Voting Data
+							</span>
+						</h3>
+						<Divider className='text-[#D2D8E0]' />
+					</div>
+				}
+				open={delegationVoteModal.isOpen}
+				closable
+				closeIcon={<CloseIcon />}
+				className={'sm:w-[600px]'}
+				onCancel={() => {
+					setDelegationVoteModal({ isOpen:false, voter:null });
+				}}
+				footer={null}
+			>
+				<VotersList
+					referendumId={referendumId as number}
+					voteType={voteType}
+					onlyDelegation={delegationVoteModal}
+				/>
+			</Modal>}
+		</div>
 	);
 };
 

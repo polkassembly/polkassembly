@@ -935,7 +935,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							{
 								(onchainId || onchainId === 0) &&
 								<>
-									<VoteDataModal onchainId={onchainId} open={open} setOpen={setOpen} proposalType={proposalType}/>
+									<VoteDataModal onchainId={onchainId} open={open} setOpen={setOpen} proposalType={proposalType} thresholdData={{
+										curvesError,
+										curvesLoading,
+										data,
+										progress,
+										setData
+									}}/>
 									{/* <Modal
 									closeIcon={false}
 									onCancel={() => {

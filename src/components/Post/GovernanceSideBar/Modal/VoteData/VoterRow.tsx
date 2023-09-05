@@ -28,7 +28,8 @@ interface IVoterRow {
   index?: any;
   voteType: VoteType;
   voteData?: any;
-  isReferendum2?:boolean
+  isReferendum2?:boolean,
+  setDelegationVoteModal:any,
 }
 
 const StyledCollapse = styled(Collapse)`
@@ -67,7 +68,7 @@ const getDelegatedDetails = (votes:[any]) => {
 	return [allVotes, votingPower, votes.length];
 };
 
-const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2 }) => {
+const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2, setDelegationVoteModal }) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
 	const [delegatedVotes, delegatedVotingPower, delegators] = getDelegatedDetails(voteData?.delegatedVotes || []);
@@ -133,11 +134,11 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2 
 					</div>
 				)}
 
-				{voteData.totalVotingPower && (
+				{( voteData.totalVotingPower || voteData.votingPower ) && (
 					<div className='overflow-ellipsis w-[50px]'>
 						{formatUSDWithUnits(
 							formatBnBalance(
-								voteData.totalVotingPower,
+								voteData.totalVotingPower|| voteData.votingPower,
 								{
 									numberAfterComma: 1,
 									withThousandDelimitor: false,
@@ -321,16 +322,17 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2 
 							</div>
 							{network !== AllNetworks.COLLECTIVES ? (
 								<div className='w-[110px] ml-1 flex items-center gap-1 text-lightBlue'>
-									Conviction{' '}
+									Conviction
 								</div>
 							) : null}
 							<div className='w-[100px] flex items-center gap-1 text-lightBlue'>
 								Voting Power
 							</div>
 						</div>
-						<div className='pr-2 max-h-20 overflow-y-auto flex flex-col gap-1'>
+						<div className='pr-2 max-h-[70px] overflow-y-auto flex flex-col gap-1'>
 							{voteData.delegatedVotes.map((data:any, i:number) => <DelegationListRow key={i} voteType={voteType} voteData={data} />)}
 						</div>
+						<p className='m-0 mt-2 text-xs text-pink_primary font-medium cursor-pointer' onClick={() => setDelegationVoteModal({ isOpen: true, voter:voteData.voter })}>Show More</p>
 					</div>
 				</div>
 			</StyledCollapse.Panel>

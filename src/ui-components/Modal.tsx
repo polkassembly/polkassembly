@@ -12,7 +12,8 @@ type Props = PropsWithChildren<{
     open: boolean,
     onConfirm: any,
     onCancel: any,
-    footer?: Array<ReactElement>
+    footer?: Array<ReactElement>,
+	className?:string
 }>
 
 const StyledModal = styled(AntdModal)`
@@ -22,7 +23,7 @@ const StyledModal = styled(AntdModal)`
 }
 `;
 
-const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, children }: Props) => {
+const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, className, children }: Props) => {
 	return (
 		<StyledModal title={<div className='mr-[-24px] ml-[-24px] text-[18px]'>
 			<h3 className='ml-[24px] mb-0 font-semibold text-[#243A57] flex align-center gap-2'> {titleIcon} {title} </h3>
@@ -31,7 +32,7 @@ const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, children }
 		open={open}
 		closable
 		closeIcon={<CloseIcon />}
-		className='min-w-[350px] md:min-w-[600px]'
+		className={`min-w-[350px] md:min-w-[600px] ${className}`}
 		onCancel={onCancel}
 		onOk={onConfirm}
 		footer={footer || null}

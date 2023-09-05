@@ -115,14 +115,12 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 				</article>
 			}
 		</section>
-		{proposalType !== ProposalType.TECHNICAL_PIPS && <>
-			<Divider style={{ border: '1px solid #e3e6eb' }} className='my-4'/>
+		<Divider style={{ border: '1px solid #e3e6eb' }} className='my-4'/>
 
-			<button onClick={() => setOpen(true)} className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px] -mt-1'>
-				<VotingHistoryIcon />
-				<span>Voting History</span>
-			</button>
-		</>}
+		<button onClick={() => setOpen(true)} className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px] -mt-1'>
+			<VotingHistoryIcon />
+			<span>Voting History</span>
+		</button>
 	</div>;
 };
 export default PIPsVoteInfo;

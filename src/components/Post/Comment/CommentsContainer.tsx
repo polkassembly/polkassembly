@@ -77,7 +77,7 @@ interface ISentimentsPercentage {
 const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	const commentResponse:any = {};
 	for(const key in comments){
-		commentResponse[key] = comments[key].filter(comment => comment.isDelete?false:true).sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
+		commentResponse[key] = comments[key].filter(comment => comment.isDeleted?false:true).sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
 	}
 	return commentResponse;
 };
@@ -102,7 +102,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments|null>(null);
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
-	// const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
 
 	if(filterSentiments){
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);

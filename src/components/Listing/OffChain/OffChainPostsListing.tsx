@@ -25,8 +25,6 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 			</div>
 		);
 	}
-	//filter the posts that are deleted
-	posts = posts.filter((post) => post.isDelete !== true || post.isDelete === undefined);
 	return (
 		<div className={`${className} flex flex-col `}>
 			{posts.map((post,index) => (

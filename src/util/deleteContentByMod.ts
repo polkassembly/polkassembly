@@ -23,15 +23,17 @@ export async function deleteContentByMod(postId:number|string, proposalType:Prop
 			message: deleteError || 'Error in deleting content',
 			status: NotificationStatus.ERROR
 		});
+		return;
 	}
-
-	if(deleteData && commentId && replyId){
-		onSuccess?.();
+	let onSuccessFunc = onSuccess;
+	if(commentId){
+		onSuccessFunc = onSuccess;
 	}
-	if(deleteData && commentId && !replyId){
-		onSuccess?.();
+	if(commentId && replyId){
+		onSuccessFunc = onSuccess;
 	}
-	if(deleteData && !commentId && !replyId && postId){
-		onSuccess?.();
+	if(postId){
+		onSuccessFunc = onSuccess;
 	}
+	onSuccessFunc?.();
 }

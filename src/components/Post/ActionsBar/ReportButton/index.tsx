@@ -169,16 +169,15 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
 		if(allowed_roles?.includes('moderator')) {
-			if(!postId) return;
-			if(postId && commentId && replyId) {
-				await deleteContentByMod(postId, proposalType, reason, commentId, replyId, onDeleteReply);
+			if(isNaN(Number(postId))) return;
+			let onSuccess = onDeletePost;
+			if(commentId) {
+				onSuccess = onDeleteComment;
 			}
-			else if(postId && commentId && !replyId) {
-				await deleteContentByMod(postId, proposalType, reason, commentId, replyId, onDeleteComment);
+			if(commentId && replyId) {
+				onSuccess = onDeleteReply;
 			}
-			else if(postId && !commentId && !replyId) {
-				await deleteContentByMod(postId, proposalType, reason, commentId, replyId, onDeletePost);
-			}
+			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
 		}
 	};
 	return (

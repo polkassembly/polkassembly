@@ -204,24 +204,6 @@ export default (styled(TimelineContainer)`
 		margin-right: -16px;
 	}
 	
-	@media (min-width: 1400px) and (max-width: 1460px) {
-		.content-container {
-		width: 650px;
-		}
-	
-		.timeline-container {
-		margin: 0 5px;
-		}
-	
-		.timeline-dropdown {
-		margin-left: 658px;
-		}
-
-		.round-icon{
-			margin-left: 34px;
-		}
-	}
-	
 	@media (min-width: 1100px) and (max-width: 1280px) {
 		.content-container {
 		width: 800px;

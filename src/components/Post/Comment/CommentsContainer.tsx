@@ -91,7 +91,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		setComments,
 		setTimelines,
 		timelines,
-		overallSentiments
+		overallSentiments,
+		setOverallSentiments
 	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
@@ -156,10 +157,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 		const timelines:ITimeline[] = [];
 		const comments:{[index:string]:IComment[]} ={};
-		let haveComments: number = 0;
 		if (timeline && timeline.length > 0) {
 			timeline.forEach((obj) => {
-				haveComments +=obj.commentsCount;
 				timelines.push({
 					commentsCount: obj.commentsCount,
 					date: dayjs(obj?.created_at),
@@ -173,17 +172,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			});
 			setTimelines(timelines);
 		}
-		if(!haveComments){
-			setLoading(false);
-			return;
-		}
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
-
 		if(!commentResponse || Object.keys(commentResponse).length==0){
 			setComments(comments);
 		}
 		else{
 			setComments(getSortedComments(commentResponse.comments));
+			setOverallSentiments(commentResponse.overallSentiments);
 		}
 		if(loading){
 			setLoading(false);
@@ -288,8 +283,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								</div>}
 							>
 								<div
-									onClick={() => { getFilteredComments(data.sentiment); }}
-									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''}`}
+									onClick={() => getFilteredComments(data.sentiment)}
+									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none': ''}`}
 								>
 									{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
 									<span className={'flex justify-center font-medium'}>{data.percentage}%</span>

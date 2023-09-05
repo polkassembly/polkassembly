@@ -199,13 +199,27 @@ export default (styled(TimelineContainer)`
 	.round-icon{
 		margin-left: 60px;
 	}
-	
-	.arrow-container{
-		margin-left: -107px;
-	}
 
 	.status-tag{
 		margin-right: -16px;
+	}
+	
+	@media (min-width: 1400px) and (max-width: 1460px) {
+		.content-container {
+		width: 650px;
+		}
+	
+		.timeline-container {
+		margin: 0 5px;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 658px;
+		}
+
+		.round-icon{
+			margin-left: 34px;
+		}
 	}
 	
 	@media (min-width: 1100px) and (max-width: 1280px) {
@@ -323,10 +337,6 @@ export default (styled(TimelineContainer)`
 		margin-left: 28px;
 		}
 	
-		.arrow-container{
-		margin-left: 8px;
-		}
-	
 		.status-update{
 			margin-left: -110px;
 		}
@@ -344,8 +354,8 @@ export default (styled(TimelineContainer)`
 			margin-left: 33px;
 		}
 
-		.arrow-container{
-			margin-left: 8px;
+		.timeline-dropdown {
+			margin-left: 263px;
 		}
 	}
 
@@ -360,10 +370,6 @@ export default (styled(TimelineContainer)`
 
 		.round-icon {
 			margin-left: 2px;
-		}
-
-		.arrow-container{
-			margin-left: -105px;
 		}
 
 		.timeline-dropdown {

@@ -290,12 +290,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setAyeVoteValue(ZERO_BN);
 		setNayVoteValue(ZERO_BN);
 		setLockedBalance(ZERO_BN);
-		ayeNayForm.setFieldValue('balance', '');
-		splitForm.setFieldValue('ayeVote','');
-		splitForm.setFieldValue('nayVote','');
-		abstainFrom.setFieldValue('ayeVote', '');
-		abstainFrom.setFieldValue('nayVote','');
-		abstainFrom.setFieldValue('abstainVote', '');
+		ayeNayForm.setFieldValue('balance', ZERO_BN);
+		splitForm.setFieldValue('ayeVote',ZERO_BN);
+		splitForm.setFieldValue('nayVote',ZERO_BN);
+		abstainFrom.setFieldValue('ayeVote', ZERO_BN);
+		abstainFrom.setFieldValue('nayVote',ZERO_BN);
+		abstainFrom.setFieldValue('abstainVote', ZERO_BN);
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 

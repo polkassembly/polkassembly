@@ -60,70 +60,175 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setModalOpen(true);
 	};
 
+	// const handleSave = async () => {
+	// 	await form.validateFields();
+	// 	const content = form.getFieldValue('content');
+	// 	if(!content) return;
+
+	// 	setLoading(true);
+
+	// 	const { data , error } = await nextApiClientFetch<IAddPostCommentResponse>( 'api/v1/auth/actions/addPostComment', {
+	// 		content,
+	// 		postId: postIndex,
+	// 		postType: postType,
+	// 		sentiment:isSentimentPost?sentiment:0,
+	// 		trackNumber: track_number,
+	// 		userId: id
+	// 	});
+
+	// 	if(error || !data) {
+	// 		setError(error || 'No data returned from the saving comment query');
+	// 		queueNotification({
+	// 			header: 'Failed!',
+	// 			message: error,
+	// 			status: NotificationStatus.ERROR
+	// 		});
+	// 	}
+
+	// 	if(data) {
+	// 		setContent('');
+	// 		form.resetFields();
+	// 		form.setFieldValue('content', '');
+	// 		global.window.localStorage.removeItem(commentKey());
+	// 		postIndex && createSubscription(postIndex);
+	// 		queueNotification({
+	// 			header: 'Success!',
+	// 			message: 'Comment created successfully.',
+	// 			status: NotificationStatus.SUCCESS
+	// 		});
+	// 		const comment=  {
+	// 			comment_reactions: {
+	// 				'👍': {
+	// 					count: 0,
+	// 					usernames: []
+	// 				},
+	// 				'👎': {
+	// 					count: 0,
+	// 					usernames: []
+	// 				}
+	// 			},
+	// 			content,
+	// 			created_at: new Date(),
+	// 			history: [],
+	// 			id: data?.id || '',
+	// 			profile: picture || '',
+	// 			replies: [],
+	// 			sentiment:isSentimentPost? sentiment : 0,
+	// 			updated_at: new Date(),
+	// 			user_id: id as any,
+	// 			username: username || ''
+	// 		};
+	// 		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
+	// 	}
+	// 	setLoading(false);
+	// 	setIsComment(false);
+	// 	setIsSentimentPost(false);
+	// 	setSentiment(3);
+	// };
+
 	const handleSave = async () => {
 		await form.validateFields();
 		const content = form.getFieldValue('content');
-		if(!content) return;
-
+		if (!content) return;
+		// Update the state before making the API call
 		setLoading(true);
+		setError('');
+		// Create a new comment object and add it to the UI
+		// const newComment = {
+		// 	comment_reactions: {
+		// 		'👍': {
+		// 			count: 0,
+		// 			usernames: []
+		// 		},
+		// 		'👎': {
+		// 			count: 0,
+		// 			usernames: []
+		// 		}
+		// 	},
+		// 	content,
+		// 	created_at: new Date(),
+		// 	history: [],
+		// 	id: '', // Initially empty until you get the ID from the server
+		// 	profile: picture || '',
+		// 	replies: [],
+		// 	sentiment: isSentimentPost ? sentiment : 0,
+		// 	updated_at: new Date(),
+		// 	user_id: id as any,
+		// 	username: username || ''
+		// };
 
-		const { data , error } = await nextApiClientFetch<IAddPostCommentResponse>( 'api/v1/auth/actions/addPostComment', {
-			content,
-			postId: postIndex,
-			postType: postType,
-			sentiment:isSentimentPost?sentiment:0,
-			trackNumber: track_number,
-			userId: id
+		setContent('');
+		form.resetFields();
+		form.setFieldValue('content', '');
+		global.window.localStorage.removeItem(commentKey());
+		postIndex && createSubscription(postIndex);
+		queueNotification({
+			header: 'Success!',
+			message: 'Comment created successfully.',
+			status: NotificationStatus.SUCCESS
 		});
-
-		if(error || !data) {
-			setError(error || 'No data returned from the saving comment query');
-			queueNotification({
-				header: 'Failed!',
-				message: error,
-				status: NotificationStatus.ERROR
-			});
-		}
-
-		if(data) {
-			setContent('');
-			form.resetFields();
-			form.setFieldValue('content', '');
-			global.window.localStorage.removeItem(commentKey());
-			postIndex && createSubscription(postIndex);
-			queueNotification({
-				header: 'Success!',
-				message: 'Comment created successfully.',
-				status: NotificationStatus.SUCCESS
-			});
-			const comment=  {
-				comment_reactions: {
-					'👍': {
-						count: 0,
-						usernames: []
-					},
-					'👎': {
-						count: 0,
-						usernames: []
-					}
+		const comment=  {
+			comment_reactions: {
+				'👍': {
+					count: 0,
+					usernames: []
 				},
+				'👎': {
+					count: 0,
+					usernames: []
+				}
+			},
+			content,
+			created_at: new Date(),
+			history: [],
+			id: content?.id || '',
+			profile: picture || '',
+			replies: [],
+			sentiment:isSentimentPost? sentiment : 0,
+			updated_at: new Date(),
+			user_id: id as any,
+			username: username || ''
+		};
+		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
+		// Add the new comment to the UI immediately
+		// You may need to update your UI to handle this
+		// For example, you could have a state variable 'comments' which is an array of comments
+		// You would append the newComment to the 'comments' array
+		// ...
+		try {
+			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
-				created_at: new Date(),
-				history: [],
-				id: data?.id || '',
-				profile: picture || '',
-				replies: [],
-				sentiment:isSentimentPost? sentiment : 0,
-				updated_at: new Date(),
-				user_id: id as any,
-				username: username || ''
-			};
-			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
+				postId: postIndex,
+				postType: postType,
+				sentiment: isSentimentPost ? sentiment : 0,
+				trackNumber: track_number,
+				userId: id
+			});
+			if (error || !data) {
+			// If the API call fails, remove the newly added comment from the UI
+			// You'll need to implement this logic in your code to remove the comment
+			// from the 'comments' array or wherever you store comments in your UI
+			// You should also reset any relevant state variables
+				console.error('API call failed:', error);
+				setError(error || 'No data returned from the saving comment query');
+				// You may also want to show an error message to the user
+			} else {
+				// If the API call is successful, update the ID of the new comment
+				comment.id = data.id || '';
+				// You may also want to update the comment in your UI with the new ID
+			}
+		} catch (error) {
+			// Handle unexpected errors here
+			console.error('Error while saving comment:', error);
+			setError('An unexpected error occurred.');
+			// You may also want to show an error message to the user
+		} finally {
+			// Reset loading and other state variables
+			setLoading(false);
+			setIsComment(false);
+			setIsSentimentPost(false);
+			setSentiment(3);
 		}
-		setLoading(false);
-		setIsComment(false);
-		setIsSentimentPost(false);
-		setSentiment(3);
 	};
 
 	useEffect(() => {

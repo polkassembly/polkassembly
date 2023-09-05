@@ -125,6 +125,9 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					isAuthor = true;
 				}
 			}
+			if(!isAuthor){
+				isAuthor = await checkIsProposer(proposerAddress, userAddresses.map(a => a.address), network);
+			}
 
 			if(proposalType == ProposalType.REFERENDUM_V2){
 				const latestActivitykey = `${network}_latestActivity_OpenGov`;
@@ -140,7 +143,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			isAuthor = true;
 		}
 		else{
-			isAuthor = await checkIsProposer(proposerAddress, userAddresses.map(a => a.address), network);
+			isAuthor = await checkIsProposer(proposerAddress, userAddresses.map(a => a.address), network); // true
 		}
 		if(process.env.IS_CACHING_ALLOWED == '1'){
 			if(proposalType == ProposalType.DISCUSSIONS){
@@ -158,6 +161,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		created_at = post?.created_at?.toDate();
 		topic_id = post?.topic_id;
 		post_link = post?.post_link;
+		proposer_address = post?.proposer_address;
 	}else {
 		const defaultUserAddress = await getDefaultUserAddressFromId(user.id);
 		proposer_address = defaultUserAddress?.address || '';
@@ -200,13 +204,15 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		const substrateAddress = getSubstrateAddress(proposerAddress);
 		if(!substrateAddress)  return res.status(500).json({ message: 'Something went wrong.' });
 		proposer_address = substrateAddress;
-
-		let isAuthor = userAddresses.find(address => address.address === substrateAddress);
+		let isAuthor:any = userAddresses.find(address => address.address === substrateAddress);
 		if(network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post.index === 23){
 			isAuthor = userAddresses.find(address => address.address === '0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
 		}
 		if(network === 'moonriver' && proposalType === ProposalType.REFERENDUM_V2 && post.index === 3){
 			isAuthor = userAddresses.find(address => address.address === '0x16095c509f728721ad19a51704fc39116157be3a');
+		}
+		if(!isAuthor){
+			isAuthor = await checkIsProposer(proposerAddress, userAddresses.map(a => a.address), network);
 		}
 
 		created_at = dayjs(post.createdAt).toDate();
@@ -239,7 +245,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const last_comment_at = new Date();
 
 	const summary = (await fetchContentSummary(content, proposalType)) || '';
-
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		content,
 		created_at,
@@ -247,13 +252,13 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		id: proposalType === ProposalType.ANNOUNCEMENT ? postId : proposalType === ProposalType.TIPS ? postId : Number(postId),
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
-		proposer_address: proposer_address,
+		proposer_address: proposer_address, // postAddress
 		summary: summary,
 		tags: tags || [],
 		title,
 		topic_id : topic_id || getTopicFromType(proposalType).id,
-		user_id: user.id,
-		username: user.username
+		user_id: post?.user_id || user.id,
+		username: post?.username || user.username
 	};
 
 	if (!postDoc.exists || !postDoc?.data() || !postDoc?.data()?.last_comment_at) {
@@ -288,8 +293,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					tags: tags || [],
 					title,
 					topic_id : topic_id || getTopicFromType(proposalType).id,
-					user_id: user.id,
-					username: user.username
+					user_id: post?.user_id || user.id,
+					username: post?.username || user.username
 				}, { merge: true });
 			}
 		});

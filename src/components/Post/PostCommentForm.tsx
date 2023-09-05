@@ -15,7 +15,7 @@ import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { Input } from 'antd';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
@@ -29,7 +29,7 @@ import { ESentiment } from '~src/types';
 interface IPostCommentFormProps {
 	className?: string;
 	isUsedInSuccessModal?: boolean;
-	voteDecision? :string
+	voteDecision? :EVoteDecisionType;
 	setSuccessModalOpen?: (pre: boolean) => void;
 	setCurrentState?:(postId: string, type:string, comment: IComment) => void;
 }
@@ -59,17 +59,22 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [showEmojiMenu, setShowEmojiMenu] = useState(false);
 	const [selectedIcon, setSelectedIcon] = useState(null);
 	useEffect(() => {
-		if (voteDecision === 'aye') {
+		switch (voteDecision) {
+		case EVoteDecisionType.AYE:
 			setSentiment(5);
 			setIsSentimentPost(true);
-		} else if (voteDecision === 'nye') {
+			break;
+		case EVoteDecisionType.NAY:
 			setSentiment(1);
 			setIsSentimentPost(true);
-		} else {
+			break;
+		default:
 			setSentiment(3);
 			setIsSentimentPost(true);
+			break;
 		}
-	}, [voteDecision]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const handleEmojiClick = (icon:any, currentSentiment:any) => {
 		setContent((prevContent) => prevContent + icon);
@@ -82,7 +87,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const EmojiOption = ({ icon, currentSentiment = 3, clickable = true, disabled }: IEmojiOption) => (
 		<Button
 			disabled={disabled}
-			className="text-2xl w-10 h-10 p-0 pt-1 mb-[4px] border-solid hover:bg-baby_pink"
+			className={`${disabled && 'opacity-50'} text-2xl w-10 h-10 p-0 pt-1 mb-[4px] border-solid hover:bg-baby_pink`}
 			onClick={() => { clickable && handleEmojiClick(icon, currentSentiment); }}>
 			{icon}
 		</Button>
@@ -245,7 +250,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 							isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
 								<Input
 									name='content'
-									className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1`}
+									className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1 input-container`}
 									onChange = {(e) => {onContentChange(e.target.value);adjustHeightByString(e.target.value);}}
 									placeholder={'Type your comment here'}
 								/>
@@ -271,7 +276,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 													</div>
 												)}
 												{!selectedIcon && (
-													<div className="w-10 h-10 mr-[7px]" onClick={() => setShowEmojiMenu(!showEmojiMenu) }>
+													<div className="w-10 h-10 mr-[7px] emoji-button" onClick={() => setShowEmojiMenu(!showEmojiMenu) }>
 														<EmojiOption disabled={!content} icon={sentimentsIcons[sentiment]} currentSentiment={3} clickable={false}/> 
 													</div>
 												)}

@@ -267,7 +267,7 @@ const VoteInitiatedModal = ({
 			</div>
 			<div className='mt-3 w-full'>
 				<div className="vector min-w-[250px]">
-					<BackgroundImage className="-ml-[15px] text-2xl min-w-[250px]"/>
+					<BackgroundImage className="-ml-[15px] text-2xl min-w-[250px] background-image"/>
 				</div>
 				<span className="quote quote--left w-[48px] h-[40px] justify-center text-center pt-[10px] top-[327px] left-[6px]" style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}>
 					<LeftQuote/>
@@ -275,7 +275,7 @@ const VoteInitiatedModal = ({
 				<p className="-mt-[155px] text-center">
 					Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing your reason for this vote ?
 				</p>
-				<div className="form-group ml-4">
+				<div className="form-group ml-4 form-container">
 					<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 				</div>
 				<span className="quote quote--right top-[325px] right-[3px] h-[40px] w-[48px] text-center pt-[10px]" style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}>

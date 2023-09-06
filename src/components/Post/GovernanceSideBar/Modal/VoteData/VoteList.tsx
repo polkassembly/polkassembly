@@ -46,7 +46,6 @@ interface IVotersListProps {
   referendumId: number;
   voteType: VoteType;
   thresholdData?: any;
-  onlyDelegation?:{isOpen: boolean, voter:string | null}
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -60,7 +59,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		postData: { postType }
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
-	const { className, referendumId, voteType, thresholdData, onlyDelegation } = props;
+	const { className, referendumId, voteType, thresholdData } = props;
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: true,

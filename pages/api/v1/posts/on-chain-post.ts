@@ -379,40 +379,45 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			};
 
 			const replyIds: string[] = [];
-			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').where('isDeleted','!=',true).get();
-			repliesSnapshot.docs.forEach((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					if (data) {
-						const { created_at, id, username, comment_id, content, user_id } = data;
-						if (id) {
-							replyIds.push(id);
-						}
-						if (typeof user_id === 'number') {
-							userIds.add(user_id);
-						} else {
-							const numUserId = Number(user_id);
-							if (!isNaN(numUserId)) {
-								userIds.add(numUserId);
+			try{
+				const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted','==',false).orderBy('created_at', 'asc').get();
+				repliesSnapshot.docs.forEach((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						if (data) {
+							const { created_at, id, username, comment_id, content, user_id } = data;
+							if (id) {
+								replyIds.push(id);
 							}
+							if (typeof user_id === 'number') {
+								userIds.add(user_id);
+							} else {
+								const numUserId = Number(user_id);
+								if (!isNaN(numUserId)) {
+									userIds.add(numUserId);
+								}
+							}
+							comment.replies.push({
+								comment_id,
+								content,
+								created_at: created_at?.toDate? created_at.toDate(): created_at,
+								id: id,
+								is_custom_username: false,
+								post_index: postIndex,
+								post_type: postType,
+								proposer: '',
+								spam_users_count: 0,
+								updated_at: getUpdatedAt(data),
+								user_id: user_id,
+								username
+							});
 						}
-						comment.replies.push({
-							comment_id,
-							content,
-							created_at: created_at?.toDate? created_at.toDate(): created_at,
-							id: id,
-							is_custom_username: false,
-							post_index: postIndex,
-							post_type: postType,
-							proposer: '',
-							spam_users_count: 0,
-							updated_at: getUpdatedAt(data),
-							user_id: user_id,
-							username
-						});
 					}
-				}
-			});
+				});
+			}
+			catch(err){
+				console.log('error in getting replies',err);
+			}
 
 			if (replyIds.length > 0) {
 				const chunkSize = 30;

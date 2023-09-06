@@ -65,8 +65,6 @@ async function getOAuthAccessTokenWith( network: string, {
 export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestToken }: Props ): Promise<IApiResponse<string | MessageType>> => {
 	try{
 		const tokenVerification = await firestore.collection('twitter_verification_tokens').where('oauth_request_token', '==', oauthRequestToken).limit(1).get();
-
-		const data = tokenVerification.docs[0].data();
 		if (tokenVerification.empty) {
 			return {
 				data: null,
@@ -74,6 +72,7 @@ export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestTo
 				status: 400
 			};
 		}
+		const data = tokenVerification.docs[0].data();
 
 		const oauthRequestTokenSecret = data?.oauth_requestToken_secret;
 

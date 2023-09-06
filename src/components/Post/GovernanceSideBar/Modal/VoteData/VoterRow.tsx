@@ -29,8 +29,8 @@ interface IVoterRow {
   voteData?: any;
   isReferendum2?:boolean,
   setDelegationVoteModal:any,
-  currentKey:any,
-  setActiveKey:any
+  currentKey?:any,
+  setActiveKey?:any
 }
 
 const StyledCollapse = styled(Collapse)`

@@ -131,32 +131,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		const content = form.getFieldValue('content');
 		if (!content) return;
 		// Update the state before making the API call
-		setLoading(true);
+		// setLoading(true);
 		setError('');
-		// Create a new comment object and add it to the UI
-		// const newComment = {
-		// 	comment_reactions: {
-		// 		'👍': {
-		// 			count: 0,
-		// 			usernames: []
-		// 		},
-		// 		'👎': {
-		// 			count: 0,
-		// 			usernames: []
-		// 		}
-		// 	},
-		// 	content,
-		// 	created_at: new Date(),
-		// 	history: [],
-		// 	id: '', // Initially empty until you get the ID from the server
-		// 	profile: picture || '',
-		// 	replies: [],
-		// 	sentiment: isSentimentPost ? sentiment : 0,
-		// 	updated_at: new Date(),
-		// 	user_id: id as any,
-		// 	username: username || ''
-		// };
-
 		setContent('');
 		form.resetFields();
 		form.setFieldValue('content', '');
@@ -191,10 +167,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		};
 		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		// Add the new comment to the UI immediately
-		// You may need to update your UI to handle this
-		// For example, you could have a state variable 'comments' which is an array of comments
-		// You would append the newComment to the 'comments' array
-		// ...
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
@@ -211,6 +183,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			// You should also reset any relevant state variables
 				console.error('API call failed:', error);
 				setError(error || 'No data returned from the saving comment query');
+				queueNotification({
+					header: 'Failed!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
 				// You may also want to show an error message to the user
 			} else {
 				// If the API call is successful, update the ID of the new comment

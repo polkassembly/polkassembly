@@ -158,7 +158,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				className={className}
 				spinning={loadingStatus.isLoading}
 				indicator={<LoadingOutlined />}
-				tip={loadingStatus.message}
 			>
 				<div className='flex gap-6'>
 					<div className='md:overflow-visible overflow-x-auto'>

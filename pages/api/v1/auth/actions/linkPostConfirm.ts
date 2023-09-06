@@ -58,6 +58,10 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 
 	// Subsquid Data
 	const subsquidData = subsquidRes?.data;
+
+	//DiscussionPage - currPostID = discussionId , postId = referendumId
+	//ReferendumPage - currPostId = referendumId, postId = discussionId
+
 	if (!isDataExist(subsquidData)) {
 		throw apiErrorWithStatusCode(`The Post with id: "${postId}" and type: "${postType}" is not found.`, 400);
 	}
@@ -69,19 +73,30 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post.trackNumber}_*`;
 			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${currPostId}`;
 
+			const discussionDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+
 			await redisDel(latestActivitykey);
 			await deleteKeys(trackListingKey);
 			await redisDel(referendumDetailsKey);
+			await redisDel(discussionDetailsKey);
+			await deleteKeys(discussionListingKey);
+
 		}
 
 		if(currPostType == ProposalType.DISCUSSIONS){
 			const latestActivitykey = `${network}_latestActivity_OpenGov`;
-			const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+			const discussionDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${currPostId}`;
 			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+
+			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post.trackNumber}_*`;
+			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
 
 			await redisDel(latestActivitykey);
 			await redisDel(referendumDetailsKey);
+			await redisDel(discussionDetailsKey);
 			await deleteKeys(discussionListingKey);
+			await deleteKeys(trackListingKey);
 		}
 	}
 

@@ -68,14 +68,13 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
 
 export const GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID = `
 query ConvictionVotesListingByTypeAndIndex(
-  $orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC,
   $index_eq: Int = 264,
   $type_eq: VoteType = ReferendumV2,
   $limit: Int = 10,
   $offset: Int = 0,
   $decision: VoteDecision = yes,
   $voter_eq: String = "") {
-  convictionVotes(orderBy: $orderBy,
+    convictionVotes(
       where: {
         type_eq: $type_eq,
           proposal: {

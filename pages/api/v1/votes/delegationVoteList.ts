@@ -6,23 +6,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { isVotesSortOptionsValid, votesSortValues } from '~src/global/sortOptions';
 import {  GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from './query';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IVotesResponse {
-	yes: {
-		count: number;
-		votes: any[];
-	};
-	no: {
-		count: number;
-		votes: any[];
-	};
-	abstain: {
-		count: number;
-		votes: any[];
-	};
+	count: number;
+	votes: any[];
 }
 
 // expects optional id, page, voteType and listingLimit
@@ -31,7 +20,6 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 		postId = 0,
 		page = 1,
 		listingLimit = VOTES_LISTING_LIMIT,
-		sortBy = votesSortValues.VOTING_POWER_DESC,
 		decision,
 		type,
 		voter } = req.query;
@@ -56,77 +44,30 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 		return res.status(400).json({ error: `The postId "${postId}" is invalid.` });
 	}
 
-	const strSortBy = String(sortBy);
-
-	const getOrderBy = (sortByValue:string) => {
-		switch (sortByValue){
-		case votesSortValues.BALANCE_ASC:
-			return ['balance_value_ASC', 'id_ASC'];
-		case votesSortValues.BALANCE_DESC:
-			return ['balance_value_DESC', 'id_DESC'];
-		case votesSortValues.CONVICTION_ASC:
-			return ['lockPeriod_ASC', 'id_ASC'];
-		case votesSortValues.CONVICTION_DESC:
-			return ['lockPeriod_DESC', 'id_DESC'];
-		case votesSortValues.VOTING_POWER_ASC:
-			return ['totalVotingPower_ASC', 'id_ASC'];
-		case votesSortValues.VOTING_POWER_DESC:
-			return ['totalVotingPower_DESC', 'id_DESC'];
-		case votesSortValues.TIME_ASC:
-			return ['timestamp_ASC', 'id_ASC'];
-		default:
-			return ['createdAtBlock_DESC', 'id_DESC'];
-		}
-	};
-	if (!isVotesSortOptionsValid(strSortBy)) {
-		return res.status(400).json({ error: `The sortBy "${sortBy}" is invalid.` });
-	}
 	const variables: any = {
-		decision_eq: decision,
+		decision: decision,
 		index_eq: Number(postId),
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
-		orderBy:getOrderBy(strSortBy),
 		type_eq: type,
 		voter_eq: voter
 	};
 
 	const votesQuery = GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID;
 
-	const decisions = ['yes', 'no', 'abstain'];
+	console.log(variables);
 
-	const promiseResults = await Promise.allSettled(decisions.map((decision) => {
-		variables['decision_eq'] = decision;
-		return fetchSubsquid({
-			network,
-			query: votesQuery,
-			variables
-		});
-	}));
-
-	const resObj: IVotesResponse = {
-		abstain: {
-			count: 0,
-			votes: []
-		},
-		no: {
-			count: 0,
-			votes: []
-		},
-		yes: {
-			count: 0,
-			votes: []
-		}
-	};
-
-	promiseResults.forEach((result, i) => {
-		const decision = i === 0? 'yes': i === 1? 'no': 'abstain';
-		if (result && result.status === 'fulfilled' && result.value) {
-			const subsquidData = result.value?.data;
-			resObj[decision].votes = subsquidData?.convictionVotes?.[0]?.delegatedVotes;
-			resObj[decision].count = subsquidData?.convictionVotesConnection?.totalCount;
-		}
+	const result = await fetchSubsquid({
+		network,
+		query: votesQuery,
+		variables
 	});
+
+	const subsquidData = result?.data;
+	const resObj = {
+		count: subsquidData?.convictionDelegatedVotesConnection?.totalCount,
+		votes: subsquidData?.convictionVotes?.[0]?.delegatedVotes
+	};
 	res.status(200).json(resObj);
 }
 

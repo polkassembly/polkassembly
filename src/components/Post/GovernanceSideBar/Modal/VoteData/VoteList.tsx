@@ -27,6 +27,7 @@ import ChartIcon from '~assets/chart-icon.svg';
 import ThresholdGraph from './ThresholdGraph';
 import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
+import DelegationVotersList from './DelegateVoteList';
 
 const StyledSegmented = styled(Segmented)`
   .ant-segmented-group > label {
@@ -79,9 +80,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			isLoading: true,
 			message: 'Loading votes'
 		});
-		const url = onlyDelegation?.isOpen
-			? `api/v1/votes/delegationVoteList?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&page=${currentPage}&sortBy=${votesSortValues.BALANCE_DESC}&decision=${decision||'yes'}&type=${voteType}&voter=${onlyDelegation.voter}`
-			: `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
+		const url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
 		nextApiClientFetch<IVotesResponse>(url)
 			.then((res) => {
 				if (res.error) {
@@ -180,7 +179,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										isReferendum2 ? 'w-[220px]' : 'w-[250px]'
 									} text-lightBlue text-sm font-medium`}
 								>
-                  Voter
+									Voter
 								</div>
 								<div
 									className={`${
@@ -195,7 +194,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										setBalanceIsAsc(!balanceIsAsc);
 									}}
 								>
-                  Amount
+									Amount
 									<ExpandIcon className={balanceIsAsc ? 'rotate-180' : ''} />
 								</div>
 								{network !== AllNetworks.COLLECTIVES ? (
@@ -212,7 +211,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											setConvictionIsAsc(!convictionIsAsc);
 										}}
 									>
-                    Conviction
+										Conviction
 										<ExpandIcon
 											className={convictionIsAsc ? 'rotate-180' : ''}
 										/>
@@ -230,7 +229,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											setVotingIsAsc(!votingIsAsc);
 										}}
 									>
-                    Voting Power
+										Voting Power
 										<ExpandIcon className={votingIsAsc ? 'rotate-180' : ''} />
 									</div>
 								)}
@@ -263,7 +262,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 						<div className='flex justify-between items-center pt-6 bg-white z-10'>
 							<p className='text-xs text-[#96A4B6] m-0'>
-                d: Delegation s: Split sa: Split Abstain
+								d: Delegation s: Split sa: Split Abstain
 							</p>
 							<Pagination
 								size='small'
@@ -311,35 +310,41 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					</Container>}
 				</div>
 			</Spin>
-			{delegationVoteModal.isOpen && <Modal
-				title={
-					<div className='mr-[-24px] ml-[-24px] text-[18px]'>
-						<h3 className='ml-[24px] mb-0 font-semibold text-[#243A57] flex align-center gap-2'>
-							<span className='top-1 relative'>
-								<VoteDataIcon />
-							</span>
-							<span className='text-xl font-semibold text-bodyBlue'>
-							Voting Data
-							</span>
-						</h3>
-						<Divider className='text-[#D2D8E0]' />
-					</div>
-				}
-				open={delegationVoteModal.isOpen}
-				closable
-				closeIcon={<CloseIcon />}
-				className={'sm:w-[600px]'}
-				onCancel={() => {
-					setDelegationVoteModal({ isOpen:false, voter:null });
-				}}
-				footer={null}
-			>
-				<VotersList
-					referendumId={referendumId as number}
-					voteType={voteType}
-					onlyDelegation={delegationVoteModal}
-				/>
-			</Modal>}
+			{
+				delegationVoteModal.isOpen
+				&& delegationVoteModal.voter
+				&& decision
+				&& <Modal
+					title={
+						<div className='mr-[-24px] ml-[-24px] text-[18px]'>
+							<h3 className='ml-[24px] mb-0 font-semibold text-[#243A57] flex align-center gap-2'>
+								<span className='top-1 relative'>
+									<VoteDataIcon />
+								</span>
+								<span className='text-xl font-semibold text-bodyBlue'>
+									Voting Data
+								</span>
+							</h3>
+							<Divider className='text-[#D2D8E0]' />
+						</div>
+					}
+					open={delegationVoteModal.isOpen}
+					closable
+					closeIcon={<CloseIcon />}
+					className={'sm:w-[600px]'}
+					onCancel={() => {
+						setDelegationVoteModal({ isOpen:false, voter:null });
+					}}
+					footer={null}
+				>
+					<DelegationVotersList
+						referendumId={referendumId as number}
+						voteType={voteType}
+						voter={delegationVoteModal.voter}
+						decision={decision}
+					/>
+				</Modal>
+			}
 		</div>
 	);
 };

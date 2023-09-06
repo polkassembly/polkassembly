@@ -4,11 +4,11 @@
 
 import React, { FC } from 'react';
 import Address from 'src/ui-components/Address';
-import formatBnBalance from 'src/util/formatBnBalance';
 import { VoteType } from '~src/global/proposalType';
-import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { network as AllNetworks, chainProperties } from '~src/global/networkConstants';
 import { useNetworkContext } from '~src/context';
+import { formatBalance } from '@polkadot/util';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 interface IDelegationListRow {
   voteType: VoteType;
@@ -49,18 +49,13 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 				<>
 					<div className='w-[115px] overflow-ellipsis'>
 						{formatUSDWithUnits(
-							formatBnBalance(
+							formatBalance((
 								voteData?.decision === 'abstain'
 									? voteData?.balance?.abstain || 0
-									: voteData?.balance?.value || 0,
-								{
-									numberAfterComma: 1,
-									withThousandDelimitor: false,
-									withUnit: true
-								},
-								network
-							),
-							1
+									: voteData?.balance?.value || 0
+							).toString(),
+							{ forceUnit: chainProperties[network]?.tokenSymbol }
+							),1
 						)}
 					</div>
 					<div className='w-[110px] overflow-ellipsis'>
@@ -82,18 +77,12 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 			{voteData.votingPower && (
 				<div className='overflow-ellipsis w-[50px]'>
 					{formatUSDWithUnits(
-						formatBnBalance(
-							voteData.votingPower,
-							{
-								numberAfterComma: 1,
-								withThousandDelimitor: false,
-								withUnit: false
-							},
-							network
-						),
-						1
+						formatBalance((
+							voteData.votingPower
+						).toString(),
+						{ forceUnit: chainProperties[network]?.tokenSymbol }
+						), 1
 					)}
-					{}
 				</div>
 			)}
 		</div>

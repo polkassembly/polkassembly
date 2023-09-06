@@ -4,10 +4,9 @@
 
 import React, { FC, useState } from 'react';
 import Address from 'src/ui-components/Address';
-import formatBnBalance from 'src/util/formatBnBalance';
 import { VoteType } from '~src/global/proposalType';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { network as AllNetworks, chainProperties } from '~src/global/networkConstants';
 import { useNetworkContext } from '~src/context';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import CollapseDownIcon from '~assets/icons/keyboard_arrow_down.svg';
@@ -22,6 +21,7 @@ import styled from 'styled-components';
 import { Divider } from 'antd';
 import DelegationListRow from './DelegationListRow';
 import dayjs from 'dayjs';
+import { formatBalance } from '@polkadot/util';
 
 interface IVoterRow {
   className?:string;
@@ -106,18 +106,13 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 					<>
 						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[105px]' : 'w-[150px]'}`}>
 							{formatUSDWithUnits(
-								formatBnBalance(
+								formatBalance((
 									voteData?.decision === 'abstain'
 										? voteData?.balance?.abstain || 0
-										: voteData?.balance?.value || 0,
-									{
-										numberAfterComma: 1,
-										withThousandDelimitor: false,
-										withUnit: true
-									},
-									network
-								),
-								1
+										: voteData?.balance?.value || 0
+								).toString(),
+								{ forceUnit: chainProperties[network]?.tokenSymbol }
+								),1
 							)}
 						</div>
 						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[115px]' : 'w-[135px]'}`}>
@@ -135,20 +130,14 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 				)}
 
 				{( voteData.totalVotingPower || voteData.votingPower ) && (
-					<div className='overflow-ellipsis w-[50px]'>
+					<div className='overflow-ellipsis w-[90px]'>
 						{formatUSDWithUnits(
-							formatBnBalance(
-								voteData.totalVotingPower|| voteData.votingPower,
-								{
-									numberAfterComma: 1,
-									withThousandDelimitor: false,
-									withUnit: false
-								},
-								network
-							),
-							1
+							formatBalance((
+								voteData.totalVotingPower|| voteData.votingPower
+							).toString(),
+							{ forceUnit: chainProperties[network]?.tokenSymbol }
+							),1
 						)}
-						{}
 					</div>
 				)}
 			</div>
@@ -179,20 +168,17 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 							<CalenderIcon /> {dayjs(voteData.createdAt.toDate?.()).format('MMMM D, YYYY h:mm A').toString()}
 						</span>
 						<span className='flex gap-1 items-center text-lightBlue text-xs font-medium'>
-							<PowerIcon /> Voting Power <span className='text-[#96A4B6]'>{formatUSDWithUnits(
-								formatBnBalance(
-									voteData?.decision === 'abstain'
-										? voteData?.balance?.abstain || 0
-										: voteData?.balance?.value || 0,
-									{
-										numberAfterComma: 1,
-										withThousandDelimitor: false,
-										withUnit: true
-									},
-									network
-								),
-								1
-							)}</span>
+							<PowerIcon /> Voting Power <span className='text-[#96A4B6]'>
+								{formatUSDWithUnits(
+									formatBalance((
+										voteData?.decision === 'abstain'
+											? voteData?.balance?.abstain || 0
+											: voteData?.balance?.value || 0
+									).toString(),
+									{ forceUnit: chainProperties[network]?.tokenSymbol }
+									),1
+								)}
+							</span>
 						</span>
 					</div>
 					<div>
@@ -210,18 +196,13 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 									</span>
 									<span className='text-xs text-bodyBlue'>
 										{formatUSDWithUnits(
-											formatBnBalance(
+											formatBalance((
 												voteData?.decision === 'abstain'
 													? voteData?.balance?.abstain || 0
-													: voteData?.balance?.value || 0,
-												{
-													numberAfterComma: 1,
-													withThousandDelimitor: false,
-													withUnit: true
-												},
-												network
-											),
-											1
+													: voteData?.balance?.value || 0
+											).toString(),
+											{ forceUnit: chainProperties[network]?.tokenSymbol }
+											),1
 										)}
 									</span>
 								</div>
@@ -239,16 +220,11 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 									</span>
 									<span className='text-xs text-bodyBlue'>
 										{formatUSDWithUnits(
-											formatBnBalance(
-												voteData.selfVotingPower || 0,
-												{
-													numberAfterComma: 1,
-													withThousandDelimitor: false,
-													withUnit: true
-												},
-												network
-											),
-											1
+											formatBalance((
+												voteData.selfVotingPower || 0
+											).toString(),
+											{ forceUnit: chainProperties[network]?.tokenSymbol }
+											),1
 										)}
 									</span>
 								</div>
@@ -264,16 +240,11 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 									</span>
 									<span className='text-xs text-bodyBlue'>
 										{formatUSDWithUnits(
-											formatBnBalance(
-												delegatedVotes.toString(),
-												{
-													numberAfterComma: 1,
-													withThousandDelimitor: false,
-													withUnit: true
-												},
-												network
-											),
-											1
+											formatBalance((
+												delegatedVotes
+											).toString(),
+											{ forceUnit: chainProperties[network]?.tokenSymbol }
+											),1
 										)}
 									</span>
 								</div>
@@ -289,16 +260,11 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 									</span>
 									<span className='text-xs text-bodyBlue'>
 										{formatUSDWithUnits(
-											formatBnBalance(
-												delegatedVotingPower.toString(),
-												{
-													numberAfterComma: 1,
-													withThousandDelimitor: false,
-													withUnit: true
-												},
-												network
-											),
-											1
+											formatBalance((
+												delegatedVotingPower
+											).toString(),
+											{ forceUnit: chainProperties[network]?.tokenSymbol }
+											),1
 										)}
 									</span>
 								</div>

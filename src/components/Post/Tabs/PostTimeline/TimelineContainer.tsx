@@ -206,6 +206,10 @@ export default (styled(TimelineContainer)`
 	.arrow-container {
 		margin-left: -105px;
 	}
+
+	.status-update {
+        width: 98px;
+    }
 	
 	@media (min-width: 1100px) and (max-width: 1280px) {
 		.content-container {

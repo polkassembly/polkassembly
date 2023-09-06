@@ -5,8 +5,7 @@
 import React, { FC, useState } from 'react';
 import Address from 'src/ui-components/Address';
 import { VoteType } from '~src/global/proposalType';
-import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { network as AllNetworks, chainProperties } from '~src/global/networkConstants';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import { useNetworkContext } from '~src/context';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import CollapseDownIcon from '~assets/icons/keyboard_arrow_down.svg';
@@ -21,7 +20,7 @@ import styled from 'styled-components';
 import { Divider } from 'antd';
 import DelegationListRow from './DelegationListRow';
 import dayjs from 'dayjs';
-import { formatBalance } from '@polkadot/util';
+import { parseBalance } from './utils/parseBalaceToReadable';
 
 interface IVoterRow {
   className?:string;
@@ -30,6 +29,8 @@ interface IVoterRow {
   voteData?: any;
   isReferendum2?:boolean,
   setDelegationVoteModal:any,
+  currentKey:any,
+  setActiveKey:any
 }
 
 const StyledCollapse = styled(Collapse)`
@@ -68,7 +69,7 @@ const getDelegatedDetails = (votes:[any]) => {
 	return [allVotes, votingPower, votes.length];
 };
 
-const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2, setDelegationVoteModal }) => {
+const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData, className, isReferendum2, setDelegationVoteModal, index }) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
 	const [delegatedVotes, delegatedVotingPower, delegators] = getDelegatedDetails(voteData?.delegatedVotes || []);
@@ -105,20 +106,10 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
 						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[105px]' : 'w-[150px]'}`}>
-							{formatUSDWithUnits(
-								formatBalance((
-									voteData?.decision === 'abstain'
-										? voteData?.balance?.abstain || 0
-										: voteData?.balance?.value || 0
-								).toString(),
-								{ forceUnit: chainProperties[network]?.tokenSymbol }
-								),1
-							)}
+							{parseBalance((voteData.totalVotingPower|| voteData.votingPower).toString(), 2, true, network)}
 						</div>
 						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[115px]' : 'w-[135px]'}`}>
-							{voteData.lockPeriod
-								? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length>0 ? '/d' : ''}`
-								: '0.1x'}
+							{`${voteData.lockPeriod === 0 ? '0.1': voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0  ? '/d' : ''}`}
 						</div>
 					</>
 				) : (
@@ -131,13 +122,7 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 
 				{( voteData.totalVotingPower || voteData.votingPower ) && (
 					<div className='overflow-ellipsis w-[90px]'>
-						{formatUSDWithUnits(
-							formatBalance((
-								voteData.totalVotingPower|| voteData.votingPower
-							).toString(),
-							{ forceUnit: chainProperties[network]?.tokenSymbol }
-							),1
-						)}
+						{parseBalance((voteData.totalVotingPower|| voteData.votingPower).toString(), 2, true, network)}
 					</div>
 				)}
 			</div>
@@ -156,6 +141,8 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 				setActive(isActive);
 				return isActive ? <CollapseUpIcon /> : <CollapseDownIcon />;
 			}}
+			activeKey={currentKey === index ? 1 : 0}
+			onChange={() => setActiveKey(currentKey === index ? null :index)}
 		>
 			<StyledCollapse.Panel
 				className={`rounded-none p-0 ${active ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''} gap-[0px] text-bodyBlue`}
@@ -169,15 +156,17 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 						</span>
 						<span className='flex gap-1 items-center text-lightBlue text-xs font-medium'>
 							<PowerIcon /> Voting Power <span className='text-[#96A4B6]'>
-								{formatUSDWithUnits(
-									formatBalance((
+								{
+									parseBalance((
 										voteData?.decision === 'abstain'
 											? voteData?.balance?.abstain || 0
 											: voteData?.balance?.value || 0
 									).toString(),
-									{ forceUnit: chainProperties[network]?.tokenSymbol }
-									),1
-								)}
+									2,
+									true,
+									network
+									)
+								}
 							</span>
 						</span>
 					</div>
@@ -195,15 +184,17 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 										<VoterIcon /> votes
 									</span>
 									<span className='text-xs text-bodyBlue'>
-										{formatUSDWithUnits(
-											formatBalance((
+										{
+											parseBalance((
 												voteData?.decision === 'abstain'
 													? voteData?.balance?.abstain || 0
 													: voteData?.balance?.value || 0
 											).toString(),
-											{ forceUnit: chainProperties[network]?.tokenSymbol }
-											),1
-										)}
+											2,
+											true,
+											network
+											)
+										}
 									</span>
 								</div>
 								<div className='flex justify-between'>
@@ -212,20 +203,22 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 									</span>
 									<span className='text-xs text-bodyBlue'>{voteData.lockPeriod
 										? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length>0 ? '/d' : ''}`
-										: '0.1x'}</span>
+										: '0.01x'}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
 										<CapitalIcon /> Vote Power
 									</span>
 									<span className='text-xs text-bodyBlue'>
-										{formatUSDWithUnits(
-											formatBalance((
+										{
+											parseBalance((
 												voteData.selfVotingPower || 0
 											).toString(),
-											{ forceUnit: chainProperties[network]?.tokenSymbol }
-											),1
-										)}
+											2,
+											true,
+											network
+											)
+										}
 									</span>
 								</div>
 							</div>
@@ -239,13 +232,15 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 										<VoterIcon /> votes
 									</span>
 									<span className='text-xs text-bodyBlue'>
-										{formatUSDWithUnits(
-											formatBalance((
+										{
+											parseBalance((
 												delegatedVotes
 											).toString(),
-											{ forceUnit: chainProperties[network]?.tokenSymbol }
-											),1
-										)}
+											2,
+											true,
+											network
+											)
+										}
 									</span>
 								</div>
 								<div className='flex justify-between'>
@@ -259,13 +254,15 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2,
 										<CapitalIcon /> Capital
 									</span>
 									<span className='text-xs text-bodyBlue'>
-										{formatUSDWithUnits(
-											formatBalance((
+										{
+											parseBalance((
 												delegatedVotingPower
 											).toString(),
-											{ forceUnit: chainProperties[network]?.tokenSymbol }
-											),1
-										)}
+											2,
+											true,
+											network
+											)
+										}
 									</span>
 								</div>
 							</div>

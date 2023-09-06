@@ -55,8 +55,6 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 
 	const votesQuery = GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID;
 
-	console.log(variables);
-
 	const result = await fetchSubsquid({
 		network,
 		query: votesQuery,

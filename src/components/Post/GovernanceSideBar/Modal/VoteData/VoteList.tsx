@@ -74,6 +74,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [votingIsAsc, setVotingIsAsc] = useState<boolean>(false);
 	const [convictionIsAsc, setConvictionIsAsc] = useState<boolean>(false);
 	const [delegationVoteModal, setDelegationVoteModal] =useState<{isOpen: boolean, voter:string | null}>({ isOpen:false, voter: null });
+	const [activeKey, setActiveKey] = useState<any>(null);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -84,10 +85,18 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		nextApiClientFetch<IVotesResponse>(url)
 			.then((res) => {
 				if (res.error) {
+					setLoadingStatus({
+						isLoading: false,
+						message: ''
+					});
 					console.log(res.error);
 				} else {
 					const votesRes = res.data;
 					setVotesRes(votesRes);
+					setLoadingStatus({
+						isLoading: false,
+						message: ''
+					});
 					if (votesRes && firstRef.current) {
 						firstRef.current = false;
 						let decision: DecisionType = 'yes';
@@ -104,12 +113,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			})
 			.catch((err) => {
 				console.log(err);
-			})
-			.finally(() => {
-				setLoadingStatus({
-					isLoading: false,
-					message: ''
-				});
 			});
 	}, [referendumId, currentPage, voteType, sortBy, onlyDelegation, decision]);
 
@@ -155,6 +158,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				className={className}
 				spinning={loadingStatus.isLoading}
 				indicator={<LoadingOutlined />}
+				tip={loadingStatus.message}
 			>
 				<div className='flex gap-6'>
 					<div className='md:overflow-visible overflow-x-auto'>
@@ -247,11 +251,13 @@ const VotersList: FC<IVotersListProps> = (props) => {
 													: ''
 											}`}
 											key={index}
+											currentKey={activeKey}
 											voteType={voteType}
 											voteData={voteData}
 											index={index}
 											isReferendum2={isReferendum2}
 											setDelegationVoteModal={setDelegationVoteModal}
+											setActiveKey={setActiveKey}
 										/>
 									)
 								)

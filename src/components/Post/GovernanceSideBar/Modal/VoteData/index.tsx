@@ -61,4 +61,4 @@ const VoteDataModal: FC<IVoteDataModal> = ({
 	);
 };
 
-export default VoteDataModal;
+export default React.memo(VoteDataModal);

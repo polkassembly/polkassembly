@@ -114,7 +114,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			.catch((err) => {
 				console.log(err);
 			});
-	}, [referendumId, currentPage, voteType, sortBy, onlyDelegation, decision]);
+	}, [currentPage, referendumId, sortBy, voteType]);
 
 	const decisionOptions = [
 		{

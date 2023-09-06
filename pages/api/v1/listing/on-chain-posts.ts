@@ -78,6 +78,7 @@ export interface IPostListing {
   timeline?: any;
   track_no?: number | null;
 	isSpam?: boolean;
+	identity?: string | null;
 }
 
 export interface IPostsListingResponse {
@@ -273,6 +274,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					});
 				}
 				const status = subsquidPost.status;
+				const identity = subsquidPost?.identity || null;
 				const tally = subsquidPost.tally;
 				const postId = proposalType === ProposalType.TIPS ? hash : index;
 				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
@@ -306,6 +308,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							end,
 							gov_type: data.gov_type,
 							hash,
+							identity,
 							isSpam: data?.isSpam || false,
 							method: preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
@@ -340,6 +343,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					description,
 					end: end,
 					hash: hash || null,
+					identity,
 					method: preimage?.method,
 					parent_bounty_index: parentBountyIndex || null,
 					post_id: postId,
@@ -651,6 +655,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						});
 					}
 					const tally = subsquidPost?.tally;
+					const identity = subsquidPost?.identity || null;
 					let status = subsquidPost.status;
 					if (status === 'DecisionDepositPlaced') {
 						const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
@@ -693,6 +698,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								end,
 								gov_type: data.gov_type,
 								hash,
+								identity,
 								isSpam: data?.isSpam || false,
 								method: preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
@@ -727,6 +733,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						description,
 						end: end,
 						hash: hash || null,
+						identity,
 						method: preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,

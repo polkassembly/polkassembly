@@ -414,6 +414,7 @@ const Post: FC<IPostProps> = (props) => {
 			currentTimeline: post.currentTimeline,
 			description: post?.description,
 			history: post?.history || [],
+			identityId: post?.identity || null,
 			last_edited_at: post?.last_edited_at,
 			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,

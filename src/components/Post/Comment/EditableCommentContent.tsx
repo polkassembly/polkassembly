@@ -358,7 +358,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			key:4,
 			label:<div className={`flex items-center shadow-none text-[10px] text-slate-400 leading-4 ml-[-1.8px] ${poppins.variable} ${poppins.className} border-none` } onClick={() => {deleteComment();}}><DeleteIcon className='mr-1' />Delete</div>
 		}:
-			allowed_roles?.includes('moderator') ?
+			allowed_roles?.includes('moderator') && (network.includes('kusama') || network.includes('polkadot')) ?
 				{
 					key: 4,
 					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type='comment' allowed_roles={allowed_roles} onDeleteComment={deleteComment} isReply={false} commentId={commentId} postId={postIndex}/>

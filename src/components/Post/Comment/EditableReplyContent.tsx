@@ -351,7 +351,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{
 									id === userId ? <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>
 										:
-										allowed_roles?.includes('moderator') ? <ReportButton isDeleteModal={true} proposalType={postType} className={'flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent '} type='comment' isReply={true} onDeleteReply={deleteReply} commentId={commentId} allowed_roles={allowed_roles} replyId={replyId} postId={postIndex}/>
+										allowed_roles?.includes('moderator') && (network.includes('kusama') || network.includes('polkadot')) ? <ReportButton isDeleteModal={true} proposalType={postType} className={'flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent '} type='comment' isReply={true} onDeleteReply={deleteReply} commentId={commentId} allowed_roles={allowed_roles} replyId={replyId} postId={postIndex}/>
 											: null
 
 								}

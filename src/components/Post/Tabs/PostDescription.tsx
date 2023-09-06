@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
 import Markdown from 'src/ui-components/Markdown';
 
-import { usePostDataContext } from '~src/context';
+import { usePostDataContext, useNetworkContext } from '~src/context';
 
 import CreateOptionPoll from '../ActionsBar/OptionPoll/CreateOptionPoll';
 import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
@@ -45,6 +45,7 @@ interface IPostDescriptionProps {
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp , allowed_roles, trackName , isOffchainPost } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
+	const { network } = useNetworkContext();
 	const router = useRouter();
 	//write a function which redirects to the proposalType page
 	const deletePostFromUrl = (proposalType: ProposalType, trackName?: string) => {
@@ -118,7 +119,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{TrackerButtonComp}
 					<ShareButton title={title} />
 					{
-						allowed_roles && allowed_roles.includes('moderator') && isOffchainPost?
+						allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && (network.includes('kusama') || network.includes('polkadot'))?
 							<ReportButton proposalType={postType} allowed_roles={allowed_roles} isPost={true} onDeletePost={deletePost} isDeleteModal={true} type='post' postId={`${postIndex}`} /> :
 							null
 					}

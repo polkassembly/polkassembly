@@ -29,6 +29,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
+	if(network !== 'kusama' && network !== 'polkadot') return res.status(400).json({ message: 'Invalid network in request header' });
+
 	const { commentId= '', postId, postType , replyId= '', reason = '' } = req.body;
 
 	if(isNaN(postId) || !postType || !reason) return res.status(400).json({ message: 'Missing parameters in request body' });
@@ -61,8 +63,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		network,
 		postId,
 		postType,
+		reason,
 		userId: String(user.id)
 	};
+	res.status(200).json({ message: 'Content deleted.' });
+
 	const triggerName = 'contentDeletedByMod';
 	fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
 		body: JSON.stringify({
@@ -71,14 +76,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}),
 		headers: firebaseFunctionsHeader(network),
 		method: 'POST'
-	}).then((res) => {
-		console.log(res.json());
+	}).then(async(res) => {
+		console.log('response from firebase function', await res.json());
 	}).catch((err) => {
-		console.error(err);
+		console.log('error from firebase function', err);
 	});
 
-	return res.status(200).json({ message: 'Content deleted.' });
-
+	return;
 }
 
 export default withErrorHandling(handler);

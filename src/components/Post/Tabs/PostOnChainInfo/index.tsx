@@ -398,6 +398,14 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						}
 					</ul>
 					{
+						description && network === 'polymesh'?
+							<div className='grid grid-cols-6 md:grid-cols-8 gap-x-5 mt-5'>
+								<h6 className='text-lightBlue font-medium col-span-6 md:col-span-2 text-base'>Description</h6>
+								<p className='text-bodyBlue font-medium leading-6 col-span-6'>{description}</p>
+							</div>
+							: null
+					}
+					{
 						proposal_arguments &&
 					<div className='mt-7'>
 						<h5 className='font-bold text-base mb-3'>Call Arguments</h5>
@@ -433,7 +441,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							: null
 					}
 					{
-						description?
+						description && network !== 'polymesh'?
 							<div className='grid grid-cols-6 md:grid-cols-8 gap-x-5 mt-5'>
 								<h6 className='text-lightBlue font-medium col-span-6 md:col-span-2 text-base'>Description</h6>
 								<p className='text-bodyBlue font-medium leading-6 col-span-6'>{description}</p>

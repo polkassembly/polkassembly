@@ -31,6 +31,8 @@ import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
+import StickyBox from '~src/util/Stickytop';
+import CommentsDataContextProvider from '~src/context/CommentDataContext';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -260,19 +262,22 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-
-				<GovernanceSideBar
-					toggleEdit={toggleEdit}
-					proposalType={proposalType}
-					onchainId={onchainId}
-					status={postStatus}
-					canEdit={canEdit}
-					startTime={post.created_at}
-					post={post}
-					tally={post?.tally}
-					trackName={trackName}
-					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
-				/>
+				<StickyBox offsetTop={65} offsetBottom={65} className="mb-6">
+					<GovernanceSideBar
+						toggleEdit={toggleEdit}
+						proposalType={proposalType}
+						onchainId={onchainId}
+						status={postStatus}
+						canEdit={canEdit}
+						startTime={post.created_at}
+						post={post}
+						tally={post?.tally}
+						trackName={trackName}
+						className={`${!isOffchainPost }`}
+						pipsVoters={post?.pips_voters || []}
+						hash={hash}
+					/>
+				</StickyBox>
 				{/* decision deposite placed. */}
 
 				{
@@ -430,7 +435,12 @@ const Post: FC<IPostProps> = (props) => {
 			track_number: post?.track_number,
 			username: post?.username
 		}}>
-			<>
+			<CommentsDataContextProvider initialCommentsData={{
+				comments: {},
+				currentTimeline:post.currentTimeline,
+				overallSentiments: post?.overallSentiments,
+				timelines:[]
+			}}>
 				<SpamAlert />
 				{
 					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES &&
@@ -472,7 +482,7 @@ const Post: FC<IPostProps> = (props) => {
 
 							{!isEditing && <>
 								<PostHeading
-									className='mb-8'
+									className='mb-5'
 								/>
 								<Tabs
 									type="card"
@@ -495,7 +505,7 @@ const Post: FC<IPostProps> = (props) => {
 				>
 					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
 				</SidebarRight>
-			</>
+			</CommentsDataContextProvider>
 		</PostDataContextProvider>
 	);
 };

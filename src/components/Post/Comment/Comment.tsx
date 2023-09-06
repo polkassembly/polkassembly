@@ -90,6 +90,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
+					isRow={true}
 				>
 					{
 						history && history.length > 0 &&

@@ -352,13 +352,12 @@ color: var(--lightBlue) !important;
 	border-radius: 8px !important;
 }
 
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
 
-  /* Track */
-  ::-webkit-scrollbar-track {
-    border-radius: 10px;
-  }
-
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-  }
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}

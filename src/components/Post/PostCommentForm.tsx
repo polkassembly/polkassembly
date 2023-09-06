@@ -19,7 +19,7 @@ import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
-import { getSubsquidProposalType } from '~src/global/proposalType';
+import { getSubsquidLikeProposalType } from '~src/global/proposalType';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -31,7 +31,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, setCurrentState } = props;
 	const { id, username, picture } = useUserDetailsContext();
-	const { postData: { postIndex, postType } } = usePostDataContext();
+	const { postData: { postIndex, postType, track_number } } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
@@ -72,6 +72,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			postId: postIndex,
 			postType: postType,
 			sentiment:isSentimentPost?sentiment:0,
+			trackNumber: track_number,
 			userId: id
 		});
 
@@ -117,13 +118,14 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				user_id: id as any,
 				username: username || ''
 			};
-			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidProposalType(postType as any), comment);
+			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		}
 		setLoading(false);
 		setIsComment(false);
 		setIsSentimentPost(false);
 		setSentiment(3);
 	};
+
 	useEffect(() => {
 		isComment && handleSave();
 	// eslint-disable-next-line react-hooks/exhaustive-deps

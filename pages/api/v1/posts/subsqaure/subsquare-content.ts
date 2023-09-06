@@ -4,6 +4,7 @@
 import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
+import fetchWithTimeout from '~src/api-utils/timeoutFetch';
 import { ProposalType } from '~src/global/proposalType';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 const urlMapper = {
@@ -47,7 +48,7 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 		}
 		const postId = ProposalType.TIPS !== proposalType ? Number(id) : id ;
 		const url = new URL( urlMapper[proposalType as keyof typeof urlMapper]?.(postId, network));
-		const data = await (await fetch(url)).json();
+		const data = await fetchWithTimeout(url, { timeout: 8000 }).then((res) => res.json());
 
 		let subsqTitle = data?.title || '';
 

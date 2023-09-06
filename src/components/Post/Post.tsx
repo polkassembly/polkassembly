@@ -15,7 +15,6 @@ import PostDataContextProvider from '~src/context/PostDataContext';
 import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
-import OtherProposals from '../OtherProposals';
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
@@ -97,7 +96,6 @@ const Post: FC<IPostProps> = (props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
@@ -308,10 +306,6 @@ const Post: FC<IPostProps> = (props) => {
 		}
 	</>;
 
-	const handleOpenSidebar = (address:string) => {
-		setSidebarOpen(true);
-		setProposerAddress(address);
-	};
 	const getOnChainTabs = () => {
 		const tabs: any[] = [
 			{
@@ -376,7 +370,6 @@ const Post: FC<IPostProps> = (props) => {
 							version: post?.version,
 							vote_threshold: post?.vote_threshold
 						}}
-						handleOpenSidebar={handleOpenSidebar}
 						proposalType={proposalType}
 					/>
 				),
@@ -504,7 +497,6 @@ const Post: FC<IPostProps> = (props) => {
 					open={sidebarOpen}
 					closeSidebar={() => setSidebarOpen(false)}
 				>
-					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
 				</SidebarRight>
 			</CommentsDataContextProvider>
 		</PostDataContextProvider>

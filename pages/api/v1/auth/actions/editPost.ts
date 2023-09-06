@@ -242,6 +242,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		created_at,
 		history,
 		id: proposalType === ProposalType.ANNOUNCEMENT ? postId : proposalType === ProposalType.TIPS ? postId : Number(postId),
+		isDeleted: false,
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
 		proposer_address: proposer_address,

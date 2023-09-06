@@ -71,7 +71,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}),
 		headers: firebaseFunctionsHeader(network),
 		method: 'POST'
+	}).then((res) => {
+		console.log(res.json());
+	}).catch((err) => {
+		console.error(err);
 	});
+
 	return res.status(200).json({ message: 'Content deleted.' });
 
 }

@@ -6,6 +6,8 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 
+import CautionIcon from '~assets/icons/Caution 2.svg';
+import RetryIcon from '~assets/icons/Refresh.svg';
 import OpenAiSVG from '~assets/icons/openai.svg';
 import AiStarSVG from '~assets/icons/ai-star.svg';
 import SummaryModalCloseSVG from '~assets/icons/summary-modal-close.svg';
@@ -101,6 +103,14 @@ import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
 import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
+
+export const IconRetry = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={RetryIcon} {...props} />
+);
+
+export const IconCaution = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CautionIcon} {...props} />
+);
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />

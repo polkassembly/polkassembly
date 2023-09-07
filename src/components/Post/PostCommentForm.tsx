@@ -40,6 +40,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [isComment,setIsComment]=useState(false);
 	const [sentiment,setSentiment]=useState<number>(3);
 	const [isSentimentPost,setIsSentimentPost]=useState(false);
+	// const [isError, setIsError]=useState(false);
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -172,6 +173,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			if (error || !data) {
 				console.error('API call failed:', error);
 				setError(error || 'No data returned from the saving comment query');
+				// setIsError(true);
 				queueNotification({
 					header: 'Failed!',
 					message: error,

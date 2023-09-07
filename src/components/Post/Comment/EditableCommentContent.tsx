@@ -36,6 +36,12 @@ import { poppins } from 'pages/_app';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
+import { IconRetry } from '~src/ui-components/CustomIcons';
+import { IconCaution } from '~src/ui-components/CustomIcons';
+
+// import { cautionIcon } from '~assets/icons/Caution 2.svg';
+// import { retryIcon } from '~assets/icons/Refresh.svg';
+
 interface IEditableCommentContentProps {
 	userId: number,
 	className?: string,
@@ -444,6 +450,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								>
 									<ThreeDotsIcon className=' mt-[-1px] ml-[6px] hover:bg-pink-100 rounded-xl'/>
 								</Dropdown>
+								<div className="flex text-xs text-lightBlue ml-[164px]">
+									<IconCaution className="text-2xl -mr-2 mt-[3px]"/>
+									<span className="m-0 p-0 mt-[4px]">Comment not posted</span>
+									<div className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>
+										<IconRetry className='text-2xl mt-[4px]'/>
+										<span className='m-0 p-0 -ml-2 mt-[4px]'>Retry</span>
+									</div>
+								</div>
 							</div>
 
 							{/* Add Reply Form*/}

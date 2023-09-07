@@ -3,17 +3,17 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
+// import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import {  Drawer,  Layout, Menu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { memo, ReactNode, useEffect, useState } from 'react';
+import React, { memo,  useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon, RootIcon, UpgradeCommitteePIPsIcon, CommunityPIPsIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 
@@ -28,12 +28,12 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import PaLogo from './PaLogo';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
-
 function getSiderMenuItem(
 	label: React.ReactNode,
 	key: React.Key,
@@ -45,70 +45,21 @@ function getSiderMenuItem(
 		icon,
 		key,
 		label,
-		type: ['tracksHeading','pipsHeading'].includes(key as string) ? 'group' : ''
+		type: key === 'tracksHeading' ? 'group' : ''
 	} as MenuItem;
 }
 
-const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
-	const dropdownMenuItems: ItemType[] = [
-		{
-			key: 'view profile',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
-				<UserOutlined />
-				<span>View Profile</span>
-			</Link>
-		},
-		{
-			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
-				<SettingOutlined />
-				<span>Settings</span>
-			</Link>
-		},
-		{
-			key: 'logout',
-			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
-				onClick={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					handleLogout(username);
-				}}>
-				<LogoutOutlined />
-				<span>Logout</span>
-			</Link>
-		}
-	];
-
-	const AuthDropdown = ({ children }: {children: ReactNode}) => (
-		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
-			{children}
-		</Dropdown>
-	);
-
-	return getSiderMenuItem(
-		<AuthDropdown>
-			<div className='flex items-center justify-between gap-x-2'>
-				<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
-			</div>
-		</AuthDropdown>,
-		'userMenu',
-		<AuthDropdown>
-			{img ? <Avatar className='-ml-2.5 mr-2' size={40} src={img} /> :
-				<Avatar className='-ml-2.5 mr-2' size={40} icon={<UserOutlined />} />
-			}
-		</AuthDropdown>);
-};
-
 interface Props {
-Component: NextComponentType<NextPageContext, any, any>;
-pageProps: any;
-className?: string;
+	Component: NextComponentType<NextPageContext, any, any>;
+	pageProps: any;
+	className?: string;
 }
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
-	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
+	const { setUserDetailsContextState, username } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
+	const [sidedrawerHover, setSidedrawerHover] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 
@@ -123,7 +74,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
 	useEffect(() => {
@@ -132,7 +83,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		if(authToken && isExpired(authToken)) {
 			logout(setUserDetailsContextState);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.asPath]);
 
 	useEffect(() => {
@@ -172,12 +123,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
 			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
-		] : [],
-		PIPsItems:(chainProperties[network]?.subsquidUrl && (network === 'polymesh')) ? [
-			getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='text-white mt-1.5'/>),
-			getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='text-white mt-1.5'/>),
-			getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='text-white mt-1.5'/>)
-		] :[]
+		] : []
 	};
 
 	if (isGrantsSupported(network)) {
@@ -192,10 +138,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let items: MenuProps['items'] = [
+		getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[80px] max-h-[60px] border-bottom'> <PaLogo className='' sidedrawer={sidedrawer} /></div>),
 		...gov1Items.overviewItems
 	];
 
-	if(chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
+	if(chainProperties[network]?.subsquidUrl) {
 		items = items.concat([
 			getSiderMenuItem('Democracy', 'democracy_group', null, [
 				...gov1Items.democracyItems
@@ -219,21 +166,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		...gov1Items.overviewItems
 	];
 
-	if(chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
+	if(chainProperties[network]?.subsquidUrl) {
 		collapsedItems = collapsedItems.concat([
 			...gov1Items.democracyItems,
 			...gov1Items.treasuryItems,
 			...gov1Items.councilItems,
 			...gov1Items.techCommItems
-		]);
-	}
-	if(network === 'polymesh'){
-		items = items.concat(
-			getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base cursor-text font-medium'>PIPs</span>, 'pipsHeading', null),
-			...gov1Items.PIPsItems
-		);
-		collapsedItems = collapsedItems.concat([
-			...gov1Items.PIPsItems
 		]);
 	}
 
@@ -294,6 +232,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
+		getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[66px] max-h-[60px] border-bottom'> {sidedrawer && <PaLogo className='h-full' sidedrawer={sidedrawer} />}</div>),
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -303,7 +242,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	];
 
 	if(['kusama', 'polkadot'].includes(network)){
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
+		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
 	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
@@ -317,6 +256,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	const gov2Items:MenuProps['items'] = [
+
 		...gov2OverviewItems,
 		// Tracks Heading
 		getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base font-medium'>Tracks</span>, 'tracksHeading', null),
@@ -339,7 +279,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2Items.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [
 			...gov2TrackItems.treasuryItems
 		]));
-	}const gov2CollapsedItems:MenuProps['items'] = [
+	}
+
+	const gov2CollapsedItems:MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [
@@ -357,7 +299,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if(!['moonbeam', 'moonbase', 'moonriver'].includes(network)){
-		gov2CollapsedItems.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [
+		gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [
 			...gov2TrackItems.treasuryItems
 		]));
 	}
@@ -365,17 +307,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
 	const handleMenuClick = (menuItem: any) => {
-		if(['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
+		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
 		setSidedrawer(false);
 	};
-
-	const handleLogout = async () => {
-		logout(setUserDetailsContextState);
-		router.replace(router.asPath);
-	};
-
-	const userDropdown = getUserDropDown(handleLogout, picture, username!);
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
@@ -383,29 +318,33 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
-	if(username) {
-		sidebarItems = [userDropdown, ...sidebarItems];
-	}
-
 	return (
 		<Layout className={className}>
-			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
+			<NavHeader sidedrawer={sidedrawer} sidedrawerHover={sidedrawerHover} setSidedrawer={setSidedrawer} previousRoute={previousRoute}  />
 			<Layout hasSider>
 				<Sider
 					trigger={null}
 					collapsible={false}
 					collapsed={true}
-					onMouseOver={() => setSidedrawer(true)}
-					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed z-40'}
+					onMouseOver={() => {
+						setSidedrawer(true);
+						setSidedrawerHover(true);
+					}}
+					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' , zIndex:1001 }}
+					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed'}
 				>
+					<div className='flex w-full items-center justify-center h-[60px] max-h-[60px] border-bottom border-right'>
+
+						<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='' sidedrawer={false}/></Link>
+					</div>
+
 					<Menu
 						theme="light"
 						mode="inline"
 						selectedKeys={[router.pathname]}
-						items={sidebarItems}
+						items={sidebarItems.filter((item) => item?.key)}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[60px]`}
+						className={`${username?'auth-sider-menu':''} mt-[15px]`}
 					/>
 				</Sider>
 				<Drawer
@@ -419,9 +358,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						height: '100vh',
 						left: 0,
 						position: 'fixed',
-						top: '60px'
+						top: 0
 					}}
 				>
+
 					<Menu
 						theme="light"
 						mode="inline"
@@ -429,8 +369,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[60px]`}
-						onMouseLeave={() => setSidedrawer(false)}
+						className={`${username?'auth-sider-menu':''} mt-[60px] logo-border`}
+						onMouseLeave={() => {
+							setSidedrawer(false);
+							setSidedrawerHover(false);
+						}
+						}
 					/>
 				</Drawer>
 				{
@@ -462,99 +406,125 @@ const CustomContent = memo(function CustomContent({ Component, pageProps } : Pro
 });
 
 export default styled(AppLayout)`
+.svgLogo svg{
+	height:60%;
+}
+
+.border-bottom {
+	border-bottom: 1px solid #D2D8E0 ;
+
+  }
+  .border-right {
+	border-right:1px solid #D2D8E0;
+  }
+
+.logo-border li:nth-child(1):hover{
+	background:transparent !important;
+}
+#rc-menu-uuid-75314-4-{
+	border-bottom:1px solid gray;
+}
 
 .ant-drawer .ant-drawer-mask{
-position: fixed !important;
+	position: fixed !important;
+	top:60px
 }
 
 .ant-drawer .ant-drawer-content{
-height: auto !important;
+	height: auto !important;
 }
 
 .ant-drawer-content-wrapper, .ant-drawer-content{
-max-width: 256px !important;
-box-shadow: none !important;
-min-width: 60px !important;
+	max-width: 256px !important;
+	box-shadow: none !important;
+	min-width: 60px !important;
 }
 
 .ant-drawer-body{
-text-transform: capitalize !important;
-padding: 0 !important;
+	text-transform: capitalize !important;
+	padding: 0 !important;
 
-ul{
-  margin-top: 0 !important;
-}
+	ul{
+		margin-top: 0 !important;
+	}
 }
 
 .ant-menu-item .anticon, .ant-menu-item-icon{
-font-size: 20px !important;
+	font-size: 20px !important;
+	margin-top: 0 !important;
 }
 
 .ant-menu-item .delegation{
 font-size: 20px !important;
+margin-top: 0 !important;
 }
 .ant-menu-item .delegation .opacity{
 opacity:1 !important;
 margin-top: -17px !important; 
+margin-top: 0 !important;
 }
 
 
 .ant-menu-item-selected {
-background: #fff !important;
+	background: #fff !important;
 
-.ant-menu-title-content {
-  color: var(--pink_primary) !important;
-}
+	.ant-menu-title-content {
+		color: var(--pink_primary) !important;
+	}
 }
 
 .ant-menu-title-content:hover {
-color: var(--pink_primary) !important;
+	color: var(--pink_primary) !important;
 }
 
 .ant-menu-item::after {
-border-right: none !important;
+	border-right: none !important;
+	margin-top: 0 !important;
 }
 
 .ant-menu-title-content {
-color: #485F7D !important;
-font-weight: 500;
-font-size: 14px;
-line-height: 21px;
-letter-spacing: 0.01em;
+	color: #485F7D !important;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 21px;
+	letter-spacing: 0.01em;
 }
 
 .auth-sider-menu {
-list-style: none !important;
+	list-style: none !important;
 }
 
 .auth-sider-menu > li:first-child {
-margin-bottom: 25px;
-margin-top: 15px;
+//   margin-bottom: 25px;
+  margin-top: 0px;
 }
 
 .ant-empty-image{
-display: flex;
-justify-content: center;
+	display: flex;
+	justify-content: center;
 }
 
 .sidebar .ant-menu-item-selected .anticon {
-filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
+//  .ant-menu-item:first-child{
+// margin: -15px !important;
+// }
 
 .sidebar .ant-menu-item-selected .opacity {
-background-color: var(--pink_primary) !important;
+  background-color: var(--pink_primary) !important;
 }
 .ant-menu-inline-collapsed-noicon {
-color: var(--lightBlue);
+	color: var(--lightBlue);
 }
 
 .ant-menu-item-selected {
-.ant-menu-inline-collapsed-noicon {
-  color: var(--pink_primary);
-}
+	.ant-menu-inline-collapsed-noicon {
+		color: var(--pink_primary);
+	}
 }
 
 .ant-menu-sub {
-background: #fff !important;
+	background: #fff !important;
 }
 `;

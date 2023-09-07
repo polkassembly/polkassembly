@@ -41,17 +41,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	let ref = postsByTypeRef(network, postType)
 		.doc(String(postId));
-	if(postId && commentId && replyId){
+	if(commentId){
+		ref = ref
+			.collection('comments')
+			.doc(String(commentId));
+		console.log(ref);
+	}
+	else if(replyId){
 		ref = ref
 			.collection('comments')
 			.doc(String(commentId))
 			.collection('replies')
 			.doc(String(replyId));
-	}
-	if(postId && commentId && !replyId){
-		ref = ref
-			.collection('comments')
-			.doc(String(commentId));
+		console.log(ref);
 	}
 	await ref.update({
 		isDeleted: true
@@ -67,17 +69,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	res.status(200).json({ message: 'Content deleted.' });
 
 	const triggerName = 'contentDeletedByMod';
-	fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+	await fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
 		body: JSON.stringify({
 			notificationArgs,
 			trigger: triggerName
 		}),
 		headers: firebaseFunctionsHeader(network),
 		method: 'POST'
-	}).then(async(res) => {
-		console.log('response from firebase function', await res.json());
-	}).catch((err) => {
-		console.log('error from firebase function', err);
 	});
 
 	return;

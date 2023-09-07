@@ -92,7 +92,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						'👎': reactions['👎']?.count || 0
 					};
 
-					const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).count().get();
 
 					const created_at = docData.created_at;
 					const { topic, topic_id } = docData;

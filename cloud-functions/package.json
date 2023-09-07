@@ -15,6 +15,9 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@polkadot/api": "^10.9.1",
+    "@polkadot/api-augment": "^10.9.1",
+    "@polkadot/types": "^10.9.1",
     "algoliasearch": "^4.17.1",
     "axios": "^1.4.0",
     "dayjs": "^1.11.8",

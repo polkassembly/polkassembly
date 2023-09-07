@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { NotificationStatus } from 'src/types';
+import { EReportType, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -310,31 +310,26 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 		queueNotification({
 			header: 'Success!',
-			message: `${allowed_roles?.includes('moderator') && userId! == id? 'The' : 'Your'} comment was deleted.`,
+			message: 'The comment was deleted.',
 			status: NotificationStatus.SUCCESS
 		});
 	};
 
 	const deleteComment = async () => {
-		if (!allowed_roles?.includes('moderator')) {
-			const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
-				commentId,
-				postId: ((comment.post_index || comment.post_index === 0) ? comment.post_index : props.postId),
-				postType: comment.post_type || props.proposalType
+		const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
+			commentId,
+			postId: ((comment.post_index || comment.post_index === 0) ? comment.post_index : props.postId),
+			postType: comment.post_type || props.proposalType
+		});
+		if (deleteCommentError || !data) {
+			console.error('Error deleting comment: ', deleteCommentError);
+			queueNotification({
+				header: 'Error!',
+				message: deleteCommentError || 'There was an error in deleting your comment.',
+				status: NotificationStatus.ERROR
 			});
-			if (deleteCommentError || !data) {
-				console.error('Error deleting comment: ', deleteCommentError);
-				queueNotification({
-					header: 'Error!',
-					message: deleteCommentError || 'There was an error in deleting your comment.',
-					status: NotificationStatus.ERROR
-				});
-			}
-			if (data){
-				removeCommentContent();
-			}
 		}
-		else{
+		if (data){
 			removeCommentContent();
 		}
 	};
@@ -358,10 +353,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			key:4,
 			label:<div className={`flex items-center shadow-none text-[10px] text-slate-400 leading-4 ml-[-1.8px] ${poppins.variable} ${poppins.className} border-none` } onClick={() => {deleteComment();}}><DeleteIcon className='mr-1' />Delete</div>
 		}:
-			allowed_roles?.includes('moderator') && (network.includes('kusama') || network.includes('polkadot')) ?
+			allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) ?
 				{
 					key: 4,
-					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type='comment' allowed_roles={allowed_roles} onDeleteComment={deleteComment} isReply={false} commentId={commentId} postId={postIndex}/>
+					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type={EReportType.COMMENT} onSuccess={removeCommentContent} commentId={commentId} postId={postIndex}/>
 				}
 				:null
 	];

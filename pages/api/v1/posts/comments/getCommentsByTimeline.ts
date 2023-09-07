@@ -70,8 +70,8 @@ export const getCommentsByTimeline = async ({
 				for(let i = 0; i < sentimentsKey.length; i++){
 					const key = sentimentsKey[i];
 					sentiments[key]= sentiments[key] ?
-						sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
-						(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
+						sentiments[key] + (await postDocRef.collection('comments').where('isDeleted','==',false).where('sentiment', '==', i+1).count().get()).data().count :
+						(await postDocRef.collection('comments').where('isDeleted','==',false).where('sentiment', '==', i+1).count().get()).data().count;
 				}
 			}
 		}

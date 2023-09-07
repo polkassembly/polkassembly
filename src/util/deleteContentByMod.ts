@@ -25,15 +25,5 @@ export async function deleteContentByMod(postId:number|string, proposalType:Prop
 		});
 		return;
 	}
-	let onSuccessFunc = onSuccess;
-	if(commentId){
-		onSuccessFunc = onSuccess;
-	}
-	if(commentId && replyId){
-		onSuccessFunc = onSuccess;
-	}
-	if(postId){
-		onSuccessFunc = onSuccess;
-	}
-	onSuccessFunc?.();
+	onSuccess?.();
 }

@@ -7,7 +7,7 @@ import { Button, Form, Tooltip } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
-import { NotificationStatus } from 'src/types';
+import { EReportType, NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
@@ -240,7 +240,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		}
 	};
 
-	const removeReplyContent = async() => {
+	const removeReplyContent = () => {
 		const keys = Object.keys(comments);
 		setComments((prev:any) => {
 			const comments:any = Object.assign({}, prev);
@@ -265,36 +265,30 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		});
 		queueNotification({
 			header: 'Success!',
-			message: `${allowed_roles?.includes('moderator')? 'The' : 'Your'} reply was deleted.`,
+			message: 'The reply has been deleted.',
 			status: NotificationStatus.SUCCESS
 		});
 	};
 
 	const deleteReply = async () => {
 		setLoading(true);
-		if (!allowed_roles?.includes('moderator')) {
-			const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
-				commentId,
-				postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
-				postType: reply.post_type || postType,
-				replyId,
-				userId: id
-			});
+		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
+			commentId,
+			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+			postType: reply.post_type || postType,
+			replyId,
+			userId: id
+		});
 
-			if (deleteReplyError || !data) {
-				console.error('Error deleting reply: ', deleteReplyError);
-				queueNotification({
-					header: 'Error!',
-					message: deleteReplyError || 'Error in deleting reply',
-					status: NotificationStatus.ERROR
-				});
-			}
-			if (data) {
-				removeReplyContent();
-			}
-			setLoading(false);
+		if (deleteReplyError || !data) {
+			console.error('Error deleting reply: ', deleteReplyError);
+			queueNotification({
+				header: 'Error!',
+				message: deleteReplyError || 'Error in deleting reply',
+				status: NotificationStatus.ERROR
+			});
 		}
-		else{
+		if (data) {
 			removeReplyContent();
 		}
 		setLoading(false);
@@ -351,9 +345,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{
 									id === userId ? <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>
 										:
-										allowed_roles?.includes('moderator') && (network.includes('kusama') || network.includes('polkadot')) ? <ReportButton isDeleteModal={true} proposalType={postType} className={'flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent '} type='comment' isReply={true} onDeleteReply={deleteReply} commentId={commentId} allowed_roles={allowed_roles} replyId={replyId} postId={postIndex}/>
-											: null
-
+										allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && <ReportButton isDeleteModal={true} proposalType={postType} className={'flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent '} type={EReportType.REPLY} onSuccess={removeReplyContent} commentId={commentId} replyId={replyId} postId={postIndex}/>
 								}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 

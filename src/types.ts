@@ -83,6 +83,12 @@ export enum Role {
   MODERATOR = 'moderator',
 }
 
+export enum EReportType {
+  POST = 'post',
+  COMMENT = 'comment',
+  REPLY = 'reply',
+}
+
 export enum NotificationStatus {
   SUCCESS = 'success',
   ERROR = 'error',

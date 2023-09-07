@@ -195,7 +195,6 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 			status: 200
 		};
 	} catch (error) {
-		console.log('error', error);
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,

@@ -11,7 +11,7 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import DeleteIcon from '~assets/icons/delete.svg';
-import { usePostDataContext } from '~src/context';
+import { usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IComment } from '../../Comment/Comment';
@@ -25,12 +25,7 @@ interface IReportButtonProps {
 	className?: string;
 	proposalType: ProposalType;
 	isDeleteModal?: boolean;
-	onDeleteReply?: () => Promise<void>;
-	onDeleteComment?: () => Promise<void>;
-	onDeletePost?: () => void;
-	isReply?: boolean;
-	isPost?: boolean;
-	allowed_roles?: string[];
+	onSuccess?: () => void;
 }
 
 const reasons = [
@@ -41,7 +36,8 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , isReply, isPost, onDeleteReply, onDeleteComment , onDeletePost, allowed_roles } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , onSuccess } = props;
+	const { allowed_roles } = useUserDetailsContext();
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -169,33 +165,29 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
 		if(allowed_roles?.includes('moderator')) {
-			if(isNaN(Number(postId))) return;
-			let onSuccess = onDeletePost;
-			if(commentId) {
-				onSuccess = onDeleteComment;
-			}
-			if(commentId && replyId) {
-				onSuccess = onDeleteReply;
-			}
+			if(!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
 			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
+			setLoading(false);
 		}
 	};
 	return (
 		<>
 			{
-				isReply || isPost ? <Button className={isPost ? 'inline-block flex items-center border-none shadow-none text-pink_primary' : 'text-xs text-pink_primary inline-block flex items-center border-none shadow-none'} onClick={() => setShowModal(true)}>
-					<DeleteOutlined />Delete</Button> :
-					<Button className={`border-none ${ className } text-pink_primary flex items-center shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
-						{
-							isDeleteModal ?
-								<DeleteIcon /> : <FlagOutlined />
-						}
-						<span className='ml-1'>
-							{
-								isDeleteModal ? 'Delete' : 'Report'
-							}
-						</span>
-					</Button>
+				type === 'post'?
+					<Button className={'inline-block flex items-center border-none shadow-none text-pink_primary'} onClick={() => setShowModal(true)}>
+						<DeleteOutlined />Delete
+					</Button> :
+					type === 'reply'?
+						<Button className={`border-none ${className} text-pink_primary flex items-center shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
+							<DeleteIcon />Delete
+						</Button> :
+						<Button className={`border-none ${className} text-pink_primary flex items-center shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
+							{isDeleteModal ?
+								<DeleteIcon /> : <FlagOutlined />}
+							<span className='ml-1'>
+								{isDeleteModal ? 'Delete' : 'Report'}
+							</span>
+						</Button>
 			}
 			<Modal
 				title={isDeleteModal ? 'Delete' : 'Report'}

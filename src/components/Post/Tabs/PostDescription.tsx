@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
 import Markdown from 'src/ui-components/Markdown';
 
-import { usePostDataContext, useNetworkContext } from '~src/context';
+import { usePostDataContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 
 import CreateOptionPoll from '../ActionsBar/OptionPoll/CreateOptionPoll';
 import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
@@ -16,7 +16,7 @@ import ReportButton from '../ActionsBar/ReportButton';
 import ShareButton from '../ActionsBar/ShareButton';
 import SubscriptionButton from '../ActionsBar/SubscriptionButton/SubscriptionButton';
 import { useRouter } from 'next/router';
-import { NotificationStatus } from '~src/types';
+import { EReportType, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ProposalType } from '~src/global/proposalType';
 
@@ -29,67 +29,37 @@ const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), 
 });
 
 interface IPostDescriptionProps {
-	allowed_roles?: string[] | null;
 	className?: string;
 	canEdit: boolean | '' | undefined;
 	id: number | null | undefined;
 	isEditing: boolean;
 	isOnchainPost: boolean;
-	trackName?: string;
-	isOffchainPost?: boolean;
 	toggleEdit: () => void
 	TrackerButtonComp: JSX.Element
 	Sidebar: ({ className }: {className?: string | undefined;}) => JSX.Element
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp , allowed_roles, trackName , isOffchainPost } = props;
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
+	const { allowed_roles } = useUserDetailsContext();
 	const { network } = useNetworkContext();
 	const router = useRouter();
+	const isOffchainPost: Boolean  = postType == ProposalType.DISCUSSIONS || postType == ProposalType.GRANTS;
 	//write a function which redirects to the proposalType page
-	const deletePostFromUrl = (proposalType: ProposalType, trackName?: string) => {
+	const listingViewPath = (proposalType: ProposalType) => {
 		let path: string = '';
-		if(trackName) {
-			path = `${trackName.split(/(?=[A-Z])/).join('-').toLowerCase()}`;
-		}
 		if(proposalType){
 			switch (proposalType){
 			case ProposalType.DISCUSSIONS:
 				path = 'discussions';
 				break;
-			case ProposalType.BOUNTIES:
-				path = 'bounties';
-				break;
-			case ProposalType.CHILD_BOUNTIES:
-				path = 'child_bounties';
-				break;
-			case ProposalType.TIPS:
-				path = 'tips';
-				break;
 			case ProposalType.GRANTS:
 				path = 'grants';
 				break;
-			case ProposalType.TREASURY_PROPOSALS:
-				path = 'treasury-proposals';
-				break;
-			case ProposalType.TECH_COMMITTEE_PROPOSALS:
-				path = 'tech-comm-proposals';
-				break;
-			case ProposalType.REFERENDUMS:
-				path = 'referenda';
-				break;
-			case ProposalType.DEMOCRACY_PROPOSALS:
-				path = 'proposals';
-				break;
-			case ProposalType.COUNCIL_MOTIONS:
-				path = 'motions';
-				break;
 			}
 		}
-		const listingPageText = path.replace(/-|_/g, ' ');
-		const url = trackName? trackName.split(/(?=[A-Z])/).join('-').toLowerCase() : listingPageText;
-		router.push(`/${url}`);
+		router.push(`/${path}`);
 	};
 	const deletePost = () => {
 		queueNotification({
@@ -97,7 +67,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			message: 'The post was deleted successfully',
 			status: NotificationStatus.SUCCESS
 		});
-		deletePostFromUrl(postType, trackName);
+		listingViewPath(postType);
 	};
 	return (
 		<div className={`${className} mt-4`}>
@@ -119,9 +89,8 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{TrackerButtonComp}
 					<ShareButton title={title} />
 					{
-						allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && (network.includes('kusama') || network.includes('polkadot'))?
-							<ReportButton proposalType={postType} allowed_roles={allowed_roles} isPost={true} onDeletePost={deletePost} isDeleteModal={true} type='post' postId={`${postIndex}`} /> :
-							null
+						allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && ['polkadot', 'kusama'].includes(network) &&
+							<ReportButton proposalType={postType} onSuccess={deletePost} isDeleteModal={true} type={EReportType.POST} postId={`${postIndex}`} />
 					}
 				</div>
 			</div>

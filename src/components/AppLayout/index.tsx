@@ -328,9 +328,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => {
 						setSidedrawer(true);
-						setTimeout(() => {
-							setSidedrawerHover(true);
-						}, 200);
+						setSidedrawerHover(true);
 					}}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' , zIndex:1001 }}
 					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed'}
@@ -373,10 +371,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onClick={handleMenuClick}
 						className={`${username?'auth-sider-menu':''} mt-[60px] logo-border`}
 						onMouseLeave={() => {
-							setTimeout(() => {
-								setSidedrawer(false);
-								setSidedrawerHover(false);
-							}, 0);}
+							setSidedrawer(false);
+							setSidedrawerHover(false);
+						}
 						}
 					/>
 				</Drawer>

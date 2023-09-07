@@ -137,11 +137,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		form.setFieldValue('content', '');
 		global.window.localStorage.removeItem(commentKey());
 		postIndex && createSubscription(postIndex);
-		queueNotification({
-			header: 'Success!',
-			message: 'Comment created successfully.',
-			status: NotificationStatus.SUCCESS
-		});
 		const comment=  {
 			comment_reactions: {
 				'👍': {
@@ -184,6 +179,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				});
 			} else {
 				comment.id = data.id || '';
+				queueNotification({
+					header: 'Success!',
+					message: 'Comment created successfully.',
+					status: NotificationStatus.SUCCESS
+				});
 			}
 		} catch (error) {
 			console.error('Error while saving comment:', error);

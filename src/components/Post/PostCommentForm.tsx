@@ -130,7 +130,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		await form.validateFields();
 		const content = form.getFieldValue('content');
 		if (!content) return;
-		// Update the state before making the API call
 		// setLoading(true);
 		setError('');
 		setContent('');
@@ -166,7 +165,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			username: username || ''
 		};
 		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
-		// Add the new comment to the UI immediately
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
@@ -177,10 +175,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				userId: id
 			});
 			if (error || !data) {
-			// If the API call fails, remove the newly added comment from the UI
-			// You'll need to implement this logic in your code to remove the comment
-			// from the 'comments' array or wherever you store comments in your UI
-			// You should also reset any relevant state variables
 				console.error('API call failed:', error);
 				setError(error || 'No data returned from the saving comment query');
 				queueNotification({
@@ -188,19 +182,13 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					message: error,
 					status: NotificationStatus.ERROR
 				});
-				// You may also want to show an error message to the user
 			} else {
-				// If the API call is successful, update the ID of the new comment
 				comment.id = data.id || '';
-				// You may also want to update the comment in your UI with the new ID
 			}
 		} catch (error) {
-			// Handle unexpected errors here
 			console.error('Error while saving comment:', error);
 			setError('An unexpected error occurred.');
-			// You may also want to show an error message to the user
 		} finally {
-			// Reset loading and other state variables
 			setLoading(false);
 			setIsComment(false);
 			setIsSentimentPost(false);

@@ -69,6 +69,7 @@ const Listing: FC<IListingProps> = (props) => {
 					post_reactions,
 					proposer,
 					comments_count,
+					identity,
 					status,
 					title,
 					topic,
@@ -108,6 +109,7 @@ const Listing: FC<IListingProps> = (props) => {
 									tally={tally}
 									proposalType={proposalType}
 									votesData={votesData}
+									identityId={identity || null}
 								/>
 							</Link>
 						}

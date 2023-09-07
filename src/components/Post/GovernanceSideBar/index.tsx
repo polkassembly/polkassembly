@@ -999,7 +999,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							</div>
 						</>
 					}
-					{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
+					{[ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
 						<GovSidebarCard>
 							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number} tally={tally}/>
 						</GovSidebarCard>
@@ -1028,6 +1028,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							tippers={post.tippers}
 						/>
 					</GovSidebarCard>
+					}
+					{
+						network.includes('polymesh')?
+							proposalType === ProposalType.TECHNICAL_PIPS || proposalType === ProposalType.UPGRADE_PIPS?
+								<GovSidebarCard>
+									<div className='flex mt-1 gap-2'>
+										<span className='text-sm tracking-wide text-bodyBlue'>This PIP is proposed via
+											{proposalType === ProposalType.TECHNICAL_PIPS? ' Technical Committee ': ' Upgrade Committee '}
+								& is not open to community voting
+										</span>
+									</div>
+								</GovSidebarCard>:
+								null:
+							null
 					}
 
 					{proposalType === ProposalType.BOUNTIES && <>

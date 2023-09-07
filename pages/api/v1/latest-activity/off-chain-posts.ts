@@ -148,7 +148,7 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	const { proposalType = OffChainProposalType.DISCUSSIONS, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getLatestActivityOffChainPosts({
 		listingLimit,
@@ -157,9 +157,9 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	});
 
 	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

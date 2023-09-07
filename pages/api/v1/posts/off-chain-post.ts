@@ -291,7 +291,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	const { postId = 0, proposalType = OffChainProposalType.DISCUSSIONS } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getOffChainPost({
 		isExternalApiCall: true,
@@ -302,12 +302,12 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	});
 
 	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
 		if (data.summary) {
 			delete data.summary;
 		}
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

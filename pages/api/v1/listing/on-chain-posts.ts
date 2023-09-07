@@ -875,7 +875,7 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;
 	const { data, error, status } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
@@ -890,9 +890,9 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 	});
 
 	if (error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	} else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

@@ -126,13 +126,13 @@ const handler: NextApiHandler<{ data: any } | { error: string }> = async (req, r
 	const { proposalType, id } = req.query;
 	const network = String(req.headers['x-network']);
 
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const data = await getSubSquareComments(proposalType as string, network, id);
 	if (data.length === 0) {
-		res.status(200).json({ data: [] });
+		return res.status(200).json({ data: [] });
 	} else {
-		res.status(200).json({ data });
+		return res.status(200).json({ data });
 	}
 };
 

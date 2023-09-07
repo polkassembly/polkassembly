@@ -347,7 +347,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		},
 		id && !isEditing ?{
 			key:3,
-			label: <ReportButton proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' commentId={commentId} postId={postIndex}/>
+			label: <ReportButton proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' commentId={commentId} postId={postIndex}/>
 		}:null,
 		id===userId ? {
 			key:4,
@@ -356,7 +356,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) ?
 				{
 					key: 4,
-					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type={EReportType.COMMENT} onSuccess={removeCommentContent} commentId={commentId} postId={postIndex}/>
+					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex shadow-none text-slate-400 text-[10px] leading-4 rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type={EReportType.COMMENT} onSuccess={removeCommentContent} commentId={commentId} postId={postIndex}/>
 				}
 				:null
 	];

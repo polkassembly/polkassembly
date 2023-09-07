@@ -93,7 +93,7 @@ const Post: FC<IPostProps> = (props) => {
 		proposalType
 	} = props;
 
-	const { id, addresses , allowed_roles } = useContext(UserDetailsContext);
+	const { id, addresses } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
@@ -398,9 +398,6 @@ const Post: FC<IPostProps> = (props) => {
 				isOnchainPost={isOnchainPost}
 				TrackerButtonComp={TrackerButtonComp}
 				Sidebar={() => <Sidebar />}
-				allowed_roles={allowed_roles}
-				trackName={trackName}
-				isOffchainPost={isOffchainPost}
 			/>,
 			key: 'description',
 			label: 'Description'

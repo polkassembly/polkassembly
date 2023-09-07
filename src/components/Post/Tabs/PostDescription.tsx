@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import { EReportType, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ProposalType } from '~src/global/proposalType';
+import { poppins } from 'pages/_app';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => <div>
@@ -84,13 +85,13 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{canEdit && <Button className={'text-pink_primary flex items-center border-none shadow-none px-1.5'} onClick={toggleEdit}><FormOutlined />Edit</Button>}
 				</div>
 				<div className='flex items-center'>
-					{id && !isEditing && <ReportButton proposalType={postType} type='post' postId={`${postIndex}`} />}
+					{id && !isEditing && <ReportButton className={'text-pink_primary flex items-center border-none shadow-none'} proposalType={postType} type='post' postId={`${postIndex}`} />}
 					{canEdit && !isEditing && <CreateOptionPoll proposalType={postType} postId={postIndex} />}
 					{TrackerButtonComp}
 					<ShareButton title={title} />
 					{
 						allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && ['polkadot', 'kusama'].includes(network) &&
-							<ReportButton proposalType={postType} onSuccess={deletePost} isDeleteModal={true} type={EReportType.POST} postId={`${postIndex}`} />
+							<ReportButton className={`flex items-center shadow-none text-pink_primary leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} proposalType={postType} onSuccess={deletePost} isDeleteModal={true} type={EReportType.POST} postId={`${postIndex}`} />
 					}
 				</div>
 			</div>

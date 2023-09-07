@@ -10,7 +10,6 @@ import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
-import DeleteIcon from '~assets/icons/delete.svg';
 import { usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -172,23 +171,13 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	};
 	return (
 		<>
-			{
-				type === 'post'?
-					<Button className={'inline-block flex items-center border-none shadow-none text-pink_primary'} onClick={() => setShowModal(true)}>
-						<DeleteOutlined />Delete
-					</Button> :
-					type === 'reply'?
-						<Button className={`border-none ${className} text-pink_primary flex items-center shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
-							<DeleteIcon />Delete
-						</Button> :
-						<Button className={`border-none ${className} text-pink_primary flex items-center shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
-							{isDeleteModal ?
-								<DeleteIcon /> : <FlagOutlined />}
-							<span className='ml-1'>
-								{isDeleteModal ? 'Delete' : 'Report'}
-							</span>
-						</Button>
-			}
+			<Button
+				className={'flex items-center border-none shadow-none pr-1'}
+				onClick={() => setShowModal(true)}
+			>
+				{isDeleteModal ? <DeleteOutlined className={`${className} ml-[-12px]`} /> : <FlagOutlined className={`${className} ml-[-12px]`} />}
+				{isDeleteModal ? <span className={`${className} ml-1`}>Delete</span> : <span className={`${className} ml-1`}>Report</span>}
+			</Button>
 			<Modal
 				title={isDeleteModal ? 'Delete' : 'Report'}
 				open={showModal}

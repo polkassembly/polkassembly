@@ -9,7 +9,7 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { ESentiments, IApiResponse, IPostHistory } from '~src/types';
+import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -22,11 +22,12 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
-import { getSubSquareComments } from './comments/subsquare-comments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
+import { generateKey } from '~src/util/getRedisKeys';
+import { redisGet, redisSet } from '~src/auth/redis';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -557,7 +558,6 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
 		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
-		const netDocRef = networkDocRef(network);
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
@@ -576,6 +576,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const topicFromType = getTopicFromType(proposalType as ProposalType);
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+
+		if(proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress });
+			const redisData = await redisGet(redisKey);
+			if(redisData){
+				return {
+					data: JSON.parse(redisData),
+					error: null,
+					status: 200
+				};
+			}
+		}
+
+		const netDocRef = networkDocRef(network);
 
 		let postVariables: any = proposalType === ProposalType.ANNOUNCEMENT ? {
 			cid: postId,
@@ -962,11 +976,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		// Comments
 		if(noComments){
-			const sentiments:any = {};
-			const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
 					return { ...timeline, commentsCount };
 				});
@@ -985,25 +997,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					type: currentTimelineObj?.type
 				};
 			}
-			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
-				let timeline: any= null;
-				for (timeline of post.timeline){
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
-					for(let i = 0; i < sentimentsKey.length; i++){
-						const key = sentimentsKey[i];
-						sentiments[key]= sentiments[key] ?
-							sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
-							(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
-					}
-				}
-			}
-
-			// get subsquare comments
-			const subsqaureComments = await getSubSquareComments(proposalType as string, network, postId as string);
-			post.subsquareComments = subsqaureComments;
-
-			// overall sentiments
-			post.overallSentiments = sentiments;
 		}
 		else{
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
@@ -1070,6 +1063,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
 		await getContentSummary(post, network, isExternalApiCall);
+		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }), JSON.stringify(post));
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

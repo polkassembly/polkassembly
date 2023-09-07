@@ -8,6 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
+import { deleteKeys, redisDel } from '~src/auth/redis';
 import { CreatePostResponseType } from '~src/auth/types';
 import getDefaultUserAddressFromId from '~src/auth/utils/getDefaultUserAddressFromId';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
@@ -79,6 +80,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 				batch.set(tagRef, newTag, { merge: true });
 			}
 		});
+	}
+
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${newID}`;
+		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+
+		await redisDel(discussionDetail);
+		await deleteKeys(discussionListingKey);
 	}
 
 	await postDocRef.set(newPost).then(() => {

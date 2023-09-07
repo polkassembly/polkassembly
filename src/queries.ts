@@ -184,6 +184,7 @@ query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset
     proposer
     index
     status
+    identity
     statusHistory {
       id
     }
@@ -265,6 +266,7 @@ export const GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query Polymesh
     endedAtBlock
     endedAt
     hash
+    identity
     fee
     description
     proposer

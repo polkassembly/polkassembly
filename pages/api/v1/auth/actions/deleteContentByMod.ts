@@ -45,15 +45,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		ref = ref
 			.collection('comments')
 			.doc(String(commentId));
-		console.log(ref);
 	}
-	else if(replyId){
+	if(commentId && replyId){
 		ref = ref
-			.collection('comments')
-			.doc(String(commentId))
 			.collection('replies')
 			.doc(String(replyId));
-		console.log(ref);
 	}
 	await ref.update({
 		isDeleted: true

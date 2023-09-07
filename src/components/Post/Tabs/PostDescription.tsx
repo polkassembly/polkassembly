@@ -48,7 +48,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const router = useRouter();
 	const isOffchainPost: Boolean  = postType == ProposalType.DISCUSSIONS || postType == ProposalType.GRANTS;
 	//write a function which redirects to the proposalType page
-	const listingViewPath = (proposalType: ProposalType) => {
+	const goToListingViewPath = (proposalType: ProposalType) => {
 		let path: string = '';
 		if(proposalType){
 			switch (proposalType){
@@ -68,7 +68,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			message: 'The post was deleted successfully',
 			status: NotificationStatus.SUCCESS
 		});
-		listingViewPath(postType);
+		goToListingViewPath(postType);
 	};
 	return (
 		<div className={`${className} mt-4`}>

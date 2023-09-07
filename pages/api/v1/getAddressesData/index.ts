@@ -43,7 +43,7 @@ const handler: NextApiHandler<IAddressesResponse | { error: string }> = async (r
 		});
 	}
 
-	res.status(200).json({
+	return res.status(200).json({
 		addressesData
 	});
 };

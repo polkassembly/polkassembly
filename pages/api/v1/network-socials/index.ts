@@ -52,9 +52,9 @@ const handler: NextApiHandler<NetworkSocials | { error: string }> = async (req, 
 	});
 
 	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

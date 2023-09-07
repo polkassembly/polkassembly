@@ -351,7 +351,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 // expects proposerAddress
 const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { userId, addresses } = req.body;
 
@@ -362,9 +362,9 @@ const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (
 	});
 
 	if(error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

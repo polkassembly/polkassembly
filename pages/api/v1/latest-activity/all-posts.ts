@@ -64,6 +64,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				track_number: any;
 				type: any;
 				isSpam?: boolean;
+				isSpamReportInvalid?: boolean;
 		}[] = [];
 
 		let onChainPostsCount = 0;
@@ -110,6 +111,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					return {
 						...singlePost,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						title: data?.title || title
 					};
 				}
@@ -228,6 +230,9 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					}
 					return {
 						...onChainPost,
+						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
+						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title || subsquareTitle || null
 					};
 				}
@@ -300,8 +305,10 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					offChainPosts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						post_id: data?.id,
 						proposer: '',
+						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
 							id: topic_id,
@@ -367,6 +374,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			count:  onChainPostsCount + offChainPostsCount,
 			posts: deDupedAllPosts.slice(0, numListingLimit)
 		};
+
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
@@ -385,7 +393,7 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	const { govType, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getLatestActivityAllPosts({
 		govType,
@@ -394,9 +402,9 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	});
 
 	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

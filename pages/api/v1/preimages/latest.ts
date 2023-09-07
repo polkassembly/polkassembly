@@ -82,9 +82,9 @@ const handler: NextApiHandler<IPreimageData | MessageType > = async (req, res) =
 	});
 
 	if(error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

@@ -157,6 +157,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		setLoading(false);
 	};
 	const handleDelete = async () => {
+		if(!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
 		setLoading(true);
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
@@ -164,7 +165,6 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
 		if(allowed_roles?.includes('moderator')) {
-			if(!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
 			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
 			setLoading(false);
 		}

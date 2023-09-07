@@ -139,7 +139,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<div className="flex w-13 h-[33px] gap-1">
 								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
 									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">1</Button>
-									<span className="ml-[1px] pt-[3px]">of 3</span>
+									<span className="ml-[4px] pt-[3px]">of 3</span>
 								</p>
 							</div>
 						</div>
@@ -162,8 +162,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
 							<div className="flex w-13 h-[33px] gap-1">
 								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
-									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">2</Button>
-									<span className="ml-[1px] pt-[3px]">of 3</span>
+									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] mr-[2px] -ml-[3px] text-white">2</Button>
+									<span className="ml-[4px] pt-[3px]">of 3</span>
 								</p>
 							</div>
 						</div>
@@ -197,7 +197,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 										<div className="flex w-13 h-[33px] gap-1">
 											<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
 												<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">3</Button>
-												<span className="ml-[1px] pt-[3px]">of 3</span>
+												<span className="ml-[4px] pt-[3px]">of 3</span>
 											</p>
 										</div>
 									</div>

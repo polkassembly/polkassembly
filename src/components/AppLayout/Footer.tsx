@@ -30,7 +30,7 @@ const Footer = ({ className } : { className?:string }) => {
 					<div>
 						<div className="flex justify-center sm:justify-start">
 							<Link className='flex' href='/'>
-								<PaLogo className='h-auto w-[180px]' />
+								<PaLogo className='h-auto w-[180px]' sidedrawer={true} />
 							</Link>
 						</div>
 

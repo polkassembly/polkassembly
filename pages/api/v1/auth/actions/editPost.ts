@@ -24,6 +24,7 @@ import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import { checkIsProposer } from './utils/checkIsProposer';
+import { getUserWithAddress } from '../data/userProfileWithUsername';
 
 export interface IEditPostResponse {
 	content: string;
@@ -245,6 +246,9 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const last_comment_at = new Date();
 
 	const summary = (await fetchContentSummary(content, proposalType)) || '';
+
+	const { data: postUser } = await getUserWithAddress(proposer_address);
+
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		content,
 		created_at,
@@ -257,8 +261,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		tags: tags || [],
 		title,
 		topic_id : topic_id || getTopicFromType(proposalType).id,
-		user_id: post?.user_id || user.id,
-		username: post?.username || user.username
+		user_id: postUser?.userId || user.id,
+		username: postUser?.username || user.username
 	};
 
 	if (!postDoc.exists || !postDoc?.data() || !postDoc?.data()?.last_comment_at) {

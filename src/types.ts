@@ -288,7 +288,7 @@ export interface NetworkEvent {
 export interface ICommentHistory {
   content: string,
   created_at: Date,
-  isDeleted: boolean,
+  isDeleted?: boolean,
   sentiment: number | 0,
 }
 

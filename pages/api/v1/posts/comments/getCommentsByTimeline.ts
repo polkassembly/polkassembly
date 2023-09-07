@@ -12,11 +12,15 @@ import { MessageType } from '~src/auth/types';
 import { ProposalType, getFirestoreProposalType } from '~src/global/proposalType';
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { ITimelineData } from '~src/context/PostDataContext';
+import { ESentiments } from '~src/types';
 
 export interface ITimelineComments {
   comments: {
 	[index:string]: Array<IComment>
   };
+  overallSentiments:{
+	[index:string]: number;
+},
 }
 
 export const getCommentsByTimeline = async ({
@@ -57,9 +61,23 @@ export const getCommentsByTimeline = async ({
 				allTimelineComments[key] = result.value;
 			}
 		});
+		const sentiments:any = {};
+		const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
+		if (postTimeline && Array.isArray(postTimeline) && postTimeline.length > 0) {
+			let timeline: any= null;
+			for (timeline of postTimeline){
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
+				for(let i = 0; i < sentimentsKey.length; i++){
+					const key = sentimentsKey[i];
+					sentiments[key]= sentiments[key] ?
+						sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
+						(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
+				}
+			}
+		}
 
 		return {
-			data: { comments: allTimelineComments } as ITimelineComments,
+			data: { comments: allTimelineComments, overallSentiments: sentiments } as ITimelineComments,
 			error: null,
 			status: 200
 		};

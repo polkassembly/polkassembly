@@ -12,12 +12,14 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { OffChainProposalType } from '~src/global/proposalType';
+import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
 import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
+import { redisGet, redisSet } from '~src/auth/redis';
+import { generateKey } from '~src/util/getRedisKeys';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -26,7 +28,7 @@ interface IDiscussionsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.COMMENTED,filterBy } = query;
+	const { page = 1, sortBy = sortValues.COMMENTED, filterBy } = query;
 
 	if(!Object.values(sortValues).includes(sortBy.toString()) || filterBy && filterBy.length!==0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))) {
 		return {
@@ -39,6 +41,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
+	const redisKey = generateKey({ filterBy: filterBy, keyType: 'page', network: network, page: page, proposalType: ProposalType.DISCUSSIONS, sortBy: sortBy });
+
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		const redisData = await redisGet(redisKey);
+
+		if (redisData){
+			const props = JSON.parse(redisData);
+			if(!props.error){
+				return { props };
+			}
+		}
+	}
+
 	const { data, error = ''  } = await getOffChainPosts({
 		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
@@ -48,13 +63,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		sortBy: String(sortBy)
 	});
 
-	return {
-		props: {
-			data,
-			error,
-			network
-		}
-	};
+	const props = { data, error, network };
+
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		await redisSet(redisKey, JSON.stringify(props));
+	}
+
+	return { props };
 };
 
 const Discussions: FC<IDiscussionsProps> = (props) => {

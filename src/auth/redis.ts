@@ -59,3 +59,22 @@ export const redisDel = (key: string): Promise<number> => new Promise((resolve, 
 		resolve(reply);
 	}).catch(err => reject(err));
 });
+
+export async function deleteKeys(pattern: string) {
+	const stream = client.scanStream({
+		match: pattern
+	});
+	stream.on('data', async (keys) => {
+		if (keys.length) {
+			const pipeline = client.pipeline();
+			keys.forEach((key: any) => {
+				pipeline.del(key);
+			});
+			await pipeline.exec();
+		}
+	});
+
+	stream.on('end', () => {
+		console.log('All keys matching pattern deleted.');
+	});
+}

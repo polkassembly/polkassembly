@@ -12,7 +12,6 @@ export interface ICommentsDataContextProviderProps extends PropsWithChildren {
 export interface ICommentsData {
     timelines: Array<ITimeline>;
     comments:{[index:string]:Array<IComment>};
-	subsquareComments?:Array<IComment>,
     currentTimeline:ITimeline | null;
 	overallSentiments:{
         [index:string]: number;

@@ -433,7 +433,6 @@ const Post: FC<IPostProps> = (props) => {
 				comments: {},
 				currentTimeline:post.currentTimeline,
 				overallSentiments: post?.overallSentiments,
-				subsquareComments: post?.subsquareComments,
 				timelines:[]
 			}}>
 				<SpamAlert />

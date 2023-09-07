@@ -1007,7 +1007,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					const post_index = (timeline.type === 'Tip'? timeline.hash: timeline.index);
 					const type = getFirestoreProposalType(timeline.type) as ProposalType;
 					const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
 					return comments;
 				});
@@ -1024,10 +1024,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				if (post.post_link) {
 					const { id, type } = post.post_link;
 					const postDocRef = postsByTypeRef(network, type).doc(String(id));
-					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
 				}
-				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 				const comments = await getComments(commentsSnapshot, postDocRef, network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType), (strProposalType === ProposalType.TIPS? strPostId: numPostId));
 				if (post.comments && Array.isArray(post.comments)) {
 					post.comments = post.comments.concat(comments);

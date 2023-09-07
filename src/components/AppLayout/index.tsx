@@ -454,14 +454,17 @@ export default styled(AppLayout)`
 
 .ant-menu-item .anticon, .ant-menu-item-icon{
 	font-size: 20px !important;
+	margin-top: 0 !important;
 }
 
 .ant-menu-item .delegation{
 font-size: 20px !important;
+margin-top: 0 !important;
 }
 .ant-menu-item .delegation .opacity{
 opacity:1 !important;
 margin-top: -17px !important; 
+margin-top: 0 !important;
 }
 
 
@@ -479,6 +482,7 @@ margin-top: -17px !important;
 
 .ant-menu-item::after {
 	border-right: none !important;
+	margin-top: 0 !important;
 }
 
 .ant-menu-title-content {
@@ -495,7 +499,7 @@ margin-top: -17px !important;
 
 .auth-sider-menu > li:first-child {
 //   margin-bottom: 25px;
-  margin-top: 15px;
+  margin-top: 0px;
 }
 
 .ant-empty-image{

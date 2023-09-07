@@ -273,7 +273,7 @@ const UserDropdown = ({ address, className, displayInline, disableIdenticon, ext
 								}
 								<div className={`description ml-0.5 ${addressClassName} text-xs`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 							</div>
-						: <div className={`description ${addressClassName} text-xs`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
+						: <div className={`description ${addressClassName} w-[66px] text-ellipsis overflow-hidden text-xs`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}
 			</div>}
 			{

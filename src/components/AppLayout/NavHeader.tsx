@@ -5,7 +5,7 @@
 /* eslint-disable no-tabs */
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Dropdown, Select, Skeleton, Space } from 'antd';
+import { Button, Divider, Dropdown, Skeleton, Space } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -13,7 +13,6 @@ import { useRouter } from 'next/router';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
-import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 import { chainProperties } from '~src/global/networkConstants';
 import SearchBar from '~src/ui-components/SearchBar';
@@ -30,6 +29,9 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { logout } from '~src/services/auth.service';
 import { EGovType } from '~src/global/proposalType';
 import UserDropdown from '../../ui-components/UserDropdown';
+import { UserDetailsContextType } from '~src/types';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+// import { UserDetailsContextType } from '~src/types';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -44,32 +46,62 @@ interface Props {
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedrawerHover } : Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
+	// const { network } = useNetworkContext();
+	// const currentUser = useUserDetailsContext();
+	// const router = useRouter();
+	// const { pathname, query } = router;
+	// const { username,defaultAddress,web3signup } = currentUser;
+	// const [open, setOpen] = useState(false);
+	// const [openLogin,setLoginOpen]=useState<boolean>(false);
+	// const [openSignup,setSignupOpen]=useState<boolean>(false);
+	// const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
+	// const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
+	// const isClicked = useRef(false);
+	// const { setUserDetailsContextState } = useUserDetailsContext();
+	// const handleLogout = async () => {
+	// 	logout(setUserDetailsContextState);
+	// 	router.replace(router.asPath);
+	// };
+
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
+	const { govType, username, setUserDetailsContextState } = useUserDetailsContext();
 	const router = useRouter();
-	const { pathname, query } = router;
-	const { username,defaultAddress,web3signup } = currentUser;
+	const { defaultAddress,web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
-	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
-	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
 	const isClicked = useRef(false);
-	const { setUserDetailsContextState } = useUserDetailsContext();
+
 	const handleLogout = async () => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
 	};
+	const setGovTypeToContext = (govType: EGovType) => {
+		setUserDetailsContextState((prev: UserDetailsContextType) => {
+			return {
+				...prev,
+				govType
+			};
+		});
+	};
+	// useEffect(() => {
+	// 	if(router.pathname==='/opengov'){
+	// 		setSelectedGov(EGovType.OPEN_GOV);
+	// 	}else{
+	// 		setSelectedGov(EGovType.GOV1);
+
+	// 	}
+
+	// },[router]);
+
 	useEffect(() => {
-		if(router.pathname==='/opengov'){
-			setSelectedGov(EGovType.OPEN_GOV);
-		}else{
-			setSelectedGov(EGovType.GOV1);
-
+		if(network && !isOpenGovSupported(network)){
+			setGovTypeToContext(EGovType.GOV1);
 		}
-
-	},[router]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[network]);
 
 	const menudropDownItems: ItemType[]= [
 		{
@@ -142,38 +174,16 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='' sidedrawer={false}/></Link>
+					<Link className='flex' href={'/'}><PaLogo className='-ml-[2px]' sidedrawer={false}/></Link>
 
 					<div className='flex items-center'>
-
+						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] mr-[8px] md:mr-[10px] ml-[16px]'></span>
+						<h2 className={`m-0 p-0 ${sidedrawer ? 'ml-[200px]' : 'ml-[76px]'} text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]`}>
+							{
+								govType === EGovType.OPEN_GOV ? 'OpenGov': 'Gov1'
+							}
+						</h2>
 					</div>
-					<Select
-						value={selectedGov}
-						style={{
-							width: 'max-content'
-
-						}}
-						className={`drop ${sidedrawerHover?'ml-48':'ml-16' } `}
-						onChange={(e) => {
-							setSelectedGov(e);
-							if (e === 'open_gov') {
-								window.location.href = '/opengov';
-							} else if (e === 'gov1') {
-								window.location.href = '/';
-							}
-						}}
-						options={[
-							{
-								label: 'Gov1',
-								value: 'gov1'
-							},
-							{
-								label: 'OpenGov',
-								value: 'open_gov'
-							}
-						]}
-					/>
-
 				</div>
 
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">

@@ -58,6 +58,7 @@ interface Props {
 	otherTextClassName?: string;
 	passedUsername?:string
 	isVoterAddress?: boolean;
+	isSimpleDropdown?: boolean;
 }
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {

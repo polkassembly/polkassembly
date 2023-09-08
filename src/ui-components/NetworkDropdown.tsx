@@ -34,7 +34,7 @@ for (const key of Object.keys(network)) {
 	link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key) ? `https://${key}.polkassembly.network` : `https://${key === 'POLYMESHTEST'? 'polymesh-test': keyVal}.polkassembly.io`;
 
 	if (isOpenGovSupported(keyVal)) {
-		link = `${link}/opengov`;
+		link = `${link}`;
 	}
 	const optionObj: DropdownMenuItemType = {
 		key,

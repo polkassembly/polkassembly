@@ -66,8 +66,10 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 					posts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						post_id: data?.id,
 						proposer: '',
+						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
 							id: topic_id,
@@ -146,7 +148,7 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	const { proposalType = OffChainProposalType.DISCUSSIONS, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getLatestActivityOffChainPosts({
 		listingLimit,
@@ -155,9 +157,9 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	});
 
 	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

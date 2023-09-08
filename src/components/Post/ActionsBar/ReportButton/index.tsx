@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { FlagOutlined } from '@ant-design/icons';
+import { FlagOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button,Form,Input,Modal, Select } from 'antd';
 import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
 import React, { FC, useState } from 'react';
@@ -10,11 +10,11 @@ import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
-
-import { usePostDataContext } from '~src/context';
+import { usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IComment } from '../../Comment/Comment';
+import { deleteContentByMod } from '~src/util/deleteContentByMod';
 
 interface IReportButtonProps {
 	type: string;
@@ -23,6 +23,8 @@ interface IReportButtonProps {
 	replyId?: string;
 	className?: string;
 	proposalType: ProposalType;
+	isDeleteModal?: boolean;
+	onSuccess?: () => void;
 }
 
 const reasons = [
@@ -33,7 +35,8 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , onSuccess } = props;
+	const { allowed_roles } = useUserDetailsContext();
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -153,17 +156,34 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 		setLoading(false);
 	};
-
+	const handleDelete = async () => {
+		if(!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
+		setLoading(true);
+		await form.validateFields();
+		const validationErrors = form.getFieldError('reason');
+		if(validationErrors.length > 0) return;
+		setFormDisabled(true);
+		const reason = form.getFieldValue('comments');
+		if(allowed_roles?.includes('moderator')) {
+			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
+			setLoading(false);
+		}
+	};
 	return (
 		<>
-			<Button className={`border-none ${ className } text-pink_primary flex items-center  shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
-				<FlagOutlined /><span className='ml-1'>Report</span>
+			<Button
+				className={`${type=== 'comment' ? 'p-0 m-0': ''} flex items-center border-none shadow-none pr-1`}
+				onClick={() => setShowModal(true)}
+			>
+				{isDeleteModal ? <DeleteOutlined className={`${className}`} /> : <FlagOutlined className={`${className}`} />}
+				{isDeleteModal ? <span className={`${className}`}>Delete</span> : <span className={`${className}`}>Report</span>}
 			</Button>
-
 			<Modal
-				title="Report Post"
+				title={isDeleteModal ? 'Delete' : 'Report'}
 				open={showModal}
-				onOk={handleReport}
+				onOk={
+					isDeleteModal ? handleDelete : handleReport
+				}
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
 				zIndex={1067}
@@ -171,15 +191,21 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					<Button key="back" disabled={loading} onClick={() => setShowModal(false)}>
             Cancel
 					</Button>,
-					<Button htmlType='submit' key="submit" className='bg-pink_primary hover:bg-pink_secondary text-white' disabled={loading} onClick={handleReport}>
-            Report
+					<Button htmlType='submit' key="submit" className='bg-pink_primary hover:bg-pink_secondary text-white' disabled={loading} onClick={
+						isDeleteModal ? handleDelete : handleReport
+					}>
+						{
+							isDeleteModal ? 'Delete' : 'Report'
+						}
 					</Button>
 				]}
 			>
 				<Form
 					form={form}
 					name="report-post-form"
-					onFinish={handleReport}
+					onFinish={
+						isDeleteModal ? handleDelete : handleReport
+					}
 					layout="vertical"
 					disabled={formDisabled}
 					validateMessages={

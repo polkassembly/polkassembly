@@ -25,10 +25,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if(data){
 		return { props: { network } };
 	}
-	return { props: { error: error || null, network } };
+	return { props: { error: error || 'Error in getting twitter handle', network } };
 };
 
-const TwitterCallback = ({ error, network  }: { network: string, error: null | string}) => {
+const TwitterCallback = ({ error, network  }: { network: string, error: null | any}) => {
 	const { setNetwork } = useNetworkContext();
 	useEffect(() => {
 		setNetwork(network);
@@ -44,7 +44,7 @@ const TwitterCallback = ({ error, network  }: { network: string, error: null | s
 						<h2 className='flex flex-col gap-y-2 items-center text-xl font-medium'>
 							<WarningOutlined />
 							{/* TODO: Check error message from BE when email already verified */}
-							<FilteredError text={error}/>
+							<FilteredError text={error?.message || error}/>
 						</h2>
 					</article>
 					: <Loader/>

@@ -98,7 +98,7 @@ export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestTo
 		});
 
 		return {
-			data: twitterUser,
+			data: 'Success',
 			error: null,
 			status: 200
 		};
@@ -111,7 +111,7 @@ export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestTo
 	}
 };
 
-const handler: NextApiHandler<any> = async (req, res) => {
+const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const {
 		oauthVerifier,
 		oauthRequestToken
@@ -128,8 +128,8 @@ const handler: NextApiHandler<any> = async (req, res) => {
 		oauthVerifier: String(oauthVerifier)
 	});
 	if(error){
-		return res.status(status).send({ message: error });
+		return res.status(status).json({ message: error });
 	}
-	return res.status(status).json(data);
+	return res.status(status).json({ message: data?.toString() || 'Success' });
 };
 export default withErrorHandling(handler);

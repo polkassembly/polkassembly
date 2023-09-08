@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined } from '@ant-design/icons';
-import { Button, Form } from 'antd';
+import { Button, Form, Tooltip } from 'antd';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -39,6 +39,9 @@ interface IEmojiOption {
 	currentSentiment: number;
 	clickable?:boolean;
 	disabled?:boolean;
+	className?: string;
+	emojiButton?: boolean;
+	title?:string;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
@@ -58,6 +61,9 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [textBoxHeight,setTextBoxHeight] = useState(40);
 	const [showEmojiMenu, setShowEmojiMenu] = useState(false);
 	const [selectedIcon, setSelectedIcon] = useState(null);
+	const [isPosted, setIsPosted] = useState(false);
+	const [formContent, setFormContent] = useState('');
+
 	useEffect(() => {
 		switch (voteDecision) {
 		case EVoteDecisionType.AYE:
@@ -84,14 +90,30 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setIsSentimentPost(true);
 	};
 
-	const EmojiOption = ({ icon, currentSentiment = 3, clickable = true, disabled }: IEmojiOption) => (
-		<Button
-			disabled={disabled}
-			className={`${disabled && 'opacity-50'} text-2xl w-10 h-10 p-0 pt-1 mb-[4px] border-solid hover:bg-baby_pink`}
-			onClick={() => { clickable && handleEmojiClick(icon, currentSentiment); }}>
-			{icon}
-		</Button>
-	);
+	const EmojiOption = ({ icon, currentSentiment = 3, clickable = true, disabled, emojiButton, title }: IEmojiOption) => {
+		if (emojiButton) {
+			return (
+				<Button
+					disabled={disabled}
+					className={`${disabled && 'opacity-50'} text-2xl h-10 p-0 pt-1 mb-[4px] border-solid emoji-button w-10 hover:bg-baby_pink`}
+					onClick={() => { clickable && handleEmojiClick(icon, currentSentiment); }}
+				>
+					{icon}
+				</Button>
+			);
+		}
+		return (
+			<Tooltip color="#363636" title={title}>
+				<Button
+					disabled={disabled}
+					className={`${disabled && 'opacity-50'} text-2xl w-10 h-10 p-0 pt-1 mb-[4px] border-none rounded-full emoji-button hover:bg-baby_pink`}
+					onClick={() => { clickable && handleEmojiClick(icon, currentSentiment); }}
+				>
+					{icon}
+				</Button>
+			</Tooltip>
+		);
+	};
 
 	const sentimentsIcons:any = {
 		[ESentiment.Against]:  <SadDizzyIcon style={{ border: 'none' }} />,
@@ -130,6 +152,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const handleSave = async () => {
 		await form.validateFields();
 		const content = form.getFieldValue('content');
+		setFormContent(content);
 		if(!content) return;
 
 		setLoading(true);
@@ -153,6 +176,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		}
 		if(data) {
 			setContent('');
+			setIsPosted(true);
 			form.resetFields();
 			form.setFieldValue('content', '');
 			global.window.localStorage.removeItem(commentKey());
@@ -228,76 +252,87 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				size={'large'}
 				id={id}
 			/>
-
-			<div className={isUsedInSuccessModal ? 'p-[1rem] w-[95%]' : 'comment-box bg-white p-[1rem]'}>
-				{error && <ErrorAlert errorMsg={error} className='mb-2' />}
-				<Form
-					form={form}
-					name="comment-content-form"
-					layout="vertical"
-					onFinish={handleModalOpen}
-					initialValues={{
-						content
-					}}
-					disabled={loading}
-
-					validateMessages= {
-						{ required: "Please add the  '${name}'" }
-					}
-				>
-					<div className={isUsedInSuccessModal ? 'flex justify-between items-center w-[522px] -ml-[30px]' : ''}>
-						{
-							isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
-								<Input
-									name='content'
-									className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1 input-container`}
-									onChange = {(e) => {onContentChange(e.target.value);adjustHeightByString(e.target.value);}}
-									placeholder={'Type your comment here'}
-								/>
-							</Form.Item>
-
-						}
-						{
-							!isUsedInSuccessModal && <ContentForm  onChange = {(content : any) => onContentChange(content)} height={200}/>
-						}
-						<Form.Item>
-							<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>
-								{
-									isUsedInSuccessModal ?
-										<div className='relative'>
-											<div className="flex">
-												{showEmojiMenu && (
-													<div className="absolute top-[-55px] right-[77px] w-[234px] h-[50px] pt-[7px] p-2 flex space-x-1 pb-12 -mt-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
-														<EmojiOption icon={<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />} currentSentiment={1}/>
-														<EmojiOption icon={<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={2} />
-														<EmojiOption icon={<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={3} />
-														<EmojiOption icon={<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={4} />
-														<EmojiOption icon={<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={5} />
-													</div>
-												)}
-												{!selectedIcon && (
-													<div className="w-10 h-10 mr-[7px] emoji-button" onClick={() => setShowEmojiMenu(!showEmojiMenu) }>
-														<EmojiOption disabled={!content} icon={sentimentsIcons[sentiment]} currentSentiment={3} clickable={false}/> 
-													</div>
-												)}
-												{selectedIcon && (
-													<Button className="w-10 h-10 mr-[7px] p-0 pt-1" onClick={() => setShowEmojiMenu(!showEmojiMenu) }>
-														{ selectedIcon }
-													</Button>
-												)}
-												<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>Post</Button>
-											</div>
-										</div>
-										:
-										<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
-											<CheckOutlined /> Comment
-										</Button>
-								}
-							</div>
-						</Form.Item>
+			{isPosted ? (
+				<div className="comment-message">
+					<div className="mt-6 w-[500px] text-center h-30 overflow-hidden">
+						<p className="truncate text-lightBlue">
+							&apos;{formContent}&apos;
+						</p>
 					</div>
-				</Form>
-			</div>
+					<div className="text-green-600 mb-5 ml-[140px] -mt-[15px]">Comment posted successfully.</div>
+				</div>
+			) : (
+				<div className={isUsedInSuccessModal ? 'p-[1rem] w-[95%]' : 'comment-box bg-white p-[1rem]'}>
+					{error && <ErrorAlert errorMsg={error} className='mb-2' />}
+					<Form
+						form={form}
+						name="comment-content-form"
+						layout="vertical"
+						onFinish={handleModalOpen}
+						initialValues={{
+							content
+						}}
+						disabled={loading}
+
+						validateMessages= {
+							{ required: "Please add the  '${name}'" }
+						}
+					>
+						<div className={isUsedInSuccessModal ? 'flex justify-between items-center w-[522px] -ml-[30px]' : ''}>
+							{
+								isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
+									<Input
+										name='content'
+										className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1 input-container`}
+										onChange = {(e) => {onContentChange(e.target.value);adjustHeightByString(e.target.value);}}
+										placeholder={'Type your comment here'}
+										// style={{ border: '1px solid #D2D8E0', padding: '4px 8px' }}
+									/>
+								</Form.Item>
+
+							}
+							{
+								!isUsedInSuccessModal && <ContentForm  onChange = {(content : any) => onContentChange(content)} height={200}/>
+							}
+							<Form.Item>
+								<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>
+									{
+										isUsedInSuccessModal ?
+											<div className='relative'>
+												<div className="flex">
+													{showEmojiMenu && (
+														<div className="absolute top-[-55px] right-[77px] w-[234px] h-[50px] pt-[7px] p-2 flex space-x-1 pb-12 -mt-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
+															<EmojiOption icon={<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />} currentSentiment={1} title={'Completely Against'} />
+															<EmojiOption icon={<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={2} title={'Slightly Against'} />
+															<EmojiOption icon={<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={3} title={'Neutral'} />
+															<EmojiOption icon={<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={4}  title={'Slightly For'}/>
+															<EmojiOption icon={<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={5}  title={'Completely For'}/>
+														</div>
+													)}
+													{!selectedIcon && (
+														<div className="w-10 h-10 mr-[7px]" onClick={() => setShowEmojiMenu(!showEmojiMenu) }>
+															<EmojiOption disabled={!content} emojiButton={true} icon={sentimentsIcons[sentiment]} currentSentiment={3} title={'Select Sentiment'} clickable={false} />
+														</div>
+													)}
+													{selectedIcon && (
+														<Button className="w-10 h-10 mr-[7px] p-0 pt-1 border-solid" onClick={() => setShowEmojiMenu(!showEmojiMenu) }>
+															{ selectedIcon }
+														</Button>
+													)}
+													<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>Post</Button>
+												</div>
+											</div>
+											:
+											<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
+												<CheckOutlined /> Comment
+											</Button>
+									}
+								</div>
+							</Form.Item>
+						</div>
+					</Form>
+				</div>
+			) }
 			{openModal && <CommentSentimentModal
 				setSentiment={setSentiment}
 				openModal={openModal}
@@ -328,4 +363,27 @@ export default styled(PostCommentForm)`
 		display: flex;
 		justify-content: flex-end;
 	}
+
+	.emoji-button: hover {
+		background-color: #FBDBEC;
+	}
+
+	.ant-tooltip {
+    	font-size:16px;
+    }
+    .ant-tooltip .ant-tooltip-placement-leftTop{
+    	height:10px;
+    	padding:0px;
+    }
+    .ant-tooltip .ant-tooltip-inner{
+    	min-height:0;
+    }
+	.ant-tooltip-arrow{
+    	display:none;
+    }
+    .ant-tooltip-inner {
+        color: black;
+  	    font-size:10px;
+  	    padding:6px 8px;
+    }
 `;

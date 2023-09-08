@@ -48,7 +48,6 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 	const newHistory: ICommentHistory = {
 		content: commentData?.content,
 		created_at: commentData?.created_at?.toDate? commentData?.created_at.toDate(): commentData?.created_at,
-		isDeleted: commentData?.isDeleted || false,
 		sentiment: commentData?.sentiment || 0
 	};
 

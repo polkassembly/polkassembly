@@ -46,8 +46,7 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, profile, isDeleted } = comment;
-	console.log('history',history);
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, profile } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
@@ -125,7 +124,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>
-			{ history && history.length > 0 && <CommentHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: updated_at, isDeleted:isDeleted || false, sentiment: newSentiment || sentiment || 0 } ,...history]} defaultAddress={comment?.proposer} username={comment?.username} user_id={comment?.user_id}/>}
+			{ history && history.length > 0 && <CommentHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: updated_at, sentiment: newSentiment || sentiment || 0 } ,...history]} defaultAddress={comment?.proposer} username={comment?.username} user_id={comment?.user_id}/>}
 		</div>
 	);
 };

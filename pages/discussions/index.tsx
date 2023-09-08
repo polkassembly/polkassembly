@@ -18,15 +18,8 @@ import { sortValues } from '~src/global/sortOptions';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
 import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
-import dynamic from 'next/dynamic';
-import { Skeleton } from 'antd';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
-
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),{
-	loading: () => <Skeleton active />,
-	ssr: false
-});
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -107,7 +100,6 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Discussions' network={network}/>
-			<OnChainIdentity/>
 			<div className='flex flex-col sm:flex-row w-full justify-between align-middle mt-3'>
 				<div className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 flex'><DiscussionsIcon className='xs:mr-3 mt-2 sm:mr-2 sm:mt-1.5' />Latest Discussions({count})</div>
 				<button onClick={handleClick} className='outline-none whitespace-pre border-none p-3 sm:w-[120px] sm:h-[40px] font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] rounded-[4px] flex items-center justify-center text-white bg-pink_primary cursor-pointer sm:-mt-1 xs:mt-3'>+ Add Post</button>

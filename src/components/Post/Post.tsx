@@ -30,10 +30,14 @@ import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
-import StickyBox from '~src/util/Stickytop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
+
+const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });

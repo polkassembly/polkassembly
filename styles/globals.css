@@ -377,3 +377,8 @@ color: var(--lightBlue) !important;
 .logo-class:hover a{
   color: #000 !important;
 }
+
+.ant-menu-root li:nth-child(1) {
+  /* padding:50px !important; */
+  height: 60px !important;
+}

@@ -6,6 +6,7 @@ import React, { FC } from 'react';
 interface IPaLogoProps {
     className?: string;
 	sidedrawer:boolean
+	style?: object;
 
 }
 

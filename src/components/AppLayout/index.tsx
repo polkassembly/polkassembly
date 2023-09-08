@@ -187,7 +187,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 	const govOverviewItems = isOpenGovSupported(network) ? [
-		getSiderMenuItem('', '', <div className='svgLogo logo-container flex w-full items-center justify-center h-[66px] border-bottom'> {sidedrawer && <PaLogo className='h-full' sidedrawer={sidedrawer} />}</div>),
+		getSiderMenuItem('', '', <div className={`${className} svgLogo logo-padding logo-container -mt-[8px] w-[212px] -ml-[9px] flex items-center justify-center h-[66px] ${sidedrawer ? 'border-bottom' : 'border-none'}`}> {sidedrawer && <div className="-ml-[60px] mt-1"><PaLogo className='h-full' sidedrawer={sidedrawer} /></div>}</div>),
 		getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -288,7 +288,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[30px]`}
+						className={`${username?'auth-sider-menu':''} mt-[15px]`}
 					/>
 				</Sider>
 				<Drawer
@@ -464,13 +464,8 @@ margin-top: -17px !important;
 	height:100px ;
 }
 
-.logo-container {
-	margin-left: -100px;
-	width: 344px !important;
-}
-
 .logo-container:hover {
-	width: 344px !important;
 	background: #fff !important;
 }
+
 `;

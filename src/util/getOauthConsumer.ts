@@ -7,8 +7,6 @@ const TWITTER_CONSUMER_API_KEY = process.env.TWITTER_CONSUMER_API_KEY || '';
 const TWITTER_CONSUMER_API_SECRET_KEY = process.env.TWITTER_CONSUMER_API_SECRET_KEY || '';
 
 const getOauthConsumer = (network: string) => {
-	const  oauthRequestToken = localStorage.getItem('oauthRequestTokenSecret') || '';
-	const oauthRequestTokenSecret = localStorage.getItem('oauthRequestTokenSecret') || '';
 
 	const oauthConsumer = new oauth.OAuth(
 		'https://twitter.com/oauth/request_token',
@@ -16,7 +14,7 @@ const getOauthConsumer = (network: string) => {
 		TWITTER_CONSUMER_API_KEY,
 		TWITTER_CONSUMER_API_SECRET_KEY,
 		'1.0A',
-		`https://${network}.polkassembly.io/twitter-callback?oauthRequestToken=${oauthRequestToken}&oauthRequestTokenSecret=${oauthRequestTokenSecret}`,
+		`https://${network}.polkassembly.io/twitter-callback`,
 		'HMAC-SHA1'
 	);
 	return oauthConsumer;

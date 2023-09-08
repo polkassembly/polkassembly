@@ -9,14 +9,13 @@ import { getTwitterCallback } from 'pages/api/v1/verification/twitter-callback';
 import React, { useEffect } from 'react';
 import { useNetworkContext } from 'src/context';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { MessageType } from '~src/auth/types';
 import SEOHead from '~src/global/SEOHead';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
-	const { oauth_verifier: oauthVerifier, oauth_token:oauthRequestToken } = query;
+	const { oauth_verifier: oauthVerifier, oauth_token: oauthRequestToken } = query;
 	const { data, error } = await getTwitterCallback({
 		network,
 		oauthRequestToken: String(oauthRequestToken),
@@ -24,19 +23,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	});
 
 	if(data){
-		return {
-			props: {},
-			redirect: {
-				destination: '/'
-			}
-		};
+		return { props: { network } };
 	}
-	return { props: { error: error || null, network, oauthVerifier } };
+	return { props: { error: error || null, network } };
 };
 
-const TwitterCallback = ({ error, network }: { network: string, error: MessageType | null }) => {
+const TwitterCallback = ({ error, network  }: { network: string, error: null | string}) => {
 	const { setNetwork } = useNetworkContext();
-
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,7 +44,7 @@ const TwitterCallback = ({ error, network }: { network: string, error: MessageTy
 						<h2 className='flex flex-col gap-y-2 items-center text-xl font-medium'>
 							<WarningOutlined />
 							{/* TODO: Check error message from BE when email already verified */}
-							<FilteredError text={error?.message}/>
+							<FilteredError text={error}/>
 						</h2>
 					</article>
 					: <Loader/>

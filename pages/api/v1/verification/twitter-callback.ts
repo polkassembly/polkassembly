@@ -4,12 +4,14 @@
 
 import { NextApiHandler } from 'next';
 import { promisify } from 'util';
+import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import getOauthConsumer from '~src/util/getOauthConsumer';
+import messages from '~src/util/messages';
 
 const firestore = firebaseAdmin.firestore();
 
@@ -18,6 +20,10 @@ export enum VerificationStatus {
 	VERFICATION_EMAIL_SENT = 'Verification email sent',
 	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
 	NOT_VERIFIED = 'Not verified',
+}
+interface ITwitterDocData{
+	twitter_handle: string;
+	oauth_request_token_secret: string;
 }
 
 interface Props{
@@ -56,7 +62,7 @@ async function getOAuthAccessTokenWith( network: string, {
 			oauthRequestTokenSecret,
 			oauthVerifier,
 			function (error, oauthAccessToken, oauthAccessTokenSecret, results) {
-				return error ? reject(new Error('Error getting OAuth access token')) : resolve({ oauthAccessToken, oauthAccessTokenSecret, results });
+				return error ? reject(new Error(String(error?.data) || 'Error getting Oauth access token')) : resolve({ oauthAccessToken, oauthAccessTokenSecret, results });
 			}
 		);
 	});
@@ -64,47 +70,43 @@ async function getOAuthAccessTokenWith( network: string, {
 
 export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestToken }: Props ): Promise<IApiResponse<string | MessageType>> => {
 	try{
-		const tokenVerification = await firestore.collection('twitter_verification_tokens').where('oauth_request_token', '==', oauthRequestToken).limit(1).get();
-		if (tokenVerification.empty) {
-			return {
-				data: null,
-				error: 'Wrong verification token found!',
-				status: 400
-			};
-		}
-		const data = tokenVerification.docs[0].data();
+		if(!oauthVerifier || !oauthRequestToken )  throw apiErrorWithStatusCode('Invalid params in req body', 400);
 
-		const oauthRequestTokenSecret = data?.oauth_requestToken_secret;
+		const twitterVerificationSnapshot = await firestore.collection('twitter_verification_tokens').where('oauth_request_token' ,'==', oauthRequestToken).get();
+		if(twitterVerificationSnapshot.empty) throw apiErrorWithStatusCode('Invalid request token', 400);
+
+		const twitterDoc =  twitterVerificationSnapshot?.docs[0];
+		const twitterDocData = twitterDoc.data() as ITwitterDocData;
+
+		const oauthRequestTokenSecret = twitterDocData?.oauth_request_token_secret;
 
 		const { oauthAccessToken, oauthAccessTokenSecret, results } =
-		await getOAuthAccessTokenWith(network,{ oauthRequestToken, oauthRequestTokenSecret, oauthVerifier });
+		await getOAuthAccessTokenWith(network, { oauthRequestToken, oauthRequestTokenSecret, oauthVerifier });
 
-		const { user_id: userId /*, screen_name */ } = results;
-		const user = await oauthGetUserById(userId, network,
+		const { user_id: twitterUserId } = results;
+		const twitterUser = await oauthGetUserById(twitterUserId, network,
 			{
 				oauthAccessToken,
 				oauthAccessTokenSecret
 			});
 
-		const twitterVerificationRef = firestore.collection('twitter_verification_tokens').doc(user?.screen_name);
-		if(! twitterVerificationRef) throw apiErrorWithStatusCode('Wrong verification token found', 400);
+		if(twitterDocData?.twitter_handle !==  twitterUser?.screen_name) throw apiErrorWithStatusCode('Twitter handle does not match', 400);
 
-		await twitterVerificationRef.set({
-			...twitterVerificationRef,
-			screen_name: user?.screen_name || '',
+		await twitterDoc.ref.set({
+			...twitterDocData,
 			verified: true
 		});
 
 		return {
-			data: '/',
+			data: twitterUser,
 			error: null,
 			status: 200
 		};
 	}catch(error){
 		return {
 			data: null,
-			error: 'Wrong verification token found!',
-			status: 400
+			error: error.message || messages.API_FETCH_ERROR,
+			status: Number(error.name) || 500
 		};
 	}
 };
@@ -120,14 +122,14 @@ const handler: NextApiHandler<any> = async (req, res) => {
 
 	if(!oauthVerifier || !oauthRequestToken )  return res.status(400).json({ message: 'Invalid params in req body' });
 
-	const { data, error } = await getTwitterCallback({
+	const { data, error, status } = await getTwitterCallback({
 		network,
 		oauthRequestToken: String(oauthRequestToken),
 		oauthVerifier: String(oauthVerifier)
 	});
 	if(error){
-		return res.status(400).send({ message: error });
+		return res.status(status).send({ message: error });
 	}
-	return res.redirect(data as string);
+	return res.status(status).json(data);
 };
-export default handler;
+export default withErrorHandling(handler);

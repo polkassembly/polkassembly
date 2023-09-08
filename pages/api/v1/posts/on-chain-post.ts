@@ -985,7 +985,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
-					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
+					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get()).data().count;
 					return { ...timeline, commentsCount };
 				});
 				const timelines:Array<any> = await Promise.allSettled(commentPromises);

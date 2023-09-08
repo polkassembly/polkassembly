@@ -16,7 +16,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from '~src/types';
-import { Input } from 'antd';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
 import SadDizzyIcon from '~assets/overall-sentiment/pink-against.svg';
@@ -281,12 +280,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						<div className={isUsedInSuccessModal ? 'flex justify-between items-center w-[522px] -ml-[30px]' : ''}>
 							{
 								isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
-									<Input
+									<textarea
 										name='content'
-										className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1 input-container`}
+										className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-2 suffixColor hover:border-pink_primary flex-1 input-container focus:border-pink_primary max-h-10`}
 										onChange = {(e) => {onContentChange(e.target.value);adjustHeightByString(e.target.value);}}
 										placeholder={'Type your comment here'}
-										// style={{ border: '1px solid #D2D8E0', padding: '4px 8px' }}
+										style={{ border: '1px solid #D2D8E0', padding: '4px 8px' }}
 									/>
 								</Form.Item>
 

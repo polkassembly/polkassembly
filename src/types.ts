@@ -43,7 +43,7 @@ export interface UserDetailsContextType {
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
-}
+  }
 
 export interface IPeriod {
 	period: string;

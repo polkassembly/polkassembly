@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
+import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Skeleton } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon, RootIcon, UpgradeCommitteePIPsIcon, CommunityPIPsIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon, RootIcon, UpgradeCommitteePIPsIcon, CommunityPIPsIcon, SetIdentityIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 
@@ -29,7 +29,13 @@ import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+import dynamic from 'next/dynamic';
+import { poppins } from 'pages/_app';
 
+const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),{
+	loading: () => <Skeleton.Button active />,
+	ssr: false
+});
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -49,25 +55,37 @@ function getSiderMenuItem(
 	} as MenuItem;
 }
 
-const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
+const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, img?: string | null, username?: string, className?:string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+			label: <Link className='text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
 				<UserOutlined />
 				<span>View Profile</span>
 			</Link>
 		},
 		{
+			key: 'set on-chain identity',
+			label: <Link className={`text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2 -ml-1 ${className}`} href={''}
+			onClick={(e) => {
+				e.stopPropagation();
+				e.preventDefault();
+				handleSetIdentityClick();
+				}}>
+								<span className='text-xl selected-identity'><SetIdentityIcon /></span>
+			<span>Set on-chain identity</span>
+		</Link>
+		},
+		{
 			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+			label: <Link className='text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
 				<SettingOutlined />
 				<span>Settings</span>
 			</Link>
 		},
 		{
 			key: 'logout',
-			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
+			label: <Link href='/' className='text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
 				onClick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
@@ -100,9 +118,9 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 };
 
 interface Props {
-Component: NextComponentType<NextPageContext, any, any>;
-pageProps: any;
-className?: string;
+	Component: NextComponentType<NextPageContext, any, any>;
+	pageProps: any;
+	className?: string;
 }
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
@@ -111,8 +129,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
-
-	useEffect(() => {
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const [open, setOpen] = useState<boolean>(false);
+  useEffect(() => {
 		const handleRouteChange = () => {
 			if(router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post' ){
 				setPreviousRoute(router.asPath);
@@ -123,7 +142,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
 	useEffect(() => {
@@ -132,7 +151,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		if(authToken && isExpired(authToken)) {
 			logout(setUserDetailsContextState);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.asPath]);
 
 	useEffect(() => {
@@ -173,14 +192,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
 			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
 		] : [],
-		PIPsItems:(chainProperties[network]?.subsquidUrl && (network === 'polymesh')) ? [
+    PIPsItems:(chainProperties[network]?.subsquidUrl && (network === 'polymesh')) ? [
 			getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='text-white mt-1.5'/>),
 			getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='text-white mt-1.5'/>),
 			getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='text-white mt-1.5'/>)
 		] :[]
 	};
-
-	if (isGrantsSupported(network)) {
+  if (isGrantsSupported(network)) {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
@@ -364,18 +382,30 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
-	const handleMenuClick = (menuItem: any) => {
+  const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
 		setSidedrawer(false);
 	};
-
-	const handleLogout = async () => {
+  const handleLogout = async (username: string) => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
+		if(!router.query?.username) return;
+		if(router.query?.username.includes(username)) {
+			router.replace('/');
+		}
 	};
+	const handleIdentityButtonClick = () => {
+		const address = localStorage.getItem('identityAddress');
+		// if(id){
+			if(address?.length){
+				setOpen(!open);
+			}else {
+				setOpenAddressLinkedModal(true);
+			}
+		};
 
-	const userDropdown = getUserDropDown(handleLogout, picture, username!);
+	const userDropdown = getUserDropDown( handleIdentityButtonClick, handleLogout, picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
@@ -451,6 +481,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				}
 			</Layout>
 			<Footer />
+			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
 		</Layout>
 	);
 };
@@ -464,30 +495,30 @@ const CustomContent = memo(function CustomContent({ Component, pageProps } : Pro
 export default styled(AppLayout)`
 
 .ant-drawer .ant-drawer-mask{
-position: fixed !important;
+	position: fixed !important;
 }
 
 .ant-drawer .ant-drawer-content{
-height: auto !important;
+	height: auto !important;
 }
 
 .ant-drawer-content-wrapper, .ant-drawer-content{
-max-width: 256px !important;
-box-shadow: none !important;
-min-width: 60px !important;
+	max-width: 256px !important;
+	box-shadow: none !important;
+	min-width: 60px !important;
 }
 
 .ant-drawer-body{
-text-transform: capitalize !important;
-padding: 0 !important;
+	text-transform: capitalize !important;
+	padding: 0 !important;
 
-ul{
-  margin-top: 0 !important;
-}
+	ul{
+		margin-top: 0 !important;
+	}
 }
 
 .ant-menu-item .anticon, .ant-menu-item-icon{
-font-size: 20px !important;
+	font-size: 20px !important;
 }
 
 .ant-menu-item .delegation{
@@ -500,61 +531,64 @@ margin-top: -17px !important;
 
 
 .ant-menu-item-selected {
-background: #fff !important;
+	background: #fff !important;
 
-.ant-menu-title-content {
-  color: var(--pink_primary) !important;
-}
+	.ant-menu-title-content {
+		color: var(--pink_primary) !important;
+	}
 }
 
 .ant-menu-title-content:hover {
-color: var(--pink_primary) !important;
+	color: var(--pink_primary) !important;
 }
 
 .ant-menu-item::after {
-border-right: none !important;
+	border-right: none !important;
 }
 
 .ant-menu-title-content {
-color: #485F7D !important;
-font-weight: 500;
-font-size: 14px;
-line-height: 21px;
-letter-spacing: 0.01em;
+	color: #485F7D !important;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 21px;
+	letter-spacing: 0.01em;
 }
 
 .auth-sider-menu {
-list-style: none !important;
+	list-style: none !important;
 }
 
 .auth-sider-menu > li:first-child {
-margin-bottom: 25px;
-margin-top: 15px;
+  margin-bottom: 25px;
+  margin-top: 15px;
 }
 
 .ant-empty-image{
-display: flex;
-justify-content: center;
+	display: flex;
+	justify-content: center;
 }
 
 .sidebar .ant-menu-item-selected .anticon {
-filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+}
+.selected-identity:hover{
+	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
 
 .sidebar .ant-menu-item-selected .opacity {
-background-color: var(--pink_primary) !important;
+  background-color: var(--pink_primary) !important;
 }
 .ant-menu-inline-collapsed-noicon {
-color: var(--lightBlue);
+	color: var(--lightBlue);
 }
 
 .ant-menu-item-selected {
-.ant-menu-inline-collapsed-noicon {
-  color: var(--pink_primary);
-}
+	.ant-menu-inline-collapsed-noicon {
+		color: var(--pink_primary);
+	}
 }
 
 .ant-menu-sub {
-background: #fff !important;
+	background: #fff !important;
 }
 `;

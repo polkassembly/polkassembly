@@ -5,11 +5,9 @@
 import { Divider } from 'antd';
 import React from 'react';
 import { Wallet } from 'src/types';
-
 import WalletButton from '../WalletButton';
 import { useNetworkContext } from '~src/context';
 import { WalletIcon } from './MetamaskLogin';
-import { signIn } from 'next-auth/react';
 
 interface Props {
 	disabled: boolean
@@ -27,12 +25,6 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 		onWalletSelect(wallet);
 	}
 
-	const signInTwitter = async () => {
-		// const url = '/api/auth/signin/twitter';
-		// window.open(url, '_blank');
-		signIn('twitter', { callbackUrl: '/' });
-	};
-
 	return (
 		<div className='w-full'>
 			{!noHeader &&
@@ -41,7 +33,6 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 				</div>
 			}
 			<div className="flex mt-3 max-w-xs gap-4 flex-col m-auto justify-center sm:flex-row sm:mx-2 sm:max-w-none">
-				<button onClick={() => signInTwitter()}>Twitter</button>
 				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot.js" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6' />} />
 				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.TALISMAN ? 'border border-solid border-pink_primary' : ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6' />} />
 				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary' : ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="SubWallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />

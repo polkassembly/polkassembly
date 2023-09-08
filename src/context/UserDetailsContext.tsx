@@ -20,7 +20,7 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	email_verified: false,
 	id: null,
 	is2FAEnabled: false,
-	isLoggedOut: (): boolean => {
+		isLoggedOut: (): boolean => {
 		throw new Error('isLoggedIn function must be overridden');
 	},
 	loginAddress: '',
@@ -80,7 +80,7 @@ try {
 		initialUserDetailsContext.is2FAEnabled = is2FAEnabled;
 		initialUserDetailsContext.loginAddress = login_address || window?.localStorage?.getItem('loginAddress') || '';
 		initialUserDetailsContext.loginWallet = login_wallet || null;
-	}
+			}
 } catch {
 	//do nothing, the user will be authenticated as soon as there's a new call to the server.
 }

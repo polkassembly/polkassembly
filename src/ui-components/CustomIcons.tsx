@@ -102,6 +102,7 @@ import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
 import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
+import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -448,4 +449,8 @@ export const UpgradeCommitteePIPsIcon = (props: Partial<CustomIconComponentProps
 );
 export const CommunityPIPsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CommunityPIPsSVG} {...props} />
+);
+
+export const SetIdentityIcon  = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SetIdentitySVG} {...props} />
 );

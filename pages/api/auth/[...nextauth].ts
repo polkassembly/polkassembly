@@ -18,6 +18,7 @@ export default NextAuth({
             const { screen_name } = profile as any;
             const twitterVerification = await firestore.collection('twitter_verification_tokens').doc(screen_name).get();
             const data = twitterVerification.data();
+            console.log(data, screen_name,'dataa');
 
             if (!data) {
                 return false;

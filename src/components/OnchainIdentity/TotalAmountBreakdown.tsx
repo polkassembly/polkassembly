@@ -17,9 +17,10 @@ interface Props{
   txFee: ITxFee;
   changeStep: (step: number) => void;
   perSocialBondFee: BN;
+	loading: boolean;
 }
 
-const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee }: Props) => {
+const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, loading }: Props) => {
 	const { registerarFee } = txFee;
 	const { network } = useContext(NetworkContext);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -42,7 +43,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee }
 						{formatedBalance(perSocialBondFee.add(registerarFee).toString(), unit)} {unit}
 						{ amountBreakup ? <DownArrowIcon className='ml-3'/> : <UpArrowIcon className='ml-3'/> }
 					</span>
-					<span className='text-xs text-lightBlue font-normal -mt-1'>View Amount Breakup</span>
+					<span className='text-xs text-lightBlue font-normal -mt-1'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>
 				</div>
 			</div>
 			{amountBreakup && <div className='flex gap-2 flex-col mt-3'>
@@ -58,8 +59,8 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee }
 			}
 		</div>
 		<div className='-mx-6 mt-6 border-0 border-solid border-t-[1px] px-6 pt-5 border-[#E1E6EB] rounded-[4px]'>
-			<Button onClick={() => changeStep(2)} className='bg-pink_primary text-sm w-full rounded-[4px h-[40px] text-white tracking-wide'>
-        Let&apos;s Begain
+			<Button loading={loading} onClick={() => changeStep(2)} className='bg-pink_primary text-sm w-full rounded-[4px] h-[40px] text-white tracking-wide border-pink_primary'>
+        Let&apos;s Begin
 			</Button>
 		</div>
 	</div>;

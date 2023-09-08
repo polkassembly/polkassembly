@@ -46,11 +46,14 @@ interface Props{
   onConfirm?: () => void;
   linkAddressNeeded?: boolean;
   usingMultisig?: boolean;
+	walletAlertTitle: string;
+	accountAlertTitle?: string;
+	accountSelectionFormTitle?: string;
 }
 
 const ZERO_BN = new BN(0);
 
-const AddressConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, linkAddressNeeded = false , usingMultisig = false }: Props) => {
+const AddressConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, linkAddressNeeded = false , usingMultisig = false, walletAlertTitle, accountAlertTitle='Wallet extension not detected.', accountSelectionFormTitle='Select an address' }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -418,7 +421,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		className = {`${poppins.className} ${poppins.variable} radius`}
 		open = {open}
 		title = {
-			<div className='text-center text-[20px] font-semibold text-[#243A57]'>
+			<div className='text-center text-[20px] font-semibold text-bodyBlue'>
 				{showMultisig && <ArrowLeft
 					className='cursor-pointer absolute left-[24px] mt-1'
 					onClick={() => {
@@ -448,7 +451,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 					</span>
 				</div>
 				}
-				<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
+				<h3 className='text-sm font-normal text-lightBlue text-center'>Select a wallet</h3>
 				<div className={`flex items-center justify-center gap-x-4 ${showMultisig ? 'mb-6':''}`}>
 					{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
 
@@ -501,11 +504,23 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 					}
 				</div>}
 
-				{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${linkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mt-4' type='info' />}
+				{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert
+				message={`For using ${walletAlertTitle}:`}
+				description={
+				<ul className='mt-[-5px] text-sm'>
+					<li>Give access to Polkassembly on your selected wallet.</li>
+					<li>Add an address to the selected wallet.</li>
+					</ul>
+				}
+				showIcon
+				className='mt-4'
+				type='info'
+				/>
+				}
 				{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert
-					message={linkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
+					message={accountAlertTitle}
 					description={`${linkAddressNeeded ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
-					type='info' showIcon className='text-[#243A57] changeColor text-md'/>}
+					type='info' showIcon className='text-bodyBlue changeColor text-md'/>}
 
 				{
 					!extensionOpen &&
@@ -513,7 +528,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 									form={form}
 									disabled={loading}
 								>
-									{accounts.length > 0?
+									{accounts.length > 0 ?
 										showMultisig ?
 											<MultisigAccountSelectionForm
 												title='Select Address'
@@ -525,7 +540,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 													setMultisig('');
 												}}
 												onBalanceChange={handleOnBalanceChange}
-												className='text-[#485F7D] text-sm'
+												className='text-lightBlue text-sm'
 												walletAddress={multisig}
 												setWalletAddress={setMultisig}
 												containerClassName='gap-[20px]'
@@ -533,14 +548,14 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 												canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 											/> :
 											<AccountSelectionForm
-												title={linkAddressNeeded ? 'Select Proposer Address' :'Select an address'}
+												title={accountSelectionFormTitle}
 												accounts={accounts}
 												address={address}
 												withBalance={true}
 												onAccountChange={(address) => setAddress(address)}
 												onBalanceChange={handleOnBalanceChange}
 												className='text-lightBlue text-sm mt-4'
-											/> : !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
+											/> : !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' className='mt-4 rounded-[4px]' showIcon message='Please select a wallet.' />: null}
 								</Form>
 				}
 			</div>

@@ -111,15 +111,14 @@ export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestTo
 
 const handler: NextApiHandler<any> = async (req, res) => {
 	const {
-		oauth_verifier: oauthVerifier,
-		oauthRequestToken,
-		oauthRequestTokenSecret
+		oauthVerifier,
+		oauthRequestToken
 	} = req.query;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	if(!oauthVerifier || !oauthRequestToken || !oauthRequestTokenSecret)  return res.status(400).json({ message: 'Invalid params in req body' });
+	if(!oauthVerifier || !oauthRequestToken )  return res.status(400).json({ message: 'Invalid params in req body' });
 
 	const { data, error } = await getTwitterCallback({
 		network,

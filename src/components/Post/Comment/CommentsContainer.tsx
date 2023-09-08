@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { useNetworkContext, usePostDataContext } from '~src/context';
+import { useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
@@ -25,12 +25,10 @@ import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
 import { ESentiments } from '~src/types';
-import { getPaginatedComments } from './utils/getPaginatedComments';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/router';
-import { getCommentsWithId } from './utils/getPostCommentsWithId';
+import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -67,10 +65,7 @@ export interface ITimeline {
 	index: string;
 	type: string;
 }
-interface IFilteredSentiment {
-	sentiment: ESentiments | 0;
-	active: boolean;
-}
+
 interface ISentimentsPercentage {
 	against: ESentiments | 0;
 	for: ESentiments | 0;
@@ -79,9 +74,7 @@ interface ISentimentsPercentage {
 	slightlyFor: ESentiments | 0;
 }
 
-const COMMENT_SIZE = 50;
-
-const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
+export const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	const commentResponse:any = {};
 	for(const key in comments){
 		commentResponse[key] = comments[key].sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
@@ -89,36 +82,32 @@ const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	return commentResponse;
 };
 
-const getLastDocs = (comments: {[index:string]:Array<IComment>}) => {
-	const lastDocs:any = {};
-	for(const key in comments){
-		lastDocs[key] = comments[key]?.[comments[key].length-1]?.id || null;
-	}
-	return lastDocs;
-};
-
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { postData: { comments:initialComments, postType, timeline, created_at, currentTimeline:initialCurrentTimeline } } = usePostDataContext();
+	const { postData: { postType, timeline, created_at } } = usePostDataContext();
 	const targetOffset = 10;
-	const [timelines, setTimelines] = useState<ITimeline[]>([]);
+	const {
+		comments,
+		setComments,
+		setTimelines,
+		timelines,
+		overallSentiments,
+		setOverallSentiments
+	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
-	const [comments, setComments] = useState<{[index:string]:Array<IComment>}>(initialComments);
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
-	const [currentTimeline, setCurrentTimeline] = useState<ITimeline | null>(initialCurrentTimeline || null);
 	const { network } = useNetworkContext();
-	const allComments = Object.values(comments)?.flat() || [];
+	const [filterSentiments, setFilterSentiments] = useState<ESentiments|null>(null);
 	const router = useRouter();
-	const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
-	const [lastDocs, setLastDocs] = useState<{[index:string]:number | null}>(getLastDocs(comments));
-	const [showMore, setShowMore] = useState<boolean>(true);
+	let allComments = Object.values(comments)?.flat() || [];
 
-	const url = window.location.href;
-	const commentId = url.split('#')[1];
+	if(filterSentiments){
+		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
+	}
+
 	const handleTimelineClick = (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode; href: string; }) => {
 		if (link.href === '#') {
 			e.preventDefault();
@@ -126,37 +115,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	};
 
-	const handleSetFilteredComments = (sentiment: ESentiments | 0) => {
-		setFilteredSentiment((pre) => pre.sentiment === sentiment && pre.active === true ? { ...pre, active: false } : { active: true, sentiment: sentiment });
-	};
-
 	const getOverallSentimentPercentage = () => {
-		let againstCount = 0;
-		let slightlyAgainstCount = 0;
-		let neutralCount = 0;
-		let slightlyForCount = 0;
-		let forCount = 0;
+		const againstCount = overallSentiments?.[ESentiments.Against] || 0;
+		const slightlyAgainstCount = overallSentiments?.[ESentiments.SlightlyAgainst] || 0;
+		const neutralCount = overallSentiments?.[ESentiments.Neutral] || 0;
+		const slightlyForCount = overallSentiments?.[ESentiments.SlightlyFor] || 0;
+		const forCount = overallSentiments?.[ESentiments.For] || 0;
 
-		for (let item = 0; item < allComments.length; item++) {
-			switch (allComments[item]?.sentiment) {
-			case ESentiments.Against:
-				againstCount += 1;
-				break;
-			case ESentiments.SlightlyAgainst:
-				slightlyAgainstCount += 1;
-				break;
-			case ESentiments.Neutral:
-				neutralCount += 1;
-				break;
-			case ESentiments.SlightlyFor:
-				slightlyForCount += 1;
-				break;
-			case ESentiments.For:
-				forCount += 1;
-				break;
-
-			}
-		}
 		const totalCount = againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount;
 
 		setSentimentsPercentage({
@@ -173,18 +138,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	const getFilteredComments = (sentiment: number) => {
-		if (filteredSentiment.sentiment === sentiment && filteredSentiment.active) { setComments(comments); }
-		else {
-			const commentsPayload = Object.assign({}, comments);
-			for(const index in commentsPayload){
-				commentsPayload[index] =commentsPayload[index].filter((comment) => comment?.sentiment === sentiment);
-			}
-			setComments(commentsPayload);
-		}
+		setFilterSentiments(filterSentiments === sentiment ? null:sentiment);
 	};
 
 	const checkActive = (sentiment: ESentiments) => {
-		return filteredSentiment.active && filteredSentiment.sentiment === sentiment;
+		return filterSentiments === sentiment;
 	};
 
 	useEffect(() => {
@@ -192,7 +150,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [comments]);
 
-	const setTimeline = async () => {
+	const addCommentDataToTimeline = async () => {
 		if(!timeline){
 			setLoading(false);
 			return;
@@ -206,127 +164,25 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					date: dayjs(obj?.created_at),
 					firstCommentId: '',
 					id: timelines.length + 1,
-					index: obj?.index.toString(),
+					index: obj?.index?.toString(),
 					status: getStatus(obj?.type),
 					type:obj?.type
 				});
-				comments[`${obj?.index.toString()}_${obj?.type}`] = [];
+				comments[`${obj?.index?.toString()}_${obj?.type}`] = [];
 			});
 			setTimelines(timelines);
 		}
-		if(!currentTimeline){
-			return;
-		}
-		if(commentId){
-			for(let i = 0; i < timelines.length; i++){
-				if(timelines[i].commentsCount === 0){
-					continue;
-				}
-				setCurrentTimeline(timelines[i]);
-				const key = `${timelines[i].index}_${timelines[i].type}`;
-				const res = await getCommentsWithId(timelines[i].index.toString(), commentId, network, COMMENT_SIZE, timelines[i].type);
-				const isCommentExit = res.comments.some((comment: { id: string; }) => {
-					return comment.id === commentId;
-				});
-				comments[key] = [...comments[key], ...res.comments];
-				if(isCommentExit){
-					break;
-				}
-			}
-			setComments(getSortedComments(comments));
-			setLastDocs(getLastDocs(comments));
+		const commentResponse = await getAllCommentsByTimeline(timeline, network);
+		if(!commentResponse || Object.keys(commentResponse).length==0){
+			setComments(comments);
 		}
 		else{
-			const commentsPayload = Object.assign({}, comments);
-			for(let i = 0; i < timelines.length; i++){
-				if(timelines[i].commentsCount === 0){
-					continue;
-				}
-				const timeline = timelines[i];
-				const key = `${timelines[i].index}_${timelines[i].type}`;
-				const lastDoc = lastDocs[key];
-				setCurrentTimeline(timeline);
-				if(timeline && commentsPayload[key].length < timeline.commentsCount){
-					const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, COMMENT_SIZE, timeline.type);
-					commentsPayload[key] = [...commentsPayload[key], ...res.comments];
-					const resLastDocId = res.comments[res.comments.length-1]?.id || null;
-					if(resLastDocId){
-						setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [timeline.index]: resLastDocId }));
-					}
-					if(res.comments.length === COMMENT_SIZE){
-						break;
-					}
-					if(commentsPayload[key].length < timeline.commentsCount){
-						i--;
-					}
-				}
-			}
-			setComments(getSortedComments(commentsPayload));
+			setComments(getSortedComments(commentResponse.comments));
+			setOverallSentiments(commentResponse.overallSentiments);
 		}
 		if(loading){
 			setLoading(false);
 		}
-	};
-
-	const getNextComments =async (size?:number) => {
-		if(!currentTimeline){
-			return;
-		}
-		const commentsPayload = Object.assign({}, comments);
-		for(let i = 0; i < timelines.length; i++){
-			if(timelines[i].commentsCount === 0){
-				continue;
-			}
-			const timeline = timelines[i];
-			const key = `${timeline.index}_${timeline.type}`;
-			const lastDoc = lastDocs[key];
-			setCurrentTimeline(timeline);
-			if(timeline && commentsPayload[key].length < timeline.commentsCount){
-				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, size || COMMENT_SIZE, timeline.type);
-				commentsPayload[key] = [...commentsPayload[key], ...res.comments];
-				const resLastDocId = res.comments[res.comments.length-1]?.id || null;
-				if(resLastDocId){
-					setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [key]: resLastDocId }));
-				}
-				if(res.comments.length === COMMENT_SIZE){
-					break;
-				}
-				if(commentsPayload[key].length < timeline.commentsCount){
-					i--;
-				}
-			}
-		}
-		setComments(getSortedComments(commentsPayload));
-	};
-
-	const handleSingleTimelineClick =async (timeline:ITimeline) => {
-		const commentsPayload = Object.assign({}, comments);
-		if(!currentTimeline || commentsPayload[timeline.index]?.[0] ){
-			return;
-		}
-		for(const data of timelines){
-			if(data.id > timeline.id){
-				break;
-			}
-			if(currentTimeline.id <= data.id && data.id !== timeline.id){
-				const key = `${currentTimeline.index}_${currentTimeline.type}`;
-				if(commentsPayload[key].length < currentTimeline.commentsCount){
-					const lastDoc = commentsPayload[key][commentsPayload[`${data.index}_${data.type}`].length-1]?.id;
-					const res:any = await getPaginatedComments(currentTimeline.index.toString(), lastDoc, network, Infinity, currentTimeline.type);
-					commentsPayload[key] = [...commentsPayload[key], ...res.comments];
-				}
-			}
-			if(data.id === timeline.id){
-				const key = `${data.index}_${data.type}`;
-				const res:any = await getPaginatedComments(data.index.toString(), undefined, network, COMMENT_SIZE, data.type);
-				commentsPayload[key] = [...commentsPayload[key], ...res.comments];
-				break;
-			}
-		}
-		setComments(getSortedComments(commentsPayload));
-		setLastDocs(getLastDocs(commentsPayload));
-		setCurrentTimeline(timeline);
-		return commentsPayload[`${timeline.index}_${timeline.type}`]?.[0].id || '';
 	};
 
 	const handleCurrentCommentAndTimeline = (postId:string, type:string, comment:IComment) => {
@@ -345,14 +201,57 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				timeline
 		));
 		setTimelines(timelinePayload);
-		setShowMore(allComments.length < allCommentsLength ? false : true);
 		router.push(`#${comment.id}`);
 	};
 
 	useEffect(() => {
-		setTimeline();
+		if(!timeline || timeline.length == 0){
+			if(loading){
+				setLoading(false);
+			}
+			return;
+		}
+		addCommentDataToTimeline();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+	},[timeline]);
+
+	const sentimentsData = [
+		{
+			iconActive: <AgainstIcon />,
+			iconInactive: <UnfilterAgainstIcon />,
+			percentage: sentimentsPercentage?.against,
+			sentiment: ESentiments.Against,
+			title: 'Completely Against'
+		},
+		{
+			iconActive: <SlightlyAgainstIcon />,
+			iconInactive: <UnfilterSlightlyAgainstIcon />,
+			percentage: sentimentsPercentage?.slightlyAgainst,
+			sentiment: ESentiments.SlightlyAgainst,
+			title: 'Slightly Against'
+		},
+		{
+			iconActive: <NeutralIcon className='text-[20px] font-medium' />,
+			iconInactive: <UnfilterNeutralIcon />,
+			percentage: sentimentsPercentage?.neutral,
+			sentiment: ESentiments.Neutral,
+			title: 'Neutral'
+		},
+		{
+			iconActive: <SlightlyForIcon />,
+			iconInactive: <UnfilterSlightlyForIcon />,
+			percentage: sentimentsPercentage?.slightlyFor,
+			sentiment: ESentiments.SlightlyFor,
+			title: 'Slightly For'
+		},
+		{
+			iconActive: <ForIcon />,
+			iconInactive: <UnfilterForIcon />,
+			percentage: sentimentsPercentage?.for,
+			sentiment: ESentiments.For,
+			title: 'Completely For'
+		}
+	];
 
 	return (
 		<div className={className}>
@@ -369,60 +268,35 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			}
-			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-				<span className='text-lg font-medium text-bodyBlue'>
-					{allCommentsLength || 0}
-					<span className='ml-1'>Comments</span>
-				</span>
-				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
-					<Tooltip color='#E5007A'
-						title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Completely Against</span>
-							<span className='text-center pt-1'>Select to filter</span>
-						</div>} >
-						<div onClick={() => { handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against); }} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`} >
-							{checkActive(ESentiments.Against) ? <AgainstIcon /> : <UnfilterAgainstIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.against}%</span>
-						</div>
-					</Tooltip>
-					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-						<span className='text-center font-medium'>Slightly Against</span>
-						<span className='text-center pt-1'>Select to filter</span>
-					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
-							{checkActive(ESentiments.SlightlyAgainst) ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyAgainst}%</span>
-						</div>
-					</Tooltip>
-					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-						<span className='text-center font-medium'>Neutral </span>
-						<span className='text-center pt-1'>Select to filter</span>
-					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
-							{checkActive(ESentiments.Neutral) ? <NeutralIcon className='text-[20px] font-medium' /> : <UnfilterNeutralIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.neutral}%</span>
-						</div>
-					</Tooltip>
-					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-						<span className='text-center font-medium'>Slightly For</span>
-						<span className='text-center pt-1'>Select to filter</span>
-					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
-							{checkActive(ESentiments.SlightlyFor) ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyFor}%</span>
-						</div>
-					</Tooltip>
-					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-						<span className='text-center font-medium'>Completely For</span>
-						<span className='text-center pt-1'> Select to filter</span>
-					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.For); getFilteredComments(ESentiments.For); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
-							{checkActive(ESentiments.For) ? <ForIcon /> : <UnfilterForIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
-						</div>
-					</Tooltip>
-				</div>}
-			</div>
+			{
+				!loading &&
+				<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
+					<span className='text-lg font-medium text-bodyBlue'>
+						{allComments.length || 0}
+						<span className='ml-1'>Comments</span>
+					</span>
+					{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
+						{sentimentsData.map((data) => (
+							<Tooltip
+								key={data.sentiment}
+								color='#E5007A'
+								title={<div className='flex flex-col text-xs px-1'>
+									<span className='text-center font-medium'>{data.title}</span>
+									<span className='text-center pt-1'>Select to filter</span>
+								</div>}
+							>
+								<div
+									onClick={() => getFilteredComments(data.sentiment)}
+									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none': ''}`}
+								>
+									{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
+									<span className={'flex justify-center font-medium'}>{data.percentage}%</span>
+								</div>
+							</Tooltip>
+						))}
+					</div>}
+				</div>
+			}
 			<div className={'block xl:grid grid-cols-12'}>
 				{
 					!!allComments?.length && timelines.length >= 1 &&
@@ -431,15 +305,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							{timelines.map((timeline) => {
 								return (
 									timeline.commentsCount > 0 ?
-										<div key={id} onClick={() => {
-											if(!comments[`${timeline.index}_${timeline.type}`]?.[0]?.id){
-												setLoading(true);
-												handleSingleTimelineClick(timeline).then((firstCommentId) => {
-													setLoading(false);
-													router.push(`#${firstCommentId}`);
-												});
-											}
-										}} className='m-0 p-0 border-none [&>.ant-card-body]:p-0'>
+										<div key={id} className='m-0 p-0 border-none [&>.ant-card-body]:p-0'>
 											{comments[`${timeline.index}_${timeline.type}`]?.[0]?.id ? <AnchorLink
 												href={`#${comments[`${timeline.index}_${timeline.type}`]?.[0]?.id}`}
 												title={
@@ -471,27 +337,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				<div className={`col-start-1 ${timelines.length >= 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
 					{!!allComments?.length && !loading &&
 						<>
-							<InfiniteScroll
-								dataLength={allComments.length}
-								className='overflow-hidden'
-								next={getNextComments}
-								hasMore={showMore && allComments.length < allCommentsLength}
-								loader={<Loader/>}
-								endMessage={
-									showMore ?
-										<p className='text-center'>
-										No more comments
-										</p> :
-										<div className='flex justify-center items-center'>
-											<span onClick={() => {
-												setShowMore(true);
-												getNextComments(1000);
-											}}
-											className='text-xs cursor-pointer text-pink_primary font-medium'>Show All Comments</span>
-										</div>
-								}>
-								<Comments disableEdit={isGrantClosed} comments={allComments} />
-							</InfiniteScroll>
+							<Comments disableEdit={isGrantClosed} comments={allComments} />
 						</>
 					}
 					{loading && <Loader/>}

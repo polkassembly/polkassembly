@@ -356,6 +356,8 @@ export interface Post {
   history?: IPostHistory[];
   subscribers?: number[];
   summary?: string;
+  createdOnPolkassembly?: boolean,
+
 }
 export interface IPostTag {
   name: string;
@@ -479,9 +481,9 @@ export interface IUserNotificationSettings {
 }
 export interface ILastVote {
 	decision: EVoteDecisionType | null
-	time:  Date | string | null;
-	balance: BN | string;
-	conviction:  number;
+	time: Date | string | null;
+	balance?: BN | string;
+	conviction?:  number;
 }
 
 export type VoteInfo = {

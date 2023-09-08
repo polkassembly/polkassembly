@@ -3,12 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -29,7 +28,9 @@ import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
-import { getStatus } from './comments/getInitialComments';
+import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
+import { generateKey } from '~src/util/getRedisKeys';
+import { redisGet, redisSet } from '~src/auth/redis';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -84,6 +85,13 @@ export interface IReactions {
 	};
 }
 
+export interface IPIPsVoting {
+	balance: null | string;
+	voter: null | string;
+	decision: 'yes' | 'no';
+	identityId: string ;
+  }
+
 export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
@@ -99,13 +107,14 @@ export interface IPostResponse {
 		id: number;
 		name: string;
 	};
-  title?: string;
 	decision?: string;
 	last_edited_at?: string | Date;
+	gov_type?: 'gov_1' | 'open_gov' ;
+	tags?: string[] | [];
+	history?: IPostHistory[];
+	pips_voters?: IPIPsVoting[];
+	title?: string;
 	[key: string]: any;
-  gov_type?: 'gov_1' | 'open_gov' ;
-  tags?: string[] | [];
-  history?: IPostHistory[];
 }
 
 export type IReaction = '👍' | '👎';
@@ -552,7 +561,6 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
 		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
-		const netDocRef = networkDocRef(network);
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
@@ -571,6 +579,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const topicFromType = getTopicFromType(proposalType as ProposalType);
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+
+		if(proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress });
+			const redisData = await redisGet(redisKey);
+			if(redisData){
+				return {
+					data: JSON.parse(redisData),
+					error: null,
+					status: 200
+				};
+			}
+		}
+
+		const netDocRef = networkDocRef(network);
 
 		let postVariables: any = proposalType === ProposalType.ANNOUNCEMENT ? {
 			cid: postId,
@@ -598,6 +620,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			};
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
+		}
+		else if(network === 'polymesh'){
+			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
+			postVariables =  {
+				index_eq: numPostId,
+				type_eq: subsquidProposalType
+			};
 		}
 
 		let subsquidRes: any = {};
@@ -739,12 +768,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
 			history,
+			identity: postData?.identity || null,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
 			motion_method: proposalArguments?.method,
 			origin: postData?.origin,
 			payee: postData?.payee,
+			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
 			proposal_arguments: proposalArguments,
@@ -765,6 +796,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			version:postData?.version,
 			vote_threshold: postData?.threshold?.type
 		};
+
 		// Timeline
 		updatePostTimeline(post, postData);
 
@@ -937,6 +969,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					}
 				}
 				post.post_link = post_link;
+				post.isSpam = data?.isSpam || false;
+				post.isSpamReportInvalid = data?.isSpamReportInvalid || false;
 			}
 
 			if(post.content === '' || post.title === '' || post.title === undefined || post.content === undefined){
@@ -950,7 +984,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		if(noComments){
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
 					return { ...timeline, commentsCount };
 				});
@@ -1021,16 +1055,30 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 		post.post_reactions = getReactions(postReactionsQuerySnapshot);
 
-		// Check if it is a spam or not
-		post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId), 'post');
+		// spam users count
+		if(post?.isSpam) {
+			const threshold = process.env.REPORTS_THRESHOLD || 50;
+			post.spam_users_count = Number(threshold);
+		} else {
+			// Check if it is a spam or not
+			post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId), 'post');
+		}
+
+		if(post?.isSpamReportInvalid) {
+			post.spam_users_count = 0;
+		}
 
 		if (!post.content || post.content?.trim().length === 0) {
 			if (remark) {
 				post.content = remark.replace(/\n/g, '<br/>');
 			} else {
 				const proposer = post.proposer;
+				const identity  = post?.identity;
 				if (proposer) {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					if(network === AllNetworks.POLYMESH){
+						post.content = `This is a pip whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					}
 				} else {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 				}
@@ -1041,6 +1089,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
 		await getContentSummary(post, network, isExternalApiCall);
+		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }), JSON.stringify(post));
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -1074,35 +1125,6 @@ export const checkReportThreshold = (totalUsers?: number) => {
 	}
 	return totalUsers || 0;
 };
-
-// expects optional proposalType and postId of proposal
-const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
-	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress } = req.query;
-
-	// TODO: take proposalType and postId in dynamic pi route
-
-	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
-	const { data, error, status } = await getOnChainPost({
-		isExternalApiCall: true,
-		network,
-		noComments:false,
-		postId,
-		proposalType,
-		voterAddress
-	});
-
-	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
-		if (data.summary) {
-			delete data.summary;
-		}
-		res.status(status).json(data);
-	}
-};
-
-export default withErrorHandling(handler);
 
 export const updatePostTimeline = (post: any, postData: any) => {
 	if (post && postData) {
@@ -1152,3 +1174,32 @@ export const updatePostTimeline = (post: any, postData: any) => {
 		}
 	}
 };
+
+// expects optional proposalType and postId of proposal
+const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
+	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress } = req.query;
+
+	// TODO: take proposalType and postId in dynamic pi route
+
+	const network = String(req.headers['x-network']);
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+	const { data, error, status } = await getOnChainPost({
+		isExternalApiCall: true,
+		network,
+		noComments:false,
+		postId,
+		proposalType,
+		voterAddress
+	});
+
+	if(error || !data) {
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+	}else {
+		if (data.summary) {
+			delete data.summary;
+		}
+		return res.status(status).json(data);
+	}
+};
+
+export default withErrorHandling(handler);

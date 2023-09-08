@@ -18,8 +18,7 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 		};
 		return newTag;
 	});
-	res.status(200).json(tags);
-
+	return res.status(200).json(tags);
 };
 
 export default withErrorHandling(handler);

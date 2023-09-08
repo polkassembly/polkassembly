@@ -3,13 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isGovTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, gov1ProposalTypes, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_LATEST_ACTIVITY } from '~src/queries';
+import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_LATEST_ACTIVITY, GET_PROPOSALS_LISTING_FOR_POLYMESH } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -21,6 +20,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { chainProperties, network as AllNetworks } from '~src/global/networkConstants';
 import { fetchLatestSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
+
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
 	network: string;
@@ -41,7 +41,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			throw apiErrorWithStatusCode(`Invalid govType "${govType}"`, 400);
 		}
 
-		const variables: any = {
+		let variables: any = {
 			limit: numListingLimit,
 			type_in: gov1ProposalTypes
 		};
@@ -64,6 +64,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				track_number: any;
 				type: any;
 				isSpam?: boolean;
+				isSpamReportInvalid?: boolean;
 		}[] = [];
 
 		let onChainPostsCount = 0;
@@ -110,6 +111,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					return {
 						...singlePost,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						title: data?.title || title
 					};
 				}
@@ -121,13 +123,20 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		}
 
 		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
+			let query = GET_PROPOSALS_LISTING_BY_TYPE;
+			if(network === AllNetworks.POLYMESH){
+				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
+				variables ={
+					limit: numListingLimit
+				};
+			}
 
 			let subsquidRes: any = {};
 			try {
 				subsquidRes = await fetchSubsquid({
 					network,
-					query: GET_PROPOSALS_LISTING_BY_TYPE,
-					variables: variables
+					query,
+					variables
 				});
 			} catch (error) {
 				const data = await fetchLatestSubsquare(network);
@@ -221,6 +230,9 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					}
 					return {
 						...onChainPost,
+						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
+						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title || subsquareTitle || null
 					};
 				}
@@ -293,8 +305,10 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					offChainPosts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						post_id: data?.id,
 						proposer: '',
+						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
 							id: topic_id,
@@ -360,6 +374,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			count:  onChainPostsCount + offChainPostsCount,
 			posts: deDupedAllPosts.slice(0, numListingLimit)
 		};
+
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
@@ -378,7 +393,7 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	const { govType, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getLatestActivityAllPosts({
 		govType,
@@ -387,9 +402,9 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	});
 
 	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

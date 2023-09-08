@@ -29,6 +29,7 @@ export interface IPostsRowData {
 	}
 	tip_id?: number;
 	spam_users_count?: number;
+  description?: string;
 }
 
 interface IPostsTableProps {
@@ -64,6 +65,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 		const id = isTip? hash: post_id;
 		const tableDataObj: IPostsRowData = {
 			created_at: created_at,
+			description: post?.description || '',
 			hash: isTip? hash?.substring(0,4): hash,
 			key: id,
 			post_id: id,
@@ -78,7 +80,6 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 		};
 
 		tableData.push(tableDataObj);
-		// }
 	});
 
 	return(<>

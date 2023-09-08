@@ -57,12 +57,12 @@ interface Props {
 	lastVote: ILastVote | undefined;
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
-  address: string;
+	address: string;
 }
 export interface INetworkWalletErr{
-message: string;
- description: string;
- error: number
+	message: string;
+	description: string;
+	error: number
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
@@ -220,8 +220,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				return;
 			}
 			//deposit balance
-			const depositBase = api.consts.multisig.depositBase.toString();
-			const depositFactor = api.consts.multisig.depositFactor.toString();
+			const depositBase = api.consts.multisig?.depositBase.toString();
+			const depositFactor = api.consts.multisig?.depositFactor.toString();
 			setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 			//initiator balance
 			const initiatorBalance = await api.query.system.account(address);
@@ -428,7 +428,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setLoadingStatus({ isLoading: true, message: '' });
 
 		let voteTx = null;
-
 		if(proposalType === ProposalType.OPEN_GOV){
 
 			if(vote === EVoteDecisionType.AYE ) {
@@ -614,7 +613,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`w-[600px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={
@@ -903,6 +902,5 @@ export default styled(VoteReferendum)`
 .vote-referendum .ant-segmented-item{
 	padding: 0px !important;
 }
-
 `;
 

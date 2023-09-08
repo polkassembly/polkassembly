@@ -6,8 +6,8 @@ import { ClockCircleOutlined,LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal, Skeleton, Spin, Tooltip } from 'antd';
-import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
+import { Button, Form, Modal, Spin, Tooltip, Skeleton } from 'antd';
+import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
@@ -54,6 +54,8 @@ import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
+import PIPsVoteInfo from './PIPs/PIPsVoteInfo';
+import PIPsVote from './PIPs/PIPsVote';
 import dynamic from 'next/dynamic';
 import { PlusOutlined } from '@ant-design/icons';
 import MoneyIcon from '~assets/icons/money-icon-gray.svg';
@@ -69,7 +71,6 @@ const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasur
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
-
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
 	className?: string
@@ -80,7 +81,9 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
-  trackName?: string;
+	trackName?: string;
+	pipsVoters?: IPIPsVoting[];
+	hash: string;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -119,7 +122,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, trackName } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, pipsVoters, hash, trackName } = props;
 	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
@@ -163,7 +166,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		gov2ReferendumStatus.SUBMITTED,
 		gov2ReferendumStatus.DECIDING,
 		gov2ReferendumStatus.CONFIRM_STARTED,
-		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED
+		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+		gov2ReferendumStatus.CONFIRM_ABORTED
 	].includes(post.status);
 
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -445,12 +449,36 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
 								const currentSupport = currentSupportData[currentSupportData.length - 1];
 
+								const currentApprovalDataLength = currentApprovalData.length;
+								const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
+								for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
+									const approval = approvalData[i];
+									if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'minute')) > 0) {
+										currentApprovalData.push({
+											...lastCurrentApproval,
+											x: approval.x
+										});
+									}
+								}
+								const currentSupportDataLength = currentSupportData.length;
+								const lastCurrentSupport = currentSupportData[currentSupportDataLength - 1];
+								for (let i = currentSupportDataLength; i < supportData.length; i++) {
+									const support = supportData[i];
+									if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'minute')) > 0) {
+										currentSupportData.push({
+											...lastCurrentSupport,
+											x: support.x
+										});
+									}
+								}
+
 								let newAPI: ApiPromise = api;
 								let approval: BigNumber | null = null;
 								let support: BigNumber | null = null;
 
 								try {
-									const status = (statusHistory || [])?.find((v) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+									const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+
 									if (status) {
 										const blockNumber = status.block;
 										if (blockNumber) {
@@ -475,7 +503,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								} catch (error) {
 									// console.log(error);
 								}
-
 								setProgress({
 									approval: approval? approval.toFormat(2, BigNumber.ROUND_UP): currentApproval?.y?.toFixed(1) as any,
 									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
@@ -656,20 +683,19 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
 						<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
 					</Tooltip>
-
-					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
+					{balance && <Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
 						<span>
 							<MoneyIcon className='mr-1'/>
-							{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+							{formatedBalance(balance?.toString(), unit)}{` ${unit}`}
 						</span>
-					</Tooltip>
+					</Tooltip>}
 
-					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
+					{conviction && <Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
 						<span title='Conviction'>
 							<ConvictionIcon className='mr-1'/>
 							{conviction}x
 						</span>
-					</Tooltip>
+					</Tooltip>}
 				</div>
 			</div>
 		);
@@ -789,8 +815,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							startTime={startTime}
 						/>
 					}
-
-					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.REFERENDUMS].includes(proposalType) &&
+					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.REFERENDUMS, ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS ].includes(proposalType) &&
 						<>
 							{
 								proposalType === ProposalType.REFERENDUMS?
@@ -863,25 +888,35 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</GovSidebarCard>
 
 														}
-													</> : <GovSidebarCard className='overflow-y-hidden'>
+													</>
+													: <GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
-														<VoteReferendum
-															address={address}
-															lastVote={lastVote}
-															setLastVote={setLastVote}
-															onAccountChange={onAccountChange}
-															referendumId={onchainId  as number}
-															proposalType={proposalType}
-														/>
-
+														{['polymesh'].includes(network)
+															? <PIPsVote
+																address={address}
+																lastVote={lastVote}
+																setLastVote={setLastVote}
+																onAccountChange={onAccountChange}
+																referendumId={onchainId  as number}
+																proposalType={proposalType}
+																hash={hash}
+															/> : <VoteReferendum
+																address={address}
+																lastVote={lastVote}
+																setLastVote={setLastVote}
+																onAccountChange={onAccountChange}
+																referendumId={onchainId  as number}
+																proposalType={proposalType}
+															/>
+														}
 														{RenderLastVote}
 
 													</GovSidebarCard>}
 											</>
 										}
-										<ReferendaV2Messages
+										{![ ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS ].includes(proposalType) && <ReferendaV2Messages
 											progress={progress}
-										/>
+										/>}
 
 										{(onchainId || onchainId === 0) &&
 											<>
@@ -931,7 +966,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										}
 									</>
 							}
-
 							{
 								(onchainId || onchainId === 0) &&
 								<Modal
@@ -945,8 +979,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								>
 									<VotersList
 										className={className}
+										pipsVoters={pipsVoters}
 										referendumId={onchainId as number}
 										voteType={getVotingTypeFromProposalType(proposalType)}
+										proposalType={proposalType}
 									/>
 								</Modal>
 							}
@@ -962,6 +998,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								}
 							</div>
 						</>
+					}
+					{[ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
+						<GovSidebarCard>
+							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number} tally={tally}/>
+						</GovSidebarCard>
+					</>
 					}
 
 					{proposalType === ProposalType.TIPS &&
@@ -986,6 +1028,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							tippers={post.tippers}
 						/>
 					</GovSidebarCard>
+					}
+					{
+						network.includes('polymesh')?
+							proposalType === ProposalType.TECHNICAL_PIPS || proposalType === ProposalType.UPGRADE_PIPS?
+								<GovSidebarCard>
+									<div className='flex mt-1 gap-2'>
+										<span className='text-sm tracking-wide text-bodyBlue'>This PIP is proposed via
+											{proposalType === ProposalType.TECHNICAL_PIPS? ' Technical Committee ': ' Upgrade Committee '}
+								& is not open to community voting
+										</span>
+									</div>
+								</GovSidebarCard>:
+								null:
+							null
 					}
 
 					{proposalType === ProposalType.BOUNTIES && <>

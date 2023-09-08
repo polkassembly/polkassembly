@@ -252,7 +252,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				id={id}
 			/>
 			{isPosted ? (
-				<div className="comment-message">
+				<div className="comment-message -mt-[4px]">
 					<div className="mt-6 w-[500px] text-center h-30 overflow-hidden">
 						<p className="truncate text-lightBlue">
 							&apos;{formContent}&apos;
@@ -282,10 +282,10 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 								isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
 									<textarea
 										name='content'
-										className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-2 suffixColor hover:border-pink_primary flex-1 input-container focus:border-pink_primary max-h-10`}
+										className={`resize-none w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-2 suffixColor hover:border-pink_primary flex-1 input-container focus:border-pink_primary max-h-10`}
 										onChange = {(e) => {onContentChange(e.target.value);adjustHeightByString(e.target.value);}}
 										placeholder={'Type your comment here'}
-										style={{ border: '1px solid #D2D8E0', padding: '4px 8px' }}
+										style={{ border: '1px solid #D2D8E0', padding: '8px 8px' }}
 									/>
 								</Form.Item>
 
@@ -310,7 +310,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 													)}
 													{!selectedIcon && (
 														<div className="w-10 h-10 mr-[7px]" onClick={() => setShowEmojiMenu(!showEmojiMenu) }>
-															<EmojiOption disabled={!content} emojiButton={true} icon={sentimentsIcons[sentiment]} currentSentiment={3} title={'Select Sentiment'} clickable={false} />
+															<EmojiOption disabled={!content} emojiButton={true} icon={sentimentsIcons[sentiment]} currentSentiment={3} clickable={false} />
 														</div>
 													)}
 													{selectedIcon && (

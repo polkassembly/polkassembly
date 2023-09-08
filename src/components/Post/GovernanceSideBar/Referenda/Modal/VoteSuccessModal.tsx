@@ -276,7 +276,7 @@ const VoteInitiatedModal = ({
 					Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing your reason for this vote?
 				</p>
 				<div className="form-group ml-4 form-container">
-					<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+					<PostCommentForm className='ml-4 -mt-[25px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 				</div>
 				<span className="quote quote--right top-[325px] right-[0px] h-[40px] w-[48px] text-center pt-[10px]" style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}>
 					<RightQuote/>

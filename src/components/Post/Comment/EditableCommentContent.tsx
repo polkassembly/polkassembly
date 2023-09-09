@@ -68,7 +68,6 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName, is_custom_username, proposer } = props;
 	const { comments, setComments, setTimelines } = useCommentDataContext();
-
 	const { network } = useContext(NetworkContext);
 	const { id, username, picture, loginAddress } = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
@@ -201,6 +200,36 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		}
 
 		setLoading(false);
+	};
+
+	const handleRetry= async() => {
+		console.log(comment);
+		const { data, error: addCommentError } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addPostComment', {
+			commentId: commentId,
+			content: comment.content,
+			postId: props.postId,
+			postType: props.proposalType,
+			trackNumber: track_number,
+			userId: id
+		});
+
+		if (addCommentError || !data) {
+			setErrorReply('There was an error in saving your reply.');
+			console.error('Error saving reply: ', addCommentError);
+			queueNotification({
+				header: 'Error!',
+				message: 'There was an error in saving your reply.',
+				status: NotificationStatus.ERROR
+			});
+		}
+
+		if(data){
+			setComments((prev) => {
+				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+				prev[key].map(comment => comment.id === commentId ? { ...comment, isError:false }: comment) ;
+				return prev;
+			});
+		}
 	};
 
 	const handleReplySave = async () => {
@@ -450,14 +479,15 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								>
 									<ThreeDotsIcon className=' mt-[-1px] ml-[6px] hover:bg-pink-100 rounded-xl'/>
 								</Dropdown>
+								{ comment.isError &&
 								<div className="flex text-xs text-lightBlue ml-[164px]">
 									<IconCaution className="text-2xl -mr-2 mt-[3px]"/>
 									<span className="m-0 p-0 mt-[4px]">Comment not posted</span>
-									<div className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>
+									<div onClick={handleRetry} className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>
 										<IconRetry className='text-2xl mt-[4px]'/>
 										<span className='m-0 p-0 -ml-2 mt-[4px]'>Retry</span>
 									</div>
-								</div>
+								</div>}
 							</div>
 
 							{/* Add Reply Form*/}

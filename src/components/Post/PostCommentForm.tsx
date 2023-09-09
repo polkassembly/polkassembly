@@ -11,7 +11,7 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import { ChangeResponseType } from '~src/auth/types';
-import { usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -20,6 +20,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
+import { v4 } from 'uuid';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -31,6 +32,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, setCurrentState } = props;
 	const { id, username, picture } = useUserDetailsContext();
+	const { comments, setComments, setTimelines } = useCommentDataContext();
 	const { postData: { postIndex, postType, track_number } } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
@@ -40,7 +42,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [isComment,setIsComment]=useState(false);
 	const [sentiment,setSentiment]=useState<number>(3);
 	const [isSentimentPost,setIsSentimentPost]=useState(false);
-	// const [isError, setIsError]=useState(false);
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -61,83 +62,17 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setModalOpen(true);
 	};
 
-	// const handleSave = async () => {
-	// 	await form.validateFields();
-	// 	const content = form.getFieldValue('content');
-	// 	if(!content) return;
-
-	// 	setLoading(true);
-
-	// 	const { data , error } = await nextApiClientFetch<IAddPostCommentResponse>( 'api/v1/auth/actions/addPostComment', {
-	// 		content,
-	// 		postId: postIndex,
-	// 		postType: postType,
-	// 		sentiment:isSentimentPost?sentiment:0,
-	// 		trackNumber: track_number,
-	// 		userId: id
-	// 	});
-
-	// 	if(error || !data) {
-	// 		setError(error || 'No data returned from the saving comment query');
-	// 		queueNotification({
-	// 			header: 'Failed!',
-	// 			message: error,
-	// 			status: NotificationStatus.ERROR
-	// 		});
-	// 	}
-
-	// 	if(data) {
-	// 		setContent('');
-	// 		form.resetFields();
-	// 		form.setFieldValue('content', '');
-	// 		global.window.localStorage.removeItem(commentKey());
-	// 		postIndex && createSubscription(postIndex);
-	// 		queueNotification({
-	// 			header: 'Success!',
-	// 			message: 'Comment created successfully.',
-	// 			status: NotificationStatus.SUCCESS
-	// 		});
-	// 		const comment=  {
-	// 			comment_reactions: {
-	// 				'👍': {
-	// 					count: 0,
-	// 					usernames: []
-	// 				},
-	// 				'👎': {
-	// 					count: 0,
-	// 					usernames: []
-	// 				}
-	// 			},
-	// 			content,
-	// 			created_at: new Date(),
-	// 			history: [],
-	// 			id: data?.id || '',
-	// 			profile: picture || '',
-	// 			replies: [],
-	// 			sentiment:isSentimentPost? sentiment : 0,
-	// 			updated_at: new Date(),
-	// 			user_id: id as any,
-	// 			username: username || ''
-	// 		};
-	// 		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
-	// 	}
-	// 	setLoading(false);
-	// 	setIsComment(false);
-	// 	setIsSentimentPost(false);
-	// 	setSentiment(3);
-	// };
-
 	const handleSave = async () => {
 		await form.validateFields();
 		const content = form.getFieldValue('content');
 		if (!content) return;
-		// setLoading(true);
 		setError('');
 		setContent('');
 		form.resetFields();
 		form.setFieldValue('content', '');
 		global.window.localStorage.removeItem(commentKey());
 		postIndex && createSubscription(postIndex);
+		const commentId = v4();
 		const comment=  {
 			comment_reactions: {
 				'👍': {
@@ -152,7 +87,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			content,
 			created_at: new Date(),
 			history: [],
-			id: content?.id || '',
+			id: commentId || '',
+			isError: false,
 			profile: picture || '',
 			replies: [],
 			sentiment:isSentimentPost? sentiment : 0,
@@ -161,6 +97,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			username: username || ''
 		};
 		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
+		console.log(comments, setTimelines);
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
@@ -173,7 +110,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			if (error || !data) {
 				console.error('API call failed:', error);
 				setError(error || 'No data returned from the saving comment query');
-				// setIsError(true);
+				setComments((prev) => {
+					const key = `${postIndex}_${ getSubsquidLikeProposalType(postType)}`;
+					const payload = Object.assign(prev, {});
+					payload[key] = prev[key].map( comment => comment.id === commentId ? { ...comment, isError: true } : comment);
+					return payload;
+				});
 				queueNotification({
 					header: 'Failed!',
 					message: error,

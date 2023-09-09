@@ -22,6 +22,7 @@ export interface IComment {
 	content: string;
 	created_at: Date;
 	id: string;
+	isError: boolean;
 	updated_at: Date;
 	replies: any[];
 	comment_reactions: IReactions;

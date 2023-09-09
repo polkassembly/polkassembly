@@ -47,7 +47,7 @@ Analyze the sentiment of the comments related to the post and determine if they 
 Post: "${post}"
 Comments:
 ${comments.map((comment, index) => {
-		return `${(index + 1)}. "${comment}."` ;
+		return `${(index + 1)}). "${comment}."` ;
 	}).join('\n')}
         `;
 		const url = 'https://api.openai.com/v1/engines/davinci/completions';

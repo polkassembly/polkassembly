@@ -38,9 +38,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 
 import { IconRetry } from '~src/ui-components/CustomIcons';
 import { IconCaution } from '~src/ui-components/CustomIcons';
-
-// import { cautionIcon } from '~assets/icons/Caution 2.svg';
-// import { retryIcon } from '~assets/icons/Refresh.svg';
+import { v4 } from 'uuid';
 
 interface IEditableCommentContentProps {
 	userId: number,
@@ -203,7 +201,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	};
 
 	const handleRetry= async() => {
-		console.log(comment);
 		const { data, error: addCommentError } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addPostComment', {
 			commentId: commentId,
 			content: comment.content,
@@ -236,6 +233,48 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		await replyForm.validateFields();
 		const replyContent = replyForm.getFieldValue('content');
 		if(!replyContent) return;
+		setErrorReply('');
+		global.window.localStorage.removeItem(replyKey(commentId));
+		const keys = Object.keys(comments);
+		setComments((prev) => {
+			const comments:any = Object.assign({}, prev);
+			for(const key of keys ){
+				let flag = false;
+				const commentId = v4();
+				if (prev?.[key]) {
+					comments[key] = prev[key].map((comment) => {
+						if (comment.id === commentId) {
+							if (comment?.replies && Array.isArray(comment.replies)) {
+								comment.replies.push({
+									content: replyContent,
+									created_at: new Date(),
+									id: commentId,
+									proposer: loginAddress,
+									updated_at: new Date(),
+									user_id: id,
+									user_profile_img: picture || '',
+									username: username
+								});
+							}
+							flag = true;
+						}
+						return {
+							...comment
+						};
+					});
+				}
+				if(flag){
+					break;
+				}
+			}
+			return comments;
+		});
+		replyForm.setFieldValue('content', '');
+		queueNotification({
+			header: 'Success!',
+			message: 'Your reply was added.',
+			status: NotificationStatus.SUCCESS
+		});
 
 		if(id){
 			setIsReplying(false);
@@ -259,51 +298,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					status: NotificationStatus.ERROR
 				});
 			}
-
-			if(data) {
-				setErrorReply('');
-				global.window.localStorage.removeItem(replyKey(commentId));
-				const keys = Object.keys(comments);
-				setComments((prev) => {
-					const comments:any = Object.assign({}, prev);
-					for(const key of keys ){
-						let flag = false;
-						if (prev?.[key]) {
-							comments[key] = prev[key].map((comment) => {
-								if (comment.id === commentId) {
-									if (comment?.replies && Array.isArray(comment.replies)) {
-										comment.replies.push({
-											content: replyContent,
-											created_at: new Date(),
-											id: data.id,
-											proposer: loginAddress,
-											updated_at: new Date(),
-											user_id: id,
-											user_profile_img: picture || '',
-											username: username
-										});
-									}
-									flag = true;
-								}
-								return {
-									...comment
-								};
-							});
-						}
-						if(flag){
-							break;
-						}
-					}
-					return comments;
-				});
-				replyForm.setFieldValue('content', '');
-				queueNotification({
-					header: 'Success!',
-					message: 'Your reply was added.',
-					status: NotificationStatus.SUCCESS
-				});
-			}
-
 			setLoadingReply(false);
 		}
 	};

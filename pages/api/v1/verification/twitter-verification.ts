@@ -40,12 +40,11 @@ const handler: NextApiHandler<any> = async (req, res) => {
   if(!twitterHandle) throw apiErrorWithStatusCode('Invalid twitter handle', 400);
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
   const userId = user?.id;
 
-	if(!userId) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if(!userId || !token) throw apiErrorWithStatusCode(messages.UNAUTHORISED, 403);
 
     const { oauthRequestToken, oauthRequestTokenSecret } = await getOAuthRequestToken(network);
 

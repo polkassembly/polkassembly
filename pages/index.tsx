@@ -35,6 +35,12 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
+import { useRouter } from 'next/router';
+
+const OnChainIdentity  = dynamic(() => import('~src/components/OnchainIdentity'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -174,7 +180,9 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const { setNetwork } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
 	const { id: userId } = useUserDetailsContext();
+	const router = useRouter();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
+	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(Boolean(router.query.identityVerification) || false);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -187,8 +195,8 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
 			setIsIdentityUnverified(info.identity?.judgements.length === 0);
-			if(info.identity?.judgements.length === 0) {
-				localStorage.removeItem('identityForm');
+			if(info.identity?.judgements.length !== 0) {
+			localStorage.removeItem('identityForm');
 			}
 		})
 			.then(unsub => { unsubscribe = unsub; })
@@ -255,6 +263,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					</div>
 				</div>
 			</main>
+			<OnChainIdentity open={openContinuingModal} setOpen={setOpenContinuingModal}/>
 		</>
 	);
 };

@@ -98,7 +98,7 @@ export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestTo
 		});
 
 		return {
-			data: 'Success',
+			data: twitterDocData?.twitter_handle,
 			error: null,
 			status: 200
 		};

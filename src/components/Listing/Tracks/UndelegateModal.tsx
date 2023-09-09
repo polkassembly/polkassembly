@@ -271,7 +271,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					</div>
 				</Spin>
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance} isMultisig={isMultisig} title={isMultisig ? 'Undelegation with Polkasafe initiated':''}/>
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance} isMultisig={isMultisig} title={isMultisig ? 'Undelegation with Polkasafe initiated':'Undelegated Successfully'}/>
 		</>
 	);
 };

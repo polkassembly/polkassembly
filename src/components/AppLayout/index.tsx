@@ -13,7 +13,7 @@ import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon, RootIcon, UpgradeCommitteePIPsIcon, CommunityPIPsIcon, SetIdentityIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon, RootIcon, UpgradeCommitteePIPsIcon, CommunityPIPsIcon, ApplayoutIdentityIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 
@@ -31,6 +31,8 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
+
+import IdentityCaution from '~assets/icons/identity-caution.svg';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),{
 	loading: () => <Skeleton.Button active />,
@@ -72,8 +74,9 @@ const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, img?: s
 				e.preventDefault();
 				handleSetIdentityClick();
 				}}>
-								<span className='text-xl selected-identity'><SetIdentityIcon /></span>
+								<span className='text-xl '><ApplayoutIdentityIcon /></span>
 			<span>Set on-chain identity</span>
+			<span className=' flex items-center'><IdentityCaution/></span>
 		</Link>
 		},
 		{
@@ -569,9 +572,6 @@ margin-top: -17px !important;
 }
 
 .sidebar .ant-menu-item-selected .anticon {
-	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
-}
-.selected-identity:hover{
 	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
 

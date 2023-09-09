@@ -19,6 +19,8 @@ import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
+import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
+import { SetIdentityIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -49,8 +51,8 @@ interface Propos{
 const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, setOpenAddressLinkedModal:openAddressModal }: Propos) => {
 
 	const { network } = useContext(NetworkContext);
-	const { setUserDetailsContextState } = useContext(UserDetailsContext);
-const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
+	const { setUserDetailsContextState, id: userId } = useContext(UserDetailsContext);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);
 	const [loading, setLoading]= useState<boolean>(false);
 	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, registerarFee: ZERO_BN });
@@ -64,8 +66,10 @@ const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(ad
 	const [step, setStep] = useState<number>(isIdentityCallDone ? 3 : 1);
 	const [identityHash, setIdentityHash] = useState<string>('');
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
+	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
 	const handleStateChange = (identityForm: any) => {
+		if(identityForm?.userId !== userId) return;
 		setName({ displayName: identityForm?.displayName || '', legalName: identityForm?.legalName || '' });
 		setSocials({ ...socials, email: identityForm?.email || '', twitter: identityForm?.twitter || '' });
 		form.setFieldValue('displayName', identityForm?.displayName || '');
@@ -217,9 +221,9 @@ const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(ad
 			closeIcon={<CloseIcon/>}
 			className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
 			title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>
-				<OnChainIdentityIcon/>
+				{step !==3 ? <span className='text-2xl'><SetIdentityIcon/></span> : <OnChainIdentityIcon/>}
 				<span className='text-bodyBlue'>{step !== 3 ? 'On-chain identity' : 'Socials Verification'}</span>
-			{isIdentityUnverified && step === 3 && <span className='text-xs font-semibold px-3 rounded-[4px] py-[6px] border-solid border-[1px] flex items-center bg-[#f6f7f9] border-[#D2D8E0] gap-2 text-bodyBlue'> <IdentityProgressIcon/> Progress</span>}
+			{isIdentityUnverified && step === 3 && <span className='text-xs font-semibold px-3 rounded-[4px] py-[6px] border-solid border-[1px] flex items-center bg-[#f6f7f9] border-[#D2D8E0] gap-2 text-bodyBlue'> <IdentityProgressIcon/>In Progress</span>}
 				</span>
 				}
 		>
@@ -257,11 +261,12 @@ const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(ad
 				changeStep= {setStep}
 				closeModal= {(open) => setOpen(!open)}
 				setSocials={setSocials}
+				setOpenSuccessModal={setOpenSuccessModal}
 				/>
           }
 			</Spin>
-
 		</Modal>
+		<DelegationSuccessPopup open={openSuccessModal} setOpen={setOpenSuccessModal} title='On-chain identity verified successfully '/>
 	</>
 	;
 };

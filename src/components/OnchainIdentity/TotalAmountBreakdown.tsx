@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -11,6 +11,7 @@ import { Button } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import IdentityIllustration from '~assets/icons/identity.svg';
+import { useUserDetailsContext } from '~src/context';
 
 interface Props{
   className?: string;
@@ -25,6 +26,17 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 	const { network } = useContext(NetworkContext);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
+	const { id: userId } = useUserDetailsContext();
+
+	useEffect(() => {
+		let identityForm: any = localStorage.getItem('identityForm');
+		identityForm = JSON.parse(identityForm);
+
+		localStorage.setItem('identityForm', JSON.stringify({
+			...identityForm,
+			userId
+		}));
+	},[network, userId]);
 
 	return <div className={className}>
 		<span className='flex justify-center items-center mt-6'><IdentityIllustration/></span>

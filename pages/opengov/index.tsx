@@ -125,8 +125,8 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
 			setIsIdentityUnverified(info.identity?.judgements.length === 0);
-			if(info.identity?.judgements.length === 0) {
-				localStorage.removeItem('identityForm');
+			if(info.identity?.judgements.length !== 0) {
+			localStorage.removeItem('identityForm');
 			}
 		})
 			.then(unsub => { unsubscribe = unsub; })

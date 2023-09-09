@@ -6,9 +6,10 @@ import { WarningOutlined } from '@ant-design/icons';
 import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getTwitterCallback } from 'pages/api/v1/verification/twitter-callback';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNetworkContext } from 'src/context';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
+import VerificationSuccessScreen from '~src/components/OnchainIdentity/VerificationSuccessScreen';
 import SEOHead from '~src/global/SEOHead';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
@@ -23,17 +24,20 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	});
 
 	if(data){
-		return { props: { network } };
+		return { props: { network, twitterHandle: data } };
 	}
 	return { props: { error: error || 'Error in getting twitter handle', network } };
 };
 
-const TwitterCallback = ({ error, network  }: { network: string, error: null | any}) => {
+const TwitterCallback = ({ error, network, twitterHandle  }: { network: string, error?: null | any, twitterHandle?: string}) => {
 	const { setNetwork } = useNetworkContext();
+	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(!error);
+
 	useEffect(() => {
 		setNetwork(network);
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return (
 		<>
@@ -50,6 +54,7 @@ const TwitterCallback = ({ error, network  }: { network: string, error: null | a
 					: <Loader/>
 				}
 			</Row>
+			<VerificationSuccessScreen open={identityEmailSuccess} social='Twitter' socialHandle={twitterHandle} onClose={() => setIdentityEmailSuccess(false) }/>
 		</>
 	);
 };

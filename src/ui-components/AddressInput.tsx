@@ -98,7 +98,6 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 		<div className={`${className} mt-6`}>
 			{label && <label className=' flex items-center text-sm mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-1' text={helpText}/> } </label>}
 			<div className={`${className} flex items-center`}>
-
 				{
 					isValid &&
 					<>

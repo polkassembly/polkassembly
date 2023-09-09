@@ -20,6 +20,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
 import AddressInput from '~src/ui-components/AddressInput';
 import { blake2AsHex } from '@polkadot/util-crypto';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const ZERO_BN = new BN(0);
 
@@ -80,7 +81,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			data = JSON.parse(data);
 		}
 		localStorage.setItem('identityForm', JSON.stringify({
-    ...data ,
+    ...data,
 		...field
 		}));
 
@@ -155,23 +156,39 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
+	const handleIdentityHashSave = async(hash: string) => {
+		if(!hash) return;
+		const { data, error } = await nextApiClientFetch(`api/v1/verification/save-identity-hash?identityHash=${hash}`);
+		if(data){
+			console.log('Identity hash successfully save');
+		}
+		else{
+			console.log(error);
+		}
+	};
+
 	const handleSetIdentity = async() => {
 		if(!api || !apiReady || !okAll)return;
 		const identityTx = api.tx?.identity?.setIdentity(info);
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
 		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-		const encodedTx = identityTx?.method.toHex();
+		const encodedTxHash = identityTx?.method.toHex();
 
 		startLoading(true);
 
-	const onSuccess = () => {
+	const onSuccess = async() => {
 		queueNotification({
 			header: 'Success!',
 			message: 'Transaction Successfull',
 			status: NotificationStatus.SUCCESS
 		});
-		setIdentityHash(blake2AsHex(encodedTx));
+		setIdentityHash(blake2AsHex(encodedTxHash));
 		startLoading(false);
+		closeModal(true);
+		setOpen(true);
+		handleLocalStorageSave({ setIdentity: true });
+		setIsIdentityCallDone(true);
+		await handleIdentityHashSave(encodedTxHash);
 	};
 		const onFailed = () => {
 			queueNotification({
@@ -179,11 +196,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				message: 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
-			closeModal(true);
-			setOpen(true);
-		startLoading(false);
-		handleLocalStorageSave({ setIdentity: true });
-		setIsIdentityCallDone(true);
+		setLoading(false);
 		};
 
 		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });

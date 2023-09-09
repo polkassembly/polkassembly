@@ -33,6 +33,7 @@ interface Props{
 	setLoading: (pre: boolean) => void;
 	perSocialBondFee: BN;
 	identityHash: string;
+	setOpenSuccessModal: (pre: boolean) => void;
 }
 interface ISocialLayout {
 	title: string,
@@ -42,6 +43,7 @@ interface ISocialLayout {
 	verified?: boolean;
 	status?: VerificationStatus;
 	loading: boolean;
+	fieldName?: ESocials;
 }
 interface IJudgementResponse {
 	message?: string;
@@ -54,7 +56,7 @@ export enum ESocials {
 	WEB = 'web'
 }
 
-const SocialsLayout = ({ title, description, value, onVerify, verified, status, loading }: ISocialLayout) => {
+const SocialsLayout = ({ title, description, value, onVerify, verified, status, loading, fieldName }: ISocialLayout) => {
 	return <Spin spinning={loading} className='-mt-4'>
 		<div className='ml-2 text-lightBlue h-[70px] flex gap-5'>
 		<span className='text-sm w-[60px] py-1.5'>{title}</span>
@@ -63,8 +65,8 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 				<span>{value}</span>
 				{verified ? <span className='flex gap-2 items-center justify-center text-xs text-[#8d99a9]'><VerifiedTick/>Verified</span> :<Button
 				onClick={onVerify}
-				className={`bg-pink_primary border-none text-xs font-medium text-white h-[30px] tracking-wide rounded-[4px] ${status === VerificationStatus.VERFICATION_EMAIL_SENT ? 'w-[120px]': 'w-[68px]'}`}
-				>{status === VerificationStatus.VERFICATION_EMAIL_SENT ? 'Check Verified' : 'Verify'}
+				className={`bg-pink_primary border-none text-xs font-medium text-white h-[30px] tracking-wide rounded-[4px] ${[VerificationStatus.VERFICATION_EMAIL_SENT, VerificationStatus.PLEASE_VERIFY_TWITTER]?.includes(status as VerificationStatus) ? 'w-[120px]': 'w-[68px]'}`}
+				>{(status === VerificationStatus.VERFICATION_EMAIL_SENT || (fieldName === ESocials.TWITTER && status === VerificationStatus.PLEASE_VERIFY_TWITTER)) ? 'Check Verified' : 'Verify'}
 					</Button>}
 				</div>
 				{!verified  && <span className='text-xs'>{description}</span>}
@@ -73,14 +75,24 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 	</Spin>;
 };
 
-const SocialVerification = ({ className, socials, onCancel, setLoading, closeModal, changeStep, setSocials, address, identityHash }: Props) => {
+const SocialVerification = ({ className, socials, onCancel, setLoading, closeModal, changeStep, setSocials, address, identityHash, setOpenSuccessModal }: Props) => {
 	const { email, twitter } = socials;
 	const [open, setOpen] = useState<boolean>(false);
 	const [status, setStatus] = useState({ email: '', twitter: '' });
-	const { id:userId } = useUserDetailsContext();
+	const { id: userId } = useUserDetailsContext();
 	const [ fieldLoading, setFieldLoading ] = useState< {twitter: boolean, email: boolean}>({ email: false, twitter: false });
+	const [twitterVerificationStart, setTwitterVerificationStart] = useState<boolean>(false);
 
 	const items: TimelineItemProps[] = [];
+
+	const handleTwitterVerificationClick = async() => {
+		if(twitterVerificationStart) {
+			await handleVerify(ESocials.TWITTER, true);
+		}else{
+		setTwitterVerificationStart(true);
+		await handleTwitterVerification();
+	}
+};
 
 	if(email?.value){
 		items.push(
@@ -100,18 +112,19 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 	}
  if(twitter?.value){
 	items.push(
-	{
-		children: <SocialsLayout
+		{
+			children: <SocialsLayout
 						title='Twitter'
 						description='Check your messages to verify your twitter username.'
-						onVerify={async() => { await handleTwitterVerification();}}
+						onVerify={handleTwitterVerificationClick}
 						value={twitter?.value}
 						verified={twitter?.verified}
+						status={twitterVerificationStart ? VerificationStatus.PLEASE_VERIFY_TWITTER : status?.twitter as VerificationStatus}
 						loading={fieldLoading.twitter}
-
+						fieldName={ESocials.TWITTER}
 						/>,
-		dot: <TwitterIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>,
-		key: 2
+						dot: <TwitterIcon className={` ${twitter?.verified ? 'bg-[#51D36E] text-white': 'bg-[#edeff3] text-[#576D8B]' } rounded-full text-xl p-2.5 '`}/>,
+						key: 2
 	});
 }
 const handleLocalStorageSave = (field: any) => {
@@ -124,8 +137,15 @@ const handleLocalStorageSave = (field: any) => {
 	...data ,
 	...field
 	}));
+	setSocials({
+		...socials,
+		email: { ...email, ...data?.email },
+		twitter: { ...twitter, ...data?.twitter }
+});
+
 };
 const handleVerify =  async(fieldName: ESocials, checkingVerified?: boolean, isNotificaiton?: boolean ) => {
+	if(socials[fieldName]?.verified) return;
 	setFieldLoading({ ...fieldLoading, [fieldName] : true });
 	const { data, error } = await nextApiClientFetch<IVerificationResponse>(`api/v1/verification?type=${fieldName}&checkingVerified=${Boolean(checkingVerified)}`,{
 	account: fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] : socials?.[fieldName]?.value,
@@ -133,11 +153,16 @@ const handleVerify =  async(fieldName: ESocials, checkingVerified?: boolean, isN
 	});
 
 	if(data){
-		console.log(data);
 		if(data?.status === VerificationStatus.ALREADY_VERIFIED){
-			fieldName === ESocials.EMAIL ? setStatus({ ...status,email: VerificationStatus?.ALREADY_VERIFIED }): setStatus({ ...status, twitter: VerificationStatus?.ALREADY_VERIFIED });
-			setSocials({ ...socials, email: { ...email, verified: true } });
-			handleLocalStorageSave({ email: { ...email, verified: true } });
+			if(ESocials.EMAIL === fieldName){
+				setSocials({ ...socials, email: { ...email, verified: true } });
+				setStatus({ ...status, email: VerificationStatus?.ALREADY_VERIFIED });
+				handleLocalStorageSave({ email: { ...email, verified: true } });
+			}else{
+				setSocials({ ...socials, twitter: { ...twitter, verified: true } });
+				setStatus({ ...status, twitter: VerificationStatus?.ALREADY_VERIFIED });
+				handleLocalStorageSave({ twitter: { ...twitter, verified: true } });
+			}
 			if(!checkingVerified){
 				queueNotification({
 					header: 'Verified!',
@@ -146,10 +171,16 @@ const handleVerify =  async(fieldName: ESocials, checkingVerified?: boolean, isN
 				});
 			}
 			setFieldLoading({ ...fieldLoading, [fieldName] : false });
-		}else if(checkingVerified && data?.status === VerificationStatus.VERFICATION_EMAIL_SENT ){
+
+	}else if(checkingVerified && data?.status === VerificationStatus.VERFICATION_EMAIL_SENT ){
 			setFieldLoading({ ...fieldLoading, [fieldName] : false });
+			if(ESocials.EMAIL === fieldName){
 			setSocials({ ...socials, email: { ...email, verified: false } });
 			handleLocalStorageSave({ email: { ...email, verified: false } });
+			}else{
+				setSocials({ ...socials, twitter: { ...twitter, verified: false } });
+				handleLocalStorageSave({ twitter: { ...twitter, verified: false } });
+			}
 		}
 		else if((!checkingVerified || isNotificaiton)){
 			setStatus({ ...status,email: VerificationStatus?.VERFICATION_EMAIL_SENT });
@@ -195,16 +226,21 @@ const handleJudgement = async() => {
 	setLoading(true);
 	const { data, error } = await nextApiClientFetch<IJudgementResponse>(`api/v1/verification/judgement-call?identityHash=${identityHash}&userAddress=${address}`);
 	if(data){
-	queueNotification({
-		header: 'Success!',
-		message: `Judgement call successfull with hash ${data?.hash || ''}`,
-		status: NotificationStatus.SUCCESS
-	});
-	console.log(' Success', data?.hash);
+	const { data: apiData, error: err } = await nextApiClientFetch('api/v1/verification/onchain-identity-via-polkassembly');
+	if(apiData){
+		console.log('identity_via_polkassembly key set');
+	}
+	else{
+		console.log(err);
+	}
 	localStorage.removeItem('identityForm');
 	localStorage.removeItem('identityAddress');
 	localStorage.removeItem('identityWallet');
+	setOpenSuccessModal(true);
+	closeModal(true);
 	setLoading(false);
+	setOpenSuccessModal(true);
+	closeModal(true);
 }
 else if(error){
 	queueNotification({
@@ -215,16 +251,32 @@ else if(error){
 	setLoading(false);
 	console.log(error);
 }
-
 };
 
 useEffect(() => {
 	(async() => {
+		await handleVerify(ESocials.TWITTER, true);
+		})();
+	(async() => {
 	await handleVerify(ESocials.EMAIL, true);
-	await handleVerify(ESocials.TWITTER, true);
 	})();
 // eslint-disable-next-line react-hooks/exhaustive-deps
 },[]);
+
+const handleProceedDisabled = () => {
+	let socialsCount = 0;
+	let verifiedCount = 0;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	Object.entries(socials).forEach(([key, value]) => {
+		if(value?.value){
+			socialsCount+=1;
+		}if(value?.verified){
+			verifiedCount+=1;
+		}
+	});
+	return socialsCount !== verifiedCount;
+};
+
 	return <div className={`${className} pl-4 border-white border-solid`}>
 		<Timeline
 		className='mt-8'
@@ -236,7 +288,8 @@ useEffect(() => {
 			</Button>
 			<Button
 			onClick={handleJudgement}
-				className={`bg-pink_primary text-sm border-none rounded-[4px] h-[40px] w-[134px] text-white tracking-wide ${(!true) && 'opacity-50'}`}
+			disabled={handleProceedDisabled()}
+				className={`bg-pink_primary text-sm border-none rounded-[4px] h-[40px] w-[134px] text-white tracking-wide ${(handleProceedDisabled()) && 'opacity-50'}`}
 			>
             Proceed
 			</Button>

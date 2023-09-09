@@ -6,8 +6,12 @@ import type { NextApiHandler } from 'next';
 import sgMail from '@sendgrid/mail';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
-import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
+import firebaseAdmin from '~src/services/firebaseInit';
 import { cryptoRandomStringAsync } from 'crypto-random-string';
+import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import authServiceInstance from '~src/auth/auth';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import messages from '~src/auth/utils/messages';
 
 interface IReq {
 	type: 'email' | 'twitter',
@@ -40,23 +44,24 @@ const firestore = firebaseAdmin.firestore();
 const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
 	const { type, checkingVerified } = req.query as unknown as IReq;
 	const { account, userId } = req.body;
+	const token = getTokenFromReq(req);
 
-	if (!account || !type || !userId) {
+	const user = await authServiceInstance.GetUser(token);
+
+	if(!userId || !user?.id) throw apiErrorWithStatusCode(messages.UNAUTHORISED, 403);
+
+	if (!account || !type) {
 		return res.status(400).json({ message: 'Please provide valid params.' });
 	}
 
 	const verificationToken = await cryptoRandomStringAsync({ length: 20, type: 'url-safe' });
 
-	if (type == 'email') {
-		const user = await firestore_db.collection('users').where('email', '==', account).where('email-verified', '==', true).limit(1).get();
-		if (user.docs[0]?.exists) {
-			return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
-		}
+	if (type === 'email') {
 
-		const tokenVerificationRef = firestore.collection('email_verification_tokens').doc(account);
+		const tokenVerificationRef = firestore.collection('email_verification_tokens').doc(String(userId));
 		const emailDataSnapshot = await tokenVerificationRef.get();
 		const emailData =  emailDataSnapshot.data();
-		console.log(userId === (emailData?.user_id));
+
 		if(emailData?.user_id === userId){
 		if(emailData?.verified ) {
 			return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
@@ -78,7 +83,6 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 				console.log('error', error);
 				return res.status(500).json({ message: 'Error sending email' });
 			});
-console.log(VerificationStatus.VERFICATION_EMAIL_SENT);
 		await tokenVerificationRef.set({
 			created_at: new Date(),
 			email: account,
@@ -87,21 +91,25 @@ console.log(VerificationStatus.VERFICATION_EMAIL_SENT);
 			user_id: userId,
 			verified: false
 		});
-	} else if (type == 'twitter') {
+	} else if (type === 'twitter') {
 
-		const twitterVerification = await firestore.collection('twitter_verification_tokens').doc(account).get();
-		const data = twitterVerification.data();
+		const twitterVerificationDoc = await firestore.collection('twitter_verification_tokens').doc(String(userId)).get();
 
-		if (data?.verified && data?.user_id === userId) {
+		if(!twitterVerificationDoc.exists) throw apiErrorWithStatusCode(`No doc found with the user id ${userId}`, 400);
+
+		const twitterData = twitterVerificationDoc.data();
+
+		if(twitterData?.twitter_handle !== account) throw apiErrorWithStatusCode('Twitter handle does not match', 400);
+
+		if (twitterData?.verified && twitterData?.user_id === userId) {
 			return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
 		}else if(checkingVerified === true) {
 			return res.status(200).json({ status: VerificationStatus?.NOT_VERIFIED });
 		}
 		else {
-			const twitterVerificationRef = firestore.collection('twitter_verification_tokens').doc(account);
-			await twitterVerificationRef.set({
+			await twitterVerificationDoc.ref.set({
 				created_at: new Date(),
-				twitter: account,
+				twitter_handle: account,
 				user_id: userId,
 				verified: false
 			});

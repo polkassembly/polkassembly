@@ -3,9 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { WarningOutlined } from '@ant-design/icons';
-import { Row, Skeleton } from 'antd';
+import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
@@ -21,11 +20,6 @@ import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-const OnChainIdentity  = dynamic(() => import('~src/components/OnchainIdentity'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
-
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { token, identityVerification } = query;
@@ -35,7 +29,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const VerifyEmail = ({ network, token, identityVerification }: { network: string, token: string, identityVerification: boolean }) => {
 	const { setNetwork } = useNetworkContext();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(false);
-	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(false);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -110,7 +103,6 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 		identityFrom = JSON.parse(identityFrom);
 		setHandle(identityFrom?.email?.value );
 	}
-
 			(async() => {
 
 			await handleIdentityEmailTokenVerify();
@@ -133,8 +125,7 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 					: <Loader/>
 				}
 			</Row>
-			<VerificationSuccessScreen open={identityEmailSuccess} social='Email' socialHandle={handle} onClose={() => {setIdentityEmailSuccess(false); setOpenContinuingModal(true);} }/>
-			<OnChainIdentity open={openContinuingModal} setOpen={setOpenContinuingModal}/>
+			<VerificationSuccessScreen open={identityEmailSuccess} social='Email' socialHandle={handle} onClose={() => setIdentityEmailSuccess(false) }/>
 		</>
 	);
 };

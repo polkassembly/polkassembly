@@ -7,6 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { VerificationStatus } from '..';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 export interface IVerifyResponse {
 	status: boolean;
@@ -17,19 +18,19 @@ const firestore = firebaseAdmin.firestore();
 const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) => {
 	const { token, type } = req.query;
 	if (!token) {
-		return res.status(400).json({ message: 'Please provide a token to verify' });
+		throw apiErrorWithStatusCode('Please provide a token to verify', 400);
 	}
 
 	const tokenVerification = await firestore.collection('email_verification_tokens').where('token', '==', token).limit(1).get();
 	const data = tokenVerification?.docs[0]?.data?.();
 
 	if (type == 'email') {
-		if (tokenVerification.docs.length === 0 || !tokenVerification.docs[0].exists) {
-			return res.status(400).json({ message: 'Token verification failed.' });
+		if (tokenVerification.empty || !tokenVerification.docs[0].exists) {
+			throw apiErrorWithStatusCode('Token verification failed.', 400);
 		}
 
 		if (data?.verified) {
-			return res.status(400).json({ message: 'Token already verified.' });
+			throw apiErrorWithStatusCode('Token already verified.', 400);
 		}
 
 		const tokenVerificationRef = tokenVerification.docs[0].ref;
@@ -41,7 +42,7 @@ const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) 
 
 	}
 
-	return res.status(200).send({ message: 'Email verified successfully', status: true });
+	return res.status(200).json({ message: 'Email verified successfully', status: true });
 
 };
 

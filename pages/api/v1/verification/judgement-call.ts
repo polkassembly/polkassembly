@@ -20,23 +20,26 @@ export async function getJudgementCall(params: Props) : Promise<Response> {
 
 	if(!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK , 400);
 
-if(!identityHash || !userAddress) throw apiErrorWithStatusCode('Invalid identityHash or userAddress', 400);
+	if(!identityHash || !userAddress) throw apiErrorWithStatusCode('Invalid identityHash or userAddress', 400);
+	try {
+		const response = await fetch('https://us-central1-individual-node-watcher.cloudfunctions.net/judgementCall', {
+			body: JSON.stringify({ identityHash, userAddress }),
+			headers: {
+				'Authorization': `${process.env.IDENTITY_JUDGEMENT_AUTH}`,
+				'Content-Type': 'application/json'
+			},
+			method: 'POST'
+		});
 
-	const response = await fetch('https://us-central1-individual-node-watcher.cloudfunctions.net/judgementCall', {
-		body: JSON.stringify({ identityHash, userAddress }),
-		headers: {
-			'Authorization': `${process.env.IDENTITY_JUDGEMENT_AUTH}`,
-			'Content-Type': 'application/json'
-		},
-		method: 'POST'
-	});
-
-	return response;
+		return response;
+	} catch (error) {
+		throw apiErrorWithStatusCode('Failed to fetch judgement call', 500);
+	}
 }
 
 const handler: NextApiHandler<{hash: string} | MessageType> = async (req, res) => {
-  const network = String(req.headers['x-network']);
-  const { identityHash, userAddress } = req.query;
+	const network = String(req.headers['x-network']);
+	const { identityHash, userAddress } = req.query;
 
 	const result = await getJudgementCall({
 		identityHash: String(identityHash),

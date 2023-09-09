@@ -79,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
+	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -196,7 +196,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
 			setIsIdentityUnverified(info.identity?.judgements.length === 0);
 			if(info.identity?.judgements.length !== 0) {
-			localStorage.removeItem('identityForm');
+				localStorage.removeItem('identityForm');
 			}
 		})
 			.then(unsub => { unsubscribe = unsub; })
@@ -213,24 +213,24 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				chainProperties[network]?.gTag ? <><Script
 					src={`https://www.googletagmanager.com/gtag/js?id=${chainProperties[network].gTag}`}
 					strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">
-						{`
+					{`
 					window.dataLayer = window.dataLayer || [];
 					function gtag(){dataLayer.push(arguments);}
 					gtag('js', new Date());
 
 					gtag('config', ${chainProperties[network].gTag});
 				`}
-					</Script></> : null
+				</Script></> : null
 			}
 
 			< SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network} />
 			<main>
-			<div className='flex justify-between mr-2'>
-			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
-			{isIdentityUnverified && <div className='pl-3 pr-8 py-2 border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] text-sm text-[#E91C26] flex items-center rounded-md '>
-				<IdentityCaution />
-				<span className='ml-2'>Social verification incomplete</span>
-				</div>}
+				<div className='flex justify-between mr-2'>
+					<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
+					{isIdentityUnverified && <div className='pl-3 pr-8 py-2 border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] text-sm text-[#E91C26] flex items-center rounded-md '>
+						<IdentityCaution />
+						<span className='ml-2'>Social verification incomplete</span>
+					</div>}
 				</div>
 				<div className="mt-6 mx-1">
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}

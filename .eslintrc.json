@@ -40,7 +40,7 @@
 		"arrow-spacing":["warn",{ "before": true, "after": true }],
 		"comma-dangle": ["error", "never"],
 		"header/header": [2, "./header.js"],
-		"indent": "off",
+		"indent": ["error", "tab"],
 		"no-multiple-empty-lines": ["error", {"max": 1}],
 		"no-tabs": ["error", { "allowIndentationTabs": true }],
 		"no-trailing-spaces": ["warn"],

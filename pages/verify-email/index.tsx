@@ -100,13 +100,13 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 		let identityFrom:any = localStorage.getItem('identityForm') || '';
 
 		if(identityFrom){
-		identityFrom = JSON.parse(identityFrom);
-		setHandle(identityFrom?.email?.value );
-	}
-			(async() => {
+			identityFrom = JSON.parse(identityFrom);
+			setHandle(identityFrom?.email?.value );
+		}
+		(async() => {
 
 			await handleIdentityEmailTokenVerify();
-			})();
+		})();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 

@@ -81,8 +81,8 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			data = JSON.parse(data);
 		}
 		localStorage.setItem('identityForm', JSON.stringify({
-    ...data,
-		...field
+			...data,
+			...field
 		}));
 
 	};
@@ -147,8 +147,8 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
 		setTxFee(fee);
 		if(initialLoading){
-		getGasFee('', true, fee);
-}
+			getGasFee('', true, fee);
+		}
 	};
 
 	useEffect(() => {
@@ -176,27 +176,27 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 
 		startLoading(true);
 
-	const onSuccess = async() => {
-		queueNotification({
-			header: 'Success!',
-			message: 'Transaction Successfull',
-			status: NotificationStatus.SUCCESS
-		});
-		setIdentityHash(blake2AsHex(encodedTxHash));
-		startLoading(false);
-		closeModal(true);
-		setOpen(true);
-		handleLocalStorageSave({ setIdentity: true });
-		setIsIdentityCallDone(true);
-		await handleIdentityHashSave(encodedTxHash);
-	};
+		const onSuccess = async() => {
+			queueNotification({
+				header: 'Success!',
+				message: 'Transaction Successfull',
+				status: NotificationStatus.SUCCESS
+			});
+			setIdentityHash(blake2AsHex(encodedTxHash));
+			startLoading(false);
+			closeModal(true);
+			setOpen(true);
+			handleLocalStorageSave({ setIdentity: true });
+			setIsIdentityCallDone(true);
+			await handleIdentityHashSave(encodedTxHash);
+		};
 		const onFailed = () => {
 			queueNotification({
 				header: 'failed!',
 				message: 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
-		setLoading(false);
+			setLoading(false);
 		};
 
 		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
@@ -206,22 +206,22 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		<Form
 			form={form}
 			initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
-			>
-				{availableBalance?.gte(ZERO_BN) && availableBalance.lte(registerarFee.add(gasFee)) &&  <Alert showIcon type='info' className='text-sm text-bodyBlue rounded-[4px]' message='Insufficient Balance.'/>}
-						<div className='flex justify-between items-center mt-6 text-lightBlue'>
-						<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
-						<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
-						</div>
-						<AddressInput
-							name='address'
-							defaultAddress={address}
-							onChange={() => startLoading(false)}
-							inputClassName={'font-normal text-sm h-[40px] text-bodyBlue'}
-							className='text-bodyBlue text-sm font-normal -mt-6'
-							disabled
-							size='large'
-							identiconSize={30}
-						/>
+		>
+			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(registerarFee.add(gasFee)) &&  <Alert showIcon type='info' className='text-sm text-bodyBlue rounded-[4px]' message='Insufficient Balance.'/>}
+			<div className='flex justify-between items-center mt-6 text-lightBlue'>
+				<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
+				<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
+			</div>
+			<AddressInput
+				name='address'
+				defaultAddress={address}
+				onChange={() => startLoading(false)}
+				inputClassName={'font-normal text-sm h-[40px] text-bodyBlue'}
+				className='text-bodyBlue text-sm font-normal -mt-6'
+				disabled
+				size='large'
+				identiconSize={30}
+			/>
 			<div className='mt-6'>
 				<label className='text-sm text-lightBlue'>Display Name <span className='text-[#FF3C5F]'>*</span></label>
 				<Form.Item name='displayName' rules={[{
@@ -234,12 +234,12 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						}
 					} }]}>
 					<Input
-					onBlur={(e) => getGasFee(e.target.value)}
-					name='displayName'
-					className='h-[40px] rounded-[4px] text-bodyBlue mt-0.5'
-					placeholder='Enter a name for your identity '
-					value={displayName}
-					onChange={(e) => {
+						onBlur={(e) => getGasFee(e.target.value)}
+						name='displayName'
+						className='h-[40px] rounded-[4px] text-bodyBlue mt-0.5'
+						placeholder='Enter a name for your identity '
+						value={displayName}
+						onChange={(e) => {
 							onChangeName({ ...name, displayName: e.target.value });
 							handleInfo();
 							handleLocalStorageSave({ displayName:e.target.value });
@@ -259,7 +259,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						}
 					} }]}>
 					<Input
-					onBlur={(e) => getGasFee(e.target.value)}
+						onBlur={(e) => getGasFee(e.target.value)}
 						name='legalName'
 						className='h-[40px] rounded-[4px] text-bodyBlue'
 						placeholder='Enter your full name'
@@ -309,7 +309,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 							}
 						} }]}>
 						<Input
-						onBlur={(e) => getGasFee(e.target.value)}
+							onBlur={(e) => getGasFee(e.target.value)}
 							name='email'
 							value={email?.value}
 							placeholder='Enter your email address'
@@ -338,7 +338,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						} }]}>
 
 						<Input
-						onBlur={(e) => getGasFee(e.target.value)}
+							onBlur={(e) => getGasFee(e.target.value)}
 							name='twitter'
 							value={twitter?.value}
 							placeholder='@YourTwitterName'
@@ -378,27 +378,27 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 
 		{((!gasFee.eq(ZERO_BN)) || loading) && <Spin spinning={loading} tip='calculating gas fee'>
 
-		<Alert
-			className='mt-6 rounded-[4px]'
-			type='info'
-			showIcon
-			message={<span className='text-bodyBlue text-sm font-medium '>Total Fees of {formatedBalance((bondFee.add(gasFee).add(registerarFee)).toString(), unit)} {unit} will be applied to the transaction.<span className='text-pink_primary text-xs cursor-pointer ml-1' onClick={() => setHideDetails(!hideDetails)}>{hideDetails ? 'Show Details' : 'Hide Details'}</span></span>}
-			description={hideDetails ? '' : <div className='flex gap-1 flex-col text-sm mr-[18px]'>
-				<span className='flex justify-between text-xs'>
-					<span className='text-lightBlue'>Gas Fee</span>
-					<span className='text-bodyBlue font-medium'>{formatedBalance(gasFee.toString(), unit)} {unit}</span>
-				</span>
-				<span className='flex justify-between text-xs'>
-					<span className='text-lightBlue'>Registrar fees</span>
-					<span className='text-bodyBlue font-medium'>{formatedBalance(registerarFee.toString(), unit)} {unit}</span>
-				</span>
-				<span className='flex justify-between text-xs'>
-					<span className='text-lightBlue'>Total</span>
-					<span className='text-bodyBlue font-medium'>{formatedBalance(registerarFee.add(gasFee).toString(), unit)} {unit}</span>
-				</span>
-			</div>
-			}
-		/></Spin>}
+			<Alert
+				className='mt-6 rounded-[4px]'
+				type='info'
+				showIcon
+				message={<span className='text-bodyBlue text-sm font-medium '>Total Fees of {formatedBalance((bondFee.add(gasFee).add(registerarFee)).toString(), unit)} {unit} will be applied to the transaction.<span className='text-pink_primary text-xs cursor-pointer ml-1' onClick={() => setHideDetails(!hideDetails)}>{hideDetails ? 'Show Details' : 'Hide Details'}</span></span>}
+				description={hideDetails ? '' : <div className='flex gap-1 flex-col text-sm mr-[18px]'>
+					<span className='flex justify-between text-xs'>
+						<span className='text-lightBlue'>Gas Fee</span>
+						<span className='text-bodyBlue font-medium'>{formatedBalance(gasFee.toString(), unit)} {unit}</span>
+					</span>
+					<span className='flex justify-between text-xs'>
+						<span className='text-lightBlue'>Registrar fees</span>
+						<span className='text-bodyBlue font-medium'>{formatedBalance(registerarFee.toString(), unit)} {unit}</span>
+					</span>
+					<span className='flex justify-between text-xs'>
+						<span className='text-lightBlue'>Total</span>
+						<span className='text-bodyBlue font-medium'>{formatedBalance(registerarFee.add(gasFee).toString(), unit)} {unit}</span>
+					</span>
+				</div>
+				}
+			/></Spin>}
 		<div className='-mx-6 mt-6 border-0 border-solid flex justify-end border-t-[1px] gap-4 px-6 pt-5 border-[#E1E6EB] rounded-[4px]'>
 			<Button onClick={onCancel} className='border-pink_primary text-sm border-[1px]  h-[40px] rounded-[4px] w-[134px] text-pink_primary tracking-wide'>
                Cancel

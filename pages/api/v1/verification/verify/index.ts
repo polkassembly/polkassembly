@@ -7,7 +7,8 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { VerificationStatus } from '..';
-import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import messages from '~src/auth/utils/messages';
+import { isValidNetwork } from '~src/api-utils';
 
 export interface IVerifyResponse {
 	status: boolean;
@@ -17,29 +18,35 @@ const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) => {
 	const { token, type } = req.query;
-	if (!token) {
-		throw apiErrorWithStatusCode('Please provide a token to verify', 400);
+	const network = String(req.headers['x-network']);
+
+	if(!network || isValidNetwork(network)) res.status(400).json({ message: messages.INVALID_NETWORK });
+
+	if (!token || !type) {
+		return res.status(400).json({ message: 'Please provide both token and type to verify' });
 	}
 
 	const tokenVerification = await firestore.collection('email_verification_tokens').where('token', '==', token).limit(1).get();
 	const data = tokenVerification?.docs[0]?.data?.();
 
-	if (type == 'email') {
+	if (type === 'email') {
 		if (tokenVerification.empty || !tokenVerification.docs[0].exists) {
-			throw apiErrorWithStatusCode('Token verification failed.', 400);
+			res.status(400).json({ message: 'Token verification failed.' });
 		}
 
 		if (data?.verified) {
-			throw apiErrorWithStatusCode('Token already verified.', 400);
+			res.status(400).json({ message: 'Token already verified' });
 		}
 
 		const tokenVerificationRef = tokenVerification.docs[0].ref;
-
-		await tokenVerificationRef.update({
-			status: VerificationStatus?.ALREADY_VERIFIED,
-			verified: true
-		});
-
+		try {
+			await tokenVerificationRef.update({
+				status: VerificationStatus?.ALREADY_VERIFIED,
+				verified: true
+			});
+		} catch (error) {
+			return res.status(500).json({ message: 'Failed to update token verification status.' });
+		}
 	}
 
 	return res.status(200).json({ message: 'Email verified successfully', status: true });

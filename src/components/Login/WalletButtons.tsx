@@ -5,6 +5,7 @@
 import { Divider } from 'antd';
 import React from 'react';
 import { Wallet } from 'src/types';
+
 import WalletButton from '../WalletButton';
 import { useNetworkContext } from '~src/context';
 import { WalletIcon } from './MetamaskLogin';

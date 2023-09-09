@@ -12,10 +12,14 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import messages from '~src/auth/utils/messages';
+import { isValidNetwork } from '~src/api-utils';
 
 interface IReq {
 	type: 'email' | 'twitter',
 	checkingVerified?:boolean;
+	account: string;
+	network: string;
+	token: any;
 }
 
 export enum VerificationStatus {
@@ -41,17 +45,16 @@ if (apiKey) {
 
 const firestore = firebaseAdmin.firestore();
 
-const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
-	const { type, checkingVerified } = req.query as unknown as IReq;
-	const { account, userId } = req.body;
-	const token = getTokenFromReq(req);
+export const getSocialVerification = async({ account, type, checkingVerified, network, token }: IReq ): Promise<any> => {
 
+	if(!network || isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	const user = await authServiceInstance.GetUser(token);
+	const userId = user?.id;
 
-	if(!userId || !user?.id) throw apiErrorWithStatusCode(messages.UNAUTHORISED, 403);
+	if(!token || !userId) throw apiErrorWithStatusCode(messages.UNAUTHORISED, 403);
 
 	if (!account || !type) {
-		return res.status(400).json({ message: 'Please provide valid params.' });
+		throw apiErrorWithStatusCode('Please provide valid params.',400);
 	}
 
 	const verificationToken = await cryptoRandomStringAsync({ length: 20, type: 'url-safe' });
@@ -63,12 +66,12 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 		const emailData =  emailDataSnapshot.data();
 
 		if(emailData?.user_id === userId){
-		if(emailData?.verified ) {
-			return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
+			if(emailData?.verified ) {
+				return VerificationStatus.ALREADY_VERIFIED;
+			}
+			if(emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT) VerificationStatus.VERFICATION_EMAIL_SENT;
 		}
-		if(emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT) return res.status(200).json({ status: VerificationStatus.VERFICATION_EMAIL_SENT });
-	}
-	if(checkingVerified === true) return res.status(200).json({ status: VerificationStatus?.NOT_VERIFIED });
+		if(checkingVerified === true) return VerificationStatus?.NOT_VERIFIED;
 
 		const message = {
 			from: FROM.email,
@@ -78,10 +81,10 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 		};
 		await sgMail
 			.send(message)
-			.then(() => res.json({ message: 'Verification email sent successfully' }))
-			.catch(error => {
+			.then(() => { throw apiErrorWithStatusCode('Verification email sent successfully', 400);})
+			.catch((error: any) => {
 				console.log('error', error);
-				return res.status(500).json({ message: 'Error sending email' });
+				throw  apiErrorWithStatusCode('Error sending email', 400);
 			});
 		await tokenVerificationRef.set({
 			created_at: new Date(),
@@ -102,9 +105,9 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 		if(twitterData?.twitter_handle !== account) throw apiErrorWithStatusCode('Twitter handle does not match', 400);
 
 		if (twitterData?.verified && twitterData?.user_id === userId) {
-			return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
+			return  VerificationStatus.ALREADY_VERIFIED;
 		}else if(checkingVerified === true) {
-			return res.status(200).json({ status: VerificationStatus?.NOT_VERIFIED });
+			return VerificationStatus?.NOT_VERIFIED;
 		}
 		else {
 			await twitterVerificationDoc.ref.set({
@@ -114,9 +117,28 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 				verified: false
 			});
 
-			return res.status(200).json({ message: VerificationStatus.PLEASE_VERIFY_TWITTER });
 		}
+		return VerificationStatus.PLEASE_VERIFY_TWITTER;
+
+	}};
+const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
+	const { account, type, checkingVerified } = req.query as unknown as  IReq;
+	const network = String(req.headers['x-network']);
+	const token = getTokenFromReq(req);
+
+	const { data, error } = await getSocialVerification({
+		account: String(account),
+		checkingVerified: checkingVerified,
+		network,
+		token,
+		type
+	});
+
+	if(error){
+		return res.status(400).json({ message: error });
 	}
+	return res.status(200).json({ status: data });
+
 };
 
 export default withErrorHandling(handler);

@@ -8,23 +8,18 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log",
-    "server": "npm run build -- --watch | firebase emulators:start --only functions"
+    "logs": "firebase functions:log"
   },
   "engines": {
     "node": "18"
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@polkadot/api": "^10.9.1",
-    "@polkadot/types": "^10.9.1",
     "algoliasearch": "^4.17.1",
     "axios": "^1.4.0",
-    "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "dayjs": "^1.11.8",
     "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.4.1",
+    "firebase-functions": "^4.3.1",
     "html-to-text": "^9.0.5",
     "marked": "^5.1.0"
   },

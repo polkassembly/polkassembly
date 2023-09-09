@@ -1,14 +1,9 @@
 import algoliasearch from 'algoliasearch';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import cors = require('cors');
 import fetchSubsquid from './utils/fetchSubsquid';
 import { htmlOrMarkdownToText } from './utils/htmlOrMarkdownToText';
 import dayjs from 'dayjs';
-import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
-import { TypeRegistry } from '@polkadot/types';
-import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { ISubmittableResult } from '@polkadot/types/types';
 
 admin.initializeApp();
 const logger = functions.logger;
@@ -18,49 +13,6 @@ const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) 
     trackNumber
   }
 }`;
-
-const corsHandler = cors({ origin: true });
-
-async function judgementPromise(api: ApiPromise, judgementCall: SubmittableExtrinsic<'promise', ISubmittableResult>, proxyAccount: any) {
-	return new Promise((resolve, reject) => {
-		judgementCall.signAndSend(proxyAccount, async ({ status, txHash, events }: any) => {
-			if (status.isInvalid) {
-				reject(new Error('Transaction invalid'));
-			} else if (status.isFinalized) {
-				logger.info(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
-				// TODO: change to polkadot
-				logger.info(`identity.provideJudgement tx: https://westend.subscan.io/extrinsic/${txHash}`);
-
-				for (const { event } of events) {
-					if (event.method === 'ExtrinsicSuccess') {
-						resolve(status.hash);
-					} else if (event.method === 'ExtrinsicFailed') {
-						logger.error('Transaction failed');
-
-						const dispatchError = (event.data as any)?.dispatchError;
-						let error = '';
-
-						if (dispatchError?.isModule) {
-							const errorModule = (event.data as any)?.dispatchError?.asModule;
-							const { method, section, docs } = api.registry.findMetaError(errorModule);
-							error = `${section}.${method} : ${docs.join(' ')}`;
-						} else if (dispatchError?.isToken) {
-							error = `${dispatchError.type}.${dispatchError.asToken.type}`;
-						} else {
-							error = dispatchError?.type;
-						}
-
-						logger.error(`Error: ${error}`);
-						reject(new Error(error || 'Transaction failed'));
-					}
-				}
-			}
-		}).catch((error) => {
-			logger.error('Judgement call failed: ', error);
-			reject(new Error(error));
-		});
-	});
-}
 
 exports.onPostWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}').onWrite(async (change, context) => {
 	const { network, postType, postId } = context.params;
@@ -94,7 +46,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	const parsedContent = htmlOrMarkdownToText(post?.content || '');
 
 	// Create an object to be indexed by Algolia
-	let postRecord: { [index: string]: any } = {
+	let postRecord: {[index: string]: any} = {
 		...post,
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		network,
@@ -264,34 +216,4 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 		.then(({ objectID }) => {
 			logger.info('Post indexed successfully:', { objectID });
 		});
-});
-
-export const judgementCall = functions.runWith({
-	timeoutSeconds: 540
-}).https.onRequest(async (req, res) => {
-	corsHandler(req, res, async () => {
-		try {
-			const { userAddress, identityHash } = req.body;
-			logger.info('request body: ', { userAddress, identityHash });
-
-			const registry = new TypeRegistry();
-			const wsProvider = new WsProvider('wss://westend-rpc.polkadot.io');
-			const api = await ApiPromise.create({ provider: wsProvider });
-			await api.isReady;
-
-			const keyring = new Keyring({ type: 'sr25519' });
-			const proxyAccount = keyring.addFromJson(JSON.parse(process.env.KEYPAIR_JSON as string));
-			proxyAccount.unlock(process.env.KEYPAIR_PASSWORD as string);
-
-			const registrarIndex = 3;
-			const judgement = registry.createType('IdentityJudgement', 'Reasonable');
-			const judgementCall = api.tx.identity.provideJudgement(registrarIndex, userAddress, judgement, identityHash);
-			const hash = await judgementPromise(api, judgementCall, proxyAccount);
-
-			return res.status(200).json({ hash });
-		} catch (err) {
-			logger.info(err);
-			return res.status(500).json({ message: err || 'Judgement transaction call failed' });
-		}
-	});
 });

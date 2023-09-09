@@ -264,6 +264,11 @@ export interface NetworkSocials {
   description: string
 }
 
+export enum EGovType {
+	OPEN_GOV = 'open_gov',
+	GOV1 = 'gov1'
+}
+
 export interface NetworkEvent {
   content: string,
   end_time: Date,
@@ -360,10 +365,6 @@ export interface Post {
   createdOnPolkassembly?: boolean,
 }
 
-export enum EGovType {
-	OPEN_GOV = 'open_gov',
-	GOV1 = 'gov1'
-}
 export interface IPostTag {
   name: string;
   last_used_at: Date;

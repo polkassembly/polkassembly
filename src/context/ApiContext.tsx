@@ -90,6 +90,7 @@ export function ApiContextProvider(
 		if (!wsProvider && !props.network) return;
 		if(wsProvider.startsWith('light://substrate-connect/')) {
 			console.log('light client = ', wsProvider);
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 			provider = new ScProvider(Sc, relaySpecs[props.network || '']);
 			setLightProvider(provider);
 		}else{

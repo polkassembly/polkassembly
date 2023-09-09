@@ -212,7 +212,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
-					const commentsCount = (await postDocRef.collection('comments').get()).size;
+					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get())?.data()?.count;
 					return { ...timeline, commentsCount };
 				});
 				const timelines:Array<any>  = await Promise.allSettled(commentPromises);
@@ -237,7 +237,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 					const type = getFirestoreProposalType(timeline.type) as ProposalType;
 					const index = timeline.type === 'Tips'? timeline.hash: timeline.index;
 					const postDocRef = postsByTypeRef(network, type).doc(String(index));
-					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 					const comments = await getComments(commentsSnapshot, postDocRef, network, type, index);
 					return comments;
 				});
@@ -254,10 +254,10 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				if (post.post_link) {
 					const { id, type } = post.post_link;
 					const postDocRef = postsByTypeRef(network, type).doc(String(id));
-					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
 				}
-				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType, Number(postId));
 				if (post.comments && Array.isArray(post.comments)) {
 					post.comments = post.comments.concat(comments);

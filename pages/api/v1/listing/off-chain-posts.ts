@@ -63,19 +63,21 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 		const postsSnapshotArr = (filterBy && filterBy.length > 0)
 			? await offChainCollRef
 				.where('tags','array-contains-any',filterBy)
+				.where('isDeleted','==',false)
 				.orderBy(orderedField, order)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get()
 			:await offChainCollRef
+				.where('isDeleted','==',false)
 				.orderBy(orderedField, order)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get();
 
 		const count = (filterBy && filterBy.length > 0)
-			?(await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count
-			: (await offChainCollRef.count().get()).data().count;
+			?(await offChainCollRef.where('tags','array-contains-any',filterBy).where('isDeleted','==',false).count().get()).data().count
+			: (await offChainCollRef.where('isDeleted','==',false).count().get()).data().count;
 
 		const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 			if (doc && doc.exists) {
@@ -90,7 +92,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						'👎': reactions['👎']?.count || 0
 					};
 
-					const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).count().get();
 
 					const created_at = docData.created_at;
 					const { topic, topic_id } = docData;

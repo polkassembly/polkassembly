@@ -41,6 +41,7 @@ class AI {
 	}
 
 	async analyzeSentiment(post: string, comments: string[]) {
+		// Constructing Prompt
 		const prompt = `
 Analyze the sentiment of the comments related to the post and determine if they are for or against the post. Provide reasons for the sentiment expressed in each comment.
 

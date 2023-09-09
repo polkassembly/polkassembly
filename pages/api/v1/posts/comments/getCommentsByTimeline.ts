@@ -13,6 +13,7 @@ import { ProposalType, getFirestoreProposalType } from '~src/global/proposalType
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { ITimelineData } from '~src/context/PostDataContext';
 import { ESentiments } from '~src/types';
+import { getSubSquareComments } from './subsquare-comments';
 
 export interface ITimelineComments {
   comments: {
@@ -61,6 +62,21 @@ export const getCommentsByTimeline = async ({
 				allTimelineComments[key] = result.value;
 			}
 		});
+
+		// Subsquare Comments
+		try{
+			const lastTimeline = postTimeline[postTimeline.length-1];
+			const proposalIndex = lastTimeline.type === 'Tip' ? lastTimeline.hash : lastTimeline.index;
+			const subsquareComments = await getSubSquareComments(getFirestoreProposalType(lastTimeline.type), network, proposalIndex);
+			if(subsquareComments.length>0){
+				const key= `${lastTimeline.index}_${lastTimeline.type}`;
+				allTimelineComments[key] = [...(allTimelineComments?.[key]||[]), ...subsquareComments];
+			}
+		}catch(e){
+			console.log('error in fetching subsquare comments', e);
+		}
+
+		// Sentiments
 		const sentiments:any = {};
 		const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
 		if (postTimeline && Array.isArray(postTimeline) && postTimeline.length > 0) {

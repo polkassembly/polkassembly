@@ -187,7 +187,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							'👎': reactions['👎']?.count || 0
 						};
 
-						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+						const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 						const created_at = docData.created_at;
 						const { topic, topic_id } = docData;
@@ -290,7 +290,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					'👎': reactions['👎']?.count || 0
 				};
 
-				const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+				const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 				const postDoc = await postDocRef.get();
 				if (postDoc && postDoc.exists) {
 					const data = postDoc.data();
@@ -501,7 +501,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							'👎': reactions['👎']?.count || 0
 						};
 
-						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+						const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 						const newProposer = proposer || null;
 						const postDoc = await postDocRef.get();
 						if (postDoc && postDoc.exists) {
@@ -574,7 +574,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							'👍': reactions['👍']?.count || 0,
 							'👎': reactions['👎']?.count || 0
 						};
-						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+						const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 						const newProposer = proposer || null;
 						const postDoc = await postDocRef.get();
 						if (postDoc && postDoc.exists) {
@@ -686,7 +686,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						'👎': reactions['👎']?.count || 0
 					};
 
-					const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 					const postDoc = await postDocRef.get();
 					if (postDoc && postDoc.exists) {
 						const data = postDoc.data();

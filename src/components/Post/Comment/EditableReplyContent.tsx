@@ -7,7 +7,7 @@ import { Button, Form, Tooltip } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
-import { NotificationStatus } from 'src/types';
+import { EReportType, NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
@@ -21,6 +21,7 @@ import ReportButton from '../ActionsBar/ReportButton';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	userId: number;
@@ -38,7 +39,7 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress , allowed_roles } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
@@ -240,6 +241,36 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		}
 	};
 
+	const removeReplyContent = () => {
+		const keys = Object.keys(comments);
+		setComments((prev:any) => {
+			const comments:any = Object.assign({}, prev);
+			for(const key of keys ){
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev[key].map((comment:any) => {
+						if (comment.id === commentId) {
+							comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
+							flag = true;
+						}
+						return {
+							...comment
+						};
+					});
+				}
+				if(flag){
+					break;
+				}
+			}
+			return comments;
+		});
+		queueNotification({
+			header: 'Success!',
+			message: 'The reply has been deleted.',
+			status: NotificationStatus.SUCCESS
+		});
+	};
+
 	const deleteReply = async () => {
 		setLoading(true);
 		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
@@ -247,7 +278,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
 			postType: reply.post_type || postType,
 			replyId,
-			trackNumber: track_number
+			userId: id
 		});
 
 		if (deleteReplyError || !data) {
@@ -258,35 +289,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				status: NotificationStatus.ERROR
 			});
 		}
-
 		if (data) {
-			const keys = Object.keys(comments);
-			setComments((prev:any) => {
-				const comments:any = Object.assign({}, prev);
-				for(const key of keys ){
-					let flag = false;
-					if (prev?.[key]) {
-						comments[key] = prev[key].map((comment:any) => {
-							if (comment.id === commentId) {
-								comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
-								flag = true;
-							}
-							return {
-								...comment
-							};
-						});
-					}
-					if(flag){
-						break;
-					}
-				}
-				return comments;
-			});
-			queueNotification({
-				header: 'Success!',
-				message: 'Your reply was deleted.',
-				status: NotificationStatus.SUCCESS
-			});
+			removeReplyContent();
 		}
 		setLoading(false);
 	};
@@ -339,8 +343,12 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 										}
 									</Button>
 								}
-								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
-								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
+								{
+									id === userId ? <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>
+										:
+										allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-pink_primary text-xs leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} type={EReportType.REPLY} onSuccess={removeReplyContent} commentId={commentId} replyId={replyId} postId={postIndex}/>
+								}
+								{id && !isEditing && <ReportButton className='text-xs text-pink_primary' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 
 								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
 									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${reply.reply_source ? 'disabled-reply' : ''}` }>

@@ -167,7 +167,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 				}
 			}
 		}
-		const discussionsQuerySnapshot = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('user_id', '==', numUserId).get();
+		const discussionsQuerySnapshot = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('isDeleted', '==', false).where('user_id', '==', numUserId).get();
 		const discussionsPromise = discussionsQuerySnapshot.docs.map(async (doc) => {
 			const data = doc.data();
 			if (doc && doc.exists && data) {

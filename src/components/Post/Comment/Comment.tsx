@@ -38,6 +38,7 @@ export interface IComment {
 	vote?:string | null;
 	votes?:[];
 	isRow?:boolean;
+	isDeleted?:boolean;
 }
 
 interface ICommentProps {

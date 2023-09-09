@@ -112,12 +112,12 @@ export interface IPostResponse {
 	};
 	decision?: string;
 	last_edited_at?: string | Date;
-	[key: string]: any;
 	gov_type?: 'gov_1' | 'open_gov' ;
 	tags?: string[] | [];
 	history?: IPostHistory[];
 	pips_voters?: IPIPsVoting[];
 	title?: string;
+	[key: string]: any;
 }
 
 export type IReaction = '👍' | '👎';
@@ -383,7 +383,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			};
 
 			const replyIds: string[] = [];
-			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
+			const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted','==',false).orderBy('created_at', 'asc').get();
 			repliesSnapshot.docs.forEach((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
@@ -814,6 +814,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			version:postData?.version,
 			vote_threshold: postData?.threshold?.type
 		};
+
 		// Timeline
 		updatePostTimeline(post, postData);
 
@@ -986,6 +987,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					}
 				}
 				post.post_link = post_link;
+				post.isSpam = data?.isSpam || false;
+				post.isSpamReportInvalid = data?.isSpamReportInvalid || false;
 			}
 
 			if(post.content === '' || post.title === '' || post.title === undefined || post.content === undefined){
@@ -1000,7 +1003,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
-					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
+					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get()).data().count;
 					return { ...timeline, commentsCount };
 				});
 				const timelines:Array<any> = await Promise.allSettled(commentPromises);
@@ -1025,7 +1028,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					const post_index = (timeline.type === 'Tip'? timeline.hash: timeline.index);
 					const type = getFirestoreProposalType(timeline.type) as ProposalType;
 					const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
 					return comments;
 				});
@@ -1042,10 +1045,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				if (post.post_link) {
 					const { id, type } = post.post_link;
 					const postDocRef = postsByTypeRef(network, type).doc(String(id));
-					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
 				}
-				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 				const comments = await getComments(commentsSnapshot, postDocRef, network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType), (strProposalType === ProposalType.TIPS? strPostId: numPostId));
 				if (post.comments && Array.isArray(post.comments)) {
 					post.comments = post.comments.concat(comments);
@@ -1070,8 +1073,18 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 		post.post_reactions = getReactions(postReactionsQuerySnapshot);
 
-		// Check if it is a spam or not
-		post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId), 'post');
+		// spam users count
+		if(post?.isSpam) {
+			const threshold = process.env.REPORTS_THRESHOLD || 50;
+			post.spam_users_count = Number(threshold);
+		} else {
+			// Check if it is a spam or not
+			post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId), 'post');
+		}
+
+		if(post?.isSpamReportInvalid) {
+			post.spam_users_count = 0;
+		}
 
 		if (!post.content || post.content?.trim().length === 0) {
 			if (remark) {
@@ -1131,35 +1144,6 @@ export const checkReportThreshold = (totalUsers?: number) => {
 	return totalUsers || 0;
 };
 
-// expects optional proposalType and postId of proposal
-const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
-	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress } = req.query;
-
-	// TODO: take proposalType and postId in dynamic pi route
-
-	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
-	const { data, error, status } = await getOnChainPost({
-		isExternalApiCall: true,
-		network,
-		noComments:false,
-		postId,
-		proposalType,
-		voterAddress
-	});
-
-	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
-		if (data.summary) {
-			delete data.summary;
-		}
-		res.status(status).json(data);
-	}
-};
-
-export default withErrorHandling(handler);
-
 export const updatePostTimeline = (post: any, postData: any) => {
 	if (post && postData) {
 		const isStatus = {
@@ -1208,3 +1192,32 @@ export const updatePostTimeline = (post: any, postData: any) => {
 		}
 	}
 };
+
+// expects optional proposalType and postId of proposal
+const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
+	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress } = req.query;
+
+	// TODO: take proposalType and postId in dynamic pi route
+
+	const network = String(req.headers['x-network']);
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+	const { data, error, status } = await getOnChainPost({
+		isExternalApiCall: true,
+		network,
+		noComments:false,
+		postId,
+		proposalType,
+		voterAddress
+	});
+
+	if(error || !data) {
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+	}else {
+		if (data.summary) {
+			delete data.summary;
+		}
+		return res.status(status).json(data);
+	}
+};
+
+export default withErrorHandling(handler);

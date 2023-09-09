@@ -25,12 +25,12 @@ export async function getNotificationSettings(token: string){
 
 async function handler(req: NextApiRequest, res: NextApiResponse<{notification_preferences: IUserNotificationSettings} | MessageType>) {
 	const token = getTokenFromReq(req);
-	if (!token) res.status(400).json({ message: 'Token not found' });
+	if (!token) return res.status(400).json({ message: 'Token not found' });
 
 	const notification_preferences = await getNotificationSettings(token);
 	if(!notification_preferences) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	res.status(200).json({ notification_preferences });
+	return res.status(200).json({ notification_preferences });
 }
 
 export default withErrorHandling(handler);

@@ -36,7 +36,7 @@ export const getCommentsByTimeline = async ({
 			const post_index = timeline.type === 'Tip' ? timeline.hash : timeline.index;
 			const type = getFirestoreProposalType(timeline.type) as ProposalType;
 			const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-			const commentsSnapshot = await postDocRef.collection('comments').get();
+			const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 			const timelineComments = await getComments(
 				commentsSnapshot,
 				postDocRef,
@@ -70,8 +70,8 @@ export const getCommentsByTimeline = async ({
 				for(let i = 0; i < sentimentsKey.length; i++){
 					const key = sentimentsKey[i];
 					sentiments[key]= sentiments[key] ?
-						sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
-						(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
+						sentiments[key] + (await postDocRef.collection('comments').where('isDeleted','==',false).where('sentiment', '==', i+1).count().get()).data().count :
+						(await postDocRef.collection('comments').where('isDeleted','==',false).where('sentiment', '==', i+1).count().get()).data().count;
 				}
 			}
 		}
@@ -109,9 +109,9 @@ const handler: NextApiHandler<
 	});
 
 	if (error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 	} else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

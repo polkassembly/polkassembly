@@ -31,7 +31,6 @@ import { EGovType } from '~src/global/proposalType';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { UserDetailsContextType } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-// import { UserDetailsContextType } from '~src/types';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -86,15 +85,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 			};
 		});
 	};
-	// useEffect(() => {
-	// 	if(router.pathname==='/opengov'){
-	// 		setSelectedGov(EGovType.OPEN_GOV);
-	// 	}else{
-	// 		setSelectedGov(EGovType.GOV1);
-
-	// 	}
-
-	// },[router]);
 
 	useEffect(() => {
 		if(network && !isOpenGovSupported(network)){
@@ -178,7 +168,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 
 					<div className='flex items-center'>
 						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] mr-[8px] md:mr-[10px] ml-[16px]'></span>
-						<h2 className={`m-0 p-0 ${sidedrawer ? 'ml-[200px]' : 'ml-[76px]'} text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]`}>
+						<h2 className={`m-0 p-0 ${sidedrawer ? 'ml-[200px]' : 'ml-[64px]'} text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]`}>
 							{
 								govType === EGovType.OPEN_GOV ? 'OpenGov': 'Gov1'
 							}

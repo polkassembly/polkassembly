@@ -28,6 +28,7 @@ jobs:
         with:
           debug: true
           review_comment_lgtm: true
+          openai_heavy_model: gpt-3.5-turbo
           path_filters: |
             !.next/**
             !**/*.lock

@@ -50,7 +50,7 @@ const SuccessState = ({ className, open, close, changeStep , openPreModal, name,
 			changeStep(3);
 			openPreModal(false);
 		}
-	}
+		}
 		footer={false}
 		maskClosable={false}
 	><>

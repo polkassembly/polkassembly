@@ -33,7 +33,7 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 			<label className='text-xl font-semibold text-bodyBlue tracking-[0.15%] -mt-2'>{social} verified successfully</label>
 			{socialHandle && <div className='text-2xl text-pink_primary font-semibold mt-4'>{socialHandle}</div>}
 			<Button className='mt-6 bg-pink_primary border-none text-white rounded-[4px] h-[40px] text-sm'
-			onClick={() => router.push(`/?identityVerification=${true}`)}
+				onClick={() => router.push(`/?identityVerification=${true}`)}
 			>
 				Continue verification
 			</Button>

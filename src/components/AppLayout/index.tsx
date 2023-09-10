@@ -69,15 +69,15 @@ const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, img?: s
 		{
 			key: 'set on-chain identity',
 			label: <Link className={`text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2 -ml-1 ${className}`} href={''}
-			onClick={(e) => {
-				e.stopPropagation();
-				e.preventDefault();
-				handleSetIdentityClick();
+				onClick={(e) => {
+					e.stopPropagation();
+					e.preventDefault();
+					handleSetIdentityClick();
 				}}>
-								<span className='text-xl '><ApplayoutIdentityIcon /></span>
-			<span>Set on-chain identity</span>
-			<span className=' flex items-center'><IdentityCaution/></span>
-		</Link>
+				<span className='text-xl '><ApplayoutIdentityIcon /></span>
+				<span>Set on-chain identity</span>
+				<span className=' flex items-center'><IdentityCaution/></span>
+			</Link>
 		},
 		{
 			key: 'settings',
@@ -134,7 +134,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
-  useEffect(() => {
+	useEffect(() => {
 		const handleRouteChange = () => {
 			if(router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post' ){
 				setPreviousRoute(router.asPath);
@@ -195,13 +195,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
 			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
 		] : [],
-    PIPsItems:(chainProperties[network]?.subsquidUrl && (network === 'polymesh')) ? [
+		PIPsItems:(chainProperties[network]?.subsquidUrl && (network === 'polymesh')) ? [
 			getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='text-white mt-1.5'/>),
 			getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='text-white mt-1.5'/>),
 			getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='text-white mt-1.5'/>)
 		] :[]
 	};
-  if (isGrantsSupported(network)) {
+	if (isGrantsSupported(network)) {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
@@ -385,12 +385,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
-  const handleMenuClick = (menuItem: any) => {
+	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
 		setSidedrawer(false);
 	};
-  const handleLogout = async (username: string) => {
+	const handleLogout = async (username: string) => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
 		if(!router.query?.username) return;
@@ -401,12 +401,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const handleIdentityButtonClick = () => {
 		const address = localStorage.getItem('identityAddress');
 		// if(id){
-			if(address?.length){
-				setOpen(!open);
-			}else {
-				setOpenAddressLinkedModal(true);
-			}
-		};
+		if(address?.length){
+			setOpen(!open);
+		}else {
+			setOpenAddressLinkedModal(true);
+		}
+	};
 
 	const userDropdown = getUserDropDown( handleIdentityButtonClick, handleLogout, picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
 

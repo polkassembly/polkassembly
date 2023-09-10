@@ -150,7 +150,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 		}else{
 			setOpen(false);
 			setStep(1);
-	}};
+		}};
 
 	useEffect(() => {
 		const address = localStorage.getItem('identityAddress') || '';
@@ -161,11 +161,11 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 
 	const handleIdentityButtonClick = () => {
 		// if(id){
-			if(address?.length){
-				setOpen(!open);
-			}else {
-				openAddressModal ? openAddressModal?.(true) : setOpenAddressLinkedModal(true);
-			}
+		if(address?.length){
+			setOpen(!open);
+		}else {
+			openAddressModal ? openAddressModal?.(true) : setOpenAddressLinkedModal(true);
+		}
 		// }
 		// else{
 		// setOpenLoginPrompt(true);
@@ -175,14 +175,14 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 	return <>
 		<div onClick={handleIdentityButtonClick} className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'>Set on-chain identity</div>
 		<AddressConnectModal
-		closable
-		linkAddressNeeded
-		open={addressModal ? addressModal : openAddressLinkedModal}
-		setOpen={openAddressModal ? openAddressModal : setOpenAddressLinkedModal}
-		walletAlertTitle='On chain identity.'
-		localStorageWalletKeyName='identityWallet'
-		localStorageAddressKeyName ='identityAddress'
-		onConfirm={() => setOpen(true)}
+			closable
+			linkAddressNeeded
+			open={addressModal ? addressModal : openAddressLinkedModal}
+			setOpen={openAddressModal ? openAddressModal : setOpenAddressLinkedModal}
+			walletAlertTitle='On chain identity.'
+			localStorageWalletKeyName='identityWallet'
+			localStorageAddressKeyName ='identityAddress'
+			onConfirm={() => setOpen(true)}
 		/>
 		<Modal
 			maskClosable={false}
@@ -191,13 +191,13 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 				setOpen(true);
 				setIsExitModal(false);
 			}
-		}
+			}
 			footer={false}
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals`}
 			closable={false}
 			title={<div className='text-lg font-semibold -mx-6 text-bodyBlue items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>
     Exit Verification
- </div>}>
+			</div>}>
 			<div className='mt-6'>
 				<span className='text-bodyBlue text-sm'>Your verification is pending. Are you sure you want to exit verification process? </span>
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
@@ -223,47 +223,47 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 			title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>
 				{step !==3 ? <span className='text-2xl'><SetIdentityIcon/></span> : <OnChainIdentityIcon/>}
 				<span className='text-bodyBlue'>{step !== 3 ? 'On-chain identity' : 'Socials Verification'}</span>
-			{isIdentityUnverified && step === 3 && <span className='text-xs font-semibold px-3 rounded-[4px] py-[6px] border-solid border-[1px] flex items-center bg-[#f6f7f9] border-[#D2D8E0] gap-2 text-bodyBlue'> <IdentityProgressIcon/>In Progress</span>}
-				</span>
-				}
+				{isIdentityUnverified && step === 3 && <span className='text-xs font-semibold px-3 rounded-[4px] py-[6px] border-solid border-[1px] flex items-center bg-[#f6f7f9] border-[#D2D8E0] gap-2 text-bodyBlue'> <IdentityProgressIcon/>In Progress</span>}
+			</span>
+			}
 		>
 			<Spin spinning={loading} className='-mt-6'>
 				{step === 1 && <TotalAmountBreakdown loading={loading} txFee={txFee} perSocialBondFee={perSocialBondFee} changeStep={setStep}/>}
 				{
-				step === 2 && <IdentityForm
-				setIsIdentityCallDone = {setIsIdentityCallDone}
-					className= 'mt-3'
-					txFee= {txFee}
-					name= {name}
-					form = {form}
-					onChangeName= {setName}
-					socials= {socials}
-					onChangeSocials= {setSocials}
-					address= {address}
-					setTxFee= {setTxFee}
-					startLoading= {setLoading}
-					onCancel= {handleCancel}
-					perSocialBondFee= {perSocialBondFee}
-					changeStep= {(step) => setStep(step)}
-					closeModal= {(open) => setOpen(!open)}
-					setIdentityHash={setIdentityHash}
-				/>
+					step === 2 && <IdentityForm
+						setIsIdentityCallDone = {setIsIdentityCallDone}
+						className= 'mt-3'
+						txFee= {txFee}
+						name= {name}
+						form = {form}
+						onChangeName= {setName}
+						socials= {socials}
+						onChangeSocials= {setSocials}
+						address= {address}
+						setTxFee= {setTxFee}
+						startLoading= {setLoading}
+						onCancel= {handleCancel}
+						perSocialBondFee= {perSocialBondFee}
+						changeStep= {(step) => setStep(step)}
+						closeModal= {(open) => setOpen(!open)}
+						setIdentityHash={setIdentityHash}
+					/>
 				}
 				{
-				step === 3 && <SocialVerification
-				identityHash={identityHash}
-				socials= {socials}
-				address= {address}
-				startLoading= {setLoading}
-				onCancel= {handleCancel}
-				perSocialBondFee= {perSocialBondFee}
-				setLoading={setLoading}
-				changeStep= {setStep}
-				closeModal= {(open) => setOpen(!open)}
-				setSocials={setSocials}
-				setOpenSuccessModal={setOpenSuccessModal}
-				/>
-          }
+					step === 3 && <SocialVerification
+						identityHash={identityHash}
+						socials= {socials}
+						address= {address}
+						startLoading= {setLoading}
+						onCancel= {handleCancel}
+						perSocialBondFee= {perSocialBondFee}
+						setLoading={setLoading}
+						changeStep= {setStep}
+						closeModal= {(open) => setOpen(!open)}
+						setSocials={setSocials}
+						setOpenSuccessModal={setOpenSuccessModal}
+					/>
+				}
 			</Spin>
 		</Modal>
 		<DelegationSuccessPopup open={openSuccessModal} setOpen={setOpenSuccessModal} title='On-chain identity verified successfully '/>

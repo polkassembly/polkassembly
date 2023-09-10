@@ -56,7 +56,7 @@ const executeTx = async({ api, network, tx, address, params= {}, errorMessageFal
 				}
 			}
 		}
-}).catch((error: string) => {
+	}).catch((error: string) => {
 		console.log(':( transaction failed');
 		console.error('ERROR:', error);
 		onFailed(errorMessageFallback);

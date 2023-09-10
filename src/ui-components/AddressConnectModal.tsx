@@ -505,16 +505,16 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 				</div>}
 
 				{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert
-				message={`For using ${walletAlertTitle}:`}
-				description={
-				<ul className='mt-[-5px] text-sm'>
-					<li>Give access to Polkassembly on your selected wallet.</li>
-					<li>Add an address to the selected wallet.</li>
-					</ul>
-				}
-				showIcon
-				className='mt-4'
-				type='info'
+					message={`For using ${walletAlertTitle}:`}
+					description={
+						<ul className='mt-[-5px] text-sm'>
+							<li>Give access to Polkassembly on your selected wallet.</li>
+							<li>Add an address to the selected wallet.</li>
+						</ul>
+					}
+					showIcon
+					className='mt-4'
+					type='info'
 				/>
 				}
 				{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert

@@ -41,7 +41,7 @@ const InprogressState = ({ className, open, close, changeStep , openPreModal, so
 	};
 
 	return <Modal
-	centered
+		centered
 		open={open}
 		className={`${poppins.variable} ${poppins.className} w-[650px] max-sm:w-full`}
 		wrapClassName={className}
@@ -51,7 +51,7 @@ const InprogressState = ({ className, open, close, changeStep , openPreModal, so
 			changeStep(3);
 			openPreModal(false);
 		}
-	}
+		}
 		footer={false}
 		maskClosable={false}
 	><>
@@ -60,22 +60,22 @@ const InprogressState = ({ className, open, close, changeStep , openPreModal, so
 				<label className='text-xl font-semibold text-bodyBlue tracking-[0.0015em] mt-4'>Email verification in progress</label>
 				<div className='text-2xl text-pink_primary font-semibold mt-4'>Check your email!</div>
 				<div className=' mt-4 w-full text-sm shrink-0 text-center tracking-wide flex flex-col items-center justify-center '>
-				<span className='flex shrink-0'>A verification link has been sent to your mail address</span>
-				<u className='text-pink_primary font-medium'><a target='_blank' href='https://mail.google.com/' rel="noreferrer">{email?.value}</a></u>
+					<span className='flex shrink-0'>A verification link has been sent to your mail address</span>
+					<u className='text-pink_primary font-medium'><a target='_blank' href='https://mail.google.com/' rel="noreferrer">{email?.value}</a></u>
 				</div>
 			</div>
 
 			<Button
-			onClick={() => {
-				close(true);
-				handleVerified();
-				changeStep(3);
-				openPreModal(true);
-			}}
-			className='bg-pink_primary text-sm mt-4 w-full rounded-[4px] border-none h-[40px] text-white tracking-wide'
+				onClick={() => {
+					close(true);
+					handleVerified();
+					changeStep(3);
+					openPreModal(true);
+				}}
+				className='bg-pink_primary text-sm mt-4 w-full rounded-[4px] border-none h-[40px] text-white tracking-wide'
 			>
         Verified successfully
-				</Button>
+			</Button>
 		</>
 	</Modal>;
 };

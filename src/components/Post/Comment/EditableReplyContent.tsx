@@ -102,6 +102,41 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		await form.validateFields();
 		const newContent = form.getFieldValue('content');
 		if(!newContent) return;
+		setError('');
+		global.window.localStorage.removeItem(editReplyKey(replyId));
+		form.setFieldValue('content', '');
+		const keys = Object.keys(comments);
+		setComments((prev:any) => {
+			const comments:any = Object.assign({}, prev);
+			for(const key of keys ){
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev[key].map((comment:any) => {
+						if (comment.id === commentId) {
+							if (comment?.replies && Array.isArray(comment.replies)) {
+								comment.replies = comment.replies.map((reply:any) => {
+									if (reply.id === replyId) {
+										reply.content = newContent;
+										reply.updated_at = new Date();
+									}
+									return {
+										...reply
+									};
+								});
+							}
+							flag = true;
+						}
+						return {
+							...comment
+						};
+					});
+				}
+				if(flag){
+					break;
+				}
+			}
+			return comments;
+		});
 
 		setIsEditing(false);
 
@@ -125,29 +160,48 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			});
 			setError(editReplyError || 'Error in saving reply');
 		}
+		else{
+			queueNotification({
+				header: 'Success!',
+				message: 'Your reply was edited.',
+				status: NotificationStatus.SUCCESS
+			});
+		}
+		setLoading(false);
+	};
 
-		if (data) {
-			setError('');
-			global.window.localStorage.removeItem(editReplyKey(replyId));
-			form.setFieldValue('content', '');
-			const keys = Object.keys(comments);
-			setComments((prev:any) => {
+	const handleRetry = async() => {
+		await replyToreplyForm.validateFields();
+		const replyContent = replyToreplyForm.getFieldValue('content');
+		if(!replyContent) return;
+		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
+			content: replyContent,
+			postId: postIndex,
+			postType: postType,
+			replyId: replyId,
+			trackNumber: track_number,
+			userId: id
+		});
+		if (error || !data) {
+			setError('There was an error in saving your reply.');
+			console.error('Error saving reply: ', error);
+			queueNotification({
+				header: 'Error!',
+				message: 'There was an error in saving your reply.',
+				status: NotificationStatus.ERROR
+			});
+		}
+		if(data){
+			setComments((prev) => {
 				const comments:any = Object.assign({}, prev);
-				for(const key of keys ){
+				const keys = Object.keys(comments);
+				for(const key of keys){
 					let flag = false;
 					if (prev?.[key]) {
-						comments[key] = prev[key].map((comment:any) => {
+						comments[key] = prev[key].map((comment) => {
 							if (comment.id === commentId) {
 								if (comment?.replies && Array.isArray(comment.replies)) {
-									comment.replies = comment.replies.map((reply:any) => {
-										if (reply.id === replyId) {
-											reply.content = newContent;
-											reply.updated_at = new Date();
-										}
-										return {
-											...reply
-										};
-									});
+									comment.replies = comment.replies.map(reply => reply.id === replyId ? { ...reply, isReplyError:false }: reply) ;
 								}
 								flag = true;
 							}
@@ -162,36 +216,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				}
 				return comments;
 			});
-			queueNotification({
-				header: 'Success!',
-				message: 'Your reply was edited.',
-				status: NotificationStatus.SUCCESS
-			});
-		}
-
-		setLoading(false);
-	};
-
-	const handleRetry = async() => {
-		await replyToreplyForm.validateFields();
-		const replyContent = replyToreplyForm.getFieldValue('content');
-		if(!replyContent) return;
-		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
-			commentId: commentId,
-			content: replyContent,
-			postId: postIndex,
-			postType: postType,
-			trackNumber: track_number,
-			userId: id
-		});
-		if (error || !data) {
-			setError('There was an error in saving your reply.');
-			console.error('Error saving reply: ', error);
-			queueNotification({
-				header: 'Error!',
-				message: 'There was an error in saving your reply.',
-				status: NotificationStatus.ERROR
-			});
 		}
 	};
 
@@ -199,7 +223,50 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		await replyToreplyForm.validateFields();
 		const replyContent = replyToreplyForm.getFieldValue('content');
 		if(!replyContent) return;
-		setLoading(true);
+		// setLoading(true);
+		setError('');
+		global.window.localStorage.removeItem(newReplyKey(commentId));
+		const keys = Object.keys(comments);
+		setComments((prev:any) => {
+			const comments:any = Object.assign({}, prev);
+			for(const key of keys ){
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev[key].map((comment:any) => {
+						if (comment.id === commentId) {
+							if (comment?.replies && Array.isArray(comment.replies)) {
+								comment.replies = [...comment.replies,{
+									content: replyContent,
+									created_at: new Date(),
+									id:replyId,
+									proposer: loginAddress,
+									updated_at: new Date(),
+									user_id: id,
+									user_profile_img: picture || '',
+									username: username
+								}];
+							}
+							flag = true;
+						}
+						return {
+							...comment
+						};
+					});
+				}
+				if(flag){
+					break;
+				}
+			}
+			return comments;
+		});
+
+		replyToreplyForm.resetFields();
+		setIsReplying(false);
+		queueNotification({
+			header: 'Success!',
+			message: 'Your reply was added.',
+			status: NotificationStatus.SUCCESS
+		});
 		if(id){
 			const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 				commentId: commentId,
@@ -217,29 +284,15 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 					message: 'There was an error in saving your reply.',
 					status: NotificationStatus.ERROR
 				});
-			}
-			if(data) {
-				setError('');
-				global.window.localStorage.removeItem(newReplyKey(commentId));
-				const keys = Object.keys(comments);
-				setComments((prev:any) => {
+				setComments((prev) => {
 					const comments:any = Object.assign({}, prev);
 					for(const key of keys ){
 						let flag = false;
 						if (prev?.[key]) {
-							comments[key] = prev[key].map((comment:any) => {
+							comments[key] = prev[key].map((comment) => {
 								if (comment.id === commentId) {
 									if (comment?.replies && Array.isArray(comment.replies)) {
-										comment.replies = [...comment.replies,{
-											content: replyContent,
-											created_at: new Date(),
-											id:data.id,
-											proposer: loginAddress,
-											updated_at: new Date(),
-											user_id: id,
-											user_profile_img: picture || '',
-											username: username
-										}];
+										comment.replies = comment.replies.map(reply => reply.id === replyId ? { ...reply, isReplyError:true }: reply) ;
 									}
 									flag = true;
 								}
@@ -254,20 +307,34 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 					}
 					return comments;
 				});
-				replyToreplyForm.resetFields();
-				setIsReplying(false);
-				queueNotification({
-					header: 'Success!',
-					message: 'Your reply was added.',
-					status: NotificationStatus.SUCCESS
-				});
 			}
 			setLoading(false);
 		}
 	};
 
 	const deleteReply = async () => {
-		setLoading(true);
+		const keys = Object.keys(comments);
+		setComments((prev:any) => {
+			const comments:any = Object.assign({}, prev);
+			for(const key of keys ){
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev[key].map((comment:any) => {
+						if (comment.id === commentId) {
+							comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
+							flag = true;
+						}
+						return {
+							...comment
+						};
+					});
+				}
+				if(flag){
+					break;
+				}
+			}
+			return comments;
+		});
 		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
 			commentId,
 			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
@@ -284,30 +351,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				status: NotificationStatus.ERROR
 			});
 		}
-
-		if (data) {
-			const keys = Object.keys(comments);
-			setComments((prev:any) => {
-				const comments:any = Object.assign({}, prev);
-				for(const key of keys ){
-					let flag = false;
-					if (prev?.[key]) {
-						comments[key] = prev[key].map((comment:any) => {
-							if (comment.id === commentId) {
-								comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
-								flag = true;
-							}
-							return {
-								...comment
-							};
-						});
-					}
-					if(flag){
-						break;
-					}
-				}
-				return comments;
-			});
+		else{
 			queueNotification({
 				header: 'Success!',
 				message: 'Your reply was deleted.',
@@ -375,7 +419,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
 									: null
 								}
-								<div className="flex text-xs text-lightBlue ml-[325px]">
+								<div className="flex text-xs text-lightBlue ml-[325px] -mt-[28px]">
 									<IconCaution className="text-2xl -mr-2 mt-[3px]"/>
 									<span className="m-0 p-0 mt-[4px]">Reply not posted</span>
 									<div onClick={handleRetry} className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>

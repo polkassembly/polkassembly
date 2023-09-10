@@ -135,6 +135,35 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		await form.validateFields();
 		const newContent = form.getFieldValue('content');
 		if(!newContent)return;
+		setError('');
+		global.window.localStorage.removeItem(editCommentKey(commentId));
+		const keys = Object.keys(comments);
+		setComments((prev) => {
+			const comments:any = Object.assign({}, prev);
+			for(const key of keys ){
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev?.[key]?.map((comment:IComment) => {
+						const newComment = comment;
+						if (comment.id === commentId) {
+							newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || []) ],
+							newComment.content = newContent;
+							newComment.updated_at = new Date();
+							newComment.sentiment = sentiment || 0;
+							flag = true;
+						}
+						return {
+							...newComment
+						};
+					});
+				}
+				if(flag){
+					break;
+				}
+			}
+			return comments;
+		});
+		form.setFieldValue('content', currentContent.current);
 		if(currentContent.current !== newContent){
 			currentContent.current=newContent;
 		}
@@ -159,41 +188,19 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 			console.error('Error saving comment ', editPostCommentError);
 		}
-
-		if (data) {
-			setError('');
-			global.window.localStorage.removeItem(editCommentKey(commentId));
-			const keys = Object.keys(comments);
-			setComments((prev) => {
-				const comments:any = Object.assign({}, prev);
-				for(const key of keys ){
-					let flag = false;
-					if (prev?.[key]) {
-						comments[key] = prev?.[key]?.map((comment:IComment) => {
-							const newComment = comment;
-							if (comment.id === commentId) {
-								newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || []) ],
-								newComment.content = newContent;
-								newComment.updated_at = new Date();
-								newComment.sentiment = sentiment || 0;
-								flag = true;
-							}
-							return {
-								...newComment
-							};
-						});
-					}
-					if(flag){
-						break;
-					}
-				}
-				return comments;
-			});
-			form.setFieldValue('content', currentContent.current);
+		else{
 			queueNotification({
 				header: 'Success!',
 				message: 'Your comment was edited.',
 				status: NotificationStatus.SUCCESS
+			});
+		}
+
+		if(data){
+			setComments((prev) => {
+				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+				prev[key].map(comment => comment.id === commentId ? { ...comment, isError:false }: comment) ;
+				return prev;
 			});
 		}
 
@@ -240,7 +247,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			const comments:any = Object.assign({}, prev);
 			for(const key of keys ){
 				let flag = false;
-				const commentId = v4();
+				const replyId = v4();
 				if (prev?.[key]) {
 					comments[key] = prev[key].map((comment) => {
 						if (comment.id === commentId) {
@@ -248,7 +255,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								comment.replies.push({
 									content: replyContent,
 									created_at: new Date(),
-									id: commentId,
+									id: replyId,
+									isReplyError: false,
 									proposer: loginAddress,
 									updated_at: new Date(),
 									user_id: id,
@@ -297,6 +305,30 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					message: 'There was an error in saving your reply.',
 					status: NotificationStatus.ERROR
 				});
+				setComments((prev) => {
+					const comments:any = Object.assign({}, prev);
+					for(const key of keys ){
+						let flag = false;
+						const replyId = v4();
+						if (prev?.[key]) {
+							comments[key] = prev[key].map((comment) => {
+								if (comment.id === commentId) {
+									if (comment?.replies && Array.isArray(comment.replies)) {
+										comment.replies = comment.replies.map(reply => reply.id === replyId ? { ...reply, isReplyError:true }: reply) ;
+									}
+									flag = true;
+								}
+								return {
+									...comment
+								};
+							});
+						}
+						if(flag){
+							break;
+						}
+					}
+					return comments;
+				});
 			}
 			setLoadingReply(false);
 		}
@@ -315,6 +347,29 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	};
 
 	const deleteComment = async () => {
+		const keys = Object.keys(comments);
+		setComments((prev) => {
+			const comments: any = Object.assign({}, prev);
+			for(const key of keys ){
+				if (prev?.[key]) {
+					comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
+				}
+			}
+			return comments;
+		});
+		setTimelines((prev) => {
+			return [...prev.map((timeline) => {
+				if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
+					return {
+						...timeline,
+						commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
+					};
+				}
+				return {
+					...timeline
+				};
+			})];
+		});
 		const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
 			commentId,
 			postId: ((comment.post_index || comment.post_index === 0)? comment.post_index: props.postId),
@@ -330,31 +385,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				status: NotificationStatus.ERROR
 			});
 		}
-
-		if(data) {
-			const keys = Object.keys(comments);
-			setComments((prev) => {
-				const comments: any = Object.assign({}, prev);
-				for(const key of keys ){
-					if (prev?.[key]) {
-						comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
-					}
-				}
-				return comments;
-			});
-			setTimelines((prev) => {
-				return [...prev.map((timeline) => {
-					if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
-						return {
-							...timeline,
-							commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
-						};
-					}
-					return {
-						...timeline
-					};
-				})];
-			});
+		else{
 			queueNotification({
 				header: 'Success!',
 				message: 'Your comment was deleted.',

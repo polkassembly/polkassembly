@@ -64,7 +64,7 @@ const WHITESPACE = [' ', '\t'];
 const IdentityForm = ({ className, form, address, txFee, name, socials, onChangeName, onChangeSocials, setTxFee, startLoading, onCancel, perSocialBondFee, changeStep, closeModal, setIsIdentityCallDone, setIdentityHash, setAddressChangeModalOpen }: Props) => {
 
 	const { network } = useContext(NetworkContext);
-	const { bondFee, gasFee, registerarFee } = txFee;
+	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 	const { api, apiReady } = useContext(ApiContext);
@@ -74,6 +74,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
+	const totalFee = gasFee.add(bondFee.add(registerarFee.add(minDeposite)));
 
 	const handleLocalStorageSave = (field: any) => {
 
@@ -124,7 +125,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		const okLegal = checkValue(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
 		const okEmail = checkValue(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
 		// const okRiot = checkValue((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
-		const okTwitter = checkValue(twitterVal.length > 0, twitterVal, 3, [], WHITESPACE, ['@']);
+		const okTwitter = checkValue(twitterVal.length > 0, twitterVal, 3, [], WHITESPACE, []);
 		// const okWeb = checkValue((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
 		let okSocials = 1;
@@ -213,7 +214,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			form={form}
 			initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 		>
-			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(registerarFee.add(gasFee)) &&  <Alert showIcon type='info' className=' h-[40px] text-sm text-bodyBlue rounded-[4px]' message='Insufficient Balance.'/>}
+			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) &&  <Alert showIcon type='info' className=' h-[40px] text-sm text-bodyBlue rounded-[4px]' message='Insufficient Balance.'/>}
 			<div className='flex justify-between items-center text-lightBlue mt-6'>
 				<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
 				<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
@@ -340,7 +341,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 					<Form.Item name='twitter' className='w-full' rules={[{
 						message: 'Invalid twitter username',
 						validator(rule, value, callback) {
-							if (callback && value.length && !checkValue(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], WHITESPACE, ['@']) ){
+							if (callback && value.length && !checkValue(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], WHITESPACE, []) ){
 								callback(rule?.message?.toString());
 							}else {
 								callback();
@@ -351,7 +352,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 							onBlur={() => getGasFee()}
 							name='twitter'
 							value={twitter?.value}
-							placeholder='@YourTwitterName'
+							placeholder='YourTwitterName'
 							className='h-[40px] rounded-[4px] text-bodyBlue'
 							onChange={(e) => {
 								onChangeSocials({ ...socials, twitter:{ ...twitter, value: e.target.value?.trim() } });
@@ -382,8 +383,8 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			</div>
 		</Form>
 		<div className='flex gap-4 text-sm mt-6 items-center'>
-			<span className='text-lightBlue font-medium'>Bond <HelperTooltip className='ml-1' text='Amount that needs held in an address for a verified account.'/></span>
-			<span className='text-bodyBlue font-medium bg-[#EDEFF3] py-1 px-3 rounded-2xl'>{formatedBalance(bondFee.toString(), unit)} {unit}</span>
+			<span className='text-lightBlue font-medium'>Min Deposit <HelperTooltip className='ml-1' text='Amount that needs held in an address for a verified account.'/></span>
+			<span className='text-bodyBlue font-medium bg-[#EDEFF3] py-1 px-3 rounded-2xl'>{formatedBalance(minDeposite.toString(), unit)} {unit}</span>
 		</div>
 
 		{((!gasFee.eq(ZERO_BN)) || loading) && <Spin spinning={loading} tip='calculating gas fee'>
@@ -392,8 +393,12 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				className='mt-6 rounded-[4px]'
 				type='info'
 				showIcon
-				message={<span className='text-bodyBlue text-sm font-medium '>Total Fees of {formatedBalance((bondFee.add(gasFee).add(registerarFee)).toString(), unit)} {unit} will be applied to the transaction.<span className='text-pink_primary text-xs cursor-pointer ml-1' onClick={() => setHideDetails(!hideDetails)}>{hideDetails ? 'Show Details' : 'Hide Details'}</span></span>}
+				message={<span className='text-bodyBlue text-sm font-medium '>Total Fees of {formatedBalance(totalFee.toString(), unit)} {unit} will be applied to the transaction.<span className='text-pink_primary text-xs cursor-pointer ml-1' onClick={() => setHideDetails(!hideDetails)}>{hideDetails ? 'Show Details' : 'Hide Details'}</span></span>}
 				description={hideDetails ? '' : <div className='flex gap-1 flex-col text-sm mr-[18px]'>
+					<span className='flex justify-between text-xs'>
+						<span className='text-lightBlue'>Bond</span>
+						<span className='text-bodyBlue font-medium'>{formatedBalance(bondFee.toString(), unit)} {unit}</span>
+					</span>
 					<span className='flex justify-between text-xs'>
 						<span className='text-lightBlue'>Gas Fee</span>
 						<span className='text-bodyBlue font-medium'>{formatedBalance(gasFee.toString(), unit)} {unit}</span>
@@ -404,7 +409,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 					</span>
 					<span className='flex justify-between text-xs'>
 						<span className='text-lightBlue'>Total</span>
-						<span className='text-bodyBlue font-medium'>{formatedBalance(registerarFee.add(gasFee).toString(), unit)} {unit}</span>
+						<span className='text-bodyBlue font-medium'>{formatedBalance(totalFee.toString(), unit)} {unit}</span>
 					</span>
 				</div>
 				}
@@ -414,8 +419,8 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
                Cancel
 			</Button>
 			<Button
-				disabled={!okAll || loading || (availableBalance && availableBalance.lte(registerarFee.add(gasFee))) || gasFee.lte(ZERO_BN)}
-				className={`bg-pink_primary text-sm rounded-[4px] h-[40px] border-none w-[134px] text-white tracking-wide ${(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(registerarFee.add(gasFee)) )) && 'opacity-50'}`}
+				disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN)}
+				className={`bg-pink_primary text-sm rounded-[4px] h-[40px] border-none w-[134px] text-white tracking-wide ${(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee) )) && 'opacity-50'}`}
 				onClick={handleSetIdentity}
 				loading={loading}>
                   Set Identity

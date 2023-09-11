@@ -199,7 +199,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 
 	const handleTwitterVerification = async() => {
 		setLoading(true);
-		const twitterHandle = socials?.[ESocials.TWITTER]?.value?.split('@')?.[1] || '';
+		const twitterHandle = socials?.twitter?.value?.split('@')?.[1] || socials?.twitter?.value ;
 		const { data, error } = await nextApiClientFetch<{url?: string}>(`api/v1/verification/twitter-verification?twitterHandle=${twitterHandle}`);
 
 		if(data && data?.url){

@@ -38,6 +38,7 @@ export interface ITxFee {
   bondFee: BN;
   gasFee: BN;
   registerarFee: BN;
+	minDeposite: BN;
 }
 
 export interface IName {
@@ -65,7 +66,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);
 	const [loading, setLoading]= useState<boolean>(false);
-	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, registerarFee: ZERO_BN });
+	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 	const [address, setAddress] = useState<string>('');
 	const [name, setName] = useState<IName>({ displayName: '', legalName: '' });
 	const [socials, setSocials] = useState<ISocials>({ email: { value: '', verified: false }, riot:{ value: '', verified: false }, twitter: { value: '', verified: false }, web: { value: '', verified: false } });
@@ -173,7 +174,8 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 
 			const registerarFee:any = await api.query.identity.registrars().then((e) => JSON.parse(e.toString()));
 			const bnRegisterarFee = new BN((registerarFee[registerarFee.length -1].fee) || ZERO_BN);
-			setTxFee({ ... txFee, bondFee: ZERO_BN, registerarFee: bnRegisterarFee });
+			const minDeposite =  api.consts.identity.basicDeposit;
+			setTxFee({ ... txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
 			setPerSocialBondFee(bondFee);
 			setLoading(false);
 

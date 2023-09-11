@@ -74,7 +74,7 @@ const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, img?: s
 					e.preventDefault();
 					handleSetIdentityClick();
 				}}>
-				<span className='text-xl '><ApplayoutIdentityIcon /></span>
+				<span className='text-lg ml-[2px]'><ApplayoutIdentityIcon /></span>
 				<span>Set on-chain identity</span>
 				<span className=' flex items-center'><IdentityCaution/></span>
 			</Link>

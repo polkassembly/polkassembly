@@ -9,6 +9,7 @@ import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
+
 import { ChangeResponseType } from '~src/auth/types';
 import { usePostDataContext, useUserDetailsContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
@@ -57,7 +58,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [isComment,setIsComment]=useState(false);
 	const [sentiment,setSentiment]=useState<number>(3);
 	const [isSentimentPost,setIsSentimentPost]=useState(false);
-	const [textBoxHeight,setTextBoxHeight] = useState(40);
 	const [showEmojiMenu, setShowEmojiMenu] = useState(false);
 	const [selectedIcon, setSelectedIcon] = useState(null);
 	const [isPosted, setIsPosted] = useState(false);
@@ -78,11 +78,10 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			setIsSentimentPost(true);
 			break;
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [voteDecision]);
 
 	const handleEmojiClick = (icon:any, currentSentiment:any) => {
-		setContent((prevContent) => prevContent + icon);
+		setContent((prevContent) => prevContent);
 		setSelectedIcon(icon);
 		setShowEmojiMenu(!showEmojiMenu);
 		setSentiment(currentSentiment);
@@ -215,27 +214,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setIsSentimentPost(false);
 	};
 
-	function adjustHeightByString(inputString:any) {
-		const increment = 50;
-		const heightIncrement = 15;
-
-		let currentHeight = 40;
-
-		const updateHeight = () => {
-			currentHeight += heightIncrement;
-			setTextBoxHeight(currentHeight);
-		};
-
-		if (inputString.length > increment) {
-			const stringLengthMultiple = Math.floor(inputString.length / increment);
-			currentHeight = 40 + stringLengthMultiple * heightIncrement;
-		}
-
-		if (inputString.length % increment === 0) {
-			updateHeight();
-		}
-		return currentHeight;
-	}
 	useEffect(() => {
 		isComment && handleSave();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -253,12 +231,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			/>
 			{isPosted ? (
 				<div className="comment-message -mt-[4px]">
-					<div className="mt-6 w-[500px] text-center h-30 overflow-hidden">
+					<div className="mt-[35px] w-[500px] text-center h-30 overflow-hidden">
 						<p className="truncate text-lightBlue">
 							&apos;{formContent}&apos;
 						</p>
 					</div>
-					<div className="text-green-600 mb-5 ml-[140px] -mt-[15px]">Comment posted successfully.</div>
+					<div className="text-green-600 mb-5 ml-[140px] -mt-[4px]">Comment posted successfully.</div>
 				</div>
 			) : (
 				<div className={isUsedInSuccessModal ? 'p-[1rem] w-[95%]' : 'comment-box bg-white p-[1rem]'}>
@@ -282,8 +260,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 								isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
 									<textarea
 										name='content'
-										className={`resize-none w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-2 suffixColor hover:border-pink_primary flex-1 input-container focus:border-pink_primary max-h-10`}
-										onChange = {(e) => {onContentChange(e.target.value);adjustHeightByString(e.target.value);}}
+										className={'resize-none w-full border-[1px] rounded-[4px] text-sm mt-2 suffixColor hover:border-pink_primary flex-1 input-container focus:border-pink_primary max-h-10'}
+										onChange = {(e) => {onContentChange(e.target.value);}}
 										placeholder={'Type your comment here'}
 										style={{ border: '1px solid #D2D8E0', padding: '8px 8px' }}
 									/>

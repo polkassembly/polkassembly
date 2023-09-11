@@ -51,7 +51,7 @@ const VoteInitiatedModal = ({
 	multisig,
 	balance,
 	conviction,
-	// title,
+	title,
 	vote,
 	votedAt,
 	ayeVoteValue,
@@ -89,6 +89,8 @@ const VoteInitiatedModal = ({
 		setTimelines(timelinePayload);
 	};
 
+	title = 'Voted Successfully';
+
 	return (
 		<Modal
 			open={open}
@@ -103,7 +105,7 @@ const VoteInitiatedModal = ({
 			<div className='flex justify-center items-center flex-col -mt-[132px]'>
 				{icon}
 				<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-2'>
-					Voted Successfully
+					{title}
 				</h2>
 				<div className='flex flex-col justify-center items-center gap-[14px]'>
 					<div className='text-pink_primary text-[24px] font-semibold'>

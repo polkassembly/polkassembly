@@ -91,7 +91,7 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 	return getSiderMenuItem(
 		<AuthDropdown>
 			<div className='flex items-center justify-between gap-x-2 user-info'>
-				<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
+				<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue user-info-dropdown hover:text-pink_primary text-base' />
 			</div>
 		</AuthDropdown>,
 		'userMenu',
@@ -567,6 +567,14 @@ margin-top: -17px !important;
 
 	.user-image {
 		font-size: 14px !important;
+	}
+
+	.user-info {
+		font-size: 14px !important;
+	}
+
+	.user-info-dropdown {
+		transform: scale(0.7);
 	}
 }
 

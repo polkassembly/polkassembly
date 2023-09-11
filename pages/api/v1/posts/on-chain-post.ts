@@ -257,6 +257,9 @@ const getAndSetNewData = async (params: IParams) => {
 							if(data.gov_type){
 								newData.gov_type = data?.gov_type;
 							}
+							if(data?.history){
+								newData.history = data?.history ? data.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+							}
 						}
 					}
 					if (docRefMap[path]) {
@@ -739,7 +742,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 
 		}
-		const history = postData?.history ? postData?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
@@ -764,7 +766,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			ended_at_block: postData?.endedAtBlock,
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
-			history,
 			identity: postData?.identity || null,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
@@ -923,6 +924,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.summary = data.summary;
+				post.history= data?.history;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
 				if (!post.proposer) {

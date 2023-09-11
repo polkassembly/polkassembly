@@ -924,7 +924,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.summary = data.summary;
-				post.history= data?.history;
+				post.history= data?.history || [];
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
 				if (!post.proposer) {

@@ -1,12 +1,13 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useState } from 'react';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import SuccessIcon from '~assets/icons/success-verification.svg';
 import { useRouter } from 'next/router';
+
 interface Props{
   className?: string;
   socialHandle?: string;
@@ -17,7 +18,7 @@ interface Props{
 
 const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose  }: Props) => {
 	const router = useRouter();
-
+	const [loading, setLoading] = useState<boolean>(false);
 	return <Modal
 		zIndex={100000}
 		open={open}
@@ -32,8 +33,10 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 			<SuccessIcon/>
 			<label className='text-xl font-semibold text-bodyBlue tracking-[0.15%] -mt-2'>{social} verified successfully</label>
 			{socialHandle && <div className='text-2xl text-pink_primary font-semibold mt-4'>{socialHandle}</div>}
-			<Button className='mt-6 bg-pink_primary border-none text-white rounded-[4px] h-[40px] text-sm'
-			onClick={() => router.push(`/?identityVerification=${true}`)}
+			<Button
+				className='mt-6 bg-pink_primary border-none text-white rounded-[4px] h-[40px] text-sm'
+				onClick={() => { setLoading(true); router.push(`/?identityVerification=${true}`); }}
+				loading={loading}
 			>
 				Continue verification
 			</Button>

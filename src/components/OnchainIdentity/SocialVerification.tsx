@@ -143,12 +143,11 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 
 	};
 	const handleVerify =  async(fieldName: ESocials, checkingVerified?: boolean, isNotificaiton?: boolean ) => {
-		if(socials[fieldName]?.verified) return;
 		const account = fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] : socials?.[fieldName]?.value;
 		setFieldLoading({ ...fieldLoading, [fieldName] : true });
 		const { data, error } = await nextApiClientFetch<IVerificationResponse>(`api/v1/verification?type=${fieldName}&checkingVerified=${Boolean(checkingVerified)}&account=${account}`);
 		if(data){
-			if(data?.status === VerificationStatus.ALREADY_VERIFIED){
+			if(data?.message === VerificationStatus.ALREADY_VERIFIED){
 				if(ESocials.EMAIL === fieldName){
 					setSocials({ ...socials, email: { ...email, verified: true } });
 					setStatus({ ...status, email: VerificationStatus?.ALREADY_VERIFIED });
@@ -161,13 +160,13 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 				if(!checkingVerified){
 					queueNotification({
 						header: 'Verified!',
-						message: data?.status,
+						message: data?.message,
 						status: NotificationStatus.INFO
 					});
 				}
 				setFieldLoading({ ...fieldLoading, [fieldName] : false });
 
-			}else if(checkingVerified && data?.status === VerificationStatus.VERFICATION_EMAIL_SENT ){
+			}else if(checkingVerified && data?.message === VerificationStatus.VERFICATION_EMAIL_SENT ){
 				setFieldLoading({ ...fieldLoading, [fieldName] : false });
 				if(ESocials.EMAIL === fieldName){
 					setSocials({ ...socials, email: { ...email, verified: false } });

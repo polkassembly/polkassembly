@@ -43,7 +43,7 @@ interface Props{
   closable?: boolean;
   localStorageWalletKeyName: string;
   localStorageAddressKeyName: string;
-  onConfirm?: () => void;
+  onConfirm?: (pre?:any) => void;
   linkAddressNeeded?: boolean;
   usingMultisig?: boolean;
 	walletAlertTitle: string;
@@ -94,7 +94,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		}
 	};
 
-	const isUnlinkedAddress = (getAddressType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS);
+	const isUnlinkedAddress = (getAddressType(accounts?.filter((account) => account.address === address)?.[0]) === EAddressOtherTextType.UNLINKED_ADDRESS);
 
 	const handleAddressLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
 		setLoading(true);
@@ -249,7 +249,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 			});
 			setShowMultisig(false);
 			setMultisig('');
-			onConfirm && onConfirm();
+			onConfirm && onConfirm(address);
 			setOpen(false);
 			setLoading(false);
 		}
@@ -293,11 +293,11 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		if(chosenWallet === Wallet.METAMASK){
 			const accounts = await getMetamaskAccounts();
 			setAccounts(accounts);
-			setAddress(accounts[0].address);
+			setAddress(accounts[0]?.address);
 			if(defaultWalletAddress) {
-				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)[0].address);
+				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)?.[0]?.address || accounts[0]?.address);
 			}else{
-				setAddress(accounts[0].address);
+				setAddress(accounts[0]?.address);
 			}
 		}else{
 			const injectedWindow = window as Window & InjectedWindow;
@@ -327,6 +327,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 				});
 			} catch (err) {
 				console.log(err?.message);
+				setLoading(false);
 			}
 			if (!injected) {
 				setLoading(false);
@@ -335,6 +336,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 
 			const accounts = await injected.accounts.get();
 			if (accounts.length === 0) {
+				setLoading(false);
 				return;
 			}
 
@@ -348,11 +350,11 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 					api.setSigner(injected.signer);
 				}
 
-				setAddress(accounts[0].address);
+				setAddress(accounts[0]?.address);
 				if(defaultWalletAddress) {
-					setAddress(accounts.filter((account) => (account.address) === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0].address);
+					setAddress(accounts.filter((account) => (account?.address) === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))?.[0]?.address || accounts[0]?.address);
 				}else{
-					setAddress(accounts[0].address);
+					setAddress(accounts[0]?.address);
 				}
 			}
 		}
@@ -403,10 +405,13 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 				setTotalDeposit(ZERO_BN);
 			}finally{
 				//initiator balance
-				const initiatorBalance = await api.query.system.account(address);
-				setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+				if(multisig){
+					const initiatorBalance = await api?.query?.system?.account(address);
+					setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString()));
+				}
 			}
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[address, api, apiReady]
 	);
 
@@ -434,8 +439,8 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		footer = {<Button
 			onClick={handleSubmit}
 			disabled={accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
-			className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-4 rounded-[4px] tracking-wide'>
-			{isUnlinkedAddress ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
+			className={`text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-4 rounded-[4px] tracking-wide ${accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit)) && 'opacity-50'}`}>
+			{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
 		</Button>
 		}
 		closable = {closable}
@@ -505,16 +510,16 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 				</div>}
 
 				{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert
-				message={`For using ${walletAlertTitle}:`}
-				description={
-				<ul className='mt-[-5px] text-sm'>
-					<li>Give access to Polkassembly on your selected wallet.</li>
-					<li>Add an address to the selected wallet.</li>
-					</ul>
-				}
-				showIcon
-				className='mt-4'
-				type='info'
+					message={`For using ${walletAlertTitle}:`}
+					description={
+						<ul className='mt-[-5px] text-sm'>
+							<li>Give access to Polkassembly on your selected wallet.</li>
+							<li>Add an address to the selected wallet.</li>
+						</ul>
+					}
+					showIcon
+					className='mt-4'
+					type='info'
 				/>
 				}
 				{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert

@@ -18,9 +18,9 @@ import executeTx from '~src/util/executeTx';
 import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
-import AddressInput from '~src/ui-components/AddressInput';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Address from '~src/ui-components/Address';
 
 const ZERO_BN = new BN(0);
 
@@ -41,6 +41,7 @@ interface Props {
 	form: FormInstance;
 	setIsIdentityCallDone: (pre: boolean) => void;
 	setIdentityHash: (pre: string) => void;
+	setAddressChangeModalOpen: () => void;
 }
 interface ValueState {
   info: Record<string, unknown>;
@@ -60,7 +61,7 @@ function checkValue (hasValue: boolean, value: string | null | undefined, minLen
 }
 const WHITESPACE = [' ', '\t'];
 
-const IdentityForm = ({ className, form, address, txFee, name, socials, onChangeName, onChangeSocials, setTxFee, startLoading, onCancel, perSocialBondFee, changeStep, closeModal, setIsIdentityCallDone, setIdentityHash }: Props) => {
+const IdentityForm = ({ className, form, address, txFee, name, socials, onChangeName, onChangeSocials, setTxFee, startLoading, onCancel, perSocialBondFee, changeStep, closeModal, setIsIdentityCallDone, setIdentityHash, setAddressChangeModalOpen }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { bondFee, gasFee, registerarFee } = txFee;
@@ -99,11 +100,11 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 
 	};
 
-	const getGasFee = async(fieldValue?: string, initialLoading?: boolean, txFeeVal?: ITxFee) => {
+	const getGasFee = async(initialLoading?: boolean, txFeeVal?: ITxFee) => {
 		if(!txFeeVal){
 			txFeeVal = txFee;
 		}
-		if(!api || !apiReady ||(!okAll && !initialLoading) || (!fieldValue && !initialLoading) || !form.getFieldValue('displayName')) return;
+		if(!api || !apiReady ||(!okAll && !initialLoading) || !form.getFieldValue('displayName')) return;
 
 		setLoading(true);
 
@@ -114,10 +115,10 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 	};
 
 	const handleInfo = (initialLoading?: boolean) => {
-		const displayNameVal = form.getFieldValue('displayName');
-		const legalNameVal = form.getFieldValue('legalName');
-		const emailVal = form.getFieldValue('email');
-		const twitterVal = form.getFieldValue('twitter');
+		const displayNameVal = form.getFieldValue('displayName')?.trim();
+		const legalNameVal = form.getFieldValue('legalName')?.trim();
+		const emailVal = form.getFieldValue('email')?.trim();
+		const twitterVal = form.getFieldValue('twitter').trim();
 
 		const okDisplay = checkValue(displayNameVal.length > 0, displayNameVal , 1, [], [], []);
 		const okLegal = checkValue(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
@@ -147,7 +148,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
 		setTxFee(fee);
 		if(initialLoading){
-			getGasFee('', true, fee);
+			getGasFee(true, fee);
 		}
 	};
 
@@ -188,6 +189,10 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			setOpen(true);
 			handleLocalStorageSave({ setIdentity: true });
 			setIsIdentityCallDone(true);
+			closeModal(true);
+			setOpen(true);
+			handleLocalStorageSave({ setIdentity: true });
+			setIsIdentityCallDone(true);
 			await handleIdentityHashSave(encodedTxHash);
 		};
 		const onFailed = () => {
@@ -197,6 +202,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
+			startLoading(false);
 		};
 
 		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
@@ -207,42 +213,47 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			form={form}
 			initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 		>
-			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(registerarFee.add(gasFee)) &&  <Alert showIcon type='info' className='text-sm text-bodyBlue rounded-[4px]' message='Insufficient Balance.'/>}
-			<div className='flex justify-between items-center mt-6 text-lightBlue'>
-				<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
-				<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
+			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(registerarFee.add(gasFee)) &&  <Alert showIcon type='info' className=' h-[40px] text-sm text-bodyBlue rounded-[4px]' message='Insufficient Balance.'/>}
+			<div className='text-sm flex gap-2 w-full mt-6 items-end'>
+				<div className='w-full'>
+					<div className='flex justify-between items-center text-lightBlue'>
+						<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
+						<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
+					</div>
+					<div className='border-[1px] border-solid w-[full] border-[#D2D8E0] h-[40px] flex items-center rounded-[4px] px-2 bg-[#f5f5f5]'>
+						<Address address={address} truncateUsername={false} displayInline clickable={false} textClassName='text-bodyBlue'/>
+					</div>
+				</div>
+				<Button
+					onClick={() => {
+						setAddressChangeModalOpen();
+						closeModal(true);
+						setAvailableBalance(null);
+					}}
+					className='text-white bg-pink_primary h-[40px] border-none text-sm rounded-[4px] w-[70px] flex justify-center items-center'
+				>Change</Button>
 			</div>
-			<AddressInput
-				name='address'
-				defaultAddress={address}
-				onChange={() => startLoading(false)}
-				inputClassName={'font-normal text-sm h-[40px] text-bodyBlue'}
-				className='text-bodyBlue text-sm font-normal -mt-6'
-				disabled
-				size='large'
-				identiconSize={30}
-			/>
 			<div className='mt-6'>
 				<label className='text-sm text-lightBlue'>Display Name <span className='text-[#FF3C5F]'>*</span></label>
 				<Form.Item name='displayName' rules={[{
-					message: 'Invalid ',
+					message: 'Invalid display name',
 					validator(rule, value, callback) {
-						if (callback && value.length && !checkValue(displayName.length > 0, displayName , 1, [], [], []) ){
+						if (callback && value.length && !checkValue(form?.getFieldValue('displayName')?.trim()?.length > 0, form?.getFieldValue('displayName')?.trim() , 1, [], [], []) ){
 							callback(rule?.message?.toString());
 						}else {
 							callback();
 						}
 					} }]}>
 					<Input
-						onBlur={(e) => getGasFee(e.target.value)}
+						onBlur={() => getGasFee()}
 						name='displayName'
 						className='h-[40px] rounded-[4px] text-bodyBlue mt-0.5'
 						placeholder='Enter a name for your identity '
 						value={displayName}
 						onChange={(e) => {
-							onChangeName({ ...name, displayName: e.target.value });
+							onChangeName({ ...name, displayName: e.target.value.trim() });
 							handleInfo();
-							handleLocalStorageSave({ displayName:e.target.value });
+							handleLocalStorageSave({ displayName:e.target.value.trim() });
 						}
 						} />
 				</Form.Item>
@@ -250,24 +261,24 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			<div className='mt-6'>
 				<label className='text-sm text-lightBlue'>Legal Name</label>
 				<Form.Item name='legalName' rules={[{
-					message: 'Invalid ',
+					message: 'Invalid legal name',
 					validator(rule, value, callback) {
-						if (callback && value.length && !checkValue(legalName.length > 0, legalName, 1, [], [], [])){
+						if (callback && value.length && !checkValue(form?.getFieldValue('legalName')?.trim()?.length > 0, form?.getFieldValue('legalName')?.trim(), 1, [], [], [])){
 							callback(rule?.message?.toString());
 						}else {
 							callback();
 						}
 					} }]}>
 					<Input
-						onBlur={(e) => getGasFee(e.target.value)}
+						onBlur={() => getGasFee()}
 						name='legalName'
 						className='h-[40px] rounded-[4px] text-bodyBlue'
 						placeholder='Enter your full name'
 						value={legalName}
 						onChange={(e) => {
-							onChangeName({ ...name, legalName: e.target.value });
+							onChangeName({ ...name, legalName: e.target.value.trim() });
 							handleInfo();
-							handleLocalStorageSave({ legalName :e.target.value });
+							handleLocalStorageSave({ legalName :e.target.value.trim() });
 						}
 						} />
 				</Form.Item>
@@ -300,24 +311,24 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						<span className='text-sm text-lightBlue'>Email</span>
 					</span>
 					<Form.Item name='email' className='w-full'  rules={[{
-						message: 'Invalid email',
+						message: 'Invalid email address',
 						validator(rule, value, callback) {
-							if (callback && value.length > 0 && !checkValue(email?.value?.length > 0, email?.value, 3, ['@'], WHITESPACE, []) ){
+							if (callback && value.length > 0 && !checkValue(form.getFieldValue('email')?.trim()?.length > 0, form.getFieldValue('email')?.trim(), 3, ['@'], WHITESPACE, []) ){
 								callback(rule?.message?.toString());
 							}else {
 								callback();
 							}
 						} }]}>
 						<Input
-							onBlur={(e) => getGasFee(e.target.value)}
+							onBlur={() => getGasFee()}
 							name='email'
 							value={email?.value}
 							placeholder='Enter your email address'
 							className='h-[40px] rounded-[4px] text-bodyBlue'
 							onChange={(e) => {
-								onChangeSocials({ ...socials, email: { ...email, value: e.target.value } });
+								onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 								handleInfo();
-								handleLocalStorageSave({ email: { ...email, value: e.target.value } });
+								handleLocalStorageSave({ email: { ...email, value: e.target.value?.trim() } });
 							}
 							}/>
 					</Form.Item>
@@ -328,9 +339,9 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						<TwitterIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
 						<span className='text-sm text-lightBlue'>Twitter</span></span>
 					<Form.Item name='twitter' className='w-full' rules={[{
-						message: 'Invalid twitter',
+						message: 'Invalid twitter username',
 						validator(rule, value, callback) {
-							if (callback && value.length && !checkValue(twitter?.value.length > 0, twitter?.value, 3, [], WHITESPACE, ['@']) ){
+							if (callback && value.length && !checkValue(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], WHITESPACE, ['@']) ){
 								callback(rule?.message?.toString());
 							}else {
 								callback();
@@ -338,15 +349,15 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						} }]}>
 
 						<Input
-							onBlur={(e) => getGasFee(e.target.value)}
+							onBlur={() => getGasFee()}
 							name='twitter'
 							value={twitter?.value}
 							placeholder='@YourTwitterName'
 							className='h-[40px] rounded-[4px] text-bodyBlue'
 							onChange={(e) => {
-								onChangeSocials({ ...socials, twitter:{ ...twitter, value: e.target.value } });
+								onChangeSocials({ ...socials, twitter:{ ...twitter, value: e.target.value?.trim() } });
 								handleInfo();
-								handleLocalStorageSave({ twitter: { ...twitter, value: e.target.value } });
+								handleLocalStorageSave({ twitter: { ...twitter, value: e.target.value?.trim() } });
 							}
 							}/>
 					</Form.Item>
@@ -389,7 +400,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						<span className='text-bodyBlue font-medium'>{formatedBalance(gasFee.toString(), unit)} {unit}</span>
 					</span>
 					<span className='flex justify-between text-xs'>
-						<span className='text-lightBlue'>Registrar fees</span>
+						<span className='text-lightBlue'>Registrar fees <HelperTooltip text='Costs of development & maintenance are funded by the treasury.' className='ml-1'/></span>
 						<span className='text-bodyBlue font-medium'>{formatedBalance(registerarFee.toString(), unit)} {unit}</span>
 					</span>
 					<span className='flex justify-between text-xs'>

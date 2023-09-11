@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useEffect } from 'react';
-import { IName, ISocials, ITxFee } from '.';
+import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
 import Address from '~src/ui-components/Address';
@@ -47,10 +47,10 @@ const SuccessState = ({ className, open, close, changeStep , openPreModal, name,
 		closeIcon={<CloseIcon/>}
 		onCancel={() => {
 			close(true);
-			changeStep(3);
+			changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 			openPreModal(false);
 		}
-	}
+		}
 		footer={false}
 		maskClosable={false}
 	><>
@@ -67,7 +67,7 @@ const SuccessState = ({ className, open, close, changeStep , openPreModal, name,
 				</div>
 			</div>
 
-			<Button onClick={() => {close(true); changeStep(3); openPreModal(true);}} className='bg-pink_primary text-sm mt-6 w-full rounded-[4px] border-none h-[40px] text-white tracking-wide'>
+			<Button onClick={() => {close(true); changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION); openPreModal(true);}} className='bg-pink_primary text-sm mt-6 w-full rounded-[4px] border-none h-[40px] text-white tracking-wide'>
                   Let’s start your verification process
 			</Button>
 		</>

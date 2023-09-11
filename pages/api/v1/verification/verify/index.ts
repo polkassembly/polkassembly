@@ -20,7 +20,7 @@ const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) 
 	const { token, type } = req.query;
 	const network = String(req.headers['x-network']);
 
-	if(!network || isValidNetwork(network)) res.status(400).json({ message: messages.INVALID_NETWORK });
+	if(!network || !isValidNetwork(network)) res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	if (!token || !type) {
 		return res.status(400).json({ message: 'Please provide both token and type to verify' });

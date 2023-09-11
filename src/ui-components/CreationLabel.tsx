@@ -71,7 +71,7 @@ interface ICreationLabelProps {
   cid?:string;
   spam_users_count?:number;
   truncateUsername?:boolean;
-  vote?:EVoteDecisionType;
+  vote?:string | null;
   votesArr?: any;
   isRow?:boolean;
 }

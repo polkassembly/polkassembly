@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal } from 'antd';
 import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
@@ -61,6 +61,7 @@ const VoteInitiatedModal = ({
 }: Props) => {
 	const { network } = useNetworkContext();
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
+	const [posted, setPosted] = useState(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	useEffect(() => {
 		if (!network) return;
@@ -96,7 +97,7 @@ const VoteInitiatedModal = ({
 			open={open}
 			className={`${poppins.variable} ${poppins.className} delegate w-[604px]`}
 			wrapClassName={className}
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon onClick={() => setPosted(true)}/>}
 			onCancel={() => setOpen(false)}
 			centered
 			footer={false}
@@ -278,7 +279,7 @@ const VoteInitiatedModal = ({
 					Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing your reason for this vote?
 				</p>
 				<div className="form-group ml-4 form-container">
-					<PostCommentForm className='ml-4 -mt-[25px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+					<PostCommentForm className='ml-4 -mt-[25px] w-[100%]' posted={posted} isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 				</div>
 				<span className="quote quote--right top-[325px] right-[0px] h-[40px] w-[48px] text-center pt-[10px]" style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}>
 					<RightQuote/>

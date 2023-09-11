@@ -32,6 +32,7 @@ interface IPostCommentFormProps {
 	voteDecision? :EVoteDecisionType;
 	setSuccessModalOpen?: (pre: boolean) => void;
 	setCurrentState?:(postId: string, type:string, comment: IComment) => void;
+	posted?:boolean;
 }
 
 interface IEmojiOption {
@@ -47,7 +48,7 @@ interface IEmojiOption {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className , isUsedInSuccessModal = false ,  voteDecision = null,setCurrentState } = props;
+	const { className , isUsedInSuccessModal = false ,  voteDecision = null,setCurrentState, posted } = props;
 	const { id, username, picture } = useUserDetailsContext();
 	const { postData: { postIndex, postType, track_number } } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
@@ -79,6 +80,15 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			break;
 		}
 	}, [voteDecision]);
+
+	useEffect(() => {
+		if(posted == true) {
+			setIsPosted(true);
+		}
+		else{
+			setIsPosted(false);
+		}
+	}, [posted]);
 
 	const handleEmojiClick = (icon:any, currentSentiment:any) => {
 		setContent((prevContent) => prevContent);

@@ -175,10 +175,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		const replyContent = replyToreplyForm.getFieldValue('content');
 		if(!replyContent) return;
 		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
+			commentId: commentId,
 			content: replyContent,
 			postId: postIndex,
 			postType: postType,
-			replyId: replyId,
 			trackNumber: track_number,
 			userId: id
 		});
@@ -419,14 +419,17 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
 									: null
 								}
-								<div className="flex text-xs text-lightBlue ml-[325px] -mt-[28px]">
-									<IconCaution className="text-2xl -mr-2 mt-[3px]"/>
-									<span className="m-0 p-0 mt-[4px]">Reply not posted</span>
-									<div onClick={handleRetry} className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>
-										<IconRetry className='text-2xl mt-[4px]'/>
-										<span className='m-0 p-0 -ml-2 mt-[4px]'>Retry</span>
+								{reply.isReplyError &&
+									<div className="flex text-xs text-lightBlue ml-[325px] -mt-[28px]">
+										<IconCaution className="text-2xl -mr-2 mt-[3px]"/>
+										<span className="m-0 p-0 mt-[4px]">Reply not posted</span>
+										<div onClick={handleRetry} className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>
+											<IconRetry className='text-2xl mt-[4px]'/>
+											<span className='m-0 p-0 -ml-2 mt-[4px]'>Retry</span>
+										</div>
 									</div>
-								</div>
+								}
+								
 							</div>
 							{
 								isReplying

@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
+import { Dashboard, PolkassemblyIcon } from '~src/ui-components/CustomIcons';
+import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Button, Divider, Dropdown, Skeleton, Space } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
@@ -156,19 +157,24 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 		</Dropdown>
 
 	);
+
 	return (
 		<Header className={`${className}  shadow-md ${sidedrawer?'z-1':'z-[1001]'}  sticky top-0 flex items-center  bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
-
-			<MenuOutlined className='lg:hidden mr-5' onClick={() => {
-				setSidedrawer(!sidedrawer);
-			}} />
+			<span onClick={() => { setSidedrawer(!sidedrawer); }} >
+				<Dashboard className='text-2xl mt-1 lg:hidden mr-5'/>
+			</span>
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={'/'}><PaLogo className='-ml-[2px]' sidedrawer={false}/></Link>
+					<Link className='flex' href={'/'}>
+						<PaLogo className='-ml-[2px]' sidedrawer={false}/>
+						{/* <span sidedrawer={false}>
+							<PolkassemblyIcon className='-ml-[2px]'/>
+						</span> */}
+					</Link>
 
 					<div className='flex items-center'>
 						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] mr-[8px] md:mr-[10px] ml-[16px]'></span>
-						<h2 className={`m-0 p-0 ${sidedrawer ? 'ml-[200px]' : 'ml-[64px]'} text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]`}>
+						<h2 className={`m-0 p-0 ${sidedrawer ? 'ml-[200px]' : 'ml-[64px]'} type-container text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]`}>
 							{
 								govType === EGovType.OPEN_GOV ? 'OpenGov': 'Gov1'
 							}
@@ -205,7 +211,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 										</div>
 
 									</div>:	<div className={'flex items-center justify-between gap-x-2'} >
-										<UserDropdown address={defaultAddress || ''}/>
+										<UserDropdown className="navbar-user-dropdown" address={defaultAddress || ''}/>
 									</div>
 								}
 
@@ -375,4 +381,13 @@ p {
 margin: 0;
 }
 
+navbar-user-dropdown {
+	display: inline-block !important;
+}
+
+@media (max-width: 468px) and (min-width: 380px){
+	.type-container {
+		margin-left:5px !important;
+	}
+}	
 `;

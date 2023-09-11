@@ -101,6 +101,16 @@ import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
 import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
+import DashboardIcon from '~assets/icons/dashboard.svg';
+import PolkassemblyLogo from '~assets/icons/polkaIcon.svg';
+
+export const PolkassemblyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={PolkassemblyLogo} {...props} />
+);
+
+export const Dashboard = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DashboardIcon} {...props} />
+);
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />

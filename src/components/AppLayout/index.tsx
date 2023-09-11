@@ -3,17 +3,18 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import {  Drawer, Layout, Menu, MenuProps } from 'antd';
+import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import {  Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
-import React, { memo, useEffect, useState } from 'react';
+import React, { ReactNode, memo, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
 import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TreasuryGroupIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
-
+import Link from 'next/link';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 
@@ -51,12 +52,63 @@ interface Props {
 	className?: string;
 }
 
+const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
+	const dropdownMenuItems: ItemType[] = [
+		{
+			key: 'view profile',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+				<UserOutlined />
+				<span>View Profile</span>
+			</Link>
+		},
+		{
+			key: 'settings',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+				<SettingOutlined />
+				<span>Settings</span>
+			</Link>
+		},
+		{
+			key: 'logout',
+			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
+				onClick={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					handleLogout(username);
+				}}>
+				<LogoutOutlined />
+				<span>Logout</span>
+			</Link>
+		}
+	];
+
+	const AuthDropdown = ({ children }: {children: ReactNode}) => (
+		<Dropdown className="user-menu-container" menu={{ items: dropdownMenuItems }} trigger={['click']}>
+			{children}
+		</Dropdown>
+	);
+
+	return getSiderMenuItem(
+		<AuthDropdown>
+			<div className='flex items-center justify-between gap-x-2 user-info'>
+				<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
+			</div>
+		</AuthDropdown>,
+		'userMenu',
+		<AuthDropdown>
+			{img ? <Avatar className='-ml-2.5 mr-2 user-image' size={40} src={img} /> :
+				<Avatar className='-ml-2.5 mr-2 user-image' size={40} icon={<UserOutlined />} />
+			}
+		</AuthDropdown>);
+};
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
-	const { setUserDetailsContextState, username } = useUserDetailsContext();
+	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
+	// const currentUser = useUserDetailsContext();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+	// const { defaultAddress,web3signup } = currentUser;
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -113,6 +165,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items.treasuryItems.push(getSiderMenuItem('Bounties', '/bounties'),
 			getSiderMenuItem('Child Bounties', '/child_bounties'));
 	}
+
+	const handleLogout = async () => {
+		logout(setUserDetailsContextState);
+		router.replace(router.asPath);
+	};
 
 	let items: MenuProps['items'] = [
 		...gov1Items.overviewItems
@@ -186,8 +243,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			}
 		}
 	}
+
+	const userDropdown = getUserDropDown(handleLogout, picture, username!);
 	const govOverviewItems = isOpenGovSupported(network) ? [
-		getSiderMenuItem('', '', <div className={`${className} svgLogo logo-padding logo-container -mt-[8px] w-[212px] -ml-[9px] flex items-center justify-center h-[66px] ${sidedrawer ? 'border-bottom' : 'border-none'}`}> {sidedrawer && <div className="-ml-[60px] mt-1"><PaLogo className='h-full' sidedrawer={sidedrawer} /></div>}</div>),
+		getSiderMenuItem('', '', <div className={`${className} svgLogo logo-container -mt-[8px] w-[412px] -ml-[106px] flex items-center justify-center h-[66px]`}>
+			{sidedrawer &&
+			<div className={'ml-[382px] mr-[310px] mt-[14px] logo-padding'}>
+				<PaLogo className='h-full mt-[10px]' sidedrawer={sidedrawer} />
+				<div className={`${sidedrawer ? 'border-bottom' : 'border-none'} mt-[10px] w-[220px] ml-[68px]`}></div>
+			</div>}
+			{/* <UserDropdown address={defaultAddress || ''} className='user-container'/> */}
+			{/* <userDropdown/> */}
+		</div>),
 		getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -205,7 +272,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		govOverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 	if(['kusama', 'polkadot'].includes(network)){
-		govOverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
+		govOverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
 	}
 
 	const gov2Items:MenuProps['items'] = isOpenGovSupported(network) ? [
@@ -245,7 +312,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]),
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [
 			...gov2TrackItems.fellowshipItems
-		])
+		]),
+		// getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2  text-base font-medium'>Gov1</span>, 'tracksHeading', null,[
+		...items
+		// ])
 	];
 
 	if (isFellowshipSupported(network)) {
@@ -267,8 +337,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			setSidedrawer(false);
 		}
 	};
+	let sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
+	if(username) {
+		sidebarItems = [userDropdown, ...sidebarItems];
+	}
 
-	const sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	return (
 		<Layout className={className}>
 			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} sidedrawerHover={true} previousRoute={previousRoute} />
@@ -288,12 +361,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[15px]`}
+						className={`${username?'auth-sider-menu':''} -mt-[25px]`}
 					/>
 				</Sider>
 				<Drawer
 					placement='left'
 					closable={false}
+					className='menu-container'
 					onClose={() => setSidedrawer(false)}
 					open={sidedrawer}
 					getContainer={false}
@@ -301,8 +375,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						bottom: 0,
 						height: '100vh',
 						left: 0,
-						position: 'fixed',
-						top: '0'
+						position: 'fixed'
 					}}
 				>
 					<Menu
@@ -466,6 +539,35 @@ margin-top: -17px !important;
 
 .logo-container:hover {
 	background: #fff !important;
+}
+
+.menu-container {
+	top: 0px;
+}
+
+@media (max-width: 468px) and (min-width: 380px){
+	.menu-container {
+		top:62px !important;
+	}
+
+	.logo-padding {
+		display: none !important;
+	}
+
+	.user-container {
+		display: flex!important;
+		width: 200px !important;
+		border: none !important;
+		background-color: #fff !important;
+	}
+
+	.logo-container {
+		display:flex !important;
+	}
+
+	.user-image {
+		font-size: 14px !important;
+	}
 }
 
 `;

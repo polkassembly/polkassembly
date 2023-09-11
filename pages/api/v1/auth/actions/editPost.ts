@@ -125,7 +125,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				}
 			}
 
-			if(proposalType == ProposalType.REFERENDUM_V2){
+			if(proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1'){
 				const latestActivitykey = `${network}_latestActivity_OpenGov`;
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
 				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;

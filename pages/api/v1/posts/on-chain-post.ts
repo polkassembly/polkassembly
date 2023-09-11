@@ -739,7 +739,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 
 		}
-		const history = postData?.history ? postData?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
@@ -764,7 +763,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			ended_at_block: postData?.endedAtBlock,
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
-			history,
+			history: [],
 			identity: postData?.identity || null,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
@@ -908,6 +907,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		if (firestorePost) {
 			let data = firestorePost.data();
 			// traverse the group, get and set the data.
+			const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+			post.history = history;
 			try{
 				data = await getAndSetNewData({
 					data,

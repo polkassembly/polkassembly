@@ -18,7 +18,7 @@ const withErrorHandling: TWithErrorHandling = (handler) => {
 		} catch (error) {
 			// console log needed for logging on server
 			console.log('Error in API : ', error);
-			res.status(Number(error.name) || 500).json({
+			return res.status(Number(error.name) || 500).json({
 				...error,
 				message: error.message || messages.API_FETCH_ERROR
 			});

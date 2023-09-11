@@ -125,7 +125,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				}
 			}
 
-			if(proposalType == ProposalType.REFERENDUM_V2){
+			if(proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1'){
 				const latestActivitykey = `${network}_latestActivity_OpenGov`;
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
 				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
@@ -242,6 +242,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		created_at,
 		history,
 		id: proposalType === ProposalType.ANNOUNCEMENT ? postId : proposalType === ProposalType.TIPS ? postId : Number(postId),
+		isDeleted: false,
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
 		proposer_address: proposer_address,
@@ -278,6 +279,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					content,
 					created_at,
 					id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
+					isDeleted: false,
 					last_edited_at: last_comment_at,
 					post_link: post_link,
 					proposer_address: proposer_address,

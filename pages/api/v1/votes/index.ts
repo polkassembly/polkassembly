@@ -32,12 +32,12 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) {
-		res.status(400).json({ error: 'Invalid network in request header' });
+		return res.status(400).json({ error: 'Invalid network in request header' });
 	}
 
 	const numListingLimit = Number(listingLimit);
 	if (isNaN(numListingLimit)) {
-		res.status(400).json({ error: `The listingLimit "${listingLimit}" is invalid.` });
+		return res.status(400).json({ error: `The listingLimit "${listingLimit}" is invalid.` });
 	}
 
 	const strVoteType = String(voteType);
@@ -153,7 +153,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 			}
 		}
 	});
-	res.status(200).json(resObj);
+	return res.status(200).json(resObj);
 }
 
 export default withErrorHandling(handler);

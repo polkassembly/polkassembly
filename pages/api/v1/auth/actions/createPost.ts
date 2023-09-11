@@ -57,6 +57,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		gov_type:gov_type,
 		history: [],
 		id: newID,
+		isDeleted: false,
 		last_comment_at,
 		last_edited_at: last_comment_at,
 		post_link: null,

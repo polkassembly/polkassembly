@@ -214,24 +214,23 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 		>
 			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(registerarFee.add(gasFee)) &&  <Alert showIcon type='info' className=' h-[40px] text-sm text-bodyBlue rounded-[4px]' message='Insufficient Balance.'/>}
-			<div className='text-sm flex gap-2 w-full mt-6 items-end'>
-				<div className='w-full'>
-					<div className='flex justify-between items-center text-lightBlue'>
-						<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
-						<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
-					</div>
-					<div className='border-[1px] border-solid w-[full] border-[#D2D8E0] h-[40px] flex items-center rounded-[4px] px-2 bg-[#f5f5f5]'>
-						<Address address={address} truncateUsername={false} displayInline clickable={false} textClassName='text-bodyBlue'/>
-					</div>
+			<div className='flex justify-between items-center text-lightBlue mt-6'>
+				<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
+				<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
+			</div>
+			<div className='text-sm flex gap-2 w-full items-end '>
+
+				<div className='border-[1px] border-solid w-full border-[#D2D8E0] h-[40px] flex items-center rounded-[4px] px-2 bg-[#f5f5f5] justify-between'>
+					<Address address={address} truncateUsername={false} displayInline clickable={false} textClassName='text-bodyBlue'/>
+					<Button
+						onClick={() => {
+							setAddressChangeModalOpen();
+							closeModal(true);
+							setAvailableBalance(null);
+						}}
+						className='text-white bg-pink_primary h-[26px] border-none text-xs rounded-[4px] w-[70px] flex justify-center items-center'
+					>Change</Button>
 				</div>
-				<Button
-					onClick={() => {
-						setAddressChangeModalOpen();
-						closeModal(true);
-						setAvailableBalance(null);
-					}}
-					className='text-white bg-pink_primary h-[40px] border-none text-sm rounded-[4px] w-[70px] flex justify-center items-center'
-				>Change</Button>
 			</div>
 			<div className='mt-6'>
 				<label className='text-sm text-lightBlue'>Display Name <span className='text-[#FF3C5F]'>*</span></label>

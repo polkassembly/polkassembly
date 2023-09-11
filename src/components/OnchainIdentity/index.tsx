@@ -21,6 +21,10 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import { SetIdentityIcon } from '~src/ui-components/CustomIcons';
+import { Wallet } from '~src/types';
+import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
+import { isWeb3Injected } from '@polkadot/extension-dapp';
+import { APPNAME } from '~src/global/appName';
 
 const ZERO_BN = new BN(0);
 
@@ -74,6 +78,70 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
+	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?:string | null): Promise<void> => {
+
+		if(!api || !apiReady) return;
+		setLoading(true);
+
+		const injectedWindow = window as Window & InjectedWindow;
+
+		const wallet = isWeb3Injected
+			? injectedWindow?.injectedWeb3?.[chosenWallet]
+			: null;
+
+		if (!wallet) {
+			setLoading(false);
+			return;
+		}
+		let injected: Injected | undefined;
+		try {
+			injected = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('Wallet Timeout'));
+				}, 60000); // wait 60 sec
+
+				if(wallet && wallet.enable) {
+					wallet.enable(APPNAME)
+						.then((value) => { clearTimeout(timeoutId); resolve(value); })
+						.catch((error) => { reject(error); });
+				}
+			});
+		} catch (err) {
+			console.log(err?.message);
+			setLoading(false);
+		}
+		if (!injected) {
+			setLoading(false);
+			return;
+		}
+
+		const accounts = await injected.accounts.get();
+		if (accounts.length === 0) {
+			setLoading(false);
+			return;
+		}
+
+		accounts.forEach((account) => {
+			account.address = getEncodedAddress(account.address, network) || account.address;
+		});
+
+		if (accounts.length > 0) {
+			if(api && apiReady) {
+				api.setSigner(injected.signer);
+			}
+
+			if(defaultWalletAddress) {
+				const address = accounts.filter((account) => (account?.address) === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))?.[0]?.address || accounts[0]?.address;
+				setAddress(address);
+				form.setFieldValue('address', address);
+
+			}
+		}
+
+		setLoading(false);
+		return;
+	};
+
 	const handleStateChange = (identityForm: any) => {
 		if(identityForm?.userId !== userId) return;
 		setName({ displayName: identityForm?.displayName || '', legalName: identityForm?.legalName || '' });
@@ -111,8 +179,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 
 		})();
 		const address = localStorage.getItem('identityAddress');
-		setAddress(address || '');
-		form.setFieldValue('address', address);
+		const wallet = localStorage.getItem('identityWallet');
+
+		getAccounts(wallet as Wallet, address);
 		let identityForm: any = localStorage.getItem('identityForm');
 		identityForm = JSON.parse(identityForm);
 		if(identityForm){
@@ -167,16 +236,11 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 	}, [txFee, step]);
 
 	const handleIdentityButtonClick = () => {
-		// if(id){
 		if(address?.length){
 			setOpen(!open);
 		}else {
 			openAddressModal ? openAddressModal?.(true) : setOpenAddressLinkedModal(true);
 		}
-		// }
-		// else{
-		// setOpenLoginPrompt(true);
-		// }
 	};
 	const handleConfirm = (address: string) => {
 		setOpen(true);

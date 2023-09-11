@@ -57,26 +57,15 @@ function getSiderMenuItem(
 	} as MenuItem;
 }
 
-const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, img?: string | null, username?: string, className?:string): MenuItem => {
+const onchainIdentitySupportedNetwork = [AllNetworks.POLKADOT];
+
+const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network: string, img?: string | null, username?: string, className?:string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
 			label: <Link className='text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
 				<UserOutlined />
 				<span>View Profile</span>
-			</Link>
-		},
-		{
-			key: 'set on-chain identity',
-			label: <Link className={`text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2 -ml-1 ${className}`} href={''}
-				onClick={(e) => {
-					e.stopPropagation();
-					e.preventDefault();
-					handleSetIdentityClick();
-				}}>
-				<span className='text-lg ml-[2px]'><ApplayoutIdentityIcon /></span>
-				<span>Set on-chain identity</span>
-				<span className=' flex items-center'><IdentityCaution/></span>
 			</Link>
 		},
 		{
@@ -99,6 +88,22 @@ const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, img?: s
 			</Link>
 		}
 	];
+
+	if(onchainIdentitySupportedNetwork.includes(network)){
+		dropdownMenuItems.splice(1, 0 , {
+			key: 'set on-chain identity',
+			label: <Link className={`text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2 -ml-1 ${className}`} href={''}
+				onClick={(e) => {
+					e.stopPropagation();
+					e.preventDefault();
+					handleSetIdentityClick();
+				}}>
+				<span className='text-lg ml-[2px]'><ApplayoutIdentityIcon /></span>
+				<span>Set on-chain identity</span>
+				<span className=' flex items-center'><IdentityCaution/></span>
+			</Link>
+		});
+	}
 
 	const AuthDropdown = ({ children }: {children: ReactNode}) => (
 		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
@@ -408,7 +413,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 
-	const userDropdown = getUserDropDown( handleIdentityButtonClick, handleLogout, picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
+	const userDropdown = getUserDropDown( handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 

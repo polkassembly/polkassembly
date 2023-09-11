@@ -33,7 +33,7 @@ interface IDelegationList {
 
 type DecisionType = 'yes' | 'no' | 'abstain';
 
-const VOTES_LISTING_LIMIT = 5;
+const VOTES_LISTING_LIMIT = 10;
 
 const DelegationVotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkContext();

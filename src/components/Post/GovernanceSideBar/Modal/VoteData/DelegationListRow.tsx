@@ -76,7 +76,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 			)}
 
 			{voteData.votingPower && (
-				<div className='overflow-ellipsis w-[50px]'>
+				<div className='overflow-ellipsis w-[80px]'>
 					{
 						parseBalance((
 							voteData.votingPower

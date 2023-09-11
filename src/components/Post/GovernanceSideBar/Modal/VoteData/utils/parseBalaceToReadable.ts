@@ -19,7 +19,7 @@ export const parseBalance = (
 				withUnit: false,
 				withZero: false
 			}).replaceAll(',', '')
-		).toString(),
+		).toFixed(2).toString(),
 		decimals
 	);
 	if(withUnit){

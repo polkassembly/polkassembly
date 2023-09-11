@@ -47,6 +47,7 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
         lockPeriod
         selfVotingPower
         totalVotingPower
+        delegatedVotingPower
         delegatedVotes(limit: 10, orderBy: votingPower_DESC) {
           decision
           lockPeriod
@@ -257,3 +258,44 @@ query VotesListingForAddressByTypeAndIndex_With_RemovedAtBlockIsNull_True($order
     lockPeriod
   }
 }`;
+
+export const GET_DELEGATED_CONVICTION_VOTES_COUNT = `
+query ConvictionDelegatedVotesCountAndBalance(
+  $index_eq: Int = 253,
+  $decision: VoteDecision = yes,
+  $voter_eq: String = "HqRcfhH8VXMhuCk5JXe28WMgDDuW9MVDVNofe1nnTcefVZn") {
+    convictionVotes(orderBy: id_ASC,
+      where: {
+        decision_eq: $decision,
+        proposalIndex_eq: $index_eq,
+        removedAtBlock_isNull: true,
+         voter_eq: $voter_eq,
+      }) {
+    delegatedVotes {
+      lockPeriod
+      votingPower
+      balance {
+        ... on StandardVoteBalance {
+          value
+        }
+        ... on SplitVoteBalance {
+          aye
+          nay
+        }
+      }
+    }
+  }
+    convictionDelegatedVotesConnection(orderBy: id_ASC,
+      where: {
+        decision_eq: $decision,
+        proposalIndex_eq: $index_eq,
+        removedAtBlock_isNull: true,
+          delegatedTo:{
+            voter_eq: $voter_eq,
+            removedAt_isNull: true
+          }
+      }) {
+      totalCount
+    }
+}
+`;

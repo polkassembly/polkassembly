@@ -15,7 +15,7 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType';
+import { ProposalType, VoteType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
@@ -66,6 +66,7 @@ import AbstainGray from '~assets/icons/abstain-gray.svg';
 import VoteDataModal from './Modal/VoteData';
 import { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
+import VotersList from './Referenda/VotersList';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active /> ,
@@ -122,7 +123,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters } = props;
 	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
@@ -969,13 +970,33 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							{
 								(onchainId || onchainId === 0) &&
 								<>
-									<VoteDataModal onchainId={onchainId} open={open} setOpen={setOpen} proposalType={proposalType} thresholdData={{
-										curvesError,
-										curvesLoading,
-										data,
-										progress,
-										setData
-									}}/>
+									{getVotingTypeFromProposalType(proposalType) === VoteType.REFERENDUM_V2 ?
+										<VoteDataModal onchainId={onchainId} open={open} setOpen={setOpen} proposalType={proposalType} tally={tally} thresholdData={{
+											curvesError,
+											curvesLoading,
+											data,
+											progress,
+											setData
+										}}/>:
+
+										<Modal
+											closeIcon={false}
+											onCancel={() => {
+												setOpen(false);
+											}}
+											open={open}
+											footer={[]}
+											closable={false}
+										>
+											<VotersList
+												className={className}
+												pipsVoters={pipsVoters}
+												referendumId={onchainId as number}
+												voteType={getVotingTypeFromProposalType(proposalType)}
+												proposalType={proposalType}
+											/>
+										</Modal>
+									}
 								</>
 							}
 

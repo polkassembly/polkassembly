@@ -5,13 +5,17 @@ import React, { FC } from 'react';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VotersList from './VoteList';
 import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
-import { Divider, Modal } from 'antd';
+import { Divider, Modal as AntdModal } from 'antd';
 import CloseIcon from '~assets/icons/close-icon.svg';
+import styled from 'styled-components';
+import { useNetworkContext } from '~src/context';
 interface IVoteDataModal {
   setOpen?: any;
   open?: any;
   onchainId?: any;
   proposalType?: any;
+  tally:any;
+  pipsVoters?:any;
   thresholdData?: {
     curvesError: any;
     curvesLoading: any;
@@ -21,13 +25,21 @@ interface IVoteDataModal {
   };
 }
 
+const Modal = styled(AntdModal)`
+.ant-modal-content{
+	padding-top:12px;
+}
+`;
+
 const VoteDataModal: FC<IVoteDataModal> = ({
 	setOpen,
 	open,
 	onchainId,
 	proposalType,
-	thresholdData
+	thresholdData,
+	tally
 }) => {
+	const { network } = useNetworkContext();
 	return (
 		<Modal
 			title={
@@ -40,19 +52,20 @@ const VoteDataModal: FC<IVoteDataModal> = ({
 							Voting Data
 						</span>
 					</h3>
-					<Divider className='text-[#D2D8E0]' />
+					<Divider className='text-[#D2D8E0] my-2 mb-5' />
 				</div>
 			}
 			open={open}
 			closable
 			closeIcon={<CloseIcon />}
-			className={'sm:w-[600px] lg:w-[1040px]'}
+			className={`sm:w-[600px] lg:w-[1040px] ${network === 'polymesh' ? 'lg:w-[600px]' : ''}`}
 			onCancel={() => {
 				setOpen(false);
 			}}
 			footer={null}
 		>
 			<VotersList
+				tally={tally}
 				referendumId={onchainId as number}
 				voteType={getVotingTypeFromProposalType(proposalType)}
 				thresholdData={thresholdData}

@@ -46,11 +46,18 @@ interface IVotersListProps {
   referendumId: number;
   voteType: VoteType;
   thresholdData?: any;
+  tally:any
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
 
-const VOTES_LISTING_LIMIT = 5;
+const VOTES_LISTING_LIMIT = 10;
+
+const sortedCheck = {
+	balanceIsAsc: false,
+	convictionIsAsc: false,
+	votingIsAsc: false
+};
 
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkContext();
@@ -59,7 +66,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		postData: { postType }
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
-	const { className, referendumId, voteType, thresholdData } = props;
+	const { className, referendumId, voteType, thresholdData, tally } = props;
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: true,
@@ -69,11 +76,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [decision, setDecision] = useState<DecisionType>();
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
-	const [balanceIsAsc, setBalanceIsAsc] = useState<boolean>(false);
-	const [votingIsAsc, setVotingIsAsc] = useState<boolean>(false);
-	const [convictionIsAsc, setConvictionIsAsc] = useState<boolean>(false);
+
 	const [delegationVoteModal, setDelegationVoteModal] =useState<{isOpen: boolean, voter:string | null}>({ isOpen:false, voter: null });
 	const [activeKey, setActiveKey] = useState<any>(null);
+	const [orderBy, setOrderBy] = useState<{[key:string]:boolean}>(sortedCheck);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -159,111 +165,115 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex gap-6'>
-					<div className='md:overflow-visible overflow-x-auto'>
-						<div className='w-full flex items-center justify-center mb-8'>
-							<StyledSegmented
-								block
-								className='px-3 py-2 rounded-[30px] w-full'
-								size='large'
-								value={decision}
-								onChange={(value) => {
-									setDecision(String(value) as DecisionType);
-									setCurrentPage(1);
-								}}
-								options={decisionOptions}
-							/>
-						</div>
-
-						<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-x-auto'>
-							<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
-								<div
-									className={`${
-										isReferendum2 ? 'w-[220px]' : 'w-[250px]'
-									} text-lightBlue text-sm font-medium`}
-								>
-									Voter
-								</div>
-								<div
-									className={`${
-										isReferendum2 ? 'w-[110px]' : 'w-[140px]'
-									} flex items-center gap-1 text-lightBlue`}
-									onClick={() => {
-										handleSortByClick({
-											key: balanceIsAsc
-												? votesSortValues.BALANCE_ASC
-												: votesSortValues.BALANCE_DESC
-										});
-										setBalanceIsAsc(!balanceIsAsc);
+					<div className='md:overflow-visible overflow-x-auto flex flex-col justify-between'>
+						<div>
+							<div className='w-full flex items-center justify-center mb-8'>
+								<StyledSegmented
+									block
+									className='px-3 py-2 rounded-[30px] w-full'
+									size='large'
+									value={decision}
+									onChange={(value) => {
+										setDecision(String(value) as DecisionType);
+										setCurrentPage(1);
 									}}
-								>
-									Amount
-									<ExpandIcon className={balanceIsAsc ? 'rotate-180' : ''} />
-								</div>
-								{network !== AllNetworks.COLLECTIVES ? (
+									options={decisionOptions}
+								/>
+							</div>
+							<div className='flex flex-col text-xs px-0 text-sidebarBlue'>
+								<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
 									<div
 										className={`${
-											isReferendum2 ? 'w-[120px]' : 'w-[150px]'
-										} flex items-center gap-1 text-lightBlue`}
-										onClick={() => {
-											handleSortByClick({
-												key: convictionIsAsc
-													? votesSortValues.CONVICTION_ASC
-													: votesSortValues.CONVICTION_DESC
-											});
-											setConvictionIsAsc(!convictionIsAsc);
-										}}
+											isReferendum2 ? 'w-[220px]' : 'w-[250px]'
+										} text-lightBlue text-sm font-medium`}
 									>
-										Conviction
-										<ExpandIcon
-											className={convictionIsAsc ? 'rotate-180' : ''}
-										/>
+									Voter
 									</div>
-								) : null}
-								{isReferendum2 && (
 									<div
-										className='w-[110px] flex items-center gap-1 text-lightBlue'
+										className={`${
+											isReferendum2 ? 'w-[110px]' : 'w-[140px]'
+										} flex items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]':''}`}
 										onClick={() => {
 											handleSortByClick({
-												key: votingIsAsc
-													? votesSortValues.VOTING_POWER_ASC
-													: votesSortValues.VOTING_POWER_DESC
+												key: orderBy.balanceIsAsc
+													? votesSortValues.BALANCE_ASC
+													: votesSortValues.BALANCE_DESC
 											});
-											setVotingIsAsc(!votingIsAsc);
+											setOrderBy((prev) => ({ ...sortedCheck, balanceIsAsc: !prev.balanceIsAsc }));
 										}}
 									>
-										Voting Power
-										<ExpandIcon className={votingIsAsc ? 'rotate-180' : ''} />
+									Amount
+										<ExpandIcon className={orderBy.balanceIsAsc ? 'rotate-180' : ''} />
 									</div>
-								)}
-							</div>
-
-							{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
-								votesRes[decision]?.votes.map(
-									(voteData: any, index: number) => (
-										<VoterRow
+									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
+										<div
 											className={`${
-												index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'
-											} ${
-												index === votesRes[decision]?.votes.length - 1
-													? 'border-b'
-													: ''
-											}`}
-											key={index}
-											currentKey={activeKey}
-											voteType={voteType}
-											voteData={voteData}
-											index={index}
-											isReferendum2={isReferendum2}
-											setDelegationVoteModal={setDelegationVoteModal}
-											setActiveKey={setActiveKey}
-										/>
-									)
-								)
-							) : (
-								<PostEmptyState />
-							)}
-						</div>
+												isReferendum2 ? 'w-[120px]' : 'w-[150px]'
+											} flex items-center gap-1 text-lightBlue`}
+											onClick={() => {
+												handleSortByClick({
+													key: orderBy.convictionIsAsc
+														? votesSortValues.CONVICTION_ASC
+														: votesSortValues.CONVICTION_DESC
+												});
+												setOrderBy((prev) => ({ ...sortedCheck, convictionIsAsc: !prev.convictionIsAsc }));
+											}}
+										>
+										Conviction
+											<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''}
+											/>
+										</div>
+									) : null}
+									{isReferendum2 && (
+										<div
+											className='w-[110px] flex items-center gap-1 text-lightBlue'
+											onClick={() => {
+												handleSortByClick({
+													key: orderBy.votingIsAsc
+														? votesSortValues.VOTING_POWER_ASC
+														: votesSortValues.VOTING_POWER_DESC
+												});
+												setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
+											}}
+										>
+										Voting Power
+											<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
+										</div>
+									)}
+								</div>
+								<div className='overflow-x-auto max-h-[360px]'>
+									{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
+										votesRes[decision]?.votes.map(
+											(voteData: any, index: number) => (
+												<VoterRow
+													className={`${
+														index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'
+													} ${
+														index === votesRes[decision]?.votes.length - 1
+															? 'border-b'
+															: ''
+													}`}
+													key={`${voteData.voter}_${index}`}
+													currentKey={activeKey}
+													voteType={voteType}
+													voteData={voteData}
+													index={index}
+													isReferendum2={isReferendum2}
+													setDelegationVoteModal={setDelegationVoteModal}
+													setActiveKey={setActiveKey}
+													tally={tally?.[decision=== 'yes'? 'ayes':decision==='no' ? 'nays': 'abstain'] || null}
+													decision={decision}
+													referendumId={referendumId}
 
+												/>
+											)
+										)
+									) : (
+										<PostEmptyState />
+									)}
+								</div>
+							</div>
+						</div>
 						<div className='flex justify-between items-center pt-6 bg-white z-10'>
 							<p className='text-xs text-[#96A4B6] m-0'>
 								d: Delegation s: Split sa: Split Abstain
@@ -303,15 +313,31 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							/>
 						</div>
 					</div>
-					{thresholdData && <Container className='flex flex-col gap-10 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
-						<p className='flex row gap-1 text-sm font-medium text-bodyBlue m-0'>
-							<span>
-								<ChartIcon />
-							</span>
-							Proposal is failing as both support and approval are below the threshold
-						</p>
-						<ThresholdGraph {...thresholdData} />
-					</Container>}
+					{
+						thresholdData
+						&& <Container className='flex flex-col gap-10 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
+							{
+								thresholdData.progress.approval > 50 ?
+									<p className='flex row gap-1 text-sm font-medium m-0'>
+										<span>
+											<ChartIcon />
+										</span>
+										<p>
+											Proposal is <span className='text-aye_green'>passing</span> as both support and approval are above the threshold
+										</p>
+									</p>
+									:<p className='flex row gap-1 text-sm font-medium text-bodyBlue m-0'>
+										<span>
+											<ChartIcon />
+										</span>
+										<p>
+											Proposal is <span className='text-nay_red'>failing</span> as both support and approval are below the threshold
+										</p>
+									</p>
+							}
+							<ThresholdGraph {...thresholdData} />
+						</Container>
+					}
 				</div>
 			</Spin>
 			{

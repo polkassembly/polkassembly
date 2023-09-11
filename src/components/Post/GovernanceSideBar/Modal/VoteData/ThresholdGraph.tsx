@@ -222,8 +222,8 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Current Approval</span>
 							</button>
 						</article>
-						<article className='mt-5 flex items-center justify-between gap-x-2'>
-							<div className='flex-1 px-3 py-2 border border-solid border-[#68D183] bg-[#68D18330] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
+						<article className='mt-5 flex flex-col gap-1 items-center gap-x-2'>
+							<div className='px-3 py-2 border border-solid border-[#68D183] bg-[#68D18330] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)] w-full'>
 								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E] m-0'>
 									<span className='text-xs font-medium text-bodyBlue flex gap-[6px] items-center'> <span><AyeApprovalIcon/></span> Current Approval</span>
 									<span className='text-xs font-medium text-bodyBlue flex gap-1 items-center'>{progress.approval}%</span>
@@ -233,7 +233,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 									<span className='text-xs font-medium text-bodyBlue flex gap-1 items-center'>{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%</span>
 								</p>
 							</div>
-							<div className='flex-1 px-3 py-2 border border-solid border-[#E5007A] bg-[#FFF5FB] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
+							<div className='px-3 py-2 border border-solid border-[#E5007A] bg-[#FFF5FB] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)] w-full'>
 								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E] m-0'>
 									<span className='text-xs font-medium text-bodyBlue flex gap-[6px] items-center'> <span><NayApprovalIcon/></span>Current Support</span>
 									<span className='text-xs font-medium text-bodyBlue flex gap-1 items-center'>{progress.support}%</span>

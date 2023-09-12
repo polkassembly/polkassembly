@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Skeleton } from 'antd';
+import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Skeleton } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -33,6 +33,8 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
+import CloseIcon from '~assets/icons/close-icon.svg';
+import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),{
 	loading: () => <Skeleton.Button active />,
@@ -139,6 +141,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network)) || false;
+	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
+
 	useEffect(() => {
 		const handleRouteChange = () => {
 			if(router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post' ){
@@ -210,7 +215,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network))) {
+	if(isMobile) {
 		gov1Items.overviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
@@ -405,12 +410,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 	const handleIdentityButtonClick = () => {
 		const address = localStorage.getItem('identityAddress');
-		// if(id){
-		if(address?.length){
-			setOpen(!open);
-		}else {
-			setOpenAddressLinkedModal(true);
+		if(isMobile){
+			setIdentityMobileModal(true);
+		}else{
+			if(address?.length){
+				setOpen(!open);
+			}else {
+				setOpenAddressLinkedModal(true);
+			}
 		}
+
 	};
 
 	const userDropdown = getUserDropDown( handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
@@ -489,6 +498,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				}
 			</Layout>
 			<Footer />
+			<Modal
+				open={identityMobileModal}
+				footer={false}
+				closeIcon={<CloseIcon/>}
+				onCancel={() => setIdentityMobileModal(false)}
+				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>
+					On-chain identity
+				</span>
+				}
+			>
+				<div className='flex items-center text-center flex-col gap-6 p-4'>
+					<DelegationDashboardEmptyState/>
+					<span>Please visit onchain identity from your Dekstop computer</span>
+				</div>
+			</Modal>
 			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
 		</Layout>
 	);

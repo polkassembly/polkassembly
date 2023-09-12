@@ -306,9 +306,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 			closeIcon={<CloseIcon/>}
 			className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
 			title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>
-				{step !==3 ? <span className='text-2xl'><SetIdentityIcon/></span> : <OnChainIdentityIcon/>}
-				<span className='text-bodyBlue'>{step !== 3 ? 'On-chain identity' : 'Socials Verification'}</span>
-				{isIdentityUnverified && step === 3 && <span className='text-xs font-semibold px-3 rounded-[4px] py-[6px] border-solid border-[1px] flex items-center bg-[#f6f7f9] border-[#D2D8E0] gap-2 text-bodyBlue'> <IdentityProgressIcon/>In Progress</span>}
+				{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? <span className='text-2xl'><SetIdentityIcon/></span> : <OnChainIdentityIcon/>}
+				<span className='text-bodyBlue'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
+				{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && <span className='text-xs font-semibold px-3 rounded-[4px] py-[6px] border-solid border-[1px] flex items-center bg-[#f6f7f9] border-[#D2D8E0] gap-2 text-bodyBlue'> <IdentityProgressIcon/>In Progress</span>}
 			</span>
 			}
 		>

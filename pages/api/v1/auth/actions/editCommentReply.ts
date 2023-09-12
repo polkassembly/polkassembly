@@ -12,6 +12,8 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
+import { firestore_db } from '~src/services/firebaseInit';
+import { checkIsProposer } from './utils/checkIsProposer';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -43,7 +45,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	const replyDoc = await replyRef.get();
 	if(!replyDoc.exists) return res.status(404).json({ message: 'Reply not found' });
-	if(user.id !== replyDoc.data()?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
+	const replyUserAddress = (await firestore_db.collection('addresses').where('user_id', '==', replyDoc.data()?.user_id).where('isMultisig', '==', true).get()).docs.map(doc => doc.data());
+	const userAddress = (await firestore_db.collection('addresses').where('user_id', '==', user.id).get()).docs.map(doc => doc.data());
+	const isAuthor = await checkIsProposer(replyUserAddress?.[0]?.address, userAddress.map(a => a.address), network);
+	if(!isAuthor && user.id !== replyDoc.data()?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	replyRef.update({
 		content,

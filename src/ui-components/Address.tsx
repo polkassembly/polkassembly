@@ -141,8 +141,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 
 	useEffect( () => {
 		try {
-			if(!username)
-				fetchUsername(false);
+			fetchUsername(false);
 		} catch (error) {
 			// console.log(error);
 		}

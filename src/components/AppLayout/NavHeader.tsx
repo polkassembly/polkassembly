@@ -420,4 +420,18 @@ navbar-user-dropdown {
 		margin-left: 8px!important;
 	}
 }	
+
+@media (max-width: 380px) and (min-width: 320px){
+	.logo-container {
+		margin-left: -15px !important;
+	}
+
+	.type-container {
+		margin-left: -38px !important;
+	}
+
+	.text-container {
+		margin-left: -4px!important;
+	}
+}	
 `;

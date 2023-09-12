@@ -150,10 +150,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Referenda', '/referenda', null)
 		] : [],
 		councilItems: chainProperties[network]?.subsquidUrl ? [
+			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />),
+			getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)
 		] : [],
 		treasuryItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', null),
 			getSiderMenuItem('Tips', '/tips',null)
+		] : [],
+		techCommItems: chainProperties[network]?.subsquidUrl ? [
+			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
@@ -183,11 +188,19 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				...gov1Items.democracyItems
 			]),
 
+			getSiderMenuItem('Counsil Motion', 'gov1_democracy_group', <MotionsIcon className='text-sidebarBlue' />, [
+				...gov1Items.councilItems
+			]),
+
 			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [
 				...gov1Items.treasuryItems
 			]),
-			getSiderMenuItem('Council Motions', '/motions', <MotionsIcon className='text-white' />),
-			getSiderMenuItem('Tech Committee Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
+
+			getSiderMenuItem('Tech Committee...', 'gov1_democracy_group', <TechComProposalIcon className='text-sidebarBlue' />, [
+				...gov1Items.techCommItems
+			])
+			// getSiderMenuItem('Council Motions', '/motions', <MotionsIcon className='text-white' />),
+			// getSiderMenuItem('Tech Committee Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		]);
 	}
 

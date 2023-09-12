@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { Dashboard, PolkassemblyIcon } from '~src/ui-components/CustomIcons';
+import { Dashboard, PolkassemblyIcon, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Button, Divider, Dropdown, Skeleton, Space } from 'antd';
@@ -73,6 +73,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
 	const isClicked = useRef(false);
+	// const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
 	const handleLogout = async () => {
 		logout(setUserDetailsContextState);
@@ -93,6 +94,23 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[network]);
+
+	// useEffect(() => {
+	// 	const handleResize = () => {
+	// 		setIsMobile(window.innerWidth <= 768);
+	// 	};
+	// 	window.addEventListener('resize', handleResize);
+	// 	handleResize();
+	// 	return () => {
+	// 		window.removeEventListener('resize', handleResize);
+	// 	};
+	// }, []);
+
+	// useEffect(() => {
+	// 	if(isMobile){
+
+	// 	}
+	// }, []);
 
 	const menudropDownItems: ItemType[]= [
 		{
@@ -167,9 +185,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 				<div className='flex items-center'>
 					<Link className='flex' href={'/'}>
 						<PaLogo className='-ml-[2px]' sidedrawer={false}/>
-						{/* <span sidedrawer={false}>
-							<PolkassemblyIcon className='-ml-[2px]'/>
-						</span> */}
+						{/* {isMobile &&
+						<div>
+							<PolkassemblyIcon className='text-2xl w-15 -ml-[2px]'/>
+						</div>
+						} */}
 					</Link>
 
 					<div className='flex items-center'>
@@ -217,9 +237,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 
 							</AuthDropdown>
 						}
-						<div className='mr-0 lg:mr-10 bg-[#FEF2F8] h-[24px] rounded-[6px]'>
-
+						<div className='mr-0 lg:mr-10'>
 							<MenuDropdown>
+								<OptionMenu className="text-2xl mt-[6px]"/>
+							</MenuDropdown>
+							{/* <MenuDropdown>
 								<svg width="24" height="100%" viewBox="0 0 24 24"  fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M17.7143 18.8571C17.7143 19.4883 18.226 20 18.8571 20C19.4883 20 20 19.4883 20 18.8571C20 18.226 19.4883 17.7143 18.8571 17.7143C18.226 17.7143 17.7143 18.226 17.7143 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 									<path d="M10.8571 18.8571C10.8571 19.4883 11.3688 20 12 20C12.6312 20 13.1429 19.4883 13.1429 18.8571C13.1429 18.226 12.6312 17.7143 12 17.7143C11.3688 17.7143 10.8571 18.226 10.8571 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -232,7 +254,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 									<path d="M4 5.14286C4 5.77404 4.51167 6.28571 5.14286 6.28571C5.77404 6.28571 6.28571 5.77404 6.28571 5.14286C6.28571 4.51167 5.77404 4 5.14286 4C4.51167 4 4 4.51167 4 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 								</svg>
 
-							</MenuDropdown>
+							</MenuDropdown> */}
 						</div>
 
 					</Space>

@@ -103,6 +103,11 @@ import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
 import DashboardIcon from '~assets/icons/dashboard.svg';
 import PolkassemblyLogo from '~assets/icons/polkaIcon.svg';
+import optionsLogo from '~assets/icons/optionIcon.svg';
+
+export const OptionMenu = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={optionsLogo} {...props} />
+);
 
 export const PolkassemblyIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={PolkassemblyLogo} {...props} />

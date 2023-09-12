@@ -59,7 +59,7 @@ function getSiderMenuItem(
 	} as MenuItem;
 }
 
-const onchainIdentitySupportedNetwork = [AllNetworks.POLKADOT];
+export const onchainIdentitySupportedNetwork = [AllNetworks.POLKADOT];
 
 const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network: string, img?: string | null, username?: string, className?:string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
@@ -511,7 +511,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			>
 				<div className='flex items-center text-center flex-col gap-6 p-4'>
 					<DelegationDashboardEmptyState/>
-					<span>Please visit onchain identity from your Dekstop computer</span>
+					<span>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
 			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>

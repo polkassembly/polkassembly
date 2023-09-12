@@ -4,6 +4,7 @@
 import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
+import fetchWithTimeout from '~src/api-utils/timeoutFetch';
 import { ProposalType } from '~src/global/proposalType';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 const urlMapper = {
@@ -47,7 +48,7 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 		}
 		const postId = ProposalType.TIPS !== proposalType ? Number(id) : id ;
 		const url = new URL( urlMapper[proposalType as keyof typeof urlMapper]?.(postId, network));
-		const data = await (await fetch(url)).json();
+		const data = await fetchWithTimeout(url, { timeout: 8000 }).then((res) => res.json());
 
 		let subsqTitle = data?.title || '';
 
@@ -68,12 +69,12 @@ const handler: NextApiHandler<{ data: ({ content: any|string , title: string|any
 	const { proposalType, id } = req.query;
 	const network = String(req.headers['x-network']);
 
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
-	if (!id ) res.status(400).json({ error: 'id missing in request' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+	if (!id ) return res.status(400).json({ error: 'id missing in request' });
 
 	const data = await getSubSquareContentAndTitle(proposalType as string, network, String(id));
 
-	res.status(200).json( { data } );
+	return res.status(200).json( { data } );
 
 };
 

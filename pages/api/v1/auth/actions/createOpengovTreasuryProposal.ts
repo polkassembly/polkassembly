@@ -46,6 +46,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		createdOnPolkassembly: true,
 		created_at: current_datetime,
 		id: postId,
+		isDeleted: false,
 		last_comment_at: current_datetime,
 		last_edited_at: current_datetime,
 		post_link: discussionId ? {

@@ -171,6 +171,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
 	return (
 		<>
 			{chainProperties[network]?.gTag ? <><Script

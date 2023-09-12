@@ -524,6 +524,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 									{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
 									{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+									{availableWallets[Wallet.POLKAGATE] &&  <WalletButton className={`${wallet === Wallet.POLKAGATE? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKAGATE)} name="PolkaGate" icon={<WalletIcon which={Wallet.POLKAGATE} className='h-6 w-6' />} />}
 									{
 										(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
 										<WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
@@ -660,7 +661,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<VoteInitiatedModal title={multisig ? 'Voting with Polkasafe Multisig initiated':'Voted successfully' }  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
+			<VoteInitiatedModal title={multisig ? 'Voting with Polkasafe Multisig initiated': 'Voted Successfully' }  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
 		</div>
 	</>;
 

@@ -5,7 +5,6 @@
 import { NextApiHandler } from 'next';
 
 import messages from '~src/util/messages';
-import * as Sentry from '@sentry/browser';
 
 type TWithErrorHandling = (handler: NextApiHandler) => NextApiHandler;
 
@@ -19,8 +18,7 @@ const withErrorHandling: TWithErrorHandling = (handler) => {
 		} catch (error) {
 			// console log needed for logging on server
 			console.log('Error in API : ', error);
-			Sentry.captureException(error);
-			res.status(Number(error.name) || 500).json({
+			return res.status(Number(error.name) || 500).json({
 				...error,
 				message: error.message || messages.API_FETCH_ERROR
 			});

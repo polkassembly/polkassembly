@@ -8,13 +8,18 @@ import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
 import Markdown from 'src/ui-components/Markdown';
 
-import { usePostDataContext } from '~src/context';
+import { usePostDataContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 
 import CreateOptionPoll from '../ActionsBar/OptionPoll/CreateOptionPoll';
 import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
 import ReportButton from '../ActionsBar/ReportButton';
 import ShareButton from '../ActionsBar/ShareButton';
 import SubscriptionButton from '../ActionsBar/SubscriptionButton/SubscriptionButton';
+import { useRouter } from 'next/router';
+import { EReportType, NotificationStatus } from '~src/types';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { ProposalType } from '~src/global/proposalType';
+import { poppins } from 'pages/_app';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => <div>
@@ -38,7 +43,33 @@ interface IPostDescriptionProps {
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
-
+	const { allowed_roles } = useUserDetailsContext();
+	const { network } = useNetworkContext();
+	const router = useRouter();
+	const isOffchainPost: Boolean  = postType == ProposalType.DISCUSSIONS || postType == ProposalType.GRANTS;
+	//write a function which redirects to the proposalType page
+	const goToListingViewPath = (proposalType: ProposalType) => {
+		let path: string = '';
+		if(proposalType){
+			switch (proposalType){
+			case ProposalType.DISCUSSIONS:
+				path = 'discussions';
+				break;
+			case ProposalType.GRANTS:
+				path = 'grants';
+				break;
+			}
+		}
+		router.push(`/${path}`);
+	};
+	const deletePost = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'The post was deleted successfully',
+			status: NotificationStatus.SUCCESS
+		});
+		goToListingViewPath(postType);
+	};
 	return (
 		<div className={`${className} mt-4`}>
 			{content && <Markdown className='post-content' md={content} />}
@@ -54,10 +85,14 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{canEdit && <Button className={'text-pink_primary flex items-center border-none shadow-none px-1.5'} onClick={toggleEdit}><FormOutlined />Edit</Button>}
 				</div>
 				<div className='flex items-center'>
-					{id && !isEditing && <ReportButton proposalType={postType} type='post' postId={`${postIndex}`} />}
+					{id && !isEditing && <ReportButton className={'text-pink_primary flex items-center border-none shadow-none'} proposalType={postType} type='post' postId={`${postIndex}`} />}
 					{canEdit && !isEditing && <CreateOptionPoll proposalType={postType} postId={postIndex} />}
 					{TrackerButtonComp}
 					<ShareButton title={title} />
+					{
+						allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && ['polkadot', 'kusama'].includes(network) &&
+							<ReportButton className={`flex items-center shadow-none text-pink_primary leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} proposalType={postType} onSuccess={deletePost} isDeleteModal={true} type={EReportType.POST} postId={`${postIndex}`} />
+					}
 				</div>
 			</div>
 

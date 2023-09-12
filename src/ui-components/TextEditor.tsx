@@ -92,9 +92,11 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	}, [value]);
 
 	return (
-		<>
+		<div className='relative'>
 			{loading &&  (
-				<Skeleton.Input block={true} active={true} style={{ height: '300px' }} />
+				<div className='absolute inset-0'>
+					<Skeleton.Input block={true} active={true} style={{ height: `${height || 300}px` }} />
+				</div>
 			)}
 			<Modal
 				open={isModalVisible}
@@ -304,7 +306,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					/>
 				</div>
 			</div>
-		</>
+		</div>
 
 	);
 };

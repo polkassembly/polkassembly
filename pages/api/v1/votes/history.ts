@@ -142,7 +142,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesHistoryR
 	const { listingLimit = VOTES_LISTING_LIMIT, page = 0, voterAddress, proposalType, proposalIndex } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 	const { data, error, status } = await getVotesHistory({
 		listingLimit,
 		network,
@@ -153,9 +153,9 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesHistoryR
 	});
 
 	if(error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 }
 

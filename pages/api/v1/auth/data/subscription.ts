@@ -15,7 +15,7 @@ import messages from '~src/auth/utils/messages';
 async function handler(req: NextApiRequest, res: NextApiResponse<Subscription | MessageType>) {
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { post_id = 0, proposalType } = req.body;
 
@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Subscription | 
 			subscribed = false;
 		}
 	}
-	res.status(200).json({ subscribed });
+	return res.status(200).json({ subscribed });
 }
 
 export default withErrorHandling(handler);

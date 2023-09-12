@@ -166,7 +166,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		gov2ReferendumStatus.SUBMITTED,
 		gov2ReferendumStatus.DECIDING,
 		gov2ReferendumStatus.CONFIRM_STARTED,
-		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED
+		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+		gov2ReferendumStatus.CONFIRM_ABORTED
 	].includes(post.status);
 
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -252,6 +253,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		let accounts: InjectedAccount[] = [];
 		let polakadotJSAccounts : InjectedAccount[] | undefined;
 		let polywalletJSAccounts : InjectedAccount[] | undefined;
+		let polkagateAccounts: InjectedAccount[] | undefined;
 		let subwalletAccounts: InjectedAccount[] | undefined;
 		let talismanAccounts: InjectedAccount[] | undefined;
 
@@ -262,6 +264,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			if(extObj.name == 'polkadot-js') {
 				signersMapLocal['polkadot-js'] = extObj.signer;
 				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
+			} else if(extObj.name == 'polkagate') {
+				signersMapLocal['polkagate'] = extObj.signer;
+				polkagateAccounts = await getWalletAccounts(Wallet.POLKAGATE);
 			} else if(extObj.name == 'subwallet-js') {
 				signersMapLocal['subwallet-js'] = extObj.signer;
 				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
@@ -285,6 +290,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
+			});
+		}
+
+		if(polkagateAccounts) {
+			accounts = accounts.concat(polkagateAccounts);
+			polkagateAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'polkagate';
 			});
 		}
 
@@ -664,7 +676,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
 						<span title='Conviction'>
 							<ConvictionIcon className='mr-1'/>
-							{!lockPeriod ? '0.1': lockPeriod }x
+							{lockPeriod || '0.1'}x
 						</span>
 					</Tooltip>
 				</div>
@@ -998,7 +1010,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							</div>
 						</>
 					}
-					{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
+					{[ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
 						<GovSidebarCard>
 							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number} tally={tally}/>
 						</GovSidebarCard>
@@ -1027,6 +1039,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							tippers={post.tippers}
 						/>
 					</GovSidebarCard>
+					}
+					{
+						network.includes('polymesh')?
+							proposalType === ProposalType.TECHNICAL_PIPS || proposalType === ProposalType.UPGRADE_PIPS?
+								<GovSidebarCard>
+									<div className='flex mt-1 gap-2'>
+										<span className='text-sm tracking-wide text-bodyBlue'>This PIP is proposed via
+											{proposalType === ProposalType.TECHNICAL_PIPS? ' Technical Committee ': ' Upgrade Committee '}
+								& is not open to community voting
+										</span>
+									</div>
+								</GovSidebarCard>:
+								null:
+							null
 					}
 
 					{proposalType === ProposalType.BOUNTIES && <>

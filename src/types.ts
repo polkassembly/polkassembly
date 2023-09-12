@@ -80,6 +80,13 @@ export enum Role {
   PROPOSAL_BOT = 'proposal_bot',
   USER = 'user',
   EVENT_BOT = 'event_bot',
+  MODERATOR = 'moderator',
+}
+
+export enum EReportType {
+  POST = 'post',
+  COMMENT = 'comment',
+  REPLY = 'reply',
 }
 
 export enum NotificationStatus {
@@ -203,6 +210,7 @@ export interface ReactionMapFields {
 export enum Wallet {
   TALISMAN = 'talisman',
   POLKADOT = 'polkadot-js',
+  POLKAGATE = 'polkagate',
   SUBWALLET = 'subwallet-js',
   METAMASK = 'metamask',
   WALLETCONNECT = 'walletconnect',
@@ -290,6 +298,7 @@ export interface PostComment {
   created_at: Date,
   history: ICommentHistory[],
   id: string,
+  isDeleted: boolean,
   updated_at: Date,
   sentiment: number | 0;
   username: string,
@@ -344,6 +353,7 @@ export interface Post {
   content: string,
   created_at: Date;
   id: number | string,
+  isDeleted: boolean,
   last_edited_at: Date,
   last_comment_at: Date,
   title: string,
@@ -377,6 +387,7 @@ export interface CommentReply {
   content: string,
   created_at: Date,
   id: string,
+  isDeleted: boolean,
   updated_at: Date,
   username: string,
   user_profile_img: string,

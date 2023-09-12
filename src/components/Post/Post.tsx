@@ -15,7 +15,6 @@ import PostDataContextProvider from '~src/context/PostDataContext';
 import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
-import OtherProposals from '../OtherProposals';
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
@@ -32,6 +31,11 @@ import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
+
+const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -96,7 +100,6 @@ const Post: FC<IPostProps> = (props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
@@ -261,21 +264,22 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-
-				<GovernanceSideBar
-					toggleEdit={toggleEdit}
-					proposalType={proposalType}
-					onchainId={onchainId}
-					status={postStatus}
-					canEdit={canEdit}
-					startTime={post.created_at}
-					post={post}
-					tally={post?.tally}
-					trackName={trackName}
-					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
-					pipsVoters={post?.pips_voters || []}
-					hash={hash}
-				/>
+				<StickyBox offsetTop={65} offsetBottom={65} className="mb-6">
+					<GovernanceSideBar
+						toggleEdit={toggleEdit}
+						proposalType={proposalType}
+						onchainId={onchainId}
+						status={postStatus}
+						canEdit={canEdit}
+						startTime={post.created_at}
+						post={post}
+						tally={post?.tally}
+						trackName={trackName}
+						className={`${!isOffchainPost }`}
+						pipsVoters={post?.pips_voters || []}
+						hash={hash}
+					/>
+				</StickyBox>
 				{/* decision deposite placed. */}
 
 				{
@@ -306,10 +310,6 @@ const Post: FC<IPostProps> = (props) => {
 		}
 	</>;
 
-	const handleOpenSidebar = (address:string) => {
-		setSidebarOpen(true);
-		setProposerAddress(address);
-	};
 	const getOnChainTabs = () => {
 		const tabs: any[] = [
 			{
@@ -374,7 +374,6 @@ const Post: FC<IPostProps> = (props) => {
 							version: post?.version,
 							vote_threshold: post?.vote_threshold
 						}}
-						handleOpenSidebar={handleOpenSidebar}
 						proposalType={proposalType}
 					/>
 				),
@@ -402,6 +401,7 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
+
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',
@@ -412,6 +412,7 @@ const Post: FC<IPostProps> = (props) => {
 			currentTimeline: post.currentTimeline,
 			description: post?.description,
 			history: post?.history || [],
+			identityId: post?.identity || null,
 			last_edited_at: post?.last_edited_at,
 			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,
@@ -434,7 +435,7 @@ const Post: FC<IPostProps> = (props) => {
 			username: post?.username
 		}}>
 			<CommentsDataContextProvider initialCommentsData={{
-				comments:post?.comments,
+				comments: {},
 				currentTimeline:post.currentTimeline,
 				overallSentiments: post?.overallSentiments,
 				timelines:[]
@@ -501,7 +502,6 @@ const Post: FC<IPostProps> = (props) => {
 					open={sidebarOpen}
 					closeSidebar={() => setSidebarOpen(false)}
 				>
-					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
 				</SidebarRight>
 			</CommentsDataContextProvider>
 		</PostDataContextProvider>

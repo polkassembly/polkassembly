@@ -248,7 +248,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const summary = (await fetchContentSummary(content, proposalType)) || '';
 
 	const { data: postUser } = await getUserWithAddress(proposer_address);
-
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		content,
 		created_at,

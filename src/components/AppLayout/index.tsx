@@ -108,6 +108,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const router = useRouter();
 	// const currentUser = useUserDetailsContext();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
+
 	// const { defaultAddress,web3signup } = currentUser;
 
 	useEffect(() => {
@@ -246,15 +248,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const userDropdown = getUserDropDown(handleLogout, picture, username!);
 	const govOverviewItems = isOpenGovSupported(network) ? [
-		getSiderMenuItem('', '', <div className={`${className} svgLogo logo-container -mt-[8px] w-[412px] -ml-[106px] flex items-center justify-center h-[66px]`}>
+		!isMobile ? getSiderMenuItem('', '', <div className={`${className} svgLogo logo-container logo-display-block -mt-[8px] w-[412px] -ml-[106px] flex items-center justify-center h-[66px]`}>
 			{sidedrawer &&
-			<div className={'ml-[382px] mr-[310px] mt-[14px] logo-padding'}>
+			<div className={'-ml-[72px] mt-[14px] logo-padding'}>
 				<PaLogo className='h-full mt-[10px]' sidedrawer={sidedrawer} />
 				<div className={`${sidedrawer ? 'border-bottom' : 'border-none'} mt-[10px] w-[220px] ml-[68px]`}></div>
 			</div>}
-			{/* <UserDropdown address={defaultAddress || ''} className='user-container'/> */}
-			{/* <userDropdown/> */}
-		</div>),
+		</div>): null,
 		getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -271,6 +271,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (isGrantsSupported(network)) {
 		govOverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
+
 	if(['kusama', 'polkadot'].includes(network)){
 		govOverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
 	}
@@ -337,8 +338,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			setSidedrawer(false);
 		}
 	};
+
 	let sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
-	if(username) {
+	if(typeof window !== 'undefined' && username && window.screen.width < 1024 && (isOpenGovSupported(network))) {
 		sidebarItems = [userDropdown, ...sidebarItems];
 	}
 
@@ -361,7 +363,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} -mt-[25px]`}
+						className={`${username?'auth-sider-menu':''} mt-[15px]`}
 					/>
 				</Sider>
 				<Drawer
@@ -550,7 +552,7 @@ margin-top: -17px !important;
 		top:62px !important;
 	}
 
-	.logo-padding {
+	.logo-display-block {
 		display: none !important;
 	}
 

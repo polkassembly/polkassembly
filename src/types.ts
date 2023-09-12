@@ -210,6 +210,7 @@ export interface ReactionMapFields {
 export enum Wallet {
   TALISMAN = 'talisman',
   POLKADOT = 'polkadot-js',
+  POLKAGATE = 'polkagate',
   SUBWALLET = 'subwallet-js',
   METAMASK = 'metamask',
   WALLETCONNECT = 'walletconnect',

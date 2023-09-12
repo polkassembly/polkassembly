@@ -11,7 +11,7 @@ export const checkWalletForSubstrateNetwork = (network: string) => {
 	const injectedWindow = window as Window & InjectedWindow;
 	const availableWallets = injectedWindow.injectedWeb3;
 
-	if((availableWallets[Wallet.TALISMAN] === undefined && availableWallets[Wallet.POLKADOT] === undefined && availableWallets[Wallet.SUBWALLET] === undefined && !((window as any).walletExtension?.isNovaWallet ))){
+	if((availableWallets[Wallet.TALISMAN] === undefined && availableWallets[Wallet.POLKADOT] === undefined && availableWallets[Wallet.SUBWALLET] === undefined && availableWallets[Wallet.POLKAGATE] === undefined && !((window as any).walletExtension?.isNovaWallet ))){
 		if(!['polymesh'].includes(network)){
 			return {
 				description: 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',

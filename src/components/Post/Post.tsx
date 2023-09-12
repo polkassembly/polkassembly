@@ -31,8 +31,12 @@ import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
-import StickyBox from '~src/util/Stickytop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
+
+const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -405,6 +409,7 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
+
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',

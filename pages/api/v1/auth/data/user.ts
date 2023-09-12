@@ -33,7 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<PublicUser | Me
 	const user = await getUser(Number(userId));
 	if(!user) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
 
-	res.status(200).json(user);
+	return res.status(200).json(user);
 }
 
 export default withErrorHandling(handler);

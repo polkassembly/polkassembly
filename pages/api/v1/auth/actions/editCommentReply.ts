@@ -52,6 +52,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	replyRef.update({
 		content,
+		isDeleted: false,
 		updated_at: last_comment_at
 	}).then(() => {
 		postRef.update({

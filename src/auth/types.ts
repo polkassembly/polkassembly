@@ -133,12 +133,13 @@ export interface User {
 	web3_signup: boolean;
 	primary_network?: string;
 	notification_preferences?: IUserNotificationSettings;
-	two_factor_auth?: IUser2FADetails
+	two_factor_auth?: IUser2FADetails;
+	roles?: Role[];
 }
 
-export  interface Roles {
+export interface Roles {
 	allowedRoles: Role[];
-	currentRole: Role.PROPOSAL_BOT | Role.USER | Role.EVENT_BOT
+	currentRole: Role.PROPOSAL_BOT | Role.USER | Role.EVENT_BOT | Role.MODERATOR;
 }
 
 export interface JWTPayloadType {

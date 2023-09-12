@@ -191,7 +191,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 	return <div className={`${className}`}>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
-			<ProfileBalances address={address}/>
+			<ProfileBalances/>
 		</div>
 		<div className='flex gap-2 mb-4 md:mb-5 mt-5 dashboard-heading items-center max-lg:pt-[60px]'>
 			<span className='text-sm cursor-pointer' onClick={() => handleReroute('dashboard')}>Dashboard</span>

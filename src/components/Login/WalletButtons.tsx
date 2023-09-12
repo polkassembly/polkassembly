@@ -34,9 +34,10 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 				</div>
 			}
 			<div className="flex mt-3 max-w-xs gap-4 flex-col m-auto justify-center sm:flex-row sm:mx-2 sm:max-w-none">
-				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot.js" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6' />} />
-				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.TALISMAN ? 'border border-solid border-pink_primary' : ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6' />} />
-				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary' : ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="SubWallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />
+				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary': ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot.js" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />
+				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.TALISMAN ? 'border border-solid border-pink_primary': ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
+				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary': ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="SubWallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6'  />} />
+				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary': ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLKAGATE)} name="PolkaGate" icon={<WalletIcon which={Wallet.POLKAGATE} className='h-6 w-6'  />} />
 				{showPolkasafe && onPolkasafeSelect &&
 					<WalletButton disabled={disabled} onClick={(event) => {
 						onPolkasafeSelect(true);

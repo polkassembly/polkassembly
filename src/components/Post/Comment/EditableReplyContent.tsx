@@ -333,7 +333,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						:
 						<>
 							<Markdown className='py-2 px-2 md:px-4 bg-blue-grey rounded-b-md text-sm' md={content} />
-							<div className='flex items-center flex-wrap'>
+							<div className='flex items-center flex-wrap gap-x-3'>
 								{id === userId &&
 									<Button className={'text-pink_primary flex items-center border-none shadow-none'} disabled={loading} onClick={toggleEdit}>
 										{
@@ -354,7 +354,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${reply.reply_source ? 'disabled-reply' : ''}` }>
 										<ReplyIcon className='mr-1'/> Reply
 									</Button>
-								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
+								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs p-0 m-0'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
 									: null
 								}
 							</div>

@@ -9,74 +9,82 @@ import { Wallet } from '~src/types';
 import getEncodedAddress from './getEncodedAddress';
 import getSubstrateAddress from './getSubstrateAddress';
 import { ApiPromise } from '@polkadot/api';
+import getMetamaskWalletAccounts from './getMetamaskWalletAccounts';
 
 interface Props{
   network: string,
   api: ApiPromise,
   loginAddress: string,
   chosenWallet: Wallet,
-  chosenAddress?: string
+  chosenAddress?: string;
+	setExtentionOpen?: (pre: boolean)=> void;
 }
 
-const getAccountsFromWallet = async ({ network, api, loginAddress, chosenWallet, chosenAddress }: Props): Promise<{accounts:InjectedAccount[], account: string} | undefined > => {
+const getAccountsFromWallet = async ({ network, api, loginAddress, chosenWallet, chosenAddress, setExtentionOpen }: Props): Promise<{accounts:InjectedAccount[], account: string} | undefined > => {
 
-	const injectedWindow = window as Window & InjectedWindow;
+	if(chosenWallet === Wallet.METAMASK){
+		const accountData = await getMetamaskWalletAccounts({ chosenWallet, loginAddress, network });
+		return  { account: accountData?.account || chosenAddress || '', accounts: (accountData?.accounts || []) as InjectedAccount[] };
 
-	const wallet = isWeb3Injected
-		? injectedWindow.injectedWeb3[chosenWallet]
-		: null;
+	}else{
+		const injectedWindow = window as Window & InjectedWindow;
 
-	if (!wallet || !api) {
-		return;
-	}
+		const wallet = isWeb3Injected
+			? injectedWindow.injectedWeb3[chosenWallet]
+			: null;
 
-	let injected: Injected | undefined;
-	try {
-		injected = await new Promise((resolve, reject) => {
-			const timeoutId = setTimeout(() => {
-				reject(new Error('Wallet Timeout'));
-			}, 60000); // wait 60 sec
+		if (!wallet || !api) {
+			setExtentionOpen?.(true);
+			return;
+		}
 
-			if(wallet && wallet.enable) {
-				wallet.enable(APPNAME)
-					.then((value) => { clearTimeout(timeoutId); resolve(value); })
-					.catch((error) => { reject(error); });
-			}
+		let injected: Injected | undefined;
+		try {
+			injected = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('Wallet Timeout'));
+				}, 60000); // wait 60 sec
+
+				if(wallet && wallet.enable) {
+					wallet.enable(APPNAME)
+						.then((value) => { clearTimeout(timeoutId); resolve(value); })
+						.catch((error) => { reject(error); });
+				}
+			});
+		} catch (err) {
+			console.log(err?.message);
+		}
+		if (!injected) {
+			return;
+		}
+
+		const accounts = await injected.accounts.get();
+		if (accounts.length === 0) {
+			return;
+		}
+
+		accounts.forEach((account) => {
+			account.address = getEncodedAddress(account.address, network) || account.address;
 		});
-	} catch (err) {
-		console.log(err?.message);
-	}
-	if (!injected) {
-		return;
-	}
 
-	const accounts = await injected.accounts.get();
-	if (accounts.length === 0) {
-		return;
-	}
-
-	accounts.forEach((account) => {
-		account.address = getEncodedAddress(account.address, network) || account.address;
-	});
-
-	if (accounts && Array.isArray(accounts)) {
-		const substrate_address = getSubstrateAddress(loginAddress);
-		const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
-		if (index >= 0) {
-			const account = accounts[index];
-			accounts.splice(index, 1);
-			accounts.unshift(account);
-		}
-	}
-
-	if (accounts.length > 0) {
-		if(api) {
-			api.setSigner(injected.signer);
+		if (accounts && Array.isArray(accounts)) {
+			const substrate_address = getSubstrateAddress(loginAddress);
+			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
 		}
 
+		if (accounts.length > 0) {
+			if(api) {
+				api.setSigner(injected.signer);
+			}
+
+		}
+
+		return  { account: chosenAddress || accounts[0].address, accounts };
 	}
-
-	return  { account: chosenAddress || accounts[0].address, accounts };
-
 };
 export default getAccountsFromWallet;

@@ -10,12 +10,10 @@ import { ApiContext } from '~src/context/ApiContext';
 import { useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
 import WalletButton from '~src/components/WalletButton';
-import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import getEncodedAddress from '~src/util/getEncodedAddress';
+import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
@@ -35,6 +33,7 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 
 interface Props{
   className?: string;
@@ -260,111 +259,20 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 
 	};
 
-	const getMetamaskAccounts = async (): Promise<InjectedAccount[]> => {
-		const ethereum = (window as any).ethereum;
-		if (!ethereum) return [];
-
-		let addresses = await ethereum.request({ method: 'eth_requestAccounts' });
-		addresses = addresses.map((address: string) => address);
-
-		if (addresses.length > 0) {
-			addresses = addresses.map((address: string): InjectedAccount => {
-				return {
-					address: address.toLowerCase(),
-					genesisHash: null,
-					name: 'metamask',
-					type: 'ethereum'
-				};
-			});
-		}
-
-		return addresses as InjectedAccount[];
-	};
-
-	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?:string | null): Promise<void> => {
-
-		if(!api || !apiReady) return;
-		setLoading(true);
-
-		setExtentionOpen(false);
-
-		if(chosenWallet === Wallet.METAMASK){
-			const accounts = await getMetamaskAccounts();
-			setAccounts(accounts);
-			setAddress(accounts[0].address);
-			if(defaultWalletAddress) {
-				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)[0].address);
-			}else{
-				setAddress(accounts[0].address);
-			}
-		}else{
-			const injectedWindow = window as Window & InjectedWindow;
-
-			const wallet = isWeb3Injected
-				? injectedWindow?.injectedWeb3?.[chosenWallet]
-				: null;
-
-			if (!wallet) {
-				setExtentionOpen(true);
-				setLoading(false);
-				return;
-			}
-
-			let injected: Injected | undefined;
-			try {
-				injected = await new Promise((resolve, reject) => {
-					const timeoutId = setTimeout(() => {
-						reject(new Error('Wallet Timeout'));
-					}, 60000); // wait 60 sec
-
-					if(wallet && wallet.enable) {
-						wallet.enable(APPNAME)
-							.then((value) => { clearTimeout(timeoutId); resolve(value); })
-							.catch((error) => { reject(error); });
-					}
-				});
-			} catch (err) {
-				console.log(err?.message);
-			}
-			if (!injected) {
-				setLoading(false);
-				return;
-			}
-
-			const accounts = await injected.accounts.get();
-			if (accounts.length === 0) {
-				return;
-			}
-
-			accounts.forEach((account) => {
-				account.address = getEncodedAddress(account.address, network) || account.address;
-			});
-
-			setAccounts(accounts);
-			if (accounts.length > 0) {
-				if(api && apiReady) {
-					api.setSigner(injected.signer);
-				}
-
-				setAddress(accounts[0].address);
-				if(defaultWalletAddress) {
-					setAddress(accounts.filter((account) => (account.address) === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0].address);
-				}else{
-					setAddress(accounts[0].address);
-				}
-			}
-		}
-		setLoading(false);
-		return;
-	};
-
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		if(!api || !apiReady)return;
 		localStorage.setItem('selectedWallet', wallet);
 		setAccounts([]);
 		setAddress('');
 		event.preventDefault();
 		setWallet(wallet);
-		await getAccounts(wallet);
+		(async() => {
+			setLoading(true);
+			const accountData = await getAccountsFromWallet({ api, chosenWallet: wallet, loginAddress, network, setExtentionOpen });
+			setAccounts(accountData?.accounts || []);
+			setAddress(accountData?.account || '');
+			setLoading(false);
+		})();
 	};
 
 	const handleOnBalanceChange = async(balanceStr: string) => {
@@ -383,7 +291,14 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		const wallet = localStorage.getItem('loginWallet') || '';
 		const address = localStorage.getItem('loginAddress');
 		setWallet((loginWallet || wallet) as Wallet);
-		getAccounts((loginWallet || wallet) as Wallet, loginAddress || address);
+		if(!api || !apiReady)return;
+		(async() => {
+			setLoading(true);
+			const accountData = await getAccountsFromWallet({ api, chosenAddress: (loginAddress || address) as string , chosenWallet: (loginWallet || wallet) as Wallet, loginAddress, network, setExtentionOpen });
+			setAccounts(accountData?.accounts || []);
+			setAddress(accountData?.account || '');
+			setLoading(false);
+		})();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet, loginAddress]);
 
@@ -419,7 +334,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		className = {`${poppins.className} ${poppins.variable} radius`}
 		open = {open}
 		title = {
-			<div className='text-center text-[20px] font-semibold text-[#243A57]'>
+			<div className='text-center text-[20px] font-semibold text-bodyBlue'>
 				{showMultisig && <ArrowLeft
 					className='cursor-pointer absolute left-[24px] mt-1'
 					onClick={() => {
@@ -440,7 +355,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		onCancel={() => setOpen(!closable)}
 		closeIcon={<CloseIcon/>}
 	>
-		<Spin spinning={loading} indicator={<LoadingOutlined />}>
+		<Spin spinning={loading}>
 			<div className='flex flex-col'>
 				{linkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
 					<ConnectAddressIcon/>
@@ -449,7 +364,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 					</span>
 				</div>
 				}
-				<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
+				<h3 className='text-sm font-normal text-lightBlue text-center'>Select a wallet</h3>
 				<div className={`flex items-center justify-center gap-x-4 ${showMultisig ? 'mb-6':''}`}>
 					{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
 
@@ -507,7 +422,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 				{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert
 					message={linkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
 					description={`${linkAddressNeeded ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
-					type='info' showIcon className='text-[#243A57] changeColor text-md'/>}
+					type='info' showIcon className='text-bodyBlue changeColor text-md'/>}
 
 				{
 					!extensionOpen &&
@@ -529,7 +444,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 													setMultisig('');
 												}}
 												onBalanceChange={handleOnBalanceChange}
-												className='text-[#485F7D] text-sm'
+												className='text-lightBlue text-sm'
 												walletAddress={multisig}
 												setWalletAddress={setMultisig}
 												containerClassName='gap-[20px]'

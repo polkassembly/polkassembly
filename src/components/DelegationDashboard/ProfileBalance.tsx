@@ -9,39 +9,33 @@ import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
 import dynamic from 'next/dynamic';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
-import { Wallet } from '~src/types';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { APPNAME } from '~src/global/appName';
-import getEncodedAddress from '~src/util/getEncodedAddress';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { formatBalance } from '@polkadot/util';
 import Image from 'next/image';
 import { formatedBalance } from '~src/util/formatedBalance';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 
 interface Props{
   className?: string;
-  address: string;
 }
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
 });
 
-const ProfileBalances = ({ className, address }: Props ) => {
-
+const ProfileBalances = ({ className }: Props ) => {
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkContext();
 	const [balance, setBalance] = useState<string>('0');
 	const [lockBalance, setLockBalance] = useState<string>('0');
 	const [transferableBalance, setTransferableBalance] = useState<string>('0');
-	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const { loginWallet, setUserDetailsContextState, delegationDashboardAddress } = useUserDetailsContext();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { loginWallet, setUserDetailsContextState, delegationDashboardAddress, loginAddress } = useUserDetailsContext();
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
 
 	useEffect(() => {
@@ -57,81 +51,29 @@ const ProfileBalances = ({ className, address }: Props ) => {
 
 	useEffect(() => {
 
-		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
+		userProfileBalances({ address: defaultAddress, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
+		if(loginWallet && defaultAddress ){
+			localStorage.setItem('delegationWallet', loginWallet);
+			localStorage.setItem('delegationDashboardAddress', defaultAddress || delegationDashboardAddress);
+			setUserDetailsContextState((prev) => {
+				return { ...prev,
+					delegationDashboardAddress: defaultAddress || delegationDashboardAddress
+				};
+			});
+		}
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady]);
-
-	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-
-		if(!api || !apiReady || !chosenWallet ) return;
-
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[String(chosenWallet)]
-			: null;
-
-		if (!wallet) {
-			return;
-		}
-
-		let injected: Injected | undefined;
-
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-		if (!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-
-		if (accounts.length === 0) {
-			return;
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			if(api && apiReady) {
-				api.setSigner(injected.signer);
-			}
-
-			if(loginWallet){
-				localStorage.setItem('delegationWallet', loginWallet);
-				localStorage.setItem('delegationDashboardAddress', address || delegationDashboardAddress);
-				setUserDetailsContextState((prev) => {
-					return { ...prev,
-						delegationDashboardAddress: address || delegationDashboardAddress
-					};
-				});
-			}
-			setAddress(address);
-		}
-		return;
-	};
+	}, [defaultAddress, api, apiReady]);
 
 	useEffect(() => {
-		loginWallet && getAccounts(loginWallet);
-
+		if(!api || !apiReady || !loginWallet) return;
+		(async() => {
+			const addressData = await getAccountsFromWallet({ api, chosenWallet: loginWallet, loginAddress, network });
+			setAccounts(addressData?.accounts || []);
+			setAddress(addressData?.account || '');
+		})();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[loginWallet, delegationDashboardAddress, api, apiReady]);
-
+	},[api, apiReady]);
 	return <div className={'flex justify-between items-center w-full pl-[70px] max-md:pl-4 '}>
 		<div className={`${className} flex py-[17px] items-center  h-full gap-1 max-md:px-[10px]`}>
 			<div className='h-[71px] flex flex-col justify-start py-2 gap-1 '>
@@ -175,11 +117,12 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 			</div>
 		</div>
-		<div className='w-[275px] mr-6 -mt-6'>
+		<div className='w-[200px] mr-6 -mt-6'>
 			{ accounts.length > 0 && <AccountSelectionForm
+				linkAddressTextDisabled
 				addressTextClassName='text-white'
 				accounts={accounts}
-				address={delegationDashboardAddress}
+				address={delegationDashboardAddress  || defaultAddress}
 				withBalance={false}
 				className='text-[#788698] text-sm cursor-pointer'
 				onAccountChange={setAddress}

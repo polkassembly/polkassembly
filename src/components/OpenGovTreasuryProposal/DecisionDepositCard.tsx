@@ -242,7 +242,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		>
 			<Spin spinning={loading} indicator={<LoadingOutlined />}>
 				<div className='flex flex-col px-6'>
-					<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
+					<h3 className='text-sm font-normal text-lightBlue text-center'>Select a wallet</h3>
 					<div className='flex items-center justify-center gap-x-4 mb-6'>
 						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
 
@@ -273,7 +273,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 					{ availableBalance.lte(amount) && accounts.length > 0 && <Alert showIcon type='info' className='text-sm text-bodyBlue rounded-[4px] mb-4' message='Insufficient available balance.'/>}
 
 					{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='For paying decision deposite:' description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
-					{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
+					{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-bodyBlue changeColor'/>}
 
 					{
 						!extensionOpen &&
@@ -289,7 +289,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 												withBalance={true}
 												onAccountChange={(address) => setAddress(address)}
 												onBalanceChange={handleOnBalanceChange}
-												className='text-[#485F7D] text-sm'
+												className='text-lightBlue text-sm'
 											/>: !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 
 										<div className='mt-6 flex gap-4 items-center mb-4'>

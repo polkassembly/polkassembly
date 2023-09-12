@@ -3,8 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined  } from '@ant-design/icons';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
@@ -16,9 +15,7 @@ import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
-import { APPNAME } from '~src/global/appName';
 import { ProposalType } from '~src/global/proposalType';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
@@ -29,13 +26,13 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import dayjs from 'dayjs';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import executeTx from '~src/util/executeTx';
 import VoteInitiatedModal from '../Referenda/Modal/VoteSuccessModal';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 
 const ZERO_BN = new BN(0);
 
@@ -129,80 +126,25 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		setAvailableWallets(injectedWindow.injectedWeb3);
 	};
 
-	const getAccounts = async (chosenWallet: Wallet, chosenAddress?:string): Promise<undefined> => {
-
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
-
-		if (!wallet) {
-			return;
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-		if (!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			return;
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		if (accounts && Array.isArray(accounts)) {
-			const substrate_address = getSubstrateAddress(loginAddress);
-			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
-			if (index >= 0) {
-				const account = accounts[index];
-				accounts.splice(index, 1);
-				accounts.unshift(account);
-			}
-		}
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			if(api && apiReady) {
-				api.setSigner(injected.signer);
-			}
-
-			onAccountChange(chosenAddress || accounts[0].address);
-		}
-
-		return;
-	};
-
 	useEffect(() => {
 		getWallet();
-		if(!loginWallet) return ;
-		getAccounts(loginWallet);
+		if(!loginWallet || !api || !apiReady) return ;
+		(async() => {
+			const accountData = await getAccountsFromWallet({ api, chosenWallet:loginWallet, loginAddress, network });
+			setAccounts(accountData?.accounts || []);
+			onAccountChange(accountData?.account || '');
+		})();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
 
 	useEffect(() => {
-		if(!address || !wallet) return;
-		getAccounts(wallet, address);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		if(!address || !wallet || !api || !apiReady) return;
+		(async() => {
+			const accountData = await getAccountsFromWallet({ api, chosenAddress: address, chosenWallet:wallet, loginAddress, network });
+			setAccounts(accountData?.accounts || []);
+			onAccountChange(accountData?.account || '');
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, wallet]);
 
 	useEffect(() => {
@@ -225,13 +167,18 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		}
 	};
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		if(!api || !apiReady)return;
 		localStorage.setItem('selectedWallet', wallet);
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		setAccounts([]);
 		onAccountChange('');
 		event.preventDefault();
 		setWallet(wallet);
-		await getAccounts(wallet);
+		(async() => {
+			const accountData = await getAccountsFromWallet({ api, chosenWallet: wallet, loginAddress, network });
+			setAccounts(accountData?.accounts || []);
+			onAccountChange(accountData?.account || '');
+		})();
 		setLoadingStatus({ ...loadingStatus, isLoading: false });
 	};
 
@@ -366,7 +313,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />} tip={loadingStatus.message}>
 						<>
 							<div className='mb-6'>
-								<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
+								<div className='text-sm font-normal flex items-center justify-center text-lightBlue mt-3'>Select a wallet</div>
 								<div className='flex items-center gap-x-5 mt-1 justify-center'>
 									{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 									{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
@@ -396,7 +343,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										withBalance
 										onAccountChange={onAccountChange}
 										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										withoutInfo={true}
 									/>
@@ -433,8 +380,8 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 								/>}
 
 								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0]'>
-									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance }>Confirm</Button>
+									<Button className='w-[134px] h-[40px] rounded-[4px] text-pink_primary bg-[white] mr-[15px] font-semibold border-pink_primary' onClick={() => setShowModal(false)}>Cancel</Button>
+									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-pink_primary mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance }>Confirm</Button>
 								</div>
 							</Form>
 							}

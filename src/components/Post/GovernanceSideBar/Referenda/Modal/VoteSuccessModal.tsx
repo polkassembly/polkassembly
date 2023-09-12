@@ -268,11 +268,11 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
-			<div className='mt-3 w-full'>
+			<div className='mt-3 w-full relative'>
 				<div className="vector min-w-[250px]">
 					<BackgroundImage className="-ml-[15px] text-2xl min-w-[250px] background-image"/>
 				</div>
-				<span className="quote quote--left w-[48px] h-[40px] justify-center text-center pt-[10px] top-[325px] left-[1px]" style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}>
+				<span className="quote quote--left w-[48px] h-[40px] justify-center text-center pt-[10px] -top-[2px] -left-[23px]" style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}>
 					<LeftQuote/>
 				</span>
 				<p className="-mt-[155px] text-center">
@@ -281,7 +281,7 @@ const VoteInitiatedModal = ({
 				<div className="form-group ml-4 form-container">
 					<PostCommentForm className='ml-4 -mt-[25px] w-[100%]' posted={posted} isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 				</div>
-				<span className="quote quote--right top-[325px] right-[0px] h-[40px] w-[48px] text-center pt-[10px]" style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}>
+				<span className="quote quote--right -right-[24px] h-[40px] w-[48px] text-center pt-[10px] -top-[2px]" style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}>
 					<RightQuote/>
 				</span>
 			</div>

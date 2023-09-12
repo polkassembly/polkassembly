@@ -123,6 +123,7 @@ interface IGetOnChainPostParams {
 	proposalType: string | string[];
 	isExternalApiCall?: boolean;
 	noComments?: boolean;
+	createdAtBlock?: number;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -557,7 +558,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
+		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true, createdAtBlock } = params;
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
@@ -615,6 +616,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				hash_eq: strPostId,
 				type_eq: subsquidProposalType
 			};
+			if (network === 'cere' && createdAtBlock) {
+				postVariables.createdAtBlock_eq = createdAtBlock;
+			}
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		}

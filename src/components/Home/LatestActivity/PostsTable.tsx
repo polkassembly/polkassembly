@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import React, { FC } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import { EmptyLatestActivity, ErrorLatestActivity, PopulatedLatestActivity, PopulatedLatestActivityCard } from 'src/ui-components/LatestActivityStates';
+import { useNetworkContext } from '~src/context';
 
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 
@@ -17,6 +18,7 @@ export interface IPostsRowData {
 	username: string;
 	status?: string;
 	created_at: string | null;
+	created_at_block?: number;
 	post_id?: string | number | null | undefined;
 	type: string;
 	hash?: string;
@@ -41,6 +43,7 @@ interface IPostsTableProps {
 }
 
 const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }) => {
+	const { network } = useNetworkContext();
 	const router = useRouter();
 
 	// if(network === 'collectives') return <EmptyLatestActivity />;
@@ -55,7 +58,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 
 	posts.forEach((post: any, index) => {
 		// TODO: enable this check once we have a way to fetch the author of a post
-		const { hash, post_id, method, created_at, proposer, status, description, spam_users_count } = post;
+		const { hash, post_id, method, created_at, created_at_block, proposer, status, description, spam_users_count } = post;
 		// if(post?.author?.username) {
 		// truncate title
 		let title = post.title || description || method || post?.preimage?.method || post?.description || noTitle;
@@ -65,6 +68,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 		const id = isTip? hash: post_id;
 		const tableDataObj: IPostsRowData = {
 			created_at: created_at,
+			created_at_block: created_at_block,
 			description: post?.description || '',
 			hash: isTip? hash?.substring(0,4): hash,
 			key: id,
@@ -91,9 +95,9 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 					const firestoreProposalType = getFirestoreProposalType(['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` :  rowData.type);
 					const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
 					if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-						window?.open(`/${link}/${rowData.post_id}`, '_blank');
+						window?.open(`/${link}/${rowData.post_id}${network === 'cere' && rowData.type === 'Tip' && rowData?.created_at_block? `/${rowData?.created_at_block}`: ''}`, '_blank');
 					} else {
-						router.push(`/${link}/${rowData.post_id}`);
+						router.push(`/${link}/${rowData.post_id}${network === 'cere' && rowData.type === 'Tip' && rowData?.created_at_block? `/${rowData?.created_at_block}`: ''}`);
 					}
 				}}
 			/>
@@ -106,9 +110,9 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 					const firestoreProposalType = getFirestoreProposalType(['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` :  rowData.type);
 					const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
 					if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-						window?.open(`/${link}/${rowData.post_id}`, '_blank');
+						window?.open(`/${link}/${rowData.post_id}${network === 'cere' && rowData.type === 'Tip' && rowData?.created_at_block? `/${rowData?.created_at_block}`: ''}`, '_blank');
 					} else {
-						router.push(`/${link}/${rowData.post_id}`);
+						router.push(`/${link}/${rowData.post_id}${network === 'cere' && rowData.type === 'Tip' && rowData?.created_at_block? `/${rowData?.created_at_block}`: ''}`);
 					}
 				}}
 			/>

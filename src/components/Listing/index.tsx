@@ -81,13 +81,14 @@ const Listing: FC<IListingProps> = (props) => {
 					tags,
 					tally,
 					spam_users_count,
-					votesData
+					votesData,
+					created_at_block
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
 					<div key={id} className="my-0">
 						{
-							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
+							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}${network === 'cere' && isTip && created_at_block? `/${created_at_block}`: ''}`}>
 								<GovernanceCard
 									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 									cid={cid}

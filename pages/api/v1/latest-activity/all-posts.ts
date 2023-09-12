@@ -170,7 +170,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 			const parentBounties = new Set<number>();
 			const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
-				const { createdAt, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex, group } = subsquidPost;
+				const { createdAt, createdAtBlock, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex, group } = subsquidPost;
 				const postId = type === 'Tip'? hash: index;
 				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
 				const postDoc = await postDocRef.get();
@@ -209,6 +209,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				}
 				const onChainPost = {
 					created_at: createdAt,
+					created_at_block: createdAtBlock,
 					description: description || (proposalArguments? proposalArguments?.description: null),
 					hash,
 					method: method || preimage?.method || (proposalArguments? proposalArguments?.method: proposalArguments?.method),

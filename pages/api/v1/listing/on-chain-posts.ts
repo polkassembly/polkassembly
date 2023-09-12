@@ -43,6 +43,7 @@ export interface IPostListing {
 	user_id?: string | number;
 	comments_count: number;
 	created_at: string;
+	created_at_block?: number;
 	end?: number;
 	hash?: string;
 	post_id: string | number;
@@ -59,14 +60,14 @@ export interface IPostListing {
 	method?: string;
 	status?: string;
 	status_history:{
-    block:number;
-    status: string;
-}[];
+		block:number;
+		status: string;
+	}[];
 	title: string;
 	tally?: {
-    ayes: string;
-    nays: string;
-};
+		ayes: string;
+		nays: string;
+	};
 	topic: {
 		id: number;
 		name: string;
@@ -75,8 +76,8 @@ export interface IPostListing {
 	username?: string;
 	tags?: string[] | [];
 	gov_type?: 'gov_1' | 'open_gov';
-  timeline?: any;
-  track_no?: number | null;
+	timeline?: any;
+	track_no?: number | null;
 	isSpam?: boolean;
 	identity?: string | null;
 	isSpamReportInvalid?: boolean;
@@ -244,7 +245,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals;
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
+				const { createdAt, createdAtBlock, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
 
 				const isStatus = {
 					swap: false
@@ -307,6 +308,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
+							created_at_block: createdAtBlock,
 							curator,
 							description,
 							end,
@@ -345,6 +347,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				return {
 					comments_count: commentsQuerySnapshot.data()?.count || 0,
 					created_at: createdAt,
+					created_at_block: createdAtBlock,
 					curator,
 					description,
 					end: end,
@@ -631,7 +634,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			}
 			else {
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
+					const { createdAt, createdAtBlock, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
 
 					const isStatus = {
 						swap: false
@@ -703,6 +706,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							return {
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,
+								created_at_block: createdAtBlock,
 								curator,
 								description,
 								end,
@@ -741,6 +745,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,
+						created_at_block: createdAtBlock,
 						curator,
 						description,
 						end: end,

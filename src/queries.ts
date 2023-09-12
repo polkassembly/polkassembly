@@ -113,6 +113,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     proposer
     curator
     createdAt
+    createdAtBlock
     updatedAt
     status
     statusHistory {
@@ -346,8 +347,8 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
 `;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE = `
-query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
-  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
+query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $createdAtBlock_eq: Int, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq, createdAtBlock_eq: $createdAtBlock_eq}) {
     index
     proposer
     status

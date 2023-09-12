@@ -190,22 +190,25 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 				header={<Title />}
 			>
 				<div className='flex flex-col gap-4'>
-					<div className='border-dashed border-[#D2D8E0] border-y-2 border-x-0 flex gap-[52px] py-4 items-center'>
+					<div className='border-dashed border-[#D2D8E0] border-y-2 border-x-0 flex gap-[60px] py-4 items-center'>
 						<span className='text-[#96A4B6] flex gap-1 items-center'>
 							<CalenderIcon /> {dayjs(voteData.createdAt.toDate?.()).format('MM/DD/YYYY, h:mm A').toString()}
 						</span>
-						<span className='flex gap-1 items-center text-lightBlue text-xs font-medium'>
-							<PowerIcon />Voting Power <span className='text-[#96A4B6]'>
-								{
-									getPercentage(
-										voteData?.decision === 'abstain'
-											? voteData?.balance?.abstain || 0
-											: voteData?.balance?.value || 0
-										,
-										tally)
-								}%
+						{
+							voteData?.decision !== 'abstain' &&
+							<span className='flex gap-1 items-center text-lightBlue text-xs font-medium'>
+								<PowerIcon />Voting Power <span className='text-[#96A4B6]'>
+									{
+										getPercentage(
+											voteData?.decision === 'abstain'
+												? voteData?.balance?.abstain || 0
+												: voteData?.balance?.value || 0
+											,
+											tally)
+									}%
+								</span>
 							</span>
-						</span>
+						}
 					</div>
 					<div>
 						<p className='text-sm text-bodyBlue font-medium mb-4'>

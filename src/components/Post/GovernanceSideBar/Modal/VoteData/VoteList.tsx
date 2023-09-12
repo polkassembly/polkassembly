@@ -28,6 +28,7 @@ import ThresholdGraph from './ThresholdGraph';
 import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationVotersList from './DelegateVoteList';
+import GraphExpandIcon from '~assets/graph-expand.svg';
 
 const StyledSegmented = styled(Segmented)`
   .ant-segmented-group > label {
@@ -80,6 +81,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [delegationVoteModal, setDelegationVoteModal] =useState<{isOpen: boolean, voter:string | null}>({ isOpen:false, voter: null });
 	const [activeKey, setActiveKey] = useState<any>(null);
 	const [orderBy, setOrderBy] = useState<{[key:string]:boolean}>(sortedCheck);
+	const [thresholdOpen, setThresholdOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -315,7 +317,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					</div>
 					{
 						thresholdData
-						&& <Container className='flex flex-col gap-10 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
+						&& <Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
 							{
 								thresholdData.progress.approval > 50 ?
 									<p className='flex row gap-1 text-sm font-medium m-0'>
@@ -335,7 +337,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</p>
 									</p>
 							}
-							<ThresholdGraph {...thresholdData} />
+							<button className='absolute top-[50px] right-0 bg-white border-0 cursor-pointer' onClick={() => setThresholdOpen(true)}><GraphExpandIcon/></button>
+							<ThresholdGraph {...thresholdData} thresholdOpen={thresholdOpen} setThresholdOpen={setThresholdOpen}/>
 						</Container>
 					}
 				</div>

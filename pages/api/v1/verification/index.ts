@@ -79,7 +79,13 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 
 		const message = {
 			from: FROM.email,
-			html: `Click the following link to verify your email: <a href="http://localhost:3000/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a>`,
+			html: `Click on the following link to complete email verification for your on chain identity: <a href="http://localhost:3000/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a>
+			<br>
+			Thank you,
+			</br>
+			<br>
+			Polkassembly Team
+			</br>`,
 			subject: 'Email Verification',
 			to: account
 		};
@@ -111,9 +117,9 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 		if(twitterData?.twitter_handle !== account)return res.status(400).json({ message: 'Twitter handle does not match' });
 
 		if (twitterData?.verified && twitterData?.user_id === userId) {
-			return  VerificationStatus.ALREADY_VERIFIED;
+			return  res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
 		}else if(checkingVerified === true) {
-			return VerificationStatus?.NOT_VERIFIED;
+			return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 		}
 		else {
 			await twitterVerificationDoc.ref.set({
@@ -124,7 +130,7 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			});
 
 		}
-		return VerificationStatus.PLEASE_VERIFY_TWITTER;
+		return res.status(200).json({ message: VerificationStatus.PLEASE_VERIFY_TWITTER });
 
 	}
 };

@@ -18,7 +18,8 @@ import VerifiedTick from '~assets/icons/verified-tick.svg';
 export enum VerificationStatus {
 	ALREADY_VERIFIED = 'Already verified',
 	VERFICATION_EMAIL_SENT = 'Verification email sent',
-	PLEASE_VERIFY_TWITTER = 'Please verify twitter'
+	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
+	NOT_VERIFIED = 'Not Verified'
 }
 interface Props{
   className?: string;
@@ -78,7 +79,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 	const { email, twitter } = socials;
 	const [open, setOpen] = useState<boolean>(false);
 	const [status, setStatus] = useState({ email: '', twitter: '' });
-	const [ fieldLoading, setFieldLoading ] = useState< {twitter: boolean, email: boolean}>({ email: false, twitter: false });
+	const [ fieldLoading, setFieldLoading ] = useState<{twitter: boolean, email: boolean}>({ email: false, twitter: false });
 	const [twitterVerificationStart, setTwitterVerificationStart] = useState<boolean>(false);
 
 	const items: TimelineItemProps[] = [];
@@ -97,7 +98,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			{
 				children: <SocialsLayout
 					title='Email'
-					description='Check your primary inbox or Spam to verify your email address.'
+					description='Check your primary inbox or spam to verify your email address.'
 					onVerify={async() => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT ? true : false, true )}
 					value={email?.value}
 					verified={email?.verified}
@@ -142,38 +143,43 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 		});
 
 	};
+
+	const handleSetStates = (fieldName: ESocials,verified: boolean, verificationStatus: VerificationStatus) => {
+		if(ESocials.EMAIL === fieldName){
+			setSocials({ ...socials, email: { ...email, verified } });
+			setStatus({ ...status, email: verificationStatus });
+			handleLocalStorageSave({ email: { ...email, verified } });
+		}else{
+			setSocials({ ...socials, twitter: { ...twitter, verified } });
+			setStatus({ ...status, twitter: verificationStatus });
+			handleLocalStorageSave({ twitter: { ...twitter, verified } });
+		}
+	};
+
 	const handleVerify =  async(fieldName: ESocials, checkingVerified?: boolean, isNotificaiton?: boolean ) => {
 		const account = fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] : socials?.[fieldName]?.value;
-		setFieldLoading({ ...fieldLoading, [fieldName] : true });
+
+		!checkingVerified ? setFieldLoading({ ...fieldLoading, [fieldName] : true }):setLoading(true);
+
 		const { data, error } = await nextApiClientFetch<IVerificationResponse>(`api/v1/verification?type=${fieldName}&checkingVerified=${Boolean(checkingVerified)}&account=${account}`);
+		if(error){
+			handleSetStates(fieldName, false, VerificationStatus.NOT_VERIFIED);
+			setFieldLoading({ ...fieldLoading, [fieldName] : false });
+			setLoading(false);
+		}
 		if(data){
 			if(data?.message === VerificationStatus.ALREADY_VERIFIED){
-				if(ESocials.EMAIL === fieldName){
-					setSocials({ ...socials, email: { ...email, verified: true } });
-					setStatus({ ...status, email: VerificationStatus?.ALREADY_VERIFIED });
-					handleLocalStorageSave({ email: { ...email, verified: true } });
-				}else{
-					setSocials({ ...socials, twitter: { ...twitter, verified: true } });
-					setStatus({ ...status, twitter: VerificationStatus?.ALREADY_VERIFIED });
-					handleLocalStorageSave({ twitter: { ...twitter, verified: true } });
-				}
-				if(!checkingVerified){
-					queueNotification({
-						header: 'Verified!',
-						message: data?.message,
-						status: NotificationStatus.INFO
-					});
-				}
+				handleSetStates(fieldName, true, VerificationStatus.ALREADY_VERIFIED);
+
 				setFieldLoading({ ...fieldLoading, [fieldName] : false });
 
 			}else if(checkingVerified && data?.message === VerificationStatus.VERFICATION_EMAIL_SENT ){
 				setFieldLoading({ ...fieldLoading, [fieldName] : false });
 				if(ESocials.EMAIL === fieldName){
-					setSocials({ ...socials, email: { ...email, verified: false } });
-					handleLocalStorageSave({ email: { ...email, verified: false } });
-				}else{
-					setSocials({ ...socials, twitter: { ...twitter, verified: false } });
-					handleLocalStorageSave({ twitter: { ...twitter, verified: false } });
+					handleSetStates(fieldName, false, VerificationStatus.VERFICATION_EMAIL_SENT);
+
+				}else if(ESocials.TWITTER === fieldName){
+					handleSetStates(fieldName, false, VerificationStatus.PLEASE_VERIFY_TWITTER);
 				}
 			}
 			else if((!checkingVerified || isNotificaiton)){
@@ -189,11 +195,9 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 				}
 			}
 			setFieldLoading({ ...fieldLoading, [fieldName] : false });
-		}else
-		{
-			console.log(error);
-			setFieldLoading({ ...fieldLoading, [fieldName] : false });
 		}
+		
+		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	};
 

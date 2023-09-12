@@ -146,14 +146,14 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 	const handleStateChange = (identityForm: any) => {
 		if(identityForm?.userId !== userId) return;
 		setName({ displayName: identityForm?.displayName || '', legalName: identityForm?.legalName || '' });
-		setSocials({ ...socials, email: identityForm?.email || '', twitter: identityForm?.twitter || '' });
+		setSocials({ ...socials, email:  { ...identityForm?.email, verified: false }|| '', twitter: { ...identityForm?.twitter, verified: false } });
 		form.setFieldValue('displayName', identityForm?.displayName || '');
 		form.setFieldValue('legalName', identityForm?.legalName || '');
 		form.setFieldValue('email', identityForm?.email?.value || '');
 		form.setFieldValue('twitter', identityForm?.twitter?.value || '');
 		if(identityForm?.setIdentity){
 			setIsIdentityCallDone(true);
-			setStep(3);
+			setStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 		}
 
 	};
@@ -196,7 +196,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
 			setIsIdentityUnverified(info.identity?.judgements.length === 0);
-			console.log(info.identity?.judgements);
 		})
 			.then(unsub => { unsubscribe = unsub; })
 			.catch(e => console.error(e));
@@ -211,7 +210,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 		if(data){
 			data = JSON.parse(data);
 		}
-		localStorage.setItem('isIdentityUnverified', 'yes');
 		setUserDetailsContextState((prev) => {
 			return {
 				...prev,

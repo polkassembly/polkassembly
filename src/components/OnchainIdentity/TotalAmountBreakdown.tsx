@@ -65,7 +65,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				<span className='text-sm text-lightBlue'>Total Amount Required</span>
 				<div className='text-base text-bodyBlue font-semibold flex flex-col cursor-pointer'>
 					<span className='flex' onClick={() => setAmountBreakup(!amountBreakup)}>
-						{formatedBalance(perSocialBondFee.add((registerarFee).add(minDeposite)).toString(), unit)} {unit}
+						{formatedBalance(perSocialBondFee.add((registerarFee).add(minDeposite)).toString(), unit, 2)} {unit}
 						{ amountBreakup ? <DownArrowIcon className='ml-3'/> : <UpArrowIcon className='ml-3'/> }
 					</span>
 					<span className='text-xs text-lightBlue font-normal -mt-1'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>
@@ -78,7 +78,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				</span>
 				<span className='flex justify-between text-sm'>
 					<span className='text-lightBlue'>Min Deposit <HelperTooltip className='ml-1' text='Amount that needs held in an address for a verified account.'/></span>
-					<span className='text-bodyBlue font-medium'>{formatedBalance(minDeposite.toString(), unit)} {unit}</span>
+					<span className='text-bodyBlue font-medium'>{formatedBalance(minDeposite.toString(), unit, 2)} {unit}</span>
 				</span>
 				<span className='flex justify-between text-sm'>
 					<span className='text-lightBlue'>Registrar fees <HelperTooltip text='Costs of development & maintenance are funded by the treasury.' className='ml-1'/></span>

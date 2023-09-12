@@ -28,8 +28,9 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 		onCancel={() => { onClose(false);}}
 		footer={false}
 		closable={false}
+		maskClosable={false}
 	>
-		<div className='flex justify-center items-center flex-col -mt-[115px]'>
+		<div className='flex justify-center items-center flex-col -mt-[110px]'>
 			<SuccessIcon/>
 			<label className='text-xl font-semibold text-bodyBlue tracking-[0.15%] -mt-2'>{social} verified successfully</label>
 			{socialHandle && <div className='text-2xl text-pink_primary font-semibold mt-4'>{socialHandle}</div>}

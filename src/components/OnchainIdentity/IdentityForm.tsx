@@ -204,6 +204,15 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			});
 			setLoading(false);
 			startLoading(false);
+
+			closeModal(true);
+			setOpen(true);
+			handleLocalStorageSave({ setIdentity: true });
+			setIsIdentityCallDone(true);
+			closeModal(true);
+			setOpen(true);
+			handleLocalStorageSave({ setIdentity: true });
+			setIsIdentityCallDone(true);
 		};
 
 		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
@@ -384,7 +393,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		</Form>
 		<div className='flex gap-4 text-sm mt-6 items-center'>
 			<span className='text-lightBlue font-medium'>Min Deposit <HelperTooltip className='ml-1' text='Amount that needs held in an address for a verified account.'/></span>
-			<span className='text-bodyBlue font-medium bg-[#EDEFF3] py-1 px-3 rounded-2xl'>{formatedBalance(minDeposite.toString(), unit)} {unit}</span>
+			<span className='text-bodyBlue font-medium bg-[#EDEFF3] py-1 px-3 rounded-2xl'>{formatedBalance(minDeposite.toString(), unit, 2)} {unit}</span>
 		</div>
 
 		{((!gasFee.eq(ZERO_BN)) || loading) && <Spin spinning={loading} tip='calculating gas fee'>
@@ -393,15 +402,15 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				className='mt-6 rounded-[4px]'
 				type='info'
 				showIcon
-				message={<span className='text-bodyBlue text-sm font-medium '>Total Fees of {formatedBalance(totalFee.toString(), unit)} {unit} will be applied to the transaction.<span className='text-pink_primary text-xs cursor-pointer ml-1' onClick={() => setHideDetails(!hideDetails)}>{hideDetails ? 'Show Details' : 'Hide Details'}</span></span>}
+				message={<span className='text-bodyBlue text-sm font-medium '>Total Fees of {formatedBalance(totalFee.toString(), unit, 2)} {unit} will be applied to the transaction.<span className='text-pink_primary text-xs cursor-pointer ml-1' onClick={() => setHideDetails(!hideDetails)}>{hideDetails ? 'Show Details' : 'Hide Details'}</span></span>}
 				description={hideDetails ? '' : <div className='flex gap-1 flex-col text-sm mr-[18px]'>
-					<span className='flex justify-between text-xs'>
-						<span className='text-lightBlue'>Bond</span>
-						<span className='text-bodyBlue font-medium'>{formatedBalance(bondFee.toString(), unit)} {unit}</span>
-					</span>
 					<span className='flex justify-between text-xs'>
 						<span className='text-lightBlue'>Gas Fee</span>
 						<span className='text-bodyBlue font-medium'>{formatedBalance(gasFee.toString(), unit)} {unit}</span>
+					</span>
+					<span className='flex justify-between text-xs'>
+						<span className='text-lightBlue'>Bond <HelperTooltip className='ml-1' text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}/></span>
+						<span className='text-bodyBlue font-medium'>{formatedBalance(bondFee.toString(), unit)} {unit}</span>
 					</span>
 					<span className='flex justify-between text-xs'>
 						<span className='text-lightBlue'>Registrar fees <HelperTooltip text='Costs of development & maintenance are funded by the treasury.' className='ml-1'/></span>
@@ -409,7 +418,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 					</span>
 					<span className='flex justify-between text-xs'>
 						<span className='text-lightBlue'>Total</span>
-						<span className='text-bodyBlue font-medium'>{formatedBalance(totalFee.toString(), unit)} {unit}</span>
+						<span className='text-bodyBlue font-medium'>{formatedBalance(totalFee.toString(), unit, 2)} {unit}</span>
 					</span>
 				</div>
 				}
@@ -419,7 +428,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
                Cancel
 			</Button>
 			<Button
-				disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN)}
+				// disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN)}
 				className={`bg-pink_primary text-sm rounded-[4px] h-[40px] border-none w-[134px] text-white tracking-wide ${(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee) )) && 'opacity-50'}`}
 				onClick={handleSetIdentity}
 				loading={loading}>

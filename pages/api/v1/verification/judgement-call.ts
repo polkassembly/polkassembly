@@ -30,7 +30,6 @@ export async function getJudgementCall(params: Props) : Promise<Response> {
 		},
 		method: 'POST'
 	});
-	if (!response.ok) throw apiErrorWithStatusCode(`Failed to fetch judgement call with status: ${response.status}`, 400);
 
 	return response;
 

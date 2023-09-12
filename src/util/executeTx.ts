@@ -39,15 +39,21 @@ const executeTx = async({ api, network, tx, address, params= {}, errorMessageFal
 
 				} else if (event.method === 'ExtrinsicFailed') {
 					console.log('Transaction failed');
-					const errorModule = (event.data as any)?.dispatchError?.asModule;
-					if(!errorModule) {
+					const dispatchError = (event.data as any)?.dispatchError;
+
+					if(dispatchError?.isModule) {
+						const errorModule = (event.data as any)?.dispatchError?.asModule;
 						const { method, section, docs } = api.registry.findMetaError(errorModule);
 						errorMessageFallback = `${section}.${method} : ${docs.join(' ')}`;
-						console.log(errorMessageFallback);
+						console.log(errorMessageFallback, 'error module');
 						await onFailed(errorMessageFallback);
+					}else if(dispatchError?.isToken){
+						console.log(`${dispatchError.type}.${dispatchError.asToken.type}`);
+						await onFailed(`${dispatchError.type}.${dispatchError.asToken.type}`);
 					}else{
-						await onFailed(errorMessageFallback);
-					}}
+						await onFailed(`${dispatchError.type}` || errorMessageFallback);
+					}
+				}
 			}
 		}
 	}).catch((error: string) => {

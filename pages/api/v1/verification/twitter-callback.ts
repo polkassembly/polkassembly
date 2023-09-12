@@ -7,20 +7,14 @@ import { promisify } from 'util';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
+import messages from '~src/auth/utils/messages';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import getOauthConsumer from '~src/util/getOauthConsumer';
-import messages from '~src/util/messages';
 
 const firestore = firebaseAdmin.firestore();
 
-export enum VerificationStatus {
-	ALREADY_VERIFIED = 'Already verified',
-	VERFICATION_EMAIL_SENT = 'Verification email sent',
-	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
-	NOT_VERIFIED = 'Not verified',
-}
 interface ITwitterDocData{
 	twitter_handle: string;
 	oauth_request_token_secret: string;
@@ -98,7 +92,7 @@ export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestTo
 		});
 
 		return {
-			data: 'Success',
+			data: twitterDocData?.twitter_handle,
 			error: null,
 			status: 200
 		};
@@ -118,7 +112,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	} = req.query;
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	if(!oauthVerifier || !oauthRequestToken )  return res.status(400).json({ message: 'Invalid params in req body' });
 
@@ -130,6 +124,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if(error){
 		return res.status(status).json({ message: error });
 	}
-	return res.status(status).json({ message: data?.toString() || 'Success' });
+	return res.status(status).json({ message: data?.toString() || messages.SUCCESS });
 };
 export default withErrorHandling(handler);

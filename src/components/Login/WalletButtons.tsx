@@ -13,13 +13,13 @@ import { WalletIcon } from './MetamaskLogin';
 interface Props {
 	disabled: boolean
 	onWalletSelect: (wallet: Wallet) => void
-	showPolkasafe?:boolean
-	onPolkasafeSelect?:any
-	noHeader?:boolean
-	selectedWallet?:Wallet
+	showPolkasafe?: boolean
+	onPolkasafeSelect?: any
+	noHeader?: boolean
+	selectedWallet?: Wallet
 }
 
-const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, noHeader=false, selectedWallet } : Props) => {
+const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, noHeader = false, selectedWallet }: Props) => {
 	const { network } = useNetworkContext();
 	function handleWalletClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) {
 		event.preventDefault();
@@ -29,9 +29,9 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 	return (
 		<div className='w-full'>
 			{!noHeader &&
-			<div className='flex items-center gap-x-2'>
-				<Divider className='text-grey_primary'>Or Login with</Divider>
-			</div>
+				<div className='flex items-center gap-x-2'>
+					<Divider className='text-grey_primary'>Or Login with</Divider>
+				</div>
 			}
 			<div className="flex mt-3 max-w-xs gap-4 flex-col m-auto justify-center sm:flex-row sm:mx-2 sm:max-w-none">
 				<WalletButton className={`${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary': ''}`} disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot.js" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />
@@ -42,16 +42,16 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					<WalletButton disabled={disabled} onClick={(event) => {
 						onPolkasafeSelect(true);
 						handleWalletClick((event as any), Wallet.POLKASAFE);
-					}} name="polkasafe" icon={<WalletIcon which={Wallet.POLKASAFE} className='h-7 w-6 !mt-1'/>} />
+					}} name="polkasafe" icon={<WalletIcon which={Wallet.POLKASAFE} className='h-7 w-6 !mt-1' />} />
 
 				}
 				{
-					['polymesh'].includes(network)?
-						<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
+					['polymesh'].includes(network) ?
+						<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6' />} />
 						: null
 				}
 				{
-					['moonbase', 'moonbeam', 'moonriver'].includes(network)?
+					['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
 						<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
 						: null
 				}

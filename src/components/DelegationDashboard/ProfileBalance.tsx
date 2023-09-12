@@ -188,7 +188,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				setSwitchModalOpen={setOpenModal}
 				withoutInfo={true}
 			/>}</div>
-		<AddressConnectModal localStorageWalletKeyName='delegationWallet' usingMultisig localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true}/>
+		<AddressConnectModal localStorageWalletKeyName='delegationWallet' usingMultisig localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true} walletAlertTitle='Delegation dashboard'/>
 	</div>;
 };
 export default ProfileBalances;

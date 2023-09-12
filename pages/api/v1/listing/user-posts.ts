@@ -167,7 +167,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 				}
 			}
 		}
-		const discussionsQuerySnapshot = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('user_id', '==', numUserId).get();
+		const discussionsQuerySnapshot = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('isDeleted', '==', false).where('user_id', '==', numUserId).get();
 		const discussionsPromise = discussionsQuerySnapshot.docs.map(async (doc) => {
 			const data = doc.data();
 			if (doc && doc.exists && data) {
@@ -351,7 +351,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 // expects proposerAddress
 const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { userId, addresses } = req.body;
 
@@ -362,9 +362,9 @@ const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (
 	});
 
 	if(error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

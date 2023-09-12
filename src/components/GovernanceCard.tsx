@@ -21,7 +21,7 @@ import { chainProperties } from 'src/global/networkConstants';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import { useRouter } from 'next/router';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
@@ -73,6 +73,7 @@ interface IGovernanceProps {
   proposalType?: ProposalType | string;
   votesData?: any;
   trackNumber?: number | null
+	identityId?: string | null;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -103,12 +104,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		statusHistory = [],
 		index = 0,
 		proposalType,
-		votesData
+		votesData,
+		identityId = null
 	} = props;
 
 	const router= useRouter();
 	const currentUser = useContext(UserDetailsContext);
 	const { network } = useNetworkContext();
+	const { api, apiReady } = useApiContext();
 
 	let titleString = title || method || tipReason || noTitle;
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
@@ -120,6 +123,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const ownProposal = currentUser?.addresses?.includes(address);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
+
+	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
@@ -146,6 +151,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	};
 
+	const getProposerFromPolkadot= async(identityId: string) => {
+		if(!api || !apiReady) return;
+
+		const didKeys = await api.query.identity.didKeys.keys(identityId);
+		if(didKeys.length > 0){
+			const didKey = didKeys[0];
+			const key = didKey.args[1].toJSON();
+			return key;
+		}
+	};
+
 	useEffect(() => {
 
 		if(!window || !checkGov2Route(router.pathname, router.query) || (trackNumber === null)) return;
@@ -159,8 +175,19 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
 		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
+	useEffect(() => {
+		if(!identityId || address) return;
+
+		(async() => {
+			const proposer = await getProposerFromPolkadot(identityId );
+			setPolkadotProposer(proposer as string);
+		})();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[api, apiReady]);
 
 	return (
 		<>
@@ -169,7 +196,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className="flex justify-between items-center">
 						<div className="flex flex-grow">
 							<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue'>#{isTip? tip_index: onchainId}</span>
-							<OnchainCreationLabel address={address} username={username} />
+							<OnchainCreationLabel address={address || polkadotProposer} username={username} />
 						</div>
 						<div className="flex justify-end items-center">
 							{status && <StatusTag className='sm:mr-10' status={status} />}

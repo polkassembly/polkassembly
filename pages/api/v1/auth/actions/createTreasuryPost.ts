@@ -41,6 +41,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		content,
 		created_at: new Date(),
 		id: postId,
+		isDeleted: false,
 		last_comment_at,
 		last_edited_at: last_comment_at,
 		post_link: null,

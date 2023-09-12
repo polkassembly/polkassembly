@@ -128,6 +128,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 		let accounts: InjectedAccount[] = [];
 		let polakadotJSAccounts : InjectedAccount[] | undefined;
 		let polywalletJSAccounts : InjectedAccount[] | undefined;
+		let polkagateAccounts: InjectedAccount[] | undefined;
 		let subwalletAccounts: InjectedAccount[] | undefined;
 		let talismanAccounts: InjectedAccount[] | undefined;
 		let metamaskAccounts: InjectedAccount[] = [];
@@ -142,6 +143,9 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 			if(extObj.name == 'polkadot-js') {
 				signersMapLocal['polkadot-js'] = extObj.signer;
 				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
+			} else if(extObj.name == 'polkagate') {
+				signersMapLocal['polkagate'] = extObj.signer;
+				polkagateAccounts = await getWalletAccounts(Wallet.POLKAGATE);
 			} else if(extObj.name == 'subwallet-js') {
 				signersMapLocal['subwallet-js'] = extObj.signer;
 				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
@@ -165,6 +169,13 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
+			});
+		}
+
+		if(polkagateAccounts) {
+			accounts = accounts.concat(polkagateAccounts);
+			polkagateAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'polkagate';
 			});
 		}
 

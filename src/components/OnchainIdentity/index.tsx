@@ -143,7 +143,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 		return;
 	};
 
-	const handleStateChange = (identityForm: any) => {
+	const handleInitialStateSet = (identityForm: any) => {
 		if(identityForm?.userId !== userId) return;
 		setName({ displayName: identityForm?.displayName || '', legalName: identityForm?.legalName || '' });
 		setSocials({ ...socials, email:  { ...identityForm?.email, verified: false }|| '', twitter: { ...identityForm?.twitter, verified: false } });
@@ -151,6 +151,8 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 		form.setFieldValue('legalName', identityForm?.legalName || '');
 		form.setFieldValue('email', identityForm?.email?.value || '');
 		form.setFieldValue('twitter', identityForm?.twitter?.value || '');
+		const identityHash = identityForm?.identityHash;
+		setIdentityHash(identityHash);
 		if(identityForm?.setIdentity){
 			setIsIdentityCallDone(true);
 			setStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
@@ -186,8 +188,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 		getAccounts(wallet as Wallet, address);
 		let identityForm: any = localStorage.getItem('identityForm');
 		identityForm = JSON.parse(identityForm);
+
 		if(identityForm){
-			handleStateChange(identityForm);
+			handleInitialStateSet(identityForm);
 		}
 
 		let unsubscribe: () => void;
@@ -195,7 +198,13 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 		if(!identityForm || !identityForm?.setIdentity) return;
 
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
-			setIsIdentityUnverified(info.identity?.judgements.length === 0);
+			const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
+			const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+
+			setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+			if(!(judgementProvided || !info?.identity?.judgements?.length)) {
+				localStorage.removeItem('identityForm');
+			}
 		})
 			.then(unsub => { unsubscribe = unsub; })
 			.catch(e => console.error(e));

@@ -12,6 +12,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
+import { VerificationStatus } from '~src/types';
 
 interface IReq {
 	type: 'email' | 'twitter',
@@ -19,13 +20,6 @@ interface IReq {
 	account: string;
 	network: string;
 	token: any;
-}
-
-export enum VerificationStatus {
-	ALREADY_VERIFIED = 'Already verified',
-	VERFICATION_EMAIL_SENT = 'Verification email sent',
-	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
-	NOT_VERIFIED = 'Not verified'
 }
 
 export interface IVerificationResponse {
@@ -46,10 +40,12 @@ const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
 	const { account, type, checkingVerified } = req.query as unknown as  IReq;
+
 	const network = String(req.headers['x-network']);
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+
 	const token = getTokenFromReq(req);
 
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 	const user = await authServiceInstance.GetUser(token);
 	const userId = user?.id;
 
@@ -75,11 +71,13 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 				return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
 			}
 		}
-		if(checkingVerified === true) return VerificationStatus?.NOT_VERIFIED;
+		if(checkingVerified === true) return  res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 
 		const message = {
 			from: FROM.email,
-			html: `Click on the following link to complete email verification for your on chain identity: <a href="http://localhost:3000/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a>
+			html: `Hello ${user.username},
+			<br>Click on the following link to complete email verification for your on chain identity: <a href="https://${network}.polkassembly.io/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a></br>
+			<br/>
 			<br>
 			Thank you,
 			</br>
@@ -91,10 +89,9 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 		};
 		await sgMail
 			.send(message)
-			.then(() => { res.send( { message: VerificationStatus.VERFICATION_EMAIL_SENT } );})
+			.then(() => { res.status(200).json( { message: VerificationStatus.VERFICATION_EMAIL_SENT } );})
 			.catch((error: any) => {
-				console.log('error', error);
-				return res.status(500).json({ message: 'Error sending email' });
+				return res.status(500).json({ message: error || 'Error sending email' });
 			});
 		await tokenVerificationRef.set({
 			created_at: new Date(),

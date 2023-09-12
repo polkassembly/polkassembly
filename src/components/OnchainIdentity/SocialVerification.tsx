@@ -5,22 +5,16 @@
 import { Button, Spin, Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
-import { ISocials } from '.';
+import { ESetIdentitySteps, ISocials } from '.';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { NotificationStatus, VerificationStatus } from '~src/types';
 import { IVerificationResponse } from 'pages/api/v1/verification';
 import BN from 'bn.js';
 import { useEffect, useState } from 'react';
 import InprogressState from './InprogressState';
 import VerifiedTick from '~assets/icons/verified-tick.svg';
 
-export enum VerificationStatus {
-	ALREADY_VERIFIED = 'Already verified',
-	VERFICATION_EMAIL_SENT = 'Verification email sent',
-	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
-	NOT_VERIFIED = 'Not Verified'
-}
 interface Props{
   className?: string;
   socials: ISocials;
@@ -28,7 +22,7 @@ interface Props{
   address: string;
   startLoading: (pre: boolean) => void;
   onCancel:()=> void;
-  changeStep: (pre: number) => void;
+  changeStep: (pre: ESetIdentitySteps) => void;
   closeModal: (pre: boolean) => void;
 	setLoading: (pre: boolean) => void;
 	perSocialBondFee: BN;
@@ -92,7 +86,6 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			await handleTwitterVerification();
 		}
 	};
-
 	if(email?.value){
 		items.push(
 			{
@@ -144,33 +137,37 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 
 	};
 
-	const handleSetStates = (fieldName: ESocials,verified: boolean, verificationStatus: VerificationStatus) => {
+	const handleSetStates = (fieldName: ESocials,verified: boolean, verificationStatus: VerificationStatus, noStatusUpdate?: boolean) => {
 		if(ESocials.EMAIL === fieldName){
 			setSocials({ ...socials, email: { ...email, verified } });
-			setStatus({ ...status, email: verificationStatus });
+			!noStatusUpdate && setStatus({ ...status, email: verificationStatus });
 			handleLocalStorageSave({ email: { ...email, verified } });
 		}else{
 			setSocials({ ...socials, twitter: { ...twitter, verified } });
-			setStatus({ ...status, twitter: verificationStatus });
+			!noStatusUpdate && setStatus({ ...status, twitter: verificationStatus });
 			handleLocalStorageSave({ twitter: { ...twitter, verified } });
 		}
 	};
 
 	const handleVerify =  async(fieldName: ESocials, checkingVerified?: boolean, isNotificaiton?: boolean ) => {
-		const account = fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] : socials?.[fieldName]?.value;
+		const account = fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] || socials?.[fieldName]?.value : socials?.[fieldName]?.value;
 
-		!checkingVerified ? setFieldLoading({ ...fieldLoading, [fieldName] : true }):setLoading(true);
+		if(!checkingVerified){
+			setFieldLoading({ ...fieldLoading, [fieldName] : true });
+		}else {
+			setLoading(true);
+		}
 
 		const { data, error } = await nextApiClientFetch<IVerificationResponse>(`api/v1/verification?type=${fieldName}&checkingVerified=${Boolean(checkingVerified)}&account=${account}`);
 		if(error){
-			handleSetStates(fieldName, false, VerificationStatus.NOT_VERIFIED);
+			handleSetStates(fieldName, false, VerificationStatus.NOT_VERIFIED, false);
 			setFieldLoading({ ...fieldLoading, [fieldName] : false });
 			setLoading(false);
 		}
 		if(data){
 			if(data?.message === VerificationStatus.ALREADY_VERIFIED){
-				handleSetStates(fieldName, true, VerificationStatus.ALREADY_VERIFIED);
 
+				handleSetStates(fieldName, true, VerificationStatus.ALREADY_VERIFIED);
 				setFieldLoading({ ...fieldLoading, [fieldName] : false });
 
 			}else if(checkingVerified && data?.message === VerificationStatus.VERFICATION_EMAIL_SENT ){
@@ -196,7 +193,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			}
 			setFieldLoading({ ...fieldLoading, [fieldName] : false });
 		}
-		
+
 		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	};
@@ -272,7 +269,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 				verifiedCount+=1;
 			}
 		});
-		return socialsCount !== verifiedCount;
+		return (socialsCount !== verifiedCount );
 	};
 
 	return <div className={`${className} pl-4 border-white border-solid`}>

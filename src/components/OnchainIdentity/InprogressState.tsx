@@ -16,7 +16,7 @@ interface Props{
  className?: string;
  socials: ISocials;
  open?: boolean;
- changeStep: (step: number) => void;
+ changeStep: (step: ESetIdentitySteps) => void;
  close: (pre: boolean) => void;
  openPreModal: (pre: boolean) => void;
  handleVerify: (pre: ESocials) => Promise<void>;

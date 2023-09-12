@@ -194,8 +194,11 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 		if(!identityForm || !JSON.parse(identityForm)?.setIdentity) return;
 
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
-			setIsIdentityUnverified(info.identity?.judgements.length === 0);
-			if(info.identity?.judgements.length !== 0) {
+			const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
+			const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+
+			setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+			if(!(judgementProvided || !info?.identity?.judgements?.length)) {
 				localStorage.removeItem('identityForm');
 			}
 		})

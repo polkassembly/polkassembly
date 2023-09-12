@@ -6,9 +6,9 @@ import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
 import firebaseAdmin from '~src/services/firebaseInit';
-import { VerificationStatus } from '..';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
+import { VerificationStatus } from '~src/types';
 
 export interface IVerifyResponse {
 	status: boolean;
@@ -20,10 +20,10 @@ const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) 
 	const { token, type } = req.query;
 	const network = String(req.headers['x-network']);
 
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: messages.INVALID_NETWORK });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	if (!token || !type) {
-		return res.status(400).json({ message: 'Please provide both token and type to verify' });
+	if (!token || !type || type !== 'email' || typeof token !== 'string') {
+		return res.status(400).json({ message: 'Please provide valid token and type to verify' });
 	}
 
 	const tokenVerification = await firestore.collection('email_verification_tokens').where('token', '==', token).limit(1).get();
@@ -31,11 +31,11 @@ const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) 
 
 	if (type === 'email') {
 		if (tokenVerification.empty || !tokenVerification.docs[0].exists) {
-			res.status(400).json({ message: 'Token verification failed.' });
+			return res.status(400).json({ message: 'Token verification failed.' });
 		}
 
 		if (data?.verified) {
-			res.status(400).json({ message: 'Token already verified' });
+			return res.status(400).json({ message: 'Token already verified' });
 		}
 
 		const tokenVerificationRef = tokenVerification.docs[0].ref;

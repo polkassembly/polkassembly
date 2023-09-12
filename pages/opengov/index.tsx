@@ -120,12 +120,16 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 		let unsubscribe: () => void;
 		const address = localStorage.getItem('identityAddress');
 		const identityForm = localStorage.getItem('identityForm');
+
 		const encoded_addr = address ? getEncodedAddress(address, network) : '';
 		if(!identityForm || !JSON.parse(identityForm)?.setIdentity) return;
 
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
-			setIsIdentityUnverified(info.identity?.judgements.length === 0);
-			if(info.identity?.judgements.length !== 0) {
+
+			const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
+			const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+			setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+			if(!(judgementProvided || !info?.identity?.judgements?.length)) {
 				localStorage.removeItem('identityForm');
 			}
 		})

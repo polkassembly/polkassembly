@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useEffect, useState } from 'react';
-import { IName, ISocials, ITxFee } from '.';
+import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { Alert, Button, Divider, Form, FormInstance, Input, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
@@ -36,7 +36,7 @@ interface Props {
   startLoading: (pre: boolean) => void;
   onCancel:()=> void;
   perSocialBondFee: BN;
-  changeStep: (pre: number) => void;
+  changeStep: (pre: ESetIdentitySteps) => void;
   closeModal: (pre: boolean) => void;
 	form: FormInstance;
 	setIsIdentityCallDone: (pre: boolean) => void;
@@ -179,20 +179,12 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		startLoading(true);
 
 		const onSuccess = async() => {
-			queueNotification({
-				header: 'Success!',
-				message: 'Transaction Successfull',
-				status: NotificationStatus.SUCCESS
-			});
 			setIdentityHash(blake2AsHex(encodedTxHash));
 			startLoading(false);
 			closeModal(true);
 			setOpen(true);
 			handleLocalStorageSave({ setIdentity: true });
-			setIsIdentityCallDone(true);
-			closeModal(true);
-			setOpen(true);
-			handleLocalStorageSave({ setIdentity: true });
+			handleLocalStorageSave({ identityHash: blake2AsHex(encodedTxHash) });
 			setIsIdentityCallDone(true);
 			await handleIdentityHashSave(encodedTxHash);
 		};
@@ -205,14 +197,6 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			setLoading(false);
 			startLoading(false);
 
-			closeModal(true);
-			setOpen(true);
-			handleLocalStorageSave({ setIdentity: true });
-			setIsIdentityCallDone(true);
-			closeModal(true);
-			setOpen(true);
-			handleLocalStorageSave({ setIdentity: true });
-			setIsIdentityCallDone(true);
 		};
 
 		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
@@ -223,7 +207,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			form={form}
 			initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 		>
-			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) &&  <Alert showIcon type='info' className=' h-[40px] text-sm text-bodyBlue rounded-[4px]' message='Insufficient Balance.'/>}
+			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) &&  <Alert showIcon type='error' className=' h-[40px] text-sm text-bodyBlue rounded-[4px]' message={`Minimum Balance of ${formatedBalance(totalFee.toString(), unit, 2)} ${unit} is required to proceed`}/>}
 			<div className='flex justify-between items-center text-lightBlue mt-6'>
 				<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
 				<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
@@ -428,7 +412,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
                Cancel
 			</Button>
 			<Button
-				// disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN)}
+				disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN)}
 				className={`bg-pink_primary text-sm rounded-[4px] h-[40px] border-none w-[134px] text-white tracking-wide ${(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee) )) && 'opacity-50'}`}
 				onClick={handleSetIdentity}
 				loading={loading}>

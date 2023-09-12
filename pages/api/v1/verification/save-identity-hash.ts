@@ -16,13 +16,13 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	const { identityHash } = req.query;
 	if (req.method !== 'POST') {
-		return res.status(400).json({ message: 'Invalid method in request' });
+		return res.status(405).json({ message: 'Invalid method in request' });
 	}
 
 	if(!isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 	if(!identityHash) return res.status(400).json({ message : 'Invalid identity hash' });
 
-	const token = getTokenFromReq(req);
+	const token =  getTokenFromReq(req);
 	if(!token) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const user = await authServiceInstance.GetUser(token);
@@ -30,7 +30,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	if(!userId) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const userDocRef = firestore_db.collection('users').doc(String(userId));
+	const userDocRef =  firestore_db.collection('users').doc(String(userId));
 	const userDoc = await userDocRef.get();
 
 	if(!userDoc.exists) return res.status(404).json({ message: 'User not found' });

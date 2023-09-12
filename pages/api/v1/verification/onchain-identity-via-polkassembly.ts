@@ -14,7 +14,7 @@ import { MessageType } from '~src/auth/types';
 const handler: NextApiHandler<MessageType | string> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (req.method !== 'POST') {
-		return res.status(400).json({ message: 'Invalid method in request' });
+		return res.status(400).json({ message: 'Invalid method in request body' });
 	}
 
 	if(!isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });

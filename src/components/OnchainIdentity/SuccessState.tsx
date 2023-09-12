@@ -19,7 +19,7 @@ interface Props{
  txFee: ITxFee;
  open?: boolean;
  address: string;
- changeStep: (step: number) => void;
+ changeStep: (step: ESetIdentitySteps) => void;
  close: (pre: boolean) => void;
  openPreModal: (pre: boolean) => void;
 }

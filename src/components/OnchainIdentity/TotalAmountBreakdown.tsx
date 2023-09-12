@@ -18,7 +18,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 interface Props{
   className?: string;
   txFee: ITxFee;
-  changeStep: (step: number) => void;
+  changeStep: (step: ESetIdentitySteps) => void;
   perSocialBondFee: BN;
 	loading: boolean;
 }
@@ -64,11 +64,11 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			<div className={`flex justify-between ${amountBreakup && 'border-0 border-solid border-b-[1px] pb-3 border-[#E1E6EB]'}`}>
 				<span className='text-sm text-lightBlue'>Total Amount Required</span>
 				<div className='text-base text-bodyBlue font-semibold flex flex-col cursor-pointer'>
-					<span className='flex' onClick={() => setAmountBreakup(!amountBreakup)}>
+					<span className='flex justify-end' onClick={() => setAmountBreakup(!amountBreakup)}>
 						{formatedBalance(perSocialBondFee.add((registerarFee).add(minDeposite)).toString(), unit, 2)} {unit}
-						{ amountBreakup ? <DownArrowIcon className='ml-3'/> : <UpArrowIcon className='ml-3'/> }
+						{ amountBreakup ? <DownArrowIcon className='ml-2'/> : <UpArrowIcon className='ml-2'/> }
 					</span>
-					<span className='text-xs text-lightBlue font-normal -mt-1'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>
+					<span className='text-xs text-lightBlue font-normal mt-[-2px] mr-1'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>
 				</div>
 			</div>
 			{amountBreakup && <div className='flex gap-2 flex-col mt-3'>

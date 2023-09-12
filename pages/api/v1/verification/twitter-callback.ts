@@ -15,12 +15,6 @@ import getOauthConsumer from '~src/util/getOauthConsumer';
 
 const firestore = firebaseAdmin.firestore();
 
-export enum VerificationStatus {
-	ALREADY_VERIFIED = 'Already verified',
-	VERFICATION_EMAIL_SENT = 'Verification email sent',
-	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
-	NOT_VERIFIED = 'Not verified',
-}
 interface ITwitterDocData{
 	twitter_handle: string;
 	oauth_request_token_secret: string;

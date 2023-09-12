@@ -21,20 +21,19 @@ export async function getJudgementCall(params: Props) : Promise<Response> {
 	if(!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK , 400);
 
 	if(!identityHash || !userAddress) throw apiErrorWithStatusCode('Invalid identityHash or userAddress', 400);
-	try {
-		const response = await fetch('https://us-central1-individual-node-watcher.cloudfunctions.net/judgementCall', {
-			body: JSON.stringify({ identityHash, userAddress }),
-			headers: {
-				'Authorization': `${process.env.IDENTITY_JUDGEMENT_AUTH}`,
-				'Content-Type': 'application/json'
-			},
-			method: 'POST'
-		});
 
-		return response;
-	} catch (error) {
-		throw apiErrorWithStatusCode('Failed to fetch judgement call', 500);
-	}
+	const response = await fetch('https://us-central1-individual-node-watcher.cloudfunctions.net/judgementCall', {
+		body: JSON.stringify({ identityHash, userAddress }),
+		headers: {
+			'Authorization': `${process.env.IDENTITY_JUDGEMENT_AUTH}`,
+			'Content-Type': 'application/json'
+		},
+		method: 'POST'
+	});
+	if (!response.ok) throw apiErrorWithStatusCode(`Failed to fetch judgement call with status: ${response.status}`, 400);
+
+	return response;
+
 }
 
 const handler: NextApiHandler<{hash: string} | MessageType> = async (req, res) => {
@@ -42,15 +41,13 @@ const handler: NextApiHandler<{hash: string} | MessageType> = async (req, res) =
 	const { identityHash, userAddress } = req.query;
 
 	const result = await getJudgementCall({
-		identityHash: String(identityHash),
+		identityHash: identityHash ? String(identityHash) : '',
 		network,
-		userAddress: String(userAddress)
+		userAddress: userAddress ? String(userAddress) : ''
 	});
-
 	if( result.status === 200){
 		return res.status(200).json(result as any);
 	}else{
-		console.log(result);
 		return res.status(500).json(result as any);
 	}
 };

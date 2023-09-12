@@ -23,7 +23,10 @@ import { IApiResponse, NetworkSocials } from '~src/types';
 
 import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
-import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } from './api/v1/latest-activity/on-chain-posts';
+import {
+	getLatestActivityOnChainPosts,
+	ILatestActivityPostsListingResponse
+} from './api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
@@ -33,7 +36,7 @@ import Script from 'next/script';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
-}
+};
 interface IHomeProps {
 	networkSocialsData?: IApiResponse<NetworkSocials>;
 	latestPosts: {
@@ -42,10 +45,9 @@ interface IHomeProps {
 	network: string;
 }
 
-export const getServerSideProps:GetServerSideProps = async ({ req }) => {
-
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
-	if(isOpenGovSupported(network) && !req.headers.referer) {
+	if (isOpenGovSupported(network) && !req.headers.referer) {
 		return {
 			props: {},
 			redirect: {
@@ -68,7 +70,12 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if(chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
+	if (
+		chainProperties[network]?.subsquidUrl &&
+		network !== AllNetworks.COLLECTIVES &&
+		network !== AllNetworks.WESTENDCOLLECTIVES &&
+		network !== AllNetworks.POLYMESH
+	) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -105,7 +112,10 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		fetches = { ...fetches, ...onChainFetches };
 	}
 
-	if(chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH){
+	if (
+		chainProperties[network]?.subsquidUrl &&
+		network === AllNetworks.POLYMESH
+	) {
 		const onChainFetches = {
 			community_pips: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -136,12 +146,13 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	if (network === 'collectives') {
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
-			fetches [trackName as keyof typeof fetches] =  getLatestActivityOnChainPosts({
-				listingLimit: LATEST_POSTS_LIMIT,
-				network,
-				proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
-				trackNo: networkTrackInfo[network][trackName].trackId
-			});
+			fetches[trackName as keyof typeof fetches] =
+				getLatestActivityOnChainPosts({
+					listingLimit: LATEST_POSTS_LIMIT,
+					network,
+					proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
+					trackNo: networkTrackInfo[network][trackName].trackId
+				});
 		}
 	}
 
@@ -159,58 +170,77 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 	return { props };
 };
 
-const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
-	loading: () => <Skeleton active /> ,
-	ssr: false
-});
+const TreasuryOverview = dynamic(
+	() => import('~src/components/Home/TreasuryOverview'),
+	{
+		loading: () => <Skeleton active />,
+		ssr: false
+	}
+);
 
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return (
 		<>
-			{chainProperties[network]?.gTag ? <><Script
-				src={`https://www.googletagmanager.com/gtag/js?id=${chainProperties[network].gTag}`}
-				strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">
-				{`
+			{chainProperties[network]?.gTag ? (
+				<>
+					<Script
+						src={`https://www.googletagmanager.com/gtag/js?id=${chainProperties[network].gTag}`}
+						strategy='afterInteractive'
+					/>
+					<Script id='google-analytics' strategy='afterInteractive'>
+						{`
 					window.dataLayer = window.dataLayer || [];
 					function gtag(){dataLayer.push(arguments);}
 					gtag('js', new Date());
 
 					gtag('config', ${chainProperties[network].gTag});
 				`}
-			</Script></> : null}
+					</Script>
+				</>
+			) : null}
 
-			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
+			<SEOHead
+				title='Home'
+				desc='Democratizing governance for substrate blockchains'
+				network={network}
+			/>
 			<main>
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
-				<div className="mt-6 mx-1">
-					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>
+					Overview
+				</h1>
+				<div className='mt-6 mx-1'>
+					{networkSocialsData && (
+						<AboutNetwork networkSocialsData={networkSocialsData.data} />
+					)}
 				</div>
-				{ network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES &&
-					<div className="mt-8 mx-1">
+				{network !== AllNetworks.COLLECTIVES &&
+					network !== AllNetworks.WESTENDCOLLECTIVES && (
+					<div className='mt-8 mx-1'>
 						<TreasuryOverview />
 					</div>
-				}
-				<div className="mt-8 mx-1">
-					{
-						network !== AllNetworks.COLLECTIVES?
-							<LatestActivity latestPosts={latestPosts} />
-							: <Gov2LatestActivity gov2LatestPosts={{
+				)}
+				<div className='mt-8 mx-1'>
+					{network !== AllNetworks.COLLECTIVES ? (
+						<LatestActivity latestPosts={latestPosts} />
+					) : (
+						<Gov2LatestActivity
+							gov2LatestPosts={{
 								allGov2Posts: latestPosts.all,
 								discussionPosts: latestPosts.discussions,
 								...latestPosts
-							}} />
-					}
+							}}
+						/>
+					)}
 				</div>
 
-				<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
-
+				<div className='mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4'>
 					<div className='w-full xl:w-[60%]'>
 						<UpcomingEvents />
 					</div>

@@ -346,9 +346,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{
 									id === userId ? <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>
 										:
-										allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-pink_primary text-xs leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} type={EReportType.REPLY} onSuccess={removeReplyContent} commentId={commentId} replyId={replyId} postId={postIndex}/>
+										allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && <ReportButton isDeleteModal={true} proposalType={reply.post_type as any || postType} className={`flex items-center shadow-none text-pink_primary text-xs leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} type={EReportType.REPLY} onSuccess={removeReplyContent} commentId={commentId} replyId={replyId} postId={reply.post_index as any || postIndex}/>
 								}
-								{id && !isEditing && <ReportButton className='text-xs text-pink_primary' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
+								{id && !isEditing && <ReportButton className='text-xs text-pink_primary' proposalType={reply.post_type as any || postType} postId={reply.post_index as any || postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 
 								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
 									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${reply.reply_source ? 'disabled-reply' : ''}` }>

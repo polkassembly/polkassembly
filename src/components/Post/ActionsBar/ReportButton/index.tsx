@@ -176,7 +176,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				onClick={() => setShowModal(true)}
 			>
 				{isDeleteModal ? <DeleteOutlined className={`${className}`} /> : <FlagOutlined className={`${className}`} />}
-				{isDeleteModal ? <span className={`${className}`}>Delete</span> : <span className={`${className} ml-[6px]`}>Report</span>}
+				{isDeleteModal ? <span className={`${className} ml-[5px]`}>Delete</span> : <span className={`${className} ml-[6px]`}>Report</span>}
 			</button>
 			<Modal
 				title={isDeleteModal ? 'Delete' : 'Report'}

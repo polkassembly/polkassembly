@@ -222,10 +222,10 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				</div>
 				{network !== AllNetworks.COLLECTIVES &&
 					network !== AllNetworks.WESTENDCOLLECTIVES && (
-					<div className='mt-8 mx-1'>
-						<TreasuryOverview />
-					</div>
-				)}
+						<div className='mt-8 mx-1'>
+							<TreasuryOverview />
+						</div>
+					)}
 				<div className='mt-8 mx-1'>
 					{network !== AllNetworks.COLLECTIVES ? (
 						<LatestActivity latestPosts={latestPosts} />

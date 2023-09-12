@@ -27,32 +27,84 @@
 		"header",
 		"promise",
 		"react",
-		"react-hooks"
+		"react-hooks",
+		"prettier"
 	],
 	"settings": {
 		"react": {
-			"pragma": "React",  // Pragma to use, default to "React"
+			"pragma": "React", // Pragma to use, default to "React"
 			"version": "18.2.0" // React version, default to the latest React stable release
 		}
 	},
 	"rules": {
+		"prettier/prettier": "error",
 		"react/react-in-jsx-scope": "off",
 		"@typescript-eslint/no-unused-vars": "error",
-		"arrow-spacing":["warn",{ "before": true, "after": true }],
-		"comma-dangle": ["error", "never"],
-		"header/header": [2, "./header.js"],
-		"indent": ["error", "tab"],
-		"no-multiple-empty-lines": ["error", {"max": 1}],
-		"no-tabs": ["error", { "allowIndentationTabs": true }],
-		"no-trailing-spaces": ["warn"],
+		"arrow-spacing": [
+			"warn",
+			{
+				"before": true,
+				"after": true
+			}
+		],
+		"comma-dangle": [
+			"error",
+			"never"
+		],
+		"header/header": [
+			2,
+			"./header.js"
+		],
+		"indent": "off",
+		"no-multiple-empty-lines": [
+			"error",
+			{
+				"max": 1
+			}
+		],
+		"no-tabs": [
+			"error",
+			{
+				"allowIndentationTabs": true
+			}
+		],
+		"no-trailing-spaces": [
+			"warn"
+		],
 		"no-unused-vars": "off",
-		"object-curly-spacing": ["error", "always"],
-		"quotes": ["error", "single",  { "avoidEscape": true }],
+		"object-curly-spacing": [
+			"error",
+			"always"
+		],
+		"quotes": [
+			"error",
+			"single",
+			{
+				"avoidEscape": true
+			}
+		],
 		"react-hooks/rules-of-hooks": "error",
 		"react-hooks/exhaustive-deps": "warn",
-		"semi": [2, "always"],
+		"semi": [
+			2,
+			"always"
+		],
 		// "simple-import-sort/imports": "error",
-		"sort-keys": ["error", "asc", {"caseSensitive": true, "natural": false, "minKeys": 2}],
-		"switch-colon-spacing": ["error", {"after": true, "before": false}]
+		"sort-keys": [
+			"error",
+			"asc",
+			{
+				"caseSensitive": true,
+				"natural": false,
+				"minKeys": 2
+			}
+		],
+		"switch-colon-spacing": [
+			"error",
+			{
+				"after": true,
+				"before": false
+			}
+		]
 	}
 }

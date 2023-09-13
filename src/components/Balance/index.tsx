@@ -26,7 +26,6 @@ interface Props {
 
 const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, classname }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
-	const [transferableBalance, setTransferableBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const [lockBalance, setLockBalance] = useState<string>('0');
 	const { network } = useContext(NetworkContext);
@@ -36,7 +35,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
-		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
+		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance });
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
 
@@ -120,7 +119,13 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 
 	return (
 		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
-	Available<HelperTooltip className="mx-1" text={<div className="text-center"><span>Transferable Balance: {formatedBalance(transferableBalance, unit)} {unit}</span><br/><span>Locked Balance: {formatedBalance(lockBalance, unit)} {unit}</span></div>}/>: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+			<span>Free Balance</span>
+			<HelperTooltip className="mx-1" text={
+				<div className="text-center">
+					<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 0, withUnit: true }, network)}</span>
+					<br/>
+					<span>Locked Balance: {formatedBalance(lockBalance, unit, 2)} {unit}</span>
+				</div>}/><span>:</span><span className='ml-2 text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);
 };

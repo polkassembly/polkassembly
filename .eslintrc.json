@@ -1,13 +1,20 @@
 {
+	"root": true,
 	"env": {
 		"browser": true,
+		"node": true,
 		"es6": true
 	},
 	"extends": [
 		"next/core-web-vitals",
-		"eslint:recommended",
-		"plugin:react/recommended",
-		"plugin:@typescript-eslint/eslint-recommended"
+		"plugin:@typescript-eslint/recommended",
+		"airbnb",
+		"airbnb-typescript",
+		"prettier",
+		"plugin:prettier/recommended",
+		"plugin:sonarjs/recommended",
+		"plugin:security/recommended",
+		"plugin:react-hooks/recommended"
 	],
 	"globals": {
 		"Atomics": "readonly",
@@ -15,6 +22,9 @@
 	},
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
+		"project": [
+			"tsconfig.json"
+		],
 		"ecmaFeatures": {
 			"jsx": true
 		},
@@ -30,28 +40,88 @@
 	],
 	"settings": {
 		"react": {
-			"pragma": "React",  // Pragma to use, default to "React"
-			"version": "18.2.0" // React version, default to the latest React stable release
+			"pragma": "React", // Pragma to use, default to "React"
+			"version": "detect" // React version, default to the latest React stable release
+		},
+		"import/resolver": {
+			"node": {
+				"extensions": [
+					".ts",
+					".tsx"
+				]
+			}
 		}
 	},
 	"rules": {
 		"react/react-in-jsx-scope": "off",
 		"@typescript-eslint/no-unused-vars": "error",
-		"arrow-spacing":["warn",{ "before": true, "after": true }],
-		"comma-dangle": ["error", "never"],
-		"header/header": [2, "./header.js"],
-		"indent": ["error", "tab"],
-		"no-multiple-empty-lines": ["error", {"max": 1}],
-		"no-tabs": ["error", { "allowIndentationTabs": true }],
-		"no-trailing-spaces": ["warn"],
+		"arrow-spacing": [
+			"warn",
+			{
+				"before": true,
+				"after": true
+			}
+		],
+		"comma-dangle": [
+			"error",
+			"never"
+		],
+		"header/header": [
+			2,
+			"./header.js"
+		],
+		"indent": [
+			"error",
+			"tab"
+		],
+		"no-multiple-empty-lines": [
+			"error",
+			{
+				"max": 1
+			}
+		],
+		"no-tabs": [
+			"error",
+			{
+				"allowIndentationTabs": true
+			}
+		],
+		"no-trailing-spaces": [
+			"warn"
+		],
 		"no-unused-vars": "off",
-		"object-curly-spacing": ["error", "always"],
-		"quotes": ["error", "single",  { "avoidEscape": true }],
+		"object-curly-spacing": [
+			"error",
+			"always"
+		],
+		"quotes": [
+			"error",
+			"single",
+			{
+				"avoidEscape": true
+			}
+		],
 		"react-hooks/rules-of-hooks": "error",
 		"react-hooks/exhaustive-deps": "warn",
-		"semi": [2, "always"],
-		// "simple-import-sort/imports": "error",
-		"sort-keys": ["error", "asc", {"caseSensitive": true, "natural": false, "minKeys": 2}],
-		"switch-colon-spacing": ["error", {"after": true, "before": false}]
+		"semi": [
+			2,
+			"always"
+		],
+		"sort-keys": [
+			"error",
+			"asc",
+			{
+				"caseSensitive": true,
+				"natural": false,
+				"minKeys": 2
+			}
+		],
+		"switch-colon-spacing": [
+			"error",
+			{
+				"after": true,
+				"before": false
+			}
+		]
 	}
 }

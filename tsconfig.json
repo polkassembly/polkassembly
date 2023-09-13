@@ -4,7 +4,11 @@
     "declaration": true,
     "downlevelIteration": true,
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
@@ -21,11 +25,27 @@
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
     "paths": {
-      "~assets/*": ["public/assets/*"],
-      "~src/*": ["src/*"],
-      "~styles/*": ["styles/*"],
+      "~assets/*": [
+        "public/assets/*"
+      ],
+      "~src/*": [
+        "src/*"
+      ],
+      "~styles/*": [
+        "styles/*"
+      ],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".cache", "public", "cloud-functions"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".cache",
+    "public",
+    "cloud-functions",
+    "lint-staged.config.js"
+  ]
 }

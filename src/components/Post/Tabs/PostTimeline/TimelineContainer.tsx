@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { dayjs } from 'dayjs-init';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -28,6 +27,7 @@ import { usePostDataContext } from '~src/context';
 import DownArrow from '~assets/icons/down-icon.svg';
 import UpArrow from '~assets/icons/up-arrow.svg';
 import styled from 'styled-components';
+import StatusTag from '~src/ui-components/StatusTag';
 
 interface BlockStatus {
 	block: number;
@@ -101,24 +101,20 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	}
 	const url = getBlockLink(network);
 
+	const StatusDiv = ({ status } : { status: string }) => {
+		return (
+			<div className='text-white my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center status-tag'>
+				<StatusTag className="text-ellipsis overflow-hidden text-white max-w-[86px] md:max-w-full" colorInverted={false} status={status} type={type} />
+			</div>
+		);
+	};
+
 	const Timeline = () => {
 		return(
 			<section className={className}>
 				{
 					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
 						const blockDate = dayjs(timestamp);
-						let color;
-						if(status === 'DecisionDepositePlaced'){
-							status = 'Decision deposite placed';
-							color = 'FF67000';
-						}
-						else if(status === 'Executed' || status === 'Submitted'){
-							color = '#5BC044';
-						}
-						else{
-							color = '#407AFC';
-						}
-
 						return (
 							<div key={status} className={'border-t border-black-300'} style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}>
 								<div className='content-container'>
@@ -128,14 +124,14 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 												<p className="text-xs text-sidebarBlue font-normal whitespace-nowrap mb-0 info-container">
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
-												<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
-													<ExportOutlined className='-mb-[2px]' style={{ color: '#e5007a' }}/>
-												</a>
+												{type !== 'Discussions' && (
+													<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
+														<ExportOutlined className='-mb-[2px]' style={{ color: '#e5007a' }} />
+													</a>
+												)}
 											</div>
 											<div className="text-right export-link">
-												<p style={{ backgroundColor: color }} className={'text-ellipsis overflow-hidden text-white max-w-[86px] md:max-w-full my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center'}>
-													{status}
-												</p>
+												<StatusDiv status={status} />
 											</div>
 										</div>
 									</article>
@@ -147,7 +143,6 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 			</section>
 		);
 	};
-
 	return (
 		<section className={`${className}`}>
 			<div className="flex my-12 timeline-container">
@@ -161,7 +156,9 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
 						{isCollapsed ? (
 							<div className="flex w-[200px] gap-3 arrow-container">
-								<p className='bg-[#5BC044] text-white my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update'>{timeline?.statuses[statuses.length - 1].status}</p>
+								<p className='status-update -mt-[5px]'>
+									<StatusDiv status={timeline?.statuses[statuses.length - 1].status} />
+								</p>
 								<DownArrow onClick={toggleCollapse} className="mt-[12px]"/>
 							</div>
 						) : (
@@ -201,42 +198,124 @@ export default (styled(TimelineContainer)`
 	.round-icon{
 		margin-left: 60px;
 	}
+
+	.status-tag{
+		margin-right: -16px;
+	}
+
+	.arrow-container {
+		margin-left: -105px;
+	}
+
+	.status-update {
+        width: 98px;
+    }
 	
-	.arrow-container{
-		margin-left: -107px;
+	@media (min-width: 1100px) and (max-width: 1280px) {
+		.content-container {
+		width: 800px;
+		}
+	
+		.timeline-container {
+		margin: 0 5px;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 800px;
+		}
+
+		.round-icon{
+			margin-left: 34px;
+		}
 	}
 	
-	@media (min-width: 600px) and (max-width: 800px) {
+	@media (min-width: 925px) and (max-width: 1024px) {
 		.content-container {
-		width: 213px;
+		width: 725px;
 		}
 	
 		.export-link {
-		margin-left: 335px;
-		margin-right: auto;
+		margin-right: 10px;
 		}
 	
+		.timeline-container {
+		margin: 0 70px;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 720px;
+		}
+
+		.round-icon{
+			margin-left: 98px;
+		}
+	}
+
+	@media (min-width: 700px) and (max-width: 800px) {
+		.content-container {
+		width: 550px;
+		}
+
 		.timeline-container {
 		margin: 0;
 		}
 	
 		.timeline-dropdown {
-		margin-left: 578px;
+		margin-left: 560px;
+		}
+
+		.round-icon{
+			margin-left: 28px;
+		}
+	}
+
+	@media (min-width: 600px) and (max-width: 700px) {
+		.content-container {
+		width: 478px;
+		}
+
+		.timeline-container {
+		margin: 0;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 485px;
+		}
+
+		.round-icon{
+			margin-left: 28px;
+		}
+	}
+
+	@media (min-width: 500px) and (max-width: 600px) {
+		.content-container {
+		width: 410px;
+		}
+
+		.timeline-container {
+		margin: 0;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 420px;
+		}
+
+		.round-icon{
+			margin-left: 28px;
 		}
 	}
 	
-	@media (max-width: 600px) {
+	@media (max-width: 500px) and (min-width:400px){
 		.content-container {
-		width: 213px;
+		width: 293px;
 		}
-	
+
 		.export-link {
-		margin-left: 47px;
-		margin-right: auto;
+			margin-right: -2px
 		}
-	
+
 		.timeline-container {
-		margin: 0;
+			margin: 0;
 		}
 	
 		.timeline-dropdown {
@@ -247,12 +326,47 @@ export default (styled(TimelineContainer)`
 		margin-left: 28px;
 		}
 	
-		.arrow-container{
-		margin-left: 8px;
-		}
-	
 		.status-update{
-		display:none;
+			margin-left: -110px;
+		}
+
+		.arrow-container {
+			margin-left: 6px;
+		}
+	}
+	@media (max-width: 400px) and (min-width:360px){
+		.content-container {
+			width: 248px;
+		}
+
+		.timeline-container {
+			margin: 0 5px;
+		}
+
+		.round-icon {
+			margin-left: 33px;
+		}
+
+		.timeline-dropdown {
+			margin-left: 263px;
+		}
+	}
+
+	@media (max-width: 360px) and (min-width:320px){
+		.content-container {
+			width: 248px;
+		}
+
+		.timeline-container {
+			margin: 0 -27px;
+		}
+
+		.round-icon {
+			margin-left: 2px;
+		}
+
+		.timeline-dropdown {
+			margin-left: 256px;
 		}
 	}
 `);

@@ -257,7 +257,12 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			/>
 		</div> : <Skeleton />}
 
-		{!openLoginModal && !openSignupModal && !loginWallet && <AddressConnectModal localStorageWalletKeyName='delegationWallet' localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
+		{!openLoginModal && !openSignupModal && !loginWallet && <AddressConnectModal
+			walletAlertTitle='Delegation dashboard'
+			localStorageWalletKeyName='delegationWallet'
+			localStorageAddressKeyName='delegationDashboardAddress'
+			open={openModal}
+			setOpen={setOpenModal} />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
 		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 

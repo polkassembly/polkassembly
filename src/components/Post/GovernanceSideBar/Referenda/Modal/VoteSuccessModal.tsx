@@ -218,8 +218,8 @@ const VoteInitiatedModal = ({
 						<div className='flex gap-[30px] text-sm text-lightBlue font-normal'>
 							{' '}
                             Conviction:
-							<span className='text-blue-light-high dark:text-blue-dark-high font-medium'>
-								{conviction}x
+							<span className='text-bodyBlue font-medium dark:text-blue-dark-high'>
+								{conviction || '0.1'}x
 							</span>{' '}
 						</div>
 						<div className='flex h-[21px] gap-[14px] text-sm text-lightBlue font-normal'>

@@ -6,7 +6,7 @@ import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
@@ -15,7 +15,6 @@ import PostDataContextProvider from '~src/context/PostDataContext';
 import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
-import OtherProposals from '../OtherProposals';
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
@@ -30,9 +29,14 @@ import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
+import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
-import StickyBox from '~src/util/Stickytop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
+
+const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -93,11 +97,10 @@ const Post: FC<IPostProps> = (props) => {
 		proposalType
 	} = props;
 
-	const { id, addresses } = useContext(UserDetailsContext);
+	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
@@ -108,14 +111,11 @@ const Post: FC<IPostProps> = (props) => {
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
 
-	useEffect(() => {
-		if(!post) return;
-
+	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
 		if(isOffchainPost) {
 			setCanEdit(post.user_id === id);
-			return;
 		}
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
@@ -128,8 +128,14 @@ const Post: FC<IPostProps> = (props) => {
 		}
 
 		const substrateAddress = getSubstrateAddress(proposer);
+		if(!isProposer){
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...addresses || loginAddress ] );
+			if(isProposer){
+				setCanEdit(true);
+				return;
+			}
+		}
 		if(!isProposer || !substrateAddress) return;
-
 		(async () => {
 			//check if proposer address is verified
 			const { data , error: fetchError } = await nextApiClientFetch<IVerified>( 'api/v1/auth/data/isAddressVerified', {
@@ -142,8 +148,12 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [addresses, id, isEditing, post, proposalType]);
+	},[addresses, id, isEditing, isOffchainPost, loginAddress, post, proposalType]);
+
+	useEffect(() => {
+		if(!post) return;
+		handleCanEdit();
+	}, [handleCanEdit, post]);
 
 	useEffect(() => {
 		if (proposalType !== ProposalType.GRANTS || dayjs(post.created_at).isBefore(dayjs().subtract(6, 'days'))) return;
@@ -308,10 +318,6 @@ const Post: FC<IPostProps> = (props) => {
 		}
 	</>;
 
-	const handleOpenSidebar = (address:string) => {
-		setSidebarOpen(true);
-		setProposerAddress(address);
-	};
 	const getOnChainTabs = () => {
 		const tabs: any[] = [
 			{
@@ -376,7 +382,6 @@ const Post: FC<IPostProps> = (props) => {
 							version: post?.version,
 							vote_threshold: post?.vote_threshold
 						}}
-						handleOpenSidebar={handleOpenSidebar}
 						proposalType={proposalType}
 					/>
 				),
@@ -404,6 +409,7 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
+
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',
@@ -414,6 +420,7 @@ const Post: FC<IPostProps> = (props) => {
 			currentTimeline: post.currentTimeline,
 			description: post?.description,
 			history: post?.history || [],
+			identityId: post?.identity || null,
 			last_edited_at: post?.last_edited_at,
 			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,
@@ -436,7 +443,7 @@ const Post: FC<IPostProps> = (props) => {
 			username: post?.username
 		}}>
 			<CommentsDataContextProvider initialCommentsData={{
-				comments:post?.comments,
+				comments: {},
 				currentTimeline:post.currentTimeline,
 				overallSentiments: post?.overallSentiments,
 				timelines:[]
@@ -503,7 +510,6 @@ const Post: FC<IPostProps> = (props) => {
 					open={sidebarOpen}
 					closeSidebar={() => setSidebarOpen(false)}
 				>
-					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
 				</SidebarRight>
 			</CommentsDataContextProvider>
 		</PostDataContextProvider>

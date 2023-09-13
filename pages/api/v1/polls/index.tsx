@@ -78,11 +78,11 @@ const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | MessageTyp
 		}
 	});
 	if (strPollType === POLL_TYPE.OPTION) {
-		res.status(200).json({
+		return res.status(200).json({
 			optionPolls
 		});
 	} else if (strPollType === POLL_TYPE.NORMAL) {
-		res.status(200).json({
+		return res.status(200).json({
 			polls
 		});
 	} else {

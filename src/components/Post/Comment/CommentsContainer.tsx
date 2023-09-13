@@ -75,7 +75,7 @@ interface ISentimentsPercentage {
 	slightlyFor: ESentiments | 0;
 }
 
-const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
+export const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	const commentResponse:any = {};
 	for(const key in comments){
 		commentResponse[key] = comments[key].sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
@@ -93,7 +93,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		setComments,
 		setTimelines,
 		timelines,
-		overallSentiments
+		overallSentiments,
+		setOverallSentiments
 	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
@@ -104,7 +105,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments|null>(null);
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
-	const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
 
 	if(filterSentiments){
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -159,10 +159,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 		const timelines:ITimeline[] = [];
 		const comments:{[index:string]:IComment[]} ={};
-		let haveComments: number = 0;
 		if (timeline && timeline.length > 0) {
 			timeline.forEach((obj) => {
-				haveComments +=obj.commentsCount;
 				timelines.push({
 					commentsCount: obj.commentsCount,
 					date: dayjs(obj?.created_at),
@@ -176,17 +174,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			});
 			setTimelines(timelines);
 		}
-		if(!haveComments){
-			setLoading(false);
-			return;
-		}
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
-
 		if(!commentResponse || Object.keys(commentResponse).length==0){
 			setComments(comments);
 		}
 		else{
 			setComments(getSortedComments(commentResponse.comments));
+			setOverallSentiments(commentResponse.overallSentiments);
 		}
 		if(loading){
 			setLoading(false);
@@ -214,11 +208,52 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	useEffect(() => {
 		if(!timeline || timeline.length == 0){
+			if(loading){
+				setLoading(false);
+			}
 			return;
 		}
 		addCommentDataToTimeline();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[timeline]);
+
+	const sentimentsData = [
+		{
+			iconActive: <AgainstIcon />,
+			iconInactive: <UnfilterAgainstIcon />,
+			percentage: sentimentsPercentage?.against,
+			sentiment: ESentiments.Against,
+			title: 'Completely Against'
+		},
+		{
+			iconActive: <SlightlyAgainstIcon />,
+			iconInactive: <UnfilterSlightlyAgainstIcon />,
+			percentage: sentimentsPercentage?.slightlyAgainst,
+			sentiment: ESentiments.SlightlyAgainst,
+			title: 'Slightly Against'
+		},
+		{
+			iconActive: <NeutralIcon className='text-[20px] font-medium' />,
+			iconInactive: <UnfilterNeutralIcon />,
+			percentage: sentimentsPercentage?.neutral,
+			sentiment: ESentiments.Neutral,
+			title: 'Neutral'
+		},
+		{
+			iconActive: <SlightlyForIcon />,
+			iconInactive: <UnfilterSlightlyForIcon />,
+			percentage: sentimentsPercentage?.slightlyFor,
+			sentiment: ESentiments.SlightlyFor,
+			title: 'Slightly For'
+		},
+		{
+			iconActive: <ForIcon />,
+			iconInactive: <UnfilterForIcon />,
+			percentage: sentimentsPercentage?.for,
+			sentiment: ESentiments.For,
+			title: 'Completely For'
+		}
+	];
 
 	return (
 		<div className={className}>
@@ -235,60 +270,35 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			}
-			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-				<span className='text-lg font-medium text-blue-light-high dark:text-blue-dark-high'>
-					{allCommentsLength || 0}
-					<span className='ml-1'>Comments</span>
-				</span>
-				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
-					<Tooltip color='#E5007A'
-						title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Completely Against</span>
-							<span className='text-center pt-1'>Select to filter</span>
-						</div>} >
-						<div onClick={() => { getFilteredComments(ESentiments.Against); }} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`} >
-							{checkActive(ESentiments.Against) ? <AgainstIcon /> : <UnfilterAgainstIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.against}%</span>
-						</div>
-					</Tooltip>
-					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-						<span className='text-center font-medium'>Slightly Against</span>
-						<span className='text-center pt-1'>Select to filter</span>
-					</div>}>
-						<div onClick={() => { getFilteredComments(ESentiments.SlightlyAgainst); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`}>
-							{checkActive(ESentiments.SlightlyAgainst) ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyAgainst}%</span>
-						</div>
-					</Tooltip>
-					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-						<span className='text-center font-medium'>Neutral </span>
-						<span className='text-center pt-1'>Select to filter</span>
-					</div>}>
-						<div onClick={() => { getFilteredComments(ESentiments.Neutral); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`}>
-							{checkActive(ESentiments.Neutral) ? <NeutralIcon className='text-[20px] font-medium' /> : <UnfilterNeutralIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.neutral}%</span>
-						</div>
-					</Tooltip>
-					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-						<span className='text-center font-medium'>Slightly For</span>
-						<span className='text-center pt-1'>Select to filter</span>
-					</div>}>
-						<div onClick={() => { getFilteredComments(ESentiments.SlightlyFor); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`}>
-							{checkActive(ESentiments.SlightlyFor) ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyFor}%</span>
-						</div>
-					</Tooltip>
-					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-						<span className='text-center font-medium'>Completely For</span>
-						<span className='text-center pt-1'> Select to filter</span>
-					</div>}>
-						<div onClick={() => { getFilteredComments(ESentiments.For); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`}>
-							{checkActive(ESentiments.For) ? <ForIcon /> : <UnfilterForIcon />}
-							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
-						</div>
-					</Tooltip>
-				</div>}
-			</div>
+			{
+				!loading &&
+				<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
+					<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+						{allComments.length || 0}
+						<span className='ml-1'>Comments</span>
+					</span>
+					{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
+						{sentimentsData.map((data) => (
+							<Tooltip
+								key={data.sentiment}
+								color='#E5007A'
+								title={<div className='flex flex-col text-xs px-1'>
+									<span className='text-center font-medium'>{data.title}</span>
+									<span className='text-center pt-1'>Select to filter</span>
+								</div>}
+							>
+								<div
+									onClick={() => getFilteredComments(data.sentiment)}
+									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary text-blue-light-high dark:text-blue-dark-high text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none': ''}`}
+								>
+									{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
+									<span className={'flex justify-center font-medium'}>{data.percentage}%</span>
+								</div>
+							</Tooltip>
+						))}
+					</div>}
+				</div>
+			}
 			<div className={'block xl:grid grid-cols-12'}>
 				{
 					!!allComments?.length && timelines.length >= 1 &&
@@ -304,7 +314,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 													<div className='flex flex-col text-lightBlue sticky top-10'>
 														<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
-														<div className='text-xs'>({timeline.commentsCount})</div>
+														<div className='text-xs'>({comments[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
 													</div>
 												}
 											/>:

@@ -78,6 +78,9 @@ export interface IPostListing {
   timeline?: any;
   track_no?: number | null;
 	isSpam?: boolean;
+	identity?: string | null;
+	isSpamReportInvalid?: boolean;
+	spam_users_count?: number;
 }
 
 export interface IPostsListingResponse {
@@ -184,7 +187,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							'👎': reactions['👎']?.count || 0
 						};
 
-						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+						const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 						const created_at = docData.created_at;
 						const { topic, topic_id } = docData;
@@ -194,9 +197,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							created_at: created_at?.toDate ? created_at?.toDate() : created_at,
 							gov_type: docData?.gov_type,
 							isSpam: docData?.isSpam || false,
+							isSpamReportInvalid: docData?.isSpamReportInvalid || false,
 							post_id: docData.id,
 							post_reactions,
 							proposer: getProposerAddressFromFirestorePostData(docData, network),
+							spam_users_count: docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
 							tags: docData?.tags || [],
 							title: docData?.title || subsquareTitle || null,
 							topic: topic ? topic : isTopicIdValid(topic_id) ? {
@@ -273,6 +278,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					});
 				}
 				const status = subsquidPost.status;
+				const identity = subsquidPost?.identity || null;
 				const tally = subsquidPost.tally;
 				const postId = proposalType === ProposalType.TIPS ? hash : index;
 				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
@@ -284,7 +290,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					'👎': reactions['👎']?.count || 0
 				};
 
-				const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+				const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 				const postDoc = await postDocRef.get();
 				if (postDoc && postDoc.exists) {
 					const data = postDoc.data();
@@ -306,12 +312,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							end,
 							gov_type: data.gov_type,
 							hash,
+							identity,
 							isSpam: data?.isSpam || false,
+							isSpamReportInvalid: data?.isSpamReportInvalid || false,
 							method: preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
 							post_id: postId,
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+							spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 							status,
 							status_history: statusHistory,
 							tags: data?.tags || [],
@@ -340,6 +349,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					description,
 					end: end,
 					hash: hash || null,
+					identity,
 					method: preimage?.method,
 					parent_bounty_index: parentBountyIndex || null,
 					post_id: postId,
@@ -491,7 +501,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							'👎': reactions['👎']?.count || 0
 						};
 
-						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+						const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 						const newProposer = proposer || null;
 						const postDoc = await postDocRef.get();
 						if (postDoc && postDoc.exists) {
@@ -509,9 +519,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									gov_type: data.gov_type,
 									hash,
 									isSpam: data?.isSpam || false,
+									isSpamReportInvalid: data?.isSpamReportInvalid || false,
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
+									spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 									status,
 									tags: data?.tags || [],
 									title: data?.title || subsquareTitle,
@@ -562,7 +574,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							'👍': reactions['👍']?.count || 0,
 							'👎': reactions['👎']?.count || 0
 						};
-						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+						const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 						const newProposer = proposer || null;
 						const postDoc = await postDocRef.get();
 						if (postDoc && postDoc.exists) {
@@ -581,9 +593,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									gov_type: data.gov_type,
 									hash,
 									isSpam: data?.isSpam || false,
+									isSpamReportInvalid: data?.isSpamReportInvalid || false,
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
+									spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 									status,
 									tags: data?.tags || [],
 									title: data?.title || subsquareTitle || title,
@@ -651,6 +665,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						});
 					}
 					const tally = subsquidPost?.tally;
+					const identity = subsquidPost?.identity || null;
 					let status = subsquidPost.status;
 					if (status === 'DecisionDepositPlaced') {
 						const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
@@ -671,7 +686,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						'👎': reactions['👎']?.count || 0
 					};
 
-					const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 					const postDoc = await postDocRef.get();
 					if (postDoc && postDoc.exists) {
 						const data = postDoc.data();
@@ -693,13 +708,16 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								end,
 								gov_type: data.gov_type,
 								hash,
+								identity,
 								isSpam: data?.isSpam || false,
+								isSpamReportInvalid: data?.isSpamReportInvalid || false,
 								method: preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
 								post_id: postId,
 								post_reactions,
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
+								spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 								status,
 								status_history: statusHistory,
 								tags: data?.tags || [],
@@ -727,6 +745,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						description,
 						end: end,
 						hash: hash || null,
+						identity,
 						method: preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,
@@ -804,7 +823,7 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 						if (posts[index] && (proposalType || data.proposal_type === getFirestoreProposalType(posts[index].type))) {
 							posts[index] = {
 								...posts[index],
-								spam_users_count: Number(posts[index].spam_users_count || 0) + 1
+								spam_users_count: posts[index]?.isSpam ? Number(process.env.REPORTS_THRESHOLD || 50) : posts[index]?.isSpamReportInvalid ? 0 : posts[index]?.spam_users_count || 0
 							};
 						}
 					}
@@ -843,6 +862,10 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 			post.spam_users_count = checkReportThreshold(post.spam_users_count);
 		}
 
+		if(post?.isSpamReportInvalid) {
+			post.spam_users_count = 0;
+		}
+
 		return post;
 	});
 };
@@ -852,7 +875,7 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;
 	const { data, error, status } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
@@ -867,9 +890,9 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 	});
 
 	if (error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	} else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

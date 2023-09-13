@@ -22,6 +22,7 @@ import Loader from 'src/ui-components/Loader';
 
 import NovaWalletIcon from '~assets/wallet/nova-wallet-star.svg';
 import PolkadotJSIcon from '~assets/wallet/polkadotjs-icon.svg';
+import PolkagateIcon from '~assets/wallet/polkagate-icon.svg';
 import SubWalletIcon from '~assets/wallet/subwallet-icon.svg';
 import TalismanIcon from '~assets/wallet/talisman-icon.svg';
 import MetamaskIcon from '~assets/wallet/metamask-icon.svg';
@@ -64,6 +65,8 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 		return <TalismanIcon className={`h-8 w-8 ${className}`} />;
 	case Wallet.SUBWALLET:
 		return <SubWalletIcon className={`h-8 w-6 ${className}`} />;
+	case Wallet.POLKAGATE:
+		return <PolkagateIcon className={`h-8 w-6 ${className}`} />;
 	case Wallet.NOVAWALLET:
 		return <NovaWalletIcon className={`h-8 w-8 ${className}`} />;
 	case Wallet.POLYWALLET:

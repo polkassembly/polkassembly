@@ -53,6 +53,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 		content,
 		created_at: new Date(),
 		id: newReplyRef.id,
+		isDeleted: false,
 		updated_at: last_comment_at,
 		user_id: user.id,
 		user_profile_img: user?.profile?.image || '',

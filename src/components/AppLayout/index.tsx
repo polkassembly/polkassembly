@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, MenuTheme } from 'antd';
+import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, MenuTheme, Modal, Skeleton } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon, RootIcon, UpgradeCommitteePIPsIcon, CommunityPIPsIcon, ApplayoutIdentityIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
@@ -29,7 +29,17 @@ import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+import dynamic from 'next/dynamic';
+import { poppins } from 'pages/_app';
 
+import IdentityCaution from '~assets/icons/identity-caution.svg';
+import CloseIcon from '~assets/icons/close-icon.svg';
+import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
+
+const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),{
+	loading: () => <Skeleton.Button active />,
+	ssr: false
+});
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -45,15 +55,17 @@ function getSiderMenuItem(
 		icon,
 		key,
 		label,
-		type: key === 'tracksHeading' ? 'group' : ''
+		type: ['tracksHeading','pipsHeading'].includes(key as string) ? 'group' : ''
 	} as MenuItem;
 }
 
-const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
+export const onchainIdentitySupportedNetwork:Array<string> = [];
+
+const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network: string, img?: string | null, username?: string, className?:string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+			label: <Link className='text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
 				<UserOutlined />
 				<span>View Profile</span>
 			</Link>
@@ -67,7 +79,7 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 		},
 		{
 			key: 'logout',
-			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
+			label: <Link href='/' className='text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
 				onClick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
@@ -78,6 +90,22 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 			</Link>
 		}
 	];
+
+	if(onchainIdentitySupportedNetwork.includes(network)){
+		dropdownMenuItems.splice(1, 0 , {
+			key: 'set on-chain identity',
+			label: <Link className={`text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2 -ml-1 ${className}`} href={''}
+				onClick={(e) => {
+					e.stopPropagation();
+					e.preventDefault();
+					handleSetIdentityClick();
+				}}>
+				<span className='text-lg ml-[2px]'><ApplayoutIdentityIcon /></span>
+				<span>Set on-chain identity</span>
+				<span className=' flex items-center'><IdentityCaution/></span>
+			</Link>
+		});
+	}
 
 	const AuthDropdown = ({ children }: {children: ReactNode}) => (
 		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
@@ -115,6 +143,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const [open, setOpen] = useState<boolean>(false);
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network)) || false;
+	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -178,14 +210,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
 			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
-		] : []
+		] : [],
+		PIPsItems:(chainProperties[network]?.subsquidUrl && (network === 'polymesh')) ? [
+			getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='text-white mt-1.5'/>),
+			getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='text-white mt-1.5'/>),
+			getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='text-white mt-1.5'/>)
+		] :[]
 	};
-
 	if (isGrantsSupported(network)) {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network))) {
+	if(isMobile) {
 		gov1Items.overviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
@@ -196,7 +232,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		...gov1Items.overviewItems
 	];
 
-	if(chainProperties[network]?.subsquidUrl) {
+	if(chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
 		items = items.concat([
 			getSiderMenuItem('Democracy', 'democracy_group', null, [
 				...gov1Items.democracyItems
@@ -220,12 +256,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		...gov1Items.overviewItems
 	];
 
-	if(chainProperties[network]?.subsquidUrl) {
+	if(chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
 		collapsedItems = collapsedItems.concat([
 			...gov1Items.democracyItems,
 			...gov1Items.treasuryItems,
 			...gov1Items.councilItems,
 			...gov1Items.techCommItems
+		]);
+	}
+	if(network === 'polymesh'){
+		items = items.concat(
+			getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base cursor-text font-medium'>PIPs</span>, 'pipsHeading', null),
+			...gov1Items.PIPsItems
+		);
+		collapsedItems = collapsedItems.concat([
+			...gov1Items.PIPsItems
 		]);
 	}
 
@@ -359,11 +404,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
 	const handleMenuClick = (menuItem: any) => {
-		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
+		if(['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
 		setSidedrawer(false);
 	};
-
 	const handleLogout = async (username: string) => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
@@ -372,8 +416,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			router.replace('/');
 		}
 	};
+	const handleIdentityButtonClick = () => {
+		const address = localStorage.getItem('identityAddress');
+		if(isMobile){
+			setIdentityMobileModal(true);
+		}else{
+			if(address?.length){
+				setOpen(!open);
+			}else {
+				setOpenAddressLinkedModal(true);
+			}
+		}
 
-	const userDropdown = getUserDropDown(handleLogout, picture, username!);
+	};
+
+	const userDropdown = getUserDropDown( handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
@@ -451,6 +508,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				}
 			</Layout>
 			<Footer />
+			<Modal
+				open={identityMobileModal}
+				footer={false}
+				closeIcon={<CloseIcon/>}
+				onCancel={() => setIdentityMobileModal(false)}
+				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>
+					On-chain identity
+				</span>
+				}
+			>
+				<div className='flex items-center text-center flex-col gap-6 p-4'>
+					<DelegationDashboardEmptyState/>
+					<span>Please use your desktop computer to verify on chain identity</span>
+				</div>
+			</Modal>
+			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
 		</Layout>
 	);
 };

@@ -70,7 +70,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 	>
 		<div className='flex justify-center items-center flex-col -mt-[132px]'>
 			{isMultisig ? <MultisigSuccessIcon/> :<SuccessIcon/>}
-			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-4'>{isDelegate ? isMultisig ? `${title}`: `${title} successfully` : isMultisig ? `${title}`: 'Undelegated successfully' }</h2>
+			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-4'>{title ? title : isDelegate ? isMultisig ? `${title}`: `${title} successfully` : isMultisig ? `${title}`: 'Undelegated successfully' }</h2>
 			{isDelegate && <div className='flex flex-col justify-center items-center gap-[14px]'>
 				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatedBalance(balance.toString(), unit)}{` ${unit}`}</div>}
 				{

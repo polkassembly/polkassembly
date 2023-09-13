@@ -72,7 +72,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<div >
 			{userDetails?.delegationDashboardAddress.length> 0 ? <DashboardTrackListing className='mt-8 bg-white dark:bg-section-dark-overlay shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/> : <Skeleton/>}
 		</div>
-		{!openLoginModal && !openSignupModal && !userDetails.loginWallet && <AddressConnectModal localStorageWalletKeyName='delegationWallet' localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
+		{!openLoginModal && !openSignupModal && !userDetails.loginWallet && <AddressConnectModal localStorageWalletKeyName='delegationWallet' localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} walletAlertTitle='Delegation dashboard' />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
 		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 	</div>;

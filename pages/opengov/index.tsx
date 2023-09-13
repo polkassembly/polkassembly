@@ -9,20 +9,25 @@ import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-post
 import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 import { useTheme } from 'next-themes';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import styled from 'styled-components';
+import { redisGet, redisSet } from '~src/auth/redis';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import IdentityCaution from '~assets/icons/identity-caution.svg';
+import onchainIdentitySupportedNetwork from '~src/components/AppLayout';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active /> ,
@@ -36,10 +41,20 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps:GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const LATEST_POSTS_LIMIT = 8;
 
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
+		if (redisData){
+			const props = JSON.parse(redisData);
+			if(!props.error){
+				return { props };
+			}
+		}
+	}
 	const networkSocialsData = await getNetworkSocials({ network });
 
 	if(!networkTrackInfo[network]) {
@@ -79,12 +94,16 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		(gov2LatestPosts as any)[trackName as keyof typeof gov2LatestPosts] = responseArr[Object.keys(fetches).indexOf(trackName as keyof typeof fetches)];
 	}
 
-	const props:Props = {
+	const props: Props = {
 		error: '',
 		gov2LatestPosts,
 		network,
 		networkSocialsData
 	};
+
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		await redisSet(`${network}_latestActivity_OpenGov`,JSON.stringify(props));
+	}
 
 	return { props };
 };
@@ -94,17 +113,49 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	// const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
 	// const [floatButtonOpen , setFloatButtonOpen] = useState(false);
 	const { resolvedTheme } = useTheme();
+	const { api, apiReady } = useApiContext();
+	const { id: userId } = useUserDetailsContext();
+	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
+
 	useEffect(() => {
 		setNetwork(network);
+		if(!api || !apiReady)return;
+
+		let unsubscribe: () => void;
+		const address = localStorage.getItem('identityAddress');
+		const identityForm = localStorage.getItem('identityForm');
+
+		const encoded_addr = address ? getEncodedAddress(address, network) : '';
+		if(!identityForm || !JSON.parse(identityForm)?.setIdentity) return;
+
+		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
+
+			const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
+			const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+			setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+			if(!(judgementProvided || !info?.identity?.judgements?.length)) {
+				localStorage.removeItem('identityForm');
+			}
+		})
+			.then(unsub => { unsubscribe = unsub; })
+			.catch(e => console.error(e));
+
+		return () => unsubscribe && unsubscribe();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, api, apiReady, userId]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
 		<>
 			<SEOHead title='OpenGov' network={network}/>
-			<h1 className='text-blue-light-high dark:text-blue-dark-high font-semibold text-2xl leading-9 mx-2'>Overview</h1>
+			<div className='flex justify-between mr-2'>
+				<h1 className='text-bodyBlue dark:text-blue-dark-high font-semibold text-2xl leading-9 mx-2 font-semibold text-2xl leading-9 mx-2'>Overview</h1>
+				{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && <div className='pl-3 max-sm:hidden pr-8 py-2 border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] text-sm text-[#E91C26] flex items-center rounded-md '>
+					<IdentityCaution />
+					<span className='ml-2'>Social verification incomplete</span>
+				</div>}
+			</div>
 			<div className="mt-6 mx-1">
 				{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData?.data} showGov2Links />}
 			</div>
@@ -126,8 +177,6 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 					<News twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
-
-			{/* <AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} /> */}
 
 		</>
 	);

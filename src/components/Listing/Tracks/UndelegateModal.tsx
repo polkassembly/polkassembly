@@ -224,7 +224,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 				<Spin spinning={loading} indicator={<LoadingOutlined />} >
 					<div className='flex flex-col border-0'>
-						{ <Alert showIcon type='info' className='text-[14px]' message={`An approximate fees of ${formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction`}/>}
+						{ <Alert showIcon type='info' className='text-[14px] rounded-[4px]' message={`An approximate fees of ${formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction`}/>}
 						<Form
 							form={form}
 							disabled={true}
@@ -271,7 +271,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					</div>
 				</Spin>
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance} isMultisig={isMultisig} title={isMultisig ? 'Undelegation with Polkasafe initiated':''}/>
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance} isMultisig={isMultisig} title={isMultisig ? 'Undelegation with Polkasafe initiated':'Undelegated Successfully'}/>
 		</>
 	);
 };

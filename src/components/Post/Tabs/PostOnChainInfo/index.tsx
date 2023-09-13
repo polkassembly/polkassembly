@@ -83,7 +83,6 @@ interface IPostOnChainInfoProps {
 	className?: string;
 	onChainInfo?: IOnChainInfo;
 	proposalType: ProposalType;
-	handleOpenSidebar: (address: string) => void;
 }
 export const tipStatus = {
 	CLOSED: 'Closed',
@@ -106,10 +105,11 @@ export const getBlockNumber = (statusHistory?: {
 const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	const { network } = useNetworkContext();
 	const { resolvedTheme } = useTheme();
-	const { className, handleOpenSidebar, onChainInfo, proposalType } = props;
+	const { className, onChainInfo, proposalType } = props;
 	const currentBlock = useCurrentBlock();
 	if (!onChainInfo) return null;
-	const { cid, code, codec, delay, description, end, status, proposer, vote_threshold, method, post_id, ended_at, proposed_call, bond, curator, curator_deposit, deciding, decision_deposit_amount, submission_deposit_amount, deposit, enactment_after_block, enactment_at_block, ended_at_block, fee, hash, member_count, motion_method, origin, proposal_arguments, submitted_amount, reward, payee, statusHistory, version } = onChainInfo;
+
+	const { cid, code, codec, delay, description, end, status, vote_threshold, method, post_id, ended_at, proposed_call, bond, curator, curator_deposit, deciding, decision_deposit_amount, submission_deposit_amount, deposit, enactment_after_block, enactment_at_block, ended_at_block, fee, hash, member_count, motion_method, origin, proposal_arguments, submitted_amount, reward, payee, statusHistory, version } = onChainInfo;
 	const blockNumber = getBlockNumber(statusHistory);
 
 	const formattedBlockToTime = (blockNo: number) => {
@@ -130,34 +130,8 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		<>
 			<div className={`${className} mt-4`}>
 				<OnchainInfoWrapper theme={resolvedTheme}>
-					{
-						proposer?
-							<div
-								className='md:hidden text-pink_primary cursor-pointer mb-5'
-								onClick={() => handleOpenSidebar(proposer)}
-							>
-							View Other Proposals
-							</div>
-							: null
-					}
 					<h5 className='mb-5 font-bold text-base'>Metadata</h5>
 					<ul className='list-none flex flex-col gap-y-2'>
-						{
-							proposer?
-								<li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-									<h6 className='col-span-2 text-lightBlue dark:text-blue-dark-medium font-medium'>Proposer</h6>
-									<article className='flex gap-x-2 col-span-4 md:col-span-6 overflow-hidden'>
-										<Address displayInline={true} address={proposer}/>
-										<div
-											className='hidden md:block text-pink_primary cursor-pointer ml-auto'
-											onClick={() => handleOpenSidebar(proposer)}
-										>
-										View Other Proposals
-										</div>
-									</article>
-								</li>
-								: null
-						}
 						{submitted_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
 							<h6 className='col-span-2 text-lightBlue dark:text-blue-dark-medium font-medium'>Submitted</h6>
 							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>

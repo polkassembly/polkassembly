@@ -42,7 +42,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			return res.status(500).json({ message: 'Error removing reaction' });
 		});
 	}else {
-		res.status(400).json({ message: 'No reaction found' });
+		return res.status(400).json({ message: 'No reaction found' });
 	}
 }
 

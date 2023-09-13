@@ -86,8 +86,8 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 								>
 									<CautionSVG />
 								</span>
-								<p className='m-0 font-normal text-sm leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
-							The reports provided here does not represent Polkassembly&apos;s views and we do not endorse them.
+								<p className='m-0 font-normal text-sm leading-[21px] text-[#243A57]'>
+								Reports provided here represent the auditor&apos;s views and are not endorsed by Polkassembly
 								</p>
 							</div>
 							: <NoAuditReport />

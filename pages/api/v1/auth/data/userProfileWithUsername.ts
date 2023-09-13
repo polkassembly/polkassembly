@@ -46,6 +46,53 @@ export async function getUserIdWithAddress(address: string) : Promise<IApiRespon
 	}
 }
 
+export async function getUserWithAddress(address: string) : Promise<IApiResponse<{userId:number, username:string}>> {
+	try{
+		let docSnapshot = await firestore_db.collection('addresses').doc(address).get();
+		if (!docSnapshot.exists) {
+			address = getSubstrateAddress(address) || '';
+			docSnapshot = await firestore_db.collection('addresses').doc(address).get();
+			if (!docSnapshot.exists) {
+				return {
+					data: null,
+					error: messages.NO_USER_FOUND_WITH_ADDRESS,
+					status: 404
+				};
+			}
+		}
+
+		const data = docSnapshot.data();
+		if (!data?.user_id || isNaN(Number(data?.user_id))) {
+			return {
+				data: null,
+				error: messages.NO_USER_FOUND_WITH_ADDRESS,
+				status: 404
+			};
+		}
+
+		const profile = await getUserProfileWithUserId(data.user_id);
+		if (!profile?.data?.username ){
+			return {
+				data: null,
+				error: messages.NO_USER_FOUND_WITH_ADDRESS,
+				status: 404
+			};
+		}
+
+		return {
+			data: JSON.parse(JSON.stringify({ userId: data.user_id, username: profile.data.username })),
+			error: null,
+			status: 200
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: error.message,
+			status: Number(error.name) || 500
+		};
+	}
+}
+
 export async function getUserProfileWithUserId(userId: number) : Promise<IApiResponse<ProfileDetailsResponse>> {
 	try{
 		const userDoc = await firestore_db.collection('users').doc(String(userId)).get();

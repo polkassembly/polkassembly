@@ -57,12 +57,12 @@ interface Props {
 	lastVote: ILastVote | undefined;
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
-  address: string;
+	address: string;
 }
 export interface INetworkWalletErr{
-message: string;
- description: string;
- error: number
+	message: string;
+	description: string;
+	error: number
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
@@ -73,18 +73,18 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
 				return [
-					<Select.Option className={`text-blue-light-high dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+					<Select.Option className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 					...CONVICTIONS.map(([value, lock]) =>
-						<Select.Option className={`text-blue-light-high dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
+						<Select.Option className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
 					)
 				];
 			}
 		}
 	}
 	return [
-		<Select.Option className={`text-blue-light-high dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+		<Select.Option className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option className={`text-blue-light-high dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+			<Select.Option className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
 		)
 	];
 };
@@ -220,8 +220,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				return;
 			}
 			//deposit balance
-			const depositBase = api.consts.multisig.depositBase.toString();
-			const depositFactor = api.consts.multisig.depositFactor.toString();
+			const depositBase = api.consts.multisig?.depositBase.toString();
+			const depositFactor = api.consts.multisig?.depositFactor.toString();
 			setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 			//initiator balance
 			const initiatorBalance = await api.query.system.account(address);
@@ -428,7 +428,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setLoadingStatus({ isLoading: true, message: '' });
 
 		let voteTx = null;
-
 		if(proposalType === ProposalType.OPEN_GOV){
 
 			if(vote === EVoteDecisionType.AYE ) {
@@ -577,28 +576,28 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const decisionOptions = isOpenGovSupported(network) ? [
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-[131px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium text-base'>Aye</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] dark:text-blue-dark-high w-[131px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium text-base'>Aye</span></div>,
 			value: 'aye'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium text-base'>Nay</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] dark:text-blue-dark-high w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium text-base'>Nay</span></div>,
 			value: 'nay'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'split'? 'bg-[#FFBF60] text-white' : ''}`}> {vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' /> } <span className='font-medium text-base'>Split</span> </div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] dark:text-blue-dark-high w-[126px] h-[32px] rounded-[4px] ${vote === 'split'? 'bg-[#FFBF60] text-white' : ''}`}> {vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' /> } <span className='font-medium text-base'>Split</span> </div>,
 			value: 'split'
 		},
 		{
-			label: <div className={` flex items-center justify-center text-[#576D8B] ml-2  w-[126px] h-[32px] rounded-[4px] ${vote === 'abstain'? 'bg-[#407BFF] text-white' : ''}`}><StopOutlined className='mr-2 mb-[3px]'/> <span className='font-medium text-base'>Abstain</span></div>,
+			label: <div className={` flex items-center justify-center text-[#576D8B] dark:text-blue-dark-high ml-2  w-[126px] h-[32px] rounded-[4px] ${vote === 'abstain'? 'bg-[#407BFF] text-white' : ''}`}><StopOutlined className='mr-2 mb-[3px]'/> <span className='font-medium text-base'>Abstain</span></div>,
 			value: 'abstain'
 		}
 	] : [
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-full h-[32px] ml-1 mr-1 rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium text-base'>Aye</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] dark:text-blue-dark-high w-full h-[32px] ml-1 mr-1 rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium text-base'>Aye</span></div>,
 			value: 'aye'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-full h-[32px] ml-1 mr-1 rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium text-base'>Nay</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] dark:text-blue-dark-high w-full h-[32px] ml-1 mr-1 rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium text-base'>Nay</span></div>,
 			value: 'nay'
 		}];
 
@@ -614,7 +613,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`w-[600px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={
@@ -623,14 +622,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<ArrowLeft onClick={() => {setShowMultisig(false); setMultisig('');}} className='cursor-pointer absolute left-[24px] mt-1'/>
 							<div className='flex gap-[8px] items-center'>
 								<PolkasafeIcon className='ml-14'/>
-								<span className='text-blue-light-high dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Vote with Polkasafe Multisig</span>
+								<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Vote with Polkasafe Multisig</span>
 							</div>
 
 						</div>
 						:
 						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2'>
 							<CastVoteIcon className='ml-6'/>
-							<span className='text-blue-light-high dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
+							<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 						</div>
 				}
 			><>
@@ -642,6 +641,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 									{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
 									{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+									{availableWallets[Wallet.POLKAGATE] &&  <WalletButton className={`${wallet === Wallet.POLKAGATE? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKAGATE)} name="PolkaGate" icon={<WalletIcon which={Wallet.POLKAGATE} className='h-6 w-6' />} />}
 									{
 										(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
 				<WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
@@ -657,7 +657,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
 									<WalletButton
-										className='text-sm text-blue-light-high dark:text-blue-dark-high font-semibold !border-[#D2D8E0]'
+										className='text-sm text-bodyBlue font-semibold !border-[#D2D8E0]'
 										onClick={() => {
 											setShowMultisig(!showMultisig);
 										}}
@@ -713,7 +713,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<h3 className='inner-headings mt-[24px] mb-[2px]'>Choose your vote</h3>
 							<Segmented
 								block
-								className={`${className} mb-6 border-solid border-[1px] bg-white dark:bg-section-dark-overlay border-[#D2D8E0] rounded-[4px] w-full`}
+								className={`${className} mb-6 border-solid border-[1px] bg-white border-[#D2D8E0] rounded-[4px] w-full`}
 								size="large"
 								value={vote}
 								onChange={(value) => {
@@ -823,7 +823,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<VoteInitiatedModal title={multisig ? 'Voting with Polkasafe Multisig initiated':'Voting' }  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
+			<VoteInitiatedModal title={multisig ? 'Voting with Polkasafe Multisig initiated': 'Voted Successfully' }  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
 		</div>
 	</>;
 
@@ -903,6 +903,5 @@ export default styled(VoteReferendum)`
 .vote-referendum .ant-segmented-item{
 	padding: 0px !important;
 }
-
 `;
 

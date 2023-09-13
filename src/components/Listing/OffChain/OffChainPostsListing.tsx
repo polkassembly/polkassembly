@@ -25,7 +25,6 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 			</div>
 		);
 	}
-
 	return (
 		<div className={`${className} flex flex-col `}>
 			{posts.map((post,index) => (

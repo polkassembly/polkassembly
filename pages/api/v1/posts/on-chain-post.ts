@@ -22,9 +22,6 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
-import { getSubsquareCommentsFromFirebase } from './comments/getOnlySubsquareComments';
-import { getSubSquareComments } from './comments/subsquare-comments';
-import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
@@ -760,7 +757,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 
 		}
-		const history = postData?.history ? postData?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
@@ -785,7 +781,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			ended_at_block: postData?.endedAtBlock,
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
-			history,
+			history: [],
 			identity: postData?.identity || null,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
@@ -929,6 +925,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		if (firestorePost) {
 			let data = firestorePost.data();
 			// traverse the group, get and set the data.
+			const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+			post.history = history;
 			try{
 				data = await getAndSetNewData({
 					data,
@@ -1057,16 +1055,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				}
 			}
 			post.comments_count = post.comments.length;
-		}
-
-		// Update subsquare comments
-		const { data: commentIds } = await getSubsquareCommentsFromFirebase({ network, postId: postId as string, postType:proposalType as ProposalType });
-		let comments = await getSubSquareComments(proposalType as string, network, postId as string);
-		commentIds?.forEach(id => {
-			comments = comments.filter(comment => comment.id !== id);
-		});
-		if(comments.length > 0){
-			await updateComments(postId as string, network, proposalType as ProposalType, comments);
 		}
 
 		// Post Reactions

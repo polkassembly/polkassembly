@@ -97,10 +97,13 @@ import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
 import Dislike from '~assets/icons/dislike.svg';
+import WebSVG from '~assets/icons/website-icon.svg';
 import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
 import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
+import SetIdentitySVG from '~assets/icons/identity-icon.svg';
+import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -432,6 +435,9 @@ export const SmallSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) 
 export const DelegationSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegationSVG} {...props} />
 );
+export const WebIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={WebSVG} {...props} />
+);
 
 export const CopyIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CopySVG} {...props} />
@@ -444,4 +450,12 @@ export const UpgradeCommitteePIPsIcon = (props: Partial<CustomIconComponentProps
 );
 export const CommunityPIPsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CommunityPIPsSVG} {...props} />
+);
+
+export const SetIdentityIcon  = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SetIdentitySVG} {...props} />
+);
+
+export const ApplayoutIdentityIcon  = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ApplayoutIdentitySVG} {...props} />
 );

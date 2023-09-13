@@ -12,6 +12,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { ICommentHistory } from '~src/types';
+import { checkIsProposer } from './utils/checkIsProposer';
+import { firestore_db } from '~src/services/firebaseInit';
 
 const handler: NextApiHandler< MessageType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -43,7 +45,10 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 
 	if(!commentDoc.exists) return res.status(404).json({ message: 'Comment not found' });
 	const commentData = commentDoc.data();
-	if(user.id !== commentData?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
+	const commentAddress = (await firestore_db.collection('addresses').where('user_id', '==', commentData?.user_id).where('isMultisig', '==', true).get()).docs.map(doc => doc.data());
+	const userAddress = (await firestore_db.collection('addresses').where('user_id', '==', user.id).get()).docs.map(doc => doc.data());
+	const isAuthor = await checkIsProposer(commentAddress?.[0]?.address, userAddress.map(a => a.address), network);
+	if(!isAuthor && user.id !== commentData?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const newHistory: ICommentHistory = {
 		content: commentData?.content,

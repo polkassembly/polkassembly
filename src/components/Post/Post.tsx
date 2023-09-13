@@ -6,7 +6,7 @@ import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
@@ -29,8 +29,14 @@ import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
+import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
+
+const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -96,7 +102,7 @@ const Post: FC<IPostProps> = (props) => {
 		proposalType
 	} = props;
 
-	const { id, addresses } = useContext(UserDetailsContext);
+	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
@@ -110,14 +116,11 @@ const Post: FC<IPostProps> = (props) => {
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
 
-	useEffect(() => {
-		if(!post) return;
-
+	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
 		if(isOffchainPost) {
 			setCanEdit(post.user_id === id);
-			return;
 		}
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
@@ -130,8 +133,14 @@ const Post: FC<IPostProps> = (props) => {
 		}
 
 		const substrateAddress = getSubstrateAddress(proposer);
+		if(!isProposer){
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...addresses || loginAddress ] );
+			if(isProposer){
+				setCanEdit(true);
+				return;
+			}
+		}
 		if(!isProposer || !substrateAddress) return;
-
 		(async () => {
 			//check if proposer address is verified
 			const { data , error: fetchError } = await nextApiClientFetch<IVerified>( 'api/v1/auth/data/isAddressVerified', {
@@ -144,8 +153,12 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [addresses, id, isEditing, post, proposalType]);
+	},[addresses, id, isEditing, isOffchainPost, loginAddress, post, proposalType]);
+
+	useEffect(() => {
+		if(!post) return;
+		handleCanEdit();
+	}, [handleCanEdit, post]);
 
 	useEffect(() => {
 		if (proposalType !== ProposalType.GRANTS || dayjs(post.created_at).isBefore(dayjs().subtract(6, 'days'))) return;

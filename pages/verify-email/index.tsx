@@ -12,6 +12,7 @@ import queueNotification from 'src/ui-components/QueueNotification';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ChangeResponseType } from '~src/auth/types';
+import VerificationSuccessScreen from '~src/components/OnchainIdentity/VerificationSuccessScreen';
 import SEOHead from '~src/global/SEOHead';
 import { handleTokenChange } from '~src/services/auth.service';
 import { NotificationStatus } from '~src/types';
@@ -19,13 +20,15 @@ import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
-	return { props: { network } };
+	const { token, identityVerification } = query;
+	return { props: { identityVerification:identityVerification || null, network, token: token || null } };
 };
 
-const VerifyEmail = ({ network }: { network: string }) => {
+const VerifyEmail = ({ network, token, identityVerification }: { network: string, token: string, identityVerification: boolean }) => {
 	const { setNetwork } = useNetworkContext();
+	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(false);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -36,6 +39,7 @@ const VerifyEmail = ({ network }: { network: string }) => {
 	const [error, setError] = useState('');
 
 	const currentUser = useUserDetailsContext();
+	const [handle, setHandle] = useState<string>('');
 
 	const handleVerifyEmail = useCallback(async () => {
 		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/verifyEmail');
@@ -61,9 +65,50 @@ const VerifyEmail = ({ network }: { network: string }) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const handleIdentityEmailTokenVerify = async () => {
+		const { data , error } = await nextApiClientFetch<ChangeResponseType>(`api/v1/verification/verify?token=${token}&type=email`);
+		if(error) {
+			console.error('Email verification error ', error);
+			setError(error);
+			queueNotification({
+				header: 'Error!',
+				message: 'There was an error in verifying your email. Please try again.',
+				status: NotificationStatus.ERROR
+			});
+		}
+		else if (data) {
+			handleTokenChange(data.token, currentUser);
+			queueNotification({
+				header: 'Success!',
+				message: data.message,
+				status: NotificationStatus.SUCCESS
+			});
+			setIdentityEmailSuccess(true);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	};
+
 	useEffect(() => {
+		if(identityVerification)return;
 		handleVerifyEmail();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [handleVerifyEmail]);
+
+	useEffect(() => {
+		if(!identityVerification ) return;
+
+		let identityFrom:any = localStorage.getItem('identityForm') || '';
+
+		if(identityFrom){
+			identityFrom = JSON.parse(identityFrom);
+			setHandle(identityFrom?.email?.value );
+		}
+		(async() => {
+
+			await handleIdentityEmailTokenVerify();
+		})();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[]);
 
 	return (
 		<>
@@ -80,6 +125,7 @@ const VerifyEmail = ({ network }: { network: string }) => {
 					: <Loader/>
 				}
 			</Row>
+			<VerificationSuccessScreen open={identityEmailSuccess} social='Email' socialHandle={handle} onClose={() => setIdentityEmailSuccess(false) }/>
 		</>
 	);
 };

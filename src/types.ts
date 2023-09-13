@@ -43,7 +43,7 @@ export interface UserDetailsContextType {
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
-}
+  }
 
 export interface IPeriod {
 	period: string;
@@ -210,6 +210,7 @@ export interface ReactionMapFields {
 export enum Wallet {
   TALISMAN = 'talisman',
   POLKADOT = 'polkadot-js',
+  POLKAGATE = 'polkagate',
   SUBWALLET = 'subwallet-js',
   METAMASK = 'metamask',
   WALLETCONNECT = 'walletconnect',
@@ -512,4 +513,11 @@ export enum ESentiment {
   Neutral = 3,
   SlightlyFor = 4,
   For = 5
+}
+
+export enum VerificationStatus {
+	ALREADY_VERIFIED = 'Already verified',
+	VERFICATION_EMAIL_SENT = 'Verification email sent',
+	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
+	NOT_VERIFIED = 'Not verified',
 }

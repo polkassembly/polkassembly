@@ -51,8 +51,10 @@ interface Props {
   isDelegation?: boolean;
   className?: string;
   setWithPolkasafe?: any;
+  theme?: string;
 }
-const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe  }) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe, theme  }) => {
 	const { username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -201,7 +203,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 					<div className="flex flex-col gap-y-1 -mt-4">
 						<label
-							className="text-base text-lightBluecdark:text-blue-dark-high"
+							className="text-base text-lightBlue dark:text-blue-dark-high"
 							htmlFor="password"
 						>
 							Enter Password
@@ -247,4 +249,12 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	);
 };
 
-export default Web2Login;
+export default styled(Web2Login)`
+ .ant-input{
+	color:  ${props => props.theme=='dark' ? 'white' : ''} !important;
+	background-color: ${props => props.theme=='dark' ? 'transparent' : ''} !important;
+ }
+ .ant-input::placeholder{
+	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
+ }
+`;

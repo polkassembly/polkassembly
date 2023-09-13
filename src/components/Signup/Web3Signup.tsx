@@ -277,7 +277,7 @@ const Web3Signup: FC<Props> = ({
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[accounts.length, chosenWallet, withPolkasafe]);
 	return (
-		<><div className='flex items-center'>
+		<><div className='flex items-center dark:bg-section-dark-overlay'>
 			<LoginLogo className='ml-6 mr-2' />
 			<h3 className="text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Sign Up'}</h3>
 		</div><hr className='text-[#D2D8E0]'/>
@@ -309,7 +309,7 @@ const Web3Signup: FC<Props> = ({
 						{withPolkasafe ? 'To fetch your Multisig details, please select a wallet extension' :'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 					</p>
 					<div className='flex'>
-						<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToSignUp()}>
+						<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center dark:bg-transparent' onClick={() => handleBackToSignUp()}>
 								Go Back</Button>
 						{!withPolkasafe &&<Button
 							key='got-it'

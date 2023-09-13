@@ -42,6 +42,7 @@ interface Props {
 	setSignupOpen?: (pre: boolean)=> void;
   isDelegation?: boolean;
   className?: string;
+  theme?: string;
   setWithPolkasafe?: any;
 }
 
@@ -153,7 +154,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				</div>
 			</div>
 
-			<h3 className="text-2xl font-semibold text-[#1E232C]">
+			<h3 className="text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-high">
 				{isPassword ? 'Set Password' : 'Sign Up'}
 			</h3>
 
@@ -168,7 +169,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						<>
 							<div className="flex flex-col gap-y-1">
 								<label
-									className="text-base text-[#485F7D]"
+									className="text-base text-[#485F7D] dark:text-blue-dark-high"
 									htmlFor="first_password"
 								>
 									Set Password
@@ -191,14 +192,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 											setFirstPassword(e.target.value);
 										}}
 										placeholder='Password'
-										className="rounded-md py-2 px-4"
+										className="rounded-md py-2 px-4 dark:text-blue-dark-high dark:bg-transparent"
 										id="first_password"
 									/>
 								</Form.Item>
 							</div>
 							<div className="flex flex-col gap-y-1 -mt-6">
 								<label
-									className="text-base text-[#485F7D] "
+									className="text-base text-[#485F7D] dark:text-blue-dark-high"
 									htmlFor="second_password"
 								>
 									Re-enter Password
@@ -220,7 +221,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input.Password
 										placeholder='Password'
-										className="rounded-md py-2 px-4"
+										className="rounded-md py-2 px-4 dark:text-blue-dark-high dark:bg-transparent"
 										id="second_password"
 									/>
 								</Form.Item>
@@ -229,7 +230,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						: <>
 							<div className="flex flex-col gap-y-1">
 								<label
-									className="text-base text-[#485F7D]  tracking-wide"
+									className="text-base text-[#485F7D] dark:text-blue-dark-high tracking-wide"
 									htmlFor="username"
 								>
 									Username
@@ -257,7 +258,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder="John"
-										className="rounded-md py-2 px-4"
+										className="rounded-md py-2 px-4 dark:text-blue-dark-high"
 										id="username"
 									/>
 								</Form.Item>
@@ -265,7 +266,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							<div className="flex flex-col gap-y-1 -mt-6">
 								<label
 									htmlFor="email"
-									className="text-base text-[#485F7D] tracking-wide"
+									className="text-base text-[#485F7D] dark:text-blue-dark-high tracking-wide"
 								>
 									Email
 								</label>
@@ -282,7 +283,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder="email@example.com"
-										className="rounded-md py-2 px-4"
+										className="rounded-md py-2 px-4 dark:text-blue-dark-high"
 										id="email"
 									/>
 								</Form.Item>
@@ -336,4 +337,12 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	);
 };
 
-export default Web2Signup;
+export default styled(Web2Signup)`
+ .ant-input{
+	color:  ${props => props.theme=='dark' ? 'white' : ''} !important;
+	background-color: ${props => props.theme=='dark' ? 'transparent' : ''} !important;
+ }
+ .ant-input::placeholder{
+	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
+ }
+`;

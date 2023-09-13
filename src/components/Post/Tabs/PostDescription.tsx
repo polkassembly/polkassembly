@@ -20,6 +20,7 @@ import { EReportType, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ProposalType } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';
+import { useTheme } from 'next-themes';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => <div>
@@ -45,6 +46,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 	const { allowed_roles } = useUserDetailsContext();
 	const { network } = useNetworkContext();
+	const { resolvedTheme } = useTheme();
 	const router = useRouter();
 	const isOffchainPost: Boolean  = postType == ProposalType.DISCUSSIONS || postType == ProposalType.GRANTS;
 	//write a function which redirects to the proposalType page
@@ -72,7 +74,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	};
 	return (
 		<div className={`${className} mt-4`}>
-			{content && <Markdown className='post-content' md={content} />}
+			{content && <Markdown theme={resolvedTheme} className='post-content' md={content} />}
 
 			{/* Actions Bar */}
 			<div id='actions-bar' className={`flex mt-2 ${canEdit && 'flex-col'} flex-wrap mb-8`}>

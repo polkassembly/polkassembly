@@ -386,11 +386,11 @@ const Web3Login: FC<Props> = ({
 
 	return (
 		<>
-			<div className='flex items-center'>
+			<div className='flex items-center dark:bg-section-dark-overlay'>
 				<LoginLogo className='ml-6 mr-2' />
 				<h3 className="text-xl font-semibold text-blue-light-high dark:text-blue-dark-high mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
 			</div>
-			<hr className='text-[#D2D8E0] ' />
+			<hr className='text-[#D2D8E0]' />
 			<article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-3">
 				<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-2">
 					{!withPolkasafe &&<p className='flex gap-x-2 items-center justify-start p-0 m-0'>
@@ -417,7 +417,7 @@ const Web3Login: FC<Props> = ({
 							{withPolkasafe ? 'To fetch your Multisig details, please select a wallet extension' :'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 						</p>
 						<div className='flex'>
-							<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToLogin()}>
+							<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center dark:bg-transparent' onClick={() => handleBackToLogin()}>
 								Go Back</Button>
 							{!withPolkasafe && <Button
 								key='got-it'
@@ -470,7 +470,7 @@ const Web3Login: FC<Props> = ({
 										</div>
 									) : accounts.length > 0 && (
 										<>
-											<div className='flex justify-center items-center my-5'>
+											<div className='flex justify-center items-center my-5 dark:text-blue-dark-medium'>
 												{withPolkasafe ? (
 													<MultisigAccountSelectionForm
 														title="Choose linked account"
@@ -506,7 +506,7 @@ const Web3Login: FC<Props> = ({
 													<div className="flex gap-x-2 items-center">
 														<span className="text-grey_primary text-md">Or</span>
 														<Button
-															className="p-0 border-none outline-none text-pink_primary text-md font-semibold"
+															className="p-0 border-none outline-none text-pink_primary dark:bg-transparent text-md font-semibold"
 															disabled={loading}
 															onClick={handleToggle}
 														>
@@ -524,7 +524,7 @@ const Web3Login: FC<Props> = ({
 							}
 
 							{!authResponse.isTFAEnabled && <div className='flex items-center justify-center'>
-								<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToLogin()}>
+								<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center dark:bg-transparent' onClick={() => handleBackToLogin()}>
 								Go Back
 								</Button>
 							</div>}

@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
 import Web2Signup from 'src/components/Signup/Web2Signup';
 import { Wallet } from 'src/types';
-
+import { useTheme } from 'next-themes';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:Props) => {
 	const { setNetwork } = useNetworkContext();
-
+	const { resolvedTheme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +81,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{ displayWeb === 2
-						? <Web2Signup  isDelegation={isDelegation} isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} onWalletSelect={onWalletSelect} walletError={walletError}  setWithPolkasafe={setWithPolkasafe}/> : null}
+						? <Web2Signup theme={resolvedTheme} isDelegation={isDelegation} isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} onWalletSelect={onWalletSelect} walletError={walletError}  setWithPolkasafe={setWithPolkasafe}/> : null}
 
 					{
 						displayWeb === 3 && chosenWallet && <>

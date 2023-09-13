@@ -12,6 +12,7 @@ import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
+import { useTheme } from 'next-themes';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 interface Props{
@@ -42,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:Props) => {
 	const { setNetwork } = useNetworkContext();
-
+	const { resolvedTheme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 
@@ -86,7 +87,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (
-						<Web2Login  isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} setWithPolkasafe={setWithPolkasafe}/>
+						<Web2Login theme={resolvedTheme} isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} setWithPolkasafe={setWithPolkasafe}/>
 					) : null}
 
 					{

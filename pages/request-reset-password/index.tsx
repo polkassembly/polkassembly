@@ -67,7 +67,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 			<SEOHead title="Request Reset Password" network={props.network}/>
 			<Row justify='center' align='middle' className='h-full -mt-16'>
 				<article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
-					<h3 className='text-2xl font-semibold text-[#1E232C]'>Request Password Reset</h3>
+					<h3 className='text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-high'>Request Password Reset</h3>
 					<AuthForm
 						onSubmit={handleSubmitForm}
 						className="flex flex-col gap-y-6"
@@ -75,7 +75,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 						<div className="flex flex-col gap-y-1">
 							<label
 								htmlFor="email"
-								className="text-base text-sidebarBlue font-medium"
+								className="text-base text-sidebarBlue dark:text-blue-dark-high font-medium"
 							>
 							Email
 							</label>
@@ -92,7 +92,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 							>
 								<Input
 									placeholder="email@example.com"
-									className="rounded-md py-3 px-4"
+									className="rounded-md py-3 px-4 dark:bg-transparent dark:text-blue-dark-high"
 									id="email"
 								/>
 							</Form.Item>

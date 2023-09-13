@@ -7,20 +7,18 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
-import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
-interface Props{
+export interface IJudgementProps{
 	identityHash: string;
 	userAddress: string;
-	network: string;
 }
+const handler: NextApiHandler<{hash: string} | MessageType> = async (req, res) => {
+	const network = String(req.headers['x-network']);
+	const { identityHash, userAddress } = req.body as IJudgementProps;
 
-export async function getJudgementCall(params: Props) : Promise<Response> {
-	const { network, identityHash, userAddress } = params;
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	if(!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK , 400);
-
-	if(!identityHash || !userAddress) throw apiErrorWithStatusCode('Invalid identityHash or userAddress', 400);
+	if(!identityHash || !userAddress) return res.status(400).json({ message: 'Invalid identityHash or userAddress' });
 
 	const response = await fetch('https://us-central1-individual-node-watcher.cloudfunctions.net/judgementCall', {
 		body: JSON.stringify({ identityHash, userAddress }),
@@ -31,23 +29,10 @@ export async function getJudgementCall(params: Props) : Promise<Response> {
 		method: 'POST'
 	});
 
-	return response;
-
-}
-
-const handler: NextApiHandler<{hash: string} | MessageType> = async (req, res) => {
-	const network = String(req.headers['x-network']);
-	const { identityHash, userAddress } = req.query;
-
-	const result = await getJudgementCall({
-		identityHash: identityHash ? String(identityHash) : '',
-		network,
-		userAddress: userAddress ? String(userAddress) : ''
-	});
-	if( result.status === 200){
-		return res.status(200).json(result as any);
+	if( response.status === 200){
+		return res.status(200).json(response as any);
 	}else{
-		return res.status(500).json(result as any);
+		return res.status(500).json({ message : response?.statusText });
 	}
 };
 export default withErrorHandling(handler);

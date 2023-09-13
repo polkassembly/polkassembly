@@ -512,3 +512,9 @@ export enum VerificationStatus {
 	PLEASE_VERIFY_TWITTER = 'Please verify twitter',
 	NOT_VERIFIED = 'Not verified',
 }
+export enum ESocials {
+	EMAIL = 'email',
+	RIOT = 'riot',
+	TWITTER = 'twitter',
+	WEB = 'web'
+}

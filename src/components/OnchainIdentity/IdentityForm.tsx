@@ -18,7 +18,6 @@ import executeTx from '~src/util/executeTx';
 import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
-import { blake2AsHex } from '@polkadot/util-crypto';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
 
@@ -174,19 +173,18 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		const identityTx = api.tx?.identity?.setIdentity(info);
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
 		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-		const encodedTxHash = identityTx?.method.toHex();
-
 		startLoading(true);
 
 		const onSuccess = async() => {
-			setIdentityHash(blake2AsHex(encodedTxHash));
+			const identityHash = await api.query.identity.identityOf(address).then((res) => res.unwrap().info.hash.toHex());
+			setIdentityHash(identityHash);
 			startLoading(false);
 			closeModal(true);
 			setOpen(true);
 			handleLocalStorageSave({ setIdentity: true });
-			handleLocalStorageSave({ identityHash: blake2AsHex(encodedTxHash) });
+			handleLocalStorageSave({ identityHash: identityHash });
 			setIsIdentityCallDone(true);
-			await handleIdentityHashSave(encodedTxHash);
+			await handleIdentityHashSave(identityHash);
 		};
 		const onFailed = () => {
 			queueNotification({
@@ -210,7 +208,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) &&  <Alert showIcon type='error' className=' h-[40px] text-sm text-bodyBlue rounded-[4px]' message={`Minimum Balance of ${formatedBalance(totalFee.toString(), unit, 2)} ${unit} is required to proceed`}/>}
 			<div className='flex justify-between items-center text-lightBlue mt-6'>
 				<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
-				<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
+				{address && <Balance address={address} onChange={handleOnAvailableBalanceChange}/>}
 			</div>
 			<div className='text-sm flex gap-2 w-full items-end '>
 
@@ -220,7 +218,6 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						onClick={() => {
 							setAddressChangeModalOpen();
 							closeModal(true);
-							setAvailableBalance(null);
 						}}
 						className='text-white bg-pink_primary h-[26px] border-none text-xs rounded-[4px] w-[70px] flex justify-center items-center'
 					>Change</Button>

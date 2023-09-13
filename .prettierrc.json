@@ -1,9 +1,15 @@
 {
+  "parser": "typescript",
   "tabWidth": 2,
-  "useTabs": true,
-  "printWidth": 80,
-  "semi": true,
+  "printWidth": 120,
+  "endOfLine": "auto",
+  "arrowParens": "always",
   "trailingComma": "none",
+  "semi": true,
+  "useTabs": true,
+  "singleQuote": true,
   "jsxSingleQuote": true,
-  "singleQuote": true
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "singleAttributePerLine": true
 }

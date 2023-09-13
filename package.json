@@ -123,9 +123,15 @@
     "styled-components": "^5"
   },
   "lint-staged":{
-    "**/*.{js,jsx,ts,tsx}":[
-      "npx prettier --write",
-      "npx eslint --fix"
+    "**/*.(ts|tsx)":[
+      "yarn tsc --noEmit"
+    ],
+    "**/*.(ts|tsx|js|jsx)":[
+      "yarn eslint --fix",
+      "yarn prettier --write"
+    ],
+    "**/*.(md|css|scss|html)": [
+      "yarn prettier --write"
     ]
   },
   "husky": {

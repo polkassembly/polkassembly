@@ -168,7 +168,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 				>
 					<div className="flex flex-col gap-y-1">
 						<label
-							className="text-base text-lightBlue "
+							className="text-base text-lightBlue dark:text-blue-dark-high"
 							htmlFor="username"
 						>
 							Enter Username or Email
@@ -194,14 +194,14 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<Input
 								disabled={loading}
 								placeholder="Type here"
-								className="rounded-md py-3 px-4"
+								className="rounded-md py-3 px-4 dark:bg-transparent dark:text-blue-dark-high"
 								id="username" />
 						</Form.Item>
 					</div>
 
 					<div className="flex flex-col gap-y-1 -mt-4">
 						<label
-							className="text-base text-lightBlue"
+							className="text-base text-lightBluecdark:text-blue-dark-high"
 							htmlFor="password"
 						>
 							Enter Password
@@ -213,7 +213,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<Input.Password
 								disabled={loading}
 								placeholder="Type here"
-								className="rounded-md py-3 px-4"
+								className="rounded-md py-3 px-4 dark:bg-black dark:text-blue-dark-high"
 								id="password" />
 						</Form.Item>
 						<div className="text-right text-pink_primary mt-[-20px]">

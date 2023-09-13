@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { useApiContext } from '~src/context';
+import { useTheme } from 'next-themes';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
@@ -41,6 +42,7 @@ interface IReferendaPostProps {
 }
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
+	const { resolvedTheme } = useTheme();
 	const { post, error, network , status } = props;
 	const { setNetwork } = useNetworkContext();
 	const router = useRouter();
@@ -84,7 +86,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 			{trackName && <BackToListingView trackName={trackName} />}
 
 			<div className='mt-6'>
-				<Post post={post} trackName={trackName === 'Root' ? 'root' : trackName} proposalType={proposalType} />
+				<Post post={post} trackName={trackName === 'Root' ? 'root' : trackName} proposalType={proposalType} theme={resolvedTheme} />
 			</div>
 		</>;
 	}

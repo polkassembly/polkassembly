@@ -17,10 +17,10 @@ import { ProposalType } from '~src/global/proposalType';
 import AllGov2PostsTable from './AllGov2PostsTable';
 import TrackPostsTable from './TrackPostsTable';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Gov2LatestActivity = ({ className, gov2LatestPosts, theme }: { className?:string, gov2LatestPosts: any , theme?:string }) => {
 	const [currentTab, setCurrentTab] = useState('all');
 	const { network } = useContext(NetworkContext);
-	console.log(theme);
 	const tabItems = [
 		{
 			children: (

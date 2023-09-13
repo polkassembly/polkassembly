@@ -78,6 +78,7 @@ interface IPostProps {
 	post: IPostResponse;
 	trackName?: string;
 	proposalType: ProposalType;
+	theme?: string;
 }
 
 function formatDuration(duration: any) {
@@ -94,7 +95,9 @@ const Post: FC<IPostProps> = (props) => {
 		className,
 		post,
 		trackName,
-		proposalType
+		proposalType,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		theme
 	} = props;
 
 	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
@@ -520,6 +523,8 @@ export default styled(Post)`
 .ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn .audit .card-bg{
   background-color: var(--pink_primary) !important;
   color: white !important;
-
+  .ant-tabs-card >.ant-tabs-nav .ant-tabs-tab, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab{
+	border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+  }
 }
 `;

@@ -22,7 +22,7 @@ import { initGA, logPageView } from '../analytics';
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
 import ErrorBoundary from '~src/ui-components/ErrorBoundary';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider, useTheme } from 'next-themes';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -47,7 +47,7 @@ export default function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
-
+	const { resolvedTheme } = useTheme();
 	useEffect(() => {
 		router.isReady && setShowSplashScreen(false);
 	}, [router.isReady]);
@@ -87,7 +87,7 @@ export default function App({ Component, pageProps }: AppProps) {
 									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
 										<NextNProgress color="#E5007A" />
 										<CMDK />
-										<AppLayout Component={Component} pageProps={pageProps} />
+										<AppLayout theme={resolvedTheme} Component={Component} pageProps={pageProps} />
 									</main>
 								</>
 							</NetworkContextProvider>

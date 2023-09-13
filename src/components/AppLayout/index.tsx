@@ -131,12 +131,15 @@ interface Props {
 	Component: NextComponentType<NextPageContext, any, any>;
 	pageProps: any;
 	className?: string;
+	theme?: string;
 }
 
-const AppLayout = ({ className, Component, pageProps }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const AppLayout = ({ className, Component, pageProps, theme }: Props) => {
 	const [mounted, setMounted] = useState(false);
 	const { resolvedTheme } = useTheme();
 	console.log('theme', resolvedTheme);
+	console.log('themeeeeeeeee', theme);
 	useEffect(() => setMounted(true),[]);
 	const { network } = useNetworkContext();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
@@ -182,11 +185,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const gov1Items: {[x:string]: ItemType[]} = {
 		overviewItems: [
-			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
-			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-lightBlue dark:text-blue-dark-medium' />),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-lightBlue dark:text-blue-dark-medium mt-1.5' />),
+			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-lightBlue dark:text-blue-dark-medium' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
+			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-lightBlue dark:text-blue-dark-medium mt-3' />)
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
@@ -275,7 +278,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if(network === AllNetworks.COLLECTIVES){
-		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)];
+		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-lightBlue dark:text-blue-dark-medium' />)];
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		]), getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)];
@@ -321,7 +324,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				);
 				break;
 			default: {
-				const icon = trackName === PostOrigin.ROOT ? <RootIcon /> : trackName === PostOrigin.AUCTION_ADMIN ? <AuctionAdminIcon className='ml-0.5' /> :  <StakingAdminIcon />;
+				const icon = trackName === PostOrigin.ROOT ? <RootIcon className='text-lightBlue dark:text-blue-dark-medium' /> : trackName === PostOrigin.AUCTION_ADMIN ? <AuctionAdminIcon className='ml-0.5 text-lightBlue dark:text-blue-dark-medium' /> :  <StakingAdminIcon className='text-lightBlue dark:text-blue-dark-medium' />;
 				gov2TrackItems.mainItems.push(
 					getSiderMenuItem(trackName.split(/(?=[A-Z])/).join(' '), `/${trackName.split(/(?=[A-Z])/).join('-').toLowerCase()}`, icon)
 				);
@@ -331,16 +334,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
-		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white mt-1' />),
-		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
-		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-lightBlue dark:text-blue-dark-medium mt-1' />),
+		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-lightBlue dark:text-blue-dark-medium mt-1.5' />),
+		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-lightBlue dark:text-blue-dark-medium' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2.5' />),
-		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
+		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-lightBlue dark:text-blue-dark-medium mt-2.5' />),
+		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='text-lightBlue dark:text-blue-dark-medium mt-1' />)
 	];
 
 	if(['kusama', 'polkadot'].includes(network)){
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
+		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'text-lightBlue dark:text-blue-dark-medium mt-1.5'/> ));
 	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
@@ -356,24 +359,24 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const gov2Items:MenuProps['items'] = [
 		...gov2OverviewItems,
 		// Tracks Heading
-		getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base font-medium'>Tracks</span>, 'tracksHeading', null),
+		getSiderMenuItem(<span className='text-lightBlue dark:text-blue-dark-medium hover:text-navBlue ml-2 uppercase text-base font-medium'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-lightBlue dark:text-blue-dark-medium' />, [
 			...gov2TrackItems.governanceItems
 		]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-blue-dark-medium' />, [
 			...gov2TrackItems.fellowshipItems
 		])
 	];
 
 	if (isFellowshipSupported(network)) {
-		gov2Items.splice(gov2Items.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue mt-1' />, [
+		gov2Items.splice(gov2Items.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-blue-dark-medium mt-1' />, [
 			...gov2TrackItems.fellowshipItems
 		]));
 	}
 
 	if(!['moonbeam', 'moonbase', 'moonriver'].includes(network)){
-		gov2Items.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [
+		gov2Items.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-blue-dark-medium' />, [
 			...gov2TrackItems.treasuryItems
 		]));
 	}
@@ -381,22 +384,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const gov2CollapsedItems:MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-lightBlue dark:text-blue-dark-medium' />, [
 			...gov2TrackItems.governanceItems
 		]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-blue-dark-medium' />, [
 			...gov2TrackItems.fellowshipItems
 		])
 	];
 
 	if (isFellowshipSupported(network)) {
-		gov2CollapsedItems.splice(gov2CollapsedItems.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [
+		gov2CollapsedItems.splice(gov2CollapsedItems.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-blue-dark-medium' />, [
 			...gov2TrackItems.fellowshipItems
 		]));
 	}
 
 	if(!['moonbeam', 'moonbase', 'moonriver'].includes(network)){
-		gov2CollapsedItems.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [
+		gov2CollapsedItems.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-blue-dark-medium' />, [
 			...gov2TrackItems.treasuryItems
 		]));
 	}
@@ -590,7 +593,7 @@ margin-top: -17px !important;
 }
 
 .ant-menu-title-content {
-	color: #485F7D !important;
+	color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 21px;
@@ -619,7 +622,7 @@ margin-top: -17px !important;
   background-color: var(--pink_primary) !important;
 }
 .ant-menu-inline-collapsed-noicon {
-	color: var(--lightBlue);
+	color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'};
 }
 
 .ant-menu-item-selected {

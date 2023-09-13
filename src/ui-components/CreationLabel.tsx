@@ -80,7 +80,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		sentiment === 5 ? { key:5,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely For</div> }:null
 	];
 
-	return <div className={`${className} flex justify-between w-[100%]`} >
+	return <div className={`${className} flex justify-between w-[100%] ${isRow? 'dark:bg-section-dark-container' : 'bg-none'}`} >
 		<div className={`text-xs flex ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
 				<div className={'flex items-center '}>
@@ -93,7 +93,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					/>
 					{text}&nbsp;
 					{topic &&
-			<div className='flex sm:-mt-0.5'> <span className='text-lightBlue mr-2 mt-0.5'>in</span> <TopicTag topic={topic} className={topic} /></div>
+			<div className='flex sm:-mt-0.5'> <span className='text-lightBlue dark:text-blue-dark-medium mr-2 mt-0.5'>in</span> <TopicTag topic={topic} className={topic} /></div>
 					}
 					{cid ?
 						<>
@@ -102,10 +102,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</> : null}
 				</div>
 			</div>
-			<div className='flex items-center text-lightBlue'>
+			<div className='flex items-center text-lightBlue dark:text-blue-dark-medium'>
 				{(topic || text || created_at) && <>
 				&nbsp;
-					<Divider className={`ml-1 md:inline-block ${!isRow ? 'hidden' : 'inline-block'}`} type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+					<Divider className={`ml-1 md:inline-block border-l-1 border-lightBlue dark:border-blue-dark-medium ${!isRow ? 'hidden' : 'inline-block'}`} type="vertical" />
 				</>}
 				{created_at && <span className={`flex items-center md:pl-0 mr-1 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0'}`}><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
 				{children}

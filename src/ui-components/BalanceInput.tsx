@@ -63,7 +63,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 	}, []);
 
 	return <div className={`${className} w-full flex flex-col balance-input`}>
-		{(label || (address && withBalance)) && <label className='mb-[2px] inner-headings'>
+		{(label || (address && withBalance)) && <label className='mb-[2px] inner-headings dark:text-blue-dark-medium'>
 			<span className='flex items-center'>
 				{label}
 				<span>

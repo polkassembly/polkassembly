@@ -222,10 +222,10 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 
 	};
 	return <GovSidebarCard className='overflow-y-hidden'>
-		<h2 className='font-medium tracking-[0.015em] text-xl'>Decision Deposit</h2>
+		<h2 className='font-medium tracking-[0.015em] text-xl dark:text-blue-dark-high'>Decision Deposit</h2>
 		<div className='flex mt-6 gap-2'>
 			<span><CautionIcon/></span>
-			<span className='text-sm tracking-wide'>This should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.</span>
+			<span className='text-sm tracking-wide dark:text-blue-dark-high'>This should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.</span>
 		</div>
 		<Button onClick={() => setOpenModal(true)} className='bg-pink_primary text-sm font-medium text-white mt-4 rounded-[4px] h-[40px] w-full tracking-wide'>Pay Decision Deposit</Button>
 		<Modal

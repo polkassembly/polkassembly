@@ -29,7 +29,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 	const [open, setOpen] = useState(false);
 	return (
 		<section className={classNames(className, 'flex justify-center items-center')}>
-			<Divider className='hidden md:block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+			<Divider className='hidden md:block border-l-1 border-lightBlue dark:border-blue-dark-medium' type="vertical" />
 			<button
 				onClick={() => setOpen(true)}
 				className='flex items-center gap-x-1 justify-center cursor-pointer text-lightBlue bg-white dark:bg-section-dark-overlay text-xs leading-[18px] p-[1.5px] font-medium outline-none ai-btn-border'

@@ -510,8 +510,8 @@ export default styled(VoteReferendum)`
 		position: absolute;
 		width: 100%;
 	}
-	.ant-modal > .ant-modal-content{
-		background: yellow !important;
+	.ant-modal .ant-modal-content{
+		background: black !important;
 	}
 	.vote-form-cont {
 		padding: 12px;

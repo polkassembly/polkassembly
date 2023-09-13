@@ -372,7 +372,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const ConvictionSelect = ({ className }: { className?:string }) =>
 
 		<Form.Item className={className}>
-			<label  className='inner-headings'>
+			<label  className='inner-headings dark:text-blue-dark-medium'>
 				Vote lock
 			</label>
 			<Select onChange={(key) => setConviction(Number(key))} size='large' className='' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
@@ -627,16 +627,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 						</div>
 						:
-						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2'>
+						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-section-dark-overlay'>
 							<CastVoteIcon className='ml-6'/>
-							<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
+							<span className='text-bodyBlue dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 						</div>
 				}
 			><>
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />} tip={loadingStatus.message}>
 						<>
 							<div className='mb-6'>
-								<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
+								<div className='text-sm font-normal flex items-center justify-center dark:text-blue-dark-medium text-[#485F7D] mt-3'>Select a wallet</div>
 								<div className='flex items-center gap-x-5 mt-1 justify-center'>
 									{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 									{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
@@ -657,7 +657,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
 									<WalletButton
-										className='text-sm text-bodyBlue font-semibold !border-[#D2D8E0]'
+										className='text-sm text-bodyBlue dark:text-blue-dark-medium font-semibold !border-[#D2D8E0]'
 										onClick={() => {
 											setShowMultisig(!showMultisig);
 										}}
@@ -710,7 +710,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							}
 
 							{/* aye nye split abstain buttons */}
-							<h3 className='inner-headings mt-[24px] mb-[2px]'>Choose your vote</h3>
+							<h3 className='inner-headings mt-[24px] mb-[2px] dark:text-blue-dark-medium'>Choose your vote</h3>
 							<Segmented
 								block
 								className={`${className} mb-6 border-solid border-[1px] bg-white border-[#D2D8E0] rounded-[4px] w-full`}
@@ -846,6 +846,9 @@ export default styled(VoteReferendum)`
 	height: 40rem;
 	position: absolute;
 	width: 100%;
+}
+.ant-modal .ant-modal-content{
+	background: black !important;
 }
 .vote-form-cont {
 	padding: 12px;

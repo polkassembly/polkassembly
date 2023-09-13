@@ -9,6 +9,7 @@ import React, { FC, useEffect } from 'react';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
+import { useTheme } from 'next-themes';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Post from '~src/components/Post/Post';
@@ -19,7 +20,6 @@ import SEOHead from '~src/global/SEOHead';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
-
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOffChainPost({
 		network,
@@ -37,6 +37,7 @@ interface IDiscussionPostProps {
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	const { post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
+	const { resolvedTheme } = useTheme();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -51,7 +52,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 		<BackToListingView postCategory={PostCategory.DISCUSSION} />
 
 		<div className='mt-6' >
-			<Post post={post} proposalType={ProposalType.DISCUSSIONS} />
+			<Post post={post} theme={resolvedTheme} proposalType={ProposalType.DISCUSSIONS} />
 		</div>
 	</>);
 

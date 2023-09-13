@@ -125,7 +125,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 	return (
 		<GovSidebarCard className={className}>
 			<div className="flex items-center mb-6">
-				<h3 className='dashboard-heading mb-0'><span className='text-navBlue mr-1'>Poll:</span>{question}?</h3>
+				<h3 className='dashboard-heading mb-0 dark:text-blue-dark-high'><span className='text-navBlue dark:text-blue-dark-medium mr-1'>Poll:</span>{question}?</h3>
 				<HelperTooltip className='ml-2' text={id ? 'Click on option to vote' : 'Please login to vote'} />
 			</div>
 
@@ -143,7 +143,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 				))}
 			</Spin>
 
-			<div className='mt-6 text-right text-sidebarBlue font-medium'>
+			<div className='mt-6 text-right text-sidebarBlue dark:text-blue-dark-medium font-medium'>
 				<span>{totalVotes} {totalVotes > 1 ? 'votes' : 'vote'}</span>
 
 				{ endAt && Math.round(Date.now()/1000) > endAt && <>

@@ -173,7 +173,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 	return (
 		<GovSidebarCard className={className}>
 			<Spin spinning={loading} indicator={<LoadingOutlined />}>
-				<h3 className='flex items-center'><span className='mr-2 dashboard-heading'>Poll Signals</span> <HelperTooltip text='This represents the off-chain votes of Polkassembly users including council members'/></h3>
+				<h3 className='flex items-center'><span className='mr-2 dashboard-heading dark:text-blue-dark-high'>Poll Signals</span> <HelperTooltip text='This represents the off-chain votes of Polkassembly users including council members'/></h3>
 
 				<div className="my-6 flex">
 					<div className='flex flex-col items-center text-white text-base'>
@@ -191,12 +191,12 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 
 					<div className='flex-1 flex flex-col justify-between ml-12 py-12'>
 						<div className='mb-auto flex items-center'>
-							<div className='mr-auto text-sidebarBlue font-medium'>Aye</div>
+							<div className='mr-auto text-sidebarBlue dark:text-blue-dark-medium font-medium'>Aye</div>
 							<div className='text-navBlue mr-12'>{ayes}</div>
 						</div>
 
 						<div className='flex items-center'>
-							<div className='mr-auto text-sidebarBlue font-medium'>Nay</div>
+							<div className='mr-auto text-sidebarBlue dark:text-blue-dark-medium font-medium'>Nay</div>
 							<div className='text-navBlue mr-12'>{nays}</div>
 						</div>
 					</div>

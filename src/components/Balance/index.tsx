@@ -10,6 +10,7 @@ import formatBnBalance from 'src/util/formatBnBalance';
 
 import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 interface Props {
 	address: string;
@@ -97,7 +98,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 
 	return (
 		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
-      Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+      Available: <HelperTooltip text={}/><span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);
 };

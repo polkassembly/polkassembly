@@ -18,7 +18,6 @@ import executeTx from '~src/util/executeTx';
 import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
-import { blake2AsHex } from '@polkadot/util-crypto';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
 
@@ -105,7 +104,10 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		if(!txFeeVal){
 			txFeeVal = txFee;
 		}
-		if(!api || !apiReady ||(!okAll && !initialLoading) || !form.getFieldValue('displayName')) return;
+		if(!api || !apiReady ||(!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email') || !form.getFieldValue('twitter')) {
+			setTxFee({ ...txFeeVal, gasFee: ZERO_BN  });
+			return;
+		}
 
 		setLoading(true);
 
@@ -143,7 +145,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				twitter: { [(okTwitter && twitterVal.length > 0 )? 'raw' : 'none']: (okTwitter && twitterVal.length > 0) ? twitterVal : null }
 				// web: { [(okWeb && (webVal).length > 0) ? 'raw' : 'none']: (okWeb && (webVal).length > 0) ? (webVal) : null }
 			},
-			okAll: okDisplay && okEmail && okLegal && okTwitter && (displayNameVal?.length > 1) && (emailVal || twitterVal)
+			okAll: okDisplay && okEmail && okLegal && okTwitter && (displayNameVal?.length > 1) && (emailVal && twitterVal)
 		});
 		const okSocialsBN = new BN((okSocials - 1) || BN_ONE);
 		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
@@ -174,19 +176,18 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		const identityTx = api.tx?.identity?.setIdentity(info);
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
 		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-		const encodedTxHash = identityTx?.method.toHex();
-
 		startLoading(true);
 
 		const onSuccess = async() => {
-			setIdentityHash(blake2AsHex(encodedTxHash));
+			const identityHash = await api.query.identity.identityOf(address).then((res) => res.unwrap().info.hash.toHex());
+			setIdentityHash(identityHash);
 			startLoading(false);
 			closeModal(true);
 			setOpen(true);
 			handleLocalStorageSave({ setIdentity: true });
-			handleLocalStorageSave({ identityHash: blake2AsHex(encodedTxHash) });
+			handleLocalStorageSave({ identityHash: identityHash });
 			setIsIdentityCallDone(true);
-			await handleIdentityHashSave(encodedTxHash);
+			await handleIdentityHashSave(identityHash);
 		};
 		const onFailed = () => {
 			queueNotification({
@@ -210,7 +211,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			{availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) &&  <Alert showIcon type='error' className=' h-[40px] text-sm text-bodyBlue rounded-[4px]' message={`Minimum Balance of ${formatedBalance(totalFee.toString(), unit, 2)} ${unit} is required to proceed`}/>}
 			<div className='flex justify-between items-center text-lightBlue mt-6'>
 				<label className='text-sm text-lightBlue'>Your Address <HelperTooltip className='ml-1' text='Please note the verification cannot be transferred to another address.'/></label>
-				<Balance address={address || ''} onChange={handleOnAvailableBalanceChange}/>
+				{address && <Balance address={address} onChange={handleOnAvailableBalanceChange}/>}
 			</div>
 			<div className='text-sm flex gap-2 w-full items-end '>
 
@@ -220,7 +221,6 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 						onClick={() => {
 							setAddressChangeModalOpen();
 							closeModal(true);
-							setAvailableBalance(null);
 						}}
 						className='text-white bg-pink_primary h-[26px] border-none text-xs rounded-[4px] w-[70px] flex justify-center items-center'
 					>Change</Button>
@@ -301,7 +301,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				<div className='flex items-center mt-1  '>
 					<span className='flex gap-2 items-center w-[150px] mb-6' >
 						<EmailIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
-						<span className='text-sm text-lightBlue'>Email</span>
+						<span className='text-sm text-lightBlue'>Email<span className='text-[#FF3C5F] ml-1'>*</span></span>
 					</span>
 					<Form.Item name='email' className='w-full'  rules={[{
 						message: 'Invalid email address',
@@ -330,7 +330,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				<div className='flex items-center mt-1'>
 					<span className='flex gap-2 items-center w-[150px] mb-6'>
 						<TwitterIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
-						<span className='text-sm text-lightBlue'>Twitter</span></span>
+						<span className='text-sm text-lightBlue'>Twitter<span className='text-[#FF3C5F] ml-1'>*</span></span></span>
 					<Form.Item name='twitter' className='w-full' rules={[{
 						message: 'Invalid twitter username',
 						validator(rule, value, callback) {

@@ -59,7 +59,7 @@ function getSiderMenuItem(
 	} as MenuItem;
 }
 
-export const onchainIdentitySupportedNetwork:Array<string> = [];
+export const onchainIdentitySupportedNetwork:Array<string> = [AllNetworks.POLKADOT];
 
 const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network: string, img?: string | null, username?: string, className?:string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [

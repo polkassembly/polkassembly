@@ -34,13 +34,13 @@ export const updateComments = async (postId: string, network: string, postType: 
 const handler: NextApiHandler<string | { error: MessageType | string }> = async (req, res) => {
 	const { postId = 0, postType, comments } = req.body;
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
 	const { message, error, status } = await updateComments(postId, network, postType, comments);
 
 	if (error || message === 'failed') {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	} else {
-		res.status(status).json(message);
+		return res.status(status).json(message);
 	}
 };
 

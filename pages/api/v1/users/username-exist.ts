@@ -21,6 +21,6 @@ const handler: NextApiHandler<IUsernameExistResponse | MessageType> = async (req
 	if (users.size === 0) {
 		isExist = false;
 	}
-	res.status(200).json({ isExist });
+	return res.status(200).json({ isExist });
 };
 export default withErrorHandling(handler);

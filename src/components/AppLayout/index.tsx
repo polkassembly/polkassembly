@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import {  Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
+import {  Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Skeleton } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
@@ -12,11 +12,12 @@ import React, { ReactNode, memo, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TreasuryGroupIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TreasuryGroupIcon, TechComProposalIcon , DelegatedIcon, ApplayoutIdentityIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
+import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { PostOrigin } from '~src/types';
@@ -27,6 +28,15 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import PaLogo from './PaLogo';
+import dynamic from 'next/dynamic';
+import IdentityCaution from '~assets/icons/identity-caution.svg';
+import CloseIcon from '~assets/icons/close-icon.svg';
+import { poppins } from 'pages/_app';
+
+const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),{
+	loading: () => <Skeleton.Button active />,
+	ssr: false
+});
 
 const { Content, Sider } = Layout;
 
@@ -46,13 +56,16 @@ function getSiderMenuItem(
 		type: key === 'tracksHeading' ? 'group' : ''
 	} as MenuItem;
 }
+
+export const onchainIdentitySupportedNetwork:Array<string> = [AllNetworks.POLKADOT];
+
 interface Props {
 	Component: NextComponentType<NextPageContext, any, any>;
 	pageProps: any;
 	className?: string;
 }
 
-const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
+const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network: string, img?: string | null, username?: string, className?:string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
@@ -82,6 +95,22 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 		}
 	];
 
+	if(onchainIdentitySupportedNetwork.includes(network)){
+		dropdownMenuItems.splice(1, 0 , {
+			key: 'set on-chain identity',
+			label: <Link className={`text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2 -ml-1 ${className}`} href={''}
+				onClick={(e) => {
+					e.stopPropagation();
+					e.preventDefault();
+					handleSetIdentityClick();
+				}}>
+				<span className='text-lg ml-[2px]'><ApplayoutIdentityIcon /></span>
+				<span>Set on-chain identity</span>
+				<span className=' flex items-center'><IdentityCaution/></span>
+			</Link>
+		});
+	}
+
 	const AuthDropdown = ({ children }: {children: ReactNode}) => (
 		<Dropdown className="user-menu-container" menu={{ items: dropdownMenuItems }} trigger={['click']}>
 			{children}
@@ -101,11 +130,22 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 			}
 		</AuthDropdown>);
 };
+
+interface Props {
+	Component: NextComponentType<NextPageContext, any, any>;
+	pageProps: any;
+	className?: string;
+}
+
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
+	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const router = useRouter();
+	const [open, setOpen] = useState<boolean>(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+
 	// const currentUser = useUserDetailsContext();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
@@ -176,6 +216,20 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const handleLogout = async () => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
+	};
+
+	const handleIdentityButtonClick = () => {
+		const address = localStorage.getItem('identityAddress');
+		if(isMobile){
+			setIdentityMobileModal(true);
+		}else{
+			if(address?.length){
+				setOpen(!open);
+			}else {
+				setOpenAddressLinkedModal(true);
+			}
+		}
+
 	};
 
 	let items: MenuProps['items'] = [
@@ -259,7 +313,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	const userDropdown = getUserDropDown(handleLogout, picture, username!);
+	const userDropdown = getUserDropDown(handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
 	const govOverviewItems = isOpenGovSupported(network) ? [
 		!isMobile ? getSiderMenuItem('', '', <div className={`${className} svgLogo logo-container logo-display-block -mt-[8px] w-[412px] -ml-[106px] flex items-center justify-center h-[66px]`}>
 			{sidedrawer &&
@@ -422,6 +476,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				}
 			</Layout>
 			<Footer />
+			<Modal
+				open={identityMobileModal}
+				footer={false}
+				closeIcon={<CloseIcon/>}
+				onCancel={() => setIdentityMobileModal(false)}
+				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>
+					On-chain identity
+				</span>
+				}
+			>
+				<div className='flex items-center text-center flex-col gap-6 p-4'>
+					<DelegationDashboardEmptyState/>
+					<span>Please use your desktop computer to verify on chain identity</span>
+				</div>
+			</Modal>
+			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
 		</Layout>
 	);
 };

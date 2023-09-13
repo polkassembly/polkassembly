@@ -63,19 +63,21 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 		const postsSnapshotArr = (filterBy && filterBy.length > 0)
 			? await offChainCollRef
 				.where('tags','array-contains-any',filterBy)
+				.where('isDeleted','==',false)
 				.orderBy(orderedField, order)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get()
 			:await offChainCollRef
+				.where('isDeleted','==',false)
 				.orderBy(orderedField, order)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get();
 
 		const count = (filterBy && filterBy.length > 0)
-			?(await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count
-			: (await offChainCollRef.count().get()).data().count;
+			?(await offChainCollRef.where('tags','array-contains-any',filterBy).where('isDeleted','==',false).count().get()).data().count
+			: (await offChainCollRef.where('isDeleted','==',false).count().get()).data().count;
 
 		const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 			if (doc && doc.exists) {
@@ -90,7 +92,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						'👎': reactions['👎']?.count || 0
 					};
 
-					const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).count().get();
 
 					const created_at = docData.created_at;
 					const { topic, topic_id } = docData;
@@ -99,9 +101,11 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						created_at: created_at?.toDate? created_at?.toDate(): created_at,
 						gov_type:docData?.gov_type ,
 						isSpam: docData?.isSpam || false,
+						isSpamReportInvalid: docData?.isSpamReportInvalid || false,
 						post_id: docData.id,
 						post_reactions,
 						proposer: getProposerAddressFromFirestorePostData(docData, network),
+						spam_users_count: docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
 						tags:docData?.tags || [],
 						title:  docData?.title || null,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
@@ -205,7 +209,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 const handler: NextApiHandler<IPostsListingResponse | IApiErrorResponse> = async (req, res) => {
 	const { page = 1, proposalType = OffChainProposalType.DISCUSSIONS, sortBy = sortValues.COMMENTED, listingLimit = LISTING_LIMIT,filterBy } = req.query;
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getOffChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
@@ -218,9 +222,9 @@ const handler: NextApiHandler<IPostsListingResponse | IApiErrorResponse> = async
 
 	if(error || !data) {
 
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

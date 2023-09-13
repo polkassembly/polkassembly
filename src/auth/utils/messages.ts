@@ -64,6 +64,7 @@ const messages = {
 	INVALID_EMAIL_UNDO_TOKEN: 'Invalid email change undo token.',
 	INVALID_EMAIL_VERIFICATION_TOKEN: 'Invalid email verification token.',
 	INVALID_JWT: 'Invalid token. Please login again.',
+	INVALID_NETWORK:'Invalid network in request header.',
 	INVALID_PROPOSAL_TRACKER_PARAMS: 'Invalid proposal tracker params.',
 	INVALID_PROPOSAL_TYPE: 'Invalid proposal type',
 	INVALID_USER_ID_IN_JWT: 'Invalid user id in token.',

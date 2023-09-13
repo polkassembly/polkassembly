@@ -11,7 +11,7 @@ interface Props {
 	height?: number
 	onChange?: (content: string) => void | string | null
 	value?: string
-	autofocus?: boolean
+	autofocus?: boolean;
 }
 
 type ValidationStatus = Parameters<typeof Form.Item>[0]['validateStatus'];

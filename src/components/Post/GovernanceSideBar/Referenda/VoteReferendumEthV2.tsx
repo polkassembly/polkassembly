@@ -648,7 +648,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 						</div>
 						{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info' className='mb-2 -mt-2' showIcon/>}
 
-						{balanceErr.length > 0 && wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+						{balanceErr.length > 0 && wallet && <Alert type='error' message={balanceErr} showIcon className='mb-4 rounded-[4px] h-[40px]'/>}
 						{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 
 						{

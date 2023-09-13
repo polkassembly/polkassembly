@@ -104,7 +104,7 @@ const getUserDropDown = (handleSetIdentityClick: any, isIdentityUnverified: bool
 				}}>
 				<span className='text-lg ml-[2px]'><ApplayoutIdentityIcon /></span>
 				<span>Set on-chain identity</span>
-				{!isIdentityUnverified && <span className=' flex items-center'><IdentityCaution/></span>}
+				{isIdentityUnverified && <span className=' flex items-center'><IdentityCaution/></span>}
 			</Link>
 		});
 	}

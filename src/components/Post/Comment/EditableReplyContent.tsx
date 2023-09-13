@@ -11,6 +11,7 @@ import { EReportType, NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 import ReplyIcon from '~assets/icons/reply.svg';
 
 import { MessageType } from '~src/auth/types';
@@ -45,6 +46,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
+	const { resolvedTheme } = useTheme();
 
 	const [form] = Form.useForm();
 	const [replyToreplyForm] = Form.useForm();
@@ -356,8 +358,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						</Form>
 						:
 						<>
-							<Markdown className='py-2 px-2 md:px-4 bg-blue-grey rounded-b-md text-sm' md={content} />
-							<div className='flex items-center flex-wrap gap-x-3'>
+							<Markdown theme={resolvedTheme} md={content} className='py-2 px-2 md:px-4 bg-[#EBF0F5] dark:bg-section-dark-container rounded-b-md text-sm' />
+							<div className='flex items-center flex-wrap gap-x-3 dark:bg-transparent'>
 								{isEditable &&
 									<Button className={'text-pink_primary flex items-center border-none shadow-none'} disabled={loading} onClick={toggleEdit}>
 										{
@@ -375,10 +377,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{id && !isEditing && <ReportButton className='text-xs text-pink_primary' proposalType={reply.post_type as any || postType} postId={reply.post_index as any || postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 
 								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${reply.reply_source ? 'disabled-reply' : ''}` }>
+									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent ${reply.reply_source ? 'disabled-reply' : ''}` }>
 										<ReplyIcon className='mr-1'/> Reply
 									</Button>
-								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs p-0 m-0'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
+								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs p-0 m-0 dark:bg-transparent'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
 									: null
 								}
 							</div>

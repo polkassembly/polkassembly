@@ -41,9 +41,9 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 				size='large'
 				id={id}
 			/>
-			<div className='comment-box'>
+			<div className='comment-box dark:bg-section-dark-overlay'>
 				<CreationLabel
-					className='py-2 pt-4 px-0 md:px-4 bg-[#EBF0F5] rounded-t-md'
+					className='py-2 pt-4 px-0 md:px-4 bg-[#EBF0F5] dark:bg-section-dark-container rounded-t-md'
 					created_at={created_at}
 					defaultAddress={proposer}
 					text={'replied'}

@@ -50,6 +50,7 @@ function getSiderMenuItem(
 	icon?: React.ReactNode,
 	children?: MenuItem[]
 ): MenuItem {
+	label = <span className="text-lightBlue dark:text-blue-dark-medium">{label}</span>;
 	return {
 		children,
 		icon,
@@ -593,7 +594,7 @@ margin-top: -17px !important;
 }
 
 .ant-menu-title-content {
-	color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
+	color: ${props => props.theme===undefined ? '#909090' : '#485F7D'} !important;
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 21px;

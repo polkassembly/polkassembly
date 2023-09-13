@@ -109,7 +109,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	const button =  <span className={className}>
 		<Button
 			disabled={reactionsDisabled}
-			className={'border-none px-2 shadow-none disabled:opacity-[0.5] disabled:bg-transparent'}
+			className={'border-none px-2 shadow-none disabled:opacity-[0.5] dark:bg-transparent disabled:bg-transparent'}
 			onClick={handleReact}
 		>
 			<span className="flex items-center text-pink_primary">

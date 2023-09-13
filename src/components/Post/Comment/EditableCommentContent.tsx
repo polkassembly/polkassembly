@@ -14,7 +14,7 @@ import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import copyToClipboard from 'src/util/copyToClipboard';
 import styled from 'styled-components';
-
+import { useTheme } from 'next-themes';
 import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
@@ -66,6 +66,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { comments, setComments, setTimelines } = useCommentDataContext();
 
 	const { network } = useContext(NetworkContext);
+	const { resolvedTheme } = useTheme();
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
 
@@ -444,7 +445,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						</Form>
 						:
 						<>
-							<Markdown md={content} className='py-2 px-2 md:px-4 bg-comment_bg rounded-b-md text-sm' />
+							<Markdown theme={resolvedTheme} md={content} className='py-2 px-2 md:px-4 bg-comment_bg dark:bg-section-dark-container rounded-b-md text-sm' />
 
 							<div className='flex items-center flex-row bg-white dark:bg-section-dark-overlay flex-wrap gap-[1px]'>
 								<CommentReactionBar
@@ -456,12 +457,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								{
 									id && ( props.isSubsquareUser ?
 										(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-											<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
+											<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
 												<ReplyIcon className='mr-1'/> Reply
 											</Button>
 										</Tooltip>)
 										:
-										<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
+										<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
 									)

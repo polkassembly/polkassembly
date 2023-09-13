@@ -36,7 +36,8 @@
 		"header",
 		"promise",
 		"react",
-		"react-hooks"
+		"react-hooks",
+		"prettier"
 	],
 	"settings": {
 		"react": {
@@ -53,6 +54,7 @@
 		}
 	},
 	"rules": {
+		"prettier/prettier": "error",
 		"react/react-in-jsx-scope": "off",
 		"@typescript-eslint/no-unused-vars": "error",
 		"arrow-spacing": [

@@ -13,6 +13,7 @@ import { ProposalType, getFirestoreProposalType } from '~src/global/proposalType
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { ITimelineData } from '~src/context/PostDataContext';
 import { ESentiments } from '~src/types';
+import { getSubSquareComments } from './subsquare-comments';
 
 export interface ITimelineComments {
   comments: {
@@ -36,7 +37,7 @@ export const getCommentsByTimeline = async ({
 			const post_index = timeline.type === 'Tip' ? timeline.hash : timeline.index;
 			const type = getFirestoreProposalType(timeline.type) as ProposalType;
 			const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-			const commentsSnapshot = await postDocRef.collection('comments').get();
+			const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
 			const timelineComments = await getComments(
 				commentsSnapshot,
 				postDocRef,
@@ -61,6 +62,21 @@ export const getCommentsByTimeline = async ({
 				allTimelineComments[key] = result.value;
 			}
 		});
+
+		// Subsquare Comments
+		try{
+			const lastTimeline = postTimeline[postTimeline.length-1];
+			const proposalIndex = lastTimeline.type === 'Tip' ? lastTimeline.hash : lastTimeline.index;
+			const subsquareComments = await getSubSquareComments(getFirestoreProposalType(lastTimeline.type), network, proposalIndex);
+			if(subsquareComments.length>0){
+				const key= `${lastTimeline.index}_${lastTimeline.type}`;
+				allTimelineComments[key] = [...(allTimelineComments?.[key]||[]), ...subsquareComments];
+			}
+		}catch(e){
+			console.log('error in fetching subsquare comments', e);
+		}
+
+		// Sentiments
 		const sentiments:any = {};
 		const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
 		if (postTimeline && Array.isArray(postTimeline) && postTimeline.length > 0) {
@@ -70,8 +86,8 @@ export const getCommentsByTimeline = async ({
 				for(let i = 0; i < sentimentsKey.length; i++){
 					const key = sentimentsKey[i];
 					sentiments[key]= sentiments[key] ?
-						sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
-						(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
+						sentiments[key] + (await postDocRef.collection('comments').where('isDeleted','==',false).where('sentiment', '==', i+1).count().get()).data().count :
+						(await postDocRef.collection('comments').where('isDeleted','==',false).where('sentiment', '==', i+1).count().get()).data().count;
 				}
 			}
 		}
@@ -109,9 +125,9 @@ const handler: NextApiHandler<
 	});
 
 	if (error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 	} else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

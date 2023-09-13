@@ -17,7 +17,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 
 	const { proxied, proxy, message, signature } = req.body;
 
-	if(!proxied || !proxy || !message || !signature) res.status(400).json({ message: 'Missing parameters in request body' });
+	if(!proxied || !proxy || !message || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });

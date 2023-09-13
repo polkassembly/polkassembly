@@ -58,30 +58,30 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 
 	// Subsquid Data
 	const subsquidData = subsquidRes?.data;
+
+	// currPostID = discussionId
+	// postId = referendumId
+
 	if (!isDataExist(subsquidData)) {
 		throw apiErrorWithStatusCode(`The Post with id: "${postId}" and type: "${postType}" is not found.`, 400);
 	}
 	const post = subsquidData.proposals[0];
 
 	if(process.env.IS_CACHING_ALLOWED == '1'){
-		if(currPostType == ProposalType.REFERENDUM_V2){
+		if(currPostType == ProposalType.DISCUSSIONS && postType == ProposalType.REFERENDUM_V2){
 			const latestActivitykey = `${network}_latestActivity_OpenGov`;
 			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post.trackNumber}_*`;
-			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${currPostId}`;
+			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
+
+			const discussionDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${currPostId}`;
+			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
 
 			await redisDel(latestActivitykey);
 			await deleteKeys(trackListingKey);
 			await redisDel(referendumDetailsKey);
-		}
-
-		if(currPostType == ProposalType.DISCUSSIONS){
-			const latestActivitykey = `${network}_latestActivity_OpenGov`;
-			const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
-			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
-
-			await redisDel(latestActivitykey);
-			await redisDel(referendumDetailsKey);
+			await redisDel(discussionDetailsKey);
 			await deleteKeys(discussionListingKey);
+
 		}
 	}
 

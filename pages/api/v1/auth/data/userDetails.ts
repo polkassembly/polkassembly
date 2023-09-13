@@ -33,7 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ProfileDetailsR
 		...userDoc.profile
 	};
 
-	res.status(200).json(user);
+	return res.status(200).json(user);
 }
 
 export default withErrorHandling(handler);

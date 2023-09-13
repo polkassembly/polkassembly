@@ -6,9 +6,9 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { NotificationStatus } from 'src/types';
+import { EReportType, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -35,6 +35,8 @@ import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon,Ag
 import { poppins } from 'pages/_app';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { checkIsProposer } from '../utils/checkIsProposer';
 
 interface IEditableCommentContentProps {
 	userId: number,
@@ -64,7 +66,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { comments, setComments, setTimelines } = useCommentDataContext();
 
 	const { network } = useContext(NetworkContext);
-	const { id, username, picture, loginAddress } = useUserDetailsContext();
+	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
 
 	const [replyForm] = Form.useForm();
@@ -83,9 +85,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [isReplying, setIsReplying] = useState(false);
+	const [isEditable, setIsEditable] = useState(false);
 
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
-
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
 		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
@@ -285,14 +287,43 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 	};
 
+	const removeCommentContent = () => {
+		const keys = Object.keys(comments);
+		setComments((prev) => {
+			const comments: any = Object.assign({}, prev);
+			for(const key of keys ){
+				if (prev?.[key]) {
+					comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
+				}
+			}
+			return comments;
+		});
+		setTimelines((prev) => {
+			return [...prev.map((timeline) => {
+				if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
+					return {
+						...timeline,
+						commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
+					};
+				}
+				return {
+					...timeline
+				};
+			})];
+		});
+		queueNotification({
+			header: 'Success!',
+			message: 'The comment was deleted.',
+			status: NotificationStatus.SUCCESS
+		});
+	};
+
 	const deleteComment = async () => {
 		const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
 			commentId,
-			postId: ((comment.post_index || comment.post_index === 0)? comment.post_index: props.postId),
-			postType: comment.post_type || props.proposalType,
-			trackNumber: track_number
+			postId: ((comment.post_index || comment.post_index === 0) ? comment.post_index : props.postId),
+			postType: comment.post_type || props.proposalType
 		});
-
 		if (deleteCommentError || !data) {
 			console.error('Error deleting comment: ', deleteCommentError);
 			queueNotification({
@@ -301,41 +332,30 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				status: NotificationStatus.ERROR
 			});
 		}
-
-		if(data) {
-			const keys = Object.keys(comments);
-			setComments((prev) => {
-				const comments: any = Object.assign({}, prev);
-				for(const key of keys ){
-					if (prev?.[key]) {
-						comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
-					}
-				}
-				return comments;
-			});
-			setTimelines((prev) => {
-				return [...prev.map((timeline) => {
-					if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
-						return {
-							...timeline,
-							commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
-						};
-					}
-					return {
-						...timeline
-					};
-				})];
-			});
-			queueNotification({
-				header: 'Success!',
-				message: 'Your comment was deleted.',
-				status: NotificationStatus.SUCCESS
-			});
+		if (data){
+			removeCommentContent();
 		}
 	};
 
+	const canEditComment = useCallback(async () => {
+		if(id === userId){
+			return setIsEditable(true);
+		}
+		if(!proposer){
+			return setIsEditable(false);
+		}
+		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		if(!isProposer){
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...addresses || loginAddress ] );
+			if(isProposer){
+				return setIsEditable(true);
+			}
+		}
+		return setIsEditable(false);
+	}, [addresses, id, loginAddress, proposer, userId]);
+
 	const items:MenuProps['items']=[
-		id === userId ? {
+		isEditable ? {
 			key:1,
 			label:<div className={`items-center shadow-none text-[10px] text-slate-400 leading-4  ${poppins.variable} ${poppins.className}`} onClick={toggleEdit}>
 				<span className='flex items-center' ><EditIcon className='mr-1' />Edit</span>
@@ -347,12 +367,18 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		},
 		id && !isEditing ?{
 			key:3,
-			label: <ReportButton proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' commentId={commentId} postId={postIndex}/>
+			label: <ReportButton proposalType={comment.post_type as any || postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' commentId={commentId} postId={comment.post_index as any || postIndex}/>
 		}:null,
-		id===userId ? {
+		isEditable ? {
 			key:4,
 			label:<div className={`flex items-center shadow-none text-[10px] text-slate-400 leading-4 ml-[-1.8px] ${poppins.variable} ${poppins.className} border-none` } onClick={() => {deleteComment();}}><DeleteIcon className='mr-1' />Delete</div>
-		}:null
+		}:
+			allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) ?
+				{
+					key: 4,
+					label: <ReportButton isDeleteModal={true} proposalType={comment.post_type as any || postType} className={`flex shadow-none text-slate-400 text-[10px] leading-4 rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type={EReportType.COMMENT} onSuccess={removeCommentContent} commentId={commentId} postId={comment.post_index as any || postIndex}/>
+				}
+				:null
 	];
 
 	const handleSentimentText=() => {
@@ -365,6 +391,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		default: return 'Neutral';
 		}
 	};
+
+	useEffect(() => {
+		canEditComment();
+	}, [canEditComment]);
 
 	return (
 		<>

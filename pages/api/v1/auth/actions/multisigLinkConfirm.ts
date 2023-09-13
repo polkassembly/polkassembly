@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	if(!network) return res.status(400).json({ message: 'Missing network in request header' });
 
 	const { address, addresses, ss58Prefix, threshold, signatory, signature } = req.body;
-	if(!address || !addresses || !ss58Prefix || !threshold || ! signatory || !signature) res.status(400).json({ message: 'Missing parameters in request body' });
+	if(!address || !addresses || !ss58Prefix || !threshold || ! signatory || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });

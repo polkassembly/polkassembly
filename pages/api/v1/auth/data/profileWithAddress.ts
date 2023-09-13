@@ -74,9 +74,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IGetProfileWith
 	});
 
 	if(error || !data) {
-		res.status(200).json({ message: error || messages.API_FETCH_ERROR });
+		return res.status(200).json({ message: error || messages.API_FETCH_ERROR });
 	}else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 }
 

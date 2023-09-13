@@ -120,7 +120,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 
 	return (
 		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
-	Available<HelperTooltip className="mx-1" text={<div className=""><span>Transferable Balance: {formatedBalance(transferableBalance, unit)} {unit}</span><br/><span>Locked Balance: {lockBalance} {unit}</span></div>}/>: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+	Available<HelperTooltip className="mx-1" text={<div className="text-center"><span>Transferable Balance: {formatedBalance(transferableBalance, unit)} {unit}</span><br/><span>Locked Balance: {lockBalance} {unit}</span></div>}/>: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);
 };

@@ -82,10 +82,10 @@ const AddressDropdown = ({
 			label: (
 				<Address
 					disableAddressClick={true}
-					className={`flex items-center ${poppins.className} ${poppins.className}`}
+					className={`flex items-center dark:bg-transparent ${poppins.className} ${poppins.className}`}
 					otherTextType={ getOtherTextType(account)}
 					otherTextClassName='ml-auto'
-					addressClassName='text-lightBlue'
+					addressClassName='text-lightBlue dark:bg-transparent'
 					extensionName={account.name}
 					address={account.address}
 				/>

@@ -13,10 +13,12 @@ interface Props {
 	isPreview?: boolean;
 	isAutoComplete?: boolean;
 	md: string;
+	theme?: string;
   imgHidden?: boolean;
 }
 
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false , theme }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 
 	return <ReactMarkdown
@@ -51,7 +53,7 @@ export default styled(Markdown)`
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
-      color: var(--bodyBlue) !important;
+      		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
 		}
 
 		h1 {

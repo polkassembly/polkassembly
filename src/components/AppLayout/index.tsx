@@ -188,12 +188,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				...gov1Items.democracyItems
 			]),
 
-			getSiderMenuItem('Counsil Motion', 'gov1_democracy_group', <MotionsIcon className='text-sidebarBlue' />, [
-				...gov1Items.councilItems
-			]),
-
 			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [
 				...gov1Items.treasuryItems
+			]),
+
+			getSiderMenuItem('Council', 'gov1_democracy_group', <MotionsIcon className='text-sidebarBlue' />, [
+				...gov1Items.councilItems
 			]),
 
 			getSiderMenuItem('Tech Committee...', 'gov1_democracy_group', <TechComProposalIcon className='text-sidebarBlue' />, [

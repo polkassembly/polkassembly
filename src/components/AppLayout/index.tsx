@@ -497,6 +497,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</Layout>
 				}
 			</Layout>
+			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
+
 			<Footer />
 			<Modal
 				open={identityMobileModal}
@@ -514,7 +516,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<span>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
-			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
 		</Layout>
 	);
 };

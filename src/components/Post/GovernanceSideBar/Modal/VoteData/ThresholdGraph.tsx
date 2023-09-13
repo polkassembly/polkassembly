@@ -3,36 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import * as Chart from 'react-chartjs-2';
 import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
 import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
 import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
 import CloseIcon from '~assets/icons/close.svg';
-
-import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend
-} from 'chart.js';
 import { Modal, Spin } from 'antd';
 import Curves from '../../Referenda/Curves';
-
-ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend
-);
 
 export interface IProgress {
 	approval: number,
@@ -279,7 +258,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 	);
 };
 
-export default ThresholdGraph;
+export default memo(ThresholdGraph);
 
 const hoverLinePlugin = {
 	beforeDraw: (chart: any) => {

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import * as Chart from 'react-chartjs-2';
 import {
 	Chart as ChartJS,
@@ -245,7 +245,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 	);
 };
 
-export default Curves;
+export default memo(Curves);
 
 const hoverLinePlugin = {
 	beforeDraw: (chart: any) => {

@@ -601,7 +601,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				});
 			}
 		}
-	}, [currentBlock, post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
 
 	useEffect(() => {
 		if (!api || !!apiReady) return;

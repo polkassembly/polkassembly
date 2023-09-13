@@ -134,4 +134,4 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 	);
 };
 
-export default TipInfo;
+export default React.memo(TipInfo);

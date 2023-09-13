@@ -17,7 +17,7 @@ import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import EmailIcon from '~assets/icons/email_icon.svg';
 import styled from 'styled-components';
-import { Divider, Skeleton } from 'antd';
+import { Divider, Skeleton, Tooltip } from 'antd';
 import DelegationListRow from './DelegationListRow';
 import dayjs from 'dayjs';
 import { parseBalance } from './utils/parseBalaceToReadable';
@@ -120,11 +120,11 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 				{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 					<a
 						href={`https://${network}.moonscan.io/tx/${voteData?.txnHash}`}
-						className={`overflow-ellipsis ${isReferendum2 ? 'w-[210px]' : 'w-[250px]'} ${voteData?.decision === 'abstain' ? 'w-[220px]':''}`}
+						className={`overflow-ellipsis ${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} ${voteData?.decision === 'abstain' ? 'w-[220px]':''}`}
 					>
 						<Address
 							isVoterAddress={true}
-							textClassName='w-[200px]'
+							textClassName='w-[250px]'
 							isSubVisible={false}
 							displayInline={true}
 							isShortenAddressLength={false}
@@ -132,7 +132,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 						/>
 					</a>
 				) : (
-					<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[210px]' : 'w-[245px]'} ${voteData?.decision === 'abstain' ? 'w-[220px]':''}`} onClick={(e) => e.stopPropagation()}>
+					<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[190px]' : 'w-[245px]'} ${voteData?.decision === 'abstain' ? 'w-[220px]':''}`} onClick={(e) => e.stopPropagation()}>
 						<Address
 							textClassName='overflow-ellipsis w-[250px] '
 							isSubVisible={false}
@@ -145,23 +145,24 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
-						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[105px]' : 'w-[150px]'} ${voteData?.decision === 'abstain' ? 'w-[160px]':''}`}>
-							{parseBalance((voteData.selfVotingPower || voteData.votingPower).toString(), 2, true, network)}
+						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[120px]' : 'w-[150px]'} ${voteData?.decision === 'abstain' ? 'w-[160px]':''} text-bodyBlue`}>
+							{parseBalance((voteData?.decision === 'abstain'
+								? voteData?.balance?.abstain || 0
+								: voteData?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
-						{voteData?.decision !== 'abstain' &&  <div className={`overflow-ellipsis ${isReferendum2 ? 'w-[115px]' : 'w-[135px]'}`}>
-							{`${voteData.lockPeriod === 0 ? '0.1': voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0  ? '/d' : ''}`}
+						{voteData?.decision !== 'abstain' &&  <div className={`overflow-ellipsis ${isReferendum2 ? 'w-[105px]' : 'w-[135px]'} text-bodyBlue`}>
+							{voteData?.delegatedVotes?.length > 0 ? 'd': voteData.lockPeriod === 0 ? '0.1x': voteData.lockPeriod+'x' }
+							{/* {`${voteData.lockPeriod === 0 ? '0.1': voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0  ? '/d' : ''}`} */}
 						</div>}
 					</>
 				) : (
-					<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[120px]' : 'w-[135px]'}`}>
-						{voteData?.decision === 'abstain'
-							? voteData?.balance?.abstain || 0
-							: voteData?.balance?.value || 0}
+					<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[120px]' : 'w-[135px]'} text-bodyBlue`}>
+						{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 					</div>
 				)}
 
 				{( voteData.totalVotingPower || voteData.votingPower ) && (
-					<div className='overflow-ellipsis w-[90px]'>
+					<div className='overflow-ellipsis w-[90px] text-bodyBlue'>
 						{parseBalance((voteData.totalVotingPower || voteData.votingPower).toString(), 2, true, network)}
 					</div>
 				)}
@@ -191,13 +192,13 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 			>
 				<div className='flex flex-col gap-4'>
 					<div className='border-dashed border-[#D2D8E0] border-y-2 border-x-0 flex gap-[60px] py-4 items-center'>
-						<span className='text-[#96A4B6] flex gap-1 items-center'>
+						<span className='text-bodyBlue flex gap-1 items-center text-xs'>
 							<CalenderIcon /> {dayjs(voteData.createdAt.toDate?.()).format('MM/DD/YYYY, h:mm A').toString()}
 						</span>
 						{
 							voteData?.decision !== 'abstain' &&
 							<span className='flex gap-1 items-center text-lightBlue text-xs font-medium'>
-								<PowerIcon />Voting Power <span className='text-[#96A4B6]'>
+								<PowerIcon />Voting Power: <span className='text-bodyBlue'>
 									{
 										getPercentage(
 											voteData?.decision === 'abstain'
@@ -221,14 +222,12 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
-										<VoterIcon /> Votes
+										<VoterIcon /> Voting Power
 									</span>
 									<span className='text-xs text-bodyBlue'>
 										{
 											parseBalance((
-												voteData?.decision === 'abstain'
-													? voteData?.balance?.abstain || 0
-													: voteData?.balance?.value || 0
+												voteData.selfVotingPower || 0
 											).toString(),
 											2,
 											true,
@@ -243,16 +242,18 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 									</span>
 									<span className='text-xs text-bodyBlue'>{voteData.lockPeriod
 										? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length>0 ? '/d' : ''}`
-										: '0.01x'}</span>
+										: '0.1x'}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
-										<CapitalIcon /> Vote Power
+										<CapitalIcon /> Capital
 									</span>
 									<span className='text-xs text-bodyBlue'>
 										{
 											parseBalance((
-												voteData.selfVotingPower || 0
+												voteData?.decision === 'abstain'
+													? voteData?.balance?.abstain || 0
+													: voteData?.balance?.value || 0
 											).toString(),
 											2,
 											true,
@@ -331,6 +332,9 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 							) : null}
 							<div className='w-[100px] flex items-center gap-1 text-lightBlue'>
 								Voting Power
+								{
+									<Tooltip></Tooltip>
+								}
 							</div>
 						</div>
 						<div className='pr-2 max-h-[70px] overflow-y-auto flex flex-col gap-1'>

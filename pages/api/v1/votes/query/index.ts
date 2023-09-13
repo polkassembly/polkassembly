@@ -60,6 +60,7 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
             ... on SplitVoteBalance {
               aye
               nay
+              abstain
             }
           }
         }

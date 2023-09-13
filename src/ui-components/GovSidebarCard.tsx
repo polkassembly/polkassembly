@@ -18,4 +18,4 @@ const GovSidebarCard = ({ className, children } : Props) => {
 	);
 };
 
-export default GovSidebarCard;
+export default React.memo(GovSidebarCard);

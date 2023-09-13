@@ -92,7 +92,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 							<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
 								<div
 									className={`${
-										isReferendum2 ? 'w-[220px]' : 'w-[250px]'
+										isReferendum2 ? 'w-[190px]' : 'w-[250px]'
 									} text-lightBlue text-sm font-medium`}
 								>
                                     Voter
@@ -107,7 +107,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 								{network !== AllNetworks.COLLECTIVES ? (
 									<div
 										className={`${
-											isReferendum2 ? 'w-[120px]' : 'w-[150px]'
+											isReferendum2 ? 'w-[110px]' : 'w-[150px]'
 										} flex items-center gap-1 text-lightBlue`}
 									>
                                         Conviction
@@ -185,7 +185,6 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 					</div>
 				</div>
 			</Spin>
-
 		</div>
 
 	);

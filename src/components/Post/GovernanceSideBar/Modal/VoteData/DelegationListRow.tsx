@@ -17,11 +17,11 @@ interface IDelegationListRow {
 const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 	const { network } = useNetworkContext();
 	return (
-		<div className='flex items-center text-xs'>
+		<div className='flex items-center text-xs text-bodyBlue'>
 			{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 				<a
 					href={`https://${network}.moonscan.io/tx/${voteData.txnHash}`}
-					className='w-[200px] overflow-ellipsis'
+					className='w-[200px] overflow-ellipsis text-bodyBlue'
 				>
 					<Address
 						isVoterAddress={true}
@@ -33,7 +33,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 					/>
 				</a>
 			) : (
-				<div className='w-[200px] overflow-ellipsis'>
+				<div className='w-[200px] overflow-ellipsis text-bodyBlue'>
 					<Address
 						textClassName='w-[100px]'
 						isSubVisible={false}
@@ -46,7 +46,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 
 			{network !== AllNetworks.COLLECTIVES ? (
 				<>
-					<div className='w-[115px] overflow-ellipsis'>
+					<div className='w-[115px] overflow-ellipsis text-bodyBlue'>
 						{
 							parseBalance((
 								voteData?.decision === 'abstain'
@@ -59,7 +59,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 							)
 						}
 					</div>
-					<div className='w-[110px] overflow-ellipsis'>
+					<div className='w-[110px] overflow-ellipsis text-bodyBlue'>
 						{voteData.lockPeriod
 							? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length ? '/d' : ''}`
 							: '0.1x'}
@@ -67,16 +67,24 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 				</>
 			) : (
 				<>
-					<div className='w-[120px] overflow-ellipsis'>
-						{voteData?.decision === 'abstain'
-							? voteData?.balance?.abstain || 0
-							: voteData?.balance?.value || 0}
+					<div className='w-[120px] overflow-ellipsis text-bodyBlue'>
+						{
+							parseBalance((
+								voteData?.decision === 'abstain'
+									? voteData?.balance?.abstain || 0
+									: voteData?.balance?.value || 0
+							).toString(),
+							2,
+							true,
+							network
+							)
+						}
 					</div>
 				</>
 			)}
 
 			{voteData.votingPower && (
-				<div className='overflow-ellipsis w-[80px]'>
+				<div className='overflow-ellipsis w-[80px] text-bodyBlue'>
 					{
 						parseBalance((
 							voteData.votingPower
@@ -92,4 +100,4 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 	);
 };
 
-export default DelegationListRow;
+export default React.memo(DelegationListRow);

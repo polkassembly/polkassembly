@@ -10,7 +10,7 @@ import {
 	RightOutlined
 } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Divider, Modal, Pagination, PaginationProps, Segmented, Spin } from 'antd';
+import { Divider, Modal as AntdModal, Pagination, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
@@ -29,6 +29,7 @@ import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationVotersList from './DelegateVoteList';
 import GraphExpandIcon from '~assets/graph-expand.svg';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const StyledSegmented = styled(Segmented)`
   .ant-segmented-group > label {
@@ -39,6 +40,12 @@ const StyledSegmented = styled(Segmented)`
 const Container = styled.div`
 @media(max-width: 1024px) {
     display: none !important;
+}
+`;
+
+const Modal = styled(AntdModal)`
+.ant-modal-content{
+	padding-top:12px;
 }
 `;
 
@@ -167,7 +174,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex gap-6'>
-					<div className='md:overflow-visible overflow-x-auto flex flex-col justify-between'>
+					<div className='md:overflow-visible flex flex-col justify-between'>
 						<div>
 							<div className='w-full flex items-center justify-center mb-8'>
 								<StyledSegmented
@@ -182,11 +189,11 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									options={decisionOptions}
 								/>
 							</div>
-							<div className='flex flex-col text-xs px-0 text-sidebarBlue'>
+							<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-x-auto'>
 								<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
 									<div
 										className={`${
-											isReferendum2 ? 'w-[220px]' : 'w-[250px]'
+											isReferendum2 ? 'w-[190px]' : 'w-[250px]'
 										} text-lightBlue text-sm font-medium`}
 									>
 									Voter
@@ -210,7 +217,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
 											className={`${
-												isReferendum2 ? 'w-[120px]' : 'w-[150px]'
+												isReferendum2 ? 'w-[110px]' : 'w-[150px]'
 											} flex items-center gap-1 text-lightBlue`}
 											onClick={() => {
 												handleSortByClick({
@@ -228,7 +235,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									) : null}
 									{isReferendum2 && (
 										<div
-											className='w-[110px] flex items-center gap-1 text-lightBlue'
+											className='w-[120px] flex items-center gap-1 text-lightBlue'
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.votingIsAsc
@@ -238,8 +245,11 @@ const VotersList: FC<IVotersListProps> = (props) => {
 												setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
 											}}
 										>
-										Voting Power
+											Voting Power
 											<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
+											<Tooltip color="#E5007A" title="Vote Power for delegated votes is the self vote power + delegated vote power.">
+												<InfoCircleOutlined className='text-sm text-lightBlue' />
+											</Tooltip>
 										</div>
 									)}
 								</div>
@@ -277,7 +287,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</div>
 						</div>
 						<div className='flex justify-between items-center pt-6 bg-white z-10'>
-							<p className='text-xs text-[#96A4B6] m-0'>
+							<p className='text-xs text-bodyBlue m-0'>
 								d: Delegation s: Split sa: Split Abstain
 							</p>
 							<Pagination
@@ -358,7 +368,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									Voting Data
 								</span>
 							</h3>
-							<Divider className='text-[#D2D8E0]' />
+							<Divider className='text-[#D2D8E0] my-2 mb-5' />
 						</div>
 					}
 					open={delegationVoteModal.isOpen}
@@ -382,4 +392,4 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	);
 };
 
-export default VotersList;
+export default React.memo(VotersList);

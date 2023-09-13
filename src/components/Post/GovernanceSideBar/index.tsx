@@ -89,6 +89,10 @@ interface IGovernanceSidebarProps {
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
 
+const isSupportedNestedVoteNetwork = (network:string) => {
+	return ['polkadot', 'kusama'].includes(network);
+};
+
 export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
 	let height = 0;
 	if (timeline && Array.isArray(timeline) && timeline.length > 0) {
@@ -971,7 +975,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							{
 								(onchainId || onchainId === 0) &&
 								<>
-									{getVotingTypeFromProposalType(proposalType) === VoteType.REFERENDUM_V2 ?
+									{getVotingTypeFromProposalType(proposalType) === VoteType.REFERENDUM_V2 && isSupportedNestedVoteNetwork(network) ?
 										<VoteDataModal onchainId={onchainId} open={open} setOpen={setOpen} proposalType={proposalType} tally={tally} thresholdData={{
 											curvesError,
 											curvesLoading,

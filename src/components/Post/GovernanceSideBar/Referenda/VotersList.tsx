@@ -349,4 +349,4 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	);
 };
 
-export default VotersList;
+export default React.memo(VotersList);

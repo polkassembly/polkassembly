@@ -345,7 +345,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 							onBlur={() => getGasFee()}
 							name='twitter'
 							value={twitter?.value}
-							placeholder='YourTwitterName'
+							placeholder='Your twitter name'
 							className='h-[40px] rounded-[4px] text-bodyBlue'
 							onChange={(e) => {
 								onChangeSocials({ ...socials, twitter:{ ...twitter, value: e.target.value?.trim() } });

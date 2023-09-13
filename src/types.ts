@@ -506,6 +506,15 @@ export type VoteInfo = {
 	turnout: BN;
 	voteThreshold: string;
 }
+
+export enum ESentiment {
+  Against = 1,
+  SlightlyAgainst =2,
+  Neutral = 3,
+  SlightlyFor = 4,
+  For = 5
+}
+
 export enum VerificationStatus {
 	ALREADY_VERIFIED = 'Already verified',
 	VERFICATION_EMAIL_SENT = 'Verification email sent',

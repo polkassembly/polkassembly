@@ -35,6 +35,9 @@ export interface IComment {
   profile?:any;
 	post_index?: number;
 	post_type?: string;
+	vote?:string | null;
+	votes?:[];
+	isRow?:boolean;
 	isDeleted?:boolean;
 }
 
@@ -46,7 +49,7 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, profile } = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, profile, vote = null } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
@@ -70,7 +73,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 
 	// TODO: author address
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-
 	return (
 		<div className={`${className} flex gap-x-4 mb-9 `}>
 			{/* Offset div to scroll to because scrollIntoView doesn't support offset */}
@@ -91,6 +93,8 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
+					vote={vote}
+					votesArr={comment?.votes}
 					isRow={true}
 				>
 					{

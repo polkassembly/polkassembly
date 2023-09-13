@@ -33,12 +33,12 @@ import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 
-const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 
-const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
+const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });

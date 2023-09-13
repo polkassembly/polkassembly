@@ -193,36 +193,36 @@ const AppLayout = ({ className, Component, pageProps, theme }: Props) => {
 			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-lightBlue dark:text-blue-dark-medium mt-3' />)
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
-			getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-white' />)
+			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-lightBlue dark:text-blue-dark-medium' />),
+			getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-lightBlue dark:text-blue-dark-medium' />)
 		] : [],
 		councilItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />),
-			getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)
+			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-lightBlue dark:text-blue-dark-medium' />),
+			getSiderMenuItem('Members', '/council', <MembersIcon className='text-lightBlue dark:text-blue-dark-medium' />)
 		] : [],
 		treasuryItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
-			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
-			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
+			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-lightBlue dark:text-blue-dark-medium' />),
+			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-lightBlue dark:text-blue-dark-medium' />),
+			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='text-lightBlue dark:text-blue-dark-medium ml-0.5' />),
+			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-lightBlue dark:text-blue-dark-medium text-white' />)
 		] : [],
 		techCommItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
+			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-lightBlue dark:text-blue-dark-medium' />)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-white' />),
-			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
-			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
+			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-lightBlue dark:text-blue-dark-medium' />),
+			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-lightBlue dark:text-blue-dark-medium' />),
+			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-lightBlue dark:text-blue-dark-medium' />),
+			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-lightBlue dark:text-blue-dark-medium' />)
 		] : [],
 		PIPsItems:(chainProperties[network]?.subsquidUrl && (network === 'polymesh')) ? [
-			getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='text-white mt-1.5'/>),
-			getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='text-white mt-1.5'/>),
-			getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='text-white mt-1.5'/>)
+			getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='text-lightBlue dark:text-blue-dark-medium mt-1.5'/>),
+			getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='text-lightBlue dark:text-blue-dark-medium mt-1.5'/>),
+			getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='text-lightBlue dark:text-blue-dark-medium mt-1.5'/>)
 		] :[]
 	};
 	if (isGrantsSupported(network)) {
-		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
+		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-lightBlue dark:text-blue-dark-medium' />));
 	}
 
 	if(isMobile) {

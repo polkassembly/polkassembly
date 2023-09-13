@@ -58,6 +58,7 @@ interface Props {
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
 	address: string;
+	theme?: string;
 }
 export interface INetworkWalletErr{
 	message: string;
@@ -73,23 +74,24 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
 				return [
-					<Select.Option className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+					<Select.Option className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 					...CONVICTIONS.map(([value, lock]) =>
-						<Select.Option className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
+						<Select.Option className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
 					)
 				];
 			}
 		}
 	}
 	return [
-		<Select.Option className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+		<Select.Option className={`text-bodyBlue dark:bg-section-dark-overlay  dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+			<Select.Option className={`text-bodyBlue dark:bg-section-dark-overlay  dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
 		)
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, theme }: Props) => {
 	const userDetails = useUserDetailsContext();
 	const { addresses, isLoggedOut, loginAddress } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -375,7 +377,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			<label  className='inner-headings dark:text-blue-dark-medium'>
 				Vote lock
 			</label>
-			<Select onChange={(key) => setConviction(Number(key))} size='large' className='' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
+			<Select onChange={(key) => setConviction(Number(key))} size='large' className='dark:text-blue-dark-high dark:bg-section-dark-overlay' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
 				{convictionOpts}
 			</Select>
 
@@ -713,7 +715,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<h3 className='inner-headings mt-[24px] mb-[2px] dark:text-blue-dark-medium'>Choose your vote</h3>
 							<Segmented
 								block
-								className={`${className} mb-6 border-solid border-[1px] bg-white border-[#D2D8E0] rounded-[4px] w-full`}
+								className={`${className} mb-6 border-solid border-[1px] bg-white dark:bg-section-dark-overlay border-[#D2D8E0] rounded-[4px] w-full`}
 								size="large"
 								value={vote}
 								onChange={(value) => {
@@ -735,13 +737,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									helpText={'Amount of you are willing to lock for this vote.'}
 									placeholder={'Add balance'}
 									onChange={onBalanceChange}
-									className='text-sm font-medium border-[#D2D8E0]'
+									className='text-sm dark:text-blue-dark-high dark:bg-transparent font-medium border-[#D2D8E0]'
 								/>
 
 								<ConvictionSelect className={`${className}`} />
 
 								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0]'>
-									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
+									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] dark:bg-transparent mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}>Confirm</Button>
 								</div>
 							</Form>
@@ -848,8 +850,13 @@ export default styled(VoteReferendum)`
 	width: 100%;
 }
 .ant-modal .ant-modal-content{
-	background: black !important;
+	background: #0D0D0D !important;
 }
+
+.ant-segmented-item-label{
+	background: #0D0D0D !important;
+}
+
 .vote-form-cont {
 	padding: 12px;
 }
@@ -874,8 +881,12 @@ export default styled(VoteReferendum)`
 	line-height: 21px !important;
 	letter-spacing: 0.0025em !important;
 	color: #243A57 !important;
+	background: transparent !important;
 }
-
+.dFWeFa .suffixColor .ant-input{
+	background: transparent !important;
+	color: white !important;
+}
 .vote-referendum .ant-input-number-in-from-item{
 	height: 39.85px !important;
 }

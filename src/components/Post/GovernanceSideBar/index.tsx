@@ -14,6 +14,7 @@ import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } 
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
@@ -131,6 +132,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
 	const { postData: { created_at, track_number, post_link, statusHistory } } = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
+	const { resolvedTheme } = useTheme();
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -854,6 +856,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-blue-light-high dark:text-blue-dark-high font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
+															theme={resolvedTheme}
 															address={address}
 															lastVote={lastVote}
 															setLastVote={setLastVote}

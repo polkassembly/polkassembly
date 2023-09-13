@@ -15,6 +15,7 @@ import { IProgress } from './Curves';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
+import styled from 'styled-components';
 
 interface IReferendaV2Messages {
     className?: string;
@@ -328,7 +329,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	);
 };
 
-export default ReferendaV2Messages;
+export default styled(ReferendaV2Messages)`
+	.ant-modal .ant-modal-content{
+		background: black !important;
+	}
+`;
 
 const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[]; progress: IProgress }> = (props) => {
 	const { status, timeline, network, progress } = props;

@@ -93,7 +93,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 				onBlur={() => onBlur?.()}
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName || 'balance'}
-				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}
+				className={`w-full h-[39px] border-[1px] ${inputClassName} dark:bg-transparent dark:text-blue-dark-high text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}
 				onChange={(e) => onBalanceChange(e.target.value) }
 				placeholder={placeholder}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}

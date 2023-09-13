@@ -192,8 +192,8 @@ const UserDropdown = ({ address, className, displayInline, extensionName, popupC
 	const t2 = extensionName || mainDisplay;
 	return (
 		<div className={`${displayInline ? className + ' display_inline': className} bg-[#f6f7f9] rounded-3xl user-container px-2 flex justify-center items-center`} style={{ border:'1px solid #d7dce3' }}>
-			{img ? <Avatar className='-ml-2 mr-2 user-image' size={30} src={img} /> :
-				<Avatar className='-ml-2 mr-2 user-image' size={30} icon={<UserOutlined />} />
+			{img ? <Avatar className='-ml-1 mr-2 user-image' size={20} src={img} /> :
+				<Avatar className='-ml-1 mr-2 user-image' size={20} icon={<UserOutlined />} />
 			}
 			{!disableAddress && <div className={`content ${clickable ? 'cursor-pointer' : 'cursor-not-allowed' }`} onClick={async () => {
 				if(!clickable){
@@ -253,9 +253,8 @@ const UserDropdown = ({ address, className, displayInline, extensionName, popupC
 								}
 								<div className={`description ml-0.5 ${addressClassName} text-xs`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 							</div>
-						: <div className={`description ${addressClassName} max-w-[50px] user-details-container text-ellipsis overflow-hidden text-xs`}>
+						: <div className={`description ${addressClassName} max-w-[50px] user-details-container text-ellipsis overflow-hidden text-sm text-bodyBlue`}>
 							{ username }
-							{/* {kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr} */}
 						</div>
 				}
 			</div>}

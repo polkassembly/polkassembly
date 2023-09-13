@@ -7,10 +7,14 @@ import { poppins } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import { useApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
+import { chainProperties } from '~src/global/networkConstants';
+import { formatBalance } from '@polkadot/util';
 
 import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { formatedBalance } from '~src/util/formatedBalance';
+import userProfileBalances from '~src/util/userProfieBalances';
 
 interface Props {
 	address: string;
@@ -22,12 +26,30 @@ interface Props {
 
 const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, classname }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
+	const [transferableBalance, setTransferableBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
+	const [lockBalance, setLockBalance] = useState<string>('0');
 	const { network } = useContext(NetworkContext);
 	const { postData } = usePostDataContext();
-
+	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
+
+	useEffect(() => {
+		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address, api, apiReady]);
+
+	useEffect(() => {
+
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
@@ -98,7 +120,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 
 	return (
 		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
-      Available: <HelperTooltip text={}/><span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+	Available<HelperTooltip className="mx-1" text={<div className=""><span>Transferable Balance: {formatedBalance(transferableBalance, unit)} {unit}</span><br/><span>Locked Balance: {lockBalance} {unit}</span></div>}/>: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);
 };

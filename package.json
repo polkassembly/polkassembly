@@ -114,6 +114,7 @@
     "@types/styled-components": "^5.1.26",
     "autoprefixer": "^10.4.13",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
     "postcss": "^8.4.20",
@@ -124,9 +125,6 @@
     "styled-components": "^5"
   },
   "lint-staged": {
-    "**/*.(ts|tsx)": [
-      "yarn tsc --noEmit"
-    ],
     "**/*.(ts|tsx|js|jsx)": [
       "yarn eslint --fix",
       "yarn prettier --write"

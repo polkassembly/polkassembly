@@ -104,7 +104,10 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		if(!txFeeVal){
 			txFeeVal = txFee;
 		}
-		if(!api || !apiReady ||(!okAll && !initialLoading) || !form.getFieldValue('displayName')) return;
+		if(!api || !apiReady ||(!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email') || !form.getFieldValue('twitter')) {
+			setTxFee({ ...txFeeVal, gasFee: ZERO_BN  });
+			return;
+		}
 
 		setLoading(true);
 
@@ -142,7 +145,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				twitter: { [(okTwitter && twitterVal.length > 0 )? 'raw' : 'none']: (okTwitter && twitterVal.length > 0) ? twitterVal : null }
 				// web: { [(okWeb && (webVal).length > 0) ? 'raw' : 'none']: (okWeb && (webVal).length > 0) ? (webVal) : null }
 			},
-			okAll: okDisplay && okEmail && okLegal && okTwitter && (displayNameVal?.length > 1) && (emailVal || twitterVal)
+			okAll: okDisplay && okEmail && okLegal && okTwitter && (displayNameVal?.length > 1) && (emailVal && twitterVal)
 		});
 		const okSocialsBN = new BN((okSocials - 1) || BN_ONE);
 		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
@@ -298,7 +301,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				<div className='flex items-center mt-1  '>
 					<span className='flex gap-2 items-center w-[150px] mb-6' >
 						<EmailIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
-						<span className='text-sm text-lightBlue'>Email</span>
+						<span className='text-sm text-lightBlue'>Email<span className='text-[#FF3C5F] ml-1'>*</span></span>
 					</span>
 					<Form.Item name='email' className='w-full'  rules={[{
 						message: 'Invalid email address',
@@ -327,7 +330,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 				<div className='flex items-center mt-1'>
 					<span className='flex gap-2 items-center w-[150px] mb-6'>
 						<TwitterIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
-						<span className='text-sm text-lightBlue'>Twitter</span></span>
+						<span className='text-sm text-lightBlue'>Twitter<span className='text-[#FF3C5F] ml-1'>*</span></span></span>
 					<Form.Item name='twitter' className='w-full' rules={[{
 						message: 'Invalid twitter username',
 						validator(rule, value, callback) {

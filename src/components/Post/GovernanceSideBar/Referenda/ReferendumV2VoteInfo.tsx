@@ -360,7 +360,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							<div>
 								<Container className='flex  border-[#D2D8E0]'>
 									<button
-										className='absolute right-[20px] top-[50px] mt-3 cursor-pointer border-0 bg-white'
+										className='absolute right-[20px] top-[50px] mt-7 cursor-pointer border-0 bg-white'
 										onClick={() => setThresholdOpen(true)}
 									>
 										<GraphExpandIcon />

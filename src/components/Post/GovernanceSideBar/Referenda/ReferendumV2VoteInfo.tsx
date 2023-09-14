@@ -21,6 +21,10 @@ import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import ThresholdGraph from '../Modal/VoteData/ThresholdGraph';
 import GraphExpandIcon from '~assets/graph-expand.svg';
+import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
+import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
+import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
+import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -353,20 +357,54 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					</div>
 					<div className='mt-10'>
 						{thresholdData && (
-							<Container className='flex  border-[#D2D8E0]'>
-								<button
-									className='absolute right-[20px] top-[50px] mt-3 cursor-pointer border-0 bg-white'
-									onClick={() => setThresholdOpen(true)}
-								>
-									<GraphExpandIcon />
-								</button>
-								<ThresholdGraph
-									{...thresholdData}
-									// thresholdOpen={thresholdOpen}
-									setThresholdOpen={setThresholdOpen}
-									forGovSidebar={true}
-								/>
-							</Container>
+							<div>
+								<Container className='flex  border-[#D2D8E0]'>
+									<button
+										className='absolute right-[20px] top-[50px] mt-3 cursor-pointer border-0 bg-white'
+										onClick={() => setThresholdOpen(true)}
+									>
+										<GraphExpandIcon />
+									</button>
+									<ThresholdGraph
+										{...thresholdData}
+										// thresholdOpen={thresholdOpen}
+										setThresholdOpen={setThresholdOpen}
+										forGovSidebar={true}
+									/>
+								</Container>
+								<div className='mt-4 flex justify-center gap-x-5'>
+									<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+										{' '}
+										<span>
+											<AyeApprovalIcon />
+										</span>{' '}
+										Current Approval
+									</span>
+									<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+										{' '}
+										<span>
+											<NayApprovalIcon />
+										</span>
+										Current Support
+									</span>
+								</div>
+								<div className='mt-4 flex'>
+									<span className='ml-9 flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+										{' '}
+										<span>
+											<AyeThresholdIcon />
+										</span>
+										Threshold
+									</span>
+									<span className='ml-16 flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+										{' '}
+										<span>
+											<NayThresholdIcon />
+										</span>
+										Threshold
+									</span>
+								</div>
+							</div>
 						)}
 					</div>
 				</GovSidebarCard>

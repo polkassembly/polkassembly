@@ -88,6 +88,9 @@ query ConvictionVotesListingByTypeAndIndex(
       limit: 1) {
       delegatedVotes(limit: $limit, orderBy: votingPower_DESC, offset: $offset, where:{
         decision_eq: $decision
+        delegatedTo:{
+          removedAtBlock_isNull: true
+        }
       }) {
         decision
         lockPeriod
@@ -115,7 +118,7 @@ query ConvictionVotesListingByTypeAndIndex(
         removedAtBlock_isNull: true,
           delegatedTo:{
             voter_eq: $voter_eq,
-            removedAt_isNull: true
+            removedAtBlock_isNull: true
           }
       }) {
       totalCount
@@ -270,7 +273,7 @@ query ConvictionDelegatedVotesCountAndBalance(
         decision_eq: $decision,
         proposalIndex_eq: $index_eq,
         removedAtBlock_isNull: true,
-         voter_eq: $voter_eq,
+        voter_eq: $voter_eq,
       }) {
     delegatedVotes {
       lockPeriod
@@ -293,7 +296,7 @@ query ConvictionDelegatedVotesCountAndBalance(
         removedAtBlock_isNull: true,
           delegatedTo:{
             voter_eq: $voter_eq,
-            removedAt_isNull: true
+            removedAtBlock_isNull: true
           }
       }) {
       totalCount

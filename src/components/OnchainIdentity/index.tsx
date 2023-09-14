@@ -251,13 +251,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [txFee, step]);
 
-	const handleIdentityButtonClick = () => {
-		if (address?.length) {
-			setOpen(!open);
-		} else {
-			openAddressModal ? openAddressModal?.(true) : setOpenAddressLinkedModal(true);
-		}
-	};
 	const handleConfirm = (address: string) => {
 		setOpen(true);
 		openAddressModal ? openAddressModal?.(false) : setOpenAddressLinkedModal(false);
@@ -267,21 +260,17 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 
 	return (
 		<>
-			<div
-				onClick={handleIdentityButtonClick}
-				className='flex items-center gap-x-2 font-medium text-navBlue hover:text-pink_primary'
-			>
-				Set on-chain identity
-			</div>
-			<AddressConnectModal
-				closable
-				open={addressModal ? addressModal : openAddressLinkedModal}
-				setOpen={openAddressModal ? openAddressModal : setOpenAddressLinkedModal}
-				walletAlertTitle='On chain identity.'
-				localStorageWalletKeyName='identityWallet'
-				localStorageAddressKeyName='identityAddress'
-				onConfirm={(address: string) => handleConfirm(address)}
-			/>
+			{(addressModal ? addressModal : openAddressLinkedModal) && (
+				<AddressConnectModal
+					closable
+					open={addressModal ? addressModal : openAddressLinkedModal}
+					setOpen={openAddressModal ? openAddressModal : setOpenAddressLinkedModal}
+					walletAlertTitle='On chain identity.'
+					localStorageWalletKeyName='identityWallet'
+					localStorageAddressKeyName='identityAddress'
+					onConfirm={(address: string) => handleConfirm(address)}
+				/>
+			)}
 			<Modal
 				maskClosable={false}
 				open={isExitModal}

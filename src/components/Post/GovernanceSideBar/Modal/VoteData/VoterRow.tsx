@@ -65,7 +65,6 @@ const StyledCollapse = styled(Collapse)`
 `;
 
 const getPercentage =(userVotes:string, totalVotes:string) => {
-	console.log(totalVotes, userVotes);
 	if(!totalVotes){
 		return;
 	}

@@ -232,7 +232,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									options={decisionOptions}
 								/>
 							</div>
-							<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-auto'>
+							<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-auto sm:overflow-x-auto'>
 								<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
 									<div
 										className={`${

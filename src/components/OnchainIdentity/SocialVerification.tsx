@@ -8,7 +8,7 @@ import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { ESetIdentitySteps, ISocials } from '.';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus, VerificationStatus } from '~src/types';
+import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
 import { IVerificationResponse } from 'pages/api/v1/verification';
 import BN from 'bn.js';
 import { useEffect, useState } from 'react';
@@ -43,12 +43,6 @@ interface IJudgementResponse {
 	message?: string;
 	hash?: string;
 }
-export enum ESocials {
-	EMAIL = 'email',
-	RIOT = 'riot',
-	TWITTER = 'twitter',
-	WEB = 'web'
-}
 
 const SocialsLayout = ({ title, description, value, onVerify, verified, status, loading, fieldName }: ISocialLayout) => {
 	return <Spin spinning={loading} className='-mt-4'>
@@ -60,7 +54,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 					{verified ? <span className='flex gap-2 items-center justify-center text-xs text-[#8d99a9]'><VerifiedTick/>Verified</span> :<Button
 						onClick={onVerify}
 						className={`bg-pink_primary border-none text-xs font-medium text-white h-[30px] tracking-wide rounded-[4px] ${[VerificationStatus.VERFICATION_EMAIL_SENT, VerificationStatus.PLEASE_VERIFY_TWITTER]?.includes(status as VerificationStatus) ? 'w-[120px]': 'w-[68px]'}`}
-					>{(status === VerificationStatus.VERFICATION_EMAIL_SENT || (fieldName === ESocials.TWITTER && status === VerificationStatus.PLEASE_VERIFY_TWITTER)) ? 'Check Verified' : 'Verify'}
+					>{(status === VerificationStatus.VERFICATION_EMAIL_SENT || (fieldName === ESocials.TWITTER && status === VerificationStatus.PLEASE_VERIFY_TWITTER)) ? 'Confirm' : 'Verify'}
 					</Button>}
 				</div>
 				{!verified  && <span className='text-xs'>{description}</span>}
@@ -107,7 +101,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			{
 				children: <SocialsLayout
 					title='Twitter'
-					description='Check your messages to verify your twitter username.'
+					description='Please login to Twitter to verify your email address.'
 					onVerify={handleTwitterVerificationClick}
 					value={twitter?.value}
 					verified={twitter?.verified}
@@ -219,7 +213,11 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 
 	const handleJudgement = async() => {
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IJudgementResponse>(`api/v1/verification/judgement-call?identityHash=${identityHash}&userAddress=${address}`);
+		const { data, error } = await nextApiClientFetch<IJudgementResponse>('api/v1/verification/judgement-call',{
+			identityHash,
+			userAddress: address
+		});
+
 		if(data){
 			const { data: apiData, error: err } = await nextApiClientFetch('api/v1/verification/onchain-identity-via-polkassembly');
 			if(apiData){

@@ -10,7 +10,7 @@ import SuccessIcon from '~assets/icons/identity-success.svg';
 import { NetworkContext } from '~src/context/NetworkContext';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
-import { ESocials } from './SocialVerification';
+import { ESocials } from '~src/types';
 
 interface Props{
  className?: string;

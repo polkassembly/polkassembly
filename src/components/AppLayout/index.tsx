@@ -77,7 +77,7 @@ function getSiderMenuItem(
 	} as MenuItem;
 }
 
-export const onchainIdentitySupportedNetwork:Array<string> = [];
+export const onchainIdentitySupportedNetwork:Array<string> = [AllNetworks.POLKADOT];
 
 const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network: string, img?: string | null, username?: string, className?:string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
@@ -177,6 +177,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
@@ -448,7 +449,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	};
 
-	const userDropdown = getUserDropDown( handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
+	const userDropdown = getUserDropDown( handleIdentityButtonClick, handleLogout,network ,picture, username! , `${className} ${poppins.className} ${poppins.variable}`);
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
@@ -525,6 +526,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</Layout>
 				}
 			</Layout>
+			{ onchainIdentitySupportedNetwork.includes(network) && <OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>}
 			<Footer />
 			<Modal
 				open={identityMobileModal}
@@ -537,12 +539,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				</span>
 				}
 			>
-				<div className='flex items-center text-center flex-col gap-6 p-4'>
+				<div className='flex items-center text-center flex-col gap-6 py-4'>
 					<DelegationDashboardEmptyState/>
 					<span>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
-			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
 		</Layout>
 	);
 };

@@ -606,7 +606,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				</>
 				}
 				{ isPreimage === false && <>
-					{ (txFee.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`} showIcon message='Insufficient available balance.'/>}
+					{ (txFee.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='error' className={`mt-6 rounded-[4px] h-10 text-bodyBlue ${poppins.variable} ${poppins.className}`} showIcon message='Insufficient available balance.'/>}
 					<div className='mt-6'>
 						<div className='flex justify-between items-center mt-6 text-lightBlue'>
                 Proposer Address<span>

@@ -212,7 +212,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`create-proposal ${className}`}>
-			{ (submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
+			{ (submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='error' className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
 			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-4 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
 				<div className='mt-4 flex flex-col gap-2'>

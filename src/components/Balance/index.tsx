@@ -14,7 +14,6 @@ import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
-import userProfileBalances from '~src/util/userProfieBalances';
 
 interface Props {
 	address: string;
@@ -23,25 +22,22 @@ interface Props {
 	setAvailableBalance?: (pre: string) => void;
 	classname?: string
 }
-
+const ZERO_BN = new BN(0);
 const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, classname }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
-	const [lockBalance, setLockBalance] = useState<string>('0');
+	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const { network } = useContext(NetworkContext);
 	const { postData } = usePostDataContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
-	userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance });
-
 	useEffect(() => {
-
 		if(!network) return ;
 		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol
+			decimals: chainProperties[network]?.tokenDecimals,
+			unit: chainProperties[network]?.tokenSymbol
 		});
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,18 +58,18 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 		else if(['equilibrium'].includes(network)){
 			api.query.system.account(address)
 				.then((result: any) => {
+					const locked = new BN(result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '')) ;
 					if(isReferendum){
 						setBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 						setAvailableBalance &&	setAvailableBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 						onChange && onChange(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 					}
 					else{
-						const locked = result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '') || '0';
 						const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
-						if(new BN(positive).cmp(new BN(locked))){
-							setBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
-							setAvailableBalance &&	setAvailableBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
-							onChange && onChange((new BN(positive).sub(new BN(locked))).toString() || '0');
+						if(new BN(positive).cmp(locked)){
+							setBalance((new BN(positive).sub(locked)).toString() || '0');
+							setAvailableBalance &&	setAvailableBalance((new BN(positive).sub(locked)).toString() || '0');
+							onChange && onChange((new BN(positive).sub(locked)).toString() || '0');
 						}
 						else{
 							setBalance(positive);
@@ -81,6 +77,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 							onChange && onChange(positive);
 						}
 					}
+					setLockBalance(locked);
 				}).catch(e => console.error(e));
 		}
 		else{
@@ -88,6 +85,8 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 				.then((result: any) => {
 					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
 					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
+					const locked =  new BN(result.data?.frozen?.toBigInt().toString());
+					console.log(locked.toString());
 					if(isReferendum){
 						setBalance(result.data?.free?.toString() || '0');
 						setAvailableBalance &&	setAvailableBalance(result.data?.free?.toString() || '0');
@@ -108,6 +107,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 						setAvailableBalance && setAvailableBalance('0');
 						onChange && onChange('0');
 					}
+					setLockBalance(locked);
 				})
 				.catch(e => console.error(e));
 		}
@@ -117,11 +117,11 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	return (
 		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
 			<span>Free Balance</span>
-			<HelperTooltip placement='topRight' className="mx-1" text=
+			<HelperTooltip className="mx-1" text=
 				{
 					<div>
-						<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 0, withUnit: true }, network)}</span><br/>
-						<span>Locked Balance: {formatedBalance(lockBalance, unit, 2)} {unit}</span>
+						<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span><br/>
+						<span>Locked Balance: {formatedBalance(lockBalance.toString(), unit, 2)} {unit}</span>
 					</div>
 				}
 			/>

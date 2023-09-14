@@ -270,7 +270,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							}
 						</>}
 					</div>
-					{ availableBalance.lte(amount) && accounts.length > 0 && <Alert showIcon type='info' className='text-sm text-bodyBlue rounded-[4px] mb-4' message='Insufficient available balance.'/>}
+					{ availableBalance.lte(amount) && accounts.length > 0 && <Alert showIcon type='error' className='text-sm text-bodyBlue rounded-[4px] mb-4 h-10' message='Insufficient available balance.'/>}
 
 					{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='For paying decision deposite:' description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
 					{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}

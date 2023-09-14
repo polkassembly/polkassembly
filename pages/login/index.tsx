@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:Props) => {
 	const { setNetwork } = useNetworkContext();
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 
@@ -87,7 +87,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (
-						<Web2Login theme={resolvedTheme} isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} setWithPolkasafe={setWithPolkasafe}/>
+						<Web2Login theme={theme} isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} setWithPolkasafe={setWithPolkasafe}/>
 					) : null}
 
 					{

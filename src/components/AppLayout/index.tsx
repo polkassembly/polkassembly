@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, MenuTheme, Modal, Skeleton } from 'antd';
+import { Avatar, Drawer, Dropdown, Layout, Menu as AntdMenu, MenuProps, MenuTheme, Modal, Skeleton } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -16,7 +16,6 @@ import { getLocalStorageToken, logout } from 'src/services/auth.service';
 import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon, RootIcon, UpgradeCommitteePIPsIcon, CommunityPIPsIcon, ApplayoutIdentityIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
-import { useTheme } from 'next-themes';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -35,6 +34,7 @@ import { poppins } from 'pages/_app';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
+import { useTheme } from 'next-themes';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),{
 	loading: () => <Skeleton.Button active />,
@@ -43,6 +43,23 @@ const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
+
+const Menu = styled(AntdMenu)`
+.ant-menu-sub.ant-menu-inline {
+	background: ${(props) => {
+		console.log(props);
+		return props.theme==='dark' ? '#0D0D0D' : '#fff';
+	}} !important; 
+}
+
+.ant-menu-item-selected {
+	background: ${(props) => props.theme === 'dark' ? 'none' : '#fff'} !important; 
+	.ant-menu-title-content {
+		color: var(--pink_primary) !important;
+	}
+}
+
+`;
 
 function getSiderMenuItem(
 	label: React.ReactNode,
@@ -132,17 +149,14 @@ interface Props {
 	Component: NextComponentType<NextPageContext, any, any>;
 	pageProps: any;
 	className?: string;
-	theme?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const AppLayout = ({ className, Component, pageProps, theme }: Props) => {
+const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mounted, setMounted] = useState(false);
-	const { resolvedTheme } = useTheme();
-	console.log('theme', resolvedTheme);
-	console.log('themeeeeeeeee', theme);
 	useEffect(() => setMounted(true),[]);
 	const { network } = useNetworkContext();
+	const { resolvedTheme:theme }= useTheme();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
@@ -448,7 +462,7 @@ const AppLayout = ({ className, Component, pageProps, theme }: Props) => {
 
 	return (
 		//@ts-ignore
-		<Layout className={className} dark={resolvedTheme}>
+		<Layout className={className} theme={theme}>
 			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
 			<Layout hasSider>
 				<Sider
@@ -460,7 +474,7 @@ const AppLayout = ({ className, Component, pageProps, theme }: Props) => {
 					className={'hidden overflow-y-hidden sidebar bg-white dark:bg-section-dark-overlay lg:block bottom-0 left-0 h-screen fixed z-40'}
 				>
 					<Menu
-						theme={resolvedTheme as MenuTheme}
+						theme={theme}
 						mode="inline"
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
@@ -484,7 +498,7 @@ const AppLayout = ({ className, Component, pageProps, theme }: Props) => {
 					className='bg-white dark:bg-section-dark-overlay'
 				>
 					<Menu
-						theme="light"
+						theme={theme}
 						mode="inline"
 						selectedKeys={[router.pathname]}
 						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
@@ -576,15 +590,6 @@ opacity:1 !important;
 margin-top: -17px !important; 
 }
 
-
-.ant-menu-item-selected {
-	background: ${(props:any) => props.light ? 'none' : '#fff'} !important; 
-
-	.ant-menu-title-content {
-		color: var(--pink_primary) !important;
-	}
-}
-
 .ant-menu-title-content:hover {
 	color: var(--pink_primary) !important;
 }
@@ -594,7 +599,7 @@ margin-top: -17px !important;
 }
 
 .ant-menu-title-content {
-	color: ${props => props.theme===undefined ? '#909090' : '#485F7D'} !important;
+	color: ${props => props.theme==='dark' ? '#909090' : '#485F7D'} !important;
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 21px;

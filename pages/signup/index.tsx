@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:Props) => {
 	const { setNetwork } = useNetworkContext();
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +81,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{ displayWeb === 2
-						? <Web2Signup theme={resolvedTheme} isDelegation={isDelegation} isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} onWalletSelect={onWalletSelect} walletError={walletError}  setWithPolkasafe={setWithPolkasafe}/> : null}
+						? <Web2Signup theme={theme} isDelegation={isDelegation} isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} onWalletSelect={onWalletSelect} walletError={walletError}  setWithPolkasafe={setWithPolkasafe}/> : null}
 
 					{
 						displayWeb === 3 && chosenWallet && <>

@@ -46,7 +46,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 
 	const [form] = Form.useForm();
 	const [replyToreplyForm] = Form.useForm();
@@ -358,7 +358,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						</Form>
 						:
 						<>
-							<Markdown theme={resolvedTheme} md={content} className='py-2 px-2 md:px-4 bg-[#EBF0F5] dark:bg-section-dark-container rounded-b-md text-sm' />
+							<Markdown theme={theme} md={content} className='py-2 px-2 md:px-4 bg-[#EBF0F5] dark:bg-section-dark-container rounded-b-md text-sm' />
 							<div className='flex items-center flex-wrap gap-x-3 dark:bg-transparent'>
 								{isEditable &&
 									<Button className={'text-pink_primary flex items-center border-none shadow-none'} disabled={loading} onClick={toggleEdit}>

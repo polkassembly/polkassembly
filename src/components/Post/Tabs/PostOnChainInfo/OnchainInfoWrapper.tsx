@@ -19,7 +19,7 @@ const OnchainInfoWrapper = ({ children, className, theme }: Props) => {
 };
 
 export default styled(OnchainInfoWrapper)`
-    //if resolvedTheme is dark, then use black, else use white
+    //if theme is dark, then use black, else use white
 	background-color: ${props => props.theme === 'dark' ? 'black' : 'white'};
 	font-size: sm;
 	overflow-wrap: break-word;

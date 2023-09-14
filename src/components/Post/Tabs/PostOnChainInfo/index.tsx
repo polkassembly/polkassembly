@@ -104,7 +104,7 @@ export const getBlockNumber = (statusHistory?: {
 
 const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	const { network } = useNetworkContext();
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 	const { className, onChainInfo, proposalType } = props;
 	const currentBlock = useCurrentBlock();
 	if (!onChainInfo) return null;
@@ -129,7 +129,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	return (
 		<>
 			<div className={`${className} mt-4`}>
-				<OnchainInfoWrapper theme={resolvedTheme}>
+				<OnchainInfoWrapper theme={theme}>
 					<h5 className='mb-5 font-bold text-base'>Metadata</h5>
 					<ul className='list-none flex flex-col gap-y-2'>
 						{submitted_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>

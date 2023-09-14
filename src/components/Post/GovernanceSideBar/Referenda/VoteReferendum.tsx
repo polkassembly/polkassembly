@@ -850,13 +850,12 @@ export default styled(VoteReferendum)`
 	width: 100%;
 }
 .ant-modal .ant-modal-content{
-	background: #0D0D0D !important;
+	background:  ${(props) => props.theme === 'dark'? '#0D0D0D' : '' } !important;
 }
 
 .ant-segmented-item-label{
-	background: #0D0D0D !important;
+	background: ${(props) => props.theme === 'dark'? '#0D0D0D' : '' } !important;
 }
-
 .vote-form-cont {
 	padding: 12px;
 }
@@ -884,8 +883,8 @@ export default styled(VoteReferendum)`
 	background: transparent !important;
 }
 .dFWeFa .suffixColor .ant-input{
-	background: transparent !important;
-	color: white !important;
+	background: ${(props) => props.theme === 'dark'? 'transparent' : 'white' } !important;
+	color: ${(props) => props.theme === 'dark'? 'white' : '#243A57' } !important
 }
 .vote-referendum .ant-input-number-in-from-item{
 	height: 39.85px !important;

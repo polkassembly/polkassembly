@@ -87,7 +87,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const { postData: { postType, timeline, created_at } } = usePostDataContext();
 	const targetOffset = 10;
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 	const {
 		comments,
 		setComments,
@@ -348,7 +348,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>}
 					{
 						<RefendaLoginPrompts
-							theme={resolvedTheme}
+							theme={theme}
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
 							image="/assets/post-comment.png"

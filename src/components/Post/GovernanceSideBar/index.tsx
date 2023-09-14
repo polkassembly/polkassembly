@@ -132,7 +132,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
 	const { postData: { created_at, track_number, post_link, statusHistory } } = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -856,7 +856,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-blue-light-high dark:text-blue-dark-high font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
-															theme={resolvedTheme}
+															theme={theme}
 															address={address}
 															lastVote={lastVote}
 															setLastVote={setLastVote}

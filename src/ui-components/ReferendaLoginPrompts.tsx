@@ -21,10 +21,9 @@ interface Props {
 	theme?:string;
 }
 
-const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen, className, theme }:Props ) => {
+const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen, className }:Props ) => {
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-	console.log(theme);
 	const handleClick=(path:String) => {
 		if(path === 'login'){
 			setLoginOpen(true);
@@ -64,7 +63,7 @@ export default styled(ReferendaLoginPrompts)`
 .text .ant-modal-content{
   color: var(--bodyBlue)  !important;
   border-radius: 4px !important;
-  background: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
+  background: ${props => props.theme == 'dark' ? '#0D0D0D' : 'white'} !important;
 }
 
 

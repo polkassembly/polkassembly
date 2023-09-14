@@ -37,7 +37,7 @@ interface IDiscussionPostProps {
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	const { post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -52,7 +52,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 		<BackToListingView postCategory={PostCategory.DISCUSSION} />
 
 		<div className='mt-6' >
-			<Post post={post} theme={resolvedTheme} proposalType={ProposalType.DISCUSSIONS} />
+			<Post post={post} theme={theme} proposalType={ProposalType.DISCUSSIONS} />
 		</div>
 	</>);
 

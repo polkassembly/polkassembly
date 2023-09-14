@@ -42,7 +42,7 @@ interface IReferendaPostProps {
 }
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 	const { post, error, network , status } = props;
 	const { setNetwork } = useNetworkContext();
 	const router = useRouter();
@@ -86,7 +86,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 			{trackName && <BackToListingView trackName={trackName} />}
 
 			<div className='mt-6'>
-				<Post post={post} trackName={trackName === 'Root' ? 'root' : trackName} proposalType={proposalType} theme={resolvedTheme} />
+				<Post post={post} trackName={trackName === 'Root' ? 'root' : trackName} proposalType={proposalType} theme={theme} />
 			</div>
 		</>;
 	}

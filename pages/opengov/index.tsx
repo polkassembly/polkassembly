@@ -112,7 +112,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	const { setNetwork } = useNetworkContext();
 	// const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
 	// const [floatButtonOpen , setFloatButtonOpen] = useState(false);
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const { id: userId } = useUserDetailsContext();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
@@ -165,7 +165,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 			</div>
 
 			<div className="mt-8 mx-1">
-				<Gov2LatestActivity theme={resolvedTheme} gov2LatestPosts={gov2LatestPosts} />
+				<Gov2LatestActivity theme={theme} gov2LatestPosts={gov2LatestPosts} />
 			</div>
 
 			<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">

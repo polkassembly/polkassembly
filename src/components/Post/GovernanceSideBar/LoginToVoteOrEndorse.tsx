@@ -14,7 +14,7 @@ interface ILoginToVoteOrEndorseProps {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LoginToVoteOrEndorse: FC<ILoginToVoteOrEndorseProps> = (props) => {
 	const [modalOpen,setModalOpen]=useState<boolean>(false);
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 	return (
 		<div>
 			<Button
@@ -26,7 +26,7 @@ const LoginToVoteOrEndorse: FC<ILoginToVoteOrEndorseProps> = (props) => {
 				Cast Vote
 			</Button>
 			<ReferendaLoginPrompts
-				theme={resolvedTheme}
+				theme={theme}
 				modalOpen={modalOpen}
 				setModalOpen={setModalOpen}
 				image="/assets/referenda-vote.png"

@@ -184,7 +184,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const router = useRouter();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
 	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(Boolean(router.query.identityVerification) || false);
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme:theme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 		if (!api || !apiReady) return;
@@ -247,13 +247,13 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				<div className="mt-8 mx-1">
 					{
 						network !== AllNetworks.COLLECTIVES?
-							<LatestActivity latestPosts={latestPosts} theme={resolvedTheme} />
+							<LatestActivity latestPosts={latestPosts} theme={theme} />
 							: <Gov2LatestActivity gov2LatestPosts={{
 								allGov2Posts: latestPosts.all,
 								discussionPosts: latestPosts.discussions,
 								...latestPosts
 							}}
-							theme={resolvedTheme}
+							theme={theme}
 							/>
 					}
 				</div>

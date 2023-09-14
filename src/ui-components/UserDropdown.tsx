@@ -9,7 +9,7 @@ import { ApiContext } from 'src/context/ApiContext';
 import styled from 'styled-components';
 import {  Avatar } from 'antd';
 
-import { useNetworkContext } from '~src/context';
+import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -54,14 +54,15 @@ interface Props {
 	isSimpleDropdown?: boolean;
 }
 
-const UserDropdown = ({ address, className, displayInline, disableAddress, disableAddressClick, addressClassName, clickable=true , otherTextType, otherTextClassName, passedUsername = '', isVoterAddress }: Props): JSX.Element => {
+const UserDropdown = ({ address, className, displayInline, disableAddress, disableAddressClick, addressClassName, clickable=true , otherTextType, otherTextClassName, isVoterAddress }: Props): JSX.Element => {
 
 	const { network } = useNetworkContext();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);
-	const [username, setUsername] = useState(passedUsername);
+	// const [username, setUsername] = useState(passedUsername);
 	const[img, setImg] = useState<string>('');
+	const { username } = useUserDetailsContext();
 
 	useEffect(() => {
 		if (network === AllNetworks.COLLECTIVES && (apiContext.relayApi && apiContext.relayApiReady)) {
@@ -89,7 +90,7 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 				}
 
 				console.log(data);
-				setUsername(data.username);
+				// setUsername(data.username);
 				setImg(data?.profile?.image || '');
 				if(isOnclick){
 					return;

@@ -384,7 +384,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 								</div>
 							</div>
 
-							{balanceErr.length > 0 && ![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) && wallet && <Alert type='error' message={balanceErr} showIcon className='mb-4 rounded-1 h-10'/>}
+							{balanceErr.length > 0 && ![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) && wallet && <Alert type='error' message={balanceErr} showIcon className='mb-4 rounded-[4px] h-10'/>}
 							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
 							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 							{

@@ -12,8 +12,8 @@ import { ESetIdentitySteps, ITxFee } from '.';
 import { Button } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import DownArrowIcon from '~assets/icons/down-arrow.svg';
-import IdentityIllustration from '~assets/icons/identity.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 
 interface Props{
   className?: string;
@@ -50,8 +50,8 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 	},[network, userId]);
 
 	return <div className={className}>
-		<span className='flex justify-center items-center mt-6'><IdentityIllustration/></span>
-		<ul className='text-sm text-bodyBlue mt-6 pl-4 flex flex-col gap-2 tracking-[0.001em]'>
+		<span className='flex justify-center items-center text-[350px] -mt-6'><AmountBreakdownModalIcon/></span>
+		<ul className='text-sm text-bodyBlue -mt-7 pl-4 flex flex-col gap-2 tracking-[0.001em]'>
 			<li>Polkadot offers on-chain identities that verify users&apos;s credentials through appointed registrars, instilling greater trust and support. </li>
 			<li>
             Once successfully verified, users receive a green checkmark, symbolising their trusted status. This verified status symbol enhances trustworthiness when requesting funds from the treasury or participating in discussions and proposals.

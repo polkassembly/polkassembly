@@ -329,7 +329,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						thresholdData
 						&& <Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
 							{
-								thresholdData.progress.approval > 50 ?
+								thresholdData.progress.approval >= thresholdData.progress.approvalThreshold.toFixed(1) &&
+								thresholdData.progress.support >= thresholdData.progress.supportThreshold.toFixed(1) ?
 									<p className='flex row gap-1 text-sm font-medium m-0'>
 										<span>
 											<ChartIcon />

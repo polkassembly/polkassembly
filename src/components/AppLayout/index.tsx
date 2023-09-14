@@ -185,7 +185,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 		let unsubscribe: () => void;
 		const address = localStorage.getItem('loginAddress');
-		const encoded_addr = address ? getEncodedAddress(address, network) : '';
+		const encoded_addr = address ? getEncodedAddress('13NbFWcsx6KhTxVg88ZZSvq2ig5qW3UaQQ6MTXpYbszir4om', network) : '';
 
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
 

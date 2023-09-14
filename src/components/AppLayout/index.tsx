@@ -498,8 +498,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</Layout>
 				}
 			</Layout>
-			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
-
+			{ onchainIdentitySupportedNetwork.includes(network) && <OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>}
 			<Footer />
 			<Modal
 				open={identityMobileModal}

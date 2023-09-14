@@ -500,10 +500,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						)}
 						{balanceErr.length > 0 && wallet && (
 							<Alert
-								type='info'
+								type='error'
 								message={balanceErr}
 								showIcon
-								className='mb-4'
+								className='mb-4 rounded-[4px] h-10'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (

@@ -408,8 +408,8 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 						{availableBalance.lte(amount) && accounts.length > 0 && (
 							<Alert
 								showIcon
-								type='info'
-								className='mb-4 rounded-[4px] text-sm text-bodyBlue'
+								type='error'
+								className='mb-4 rounded-[4px] h-10 text-sm text-bodyBlue'
 								message='Insufficient available balance.'
 							/>
 						)}

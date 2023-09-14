@@ -245,8 +245,8 @@ const CreateProposal = ({
 			<div className={`create-proposal ${className}`}>
 				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
-						type='info'
-						className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+						type='error'
+						className={`mt-6 rounded-[4px] h-10 text-bodyBlue ${poppins.variable} ${poppins.className}`}
 						showIcon
 						message='Insufficient available balance.'
 					/>

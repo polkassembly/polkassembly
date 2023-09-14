@@ -415,7 +415,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							<div className='flex flex-col'>
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
-										className='mb-4 rounded-[4px]'
+										type="error"
+										className='mb-4 rounded-[4px] h-10'
 										showIcon
 										message='Insufficient balance'
 									/>

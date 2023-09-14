@@ -483,10 +483,10 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 
 								{balanceErr.length > 0 && ![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) && wallet && (
 									<Alert
-										type='info'
+										type='error'
 										message={balanceErr}
 										showIcon
-										className='mb-4'
+										className='mb-4 rounded-[4px] h-10'
 									/>
 								)}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (

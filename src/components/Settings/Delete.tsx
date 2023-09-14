@@ -20,10 +20,10 @@ import { Collapse } from './Notifications/common-ui/Collapse';
 import DeleteIcon from '~assets/icons/delete-icon-settings.svg';
 const { Panel } = Collapse;
 
-const Delete: FC<{className?: string}> = ({ className }) => {
+const Delete: FC<{ className?: string }> = ({ className }) => {
 	const [error, setError] = useState('');
 	const [showModal, setShowModal] = useState(false);
-	const [isOther,setIsOther] = useState(false);
+	const [isOther, setIsOther] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 	const { setUserDetailsContextState } = useUserDetailsContext();
@@ -34,11 +34,11 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 		router.replace('/');
 	};
 
-	const handleSubmit = async(formData: any) => {
+	const handleSubmit = async (formData: any) => {
 		if (formData?.password) {
 			setLoading(true);
 
-			const { data , error } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/deleteAccount', { password: formData?.password });
+			const { data, error } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteAccount', { password: formData?.password });
 			if (error) {
 				setError(cleanError(error));
 				queueNotification({
@@ -49,7 +49,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 				console.error('Delete account error', error);
 			}
 
-			if(data) handleLogout();
+			if (data) handleLogout();
 
 			setLoading(true);
 		}
@@ -63,7 +63,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 		setError('');
 		setShowModal(false);
 	};
-	const Title = <span className='font-medium text-lg tracking-wide text-sidebarBlue'>Delete Account</span>;
+	const Title = <span className='text-lg font-medium tracking-wide text-sidebarBlue'>Delete Account</span>;
 	const { Option } = Select;
 	return (
 		<Collapse
@@ -76,17 +76,19 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<DeleteIcon />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
-						Delete Account
-						</h3>
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Delete Account</h3>
 					</div>
 				}
 				key='1'
 			>
-				<Form className={className} form={form} onFinish={handleSubmit}>
-					<p className='text-[#243A57] text-[14px]'>Please note that this action is irreversible and all the data associated with your account will be permanently deleted.</p>
+				<Form
+					className={className}
+					form={form}
+					onFinish={handleSubmit}
+				>
+					<p className='text-[14px] text-[#243A57]'>Please note that this action is irreversible and all the data associated with your account will be permanently deleted.</p>
 					<Modal
 						closable={false}
 						title={Title}
@@ -94,109 +96,111 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 						footer={[
 							<Button
 								htmlType='submit'
-								key="delete"
+								key='delete'
 								onClick={() => {
 									form.submit();
 								}}
 								loading={loading}
-								className='rounded-lg font-semibold text-lg leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary'
+								className='inline-flex items-center justify-center rounded-lg border-none bg-pink_primary px-7 py-5 text-lg font-semibold leading-7 text-white outline-none'
 							>
-                            Delete
+								Delete
 							</Button>,
 							<Button
-								key="cancel"
+								key='cancel'
 								onClick={dismissModal}
-								className='rounded-lg font-semibold text-lg leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary'
+								className='inline-flex items-center justify-center rounded-lg border-none bg-pink_primary px-7 py-5 text-lg font-semibold leading-7 text-white outline-none'
 							>
-                            Cancel
+								Cancel
 							</Button>
 						]}
 						className={className}
 					>
-						{error && <div className='mb-4'><FilteredError text={error}/></div>}
+						{error && (
+							<div className='mb-4'>
+								<FilteredError text={error} />
+							</div>
+						)}
 						<article>
 							<label
-								className="text-sm text-sidebarBlue font-normal tracking-wide leading-6"
-								htmlFor="reason"
+								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+								htmlFor='reason'
 							>
-                            Why are you deleting your account?
+								Why are you deleting your account?
 							</label>
 							<Form.Item
-								name="reason"
+								name='reason'
 								className='m-0 mt-2.5'
 							>
 								<Select
 									onChange={(value) => {
-										if (value === 'other'){
+										if (value === 'other') {
 											setIsOther(true);
 										} else {
-											if (isOther){
+											if (isOther) {
 												setIsOther(false);
 											}
 										}
 									}}
 									size='large'
 									placeholder='Select a reason'
-									className='rounded-md border-grey_border select-reason'
+									className='select-reason rounded-md border-grey_border'
 								>
-									<Option value="I use another platform for my governance needs">
-                                I use another platform for my governance needs
-									</Option>
-									<Option value="I do not hold any DOT and would not be using Polkassembly anymore">
-                                I do not hold any DOT and would not be using Polkassembly.
-									</Option>
-									<Option value="I have a duplicate account">
-                                I have a duplicate account
-									</Option>
-									<Option htmlFor='other' value='other'>
-                                Other
+									<Option value='I use another platform for my governance needs'>I use another platform for my governance needs</Option>
+									<Option value='I do not hold any DOT and would not be using Polkassembly anymore'>I do not hold any DOT and would not be using Polkassembly.</Option>
+									<Option value='I have a duplicate account'>I have a duplicate account</Option>
+									<Option
+										htmlFor='other'
+										value='other'
+									>
+										Other
 									</Option>
 								</Select>
 							</Form.Item>
-							{
-								isOther ? (
-									<Form.Item
-										name='other'
-										className='mt-4'
-									>
-										<Input.TextArea
-											placeholder='Other reason'
-											id='other'
-										/>
-									</Form.Item>
-								): null
-							}
+							{isOther ? (
+								<Form.Item
+									name='other'
+									className='mt-4'
+								>
+									<Input.TextArea
+										placeholder='Other reason'
+										id='other'
+									/>
+								</Form.Item>
+							) : null}
 						</article>
 						<article className='mt-12'>
 							<label
-								className="text-sm text-sidebarBlue font-normal tracking-wide leading-6"
-								htmlFor="password"
+								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+								htmlFor='password'
 							>
-                            To continue, re-enter your password
+								To continue, re-enter your password
 							</label>
 							<Form.Item
-								name="password"
+								name='password'
 								className='m-0 mt-2.5'
 							>
 								<Input.Password
 									placeholder='Password'
-									className="rounded-md py-3 px-4 border-grey_border"
-									id="password"
+									className='rounded-md border-grey_border px-4 py-3'
+									id='password'
 								/>
 							</Form.Item>
-							<div className="text-right text-pink_primary my-2.5">
-								<Link onClick={dismissModal} href="/request-reset-password">
-                                Forgot Password?
+							<div className='my-2.5 text-right text-pink_primary'>
+								<Link
+									onClick={dismissModal}
+									href='/request-reset-password'
+								>
+									Forgot Password?
 								</Link>
 							</div>
 						</article>
 					</Modal>
 					<Button
 						onClick={openModal}
-						htmlType="submit"
-						className='mt-5 rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 flex items-center justify-center bg-[#F53C3C]'
+						htmlType='submit'
+						className='text-md mt-5 flex items-center justify-center rounded-lg border-none bg-[#F53C3C] px-7 py-5 font-semibold leading-7 text-white outline-none'
 					>
-				Delete My Account
+						Delete My Account
 					</Button>
 				</Form>
 			</Panel>
@@ -205,8 +209,8 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 };
 
 export default styled(Delete)`
-.ant-select-item-option-content {
-  white-space: unset !important;
-  background-color: red !important;
-}
+	.ant-select-item-option-content {
+		white-space: unset !important;
+		background-color: red !important;
+	}
 `;

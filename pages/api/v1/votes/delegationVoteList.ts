@@ -6,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import {  GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from './query';
+import { GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from './query';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IVotesResponse {
@@ -15,17 +15,11 @@ export interface IVotesResponse {
 }
 
 // expects optional id, page, voteType and listingLimit
-async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
-	const {
-		postId = 0,
-		page = 1,
-		listingLimit = VOTES_LISTING_LIMIT,
-		decision,
-		type,
-		voter } = req.query;
+async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
+	const { postId = 0, page = 1, listingLimit = VOTES_LISTING_LIMIT, decision, type, voter } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) {
+	if (!network || !isValidNetwork(network)) {
 		res.status(400).json({ error: 'Invalid network in request header' });
 	}
 

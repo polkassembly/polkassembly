@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import {  GET_DELEGATED_CONVICTION_VOTES_COUNT } from './query';
+import { GET_DELEGATED_CONVICTION_VOTES_COUNT } from './query';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IVotesResponse {
@@ -14,15 +14,11 @@ export interface IVotesResponse {
 }
 
 // expects optional id, page, voteType and listingLimit
-async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
-	const {
-		postId = 0,
-		decision,
-		type,
-		voter } = req.query;
+async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
+	const { postId = 0, decision, type, voter } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) {
+	if (!network || !isValidNetwork(network)) {
 		res.status(400).json({ error: 'Invalid network in request header' });
 	}
 
@@ -45,7 +41,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 	});
 
 	const subsquidData = result?.data;
-	const voteCapital = subsquidData?.convictionVotes?.[0]?.delegatedVotes.map((cap:any) => cap?.balance?.value).reduce((a:string,b:string) => Number(a)+Number(b),0);
+	const voteCapital = subsquidData?.convictionVotes?.[0]?.delegatedVotes.map((cap: any) => cap?.balance?.value).reduce((a: string, b: string) => Number(a) + Number(b), 0);
 	const resObj = {
 		count: subsquidData?.convictionDelegatedVotesConnection?.totalCount,
 		voteCapital

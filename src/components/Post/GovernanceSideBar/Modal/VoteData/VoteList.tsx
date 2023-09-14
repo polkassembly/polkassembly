@@ -2,13 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import {
-	DislikeFilled,
-	LeftOutlined,
-	LikeFilled,
-	MinusCircleFilled,
-	RightOutlined
-} from '@ant-design/icons';
+import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Divider, Modal as AntdModal, Pagination, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
@@ -36,29 +30,29 @@ import BN from 'bn.js';
 const ZERO = '0';
 
 const StyledSegmented = styled(Segmented)`
-  .ant-segmented-group > label {
-    border-radius: 20px !important;
-  }
+	.ant-segmented-group > label {
+		border-radius: 20px !important;
+	}
 `;
 
 const Container = styled.div`
-@media(max-width: 1024px) {
-    display: none !important;
-}
+	@media (max-width: 1024px) {
+		display: none !important;
+	}
 `;
 
 const Modal = styled(AntdModal)`
-.ant-modal-content{
-	padding-top:12px;
-}
+	.ant-modal-content {
+		padding-top: 12px;
+	}
 `;
 
 interface IVotersListProps {
-  className?: string;
-  referendumId: number;
-  voteType: VoteType;
-  thresholdData?: any;
-  tally:any
+	className?: string;
+	referendumId: number;
+	voteType: VoteType;
+	thresholdData?: any;
+	tally: any;
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -79,7 +73,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	const { className, referendumId, voteType, thresholdData, tally } = props;
-	const  { api, apiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: true,
@@ -90,14 +84,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
 
-	const [delegationVoteModal, setDelegationVoteModal] =useState<{isOpen: boolean, voter:string | null}>({ isOpen:false, voter: null });
+	const [delegationVoteModal, setDelegationVoteModal] = useState<{ isOpen: boolean; voter: string | null }>({ isOpen: false, voter: null });
 	const [activeKey, setActiveKey] = useState<any>(null);
-	const [orderBy, setOrderBy] = useState<{[key:string]:boolean}>(sortedCheck);
+	const [orderBy, setOrderBy] = useState<{ [key: string]: boolean }>(sortedCheck);
 	const [thresholdOpen, setThresholdOpen] = useState<boolean>(false);
 
 	const [tallyData, setTallyData] = useState({
-		abstain:ZERO,
-		ayes: ZERO ,
+		abstain: ZERO,
+		ayes: ZERO,
 		nays: ZERO
 	});
 
@@ -134,36 +128,41 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const onChange: PaginationProps['onChange'] = (page) => {
 		setCurrentPage(page);
 	};
-	const handleSortByClick = ({ key }: {key: string}) => {
+	const handleSortByClick = ({ key }: { key: string }) => {
 		setSortBy(key);
 	};
 
-	const getReferendumV2VoteInfo = useCallback(
-		async() => {
-			if( !api || !apiReady || !network ) return;
-			setLoadingStatus({ isLoading: true, message:'' });
-			(async () => {
-				const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
-				const parsedReferendumInfo: any = referendumInfoOf.toJSON();
-				if (parsedReferendumInfo?.ongoing?.tally) {
-					setTallyData({
-						abstain: typeof parsedReferendumInfo.ongoing.tally.abstain === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString() : new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
-						ayes: typeof parsedReferendumInfo.ongoing.tally.ayes === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString() : new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
-						nays: typeof parsedReferendumInfo.ongoing.tally.nays === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString() : new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
-					});
-				} else {
-					setTallyData({
-						abstain: new BN(tally?.abstain || 0, 'hex').toString(),
-						ayes: new BN(tally?.ayes || 0, 'hex').toString(),
-						nays: new BN(tally?.nays || 0, 'hex').toString()
-					});
-				}
-				setLoadingStatus({ isLoading: false, message:'' });
-			})();
-
-		},
-		[api, apiReady, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]
-	);
+	const getReferendumV2VoteInfo = useCallback(async () => {
+		if (!api || !apiReady || !network) return;
+		setLoadingStatus({ isLoading: true, message: '' });
+		(async () => {
+			const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
+			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
+			if (parsedReferendumInfo?.ongoing?.tally) {
+				setTallyData({
+					abstain:
+						typeof parsedReferendumInfo.ongoing.tally.abstain === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
+					ayes:
+						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
+					nays:
+						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
+				});
+			} else {
+				setTallyData({
+					abstain: new BN(tally?.abstain || 0, 'hex').toString(),
+					ayes: new BN(tally?.ayes || 0, 'hex').toString(),
+					nays: new BN(tally?.nays || 0, 'hex').toString()
+				});
+			}
+			setLoadingStatus({ isLoading: false, message: '' });
+		})();
+	}, [api, apiReady, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -217,12 +216,12 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex gap-6'>
-					<div className='md:overflow-visible flex flex-col justify-between'>
+					<div className='flex flex-col justify-between md:overflow-visible'>
 						<div className='w-[340px] sm:w-full'>
-							<div className='w-full flex items-center justify-center mb-8'>
+							<div className='mb-8 flex w-full items-center justify-center'>
 								<StyledSegmented
 									block
-									className='px-3 py-2 rounded-[30px] w-full'
+									className='w-full rounded-[30px] px-3 py-2'
 									size='large'
 									value={decision}
 									onChange={(value) => {
@@ -232,65 +231,51 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									options={decisionOptions}
 								/>
 							</div>
-							<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-auto sm:overflow-x-auto'>
-								<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
+							<div className='flex flex-col overflow-x-auto overflow-y-hidden px-0 text-xs text-sidebarBlue sm:overflow-y-auto'>
+								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
+									<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									<div
-										className={`${
-											isReferendum2 ? 'w-[190px]' : 'w-[250px]'
-										} text-lightBlue text-sm font-medium  ${decision === 'abstain' ? 'w-[220px]':''}`}
-									>
-									Voter
-									</div>
-									<div
-										className={`${
-											isReferendum2 ? 'w-[110px]' : 'w-[140px]'
-										} flex cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]':''}`}
+										className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
 											handleSortByClick({
-												key: orderBy.balanceIsAsc
-													? votesSortValues.BALANCE_ASC
-													: votesSortValues.BALANCE_DESC
+												key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
 											});
 											setOrderBy((prev) => ({ ...sortedCheck, balanceIsAsc: !prev.balanceIsAsc }));
 										}}
 									>
-									Amount
+										Amount
 										<ExpandIcon className={orderBy.balanceIsAsc ? 'rotate-180' : ''} />
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
-											className={`${
-												isReferendum2 ? 'w-[110px]' : 'w-[150px]'
-											} flex cursor-pointer items-center gap-1 text-lightBlue`}
+											className={`${isReferendum2 ? 'w-[110px]' : 'w-[150px]'} flex cursor-pointer items-center gap-1 text-lightBlue`}
 											onClick={() => {
 												handleSortByClick({
-													key: orderBy.convictionIsAsc
-														? votesSortValues.CONVICTION_ASC
-														: votesSortValues.CONVICTION_DESC
+													key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
 												});
 												setOrderBy((prev) => ({ ...sortedCheck, convictionIsAsc: !prev.convictionIsAsc }));
 											}}
 										>
-										Conviction
-											<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''}
-											/>
+											Conviction
+											<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />
 										</div>
 									) : null}
 									{isReferendum2 && (
 										<div
-											className='cursor-pointer w-[120px] flex items-center gap-1 text-lightBlue'
+											className='flex w-[120px] cursor-pointer items-center gap-1 text-lightBlue'
 											onClick={() => {
 												handleSortByClick({
-													key: orderBy.votingIsAsc
-														? votesSortValues.VOTING_POWER_ASC
-														: votesSortValues.VOTING_POWER_DESC
+													key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
 												});
 												setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
 											}}
 										>
 											Voting Power
 											<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
-											<Tooltip color="#E5007A" title="Vote Power for delegated votes is the self vote power + delegated vote power.">
+											<Tooltip
+												color='#E5007A'
+												title='Vote Power for delegated votes is the self vote power + delegated vote power.'
+											>
 												<InfoCircleOutlined className='text-sm text-lightBlue' />
 											</Tooltip>
 										</div>
@@ -298,121 +283,103 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</div>
 								<div className='max-h-[360px]'>
 									{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
-										votesRes[decision]?.votes.map(
-											(voteData: any, index: number) => (
-												<VoterRow
-													className={`${
-														index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'
-													} ${
-														index === votesRes[decision]?.votes.length - 1
-															? 'border-b'
-															: ''
-													}`}
-													key={`${voteData.voter}_${index}`}
-													currentKey={activeKey}
-													voteType={voteType}
-													voteData={voteData}
-													index={index}
-													isReferendum2={isReferendum2}
-													setDelegationVoteModal={setDelegationVoteModal}
-													setActiveKey={setActiveKey}
-													tally={tallyData?.[decision=== 'yes'? 'ayes': decision === 'no' ? 'nays': 'abstain'] ||  null}
-													decision={decision}
-													referendumId={referendumId}
-
-												/>
-											)
-										)
+										votesRes[decision]?.votes.map((voteData: any, index: number) => (
+											<VoterRow
+												className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
+												key={`${voteData.voter}_${index}`}
+												currentKey={activeKey}
+												voteType={voteType}
+												voteData={voteData}
+												index={index}
+												isReferendum2={isReferendum2}
+												setDelegationVoteModal={setDelegationVoteModal}
+												setActiveKey={setActiveKey}
+												tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
+												decision={decision}
+												referendumId={referendumId}
+											/>
+										))
 									) : (
 										<PostEmptyState />
 									)}
 								</div>
 							</div>
 						</div>
-						<div className='flex justify-between items-center pt-6 bg-white z-10'>
-							<p className='text-xs text-bodyBlue m-0'>
-								d: Delegation s: Split sa: Split Abstain
-							</p>
+						<div className='z-10 flex items-center justify-between bg-white pt-6'>
+							<p className='m-0 text-xs text-bodyBlue'>d: Delegation s: Split sa: Split Abstain</p>
 							<Pagination
 								size='small'
 								defaultCurrent={1}
 								current={currentPage}
 								onChange={onChange}
-								total={
-									votesRes && decision ? votesRes[decision]?.count || 0 : 0
-								}
+								total={votesRes && decision ? votesRes[decision]?.count || 0 : 0}
 								showSizeChanger={false}
 								pageSize={VOTES_LISTING_LIMIT}
 								responsive={true}
 								hideOnSinglePage={true}
 								nextIcon={
 									<div
-										className={`ml-1 ${
-											currentPage > Math.floor((votesRes && decision? votesRes[decision]?.count || 0 : 0) / VOTES_LISTING_LIMIT)
-												? 'text-grey_secondary'
-												: ''
-										}`}
+										className={`ml-1 ${currentPage > Math.floor((votesRes && decision ? votesRes[decision]?.count || 0 : 0) / VOTES_LISTING_LIMIT) ? 'text-grey_secondary' : ''}`}
 									>
 										<RightOutlined />
 									</div>
 								}
 								prevIcon={
-									<div
-										className={`mr-1 ${
-											currentPage <= 1 ? 'text-grey_secondary' : ''
-										}`}
-									>
+									<div className={`mr-1 ${currentPage <= 1 ? 'text-grey_secondary' : ''}`}>
 										<LeftOutlined />
 									</div>
 								}
 							/>
 						</div>
 					</div>
-					{
-						thresholdData
-						&& <Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
-							{
-								thresholdData.progress.approval >= thresholdData.progress.approvalThreshold.toFixed(1) &&
-								thresholdData.progress.support >= thresholdData.progress.supportThreshold.toFixed(1) ?
-									<p className='flex row gap-1 text-sm font-medium m-0'>
-										<span>
-											<ChartIcon />
-										</span>
-										<p>
-											Proposal is <span className='text-aye_green'>passing</span> as both support and approval are above the threshold
-										</p>
+					{thresholdData && (
+						<Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
+							{thresholdData.progress.approval >= thresholdData.progress.approvalThreshold.toFixed(1) &&
+							thresholdData.progress.support >= thresholdData.progress.supportThreshold.toFixed(1) ? (
+								<p className='row m-0 flex gap-1 text-sm font-medium'>
+									<span>
+										<ChartIcon />
+									</span>
+									<p>
+										Proposal is <span className='text-aye_green'>passing</span> as both support and approval are above the threshold
 									</p>
-									:<p className='flex row gap-1 text-sm font-medium text-bodyBlue m-0'>
-										<span>
-											<ChartIcon />
-										</span>
-										<p>
-											Proposal is <span className='text-nay_red'>failing</span> as both support and approval are below the threshold
-										</p>
+								</p>
+							) : (
+								<p className='row m-0 flex gap-1 text-sm font-medium text-bodyBlue'>
+									<span>
+										<ChartIcon />
+									</span>
+									<p>
+										Proposal is <span className='text-nay_red'>failing</span> as both support and approval are below the threshold
 									</p>
-							}
-							<button className='absolute top-[50px] right-0 bg-white border-0 cursor-pointer' onClick={() => setThresholdOpen(true)}><GraphExpandIcon/></button>
-							<ThresholdGraph {...thresholdData} thresholdOpen={thresholdOpen} setThresholdOpen={setThresholdOpen}/>
+								</p>
+							)}
+							<button
+								className='absolute right-0 top-[50px] cursor-pointer border-0 bg-white'
+								onClick={() => setThresholdOpen(true)}
+							>
+								<GraphExpandIcon />
+							</button>
+							<ThresholdGraph
+								{...thresholdData}
+								thresholdOpen={thresholdOpen}
+								setThresholdOpen={setThresholdOpen}
+							/>
 						</Container>
-					}
+					)}
 				</div>
 			</Spin>
-			{
-				delegationVoteModal.isOpen
-				&& delegationVoteModal.voter
-				&& decision
-				&& <Modal
+			{delegationVoteModal.isOpen && delegationVoteModal.voter && decision && (
+				<Modal
 					title={
-						<div className='mr-[-24px] ml-[-24px] text-[18px]'>
-							<h3 className='ml-[24px] mb-0 font-semibold text-[#243A57] flex align-center gap-2'>
-								<span className='top-1 relative'>
+						<div className='ml-[-24px] mr-[-24px] text-[18px]'>
+							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>
+								<span className='relative top-1'>
 									<VoteDataIcon />
 								</span>
-								<span className='text-xl font-semibold text-bodyBlue'>
-									Voting Data
-								</span>
+								<span className='text-xl font-semibold text-bodyBlue'>Voting Data</span>
 							</h3>
-							<Divider className='text-[#D2D8E0] my-2 mb-5' />
+							<Divider className='my-2 mb-5 text-[#D2D8E0]' />
 						</div>
 					}
 					open={delegationVoteModal.isOpen}
@@ -420,7 +387,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					closeIcon={<CloseIcon />}
 					className={'sm:w-[600px]'}
 					onCancel={() => {
-						setDelegationVoteModal({ isOpen:false, voter:null });
+						setDelegationVoteModal({ isOpen: false, voter: null });
 					}}
 					footer={null}
 				>
@@ -431,7 +398,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						decision={decision}
 					/>
 				</Modal>
-			}
+			)}
 		</div>
 	);
 };

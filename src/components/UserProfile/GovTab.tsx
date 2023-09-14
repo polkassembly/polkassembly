@@ -15,50 +15,52 @@ export const getLabel = (str: string) => {
 
 interface IGovTabProps {
 	className?: string;
-    posts: {
-		discussions: {
-			posts: IUserPost[];
-		};
-		root: IUserPost[];
-		staking_admin: IUserPost[];
-		auction_admin: IUserPost[];
-		governance: {
-			lease_admin: IUserPost[];
-			general_admin: IUserPost[];
-			referendum_canceller: IUserPost[];
-			referendum_killer: IUserPost[];
-		};
-		treasury: {
-			treasurer: IUserPost[];
-			small_tipper: IUserPost[];
-			big_tipper: IUserPost[];
-			small_spender: IUserPost[];
-			medium_spender: IUserPost[];
-			big_spender: IUserPost[];
-		};
-		fellowship: {
-			member_referenda: IUserPost[];
-			whitelisted_caller: IUserPost[];
-			fellowship_admin: IUserPost[];
-		};
-	} | {
-		discussions: {
-			posts: IUserPost[];
-		};
-		democracy: {
-			referenda: IUserPost[];
-			proposals: IUserPost[];
-		};
-		treasury: {
-			treasury_proposals: IUserPost[];
-			bounties: IUserPost[];
-			tips: IUserPost[];
-		};
-		collective: {
-			council_motions: IUserPost[];
-			tech_comm_proposals: IUserPost[];
-		};
-	};
+	posts:
+		| {
+				discussions: {
+					posts: IUserPost[];
+				};
+				root: IUserPost[];
+				staking_admin: IUserPost[];
+				auction_admin: IUserPost[];
+				governance: {
+					lease_admin: IUserPost[];
+					general_admin: IUserPost[];
+					referendum_canceller: IUserPost[];
+					referendum_killer: IUserPost[];
+				};
+				treasury: {
+					treasurer: IUserPost[];
+					small_tipper: IUserPost[];
+					big_tipper: IUserPost[];
+					small_spender: IUserPost[];
+					medium_spender: IUserPost[];
+					big_spender: IUserPost[];
+				};
+				fellowship: {
+					member_referenda: IUserPost[];
+					whitelisted_caller: IUserPost[];
+					fellowship_admin: IUserPost[];
+				};
+		  }
+		| {
+				discussions: {
+					posts: IUserPost[];
+				};
+				democracy: {
+					referenda: IUserPost[];
+					proposals: IUserPost[];
+				};
+				treasury: {
+					treasury_proposals: IUserPost[];
+					bounties: IUserPost[];
+					tips: IUserPost[];
+				};
+				collective: {
+					council_motions: IUserPost[];
+					tech_comm_proposals: IUserPost[];
+				};
+		  };
 }
 
 const GovTab: FC<IGovTabProps> = (props) => {
@@ -86,27 +88,32 @@ const GovTab: FC<IGovTabProps> = (props) => {
 					value: key
 				}))}
 			/>
-			<div className='my-5 flex items-center gap-x-2 max-w-full overflow-x-auto scroll-hidden'>
-				{
-					(posts as any)?.[selectedPostsType] && !Array.isArray((posts as any)?.[selectedPostsType]) && Object.keys((posts as any)?.[selectedPostsType]).map((key) => {
+			<div className='scroll-hidden my-5 flex max-w-full items-center gap-x-2 overflow-x-auto'>
+				{(posts as any)?.[selectedPostsType] &&
+					!Array.isArray((posts as any)?.[selectedPostsType]) &&
+					Object.keys((posts as any)?.[selectedPostsType]).map((key) => {
 						return (
 							<button
 								key={key}
 								onClick={() => {
 									setSelectedPost(key);
 								}}
-								className={`flex items-center justify-center whitespace-nowrap font-medium text-xs leading-[18px] border border-solid outline-none rounded-[50px] px-3 py-1 ${selectedPost === key? 'bg-pink_primary text-white border-pink_primary': 'bg-transparent border-[#90A0B7] text-[#90A0B7]'}`}
+								className={`flex items-center justify-center whitespace-nowrap rounded-[50px] border border-solid px-3 py-1 text-xs font-medium leading-[18px] outline-none ${
+									selectedPost === key ? 'border-pink_primary bg-pink_primary text-white' : 'border-[#90A0B7] bg-transparent text-[#90A0B7]'
+								}`}
 							>
 								{getLabel(key)}
 							</button>
 						);
-					})
-				}
+					})}
 			</div>
 			<div>
-				{
-					(posts as any)?.[selectedPostsType] && Array.isArray((posts as any)?.[selectedPostsType])? <PostTab posts={(posts as any)?.[selectedPostsType]} />: (posts as any)?.[selectedPostsType]?.[selectedPost] && Array.isArray((posts as any)?.[selectedPostsType]?.[selectedPost]) && <PostTab posts={(posts as any)?.[selectedPostsType]?.[selectedPost]} />
-				}
+				{(posts as any)?.[selectedPostsType] && Array.isArray((posts as any)?.[selectedPostsType]) ? (
+					<PostTab posts={(posts as any)?.[selectedPostsType]} />
+				) : (
+					(posts as any)?.[selectedPostsType]?.[selectedPost] &&
+					Array.isArray((posts as any)?.[selectedPostsType]?.[selectedPost]) && <PostTab posts={(posts as any)?.[selectedPostsType]?.[selectedPost]} />
+				)}
 			</div>
 		</div>
 	);
@@ -122,6 +129,6 @@ export default styled(GovTab)`
 		font-size: 20px !important;
 		line-height: 30px !important;
 		letter-spacing: 0.0015em !important;
-		color: #334D6E !important;
+		color: #334d6e !important;
 	}
 `;

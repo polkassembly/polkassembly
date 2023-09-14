@@ -10,49 +10,40 @@ import CloseIcon from '~assets/icons/close-icon.svg';
 import styled from 'styled-components';
 import { useNetworkContext } from '~src/context';
 interface IVoteDataModal {
-  setOpen?: any;
-  open?: any;
-  onchainId?: any;
-  proposalType?: any;
-  tally:any;
-  pipsVoters?:any;
-  thresholdData?: {
-    curvesError: any;
-    curvesLoading: any;
-    data: any;
-    progress: any;
-    setData: any;
-  };
+	setOpen?: any;
+	open?: any;
+	onchainId?: any;
+	proposalType?: any;
+	tally: any;
+	pipsVoters?: any;
+	thresholdData?: {
+		curvesError: any;
+		curvesLoading: any;
+		data: any;
+		progress: any;
+		setData: any;
+	};
 }
 
 const Modal = styled(AntdModal)`
-.ant-modal-content{
-	padding-top:12px;
-}
+	.ant-modal-content {
+		padding-top: 12px;
+	}
 `;
 
-const VoteDataModal: FC<IVoteDataModal> = ({
-	setOpen,
-	open,
-	onchainId,
-	proposalType,
-	thresholdData,
-	tally
-}) => {
+const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally }) => {
 	const { network } = useNetworkContext();
 	return (
 		<Modal
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-[18px]'>
-					<h3 className='ml-[24px] mb-0 font-semibold text-[#243A57] flex align-center gap-2'>
-						<span className='top-1 relative'>
+				<div className='ml-[-24px] mr-[-24px] text-[18px]'>
+					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>
+						<span className='relative top-1'>
 							<VoteDataIcon />
 						</span>
-						<span className='text-xl font-semibold text-bodyBlue'>
-							Voting Data
-						</span>
+						<span className='text-xl font-semibold text-bodyBlue'>Voting Data</span>
 					</h3>
-					<Divider className='text-[#D2D8E0] my-2 mb-5' />
+					<Divider className='my-2 mb-5 text-[#D2D8E0]' />
 				</div>
 			}
 			open={open}

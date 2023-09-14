@@ -104,6 +104,7 @@ import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
 import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
+import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -747,6 +748,12 @@ export const SetIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
+export const AmountBreakdownModalIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AmountBreakdownModalSVG}
+		{...props}
+	/>
+);
 export const ApplayoutIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ApplayoutIdentitySVG}

@@ -192,7 +192,9 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				}
 				open={floatButtonOpen}
 				className={`${className}`}
-			></FloatButton.Group>
+			>
+				<></>
+			</FloatButton.Group>
 
 			{
 				<List

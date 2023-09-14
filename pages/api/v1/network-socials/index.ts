@@ -18,12 +18,12 @@ export async function getNetworkSocials(params: IGetNetworkSocialsParams): Promi
 	try {
 		const { network } = params;
 		const networkDoc = await firestore_db.collection('networks').doc(network).get();
-		if(!networkDoc.exists) {
+		if (!networkDoc.exists) {
 			throw apiErrorWithStatusCode('Invalid network name', 400);
 		}
 
 		const networkData = networkDoc.data();
-		if(!networkData?.blockchain_socials) {
+		if (!networkData?.blockchain_socials) {
 			throw apiErrorWithStatusCode('No socials found for this network', 404);
 		}
 
@@ -45,15 +45,15 @@ export async function getNetworkSocials(params: IGetNetworkSocialsParams): Promi
 
 const handler: NextApiHandler<NetworkSocials | { error: string }> = async (req, res) => {
 	const network = req.headers['x-network'] as string;
-	if(!network) return res.status(400).json({ error: 'Missing network name in request headers' });
+	if (!network) return res.status(400).json({ error: 'Missing network name in request headers' });
 
 	const { data, error, status } = await getNetworkSocials({
 		network
 	});
 
-	if(error || !data) {
+	if (error || !data) {
 		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
+	} else {
 		return res.status(status).json(data);
 	}
 };

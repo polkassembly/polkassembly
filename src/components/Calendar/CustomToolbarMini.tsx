@@ -9,7 +9,7 @@ import { dayjs } from 'dayjs-init';
 import React, { useEffect } from 'react';
 
 function CustomToolbarMini(props: any) {
-	function addMonths(date:any, months: any) {
+	function addMonths(date: any, months: any) {
 		const d = date.getDate();
 		date.setMonth(date.getMonth() + months);
 		if (date.getDate() != d) {
@@ -34,15 +34,23 @@ function CustomToolbarMini(props: any) {
 		props.date.setMonth(props.date.getMonth());
 		props.date.setYear(now.getFullYear());
 		props.onNavigate('current');
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
-		props.date && <div className='flex justify-between items-center mb-3 px-3 '>
-			<LeftOutlined onClick={goToBack} className='text-md cursor-pointer hover:text-sidebarBlue font-medium hover:font-bold' />
-			<span className=' font-medium mx-3 text-sidebarBlue'>{dayjs(props.date).format('MMMM YYYY')}</span>
-			<RightOutlined onClick={goToNext} className='text-md cursor-pointer hover:text-sidebarBlue font-medium hover:font-bold' />
-		</div>
+		props.date && (
+			<div className='mb-3 flex items-center justify-between px-3 '>
+				<LeftOutlined
+					onClick={goToBack}
+					className='text-md cursor-pointer font-medium hover:font-bold hover:text-sidebarBlue'
+				/>
+				<span className=' mx-3 font-medium text-sidebarBlue'>{dayjs(props.date).format('MMMM YYYY')}</span>
+				<RightOutlined
+					onClick={goToNext}
+					className='text-md cursor-pointer font-medium hover:font-bold hover:text-sidebarBlue'
+				/>
+			</div>
+		)
 	);
 }
 

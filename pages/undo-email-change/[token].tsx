@@ -28,7 +28,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -36,8 +36,8 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 	const currentUser = useUserDetailsContext();
 
 	const handleUndoEmailChange = useCallback(async () => {
-		const { data , error } = await nextApiClientFetch<UndoEmailChangeResponseType>( 'api/v1/auth/actions/requestResetPassword');
-		if(error) {
+		const { data, error } = await nextApiClientFetch<UndoEmailChangeResponseType>('api/v1/auth/actions/requestResetPassword');
+		if (error) {
 			console.error('Undo email change error ', error);
 			setError(error);
 			queueNotification({
@@ -56,7 +56,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 			});
 			router.replace('/');
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentUser]);
 
 	useEffect(() => {
@@ -65,16 +65,25 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 
 	return (
 		<>
-			<SEOHead title="Undo Email Change" network={network}/>
-			<Row justify='center' align='middle' className='h-full -mt-16'>
-				{ error ? <article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
-					<h2 className='flex flex-col gap-y-2 items-center text-xl font-medium'>
-						<WarningOutlined />
-						<FilteredError text={error}/>
-					</h2>
-				</article>
-					: <Loader/>
-				}
+			<SEOHead
+				title='Undo Email Change'
+				network={network}
+			/>
+			<Row
+				justify='center'
+				align='middle'
+				className='-mt-16 h-full'
+			>
+				{error ? (
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
+							<WarningOutlined />
+							<FilteredError text={error} />
+						</h2>
+					</article>
+				) : (
+					<Loader />
+				)}
 			</Row>
 		</>
 	);

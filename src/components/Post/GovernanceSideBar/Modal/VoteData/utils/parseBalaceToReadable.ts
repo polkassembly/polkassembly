@@ -5,12 +5,7 @@ import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
-export const parseBalance = (
-	balance: string,
-	decimals: number,
-	withUnit:boolean,
-	network: string
-) => {
+export const parseBalance = (balance: string, decimals: number, withUnit: boolean, network: string) => {
 	let readableBalance = formatUSDWithUnits(
 		parseFloat(
 			formatBalance(balance, {
@@ -19,10 +14,12 @@ export const parseBalance = (
 				withUnit: false,
 				withZero: false
 			}).replaceAll(',', '')
-		).toFixed(2).toString(),
+		)
+			.toFixed(2)
+			.toString(),
 		decimals
 	);
-	if(withUnit){
+	if (withUnit) {
 		readableBalance = `${readableBalance} ${chainProperties[network]?.tokenSymbol}`;
 	}
 	return readableBalance;

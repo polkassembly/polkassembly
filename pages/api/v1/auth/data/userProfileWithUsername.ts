@@ -12,8 +12,8 @@ import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
-export async function getUserIdWithAddress(address: string) : Promise<IApiResponse<number>> {
-	try{
+export async function getUserIdWithAddress(address: string): Promise<IApiResponse<number>> {
+	try {
 		address = getSubstrateAddress(address) || '';
 		const docSnapshot = await firestore_db.collection('addresses').doc(address).get();
 
@@ -46,8 +46,8 @@ export async function getUserIdWithAddress(address: string) : Promise<IApiRespon
 	}
 }
 
-export async function getUserWithAddress(address: string) : Promise<IApiResponse<{userId:number, username:string}>> {
-	try{
+export async function getUserWithAddress(address: string): Promise<IApiResponse<{ userId: number; username: string }>> {
+	try {
 		let docSnapshot = await firestore_db.collection('addresses').doc(address).get();
 		if (!docSnapshot.exists) {
 			address = getSubstrateAddress(address) || '';
@@ -71,7 +71,7 @@ export async function getUserWithAddress(address: string) : Promise<IApiResponse
 		}
 
 		const profile = await getUserProfileWithUserId(data.user_id);
-		if (!profile?.data?.username ){
+		if (!profile?.data?.username) {
 			return {
 				data: null,
 				error: messages.NO_USER_FOUND_WITH_ADDRESS,
@@ -93,8 +93,8 @@ export async function getUserWithAddress(address: string) : Promise<IApiResponse
 	}
 }
 
-export async function getUserProfileWithUserId(userId: number) : Promise<IApiResponse<ProfileDetailsResponse>> {
-	try{
+export async function getUserProfileWithUserId(userId: number): Promise<IApiResponse<ProfileDetailsResponse>> {
+	try {
 		const userDoc = await firestore_db.collection('users').doc(String(userId)).get();
 		if (!userDoc.exists) {
 			return {
@@ -131,11 +131,11 @@ export async function getUserProfileWithUserId(userId: number) : Promise<IApiRes
 	}
 }
 
-export async function getUserProfileWithUsername(username: string) : Promise<IApiResponse<ProfileDetailsResponse>> {
-	try{
+export async function getUserProfileWithUsername(username: string): Promise<IApiResponse<ProfileDetailsResponse>> {
+	try {
 		const userQuerySnapshot = await firestore_db.collection('users').where('username', '==', username).limit(1).get();
 
-		if(userQuerySnapshot.size == 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_USERNAME, 404);
+		if (userQuerySnapshot.size == 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_USERNAME, 404);
 
 		const userDoc = userQuerySnapshot.docs[0].data() as User;
 		const user_addresses = await getAddressesFromUserId(userDoc.id);
@@ -171,7 +171,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ProfileDetailsR
 
 	const { data, error, status } = await getUserProfileWithUsername(username);
 
-	if(error || !data) return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+	if (error || !data) return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 
 	return res.status(status).json(data);
 }

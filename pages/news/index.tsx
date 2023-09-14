@@ -29,8 +29,8 @@ interface Props {
 }
 
 enum Profile {
-	Polkadot='polkadot',
-	Kusama='kusamanetwork'
+	Polkadot = 'polkadot',
+	Kusama = 'kusamanetwork'
 }
 
 const News: FC<Props> = ({ data, error, network }) => {
@@ -38,62 +38,76 @@ const News: FC<Props> = ({ data, error, network }) => {
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if(error) return <ErrorState errorMessage={error} />;
+	if (error) return <ErrorState errorMessage={error} />;
 
-	if(!data?.twitter) return <PostEmptyState />;
+	if (!data?.twitter) return <PostEmptyState />;
 
 	const profile = data?.twitter.split('/')[3] || Profile.Polkadot;
 	const isPolkadotOrKusama = profile === Profile.Kusama || profile === Profile.Polkadot;
-	const profile2 = profile === Profile.Kusama? Profile.Polkadot: Profile.Kusama;
+	const profile2 = profile === Profile.Kusama ? Profile.Polkadot : Profile.Kusama;
 
 	const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
 	return (
 		<>
-			<SEOHead title='News' network={network}/>
-			<div className='w-full h-full'>
-				<h3 className='font-medium text-lg tracking-wide leading-7 text-sidebarBlue'>
-					News
-				</h3>
-				<section className='mt-6 w-full flex flex-col md:flex-row gap-5 justify-center'>
-					<article className='flex-1 max-w-[720px] justify-center'>
-						{isPolkadotOrKusama && <div className='flex items-center mb-2'>
-							<Image src={profile === Profile.Kusama? kusamaLogo : polkadotLogo} className='rounded-full' height={28} width={28} alt={`${profile === Profile.Kusama? 'Kusama': 'Polkadot'} Logo`} />
-							<h4 className='text-[18px] font-medium text-sidebarBlue ml-2'>{profile === Profile.Kusama? 'Kusama': 'Polkadot'}</h4>
-						</div>}
+			<SEOHead
+				title='News'
+				network={network}
+			/>
+			<div className='h-full w-full'>
+				<h3 className='text-lg font-medium leading-7 tracking-wide text-sidebarBlue'>News</h3>
+				<section className='mt-6 flex w-full flex-col justify-center gap-5 md:flex-row'>
+					<article className='max-w-[720px] flex-1 justify-center'>
+						{isPolkadotOrKusama && (
+							<div className='mb-2 flex items-center'>
+								<Image
+									src={profile === Profile.Kusama ? kusamaLogo : polkadotLogo}
+									className='rounded-full'
+									height={28}
+									width={28}
+									alt={`${profile === Profile.Kusama ? 'Kusama' : 'Polkadot'} Logo`}
+								/>
+								<h4 className='ml-2 text-[18px] font-medium text-sidebarBlue'>{profile === Profile.Kusama ? 'Kusama' : 'Polkadot'}</h4>
+							</div>
+						)}
 						<TwitterTimelineEmbed
-							sourceType="profile"
+							sourceType='profile'
 							screenName={profile}
 							autoHeight={false}
 							noHeader={true}
-							options={
-								{ height: vh - 250 }
-							}
+							options={{ height: vh - 250 }}
 						/>
 					</article>
-					{isPolkadotOrKusama && (<article className='flex-1'>
-						{isPolkadotOrKusama && <div className='flex items-center mb-2'>
-							<Image src={profile2 === Profile.Kusama? kusamaLogo : polkadotLogo} className='rounded-full' height={28} width={28} alt={`${profile2 === Profile.Kusama? 'Kusama': 'Polkadot'} Logo`} />
-							<h4 className='text-[18px] font-medium text-sidebarBlue ml-2'>{profile2 === Profile.Kusama? 'Kusama': 'Polkadot'}</h4>
-						</div>}
-						<TwitterTimelineEmbed
-							sourceType="profile"
-							screenName={profile2}
-							autoHeight={false}
-							noHeader={true}
-							options={
-								{ height: vh - 250 }
-							}
-						/>
-					</article>)}
+					{isPolkadotOrKusama && (
+						<article className='flex-1'>
+							{isPolkadotOrKusama && (
+								<div className='mb-2 flex items-center'>
+									<Image
+										src={profile2 === Profile.Kusama ? kusamaLogo : polkadotLogo}
+										className='rounded-full'
+										height={28}
+										width={28}
+										alt={`${profile2 === Profile.Kusama ? 'Kusama' : 'Polkadot'} Logo`}
+									/>
+									<h4 className='ml-2 text-[18px] font-medium text-sidebarBlue'>{profile2 === Profile.Kusama ? 'Kusama' : 'Polkadot'}</h4>
+								</div>
+							)}
+							<TwitterTimelineEmbed
+								sourceType='profile'
+								screenName={profile2}
+								autoHeight={false}
+								noHeader={true}
+								options={{ height: vh - 250 }}
+							/>
+						</article>
+					)}
 				</section>
 			</div>
 		</>
 	);
-
 };
 
 export default News;

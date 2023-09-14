@@ -5,8 +5,8 @@
 import React, { FC } from 'react';
 
 interface IArgumentsTableProps {
-	className?: string,
-	argumentsJSON: any,
+	className?: string;
+	argumentsJSON: any;
 }
 
 const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -30,22 +30,24 @@ const ArgumentsTable: FC<IArgumentsTableProps> = ({ argumentsJSON }) => {
 	return (
 		<>
 			{Object.entries(argumentsJSON).map(([name, value], index) => {
-
 				// eslint-disable-next-line no-tabs
-				return	<tr key={index}>
-					<td className='direct-data data-0'>
-						{name}
-					</td>
-					{
-						typeof value !== 'object'?
-							<td dangerouslySetInnerHTML={{
-								__html: constructAnchorTag(value as any)
-							}} className='direct-data data-2'/>
-							: <td className='indirect-data data-1'>
+				return (
+					<tr key={index}>
+						<td className='direct-data data-0'>{name}</td>
+						{typeof value !== 'object' ? (
+							<td
+								dangerouslySetInnerHTML={{
+									__html: constructAnchorTag(value as any)
+								}}
+								className='direct-data data-2'
+							/>
+						) : (
+							<td className='indirect-data data-1'>
 								<ArgumentsTable argumentsJSON={value} />
 							</td>
-					}
-				</tr>;
+						)}
+					</tr>
+				);
 			})}
 		</>
 	);

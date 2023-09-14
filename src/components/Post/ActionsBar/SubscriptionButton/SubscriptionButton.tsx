@@ -23,18 +23,21 @@ interface ISubscriptionButtonProps {
 const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 	const { postId, proposalType } = props;
 
-	const { postData: { subscribers }, setPostData } = usePostDataContext();
+	const {
+		postData: { subscribers },
+		setPostData
+	} = usePostDataContext();
 
 	const { id } = useContext(UserDetailsContext);
 	const [subscribed, setSubscribed] = useState<boolean>(Boolean(id && subscribers.includes(id)));
 	const [loading, setLoading] = useState(false);
 
 	const handleSubscribe = async () => {
-		if(!id) return;
+		if (!id) return;
 		setLoading(true);
 
 		if (subscribed) {
-			const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/postUnsubscribe', { post_id: postId, proposalType });
+			const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postUnsubscribe', { post_id: postId, proposalType });
 			if (error) {
 				queueNotification({
 					header: 'Failed!',
@@ -56,7 +59,7 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 				}));
 			}
 		} else {
-			const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType });
+			const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType });
 			if (error) {
 				queueNotification({
 					header: 'Failed!',
@@ -82,19 +85,18 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 		setLoading(false);
 	};
 
-	const SubscribeButton = () => <Button
-		className={`${subscribed && id ? ' negative' : ''} text-pink_primary flex items-center border-none shadow-none disabled:opacity-[0.5] px-1.5 disabled:bg-transparent`}
-		disabled={loading || !id}
-		onClick={handleSubscribe}
-	>
-		{subscribed && id ? <BookFilled /> : <BookOutlined />}
-		{subscribed && id ? 'Unsubscribe' : 'Subscribe'}
-	</Button>;
+	const SubscribeButton = () => (
+		<Button
+			className={`${subscribed && id ? ' negative' : ''} flex items-center border-none px-1.5 text-pink_primary shadow-none disabled:bg-transparent disabled:opacity-[0.5]`}
+			disabled={loading || !id}
+			onClick={handleSubscribe}
+		>
+			{subscribed && id ? <BookFilled /> : <BookOutlined />}
+			{subscribed && id ? 'Unsubscribe' : 'Subscribe'}
+		</Button>
+	);
 
-	return id
-		?  <SubscribeButton />
-		: <></>;
-
+	return id ? <SubscribeButton /> : <></>;
 };
 
 export default SubscriptionButton;

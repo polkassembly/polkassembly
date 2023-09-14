@@ -14,13 +14,13 @@ import getOauthConsumer from '~src/util/getOauthConsumer';
 
 const firestore = firebaseAdmin.firestore();
 
-async function getOAuthRequestToken(network: string):Promise<any> {
+async function getOAuthRequestToken(network: string): Promise<any> {
 	const oauthConsumer = getOauthConsumer(network);
 	// Wrap the callback-based function in a promise
 	const tokenDetails = await new Promise((resolve, reject) => {
 		oauthConsumer.getOAuthRequestToken((error, oauthRequestToken, oauthRequestTokenSecret, results) => {
 			if (error) {
-				reject(new Error(error.data ||'Oops! Something went wrong while getting the OAuth request token.'));
+				reject(new Error(error.data || 'Oops! Something went wrong while getting the OAuth request token.'));
 			} else {
 				resolve({ oauthRequestToken, oauthRequestTokenSecret, results });
 			}
@@ -30,23 +30,22 @@ async function getOAuthRequestToken(network: string):Promise<any> {
 	return tokenDetails;
 }
 
-const handler: NextApiHandler<MessageType | {url: string}> = async (req, res) => {
+const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 
 	const { twitterHandle } = req.query;
-	try{
+	try {
+		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-		if(!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
-
-		if(!twitterHandle || typeof twitterHandle !== 'string') return res.status(400).json({ message: 'Invalid twitter handle' });
+		if (!twitterHandle || typeof twitterHandle !== 'string') return res.status(400).json({ message: 'Invalid twitter handle' });
 
 		const token = getTokenFromReq(req);
-		if(!token) return res.status(403).json({ message: messages.UNAUTHORISED });
+		if (!token) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 		const user = await authServiceInstance.GetUser(token);
 		const userId = user?.id;
 
-		if(!userId ) return res.status(403).json({ message: messages.UNAUTHORISED });
+		if (!userId) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 		const { oauthRequestToken, oauthRequestTokenSecret } = await getOAuthRequestToken(network);
 
@@ -61,7 +60,7 @@ const handler: NextApiHandler<MessageType | {url: string}> = async (req, res) =>
 		});
 		const authorizationUrl = `https://api.twitter.com/oauth/authenticate?oauth_token=${oauthRequestToken}`;
 		return res.status(200).json({ url: authorizationUrl });
-	}catch(err){
+	} catch (err) {
 		return res.status(500).json({ message: 'Internal server error' });
 	}
 };

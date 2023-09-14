@@ -2,10 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import {
-	LeftOutlined,
-	RightOutlined
-} from '@ant-design/icons';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Pagination, PaginationProps, Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
@@ -18,16 +15,16 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import VoterRow from './VoterRow';
 
 interface IVotersListProps {
-  className?: string;
-  referendumId: number;
-  voteType: VoteType;
-  thresholdData?: any;
-  voter:string,
-  decision:DecisionType
+	className?: string;
+	referendumId: number;
+	voteType: VoteType;
+	thresholdData?: any;
+	voter: string;
+	decision: DecisionType;
 }
 
 interface IDelegationList {
-    count: number;
+	count: number;
 	votes: any[];
 }
 
@@ -55,7 +52,9 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 			isLoading: true,
 			message: 'Loading votes'
 		});
-		const url = `api/v1/votes/delegationVoteList?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&page=${currentPage}&decision=${decision ||'yes'}&type=${voteType}&voter=${voter}`;
+		const url = `api/v1/votes/delegationVoteList?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&page=${currentPage}&decision=${
+			decision || 'yes'
+		}&type=${voteType}&voter=${voter}`;
 		nextApiClientFetch<IDelegationList>(url)
 			.then((res) => {
 				if (res.error) {
@@ -87,96 +86,52 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex gap-6'>
-					<div className='md:overflow-visible overflow-x-auto'>
-						<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-x-auto'>
-							<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
-								<div
-									className={`${
-										isReferendum2 ? 'w-[190px]' : 'w-[250px]'
-									} text-lightBlue text-sm font-medium`}
-								>
-                                    Voter
-								</div>
-								<div
-									className={`${
-										isReferendum2 ? 'w-[110px]' : 'w-[140px]'
-									} flex items-center gap-1 text-lightBlue`}
-								>
-                                    Amount
-								</div>
+					<div className='overflow-x-auto md:overflow-visible'>
+						<div className='flex flex-col overflow-x-auto px-0 text-xs text-sidebarBlue'>
+							<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
+								<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue`}>Voter</div>
+								<div className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex items-center gap-1 text-lightBlue`}>Amount</div>
 								{network !== AllNetworks.COLLECTIVES ? (
-									<div
-										className={`${
-											isReferendum2 ? 'w-[110px]' : 'w-[150px]'
-										} flex items-center gap-1 text-lightBlue`}
-									>
-                                        Conviction
-									</div>
+									<div className={`${isReferendum2 ? 'w-[110px]' : 'w-[150px]'} flex items-center gap-1 text-lightBlue`}>Conviction</div>
 								) : null}
-								{isReferendum2 && (
-									<div
-										className='w-[110px] flex items-center gap-1 text-lightBlue'
-									>
-                                        Voting Power
-									</div>
-								)}
+								{isReferendum2 && <div className='flex w-[110px] items-center gap-1 text-lightBlue'>Voting Power</div>}
 							</div>
 
 							{votesRes && decision && !!votesRes?.votes?.length ? (
-								votesRes?.votes.map(
-									(voteData: any, index: number) => (
-										<VoterRow
-											className={`${
-												index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'
-											} ${
-												index === votesRes?.votes.length - 1
-													? 'border-b'
-													: ''
-											}`}
-											key={index}
-											voteType={voteType}
-											voteData={voteData}
-											index={index}
-											isReferendum2={isReferendum2}
-											setDelegationVoteModal={() => {}}
-										/>
-									)
-								)
+								votesRes?.votes.map((voteData: any, index: number) => (
+									<VoterRow
+										className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes?.votes.length - 1 ? 'border-b' : ''}`}
+										key={index}
+										voteType={voteType}
+										voteData={voteData}
+										index={index}
+										isReferendum2={isReferendum2}
+										setDelegationVoteModal={() => {}}
+									/>
+								))
 							) : (
 								<PostEmptyState />
 							)}
 						</div>
 
-						<div className='flex justify-between items-center pt-6 bg-white z-10'>
+						<div className='z-10 flex items-center justify-between bg-white pt-6'>
 							<Pagination
 								size='small'
 								defaultCurrent={1}
 								current={currentPage}
 								onChange={onChange}
-								total={
-									votesRes && decision ? votesRes?.count || 0 : 0
-								}
+								total={votesRes && decision ? votesRes?.count || 0 : 0}
 								showSizeChanger={false}
 								pageSize={VOTES_LISTING_LIMIT}
 								responsive={true}
 								hideOnSinglePage={true}
 								nextIcon={
-									<div
-										className={`ml-1 ${
-											currentPage > Math.floor((votesRes && decision? votesRes?.count || 0 : 0) / VOTES_LISTING_LIMIT)
-												? 'text-grey_secondary'
-												: ''
-										}`}
-									>
+									<div className={`ml-1 ${currentPage > Math.floor((votesRes && decision ? votesRes?.count || 0 : 0) / VOTES_LISTING_LIMIT) ? 'text-grey_secondary' : ''}`}>
 										<RightOutlined />
 									</div>
 								}
 								prevIcon={
-									<div
-										className={`mr-1 ${
-											currentPage <= 1 ? 'text-grey_secondary' : ''
-										}`}
-									>
+									<div className={`mr-1 ${currentPage <= 1 ? 'text-grey_secondary' : ''}`}>
 										<LeftOutlined />
 									</div>
 								}
@@ -186,7 +141,6 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 				</div>
 			</Spin>
 		</div>
-
 	);
 };
 

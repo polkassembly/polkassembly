@@ -14,10 +14,15 @@ interface Props {
 	placement?: TooltipPlacement;
 }
 
-const HelperTooltip = ({ className, text, bgColor='#E5007A', placement } : Props) => {
+const HelperTooltip = ({ className, text, bgColor = '#E5007A', placement }: Props) => {
 	return (
-		<Tooltip placement={placement} color={bgColor} title={ text } getPopupContainer={(triggerNode) => triggerNode}>
-			<InfoCircleOutlined className={className}/>
+		<Tooltip
+			placement={placement}
+			color={bgColor}
+			title={text}
+			getPopupContainer={(triggerNode) => triggerNode}
+		>
+			<InfoCircleOutlined className={className} />
 		</Tooltip>
 	);
 };

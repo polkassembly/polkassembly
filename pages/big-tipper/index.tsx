@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	}
 	const network = getNetworkFromReqHeaders(req.headers);
 
-	if(!networkTrackInfo[network][PostOrigin.BIG_TIPPER]) {
+	if (!networkTrackInfo[network][PostOrigin.BIG_TIPPER]) {
 		return { props: { error: `Invalid track for ${network}` } };
 	}
 
@@ -44,11 +44,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const redisKey = generateKey({ filterBy, keyType: 'trackId', network, page, sortBy, subsquidProposalType, trackId, trackStatus });
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
+	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(redisKey);
-		if (redisData){
+		if (redisData) {
 			const props = JSON.parse(redisData);
-			if(!props.error){
+			if (!props.error) {
 				return { props };
 			}
 		}
@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		const strTrackStatus = trackStatus ? String(trackStatus) : 'all';
 		if (status.toLowerCase().includes(strTrackStatus)) {
 			prev[strTrackStatus] = getOnChainPosts({
-				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
@@ -98,7 +98,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	Object.keys(fetches).forEach((key, index) => {
 		(props.posts as any)[key] = results[index];
 	});
-	if(process.env.IS_CACHING_ALLOWED == '1'){
+	if (process.env.IS_CACHING_ALLOWED == '1') {
 		await redisSet(redisKey, JSON.stringify(props));
 	}
 	return { props };
@@ -115,19 +115,24 @@ const BigTipper: FC<IBigTipperProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
-	return <>
-		<SEOHead title={PostOrigin.BIG_TIPPER.split(/(?=[A-Z])/).join(' ')} network={network}/>
-		<TrackListing
-			trackName={PostOrigin.BIG_TIPPER}
-			posts={posts}
-		/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={PostOrigin.BIG_TIPPER.split(/(?=[A-Z])/).join(' ')}
+				network={network}
+			/>
+			<TrackListing
+				trackName={PostOrigin.BIG_TIPPER}
+				posts={posts}
+			/>
+		</>
+	);
 };
 
 export default BigTipper;

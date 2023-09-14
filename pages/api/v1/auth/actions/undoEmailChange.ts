@@ -14,7 +14,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<UndoEmailChange
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const { updatedToken, email } = await authServiceInstance.UndoEmailChange(token);
 

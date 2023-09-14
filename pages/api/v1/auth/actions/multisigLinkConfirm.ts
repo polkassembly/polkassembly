@@ -13,24 +13,15 @@ import messages from '~src/auth/utils/messages';
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 	const network = String(req.headers['x-network']);
-	if(!network) return res.status(400).json({ message: 'Missing network in request header' });
+	if (!network) return res.status(400).json({ message: 'Missing network in request header' });
 
 	const { address, addresses, ss58Prefix, threshold, signatory, signature } = req.body;
-	if(!address || !addresses || !ss58Prefix || !threshold || ! signatory || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!address || !addresses || !ss58Prefix || !threshold || !signatory || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-	const updatedJWT = await authServiceInstance.MultiSigAddressLinkConfirm(
-		token,
-		network,
-		address,
-		addresses,
-		ss58Prefix,
-		threshold,
-		signatory,
-		signature
-	);
+	const updatedJWT = await authServiceInstance.MultiSigAddressLinkConfirm(token, network, address, addresses, ss58Prefix, threshold, signatory, signature);
 
 	return res.status(200).json({ message: messages.ADDRESS_LINKING_SUCCESSFUL, token: updatedJWT });
 }

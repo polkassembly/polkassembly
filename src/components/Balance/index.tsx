@@ -86,7 +86,6 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
 					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
 					const locked =  new BN(result.data?.frozen?.toBigInt().toString());
-					console.log(locked.toString());
 					if(isReferendum){
 						setBalance(result.data?.free?.toString() || '0');
 						setAvailableBalance &&	setAvailableBalance(result.data?.free?.toString() || '0');

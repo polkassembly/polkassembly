@@ -67,8 +67,8 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	}
 	const post = subsquidData.proposals[0];
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
-		if(currPostType == ProposalType.DISCUSSIONS && postType == ProposalType.REFERENDUM_V2){
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		if (currPostType == ProposalType.DISCUSSIONS && postType == ProposalType.REFERENDUM_V2) {
 			const latestActivitykey = `${network}_latestActivity_OpenGov`;
 			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post.trackNumber}_*`;
 			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
@@ -81,42 +81,47 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 			await redisDel(referendumDetailsKey);
 			await redisDel(discussionDetailsKey);
 			await deleteKeys(discussionListingKey);
-
 		}
 	}
 
 	const preimage = post?.preimage;
-	if(!post || (!post?.proposer && !preimage?.proposer)) {
+	if (!post || (!post?.proposer && !preimage?.proposer)) {
 		throw apiErrorWithStatusCode('Proposer address is not present in subsquid response.', 400);
 	}
 
 	const proposerAddress = post.proposer || post.preimage?.proposer;
 
 	const substrateAddress = getSubstrateAddress(proposerAddress);
-	if(!substrateAddress) {
+	if (!substrateAddress) {
 		throw apiErrorWithStatusCode('Something went wrong while getting encoded address corresponding to network', 500);
 	}
 
 	const isOffChainPost = ['discussions', 'grants'].includes(currPostType);
 	const userAddresses = await getAddressesFromUserId(user.id, true);
-	const isAuthor = userAddresses.some(address => address.address === substrateAddress) || (isOffChainPost? true: currPostData && user.id === currPostData.user_id);
+	const isAuthor = userAddresses.some((address) => address.address === substrateAddress) || (isOffChainPost ? true : currPostData && user.id === currPostData.user_id);
 	if (!isAuthor) {
-		throw apiErrorWithStatusCode(`You can not ${isRemove? 'unlink': 'link'} the post, because you are not the user who created this post`, 403);
+		throw apiErrorWithStatusCode(`You can not ${isRemove ? 'unlink' : 'link'} the post, because you are not the user who created this post`, 403);
 	}
 	if (isOffChainPost && currPostData?.post_link) {
 		throw apiErrorWithStatusCode('Discussion is already linked with other onchain post.', 403);
 	}
 	const batch = firestore_db.batch();
-	batch.set(currPostDocRef, {
-		last_edited_at: new Date(),
-		post_link: isRemove? null: {
-			id: postType === 'tips'? postId: Number(postId),
-			type: postType
-		}
-	}, { merge: true });
+	batch.set(
+		currPostDocRef,
+		{
+			last_edited_at: new Date(),
+			post_link: isRemove
+				? null
+				: {
+						id: postType === 'tips' ? postId : Number(postId),
+						type: postType
+				  }
+		},
+		{ merge: true }
+	);
 
 	const post_link: any = {
-		id: currPostType === 'tips'? currPostId: Number(currPostId),
+		id: currPostType === 'tips' ? currPostId : Number(currPostId),
 		type: currPostType
 	};
 	const postsRefWithData: TPostsRefWithData = [];
@@ -126,7 +131,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 		(proposals as any[]).forEach((proposal) => {
 			if (proposal && proposal.type) {
 				const proposalType = getFirestoreProposalType(proposal.type) as ProposalType;
-				const id = (proposal.type === 'Tip'? proposal.hash: Number(proposal.index));
+				const id = proposal.type === 'Tip' ? proposal.hash : Number(proposal.index);
 				postsRefWithData.push({
 					data: {
 						id
@@ -138,48 +143,48 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	}
 	if (isTimeline) {
 		if (!isRemove) {
-			timeline.push(
-				{
-					created_at: new Date(),
-					index: currPostId,
-					statuses: [
-						{
-							status: 'Created',
-							timestamp: new Date()
-						}
-					],
-					type: 'Discussions'
-				}
-			);
+			timeline.push({
+				created_at: new Date(),
+				index: currPostId,
+				statuses: [
+					{
+						status: 'Created',
+						timestamp: new Date()
+					}
+				],
+				type: 'Discussions'
+			});
 		}
 		timeline.push(...getTimeline(proposals));
 		if (timeline.length <= 1) {
-			timeline.push(...getTimeline([
-				{
-					createdAt: post?.createdAt,
-					hash: post?.hash,
-					index: post?.index,
-					statusHistory: post?.statusHistory,
-					type: post?.type
-				}
-			]));
+			timeline.push(
+				...getTimeline([
+					{
+						createdAt: post?.createdAt,
+						hash: post?.hash,
+						index: post?.index,
+						statusHistory: post?.statusHistory,
+						type: post?.type
+					}
+				])
+			);
 		}
 	}
 	if (postsRefWithData.length === 0) {
 		postsRefWithData.push({
 			data: {
-				id: (postType === 'tips'? postId: Number(postId))
+				id: postType === 'tips' ? postId : Number(postId)
 			},
 			ref: postsByTypeRef(network, postType as any).doc(String(postId))
 		});
 	}
-	const results = await firestore_db.getAll(...(postsRefWithData && Array.isArray(postsRefWithData)? postsRefWithData: []).map((v) => (v.ref)));
+	const results = await firestore_db.getAll(...(postsRefWithData && Array.isArray(postsRefWithData) ? postsRefWithData : []).map((v) => v.ref));
 	results.forEach((result, i) => {
 		const data = result.data();
 		const newData: any = {
 			...data,
 			last_edited_at: new Date(),
-			post_link: isRemove? null: post_link
+			post_link: isRemove ? null : post_link
 		};
 		if (!isRemove) {
 			newData.title = currPostData.title;
@@ -241,8 +246,8 @@ interface IGetPostsRefAndDataParams {
 	}[];
 }
 type TPostsRefWithData = {
-	data?: any,
-	ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>
+	data?: any;
+	ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>;
 }[];
 type TGetPostsRefAndData = (params: IGetPostsRefAndDataParams) => Promise<TPostsRefWithData>;
 export const getPostsRefAndData: TGetPostsRefAndData = async (params) => {
@@ -254,7 +259,7 @@ export const getPostsRefAndData: TGetPostsRefAndData = async (params) => {
 			ref: postsByTypeRef(network, post.type as any).doc(String(post.id))
 		};
 	});
-	const refs = ((postsRefWithData && Array.isArray(postsRefWithData))? postsRefWithData: []).map(({ ref }) => (ref));
+	const refs = (postsRefWithData && Array.isArray(postsRefWithData) ? postsRefWithData : []).map(({ ref }) => ref);
 	if (refs.length > 0) {
 		const results = await firestore_db.getAll(...refs);
 		results.forEach((result, i) => {
@@ -277,17 +282,17 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { postId, postType, currPostId, currPostType } = req.body;
 
-	if((!postId && postId !== 0) || (!currPostId && currPostId !== 0) || !postType || !currPostType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if ((!postId && postId !== 0) || (!currPostId && currPostId !== 0) || !postType || !currPostType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	try {
 		[postType, currPostType].filter((type) => {
@@ -354,7 +359,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 		const data = await updatePostLinkInGroup(params);
 		return res.status(200).json(data);
 	} catch (error) {
-		return res.status((error.name && !isNaN(Number(error.name))? Number(error.name): 500)).json({ message: error.message });
+		return res.status(error.name && !isNaN(Number(error.name)) ? Number(error.name) : 500).json({ message: error.message });
 	}
 };
 

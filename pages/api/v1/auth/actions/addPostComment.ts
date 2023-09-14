@@ -24,29 +24,27 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { userId, content, postId, postType, sentiment, trackNumber = null } = req.body;
-	if(!userId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!userId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	if(typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
+	if (typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
 
 	const strProposalType = String(postType);
-	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });
+	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType))
+		return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const postRef = postsByTypeRef(network, strProposalType as ProposalType)
-		.doc(String(postId));
+	const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 
 	const last_comment_at = new Date();
-	const newCommentRef = postRef
-		.collection('comments')
-		.doc();
+	const newCommentRef = postRef.collection('comments').doc();
 
 	const newComment: PostComment = {
 		content: content,
@@ -61,52 +59,54 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		username: user.username
 	};
 
-	const subsquidProposalType  = getSubsquidLikeProposalType(postType);
+	const subsquidProposalType = getSubsquidLikeProposalType(postType);
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
-		if (!isNaN(trackNumber)){
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		if (!isNaN(trackNumber)) {
 			// delete referendum v2 redis cache
-			if(postType == ProposalType.REFERENDUM_V2){
+			if (postType == ProposalType.REFERENDUM_V2) {
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${Number(trackNumber)}_*`;
 				await deleteKeys(trackListingKey);
 			}
-
-		}else if(postType == ProposalType.DISCUSSIONS){
+		} else if (postType == ProposalType.DISCUSSIONS) {
 			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
 			await deleteKeys(discussionListingKey);
 		}
 	}
 
-	await newCommentRef.set(newComment).then(() => {
-		postRef.update({
-			last_comment_at
+	await newCommentRef
+		.set(newComment)
+		.then(() => {
+			postRef.update({
+				last_comment_at
+			});
+
+			const triggerName = 'newCommentAdded';
+
+			const args = {
+				commentId: String(newComment.id),
+				network,
+				postId: String(postId),
+				postType: strProposalType
+			};
+
+			fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+				body: JSON.stringify({
+					args,
+					trigger: triggerName
+				}),
+				headers: firebaseFunctionsHeader(network),
+				method: 'POST'
+			});
+
+			return res.status(200).json({
+				id: newComment.id
+			});
+		})
+		.catch((error) => {
+			console.error('Error saving comment: ', error);
+			return res.status(500).json({ message: 'Error saving comment' });
 		});
-
-		const triggerName = 'newCommentAdded';
-
-		const args = {
-			commentId:String(newComment.id),
-			network,
-			postId:String(postId),
-			postType:strProposalType
-		};
-
-		fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
-			body: JSON.stringify({
-				args,
-				trigger: triggerName
-			}),
-			headers: firebaseFunctionsHeader(network),
-			method: 'POST'
-		});
-
-		return res.status(200).json({
-			id: newComment.id
-		});
-	}).catch((error) => {
-		console.error('Error saving comment: ', error);
-		return res.status(500).json({ message: 'Error saving comment' });
-	});
 };
 
 export default withErrorHandling(handler);

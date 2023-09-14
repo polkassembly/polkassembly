@@ -6,7 +6,7 @@ import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWi
 import getSubstrateAddress from './getSubstrateAddress';
 import nextApiClientFetch from './nextApiClientFetch';
 
-export default async function getUsernameByAddress(address: string){
+export default async function getUsernameByAddress(address: string) {
 	const substrateAddress = getSubstrateAddress(address);
 	if (!substrateAddress) return null;
 

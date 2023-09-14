@@ -18,7 +18,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 interface IPreImagesProps {
 	data?: IPreimagesListingResponse;
 	error?: string;
-	network: string
+	network: string;
 }
 
 const PreImages: FC<IPreImagesProps> = (props) => {
@@ -46,7 +46,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -66,20 +66,22 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='PreImages' network={network}/>
-			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>{ count } Preimages</h1>
+			<SEOHead
+				title='PreImages'
+				network={network}
+			/>
+			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>{count} Preimages</h1>
 
 			{/* <div className="mt-8 mx-1">
 				<PreImagesTable tableData={tableData} />
 			</div> */}
 
-			<div className='shadow-md bg-white p-3 md:p-8 rounded-xxl'>
+			<div className='rounded-xxl bg-white p-3 shadow-md md:p-8'>
 				<div>
 					<PreImagesTable preimages={preimages} />
 
-					<div className='flex justify-end mt-6'>
-						{
-							!!preimages && preimages.length > 0 && count && count > 0 && count > LISTING_LIMIT &&
+					<div className='mt-6 flex justify-end'>
+						{!!preimages && preimages.length > 0 && count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
@@ -89,7 +91,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 								onChange={onPaginationChange}
 								responsive={true}
 							/>
-						}
+						)}
 					</div>
 				</div>
 			</div>

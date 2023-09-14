@@ -8,14 +8,16 @@ import styled from 'styled-components';
 // import TipsPostCard from './TipsPostCard';
 
 interface Props {
-	className?: string
-	openSidebar: (postID: number) => void
+	className?: string;
+	openSidebar: (postID: number) => void;
 }
 
-const TipsBoard = ({ className } : Props) => {
+const TipsBoard = ({ className }: Props) => {
 	return (
 		<div className={className}>
-			<h3>Tips <span className='card-count'></span></h3>
+			<h3>
+				Tips <span className='card-count'></span>
+			</h3>
 			<p>Coming Soon...</p>
 
 			{/* {[1,2,3,4].map(item => (

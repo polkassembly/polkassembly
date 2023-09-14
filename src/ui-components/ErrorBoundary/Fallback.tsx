@@ -14,16 +14,20 @@ interface IFallbackProps {
 
 const Fallback: FC<IFallbackProps> = (props) => {
 	return (
-		<section className='absolute inset-0 z-[9999999] bg-[#F5F6F8] flex flex-col items-center justify-center h-screen w-screen'>
+		<section className='absolute inset-0 z-[9999999] flex h-screen w-screen flex-col items-center justify-center bg-[#F5F6F8]'>
 			<Result
 				icon={
-					<div className='w-1/2 h-auto mx-auto max-w-[900px]'>
+					<div className='mx-auto h-auto w-1/2 max-w-[900px]'>
 						<NothingFoundSVG />
 					</div>
 				}
-				title="Unfortunately something has gone wrong. Please try again."
+				title='Unfortunately something has gone wrong. Please try again.'
 				extra={
-					<Link onClick={props.onReset} href='/' className='py-2 px-6 bg-pink_primary text-white border-white hover:bg-pink_secondary rounded-md text-lg h-[50px] w-[215px]'>
+					<Link
+						onClick={props.onReset}
+						href='/'
+						className='h-[50px] w-[215px] rounded-md border-white bg-pink_primary px-6 py-2 text-lg text-white hover:bg-pink_secondary'
+					>
 						Go To Home
 					</Link>
 				}

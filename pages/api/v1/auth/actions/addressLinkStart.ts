@@ -17,32 +17,32 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessag
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network) return res.status(400).json({ message: 'Missing network in headers' });
+	if (!network) return res.status(400).json({ message: 'Missing network in headers' });
 
 	const { address: addressRes } = req.body;
 
 	let address = addressRes;
-	if(addressRes.startsWith('0x')) {
+	if (addressRes.startsWith('0x')) {
 		address = addressRes.toLowerCase();
 	}
 
-	if(!address) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!address) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	const firestore = firebaseAdmin.firestore();
 
 	const substrateAddress = getSubstrateAddress(address);
-	if(!substrateAddress) return res.status(400).json({ message: messages.INVALID_ADDRESS });
+	if (!substrateAddress) return res.status(400).json({ message: messages.INVALID_ADDRESS });
 
 	const addressExists = (await firestore.collection('addresses').where('address', '==', substrateAddress).where('verified', '==', true).limit(1).get()).docs.length > 0;
-	if(addressExists) return res.status(400).json({ message: messages.ADDRESS_ALREADY_EXISTS });
+	if (addressExists) return res.status(400).json({ message: messages.ADDRESS_ALREADY_EXISTS });
 
-	const sign_message = address.startsWith('0x') ?  `Link account with polkassembly ${uuidv4()}` : `<Bytes>${uuidv4()}</Bytes>`;
+	const sign_message = address.startsWith('0x') ? `Link account with polkassembly ${uuidv4()}` : `<Bytes>${uuidv4()}</Bytes>`;
 
 	const newAddress: Address = {
 		address: substrateAddress,
@@ -55,13 +55,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessag
 		verified: false
 	};
 
-	await firestore.collection('addresses').doc(substrateAddress).set(newAddress).then(() => {
-		return res.status(200).json({ message: messages.ADDRESS_LINKING_STARTED, signMessage:sign_message });
-	}).catch((error) => {
-		console.log(' Error while address linking start : ', error);
-		return res.status(400).json({ message: messages.ADDRESS_LINKING_FAILED });
-	});
-
+	await firestore
+		.collection('addresses')
+		.doc(substrateAddress)
+		.set(newAddress)
+		.then(() => {
+			return res.status(200).json({ message: messages.ADDRESS_LINKING_STARTED, signMessage: sign_message });
+		})
+		.catch((error) => {
+			console.log(' Error while address linking start : ', error);
+			return res.status(400).json({ message: messages.ADDRESS_LINKING_FAILED });
+		});
 }
 
 export default withErrorHandling(handler);

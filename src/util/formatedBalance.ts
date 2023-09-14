@@ -4,12 +4,11 @@
 
 import { formatBalance } from '@polkadot/util';
 
-export const formatedBalance = (balance: string, unit: string, withDecimalAfter?:number) => {
+export const formatedBalance = (balance: string, unit: string, withDecimalAfter?: number) => {
 	const formated = formatBalance(balance, { forceUnit: unit, withUnit: false }).split('.');
-	if(Number(formated?.[0][0]) > 0){
-		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0, withDecimalAfter || 1)}`: `${formated[0]}`;
-	}else{
+	if (Number(formated?.[0][0]) > 0) {
+		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0, withDecimalAfter || 1)}` : `${formated[0]}`;
+	} else {
 		return formated.join('.');
 	}
-
 };

@@ -10,8 +10,7 @@ const TWITTER_CONSUMER_API_SECRET_KEY = process.env.TWITTER_CONSUMER_API_SECRET_
 const OAUTH_CONSUMER_ERROR = 'TWITTER_CONSUMER_API_KEY or TWITTER_CONSUMER_API_SECRET_KEY missing in env';
 
 const getOauthConsumer = (network: string) => {
-
-	if(!TWITTER_CONSUMER_API_KEY || !TWITTER_CONSUMER_API_SECRET_KEY) throw apiErrorWithStatusCode(OAUTH_CONSUMER_ERROR, 400);
+	if (!TWITTER_CONSUMER_API_KEY || !TWITTER_CONSUMER_API_SECRET_KEY) throw apiErrorWithStatusCode(OAUTH_CONSUMER_ERROR, 400);
 
 	const oauthConsumer = new oauth.OAuth(
 		'https://twitter.com/oauth/request_token',
@@ -23,6 +22,5 @@ const getOauthConsumer = (network: string) => {
 		'HMAC-SHA1'
 	);
 	return oauthConsumer;
-
 };
-export default getOauthConsumer ;
+export default getOauthConsumer;

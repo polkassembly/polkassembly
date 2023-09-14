@@ -11,7 +11,7 @@ type TWithErrorHandling = (handler: NextApiHandler) => NextApiHandler;
 const withErrorHandling: TWithErrorHandling = (handler) => {
 	return async (req, res) => {
 		// CORS preflight request
-		if(req.method === 'OPTIONS') return res.status(200).end();
+		if (req.method === 'OPTIONS') return res.status(200).end();
 
 		try {
 			await handler(req, res);

@@ -16,7 +16,7 @@ interface Props {
 	onChange?: (balance: string) => void;
 	isBalanceUpdated?: boolean;
 	setAvailableBalance?: (pre: string) => void;
-	classname?: string
+	classname?: string;
 }
 
 const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, classname }: Props) => {
@@ -31,73 +31,70 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
 
-		if (['genshiro'].includes(network)){
-			api.query.eqBalances.account(address, { '0': 1734700659 })
+		if (['genshiro'].includes(network)) {
+			api.query.eqBalances
+				.account(address, { '0': 1734700659 })
 				.then((result: any) => {
 					setBalance(result.toHuman()?.Positive?.toString() || '0');
-					setAvailableBalance &&	setAvailableBalance(result.toHuman()?.Positive?.toString() || '0');
+					setAvailableBalance && setAvailableBalance(result.toHuman()?.Positive?.toString() || '0');
 					onChange && onChange(result.toHuman()?.Positive?.toString() || '0');
 				})
-				.catch(e => console.error(e));
-		}
-		else if(['equilibrium'].includes(network)){
-			api.query.system.account(address)
+				.catch((e) => console.error(e));
+		} else if (['equilibrium'].includes(network)) {
+			api.query.system
+				.account(address)
 				.then((result: any) => {
-					if(isReferendum){
+					if (isReferendum) {
 						setBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-						setAvailableBalance &&	setAvailableBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
+						setAvailableBalance && setAvailableBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 						onChange && onChange(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-					}
-					else{
+					} else {
 						const locked = result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '') || '0';
 						const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
-						if(new BN(positive).cmp(new BN(locked))){
-							setBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
-							setAvailableBalance &&	setAvailableBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
-							onChange && onChange((new BN(positive).sub(new BN(locked))).toString() || '0');
-						}
-						else{
+						if (new BN(positive).cmp(new BN(locked))) {
+							setBalance(new BN(positive).sub(new BN(locked)).toString() || '0');
+							setAvailableBalance && setAvailableBalance(new BN(positive).sub(new BN(locked)).toString() || '0');
+							onChange && onChange(new BN(positive).sub(new BN(locked)).toString() || '0');
+						} else {
 							setBalance(positive);
-							setAvailableBalance &&	setAvailableBalance(positive);
+							setAvailableBalance && setAvailableBalance(positive);
 							onChange && onChange(positive);
 						}
 					}
-				}).catch(e => console.error(e));
-		}
-		else{
-			api.query.system.account(address)
+				})
+				.catch((e) => console.error(e));
+		} else {
+			api.query.system
+				.account(address)
 				.then((result: any) => {
 					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
 					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
-					if(isReferendum){
+					if (isReferendum) {
 						setBalance(result.data?.free?.toString() || '0');
-						setAvailableBalance &&	setAvailableBalance(result.data?.free?.toString() || '0');
+						setAvailableBalance && setAvailableBalance(result.data?.free?.toString() || '0');
 						onChange && onChange(result.data?.free?.toString() || '0');
-					}
-					else if(isDemocracyProposal && result.data.free && result.data?.free?.toBigInt() >= frozen){
-						setBalance((result.data?.free?.toBigInt() + reserved).toString()  || '0');
-						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved - frozen).toString()  || '0');
-						onChange && onChange((result.data?.free?.toBigInt() + reserved).toString()  || '0');
-					}
-					else if (result.data.free && result.data?.free?.toBigInt() >= frozen){
+					} else if (isDemocracyProposal && result.data.free && result.data?.free?.toBigInt() >= frozen) {
+						setBalance((result.data?.free?.toBigInt() + reserved).toString() || '0');
+						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved - frozen).toString() || '0');
+						onChange && onChange((result.data?.free?.toBigInt() + reserved).toString() || '0');
+					} else if (result.data.free && result.data?.free?.toBigInt() >= frozen) {
 						setBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
-						setAvailableBalance &&	setAvailableBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
+						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
 						onChange && onChange((result.data?.free?.toBigInt() - frozen).toString() || '0');
-					}
-					else{
+					} else {
 						setBalance('0');
 						setAvailableBalance && setAvailableBalance('0');
 						onChange && onChange('0');
 					}
 				})
-				.catch(e => console.error(e));
+				.catch((e) => console.error(e));
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
 	return (
-		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
-      Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+		<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] ${classname}`}>
+			Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);
 };

@@ -8,42 +8,49 @@ import CloseIcon from '~assets/icons/close-icon.svg';
 import SuccessIcon from '~assets/icons/success-verification.svg';
 import { useRouter } from 'next/router';
 
-interface Props{
-  className?: string;
-  socialHandle?: string;
-  social: string;
-  open: boolean;
-	onClose:(pre:boolean)=> void;
+interface Props {
+	className?: string;
+	socialHandle?: string;
+	social: string;
+	open: boolean;
+	onClose: (pre: boolean) => void;
 }
 
-const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose  }: Props) => {
+const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose }: Props) => {
 	const router = useRouter();
 	const [loading, setLoading] = useState<boolean>(false);
-	return <Modal
-		zIndex={100000}
-		open={open}
-		className={`${poppins.variable} ${poppins.className} w-[600px] max-sm:w-full h-[300px]`}
-		wrapClassName={className}
-		closeIcon={<CloseIcon/>}
-		onCancel={() => { onClose(false);}}
-		footer={false}
-		closable={false}
-		maskClosable={false}
-	>
-		<div className='flex justify-center items-center flex-col -mt-[110px]'>
-			<SuccessIcon/>
-			<label className='text-xl font-semibold text-bodyBlue tracking-[0.15%] -mt-2'>{social} verified successfully</label>
-			{socialHandle && <div className='text-2xl text-pink_primary font-semibold mt-4'>{socialHandle}</div>}
-			<Button
-				className='mt-6 bg-pink_primary border-none text-white rounded-[4px] h-[40px] text-sm'
-				onClick={() => { setLoading(true); router.push(`/?identityVerification=${true}`); }}
-				loading={loading}
-			>
-				Continue verification
-			</Button>
-			<div className='mt-12 h-[18px] bg-[#51D36E] w-[600px] -mb-5 -ml-12 -mr-12 max-sm:w-full rounded-b-lg ' />
-		</div>
-	</Modal>;
+	return (
+		<Modal
+			zIndex={100000}
+			open={open}
+			className={`${poppins.variable} ${poppins.className} h-[300px] w-[600px] max-sm:w-full`}
+			wrapClassName={className}
+			closeIcon={<CloseIcon />}
+			onCancel={() => {
+				onClose(false);
+			}}
+			footer={false}
+			closable={false}
+			maskClosable={false}
+		>
+			<div className='-mt-[110px] flex flex-col items-center justify-center'>
+				<SuccessIcon />
+				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue'>{social} verified successfully</label>
+				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}
+				<Button
+					className='mt-6 h-[40px] rounded-[4px] border-none bg-pink_primary text-sm text-white'
+					onClick={() => {
+						setLoading(true);
+						router.push(`/?identityVerification=${true}`);
+					}}
+					loading={loading}
+				>
+					Continue verification
+				</Button>
+				<div className='-mb-5 -ml-12 -mr-12 mt-12 h-[18px] w-[600px] rounded-b-lg bg-[#51D36E] max-sm:w-full ' />
+			</div>
+		</Modal>
+	);
 };
 
 export default VerificationSuccessScreen;

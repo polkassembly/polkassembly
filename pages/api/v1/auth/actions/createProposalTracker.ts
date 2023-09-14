@@ -12,24 +12,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const body = JSON.parse(req.body);
 
 	const { onchain_proposal_id, status, deadline, start_time } = body;
 
-	if(!body || !onchain_proposal_id || !status || !deadline || start_time) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!body || !onchain_proposal_id || !status || !deadline || start_time) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 
-	await authServiceInstance.ProposalTrackerCreate(
-		onchain_proposal_id,
-		status,
-		deadline,
-		token,
-		network,
-		start_time
-	);
+	await authServiceInstance.ProposalTrackerCreate(onchain_proposal_id, status, deadline, token, network, start_time);
 
 	return { message: 'Status set successfully' };
 }

@@ -13,33 +13,37 @@ interface Props {
 	isPreview?: boolean;
 	isAutoComplete?: boolean;
 	md: string;
-  imgHidden?: boolean;
+	imgHidden?: boolean;
 }
 
 const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 
-	return <ReactMarkdown
-		className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'}`}
-		rehypePlugins={[rehypeRaw, remarkGfm]}
-		linkTarget='_blank'
-	>
-		{sanitisedMd}
-	</ReactMarkdown>;
+	return (
+		<ReactMarkdown
+			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'}`}
+			rehypePlugins={[rehypeRaw, remarkGfm]}
+			linkTarget='_blank'
+		>
+			{sanitisedMd}
+		</ReactMarkdown>
+	);
 };
 
 export default styled(Markdown)`
-	&, &.mde-preview-content {
+	&,
+	&.mde-preview-content {
 		font-size: 14px;
 		margin-bottom: 0;
 		overflow-wrap: break-word;
-		overflow-x : auto;
+		overflow-x: auto;
 
-		.hide-image img{
+		.hide-image img {
 			display: none !important;
 		}
 
-		th, td {
+		th,
+		td {
 			border: 1px solid;
 			padding: 0.5rem;
 		}
@@ -48,10 +52,15 @@ export default styled(Markdown)`
 			margin: 1rem 0;
 		}
 
-		p, blockquote, ul, ol, dl, table {
+		p,
+		blockquote,
+		ul,
+		ol,
+		dl,
+		table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
-      color: var(--bodyBlue) !important;
+			color: var(--bodyBlue) !important;
 		}
 
 		h1 {
@@ -64,12 +73,14 @@ export default styled(Markdown)`
 			margin: 2rem 0 1rem 0;
 		}
 
-		h3, h4 {
+		h3,
+		h4 {
 			font-size: 1.2rem;
 			margin-bottom: 0.8rem;
 		}
 
-		ul, ol {
+		ul,
+		ol {
 			padding-left: 2rem;
 
 			li {
@@ -99,12 +110,12 @@ export default styled(Markdown)`
 			border-left-width: 0.25rem;
 			border-left-color: grey_primary;
 			font-size: 0.9rem;
-				& > :first-child {
-					margin-top: 0;
-				}
-				& > :last-child {
-					margin-bottom: 0;
-				}
+			& > :first-child {
+				margin-top: 0;
+			}
+			& > :last-child {
+				margin-bottom: 0;
+			}
 		}
 
 		img {
@@ -123,7 +134,8 @@ export default styled(Markdown)`
 			margin: 0;
 			border-radius: 3px;
 			white-space: pre-wrap;
-			&::before, &::after {
+			&::before,
+			&::after {
 				letter-spacing: -0.2em;
 			}
 
@@ -134,17 +146,21 @@ export default styled(Markdown)`
 	}
 
 	&.mde-preview-content {
-
-		h1, h2, h3, h4 {
+		h1,
+		h2,
+		h3,
+		h4 {
 			border-bottom: none;
 		}
 
-		h1, h2 {
+		h1,
+		h2 {
 			font-size: 1.3rem;
 			font-weight: 400;
 		}
 
-		h3, h4 {
+		h3,
+		h4 {
 			font-size: 1.2rem;
 			font-weight: 500;
 		}
@@ -163,8 +179,8 @@ export default styled(Markdown)`
 			margin-top: -3px;
 			margin-right: -2px;
 			font-weight: 500;
-			color: #485F7D !important;
-			background:none !important;
+			color: #485f7d !important;
+			background: none !important;
 		}
 
 		&:hover {

@@ -170,7 +170,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
   }
 }
 `;
-export const GET_PROPOSALS_LISTING_FOR_POLYMESH =`
+export const GET_PROPOSALS_LISTING_FOR_POLYMESH = `
 query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset: Int = 0) {
   proposals(orderBy: createdAt_DESC, limit: $limit, offset: $offset, where: {type_in: $type_in}) {
     createdAt

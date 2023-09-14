@@ -23,38 +23,51 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		oauthVerifier: String(oauthVerifier)
 	});
 
-	if(data){
+	if (data) {
 		return { props: { network, twitterHandle: data } };
 	}
 	return { props: { error: error || 'Error in getting twitter handle', network } };
 };
 
-const TwitterCallback = ({ error, network, twitterHandle  }: { network: string, error?: null | any, twitterHandle?: string}) => {
+const TwitterCallback = ({ error, network, twitterHandle }: { network: string; error?: null | any; twitterHandle?: string }) => {
 	const { setNetwork } = useNetworkContext();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(!error);
 
 	useEffect(() => {
 		setNetwork(network);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return (
 		<>
-			<SEOHead title="Twitter Callback" network={network}/>
-			<Row justify='center' align='middle' className='h-full -mt-16'>
-				{ error
-					? <article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
-						<h2 className='flex flex-col gap-y-2 items-center text-xl font-medium'>
+			<SEOHead
+				title='Twitter Callback'
+				network={network}
+			/>
+			<Row
+				justify='center'
+				align='middle'
+				className='-mt-16 h-full'
+			>
+				{error ? (
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
 							<WarningOutlined />
 							{/* TODO: Check error message from BE when email already verified */}
-							<FilteredError text={error?.message || error}/>
+							<FilteredError text={error?.message || error} />
 						</h2>
 					</article>
-					: <Loader/>
-				}
+				) : (
+					<Loader />
+				)}
 			</Row>
-			<VerificationSuccessScreen open={identityEmailSuccess} social='Twitter' socialHandle={twitterHandle} onClose={() => setIdentityEmailSuccess(false) }/>
+			<VerificationSuccessScreen
+				open={identityEmailSuccess}
+				social='Twitter'
+				socialHandle={twitterHandle}
+				onClose={() => setIdentityEmailSuccess(false)}
+			/>
 		</>
 	);
 };

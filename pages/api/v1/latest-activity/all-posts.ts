@@ -51,29 +51,29 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		}
 
 		let onChainPosts: {
-				title: any;
-				created_at: any;
-				description: any;
-				hash: any;
-				method: any;
-				origin: any;
-				parent_bounty_index: any;
-				post_id: any;
-				proposer: any;
-				status: any;
-				track_number: any;
-				type: any;
-				isSpam?: boolean;
-				isSpamReportInvalid?: boolean;
+			title: any;
+			created_at: any;
+			description: any;
+			hash: any;
+			method: any;
+			origin: any;
+			parent_bounty_index: any;
+			post_id: any;
+			proposer: any;
+			status: any;
+			track_number: any;
+			type: any;
+			isSpam?: boolean;
+			isSpamReportInvalid?: boolean;
 		}[] = [];
 
 		let onChainPostsCount = 0;
 
-		if(network === AllNetworks.COLLECTIVES || network=== AllNetworks.WESTENDCOLLECTIVES  ) {
+		if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_ALLIANCE_LATEST_ACTIVITY,
-				variables:{ limit: numListingLimit }
+				variables: { limit: numListingLimit }
 			});
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
@@ -89,7 +89,10 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 						}
 					});
 				}
-				const title = subsquidPost.callData?.method?.split('_').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+				const title = subsquidPost.callData?.method
+					?.split('_')
+					.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+					.join(' ');
 				const singlePost = {
 					created_at: createdAt,
 					description: description || '',
@@ -116,7 +119,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					};
 				}
 				return singlePost;
-
 			});
 			onChainPosts = await Promise.all(posts);
 			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
@@ -124,9 +126,9 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
 			let query = GET_PROPOSALS_LISTING_BY_TYPE;
-			if(network === AllNetworks.POLYMESH){
+			if (network === AllNetworks.POLYMESH) {
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
-				variables ={
+				variables = {
 					limit: numListingLimit
 				};
 			}
@@ -142,7 +144,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				const data = await fetchLatestSubsquare(network);
 				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
 					subsquidRes['data'] = {
-						'proposals': data.items.map((item: any) => {
+						proposals: data.items.map((item: any) => {
 							return {
 								createdAt: item?.createdAt,
 								end: 0,
@@ -158,7 +160,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 								type: 'ReferendumV2'
 							};
 						}),
-						'proposalsConnection': {
+						proposalsConnection: {
 							totalCount: data.total
 						}
 					};
@@ -171,7 +173,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			const parentBounties = new Set<number>();
 			const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
 				const { createdAt, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex, group } = subsquidPost;
-				const postId = type === 'Tip'? hash: index;
+				const postId = type === 'Tip' ? hash : index;
 				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
 				const postDoc = await postDocRef.get();
 				let newProposer = proposer || preimage?.proposer || curator;
@@ -209,9 +211,9 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				}
 				const onChainPost = {
 					created_at: createdAt,
-					description: description || (proposalArguments? proposalArguments?.description: null),
+					description: description || (proposalArguments ? proposalArguments?.description : null),
 					hash,
-					method: method || preimage?.method || (proposalArguments? proposalArguments?.method: proposalArguments?.method),
+					method: method || preimage?.method || (proposalArguments ? proposalArguments?.method : proposalArguments?.method),
 					origin,
 					parent_bounty_index: parentBountyIndex,
 					post_id: postId,
@@ -224,7 +226,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				if (postDoc && postDoc.exists) {
 					const data = postDoc?.data();
 					let subsquareTitle = '';
-					if(data?.title === '' || data?.title === method || data?.title === null){
+					if (data?.title === '' || data?.title === method || data?.title === null) {
 						const res = await getSubSquareContentAndTitle(getFirestoreProposalType(type) as ProposalType, network, postId);
 						subsquareTitle = res?.title;
 					}
@@ -232,7 +234,8 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 						...onChainPost,
 						isSpam: data?.isSpam || false,
 						isSpamReportInvalid: data?.isSpamReportInvalid || false,
-						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
+						spam_users_count:
+							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title || subsquareTitle || null
 					};
 				}
@@ -264,7 +267,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 						subsquidPosts.forEach((post) => {
 							onChainPosts = onChainPosts.map((onChainPost) => {
 								if (onChainPost.parent_bounty_index === post.index && post) {
-									onChainPost.proposer = post.proposer || post.curator || (post?.preimage? post?.preimage?.proposer: '');
+									onChainPost.proposer = post.proposer || post.curator || (post?.preimage ? post?.preimage?.proposer : '');
 								}
 								return {
 									...onChainPost
@@ -274,15 +277,10 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					}
 				}
 			}
-
 		}
 
 		const discussionsPostsColRef = postsByTypeRef(network, ProposalType.DISCUSSIONS);
-		const postsSnapshotArr = await discussionsPostsColRef
-			.where('isDeleted', '==', false)
-			.orderBy('created_at', 'desc')
-			.limit(numListingLimit)
-			.get();
+		const postsSnapshotArr = await discussionsPostsColRef.where('isDeleted', '==', false).orderBy('created_at', 'desc').limit(numListingLimit).get();
 
 		let offChainPosts: any[] = [];
 		const offChainPostsCount = (await discussionsPostsColRef.where('isDeleted', '==', false).count().get()).data().count;
@@ -304,17 +302,22 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 						}
 					}
 					offChainPosts.push({
-						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
+						created_at: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
 						isSpam: data?.isSpam || false,
 						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						post_id: data?.id,
 						proposer: '',
-						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
+						spam_users_count:
+							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title,
-						topic: topic? topic: isTopicIdValid(topic_id)? {
-							id: topic_id,
-							name: getTopicNameFromTopicId(topic_id)
-						}: getTopicFromType(ProposalType.DISCUSSIONS),
+						topic: topic
+							? topic
+							: isTopicIdValid(topic_id)
+							? {
+									id: topic_id,
+									name: getTopicNameFromTopicId(topic_id)
+							  }
+							: getTopicFromType(ProposalType.DISCUSSIONS),
 						type: 'Discussions',
 						user_id,
 						username: data?.username || ''
@@ -328,9 +331,13 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		if (newIds.length > 0) {
 			const newIdsLen = newIds.length;
 			let lastIndex = 0;
-			for (let i = 0; i < newIdsLen; i+=30) {
+			for (let i = 0; i < newIdsLen; i += 30) {
 				lastIndex = i;
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
+				const addressesQuery = await firestore_db
+					.collection('addresses')
+					.where('user_id', 'in', newIds.slice(i, newIdsLen > i + 30 ? i + 30 : newIdsLen))
+					.where('default', '==', true)
+					.get();
 				addressesQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -347,7 +354,11 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				});
 			}
 			if (lastIndex <= newIdsLen) {
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
+				const addressesQuery = await firestore_db
+					.collection('addresses')
+					.where('user_id', 'in', newIds.slice(lastIndex, lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen))
+					.where('default', '==', true)
+					.get();
 				addressesQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -372,7 +383,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		deDupedAllPosts = await getSpamUsersCountForPosts(network, deDupedAllPosts);
 
 		const data: ILatestActivityPostsListingResponse = {
-			count:  onChainPostsCount + offChainPostsCount,
+			count: onChainPostsCount + offChainPostsCount,
 			posts: deDupedAllPosts.slice(0, numListingLimit)
 		};
 
@@ -394,7 +405,7 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	const { govType, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getLatestActivityAllPosts({
 		govType,
@@ -402,9 +413,9 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 		network
 	});
 
-	if(error || !data) {
+	if (error || !data) {
 		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
+	} else {
 		return res.status(status).json(data);
 	}
 };

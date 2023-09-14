@@ -27,13 +27,16 @@ const PrivacyPage: FC<IPrivacyPage> = (props) => {
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Privacy Policy' network={network}/>
-			<PrivacyPolicy/>
+			<SEOHead
+				title='Privacy Policy'
+				network={network}
+			/>
+			<PrivacyPolicy />
 		</>
 	);
 };

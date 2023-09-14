@@ -54,7 +54,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 		if (!accounts.length) {
 			getAccounts();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [accounts.length]);
 
 	useEffect(() => {
@@ -76,40 +76,36 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 		setUnlocksAt(votingInfo.asDirect.prior[0].toString());
 
-		setVotes(votingInfo.asDirect.votes.map((vote) => {
-			const refIndex = vote[0];
+		setVotes(
+			votingInfo.asDirect.votes.map((vote) => {
+				const refIndex = vote[0];
 
-			let conviction = 0;
+				let conviction = 0;
 
-			if(vote[1].asStandard.vote.conviction.isLocked1x){
-				conviction = 1;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked2x){
-				conviction = 2;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked3x){
-				conviction = 3;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked4x){
-				conviction = 4;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked5x){
-				conviction = 5;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked6x){
-				conviction = 6;
-			}
-			else{
-				conviction = 0;
-			}
+				if (vote[1].asStandard.vote.conviction.isLocked1x) {
+					conviction = 1;
+				} else if (vote[1].asStandard.vote.conviction.isLocked2x) {
+					conviction = 2;
+				} else if (vote[1].asStandard.vote.conviction.isLocked3x) {
+					conviction = 3;
+				} else if (vote[1].asStandard.vote.conviction.isLocked4x) {
+					conviction = 4;
+				} else if (vote[1].asStandard.vote.conviction.isLocked5x) {
+					conviction = 5;
+				} else if (vote[1].asStandard.vote.conviction.isLocked6x) {
+					conviction = 6;
+				} else {
+					conviction = 0;
+				}
 
-			return {
-				amount: vote[1].asStandard.balance,
-				conviction: conviction,
-				refIndex,
-				vote: vote[1].asStandard.vote.isAye
-			};
-		}));
+				return {
+					amount: vote[1].asStandard.balance,
+					conviction: conviction,
+					refIndex,
+					vote: vote[1].asStandard.vote.isAye
+				};
+			})
+		);
 
 		votes.sort((a, b) => a.conviction - b.conviction);
 
@@ -157,18 +153,20 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 			return;
 		}
 
-		setAccounts(addresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address,
-				meta: {
-					genesisHash: null,
-					name: 'metamask',
-					source: 'metamask'
-				}
-			};
+		setAccounts(
+			addresses.map((address: string): InjectedAccountWithMeta => {
+				const account = {
+					address,
+					meta: {
+						genesisHash: null,
+						name: 'metamask',
+						source: 'metamask'
+					}
+				};
 
-			return account;
-		}));
+				return account;
+			})
+		);
 
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);
@@ -291,113 +289,134 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 			});
 	};
 
-	const GetAccountsButton = () =>
+	const GetAccountsButton = () => (
 		<Form>
 			<Form.Item className='button-container'>
 				<Button
-					className='bg-pink_primary rounded-md outline-none border-none text-white mt-2'
+					className='mt-2 rounded-md border-none bg-pink_primary text-white outline-none'
 					onClick={getAccounts}
 					size={'large'}
 				>
 					Vote
 				</Button>
 			</Form.Item>
-		</Form>;
+		</Form>
+	);
 
 	const noAccount = accounts.length === 0;
 
 	return (
 		<div className={className}>
-			{noAccount
-				? <GetAccountsButton />
-				: null
-			}
+			{noAccount ? <GetAccountsButton /> : null}
 			<Form id='democracyUnlock'>
 				<div>
 					<Form.Item>
-						<h1 className='dashboard-heading' >Unlock democracy locks</h1>
-						{ accounts.length > 0 ? <AccountSelectionForm
-							title='Choose account'
-							accounts={accounts}
-							address={address}
-							onAccountChange={onAccountChange}
-							withBalance
-							isBalanceUpdated={isBalanceUpdated}
-						/> :
-							<span className='text-sidebarBlue'>No accounts found, Please approve request from your wallet and/or <a href="javascript:window.location.reload(true)">refresh</a> and try again! </span>
-						}
+						<h1 className='dashboard-heading'>Unlock democracy locks</h1>
+						{accounts.length > 0 ? (
+							<AccountSelectionForm
+								title='Choose account'
+								accounts={accounts}
+								address={address}
+								onAccountChange={onAccountChange}
+								withBalance
+								isBalanceUpdated={isBalanceUpdated}
+							/>
+						) : (
+							<span className='text-sidebarBlue'>
+								No accounts found, Please approve request from your wallet and/or <a href='javascript:window.location.reload(true)'>refresh</a> and try again!{' '}
+							</span>
+						)}
 					</Form.Item>
 				</div>
 				<div>
 					<Form.Item>
-						{lockedBalance.isZero()
-							? <div className='text-sidebarBlue'>You currently have no democracy locks.</div>
-							: <div className='text-sidebarBlue'>Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>{unlocksAt === '0' ? <div className=' font-medium'>Available to be immediately unlocked.</div> : <div>UnlocksAt: <span className='font-medium'>{unlocksAt}</span></div>} </div>
-						}
-						{votes.length ?
+						{lockedBalance.isZero() ? (
+							<div className='text-sidebarBlue'>You currently have no democracy locks.</div>
+						) : (
+							<div className='text-sidebarBlue'>
+								Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>
+								{unlocksAt === '0' ? (
+									<div className=' font-medium'>Available to be immediately unlocked.</div>
+								) : (
+									<div>
+										UnlocksAt: <span className='font-medium'>{unlocksAt}</span>
+									</div>
+								)}{' '}
+							</div>
+						)}
+						{votes.length ? (
 							<>
-								<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
-									<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
+								<ul className='mt-3 flex list-none flex-col text-sidebarBlue'>
+									<li className='grid grid-cols-6 gap-x-5 py-1 font-medium md:grid-cols-8'>
 										<span className='col-span-2'>Referendums</span>
 										<span className='col-span-2'>Locked</span>
 										<span className='col-span-2'>Unlocks At</span>
 										<span className='col-span-2'></span>
 									</li>
-									<Divider className='my-1'/>
+									<Divider className='my-1' />
 									{votes.map((vote, id) => (
 										<>
-											<li key={vote.refIndex.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
+											<li
+												key={vote.refIndex.toString()}
+												className='grid grid-cols-6 gap-x-5 py-1 md:grid-cols-8'
+											>
 												<span className='col-span-2'>
-													<Link href={`/referendum/${vote.refIndex.toString()}`}>
-														Referendum #{vote.refIndex.toString()}
-													</Link>
+													<Link href={`/referendum/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
 												</span>
-												<span className='col-span-2'>
-													{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
-												</span>
+												<span className='col-span-2'>{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}</span>
 												<span className='col-span-2'>{unlocksAt}</span>
 												<span className='col-span-2'>
-													{ id === 0 ? canBeUnlocked ? <Button
-														onClick={handleUnlock}
-														loading={loadingStatus.isLoading}
-														size='small'
-														className='bg-pink_primary rounded-md outline-none border-none text-white'
-													>
+													{id === 0 ? (
+														canBeUnlocked ? (
+															<Button
+																onClick={handleUnlock}
+																loading={loadingStatus.isLoading}
+																size='small'
+																className='rounded-md border-none bg-pink_primary text-white outline-none'
+															>
 																Unlock
-													</Button>
-														:
-														<Button
-															size='small'
-															className='bg-pink_primary rounded-md outline-none border-none text-white'
-															onClick={() => handleRemove(vote.refIndex)}
-															loading={loadingStatus.isLoading}
-														>
+															</Button>
+														) : (
+															<Button
+																size='small'
+																className='rounded-md border-none bg-pink_primary text-white outline-none'
+																onClick={() => handleRemove(vote.refIndex)}
+																loading={loadingStatus.isLoading}
+															>
 																Remove
-														</Button> : <></> }
+															</Button>
+														)
+													) : (
+														<></>
+													)}
 												</span>
 											</li>
-											<Divider className='my-1'/>
+											<Divider className='my-1' />
 										</>
 									))}
 								</ul>
 								{/* <div>{unlocking ? <>Please Confirm to Unlock.</> : <>*Remove Votes will also call Unlock.</>}</div> */}
 							</>
-							: <>
+						) : (
+							<>
 								<Button
-									className='bg-pink_primary rounded-md outline-none border-none text-white mt-2'
+									className='mt-2 rounded-md border-none bg-pink_primary text-white outline-none'
 									onClick={handleUnlock}
 									loading={loadingStatus.isLoading}
 								>
 									Unlock
 								</Button>
-							</>}
+							</>
+						)}
 					</Form.Item>
 				</div>
 			</Form>
-			{isAccountLoading || loadingStatus.isLoading
-				? <Loader className='loader-wrapper' text={loadingStatus.message} />
-				: null
-			}
+			{isAccountLoading || loadingStatus.isLoading ? (
+				<Loader
+					className='loader-wrapper'
+					text={loadingStatus.message}
+				/>
+			) : null}
 		</div>
 	);
 };

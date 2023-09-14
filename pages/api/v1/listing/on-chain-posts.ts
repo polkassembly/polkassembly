@@ -9,7 +9,14 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
-import { GET_ALLIANCE_ANNOUNCEMENTS, GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSALS_LISTING_FOR_POLYMESH, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
+import {
+	GET_ALLIANCE_ANNOUNCEMENTS,
+	GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
+	GET_PROPOSALS_LISTING_BY_TYPE,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES,
+	GET_PROPOSALS_LISTING_FOR_POLYMESH,
+	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES
+} from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -55,18 +62,18 @@ export interface IPostListing {
 	requestedAmount?: Number;
 	proposer?: string;
 	curator?: string;
-	parent_bounty_index?: number
+	parent_bounty_index?: number;
 	method?: string;
 	status?: string;
-	status_history:{
-    block:number;
-    status: string;
-}[];
+	status_history: {
+		block: number;
+		status: string;
+	}[];
 	title: string;
 	tally?: {
-    ayes: string;
-    nays: string;
-};
+		ayes: string;
+		nays: string;
+	};
 	topic: {
 		id: number;
 		name: string;
@@ -75,8 +82,8 @@ export interface IPostListing {
 	username?: string;
 	tags?: string[] | [];
 	gov_type?: 'gov_1' | 'open_gov';
-  timeline?: any;
-  track_no?: number | null;
+	timeline?: any;
+	track_no?: number | null;
 	isSpam?: boolean;
 	identity?: string | null;
 	isSpamReportInvalid?: boolean;
@@ -84,14 +91,14 @@ export interface IPostListing {
 }
 
 export interface IPostsListingResponse {
-	count: number
-	posts: IPostListing[]
+	count: number;
+	posts: IPostListing[];
 }
 
 export function getGeneralStatus(status: string) {
 	switch (status) {
-	case 'DecisionDepositPlaced':
-		return 'Deciding';
+		case 'DecisionDepositPlaced':
+			return 'Deciding';
 	}
 	return status;
 }
@@ -174,8 +181,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const docData = doc.data();
 					if (docData) {
 						let subsquareTitle = '';
-						if(docData?.title === '' || docData?.title === undefined ){
-							const res = await getSubSquareContentAndTitle(strProposalType,network,docData.id);
+						if (docData?.title === '' || docData?.title === undefined) {
+							const res = await getSubSquareContentAndTitle(strProposalType, network, docData.id);
 							subsquareTitle = res?.title;
 						}
 						const postDocRef = onChainCollRef.doc(String(docData.id));
@@ -201,19 +208,23 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							post_id: docData.id,
 							post_reactions,
 							proposer: getProposerAddressFromFirestorePostData(docData, network),
-							spam_users_count: docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
+							spam_users_count:
+								docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
 							tags: docData?.tags || [],
 							title: docData?.title || subsquareTitle || null,
-							topic: topic ? topic : isTopicIdValid(topic_id) ? {
-								id: topic_id,
-								name: getTopicNameFromTopicId(topic_id)
-							} : getTopicFromType(strProposalType as ProposalType),
+							topic: topic
+								? topic
+								: isTopicIdValid(topic_id)
+								? {
+										id: topic_id,
+										name: getTopicNameFromTopicId(topic_id)
+								  }
+								: getTopicFromType(strProposalType as ProposalType),
 							user_id: docData?.user_id || 1,
 							username: docData?.username
 						};
 					}
 				}
-
 			});
 			const posts = await Promise.all(postsPromise);
 			const indexMap: any = {};
@@ -230,8 +241,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
-			let query =  GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
-			if(network === 'polymesh'){
+			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
+			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			}
 
@@ -251,17 +262,20 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				};
 
 				let proposalTimeline;
-				if(!group?.proposals){
-					proposalTimeline = getTimeline([
-						{
-							createdAt,
-							hash,
-							index,
-							statusHistory,
-							type
-						}
-					],isStatus);
-				}else{
+				if (!group?.proposals) {
+					proposalTimeline = getTimeline(
+						[
+							{
+								createdAt,
+								hash,
+								index,
+								statusHistory,
+								type
+							}
+						],
+						isStatus
+					);
+				} else {
 					proposalTimeline = getTimeline(group?.proposals, isStatus) || [];
 				}
 
@@ -296,8 +310,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const data = postDoc.data();
 					if (data) {
 						let subsquareTitle = '';
-						if(data?.title === '' || data?.title === undefined){
-							const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
+						if (data?.title === '' || data?.title === undefined) {
+							const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 							subsquareTitle = res?.title;
 						}
 						const proposer_address = getProposerAddressFromFirestorePostData(data, network);
@@ -320,17 +334,22 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							post_id: postId,
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
-							spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
+							spam_users_count:
+								data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 							status,
 							status_history: statusHistory,
 							tags: data?.tags || [],
 							tally,
 							timeline: proposalTimeline,
 							title: data?.title || subsquareTitle || null,
-							topic: topic ? topic : isTopicIdValid(topic_id) ? {
-								id: topic_id,
-								name: getTopicNameFromTopicId(topic_id)
-							} : topicFromType,
+							topic: topic
+								? topic
+								: isTopicIdValid(topic_id)
+								? {
+										id: topic_id,
+										name: getTopicNameFromTopicId(topic_id)
+								  }
+								: topicFromType,
 							track_no: !isNaN(trackNumber) ? trackNumber : null,
 							type: type || subsquidProposalType,
 							user_id: data?.user_id || 1
@@ -339,7 +358,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				}
 
 				let subsquareTitle = '';
-				const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
+				const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 				subsquareTitle = res?.title;
 
 				return {
@@ -378,8 +397,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				error: null,
 				status: 200
 			};
-		}
-		else {
+		} else {
 			const numTrackNo = Number(trackNo);
 			const strTrackStatus = String(trackStatus);
 			if (strProposalType === ProposalType.OPEN_GOV) {
@@ -430,12 +448,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				} else {
 					query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
 				}
-			}
-			else {
+			} else {
 				query = GET_PROPOSALS_LISTING_BY_TYPE;
 			}
-			if(network === AllNetworks.POLYMESH){
-
+			if (network === AllNetworks.POLYMESH) {
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 			}
 			let subsquidRes: any = {};
@@ -449,7 +465,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				const data = await fetchSubsquare(network, Number(listingLimit), Number(page), Number(trackNo));
 				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
 					subsquidRes['data'] = {
-						'proposals': data.items.map((item: any) => {
+						proposals: data.items.map((item: any) => {
 							return {
 								createdAt: item?.createdAt,
 								end: 0,
@@ -465,7 +481,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								type: 'ReferendumV2'
 							};
 						}),
-						'proposalsConnection': {
+						proposalsConnection: {
 							totalCount: data.total
 						}
 					};
@@ -508,8 +524,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const data = postDoc.data();
 							if (data) {
 								let subsquareTitle = '';
-								if(data?.title === '' || data?.content === '' || data.title === undefined || data?.content === undefined){
-									const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
+								if (data?.title === '' || data?.content === '' || data.title === undefined || data?.content === undefined) {
+									const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 									subsquareTitle = res?.title;
 								}
 								return {
@@ -523,7 +539,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
-									spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
+									spam_users_count:
+										data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 									status,
 									tags: data?.tags || [],
 									title: data?.title || subsquareTitle,
@@ -581,8 +598,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const data = postDoc.data();
 							if (data) {
 								let subsquareTitle = '';
-								if(data?.title === '' || data?.title === title || data?.title === undefined ){
-									const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
+								if (data?.title === '' || data?.title === title || data?.title === undefined) {
+									const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 									subsquareTitle = res?.title;
 								}
 								return {
@@ -597,7 +614,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
-									spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
+									spam_users_count:
+										data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 									status,
 									tags: data?.tags || [],
 									title: data?.title || subsquareTitle || title,
@@ -608,7 +626,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						}
 
 						let subsquareTitle = '';
-						const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
+						const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 						subsquareTitle = res?.title;
 
 						return {
@@ -628,8 +646,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					});
 				}
 				posts = await Promise.all(postsPromise);
-			}
-			else {
+			} else {
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
 					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
 
@@ -638,18 +655,21 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					};
 
 					let proposalTimeline;
-					if(!group?.proposals){
-						proposalTimeline = getTimeline([
-							{
-								createdAt,
-								hash,
-								index,
-								statusHistory: statusHistory || [],
-								type
-							}
-						],isStatus);
-					}else{
-						proposalTimeline= getTimeline(group?.proposals || [], isStatus) || [];
+					if (!group?.proposals) {
+						proposalTimeline = getTimeline(
+							[
+								{
+									createdAt,
+									hash,
+									index,
+									statusHistory: statusHistory || [],
+									type
+								}
+							],
+							isStatus
+						);
+					} else {
+						proposalTimeline = getTimeline(group?.proposals || [], isStatus) || [];
 					}
 					let otherPostProposer = '';
 					const method = splitterAndCapitalizer(subsquidPost?.callData?.method || '', '_');
@@ -692,8 +712,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const data = postDoc.data();
 						if (data) {
 							let subsquareTitle = '';
-							if(data?.title === '' || data?.title === method ){
-								const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
+							if (data?.title === '' || data?.title === method) {
+								const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 								subsquareTitle = res?.title;
 							}
 							const proposer_address = getProposerAddressFromFirestorePostData(data, network);
@@ -717,17 +737,22 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								post_reactions,
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
-								spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
+								spam_users_count:
+									data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 								status,
 								status_history: statusHistory,
 								tags: data?.tags || [],
 								tally,
 								timeline: proposalTimeline,
 								title: data?.title || subsquareTitle,
-								topic: topic ? topic : isTopicIdValid(topic_id) ? {
-									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id)
-								} : topicFromType,
+								topic: topic
+									? topic
+									: isTopicIdValid(topic_id)
+									? {
+											id: topic_id,
+											name: getTopicNameFromTopicId(topic_id)
+									  }
+									: topicFromType,
 								track_no: !isNaN(trackNumber) ? trackNumber : null,
 								type: type || subsquidProposalType,
 								user_id: data?.user_id || 1
@@ -736,7 +761,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 
 					let subsquareTitle = '';
-					const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
+					const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 					subsquareTitle = res?.title;
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
@@ -808,9 +833,18 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 		let lastIndex = 0;
 		for (let i = 0; i < newIdsLen; i += 30) {
 			lastIndex = i + 30;
-			let querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30) ? (i + 30) : newIdsLen)).get();
+			let querySnapshot = networkDocRef(network)
+				.collection('reports')
+				.where('type', '==', 'post')
+				.where('content_id', 'in', postsIds.slice(i, newIdsLen > i + 30 ? i + 30 : newIdsLen))
+				.get();
 			if (proposalType) {
-				querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30) ? (i + 30) : newIdsLen)).get();
+				querySnapshot = networkDocRef(network)
+					.collection('reports')
+					.where('type', '==', 'post')
+					.where('proposal_type', '==', proposalType)
+					.where('content_id', 'in', postsIds.slice(i, newIdsLen > i + 30 ? i + 30 : newIdsLen))
+					.get();
 			}
 
 			const reportsQuery = await querySnapshot;
@@ -831,9 +865,18 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 			});
 		}
 		if (lastIndex < newIdsLen) {
-			let querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen) ? (newIdsLen + 1) : newIdsLen)).get();
+			let querySnapshot = networkDocRef(network)
+				.collection('reports')
+				.where('type', '==', 'post')
+				.where('content_id', 'in', postsIds.slice(lastIndex, lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen))
+				.get();
 			if (proposalType) {
-				querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen) ? (newIdsLen + 1) : newIdsLen)).get();
+				querySnapshot = networkDocRef(network)
+					.collection('reports')
+					.where('type', '==', 'post')
+					.where('proposal_type', '==', proposalType)
+					.where('content_id', 'in', postsIds.slice(lastIndex, lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen))
+					.get();
 			}
 			const reportsQuery = await querySnapshot;
 			reportsQuery.docs.map((doc) => {
@@ -855,14 +898,14 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 	return posts.map((post) => {
 		// marked as spam in the db by the team directly
-		if(post?.isSpam) {
+		if (post?.isSpam) {
 			const threshold = process.env.REPORTS_THRESHOLD || 50;
 			post.spam_users_count = Number(threshold);
 		} else {
 			post.spam_users_count = checkReportThreshold(post.spam_users_count);
 		}
 
-		if(post?.isSpamReportInvalid) {
+		if (post?.isSpamReportInvalid) {
 			post.spam_users_count = 0;
 		}
 

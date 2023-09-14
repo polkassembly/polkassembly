@@ -126,7 +126,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			<CreatePropoosalIcon className='cursor-pointer ml-[-31px]' />
 			<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Treasury Proposal</p>
 		</div>
-		<AddressConnectModal
+		{openAddressLinkedModal && <AddressConnectModal
 			open={openAddressLinkedModal}
 			setOpen={setOpenAddressLinkedModal}
 			closable
@@ -137,7 +137,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
 			localStorageWalletKeyName='treasuryProposalProposerWallet'
 			localStorageAddressKeyName ='treasuryProposalProposerAddress'
-		/>
+		/>}
 		<Modal
 			maskClosable={false}
 			open={closeConfirm}

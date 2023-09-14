@@ -19,13 +19,21 @@ import firebaseAdmin from '~src/services/firebaseInit';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 import { Network, Role, Wallet } from '../types';
-import {
-	sendResetPasswordEmail,
-	sendUndoEmailChangeEmail,
-	sendVerificationEmail
-} from './email';
+import { sendResetPasswordEmail, sendUndoEmailChangeEmail, sendVerificationEmail } from './email';
 import { redisDel, redisGet, redisSetex } from './redis';
-import { Address, AuthObjectType, CalendarEvent, HashedPassword, IAuthResponse, IUserPreference, JWTPayloadType, NotificationSettings, ProfileDetails, UndoEmailChangeToken, User } from './types';
+import {
+	Address,
+	AuthObjectType,
+	CalendarEvent,
+	HashedPassword,
+	IAuthResponse,
+	IUserPreference,
+	JWTPayloadType,
+	NotificationSettings,
+	ProfileDetails,
+	UndoEmailChangeToken,
+	User
+} from './types';
 import getAddressesFromUserId from './utils/getAddressesFromUserId';
 import getDefaultUserAddressFromId from './utils/getDefaultUserAddressFromId';
 import getMultisigAddress from './utils/getMultisigAddress';
@@ -45,7 +53,7 @@ export const ONE_DAY = 24 * 60 * 60; // (expressed in seconds)
 export const FIVE_MIN = 5 * 60; // (expressed in seconds)
 export const ADDRESS_LOGIN_TTL = 5 * 60; // 5 min (expressed in seconds)
 export const CREATE_POST_TTL = 60 * 60; // 1 hour (expressed in seconds)
-export const NOTIFICATION_DEFAULTS : NotificationSettings = {
+export const NOTIFICATION_DEFAULTS: NotificationSettings = {
 	new_proposal: false,
 	own_proposal: true,
 	post_created: true,
@@ -74,13 +82,13 @@ export const getEditPostKey = (address: string): string => `EPT-${address}`;
 export const get2FAKey = (userId: number): string => `TFA-${userId}`;
 
 class AuthService {
-	public async GetUser (token: string): Promise<User | null> {
+	public async GetUser(token: string): Promise<User | null> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 
 		return getUserFromUserId(userId);
 	}
 
-	private async getLatestUserCount (): Promise<number> {
+	private async getLatestUserCount(): Promise<number> {
 		try {
 			const userCount = await firebaseAdmin.firestore().collection('users').orderBy('id', 'desc').limit(1).get();
 			if (userCount.empty) return 0;
@@ -92,7 +100,7 @@ class AuthService {
 		}
 	}
 
-	private async createUser (email: string, newPassword: string, username: string, web3signup: boolean, network: string ,custom_username:boolean = false): Promise<User> {
+	private async createUser(email: string, newPassword: string, username: string, web3signup: boolean, network: string, custom_username: boolean = false): Promise<User> {
 		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);
 
 		const newUserId = (await this.getLatestUserCount()) + 1;
@@ -100,7 +108,7 @@ class AuthService {
 		const userId = String(newUserId);
 		const newUser: User = {
 			created_at: new Date(),
-			custom_username:custom_username,
+			custom_username: custom_username,
 			email,
 			email_verified: false,
 			id: newUserId,
@@ -111,7 +119,7 @@ class AuthService {
 			web3_signup: web3signup
 		};
 		const newUserRef = firebaseAdmin.firestore().collection('users').doc(userId);
-		await newUserRef.set(newUser).catch(err => {
+		await newUserRef.set(newUser).catch((err) => {
 			console.log('error in createUser', err);
 			throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER, 500);
 		});
@@ -122,7 +130,7 @@ class AuthService {
 			user_id: newUserId
 		};
 		const newUserPreferenceRef = networkDocRef(network).collection('user_preferences').doc(userId);
-		await newUserPreferenceRef.set(newUserPreference).catch(err => {
+		await newUserPreferenceRef.set(newUserPreference).catch((err) => {
 			console.log('error in creating user preference', err);
 			throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER_PREFERENCE, 500);
 		});
@@ -130,9 +138,16 @@ class AuthService {
 		return newUser;
 	}
 
-	private async createAddress (network: Network, address: string, defaultAddress: boolean, user_id: number, is_erc20?: boolean, wallet?:Wallet, isMultisig?:boolean): Promise<Address> {
-
-		if(address.startsWith('0x')) {
+	private async createAddress(
+		network: Network,
+		address: string,
+		defaultAddress: boolean,
+		user_id: number,
+		is_erc20?: boolean,
+		wallet?: Wallet,
+		isMultisig?: boolean
+	): Promise<Address> {
+		if (address.startsWith('0x')) {
 			address = address.toLowerCase();
 		}
 
@@ -154,7 +169,7 @@ class AuthService {
 		return newAddress;
 	}
 
-	private async createAndSendEmailVerificationToken (user: User, network:string): Promise<void> {
+	private async createAndSendEmailVerificationToken(user: User, network: string): Promise<void> {
 		if (user.email) {
 			const verifyToken = uuidv4();
 			await redisSetex(getEmailVerificationTokenKey(verifyToken), ONE_DAY, user.email);
@@ -164,7 +179,7 @@ class AuthService {
 		}
 	}
 
-	private async sendEmailVerificationToken (user: User, network:string): Promise<any> {
+	private async sendEmailVerificationToken(user: User, network: string): Promise<any> {
 		if (user.email) {
 			const verifyToken = uuidv4();
 			await redisSetex(getEmailVerificationTokenKey(verifyToken), ONE_DAY, user.email);
@@ -174,7 +189,7 @@ class AuthService {
 		}
 	}
 
-	private async getSaltAndHashedPassword (plainPassword: string): Promise<HashedPassword> {
+	private async getSaltAndHashedPassword(plainPassword: string): Promise<HashedPassword> {
 		const salt = randomBytes(32);
 		const hashedPassword = await argon2.hash(plainPassword, { salt });
 
@@ -184,18 +199,19 @@ class AuthService {
 		};
 	}
 
-	public async Login (username: string, password: string): Promise<IAuthResponse> {
+	public async Login(username: string, password: string): Promise<IAuthResponse> {
 		const isEmail = username.split('@')[1];
 
-		if(!isEmail){
+		if (!isEmail) {
 			for (let i = 0; i < nameBlacklist.length; i++) {
 				if (username.toLowerCase().includes(nameBlacklist[i])) throw apiErrorWithStatusCode(messages.USERNAME_BANNED, 401);
-			}}
+			}
+		}
 
 		let userQuery: firebaseAdmin.firestore.QuerySnapshot<firebaseAdmin.firestore.DocumentData>;
 		const collection = firebaseAdmin.firestore().collection('users');
 
-		if(isEmail) {
+		if (isEmail) {
 			userQuery = await collection.where('email', '==', username).limit(1).get();
 			if (userQuery.size === 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_EMAIL, 404);
 		} else {
@@ -227,7 +243,7 @@ class AuthService {
 		};
 	}
 
-	public async DeleteAccount (token: string, password: string): Promise<void> {
+	public async DeleteAccount(token: string, password: string): Promise<void> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
 
@@ -238,7 +254,7 @@ class AuthService {
 
 		const userAddresses = await firestore.collection('addresses').where('user_id', '==', user.id).get();
 		const batch = firestore.batch();
-		userAddresses.forEach(doc => {
+		userAddresses.forEach((doc) => {
 			batch.delete(doc.ref);
 		});
 		await batch.commit();
@@ -256,19 +272,19 @@ class AuthService {
 		});
 	}
 
-	public async SetDefaultAddress (token: string, address: string): Promise<string> {
+	public async SetDefaultAddress(token: string, address: string): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
 
 		const addresses = await getAddressesFromUserId(user.id);
 
-		const newAddresses  = addresses.map((addressObj) => {
+		const newAddresses = addresses.map((addressObj) => {
 			if (addressObj.address === address) {
 				addressObj.default = true;
 			} else {
 				addressObj.default = false;
 			}
-			return addressObj as { [x: string]: any; };
+			return addressObj as { [x: string]: any };
 		});
 
 		const batch = firebaseAdmin.firestore().batch();
@@ -283,8 +299,7 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressLoginStart (address: string): Promise<string> {
-
+	public async AddressLoginStart(address: string): Promise<string> {
 		const signMessage = address.startsWith('0x') ? `Login in polkassembly ${uuidv4()}` : `<Bytes>${uuidv4()}</Bytes>`;
 
 		await redisSetex(getAddressLoginKey(address), ADDRESS_LOGIN_TTL, signMessage);
@@ -292,17 +307,18 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async AddressLogin (address: string, signature: string, wallet: Wallet, multisigAddress?:string): Promise<IAuthResponse> {
+	public async AddressLogin(address: string, signature: string, wallet: Wallet, multisigAddress?: string): Promise<IAuthResponse> {
 		const signMessage = await redisGet(getAddressLoginKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_SIGN_MESSAGE_EXPIRED, 401);
 
-		const isValidSr = address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
+		const isValidSr =
+			address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
 
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_INVALID_SIGNATURE, 401);
 
 		const firestore = firebaseAdmin.firestore();
 
-		if(address.startsWith('0x')) {
+		if (address.startsWith('0x')) {
 			address = address.toLowerCase();
 		}
 
@@ -341,18 +357,22 @@ class AuthService {
 		};
 	}
 
-	public async AddressSignupStart (address: string, multisigAddress?:string): Promise<string> {
-		const addressDoc = await firebaseAdmin.firestore().collection('addresses').doc(!multisigAddress ? address : multisigAddress).get();
+	public async AddressSignupStart(address: string, multisigAddress?: string): Promise<string> {
+		const addressDoc = await firebaseAdmin
+			.firestore()
+			.collection('addresses')
+			.doc(!multisigAddress ? address : multisigAddress)
+			.get();
 		if (addressDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_ALREADY_EXISTS, 401);
 
-		const signMessage =  address.startsWith('0x') ? `Login in polkassembly ${uuidv4()}` :`<Bytes>${uuidv4()}</Bytes>`;
+		const signMessage = address.startsWith('0x') ? `Login in polkassembly ${uuidv4()}` : `<Bytes>${uuidv4()}</Bytes>`;
 
 		await redisSetex(getAddressSignupKey(address), ADDRESS_LOGIN_TTL, signMessage);
 
 		return signMessage;
 	}
 
-	public async LinkProxyAddress (token: string, network: Network, proxied: string, proxy: string, message: string, signature: string): Promise<string> {
+	public async LinkProxyAddress(token: string, network: Network, proxied: string, proxy: string, message: string, signature: string): Promise<string> {
 		if (!message) throw apiErrorWithStatusCode('Sign message not provided', 400);
 
 		const isValidSr = verifySignature(message, proxy, signature);
@@ -369,7 +389,7 @@ class AuthService {
 			method: 'GET'
 		});
 
-		const { proxies } = await getProxies.json() as any;
+		const { proxies } = (await getProxies.json()) as any;
 
 		if (!proxies || proxies.length === 0) throw apiErrorWithStatusCode(`Address ${proxy} has no proxy accounts.`, 400);
 		if (proxies.includes(proxy) === false) apiErrorWithStatusCode(`Address ${proxy} is not a proxy of ${proxied}`, 403);
@@ -389,11 +409,12 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressSignupConfirm (network: Network, address: string, signature: string, wallet: Wallet, multisigAddress?:string): Promise<AuthObjectType> {
+	public async AddressSignupConfirm(network: Network, address: string, signature: string, wallet: Wallet, multisigAddress?: string): Promise<AuthObjectType> {
 		const signMessage = await redisGet(getAddressSignupKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_SIGN_MESSAGE_EXPIRED, 403);
 
-		const isValidSr = address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
+		const isValidSr =
+			address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
 
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_INVALID_SIGNATURE, 400);
 
@@ -404,9 +425,9 @@ class AuthService {
 		const username = uuidv4().split('-').join('').substring(0, 25);
 		const password = uuidv4();
 
-		const user = await this.createUser('', password, username, true, network,false);
+		const user = await this.createUser('', password, username, true, network, false);
 
-		await this.createAddress(network, address, true, user.id, address.startsWith('0x'), wallet, !multisigAddress ? false :  true);
+		await this.createAddress(network, address, true, user.id, address.startsWith('0x'), wallet, !multisigAddress ? false : true);
 		await redisDel(getAddressSignupKey(address));
 
 		return {
@@ -415,7 +436,7 @@ class AuthService {
 		};
 	}
 
-	public async SignUp (email: string, password: string, username: string, network: string): Promise<AuthObjectType> {
+	public async SignUp(email: string, password: string, username: string, network: string): Promise<AuthObjectType> {
 		const firestore = firebaseAdmin.firestore();
 		const userQuerySnapshot = await firestore.collection('users').where('username', '==', username.toLowerCase()).limit(1).get();
 		if (!userQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
@@ -438,9 +459,9 @@ class AuthService {
 		};
 	}
 
-	public async ChangePassword (token: string, oldPassword: string, newPassword: string): Promise<void> {
+	public async ChangePassword(token: string, oldPassword: string, newPassword: string): Promise<void> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
-		const user = await getUserFromUserId(userId) as User;
+		const user = (await getUserFromUserId(userId)) as User;
 		const isCorrectPassword = await verifyUserPassword(user.password, oldPassword);
 		if (!isCorrectPassword) throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 400);
 		if (validator.equals(oldPassword, newPassword)) {
@@ -455,11 +476,11 @@ class AuthService {
 		});
 	}
 
-	public async AddressUnlink (token: string, address: string): Promise<string> {
+	public async AddressUnlink(token: string, address: string): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
 
-		if(address.startsWith('0x')) {
+		if (address.startsWith('0x')) {
 			address = address.toLowerCase();
 		}
 
@@ -476,11 +497,11 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressLinkConfirm (token: string, address: string, signature: string, wallet: Wallet): Promise<string> {
+	public async AddressLinkConfirm(token: string, address: string, signature: string, wallet: Wallet): Promise<string> {
 		const user = await this.GetUser(token);
-		if(!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
+		if (!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
 
-		if(address.startsWith('0x')) {
+		if (address.startsWith('0x')) {
 			address = address.toLowerCase();
 		}
 
@@ -491,12 +512,15 @@ class AuthService {
 
 		const addressToLink = addressToLinkDoc.data() as Address;
 
-		const isValidSr = address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature) : verifySignature(addressToLink.sign_message, addressToLink.address, signature);
+		const isValidSr =
+			address.startsWith('0x') && wallet === Wallet.METAMASK
+				? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
+				: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);
 
 		// If this linked address is the first address to be linked. Then set it as default.
 		let setAsDefault = false;
-		try{
+		try {
 			const userAddresses = await getAddressesFromUserId(user.id, true);
 			setAsDefault = userAddresses.length === 0;
 		} catch {
@@ -517,7 +541,7 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async MultisigAddressSignupStart (address: string): Promise<string> {
+	public async MultisigAddressSignupStart(address: string): Promise<string> {
 		const addressDoc = await firebaseAdmin.firestore().collection('addresses').doc(address).get();
 		if (addressDoc.exists) throw apiErrorWithStatusCode(messages.MULTISIG_ADDRESS_ALREADY_EXISTS, 400);
 
@@ -528,7 +552,7 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async MultiSigAddressLinkConfirm (
+	public async MultiSigAddressLinkConfirm(
 		token: string,
 		network: Network,
 		address: string,
@@ -543,7 +567,10 @@ class AuthService {
 		const signMessage = await redisGet(getMultisigAddressKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.MULTISIG_SIGN_MESSAGE_EXPIRED, 403);
 
-		const signatories = addresses.split(',').map(address => address.trim()).filter(x => !!x);
+		const signatories = addresses
+			.split(',')
+			.map((address) => address.trim())
+			.filter((x) => !!x);
 
 		const multisigAddress = getMultisigAddress(signatories, ss58Prefix, threshold);
 		if (address !== multisigAddress) throw apiErrorWithStatusCode(messages.MULTISIG_NOT_MATCHING, 400);
@@ -565,9 +592,9 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async VerifyEmail (token: string): Promise<string> {
+	public async VerifyEmail(token: string): Promise<string> {
 		const email = await redisGet(getEmailVerificationTokenKey(token));
-		if (!email)  throw apiErrorWithStatusCode(messages.EMAIL_VERIFICATION_TOKEN_NOT_FOUND, 400);
+		if (!email) throw apiErrorWithStatusCode(messages.EMAIL_VERIFICATION_TOKEN_NOT_FOUND, 400);
 
 		const firestore = firebaseAdmin.firestore();
 
@@ -578,10 +605,11 @@ class AuthService {
 		const userDocData = userDoc.data();
 		await userDoc.ref.update({
 			email_verified: true,
-			notification_preferences:{ ...userDocData.notification_preferences,
-				channelPreferences:{
+			notification_preferences: {
+				...userDocData.notification_preferences,
+				channelPreferences: {
 					...(userDocData.notification_preferences?.channelPreferences || {}),
-					email:{
+					email: {
 						enabled: true,
 						handle: email.toLowerCase(),
 						verified: true
@@ -596,7 +624,11 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async ChangeNotificationPreference (token: string, { post_participated, post_created, new_proposal, own_proposal }: NotificationSettings, network: string): Promise<NotificationSettings> {
+	public async ChangeNotificationPreference(
+		token: string,
+		{ post_participated, post_created, new_proposal, own_proposal }: NotificationSettings,
+		network: string
+	): Promise<NotificationSettings> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 
 		const userPreferenceRef = networkDocRef(network).collection('user_preferences').doc(String(userId));
@@ -615,26 +647,30 @@ class AuthService {
 		if (userPreferenceSnapshot.exists) {
 			const { notification_preferences } = userPreferenceSnapshot.data() as IUserPreference;
 			update = getUpdatedNotificationSettings(notification_preferences);
-			await userPreferenceRef.update({
-				notification_preferences: update
-			}).catch(err => {
-				console.log('error in updating user preference', err);
-				throw apiErrorWithStatusCode(messages.ERROR_UPDATING_USER_PREFERENCE, 500);
-			});
+			await userPreferenceRef
+				.update({
+					notification_preferences: update
+				})
+				.catch((err) => {
+					console.log('error in updating user preference', err);
+					throw apiErrorWithStatusCode(messages.ERROR_UPDATING_USER_PREFERENCE, 500);
+				});
 		} else {
-			await userPreferenceRef.set({
-				notification_preferences: update,
-				post_subscriptions: {},
-				user_id: userId
-			}).catch(err => {
-				console.log('error in creating user preference', err);
-				throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER_PREFERENCE, 500);
-			});
+			await userPreferenceRef
+				.set({
+					notification_preferences: update,
+					post_subscriptions: {},
+					user_id: userId
+				})
+				.catch((err) => {
+					console.log('error in creating user preference', err);
+					throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER_PREFERENCE, 500);
+				});
 		}
 		return update;
 	}
 
-	public async GetNotificationPreference (token: string, network: string): Promise<NotificationSettings> {
+	public async GetNotificationPreference(token: string, network: string): Promise<NotificationSettings> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 
 		const userPreferenceRef = networkDocRef(network).collection('user_preferences').doc(String(userId));
@@ -642,21 +678,23 @@ class AuthService {
 
 		let notification_preferences = NOTIFICATION_DEFAULTS;
 		if (!userPreferenceSnapshot.exists) {
-			await userPreferenceRef.set({
-				notification_preferences: notification_preferences,
-				post_subscriptions: {},
-				user_id: userId
-			}).catch(err => {
-				console.log('error in creating user preference', err);
-				throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER_PREFERENCE, 500);
-			});
+			await userPreferenceRef
+				.set({
+					notification_preferences: notification_preferences,
+					post_subscriptions: {},
+					user_id: userId
+				})
+				.catch((err) => {
+					console.log('error in creating user preference', err);
+					throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER_PREFERENCE, 500);
+				});
 		} else {
 			notification_preferences = (userPreferenceSnapshot.data() as IUserPreference).notification_preferences;
 		}
 		return notification_preferences;
 	}
 
-	public async resendVerifyEmailToken (token: string, network: string): Promise<void> {
+	public async resendVerifyEmailToken(token: string, network: string): Promise<void> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
 		if (!user.email) throw apiErrorWithStatusCode(messages.EMAIL_NOT_FOUND, 404);
@@ -664,7 +702,7 @@ class AuthService {
 		await this.createAndSendEmailVerificationToken(user, network);
 	}
 
-	public async SetCredentialsStart (address: string): Promise<string> {
+	public async SetCredentialsStart(address: string): Promise<string> {
 		const addressDoc = await firebaseAdmin.firestore().collection('addresses').doc(address).get();
 		if (!addressDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_NOT_FOUND, 404);
 
@@ -675,7 +713,7 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async SetCredentialsConfirm (address: string, email: string, newPassword: string, signature: string, username: string, network: string): Promise<string> {
+	public async SetCredentialsConfirm(address: string, email: string, newPassword: string, signature: string, username: string, network: string): Promise<string> {
 		const signMessage = await redisGet(getSetCredentialsKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.SET_CREDENTIALS_SIGN_MESSAGE_EXPIRED, 400);
 
@@ -688,10 +726,10 @@ class AuthService {
 		if (!addressDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_NOT_FOUND, 400);
 
 		const usernameQuerySnapshot = await firestore.collection('users').where('username', '==', username.toLowerCase()).get();
-		if(!usernameQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
+		if (!usernameQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
 
 		const userEmailQuerySnapshot = await firestore.collection('users').where('email', '==', email.toLowerCase()).get();
-		if(!userEmailQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
+		if (!userEmailQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
 
 		const addressObj = addressDoc.data() as Address;
 		const userId = addressObj.user_id;
@@ -716,7 +754,7 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async ChangeUsername (token: string, username: string ): Promise<string> {
+	public async ChangeUsername(token: string, username: string): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
 
@@ -731,7 +769,7 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async ChangeEmail (token: string, email: string, password: string, network: string): Promise<string> {
+	public async ChangeEmail(token: string, email: string, password: string, network: string): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
 
@@ -782,14 +820,14 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async RequestResetPassword (email: string, network: string): Promise<string> {
+	public async RequestResetPassword(email: string, network: string): Promise<string> {
 		const userQuerySnapshot = await firebaseAdmin.firestore().collection('users').where('email', '==', email).limit(1).get();
 		if (userQuerySnapshot.size === 0) return messages.EMAIL_NOT_FOUND;
 
 		const user = userQuerySnapshot.docs[0].data() as User;
 		let resetToken = await redisGet(getPwdResetTokenKey(user.id));
 		if (!resetToken) {
-			resetToken =  uuidv4();
+			resetToken = uuidv4();
 		}
 		await redisSetex(getPwdResetTokenKey(user.id), FIVE_MIN, resetToken);
 
@@ -797,7 +835,7 @@ class AuthService {
 		return '';
 	}
 
-	public async ResetPassword (token: string, userId: number, newPassword: string): Promise<void> {
+	public async ResetPassword(token: string, userId: number, newPassword: string): Promise<void> {
 		const key = getPwdResetTokenKey(userId);
 		const storedToken = await redisGet(key);
 		if (!storedToken) throw apiErrorWithStatusCode(messages.PASSWORD_RESET_TOKEN_NOT_FOUND, 403);
@@ -815,13 +853,10 @@ class AuthService {
 		await redisDel(key);
 	}
 
-	public async UndoEmailChange (token: string): Promise<{email: string; updatedToken: string}> {
+	public async UndoEmailChange(token: string): Promise<{ email: string; updatedToken: string }> {
 		const firestore = firebaseAdmin.firestore();
 
-		const undoTokenQuery = firestore
-			.collection('undo_email_change_tokens')
-			.where('token', '==', token)
-			.limit(1);
+		const undoTokenQuery = firestore.collection('undo_email_change_tokens').where('token', '==', token).limit(1);
 
 		const undoTokenSnapshot = await undoTokenQuery.get();
 
@@ -830,13 +865,10 @@ class AuthService {
 		const undoToken = undoTokenSnapshot.docs[0].data() as UndoEmailChangeToken;
 		if (!undoToken.valid) throw apiErrorWithStatusCode(messages.INVALID_EMAIL_UNDO_TOKEN, 403);
 
-		await firestore
-			.collection('users')
-			.doc(String(undoToken.user_id))
-			.update({
-				email: undoToken.email,
-				email_verified: false
-			});
+		await firestore.collection('users').doc(String(undoToken.user_id)).update({
+			email: undoToken.email,
+			email_verified: false
+		});
 
 		await undoTokenSnapshot.docs[0].ref.update({ valid: false });
 
@@ -845,7 +877,17 @@ class AuthService {
 		return { email: user.email, updatedToken: await this.getSignedToken(user) };
 	}
 
-	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth, login_address, login_wallet , roles }: User & { login_address?: string; login_wallet?: Wallet; }): Promise<string> {
+	public async getSignedToken({
+		email,
+		email_verified,
+		id,
+		username,
+		web3_signup,
+		two_factor_auth,
+		login_address,
+		login_wallet,
+		roles
+	}: User & { login_address?: string; login_wallet?: Wallet }): Promise<string> {
 		if (!privateKey) {
 			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
@@ -902,21 +944,17 @@ class AuthService {
 			tokenContent.login_wallet = login_wallet;
 		}
 
-		if(two_factor_auth?.enabled && two_factor_auth?.verified) {
+		if (two_factor_auth?.enabled && two_factor_auth?.verified) {
 			tokenContent = {
 				...tokenContent,
 				is2FAEnabled: true
 			};
 		}
 
-		return jwt.sign(
-			tokenContent,
-			{ key: privateKey, passphrase },
-			{ algorithm: 'RS256', expiresIn: '30d' }
-		);
+		return jwt.sign(tokenContent, { key: privateKey, passphrase }, { algorithm: 'RS256', expiresIn: '30d' });
 	}
 
-	public async CreatePostStart (address: string): Promise<string> {
+	public async CreatePostStart(address: string): Promise<string> {
 		const signMessage = uuidv4();
 
 		await redisSetex(getCreatePostKey(address), CREATE_POST_TTL, signMessage);
@@ -924,14 +962,7 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async CreatePostConfirm (
-		network: Network,
-		address: string,
-		title: string,
-		content: string,
-		signature: string,
-		proposalType: ProposalType
-	): Promise<void> {
+	public async CreatePostConfirm(network: Network, address: string, title: string, content: string, signature: string, proposalType: ProposalType): Promise<void> {
 		const challenge = await redisGet(getCreatePostKey(address));
 
 		if (!challenge) {
@@ -980,14 +1011,14 @@ class AuthService {
 			title,
 			topic: {
 				id: 1,
-				name: proposalType === ProposalType.DISCUSSIONS? 'Democracy': 'Grant'
+				name: proposalType === ProposalType.DISCUSSIONS ? 'Democracy' : 'Grant'
 			},
 			user_id: user.id,
 			username: user.username
 		});
 	}
 
-	public async EditPostStart (address: string): Promise<string> {
+	public async EditPostStart(address: string): Promise<string> {
 		const signMessage = uuidv4();
 
 		await redisSetex(getEditPostKey(address), CREATE_POST_TTL, signMessage);
@@ -995,15 +1026,7 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async EditPostConfirm (
-		network: Network,
-		address: string,
-		title: string,
-		content: string,
-		signature: string,
-		proposalType: string,
-		proposalId: string
-	): Promise<void> {
+	public async EditPostConfirm(network: Network, address: string, title: string, content: string, signature: string, proposalType: string, proposalId: string): Promise<void> {
 		const challenge = await redisGet(getEditPostKey(address));
 		if (!challenge) throw apiErrorWithStatusCode(messages.POST_EDIT_SIGN_MESSAGE_EXPIRED, 403);
 
@@ -1041,32 +1064,27 @@ class AuthService {
 			.collection('post_types')
 			.doc(proposalType)
 			.collection('posts')
-			.doc(proposalId).set({
-				content,
-				last_edited_at: new Date(),
-				title,
-				topic: {
-					id: 1,
-					name: 'Democracy'
+			.doc(proposalId)
+			.set(
+				{
+					content,
+					last_edited_at: new Date(),
+					title,
+					topic: {
+						id: 1,
+						name: 'Democracy'
+					},
+					user_id: user.id
 				},
-				user_id: user.id
-			}, { merge: true });
-
+				{ merge: true }
+			);
 	}
 
-	public async ProposalTrackerCreate (
-		onchain_proposal_id: number,
-		status: string,
-		deadline: string,
-		token: string,
-		network: string,
-		start_time: string
-	): Promise<void> {
-
+	public async ProposalTrackerCreate(onchain_proposal_id: number, status: string, deadline: string, token: string, network: string, start_time: string): Promise<void> {
 		if (!token || !status || !deadline || !onchain_proposal_id || !network || !start_time) throw apiErrorWithStatusCode(messages.INVALID_PROPOSAL_TRACKER_PARAMS, 400);
 
 		const user = await this.GetUser(token);
-		if(!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
+		if (!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
 		const user_id = user.id;
 
 		const firestore = firebaseAdmin.firestore();
@@ -1089,21 +1107,17 @@ class AuthService {
 		await newEventDocRef.set(event);
 	}
 
-	public async ProposalTrackerUpdate (
-		id: string,
-		status: string,
-		token: string
-	): Promise<void> {
+	public async ProposalTrackerUpdate(id: string, status: string, token: string): Promise<void> {
 		if (!token || !status || !id) throw apiErrorWithStatusCode(messages.INVALID_PROPOSAL_TRACKER_PARAMS, 400);
 
 		const user = await this.GetUser(token);
-		if(!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
+		if (!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
 		const user_id = user.id;
 
 		const firestore = firebaseAdmin.firestore();
 
 		const proposalEventDoc = await firestore.collection('proposal_trackers').doc(id).get();
-		if(!proposalEventDoc.exists) throw apiErrorWithStatusCode(messages.ERROR_IN_PROPOSAL_TRACKER, 400);
+		if (!proposalEventDoc.exists) throw apiErrorWithStatusCode(messages.ERROR_IN_PROPOSAL_TRACKER, 400);
 
 		const proposalEventData = proposalEventDoc.data() as CalendarEvent;
 		if (proposalEventData.user_id !== user_id) throw apiErrorWithStatusCode(messages.ERROR_IN_PROPOSAL_TRACKER, 400);
@@ -1112,7 +1126,7 @@ class AuthService {
 			status: status
 		});
 	}
-	public async SendVerifyEmail (token: string, email: string, network: string): Promise<any> {
+	public async SendVerifyEmail(token: string, email: string, network: string): Promise<any> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
 
@@ -1147,7 +1161,7 @@ class AuthService {
 
 		await this.sendEmailVerificationToken(user, network);
 		// send undo token in background
-		if(shouldSendUndoEmailChangeEmail){
+		if (shouldSendUndoEmailChangeEmail) {
 			const newUndoEmailChangeToken: UndoEmailChangeToken = {
 				created_at: new Date(),
 				email: oldMail,

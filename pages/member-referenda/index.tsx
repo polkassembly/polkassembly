@@ -23,7 +23,7 @@ export interface IFellowshipReferendumPostsByTrackName {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST,filterBy, trackName } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackName } = query;
 	if (!trackName) {
 		return {
 			props: {},
@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		const trackId: any = networkTrackInfo?.[network]?.[currTrackName]?.trackId;
 		if (trackName === currTrackName) {
 			prev[currTrackName] = getOnChainPosts({
-				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
@@ -113,13 +113,18 @@ const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 			}
 		});
 	}
-	return <>
-		<SEOHead title={'Fellowship Referendum'} network={network}/>
-		<TrackListing
-			posts={posts}
-			fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
-		/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={'Fellowship Referendum'}
+				network={network}
+			/>
+			<TrackListing
+				posts={posts}
+				fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
+			/>
+		</>
+	);
 };
 
 export default FellowshipAdmin;

@@ -5,19 +5,18 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-const useGetFilterByFromUrl=() => {
-
+const useGetFilterByFromUrl = () => {
 	const [tags, setTags] = useState<string[]>([]);
 	const router = useRouter();
 
 	useEffect(() => {
-		if(router.query.filterBy){
-			const filterBy=router.query.filterBy;
+		if (router.query.filterBy) {
+			const filterBy = router.query.filterBy;
 			setTags(JSON.parse(decodeURIComponent(String(filterBy))) || []);
-		}else{
+		} else {
 			setTags([]);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return tags;
 };

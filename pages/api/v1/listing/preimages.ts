@@ -14,9 +14,9 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 
 interface IGetPreimagesParams {
-    network: string;
-    listingLimit: number | string | string [];
-    page: number | string | string [];
+	network: string;
+	listingLimit: number | string | string[];
+	page: number | string | string[];
 }
 
 export async function getPreimages(params: IGetPreimagesParams): Promise<IApiResponse<IPreimagesListingResponse>> {
@@ -64,7 +64,7 @@ const handler: NextApiHandler<IPreimagesListingResponse | { error: string }> = a
 	const { page = 1, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getPreimages({
 		listingLimit,
@@ -72,9 +72,9 @@ const handler: NextApiHandler<IPreimagesListingResponse | { error: string }> = a
 		page
 	});
 
-	if(error || !data) {
+	if (error || !data) {
 		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
+	} else {
 		return res.status(status).json(data);
 	}
 };

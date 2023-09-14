@@ -7,10 +7,10 @@ import { notification } from 'antd';
 import { NotificationStatus } from 'src/types';
 
 interface Props {
-	header: string
-	message?: string
-	durationInSeconds?: number
-	status: NotificationStatus
+	header: string;
+	message?: string;
+	durationInSeconds?: number;
+	status: NotificationStatus;
 }
 
 const queueNotification = ({ header, message, durationInSeconds = 4.5, status }: Props) => {

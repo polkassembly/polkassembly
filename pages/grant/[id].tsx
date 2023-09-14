@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 interface IGrantPostProps {
 	data: IPostResponse;
-	network:string;
+	network: string;
 	error?: string;
 }
 const GrantPost: FC<IGrantPostProps> = (props) => {
@@ -38,18 +38,31 @@ const GrantPost: FC<IGrantPostProps> = (props) => {
 
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} Grant`} desc={post.content} network={network}/>
+	if (post)
+		return (
+			<>
+				<SEOHead
+					title={post.title || `${noTitle} Grant`}
+					desc={post.content}
+					network={network}
+				/>
 
-		<BackToListingView postCategory={PostCategory.GRANT} />
+				<BackToListingView postCategory={PostCategory.GRANT} />
 
-		<div className='mt-6'>
-			<Post post={post} proposalType={ProposalType.GRANTS} />
+				<div className='mt-6'>
+					<Post
+						post={post}
+						proposalType={ProposalType.GRANTS}
+					/>
+				</div>
+			</>
+		);
+
+	return (
+		<div className='mt-16'>
+			<LoadingState />
 		</div>
-	</>);
-
-	return <div className='mt-16'><LoadingState /></div>;
-
+	);
 };
 
 export default GrantPost;

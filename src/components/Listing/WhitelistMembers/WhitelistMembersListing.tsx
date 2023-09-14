@@ -10,24 +10,26 @@ import WhitelistMemberCard from './WhitelistMemberCard';
 import { WhitelistMember } from './WhitelistMembersContainer';
 
 interface Props {
-  className?: string
-  data: WhitelistMember[];
-  membersType: EMembersType
+	className?: string;
+	data: WhitelistMember[];
+	membersType: EMembersType;
 }
 
-const WhitelistMembersListing = ({ className, data, membersType } : Props) => {
-
+const WhitelistMembersListing = ({ className, data, membersType }: Props) => {
 	return (
 		<div className={`${className}`}>
-			{data.map(
-				(member) => (
-					<div key={member.accountId} className='my-5'>
-						{<Link href={`/profile/${member.accountId}?membersType=${membersType}`}>
+			{data.map((member) => (
+				<div
+					key={member.accountId}
+					className='my-5'
+				>
+					{
+						<Link href={`/profile/${member.accountId}?membersType=${membersType}`}>
 							<WhitelistMemberCard member={member} />
-						</Link>}
-					</div>
-				)
-			)}
+						</Link>
+					}
+				</div>
+			))}
 		</div>
 	);
 };

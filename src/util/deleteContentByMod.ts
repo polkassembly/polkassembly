@@ -8,10 +8,10 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from './nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 
-export async function deleteContentByMod(postId:number|string, proposalType:ProposalType, reason:string, commentId?:string, replyId?:string, onSuccess?:()=>void)   {
-	const { data: deleteData , error: deleteError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteContentByMod', {
+export async function deleteContentByMod(postId: number | string, proposalType: ProposalType, reason: string, commentId?: string, replyId?: string, onSuccess?: () => void) {
+	const { data: deleteData, error: deleteError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteContentByMod', {
 		commentId,
-		postId : Number(postId),
+		postId: Number(postId),
 		postType: proposalType,
 		reason,
 		replyId

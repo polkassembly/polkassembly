@@ -7,7 +7,14 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
+import {
+	GET_PROPOSAL_BY_INDEX_AND_TYPE,
+	GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE,
+	GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
+	GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE,
+	GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE,
+	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE
+} from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -45,39 +52,44 @@ export const fetchSubsquare = async (network: string, id: string | number) => {
 	}
 };
 
-export const getTimeline = (proposals: any, isStatus?: {
-	swap: boolean;
-}) => {
-	return proposals?.map((obj: any) => {
-		const statuses = obj?.statusHistory as { status: string }[];
-		if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
-			const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
-			if (index >= 0) {
-				const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
-				if (decidingIndex >= 0) {
-					const obj = statuses[index];
-					statuses.splice(index, 1);
-					statuses.splice(decidingIndex, 0, obj);
-					if (isStatus) {
-						isStatus.swap = true;
+export const getTimeline = (
+	proposals: any,
+	isStatus?: {
+		swap: boolean;
+	}
+) => {
+	return (
+		proposals?.map((obj: any) => {
+			const statuses = obj?.statusHistory as { status: string }[];
+			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
+				const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
+				if (index >= 0) {
+					const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
+					if (decidingIndex >= 0) {
+						const obj = statuses[index];
+						statuses.splice(index, 1);
+						statuses.splice(decidingIndex, 0, obj);
+						if (isStatus) {
+							isStatus.swap = true;
+						}
 					}
 				}
 			}
-		}
-		return {
-			created_at: obj?.createdAt,
-			hash: obj?.hash,
-			index: obj?.index,
-			statuses,
-			type: obj?.type
-		};
-	}) || [];
+			return {
+				created_at: obj?.createdAt,
+				hash: obj?.hash,
+				index: obj?.index,
+				statuses,
+				type: obj?.type
+			};
+		}) || []
+	);
 };
 
 export interface IReactions {
 	'👍': {
-		count: number,
-		usernames: string[]
+		count: number;
+		usernames: string[];
 	};
 	'👎': {
 		count: number;
@@ -89,14 +101,14 @@ export interface IPIPsVoting {
 	balance: null | string;
 	voter: null | string;
 	decision: 'yes' | 'no';
-	identityId: string ;
-  }
+	identityId: string;
+}
 
 export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
 	comments: any;
-	currentTimeline?:any;
+	currentTimeline?: any;
 	content: string;
 	end?: number;
 	delay?: number;
@@ -109,7 +121,7 @@ export interface IPostResponse {
 	};
 	decision?: string;
 	last_edited_at?: string | Date;
-	gov_type?: 'gov_1' | 'open_gov' ;
+	gov_type?: 'gov_1' | 'open_gov';
 	tags?: string[] | [];
 	history?: IPostHistory[];
 	pips_voters?: IPIPsVoting[];
@@ -162,10 +174,14 @@ export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType)
 	if (data) {
 		const topic = data.topic;
 		const topic_id = data.topic_id;
-		return topic? topic: isTopicIdValid(topic_id)? {
-			id: topic_id,
-			name: getTopicNameFromTopicId(topic_id)
-		}: getTopicFromType(proposalType);
+		return topic
+			? topic
+			: isTopicIdValid(topic_id)
+			? {
+					id: topic_id,
+					name: getTopicNameFromTopicId(topic_id)
+			  }
+			: getTopicFromType(proposalType);
 	}
 	return null;
 };
@@ -195,7 +211,7 @@ const getAndSetNewData = async (params: IParams) => {
 		[key: string]: any;
 	} = {
 		content: '',
-		id: proposalType === ProposalType.TIPS? id: Number(id),
+		id: proposalType === ProposalType.TIPS ? id : Number(id),
 		title: ''
 	};
 
@@ -232,7 +248,7 @@ const getAndSetNewData = async (params: IParams) => {
 							if (data?.title && !newData?.title) {
 								newData.title = data?.title;
 							}
-							if (data.content && !isDefaultStringExist(data.content, (pathArr.length > 3? pathArr[3]: '')) && !newData.content) {
+							if (data.content && !isDefaultStringExist(data.content, pathArr.length > 3 ? pathArr[3] : '') && !newData.content) {
 								newData.content = data.content;
 								newData.user_id = data.user_id || data.author_id;
 							}
@@ -254,10 +270,10 @@ const getAndSetNewData = async (params: IParams) => {
 							if (data.summary && !newData.summary) {
 								newData.summary = data.summary;
 							}
-							if(data.tags && Array.isArray(data.tags)){
+							if (data.tags && Array.isArray(data.tags)) {
 								newData.tags = data?.tags;
 							}
-							if(data.gov_type){
+							if (data.gov_type) {
 								newData.gov_type = data?.gov_type;
 							}
 						}
@@ -283,15 +299,17 @@ const getAndSetNewData = async (params: IParams) => {
 					const pathPostType = colDocNameArr[3];
 					const postId: string | number = colDocNameArr[5];
 					// Constructing "dummy data" from existing "data" and "newData"
-					const dummyData = value.data? {
-						...value.data,
-						content: (value.data.content && !isDefaultStringExist(value?.data?.content, pathPostType))? value.data.content: newData.content,
-						title: value.data?.title? value.data?.title: newData?.title,
-						user_id: newData.user_id? newData.user_id: value.data.user_id
-					}: {
-						...newData,
-						id: postId
-					};
+					const dummyData = value.data
+						? {
+								...value.data,
+								content: value.data.content && !isDefaultStringExist(value?.data?.content, pathPostType) ? value.data.content : newData.content,
+								title: value.data?.title ? value.data?.title : newData?.title,
+								user_id: newData.user_id ? newData.user_id : value.data.user_id
+						  }
+						: {
+								...newData,
+								id: postId
+						  };
 					if (pathPostType !== 'tips') {
 						const numPostId = Number(dummyData.id);
 						if (!isNaN(numPostId)) {
@@ -304,7 +322,7 @@ const getAndSetNewData = async (params: IParams) => {
 						const realData: any = {};
 						Object.entries(dummyData).forEach(([key, value]) => {
 							if (value !== undefined && value !== null) {
-								realData[key === 'author_id'? 'user_id': key] = value;
+								realData[key === 'author_id' ? 'user_id' : key] = value;
 							}
 						});
 						if (!realData.created_at) {
@@ -326,7 +344,8 @@ const getAndSetNewData = async (params: IParams) => {
 					}
 				}
 			});
-			batch.commit()
+			batch
+				.commit()
 				.then(() => {})
 				.catch((err) => {
 					console.log('Error while creating posts of group', err);
@@ -338,12 +357,22 @@ const getAndSetNewData = async (params: IParams) => {
 	return newData;
 };
 
-export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, network: string, postType: string, postIndex: number | string): Promise<any[]> {
+export async function getComments(
+	commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+	postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>,
+	network: string,
+	postType: string,
+	postIndex: number | string
+): Promise<any[]> {
 	const userIds = new Set<number>();
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
 			const data = doc.data();
-			const history = data?.history ? data.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+			const history = data?.history
+				? data.history.map((item: any) => {
+						return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
+				  })
+				: [];
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
@@ -362,7 +391,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				comment_reactions: comment_reactions,
 				comment_source: data.comment_source || 'polkassembly',
 				content: data.content,
-				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
+				created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 				history: history,
 				id: data.id,
 				is_custom_username: false,
@@ -370,8 +399,8 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				post_type: postType,
 				profile: user?.profile || null,
 				proposer: data.proposer || '',
-				replies: data.replies || [] as any[],
-				sentiment:data.sentiment || 0,
+				replies: data.replies || ([] as any[]),
+				sentiment: data.sentiment || 0,
 				spam_users_count: 0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id,
@@ -380,7 +409,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			};
 
 			const replyIds: string[] = [];
-			const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted','==',false).orderBy('created_at', 'asc').get();
+			const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted', '==', false).orderBy('created_at', 'asc').get();
 			repliesSnapshot.docs.forEach((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
@@ -400,7 +429,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 						comment.replies.push({
 							comment_id,
 							content,
-							created_at: created_at?.toDate? created_at.toDate(): created_at,
+							created_at: created_at?.toDate ? created_at.toDate() : created_at,
 							id: id,
 							is_custom_username: false,
 							post_index: postIndex,
@@ -423,15 +452,20 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 					const endIndex = startIndex + chunkSize;
 					const slice = replyIds.slice(startIndex, endIndex);
 					if (slice.length > 0) {
-						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', postType).where('content_id', 'in', slice).get();
+						const reportsQuery = await networkDocRef(network)
+							.collection('reports')
+							.where('type', '==', 'reply')
+							.where('proposal_type', '==', postType)
+							.where('content_id', 'in', slice)
+							.get();
 						reportsQuery.docs.map((doc) => {
 							if (doc && doc.exists) {
 								const data = doc.data();
-								comment.replies = comment.replies.map((v:any) => {
+								comment.replies = comment.replies.map((v: any) => {
 									if (v && v.id == data.content_id) {
 										return {
 											...v,
-											spam_users_count:(Number(v.spam_users_count) + 1)
+											spam_users_count: Number(v.spam_users_count) + 1
 										};
 									}
 									return v;
@@ -443,7 +477,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			}
 			return {
 				...comment,
-				replies: comment.replies.map((reply:any) => {
+				replies: comment.replies.map((reply: any) => {
 					return {
 						...reply,
 						spam_users_count: checkReportThreshold(Number(reply?.spam_users_count))
@@ -455,7 +489,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 	const commentIds: string[] = [];
 	let comments = await Promise.all(commentsPromise);
-	comments =  comments.reduce((prev, comment) => {
+	comments = comments.reduce((prev, comment) => {
 		if (comment) {
 			const { id } = comment;
 			if (id) {
@@ -472,7 +506,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			username: string;
 			proposer: string;
 			is_custom_username: boolean;
-		}
+		};
 	} = {};
 
 	if (newIds.length > 0) {
@@ -488,7 +522,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 					if (doc && doc.exists) {
 						const data = doc.data();
 						userIdToUserMap[data.id] = {
-							is_custom_username: (MANUAL_USERNAME_25_CHAR.includes(data.username) || data.custom_username || data.username.length !== 25),
+							is_custom_username: MANUAL_USERNAME_25_CHAR.includes(data.username) || data.custom_username || data.username.length !== 25,
 							proposer: userIdToUserMap?.[data.user_id]?.proposer || '',
 							username: data.username || ''
 						};
@@ -517,7 +551,12 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			const endIndex = startIndex + chunkSize;
 			const slice = commentIds.slice(startIndex, endIndex);
 			if (slice.length > 0) {
-				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', postType).where('content_id', 'in', slice).get();
+				const reportsQuery = await networkDocRef(network)
+					.collection('reports')
+					.where('type', '==', 'comment')
+					.where('proposal_type', '==', postType)
+					.where('content_id', 'in', slice)
+					.get();
 				reportsQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -525,7 +564,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 							if (v && v.id == data.content_id) {
 								return {
 									...v,
-									spam_users_count:(Number(v.spam_users_count) + 1)
+									spam_users_count: Number(v.spam_users_count) + 1
 								};
 							}
 							return v;
@@ -542,15 +581,15 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			comment.username = userIdToUserMap[comment.user_id].username || comment.username;
 			comment.is_custom_username = userIdToUserMap[comment.user_id].is_custom_username;
 			const voteHistoryParams = {
-				listingLimit:1000,
+				listingLimit: 1000,
 				network,
-				page:1,
+				page: 1,
 				proposalIndex: postIndex,
 				proposalType: postType,
 				voterAddress: getEncodedAddress(comment.proposer, network) || comment.proposer
 			};
-			const { data = null }  = await getVotesHistory(voteHistoryParams);
-			if(data && data.count>0){
+			const { data = null } = await getVotesHistory(voteHistoryParams);
+			if (data && data.count > 0) {
 				comment.votes = data.votes;
 			}
 			if (comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0) {
@@ -573,7 +612,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 	return await Promise.all(commentsPromiseWithVote);
 }
 
-export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
+export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IApiResponse<IPostResponse>> {
 	try {
 		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
 
@@ -583,7 +622,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			if (!strPostId) {
 				throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
 			}
-		} else if ((isNaN(numPostId) || numPostId < 0)  && proposalType !== ProposalType.ANNOUNCEMENT) {
+		} else if ((isNaN(numPostId) || numPostId < 0) && proposalType !== ProposalType.ANNOUNCEMENT) {
 			throw apiErrorWithStatusCode(`The postId "${postId}" is invalid.`, 400);
 		}
 
@@ -595,10 +634,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 
-		if(proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
 			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress });
 			const redisData = await redisGet(redisKey);
-			if(redisData){
+			if (redisData) {
 				return {
 					data: JSON.parse(redisData),
 					error: null,
@@ -609,22 +648,26 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		const netDocRef = networkDocRef(network);
 
-		let postVariables: any = proposalType === ProposalType.ANNOUNCEMENT ? {
-			cid: postId,
-			type_eq: subsquidProposalType
-		} : {
-			index_eq: numPostId,
-			type_eq: subsquidProposalType,
-			voter_eq: voterAddress? String(voterAddress): ''
-		};
+		let postVariables: any =
+			proposalType === ProposalType.ANNOUNCEMENT
+				? {
+						cid: postId,
+						type_eq: subsquidProposalType
+				  }
+				: {
+						index_eq: numPostId,
+						type_eq: subsquidProposalType,
+						voter_eq: voterAddress ? String(voterAddress) : ''
+				  };
 
-		let postQuery =(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES ) ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
+		let postQuery =
+			network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
 
-		if(network === AllNetworks.COLLECTIVES && proposalType === ProposalType.FELLOWSHIP_REFERENDUMS){
+		if (network === AllNetworks.COLLECTIVES && proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
 			postQuery = GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE;
 		}
 
-		if(proposalType === ProposalType.ANNOUNCEMENT){
+		if (proposalType === ProposalType.ANNOUNCEMENT) {
 			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
 		}
 
@@ -635,10 +678,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			};
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
-		}
-		else if(network === 'polymesh'){
+		} else if (network === 'polymesh') {
 			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
-			postVariables =  {
+			postVariables = {
 				index_eq: numPostId,
 				type_eq: subsquidProposalType
 			};
@@ -655,7 +697,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			const data = await fetchSubsquare(network, strPostId);
 			if (data) {
 				subsquidRes['data'] = {
-					'proposals': [
+					proposals: [
 						{
 							createdAt: data?.createdAt,
 							curator: data?.proposer,
@@ -708,9 +750,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
 		}
 
-		const postData = subsquidData.proposals?.[0] ||  subsquidData.announcements?.[0];
+		const postData = subsquidData.proposals?.[0] || subsquidData.announcements?.[0];
 		const preimage = postData?.preimage;
-		const proposalArguments = postData?.proposalArguments  || postData?.callData;
+		const proposalArguments = postData?.proposalArguments || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
 		let remark = '';
 		let requested: any;
@@ -750,20 +792,19 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					const subsquidPosts: any[] = subsquidData?.proposals || [];
 					subsquidPosts.forEach((post) => {
 						if (postData?.parentBountyIndex === post.index && post) {
-							proposer = post.proposer || post.curator || (post?.preimage? post?.preimage?.proposer: '');
+							proposer = post.proposer || post.curator || (post?.preimage ? post?.preimage?.proposer : '');
 						}
 					});
 				}
 			}
-
 		}
 
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
 			bond: postData?.bond,
 			cid: postData?.cid,
-			code:postData?.code,
-			codec:postData?.codec,
+			code: postData?.code,
+			codec: postData?.codec,
 			comments: [],
 			content: '',
 			created_at: postData?.createdAt,
@@ -807,50 +848,56 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			topic: topicFromType,
 			track_number: postData?.trackNumber,
 			type: postData?.type || getSubsquidProposalType(proposalType as any),
-			version:postData?.version,
+			version: postData?.version,
 			vote_threshold: postData?.threshold?.type
 		};
 
 		// Timeline
 		updatePostTimeline(post, postData);
 
-		if(proposalType === ProposalType.ANNOUNCEMENT){
+		if (proposalType === ProposalType.ANNOUNCEMENT) {
 			const proposal = postData.proposal;
 			const isStatus = {
 				swap: false
 			};
-			const proposalTimeline = getTimeline([
-				{
-					createdAt: proposal.createdAt,
-					hash: proposal.hash,
-					index: proposal.index,
-					statusHistory: proposal.statusHistory,
-					type: proposal.type
-				}
-			], isStatus);
-			post.timeline = [...proposalTimeline , ...post.timeline ];
+			const proposalTimeline = getTimeline(
+				[
+					{
+						createdAt: proposal.createdAt,
+						hash: proposal.hash,
+						index: proposal.index,
+						statusHistory: proposal.statusHistory,
+						type: proposal.type
+					}
+				],
+				isStatus
+			);
+			post.timeline = [...proposalTimeline, ...post.timeline];
 			if (isStatus.swap) {
 				if (post.status === 'DecisionDepositPlaced') {
 					post.status = 'Deciding';
 				}
 			}
 		}
-		if(proposalType === ProposalType.ALLIANCE_MOTION){
+		if (proposalType === ProposalType.ALLIANCE_MOTION) {
 			const announcement = postData.announcement;
 			if (announcement) {
 				const isStatus = {
 					swap: false
 				};
-				const announcementTimeline = getTimeline([
-					{
-						createdAt: announcement.createdAt,
-						hash: announcement.hash,
-						index: announcement.cid,
-						statusHistory: announcement.statusHistory,
-						type: announcement.type
-					}
-				], isStatus);
-				post.timeline = [...post.timeline, ...announcementTimeline ];
+				const announcementTimeline = getTimeline(
+					[
+						{
+							createdAt: announcement.createdAt,
+							hash: announcement.hash,
+							index: announcement.cid,
+							statusHistory: announcement.statusHistory,
+							type: announcement.type
+						}
+					],
+					isStatus
+				);
+				post.timeline = [...post.timeline, ...announcementTimeline];
 				if (isStatus.swap) {
 					if (post.status === 'DecisionDepositPlaced') {
 						post.status = 'Deciding';
@@ -877,57 +924,64 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		// Tippers
 		if (proposalType === ProposalType.TIPS) {
-			post.tippers = subsquidData?.tippersConnection?.edges?.reduce((tippers: any[], edge: any) => {
-				if (edge && edge?.node) {
-					tippers.push(edge.node);
-				}
-				return tippers;
-			}, []) || [];
+			post.tippers =
+				subsquidData?.tippersConnection?.edges?.reduce((tippers: any[], edge: any) => {
+					if (edge && edge?.node) {
+						tippers.push(edge.node);
+					}
+					return tippers;
+				}, []) || [];
 		}
 
 		// Council motions votes
 		if (proposalType === ProposalType.COUNCIL_MOTIONS) {
-			post.motion_votes = subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
-				if (edge && edge?.node) {
-					motion_votes.push(edge.node);
-				}
-				return motion_votes;
-			}, []) || [];
+			post.motion_votes =
+				subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
+					if (edge && edge?.node) {
+						motion_votes.push(edge.node);
+					}
+					return motion_votes;
+				}, []) || [];
 		}
 
 		// Democracy proposals votes TotalCount
 		if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			const numTotalCount = Number(subsquidData?.votesConnection?.totalCount);
-			post.seconds = isNaN(numTotalCount)? 0: numTotalCount;
+			post.seconds = isNaN(numTotalCount) ? 0 : numTotalCount;
 		}
 
 		// Alliance motions votes
-		if(proposalType === ProposalType.ALLIANCE_MOTION ){
+		if (proposalType === ProposalType.ALLIANCE_MOTION) {
 			post.motion_votes = postData.voting;
 		}
 
 		// Child Bounties
 		if (proposalType === ProposalType.BOUNTIES) {
 			post.child_bounties_count = subsquidData?.proposalsConnection?.totalCount || 0;
-			post.child_bounties = subsquidData?.proposalsConnection?.edges?.reduce((child_bounties: any[], edge: any) => {
-				if (edge && edge?.node) {
-					child_bounties.push(edge.node);
-				}
-				return child_bounties;
-			}, []) || [];
+			post.child_bounties =
+				subsquidData?.proposalsConnection?.edges?.reduce((child_bounties: any[], edge: any) => {
+					if (edge && edge?.node) {
+						child_bounties.push(edge.node);
+					}
+					return child_bounties;
+				}, []) || [];
 		}
 		if (proposalType === ProposalType.CHILD_BOUNTIES) {
 			post.parent_bounty_index = postData?.parentBountyIndex;
 		}
 
-		const postDocRef = postsByTypeRef(network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType)).doc(strPostId);
+		const postDocRef = postsByTypeRef(network, strProposalType.toString() === 'open_gov' ? ProposalType.REFERENDUM_V2 : strProposalType).doc(strPostId);
 		const firestorePost = await postDocRef.get();
 		if (firestorePost) {
 			let data = firestorePost.data();
 			// traverse the group, get and set the data.
-			const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+			const history = data?.history
+				? data?.history.map((item: any) => {
+						return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
+				  })
+				: [];
 			post.history = history;
-			try{
+			try {
 				data = await getAndSetNewData({
 					data,
 					id: strPostId,
@@ -936,8 +990,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					proposer: post.proposer,
 					timeline: post?.timeline
 				});
-			}catch(e){
-				data=undefined;
+			} catch (e) {
+				data = undefined;
 			}
 			// Populate firestore post data into the post object
 			if (data && post) {
@@ -962,7 +1016,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					if (postDoc.exists && postData) {
 						post_link.title = postData?.title;
 						post_link.description = postData.content;
-						post_link.created_at = postData?.created_at?.toDate? postData?.created_at?.toDate(): postData?.created_at;
+						post_link.created_at = postData?.created_at?.toDate ? postData?.created_at?.toDate() : postData?.created_at;
 						post_link.last_edited_at = getUpdatedAt(postData);
 						post_link.topic = getTopicFromFirestoreData(postData, strProposalType);
 						post_link.username = postData?.username;
@@ -971,12 +1025,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 						}
 						if (post.timeline && Array.isArray(post.timeline)) {
 							post.timeline.splice(0, 0, {
-								created_at: postData?.created_at?.toDate? postData?.created_at?.toDate(): postData?.created_at,
+								created_at: postData?.created_at?.toDate ? postData?.created_at?.toDate() : postData?.created_at,
 								index: Number(id),
 								statuses: [
 									{
 										status: 'Created',
-										timestamp: postData?.created_at?.toDate? postData?.created_at?.toDate(): postData?.created_at
+										timestamp: postData?.created_at?.toDate ? postData?.created_at?.toDate() : postData?.created_at
 									}
 								],
 								type: 'Discussions'
@@ -989,26 +1043,26 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.isSpamReportInvalid = data?.isSpamReportInvalid || false;
 			}
 
-			if(post.content === '' || post.title === '' || post.title === undefined || post.content === undefined){
-				const res =  await getSubSquareContentAndTitle(proposalType,network,numPostId);
-				post.content =  res.content;
+			if (post.content === '' || post.title === '' || post.title === undefined || post.content === undefined) {
+				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
+				post.content = res.content;
 				post.title = res.title;
 			}
 		}
 
 		// Comments
-		if(noComments){
+		if (noComments) {
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip' ? timeline.hash : timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get()).data().count;
 					return { ...timeline, commentsCount };
 				});
-				const timelines:Array<any> = await Promise.allSettled(commentPromises);
-				post.timeline = timelines.map(timeline => timeline.value);
+				const timelines: Array<any> = await Promise.allSettled(commentPromises);
+				post.timeline = timelines.map((timeline) => timeline.value);
 			}
 			const currentTimelineObj = post.timeline?.[0] || null;
-			if(currentTimelineObj){
+			if (currentTimelineObj) {
 				post.currentTimeline = {
 					commentsCount: currentTimelineObj.commentsCount,
 					date: dayjs(currentTimelineObj?.created_at),
@@ -1019,14 +1073,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					type: currentTimelineObj?.type
 				};
 			}
-		}
-		else{
+		} else {
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
-					const post_index = (timeline.type === 'Tip'? timeline.hash: timeline.index);
+					const post_index = timeline.type === 'Tip' ? timeline.hash : timeline.index;
 					const type = getFirestoreProposalType(timeline.type) as ProposalType;
 					const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
 					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
 					return comments;
 				});
@@ -1043,11 +1096,17 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				if (post.post_link) {
 					const { id, type } = post.post_link;
 					const postDocRef = postsByTypeRef(network, type).doc(String(id));
-					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
 					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
 				}
-				const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','==',false).get();
-				const comments = await getComments(commentsSnapshot, postDocRef, network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType), (strProposalType === ProposalType.TIPS? strPostId: numPostId));
+				const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+				const comments = await getComments(
+					commentsSnapshot,
+					postDocRef,
+					network,
+					strProposalType.toString() === 'open_gov' ? ProposalType.REFERENDUM_V2 : strProposalType,
+					strProposalType === ProposalType.TIPS ? strPostId : numPostId
+				);
 				if (post.comments && Array.isArray(post.comments)) {
 					post.comments = post.comments.concat(comments);
 				} else {
@@ -1062,15 +1121,15 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		post.post_reactions = getReactions(postReactionsQuerySnapshot);
 
 		// spam users count
-		if(post?.isSpam) {
+		if (post?.isSpam) {
 			const threshold = process.env.REPORTS_THRESHOLD || 50;
 			post.spam_users_count = Number(threshold);
 		} else {
 			// Check if it is a spam or not
-			post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId), 'post');
+			post.spam_users_count = await getSpamUsersCount(network, proposalType, proposalType === ProposalType.TIPS ? strPostId : numPostId, 'post');
 		}
 
-		if(post?.isSpamReportInvalid) {
+		if (post?.isSpamReportInvalid) {
 			post.spam_users_count = 0;
 		}
 
@@ -1079,23 +1138,27 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = remark.replace(/\n/g, '<br/>');
 			} else {
 				const proposer = post.proposer;
-				const identity  = post?.identity;
+				const identity = post?.identity;
 				if (proposer) {
-					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-					if(network === AllNetworks.POLYMESH){
+					post.content = `This is a ${getProposalTypeTitle(
+						proposalType as ProposalType
+					)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					if (network === AllNetworks.POLYMESH) {
 						post.content = `This is a pip whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 					}
 				} else {
-					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					post.content = `This is a ${getProposalTypeTitle(
+						proposalType as ProposalType
+					)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 				}
 			}
 		}
 
-		if((proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT) && !post.title){
+		if ((proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT) && !post.title) {
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
 		await getContentSummary(post, network, isExternalApiCall);
-		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
 			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }), JSON.stringify(post));
 		}
 		return {
@@ -1113,7 +1176,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 }
 
 export const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number, type: 'post' | 'comment') => {
-	const countQuery = await networkDocRef(network).collection('reports').where('type', '==', type).where('proposal_type', '==', proposalType).where('content_id', '==', postId).count().get();
+	const countQuery = await networkDocRef(network)
+		.collection('reports')
+		.where('type', '==', type)
+		.where('proposal_type', '==', proposalType)
+		.where('content_id', '==', postId)
+		.count()
+		.get();
 	const data = countQuery.data();
 	const totalUsers = data.count || 0;
 
@@ -1162,15 +1231,18 @@ export const updatePostTimeline = (post: any, postData: any) => {
 			}
 		}
 		if (!post.timeline || post.timeline.length === 0) {
-			post.timeline = getTimeline([
-				{
-					createdAt: postData?.createdAt,
-					hash: postData?.hash,
-					index: postData?.index || postData?.cid,
-					statusHistory: postData?.statusHistory,
-					type: postData?.type
-				}
-			], isStatus);
+			post.timeline = getTimeline(
+				[
+					{
+						createdAt: postData?.createdAt,
+						hash: postData?.hash,
+						index: postData?.index || postData?.cid,
+						statusHistory: postData?.statusHistory,
+						type: postData?.type
+					}
+				],
+				isStatus
+			);
 		}
 
 		if (isStatus.swap) {
@@ -1188,19 +1260,19 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	// TODO: take proposalType and postId in dynamic pi route
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const { data, error, status } = await getOnChainPost({
 		isExternalApiCall: true,
 		network,
-		noComments:false,
+		noComments: false,
 		postId,
 		proposalType,
 		voterAddress
 	});
 
-	if(error || !data) {
+	if (error || !data) {
 		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
+	} else {
 		if (data.summary) {
 			delete data.summary;
 		}

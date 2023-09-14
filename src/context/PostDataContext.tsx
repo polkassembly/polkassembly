@@ -16,86 +16,82 @@ export interface IPostDataContextProviderProps extends PropsWithChildren {
 }
 
 export interface ITimelineData {
-    commentsCount: number;
-    index: number;
-    type: string;
-    statuses:any[] | any;
-    hash:any;
-    [index:string]:any
+	commentsCount: number;
+	index: number;
+	type: string;
+	statuses: any[] | any;
+	hash: any;
+	[index: string]: any;
 }
 
 export interface IPostData {
-    postIndex: number | string;
-    postType: ProposalType;
-    timeline?: ITimelineData[];
-    title: string;
-    cid?:string;
-    content: string;
-    summary?: string;
-    created_at: string | Date;
-    currentTimeline?:ITimeline;
-    last_edited_at?: string | Date;
-    proposer: string;
-    curator: string;
-    username: string;
-    topic?: {
-        id: number;
-        name: string;
-    };
-    description?: string;
-    status: string;
-    requested?: string | number | BN;
-    reward?: string | number | BN;
-    post_reactions?: IReactions;
-    comments: {[index:string]:Array<IComment>};
-    polls?: IPoll[];
-    optionPolls?: IOptionPoll[];
-    post_link?: {
-        id?: string | number;
-        type?: string;
-        title?: string;
-        description?: string;
-        created_at?: Date | string;
-        last_edited_at?: Date | string;
-        proposer?: string;
-        username?: string;
-        topic?: {
-            id: number;
-            name: string;
-        };
-        tags?: string[]
-    },
-    subscribers: number[],
-    track_name?: string;
-    track_number?: number;
-    tags: string[] | [];
-    spam_users_count?: number;
-    history?: IPostHistory[];
-    statusHistory?: any[];
-    identityId?: string | null;
+	postIndex: number | string;
+	postType: ProposalType;
+	timeline?: ITimelineData[];
+	title: string;
+	cid?: string;
+	content: string;
+	summary?: string;
+	created_at: string | Date;
+	currentTimeline?: ITimeline;
+	last_edited_at?: string | Date;
+	proposer: string;
+	curator: string;
+	username: string;
+	topic?: {
+		id: number;
+		name: string;
+	};
+	description?: string;
+	status: string;
+	requested?: string | number | BN;
+	reward?: string | number | BN;
+	post_reactions?: IReactions;
+	comments: { [index: string]: Array<IComment> };
+	polls?: IPoll[];
+	optionPolls?: IOptionPoll[];
+	post_link?: {
+		id?: string | number;
+		type?: string;
+		title?: string;
+		description?: string;
+		created_at?: Date | string;
+		last_edited_at?: Date | string;
+		proposer?: string;
+		username?: string;
+		topic?: {
+			id: number;
+			name: string;
+		};
+		tags?: string[];
+	};
+	subscribers: number[];
+	track_name?: string;
+	track_number?: number;
+	tags: string[] | [];
+	spam_users_count?: number;
+	history?: IPostHistory[];
+	statusHistory?: any[];
+	identityId?: string | null;
 }
 
 export interface IPostDataContext {
-    postData: IPostData
+	postData: IPostData;
 	setPostData: React.Dispatch<React.SetStateAction<IPostData>>;
 }
 
-export const PostDataContext: React.Context<IPostDataContext> = createContext(
-	{} as IPostDataContext
-);
+export const PostDataContext: React.Context<IPostDataContext> = createContext({} as IPostDataContext);
 
 const PostDataContextProvider: FC<IPostDataContextProviderProps> = (props) => {
 	const { initialPostData, children } = props;
-	const [postData, setPostData] = useState(initialPostData || {
-		postIndex: '',
-		postType: ProposalType.DISCUSSIONS
-	});
-
-	return (
-		<PostDataContext.Provider value={{ postData, setPostData }}>
-			{children}
-		</PostDataContext.Provider>
+	const [postData, setPostData] = useState(
+		initialPostData || {
+			postIndex: '',
+			postType: ProposalType.DISCUSSIONS
+		}
 	);
+
+	return <PostDataContext.Provider value={{ postData, setPostData }}>{children}</PostDataContext.Provider>;
 };
 
 export default PostDataContextProvider;

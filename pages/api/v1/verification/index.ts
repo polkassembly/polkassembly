@@ -15,8 +15,8 @@ import { isValidNetwork } from '~src/api-utils';
 import { VerificationStatus } from '~src/types';
 
 interface IReq {
-	type: 'email' | 'twitter',
-	checkingVerified?:boolean;
+	type: 'email' | 'twitter';
+	checkingVerified?: boolean;
 	account: string;
 	network: string;
 	token: any;
@@ -39,17 +39,17 @@ if (apiKey) {
 const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
-	const { account, type, checkingVerified } = req.query as unknown as  IReq;
+	const { account, type, checkingVerified } = req.query as unknown as IReq;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	const token = getTokenFromReq(req);
 
 	const user = await authServiceInstance.GetUser(token);
 	const userId = user?.id;
 
-	if(!token || !userId) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!token || !userId) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	if (!account || !type) {
 		return res.status(400).json({ message: 'Please provide valid params.' });
@@ -58,20 +58,19 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 	const verificationToken = await cryptoRandomStringAsync({ length: 20, type: 'url-safe' });
 
 	if (type === 'email') {
-
 		const tokenVerificationRef = firestore.collection('email_verification_tokens').doc(String(userId));
 		const emailDataSnapshot = await tokenVerificationRef.get();
-		const emailData =  emailDataSnapshot.data();
+		const emailData = emailDataSnapshot.data();
 
-		if(emailData?.user_id === userId){
-			if(emailData?.verified ) {
+		if (emailData?.user_id === userId) {
+			if (emailData?.verified) {
 				return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
 			}
-			if(emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT) {
+			if (emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT) {
 				return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
 			}
 		}
-		if(checkingVerified === true) return  res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
+		if (checkingVerified === true) return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 
 		const message = {
 			from: FROM.email,
@@ -89,7 +88,9 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 		};
 		await sgMail
 			.send(message)
-			.then(() => { res.status(200).json( { message: VerificationStatus.VERFICATION_EMAIL_SENT } );})
+			.then(() => {
+				res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
+			})
 			.catch((error: any) => {
 				return res.status(500).json({ message: error || 'Error sending email' });
 			});
@@ -102,33 +103,28 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			verified: false
 		});
 		return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
-
 	} else if (type === 'twitter') {
-
 		const twitterVerificationDoc = await firestore.collection('twitter_verification_tokens').doc(String(userId)).get();
 
-		if(!twitterVerificationDoc.exists) return res.status(400).json({ message: `No doc found with the user id ${userId}` });
+		if (!twitterVerificationDoc.exists) return res.status(400).json({ message: `No doc found with the user id ${userId}` });
 
 		const twitterData = twitterVerificationDoc.data();
 
-		if(twitterData?.twitter_handle !== account)return res.status(400).json({ message: 'Twitter handle does not match' });
+		if (twitterData?.twitter_handle !== account) return res.status(400).json({ message: 'Twitter handle does not match' });
 
 		if (twitterData?.verified && twitterData?.user_id === userId) {
-			return  res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
-		}else if(checkingVerified === true) {
+			return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
+		} else if (checkingVerified === true) {
 			return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
-		}
-		else {
+		} else {
 			await twitterVerificationDoc.ref.set({
 				created_at: new Date(),
 				twitter_handle: account,
 				user_id: userId,
 				verified: false
 			});
-
 		}
 		return res.status(200).json({ message: VerificationStatus.PLEASE_VERIFY_TWITTER });
-
 	}
 };
 

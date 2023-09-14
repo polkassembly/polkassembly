@@ -22,13 +22,13 @@ import UserNotFound from '~assets/user-not-found.svg';
 
 interface IUserProfileProps {
 	userPosts: {
-		data: IUserPostsListingResponse,
+		data: IUserPostsListingResponse;
 		error: string | null;
 	};
 	userProfile: {
 		data: ProfileDetailsResponse;
 		error: string | null;
-	}
+	};
 	network: string;
 	error?: string;
 	className?: string;
@@ -38,9 +38,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { params, req } = context;
 	const address = params?.address;
 	if (!address) {
-		return { props: {
-			error: 'No address provided'
-		} };
+		return {
+			props: {
+				error: 'No address provided'
+			}
+		};
 	}
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getUserIdWithAddress(address.toString());
@@ -84,13 +86,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const EmptyState = styled.div`
-	display:flex;
-	flex-direction:column;
-	gap:16px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 
-	svg{
-		max-width:600px;
-		margin:auto;
+	svg {
+		max-width: 600px;
+		margin: auto;
 	}
 `;
 
@@ -101,25 +103,19 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if(userPosts?.error === 'UserId is invalid' || error){
+	if (userPosts?.error === 'UserId is invalid' || error) {
 		return (
 			<EmptyState>
-				<ErrorAlert
-					errorMsg="Invalid User. This user does't have any account with Polkassembly"
-				/>
-				<UserNotFound/>
+				<ErrorAlert errorMsg="Invalid User. This user does't have any account with Polkassembly" />
+				<UserNotFound />
 			</EmptyState>
 		);
 	}
 	if (userPosts?.error || userProfile?.error) {
-		return (
-			<ErrorAlert
-				errorMsg={userPosts?.error || userProfile?.error || ''}
-			/>
-		);
+		return <ErrorAlert errorMsg={userPosts?.error || userProfile?.error || ''} />;
 	}
 	const tabItems = Object.entries(userPosts?.data?.[selectedGov]).map(([key, value]) => {
 		if (!value) return null;
@@ -134,25 +130,30 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			});
 		}
 		return {
-			children: (
-				<PostsTab
-					posts={value}
-				/>
-			),
+			children: <PostsTab posts={value} />,
 			key: key,
-			label: <CountBadgePill label={key?.split('_').join(' ') || ''} count={count} />
+			label: (
+				<CountBadgePill
+					label={key?.split('_').join(' ') || ''}
+					count={count}
+				/>
+			)
 		};
 	});
 	return (
 		<>
-			<SEOHead title='User Profile' network={network}/>
-			<section className={`my-0 pb-5 md:pb-0 md:bg-white md:shadow-md rounded-[4px] flex h-full min-h-[calc(100vh-150px)] ${className}`}>
-				<Details userPosts={userPosts.data} userProfile={userProfile} />
-				<article className='hidden md:flex flex-1 py-6 px-10 flex-col w-[calc(100%-330px)]'>
+			<SEOHead
+				title='User Profile'
+				network={network}
+			/>
+			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 md:bg-white md:pb-0 md:shadow-md ${className}`}>
+				<Details
+					userPosts={userPosts.data}
+					userProfile={userProfile}
+				/>
+				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 md:flex'>
 					<div className='flex items-start justify-between'>
-						<h2 className='font-semibold text-[28px] leading-[42px] text-sidebarBlue'>
-						Activity
-						</h2>
+						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue'>Activity</h2>
 						<Select
 							value={selectedGov}
 							style={{
@@ -173,12 +174,10 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							]}
 						/>
 					</div>
-					<div
-						className='fullHeight'
-					>
+					<div className='fullHeight'>
 						<Tabs
-							className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
-							type="card"
+							className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+							type='card'
 							items={tabItems as any}
 						/>
 					</div>

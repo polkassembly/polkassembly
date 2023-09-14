@@ -120,7 +120,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	return (
 		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
 			<span>Free Balance</span>
-			<HelperTooltip placement='topLeft' className="mx-1" text={
+			<HelperTooltip placement='topRight' className="mx-1" text={
 				<div>
 					<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 0, withUnit: true }, network)}</span>
 					<br/>

@@ -24,10 +24,7 @@ import { IApiResponse, NetworkSocials } from '~src/types';
 
 import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
-import {
-	getLatestActivityOnChainPosts,
-	ILatestActivityPostsListingResponse
-} from './api/v1/latest-activity/on-chain-posts';
+import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } from './api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
@@ -83,12 +80,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if (
-		chainProperties[network]?.subsquidUrl &&
-		network !== AllNetworks.COLLECTIVES &&
-		network !== AllNetworks.WESTENDCOLLECTIVES &&
-		network !== AllNetworks.POLYMESH
-	) {
+	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -191,9 +183,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const { id: userId } = useUserDetailsContext();
 	const router = useRouter();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
-	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(
-		Boolean(router.query.identityVerification) || false
-	);
+	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(Boolean(router.query.identityVerification) || false);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -252,24 +242,22 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				network={network}
 			/>
 			<main>
-				<div className='flex justify-between mr-2'>
-					<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
+				<div className='mr-2 flex justify-between'>
+					<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>Overview</h1>
 					{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
-						<div className='pl-3  max-sm:hidden pr-8 py-2 border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] text-sm text-[#E91C26] flex items-center rounded-md '>
+						<div className='flex  items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
 							<IdentityCaution />
 							<span className='ml-2'>Social verification incomplete</span>
 						</div>
 					)}
 				</div>
-				<div className='mt-6 mx-1'>
-					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
-				</div>
+				<div className='mx-1 mt-6'>{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}</div>
 				{network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && (
-					<div className='mt-8 mx-1'>
+					<div className='mx-1 mt-8'>
 						<TreasuryOverview />
 					</div>
 				)}
-				<div className='mt-8 mx-1'>
+				<div className='mx-1 mt-8'>
 					{network !== AllNetworks.COLLECTIVES ? (
 						<LatestActivity latestPosts={latestPosts} />
 					) : (
@@ -283,7 +271,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					)}
 				</div>
 
-				<div className='mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4'>
+				<div className='mx-1 mt-8 flex flex-col items-center justify-between gap-4 xl:flex-row'>
 					<div className='w-full xl:w-[60%]'>
 						<UpcomingEvents />
 					</div>

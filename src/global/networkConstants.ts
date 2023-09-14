@@ -172,7 +172,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: polkadotLogo,
 		rpcEndpoint: 'wss://rpc.polkadot.io',
 		ss58Format: 0,
-		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
+		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/v/v2/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.DOT,
 		treasuryProposalBondPercent: '5.00%',

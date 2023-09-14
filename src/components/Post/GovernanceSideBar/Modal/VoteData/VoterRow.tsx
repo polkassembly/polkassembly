@@ -65,6 +65,7 @@ const StyledCollapse = styled(Collapse)`
 `;
 
 const getPercentage =(userVotes:string, totalVotes:string) => {
+	console.log(totalVotes, userVotes);
 	if(!totalVotes){
 		return;
 	}
@@ -151,8 +152,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 								: voteData?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{voteData?.decision !== 'abstain' &&  <div className={`overflow-ellipsis ${isReferendum2 ? 'w-[105px]' : 'w-[135px]'} text-bodyBlue`}>
-							{voteData?.delegatedVotes?.length > 0 ? 'd': voteData.lockPeriod === 0 ? '0.1x': voteData.lockPeriod+'x' }
-							{/* {`${voteData.lockPeriod === 0 ? '0.1': voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0  ? '/d' : ''}`} */}
+							{`${voteData.lockPeriod === 0 ? '0.1': voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0  ? '/d' : ''}`}
 						</div>}
 					</>
 				) : (

@@ -12,9 +12,9 @@ import {
 import { LoadingOutlined } from '@ant-design/icons';
 import { Divider, Modal as AntdModal, Pagination, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 import { LoadingStatusType } from 'src/types';
-import { useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
@@ -30,6 +30,10 @@ import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationVotersList from './DelegateVoteList';
 import GraphExpandIcon from '~assets/graph-expand.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import BN from 'bn.js';
+
+// const ZERO = new BN(0);
+const ZERO = '0';
 
 const StyledSegmented = styled(Segmented)`
   .ant-segmented-group > label {
@@ -75,6 +79,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	const { className, referendumId, voteType, thresholdData, tally } = props;
+	const  { api, apiReady } = useApiContext();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: true,
@@ -89,6 +94,76 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [activeKey, setActiveKey] = useState<any>(null);
 	const [orderBy, setOrderBy] = useState<{[key:string]:boolean}>(sortedCheck);
 	const [thresholdOpen, setThresholdOpen] = useState<boolean>(false);
+
+	const [tallyData, setTallyData] = useState({
+		abstain:ZERO,
+		ayes: ZERO ,
+		nays: ZERO
+	});
+
+	const decisionOptions = [
+		{
+			label: (
+				<div className='flex items-center justify-center gap-1'>
+					<LikeFilled /> <span>Ayes</span>
+				</div>
+			),
+			value: 'yes'
+		},
+		{
+			label: (
+				<div className='flex items-center justify-center gap-1'>
+					<DislikeFilled /> <span>Nays</span>
+				</div>
+			),
+			value: 'no'
+		}
+	];
+
+	if (voteType === VoteType.REFERENDUM_V2) {
+		decisionOptions.push({
+			label: (
+				<div className='flex items-center justify-center gap-1'>
+					<MinusCircleFilled /> <span>Abstain</span>
+				</div>
+			),
+			value: 'abstain'
+		});
+	}
+
+	const onChange: PaginationProps['onChange'] = (page) => {
+		setCurrentPage(page);
+	};
+	const handleSortByClick = ({ key }: {key: string}) => {
+		setSortBy(key);
+	};
+
+	const getReferendumV2VoteInfo = useCallback(
+		async() => {
+			if( !api || !apiReady || !network ) return;
+			setLoadingStatus({ isLoading: true, message:'' });
+			(async () => {
+				const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
+				const parsedReferendumInfo: any = referendumInfoOf.toJSON();
+				if (parsedReferendumInfo?.ongoing?.tally) {
+					setTallyData({
+						abstain: typeof parsedReferendumInfo.ongoing.tally.abstain === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString() : new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
+						ayes: typeof parsedReferendumInfo.ongoing.tally.ayes === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString() : new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
+						nays: typeof parsedReferendumInfo.ongoing.tally.nays === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString() : new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
+					});
+				} else {
+					setTallyData({
+						abstain: new BN(tally?.abstain || 0, 'hex').toString(),
+						ayes: new BN(tally?.ayes || 0, 'hex').toString(),
+						nays: new BN(tally?.nays || 0, 'hex').toString()
+					});
+				}
+				setLoadingStatus({ isLoading: false, message:'' });
+			})();
+
+		},
+		[api, apiReady, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]
+	);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -130,42 +205,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			});
 	}, [currentPage, referendumId, sortBy, voteType]);
 
-	const decisionOptions = [
-		{
-			label: (
-				<div className='flex items-center justify-center gap-1'>
-					<LikeFilled /> <span>Ayes</span>
-				</div>
-			),
-			value: 'yes'
-		},
-		{
-			label: (
-				<div className='flex items-center justify-center gap-1'>
-					<DislikeFilled /> <span>Nays</span>
-				</div>
-			),
-			value: 'no'
-		}
-	];
+	useEffect(() => {
+		getReferendumV2VoteInfo();
+	}, [api, apiReady, getReferendumV2VoteInfo]);
 
-	if (voteType === VoteType.REFERENDUM_V2) {
-		decisionOptions.push({
-			label: (
-				<div className='flex items-center justify-center gap-1'>
-					<MinusCircleFilled /> <span>Abstain</span>
-				</div>
-			),
-			value: 'abstain'
-		});
-	}
-
-	const onChange: PaginationProps['onChange'] = (page) => {
-		setCurrentPage(page);
-	};
-	const handleSortByClick = ({ key }: {key: string}) => {
-		setSortBy(key);
-	};
 	return (
 		<div>
 			<Spin
@@ -175,7 +218,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			>
 				<div className='flex gap-6'>
 					<div className='md:overflow-visible flex flex-col justify-between'>
-						<div>
+						<div className='w-[340px] sm:w-full'>
 							<div className='w-full flex items-center justify-center mb-8'>
 								<StyledSegmented
 									block
@@ -189,19 +232,19 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									options={decisionOptions}
 								/>
 							</div>
-							<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-x-auto'>
+							<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-auto'>
 								<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
 									<div
 										className={`${
 											isReferendum2 ? 'w-[190px]' : 'w-[250px]'
-										} text-lightBlue text-sm font-medium`}
+										} text-lightBlue text-sm font-medium  ${decision === 'abstain' ? 'w-[220px]':''}`}
 									>
 									Voter
 									</div>
 									<div
 										className={`${
 											isReferendum2 ? 'w-[110px]' : 'w-[140px]'
-										} flex items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]':''}`}
+										} flex cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]':''}`}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.balanceIsAsc
@@ -218,7 +261,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										<div
 											className={`${
 												isReferendum2 ? 'w-[110px]' : 'w-[150px]'
-											} flex items-center gap-1 text-lightBlue`}
+											} flex cursor-pointer items-center gap-1 text-lightBlue`}
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.convictionIsAsc
@@ -235,7 +278,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									) : null}
 									{isReferendum2 && (
 										<div
-											className='w-[120px] flex items-center gap-1 text-lightBlue'
+											className='cursor-pointer w-[120px] flex items-center gap-1 text-lightBlue'
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.votingIsAsc
@@ -253,7 +296,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</div>
 									)}
 								</div>
-								<div className='overflow-x-auto max-h-[360px]'>
+								<div className='max-h-[360px]'>
 									{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
 										votesRes[decision]?.votes.map(
 											(voteData: any, index: number) => (
@@ -273,7 +316,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 													isReferendum2={isReferendum2}
 													setDelegationVoteModal={setDelegationVoteModal}
 													setActiveKey={setActiveKey}
-													tally={tally?.[decision=== 'yes'? 'ayes':decision==='no' ? 'nays': 'abstain'] || null}
+													tally={tallyData?.[decision=== 'yes'? 'ayes': decision === 'no' ? 'nays': 'abstain'] ||  null}
 													decision={decision}
 													referendumId={referendumId}
 

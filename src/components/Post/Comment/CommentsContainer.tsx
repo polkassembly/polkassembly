@@ -269,6 +269,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				</div>
 			}
 			{
+				Boolean(allComments?.length) && timelines.length >= 1 &&
 				!loading &&
 				<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
 					<span className='text-lg font-medium text-bodyBlue'>

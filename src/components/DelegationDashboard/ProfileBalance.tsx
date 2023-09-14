@@ -20,6 +20,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
+import BN from 'bn.js';
 
 interface Props{
   className?: string;
@@ -29,12 +30,13 @@ interface Props{
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
 });
+const ZERO_BN = new BN(0);
 
 const ProfileBalances = ({ className, address }: Props ) => {
 
-	const [balance, setBalance] = useState<string>('0');
-	const [lockBalance, setLockBalance] = useState<string>('0');
-	const [transferableBalance, setTransferableBalance] = useState<string>('0');
+	const [balance, setBalance] = useState<BN>(ZERO_BN);
+	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
+	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -57,7 +59,13 @@ const ProfileBalances = ({ className, address }: Props ) => {
 
 	useEffect(() => {
 
-		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
+		if(!api || !apiReady || !address) return;
+		(async() => {
+			const balances = await userProfileBalances({ address, api, apiReady, network });
+			setBalance(balances?.freeBalance || ZERO_BN);
+			setTransferableBalance(balances?.transferableBalance || ZERO_BN);
+			setLockBalance(balances?.lockedBalance || ZERO_BN);
+		})();
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
@@ -132,11 +140,11 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet, delegationDashboardAddress, api, apiReady]);
 
-	return <div className={'flex justify-between items-center w-full pl-[70px] max-md:pl-4 '}>
+	return <div className={'flex justify-between items-center w-full pl-[40px] max-md:pl-4 '}>
 		<div className={`${className} flex py-[17px] items-center  h-full gap-1 max-md:px-[10px]`}>
 			<div className='h-[71px] flex flex-col justify-start py-2 gap-1 '>
 				<div className='text-2xl font-semibold text-white tracking-[0.0015em] gap-1'>
-					{formatedBalance(balance, unit)}
+					{formatedBalance(balance.toString(), unit, 2)}
 					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 				<div className='flex items-center justify-start gap-2 ml-[1px]'>
 					<Image
@@ -153,7 +161,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 			<div className='flex gap-4 py-2 justify-start max-md:gap-2'>
 				<div className='h-[71px] flex flex-col py-2 gap-1'>
 					<div className='text-2xl font-semibold text-white tracking-[0.0015em] gap-1'>
-						{formatedBalance(transferableBalance, unit)}
+						{formatedBalance(transferableBalance.toString(), unit, 2)}
 						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 					<div className='flex items-center justify-start gap-2 ml-1'>
 						<RightTickIcon/>
@@ -164,7 +172,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 				<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
 					<div className='text-2xl font-semibold text-white tracking-[0.0015em] gap-1'>
-						{formatedBalance(lockBalance, unit)}
+						{formatedBalance(lockBalance.toString(), unit, 2)}
 						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 					<div className='flex items-center justify-start gap-2 ml-1'>
 						<LockBalanceIcon/>
@@ -188,7 +196,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				setSwitchModalOpen={setOpenModal}
 				withoutInfo={true}
 			/>}</div>
-		<AddressConnectModal localStorageWalletKeyName='delegationWallet' usingMultisig localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true}/>
+		<AddressConnectModal localStorageWalletKeyName='delegationWallet' usingMultisig localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true} walletAlertTitle='Delegation dashboard'/>
 	</div>;
 };
 export default ProfileBalances;

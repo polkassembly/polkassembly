@@ -8,53 +8,81 @@ interface Props{
   address: string;
   api: any;
   apiReady: any;
-  setBalance: (pre: string) => void;
-  setLockBalance?: (pre: string) => void;
-  setTransferableBalance?: (pre:string) => void;
   network: string;
 }
 
-const userProfileBalances = ( { address, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance }: Props ) => {
+interface IResponse {
+	freeBalance: BN;
+	lockedBalance: BN ;
+	transferableBalance: BN;
+}
+const ZERO_BN = new BN(0);
 
-	if (!api || !apiReady || !address) return;
+const userProfileBalances = async( { address, api, apiReady, network }: Props ):Promise<IResponse> => {
 
-	if (['genshiro'].includes(network)){
-		api.query.eqBalances.account(address, { '0': 1734700659 })
-			.then((result: any) => {
-				setBalance(result.toHuman()?.Positive?.toString() || '0');
-			})
-			.catch((e:any) => console.error(e));
-	}
-	else if(['equilibrium'].includes(network)){
-		api.query.system.account(address)
-			.then((result: any) => {
+	const getBalances = (async() => {
 
-				const locked = result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '') || '0';
-				const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
-				if(new BN(positive).cmp(new BN(locked))){
-					setBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
-					setLockBalance && setLockBalance(locked);
-				}
-				else{
-					setBalance(positive);
-				}
-			}).catch((e:any) => console.error(e));
-	}
-	else{
-		api.query.system.account(address)
-			.then((result: any) => {
+		let freeBalance =  ZERO_BN;
+		let transferableBalance =  ZERO_BN;
+		let lockedBalance =  ZERO_BN;
 
-				if (result.data.free && result.data?.free?.toBigInt() >= result.data?.frozen?.toBigInt()){
-					setTransferableBalance && setTransferableBalance((result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()).toString() || '0');
-					setLockBalance && setLockBalance( result.data?.frozen?.toBigInt().toString());
-					setBalance(result.data?.free?.toBigInt().toString());
-				}
-				else{
-					setBalance('0');
-				}
-			})
-			.catch((e:any) => console.error(e));
-	}
+		const responseObj = {
+			freeBalance,
+			lockedBalance,
+			transferableBalance
+		};
 
+		if (!api || !apiReady || !address || !network) {
+			return responseObj;
+		}
+		if (['genshiro'].includes(network)){
+			await api.query.eqBalances.account(address, { '0': 1734700659 })
+				.then((result: any) => {
+					freeBalance = new BN(result.toHuman()?.Positive?.toString());
+				})
+				.catch((e:any) => console.error(e));
+		}
+		else if(['equilibrium'].includes(network)){
+			await api.query.system.account(address)
+				.then((result: any) => {
+
+					const locked = new BN(result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '')) ;
+					const positive = new BN(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', ''));
+					if(new BN(positive).cmp(new BN(locked))){
+						freeBalance = positive.sub(locked);
+						lockedBalance = locked;
+					}
+					else{
+						freeBalance = positive;
+					}
+				}).catch((e:any) => console.error(e));
+		}
+		else{
+			await api.query.system.account(address)
+				.then((result: any) => {
+
+					if (result.data.free && result.data?.free?.toBigInt() >= result.data?.frozen?.toBigInt()){
+						transferableBalance =new BN(result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt());
+						lockedBalance =  new BN(result.data?.frozen?.toBigInt().toString());
+						freeBalance = new BN(result.data?.free?.toBigInt().toString());
+
+					}
+					else{
+						freeBalance = ZERO_BN;
+					}
+				})
+				.catch((e:any) => console.error(e));
+		}
+
+		return {
+			freeBalance,
+			lockedBalance,
+			transferableBalance
+		};
+	});
+
+	const result = await getBalances();
+
+	return result;
 };
 export default userProfileBalances ;

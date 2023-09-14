@@ -4,7 +4,7 @@
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, Tooltip } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { EReportType, NotificationStatus } from 'src/types';
@@ -21,6 +21,8 @@ import ReportButton from '../ActionsBar/ReportButton';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { checkIsProposer } from '../utils/checkIsProposer';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { poppins } from 'pages/_app';
 
 interface Props {
@@ -39,7 +41,7 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress , allowed_roles } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress, addresses, allowed_roles } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
@@ -52,6 +54,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const [error, setError] = useState('');
 	const [isReplying,setIsReplying] = useState(false);
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
+	const [isEditable, setIsEditable] = useState(false);
 
 	const toggleEdit = () => setIsEditing(!isEditing);
 
@@ -95,6 +98,23 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		global.window.localStorage.removeItem(newReplyKey(commentId));
 		setIsReplying(!isReplying);
 	};
+
+	const canEditComment = useCallback(async () => {
+		if(id === userId){
+			return setIsEditable(true);
+		}
+		if(!proposer){
+			return setIsEditable(false);
+		}
+		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		if(!isProposer){
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...addresses || loginAddress ] );
+			if(isProposer){
+				return setIsEditable(true);
+			}
+		}
+		return setIsEditable(false);
+	}, [addresses, id, loginAddress, proposer, userId]);
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -295,6 +315,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		setLoading(false);
 	};
 
+	useEffect(() => {
+		canEditComment();
+	}, [canEditComment]);
+
 	return (
 		<>
 			<div className={className}>
@@ -333,8 +357,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						:
 						<>
 							<Markdown className='py-2 px-2 md:px-4 bg-blue-grey rounded-b-md text-sm' md={content} />
-							<div className='flex items-center flex-wrap'>
-								{id === userId &&
+							<div className='flex items-center flex-wrap gap-x-3'>
+								{isEditable &&
 									<Button className={'text-pink_primary flex items-center border-none shadow-none'} disabled={loading} onClick={toggleEdit}>
 										{
 											loading
@@ -346,15 +370,15 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{
 									id === userId ? <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>
 										:
-										allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-pink_primary text-xs leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} type={EReportType.REPLY} onSuccess={removeReplyContent} commentId={commentId} replyId={replyId} postId={postIndex}/>
+										allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && <ReportButton isDeleteModal={true} proposalType={reply.post_type as any || postType} className={`flex items-center shadow-none text-pink_primary text-xs leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} type={EReportType.REPLY} onSuccess={removeReplyContent} commentId={commentId} replyId={replyId} postId={reply.post_index as any || postIndex}/>
 								}
-								{id && !isEditing && <ReportButton className='text-xs text-pink_primary' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
+								{id && !isEditing && <ReportButton className='text-xs text-pink_primary' proposalType={reply.post_type as any || postType} postId={reply.post_index as any || postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 
 								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
 									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${reply.reply_source ? 'disabled-reply' : ''}` }>
 										<ReplyIcon className='mr-1'/> Reply
 									</Button>
-								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
+								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs p-0 m-0'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
 									: null
 								}
 							</div>

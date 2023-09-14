@@ -724,7 +724,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								type='error'
 								message={balanceErr}
 								showIcon
-								className='mb-4 rounded-[4px] h-10'
+								className='mb-4 h-10 rounded-[4px]'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (

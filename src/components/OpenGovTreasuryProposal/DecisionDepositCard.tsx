@@ -409,7 +409,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							<Alert
 								showIcon
 								type='error'
-								className='mb-4 rounded-[4px] h-10 text-sm text-bodyBlue'
+								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue'
 								message='Insufficient available balance.'
 							/>
 						)}

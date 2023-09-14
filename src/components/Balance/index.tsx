@@ -21,7 +21,7 @@ interface Props {
 	onChange?: (balance: string) => void;
 	isBalanceUpdated?: boolean;
 	setAvailableBalance?: (pre: string) => void;
-	classname?: string
+	classname?: string;
 }
 const ZERO_BN = new BN(0);
 const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, classname }: Props) => {
@@ -30,12 +30,12 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const { network } = useContext(NetworkContext);
 	const { postData } = usePostDataContext();
-	const unit =`${chainProperties[network]?.tokenSymbol}`;
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
-		if(!network) return ;
+		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network]?.tokenDecimals,
 			unit: chainProperties[network]?.tokenSymbol
@@ -45,88 +45,87 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
 
-		if (['genshiro'].includes(network)){
-			api.query.eqBalances.account(address, { '0': 1734700659 })
+		if (['genshiro'].includes(network)) {
+			api.query.eqBalances
+				.account(address, { '0': 1734700659 })
 				.then((result: any) => {
 					setBalance(result.toHuman()?.Positive?.toString() || '0');
-					setAvailableBalance &&	setAvailableBalance(result.toHuman()?.Positive?.toString() || '0');
+					setAvailableBalance && setAvailableBalance(result.toHuman()?.Positive?.toString() || '0');
 					onChange && onChange(result.toHuman()?.Positive?.toString() || '0');
 				})
-				.catch(e => console.error(e));
-		}
-		else if(['equilibrium'].includes(network)){
-			api.query.system.account(address)
+				.catch((e) => console.error(e));
+		} else if (['equilibrium'].includes(network)) {
+			api.query.system
+				.account(address)
 				.then((result: any) => {
-					const locked = new BN(result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '')) ;
-					if(isReferendum){
+					const locked = new BN(result.toHuman().data?.V0?.lock?.toString().replaceAll(',', ''));
+					if (isReferendum) {
 						setBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-						setAvailableBalance &&	setAvailableBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
+						setAvailableBalance && setAvailableBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 						onChange && onChange(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-					}
-					else{
+					} else {
 						const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
-						if(new BN(positive).cmp(locked)){
-							setBalance((new BN(positive).sub(locked)).toString() || '0');
-							setAvailableBalance &&	setAvailableBalance((new BN(positive).sub(locked)).toString() || '0');
-							onChange && onChange((new BN(positive).sub(locked)).toString() || '0');
-						}
-						else{
+						if (new BN(positive).cmp(locked)) {
+							setBalance(new BN(positive).sub(locked).toString() || '0');
+							setAvailableBalance && setAvailableBalance(new BN(positive).sub(locked).toString() || '0');
+							onChange && onChange(new BN(positive).sub(locked).toString() || '0');
+						} else {
 							setBalance(positive);
-							setAvailableBalance &&	setAvailableBalance(positive);
+							setAvailableBalance && setAvailableBalance(positive);
 							onChange && onChange(positive);
 						}
 					}
 					setLockBalance(locked);
-				}).catch(e => console.error(e));
-		}
-		else{
-			api.query.system.account(address)
+				})
+				.catch((e) => console.error(e));
+		} else {
+			api.query.system
+				.account(address)
 				.then((result: any) => {
 					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
 					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
-					const locked =  new BN(result.data?.frozen?.toBigInt().toString());
-					if(isReferendum){
+					const locked = new BN(result.data?.frozen?.toBigInt().toString());
+					if (isReferendum) {
 						setBalance(result.data?.free?.toString() || '0');
-						setAvailableBalance &&	setAvailableBalance(result.data?.free?.toString() || '0');
+						setAvailableBalance && setAvailableBalance(result.data?.free?.toString() || '0');
 						onChange && onChange(result.data?.free?.toString() || '0');
-					}
-					else if(isDemocracyProposal && result.data.free && result.data?.free?.toBigInt() >= frozen){
-						setBalance((result.data?.free?.toBigInt() + reserved).toString()  || '0');
-						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved - frozen).toString()  || '0');
-						onChange && onChange((result.data?.free?.toBigInt() + reserved).toString()  || '0');
-					}
-					else if (result.data.free && result.data?.free?.toBigInt() >= frozen){
+					} else if (isDemocracyProposal && result.data.free && result.data?.free?.toBigInt() >= frozen) {
+						setBalance((result.data?.free?.toBigInt() + reserved).toString() || '0');
+						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved - frozen).toString() || '0');
+						onChange && onChange((result.data?.free?.toBigInt() + reserved).toString() || '0');
+					} else if (result.data.free && result.data?.free?.toBigInt() >= frozen) {
 						setBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
-						setAvailableBalance &&	setAvailableBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
+						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
 						onChange && onChange((result.data?.free?.toBigInt() - frozen).toString() || '0');
-					}
-					else{
+					} else {
 						setBalance('0');
 						setAvailableBalance && setAvailableBalance('0');
 						onChange && onChange('0');
 					}
 					setLockBalance(locked);
 				})
-				.catch(e => console.error(e));
+				.catch((e) => console.error(e));
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
 	return (
-		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
+		<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] ${classname}`}>
 			<span>Free Balance</span>
-			<HelperTooltip className="mx-1" text=
-				{
+			<HelperTooltip
+				className='mx-1'
+				text={
 					<div>
-						<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span><br/>
-						<span>Locked Balance: {formatedBalance(lockBalance.toString(), unit, 2)} {unit}</span>
+						<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+						<br />
+						<span>
+							Locked Balance: {formatedBalance(lockBalance.toString(), unit, 2)} {unit}
+						</span>
 					</div>
 				}
 			/>
 			<span>:</span>
-			<span className='ml-2 text-pink_primary'>
-				{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}
-			</span>
+			<span className='ml-2 text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);
 };

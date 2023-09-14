@@ -53,8 +53,8 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 
 	return (
 		<div className={className}>
-			<span className='flex items-center justify-center -mt-6 text-[350px]'>
-				<AmountBreakdownModalIcon/>
+			<span className='-mt-6 flex items-center justify-center text-[350px]'>
+				<AmountBreakdownModalIcon />
 			</span>
 			<ul className='-mt-6 flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue'>
 				<li>Polkadot offers on-chain identities that verify users&apos;s credentials through appointed registrars, instilling greater trust and support. </li>

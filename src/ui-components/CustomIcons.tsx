@@ -748,10 +748,10 @@ export const SetIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
-export const AmountBreakdownModalIcon  = (props: Partial<CustomIconComponentProps>) => (
+export const AmountBreakdownModalIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
-	component={AmountBreakdownModalSVG}
-	{...props}
+		component={AmountBreakdownModalSVG}
+		{...props}
 	/>
 );
 export const ApplayoutIdentityIcon = (props: Partial<CustomIconComponentProps>) => (

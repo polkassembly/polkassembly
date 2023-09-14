@@ -19,6 +19,8 @@ import { BN_HUNDRED } from '@polkadot/util';
 import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { UserDetailsContext } from '~src/context/UserDetailsContext';
+import userProfileBalances from '~src/util/userProfieBalances';
+import { useApiContext, useNetworkContext } from '~src/context';
 
 interface Props{
   className?: string;
@@ -55,6 +57,8 @@ export interface IPreimage{
 const ZERO_BN = new BN(0);
 const OpenGovTreasuryProposal = ({ className }: Props) => {
 
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
@@ -108,8 +112,15 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	useEffect(() => {
 		const address = localStorage.getItem('treasuryProposalProposerAddress') || '';
 		setProposerAddress(address);
+		if(!api || !apiReady || !proposerAddress) return;
+
+		(async() => {
+			const balances = await userProfileBalances({ address: proposerAddress || address, api, apiReady, network });
+			setAvailableBalance(balances?.freeBalance || ZERO_BN);
+		})();
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [title]);
+	}, [title, api, apiReady]);
 
 	const handleClick = () => {
 		if(id){
@@ -235,7 +246,6 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					enactment={enactment}
 					setEnactment={setEnactment}
 				/>}
-
 				{(steps.step === 2) && <CreateProposal
 					discussionLink={discussionLink}
 					availableBalance={availableBalance}

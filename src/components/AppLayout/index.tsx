@@ -3,18 +3,20 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import {  Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Skeleton } from 'antd';
+import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
+import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Skeleton } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import React, { ReactNode, memo, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
 import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TreasuryGroupIcon, TechComProposalIcon , DelegatedIcon, ApplayoutIdentityIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import Link from 'next/link';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
@@ -32,6 +34,7 @@ import dynamic from 'next/dynamic';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import { poppins } from 'pages/_app';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),{
 	loading: () => <Skeleton.Button active />,
@@ -65,7 +68,7 @@ interface Props {
 	className?: string;
 }
 
-const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network: string, img?: string | null, username?: string, className?:string): MenuItem => {
+const getUserDropDown = (handleSetIdentityClick: any, isIdentityUnverified: boolean, isGood: boolean, handleLogout: any, network: string, img?: string | null, username?: string, className?:string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
@@ -106,7 +109,7 @@ const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network
 				}}>
 				<span className='text-lg ml-[2px]'><ApplayoutIdentityIcon /></span>
 				<span>Set on-chain identity</span>
-				<span className=' flex items-center'><IdentityCaution/></span>
+				{isIdentityUnverified && <span className='flex items-center'><IdentityCaution/></span>}
 			</Link>
 		});
 	}
@@ -119,8 +122,10 @@ const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network
 
 	return getSiderMenuItem(
 		<AuthDropdown>
-			<div className='flex items-center justify-between gap-x-2 user-info'>
-				<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue user-info-dropdown hover:text-pink_primary text-base' />
+			<div className='flex items-center justify-between gap-x-2'>
+				<span className='truncate w-[85%] normal-case'>{username || ''}</span>
+				{isGood  && !isIdentityUnverified && <CheckCircleFilled style={ { color:'green' } } className='rounded-[50%] bg-white border-none' />}
+				<DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
 			</div>
 		</AuthDropdown>,
 		'userMenu',
@@ -139,6 +144,7 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
+	const { api, apiReady } = useApiContext();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
@@ -151,6 +157,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 
 	// const { defaultAddress,web3signup } = currentUser;
+	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
+	const [isGood, setIsGood] = useState<boolean>(false);
+	const [mainDisplay, setMainDisplay] = useState<string>('');
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -163,6 +172,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
@@ -181,6 +191,41 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			window.location.reload();
 		});
 	}, []);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+
+		let unsubscribe: () => void;
+		const address = localStorage.getItem('loginAddress');
+		const encoded_addr = address ? getEncodedAddress(address, network) : '';
+
+		if(!encoded_addr) return;
+
+		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
+
+			if (info.identity.displayParent && info.identity.display){
+				// when an identity is a sub identity `displayParent` is set
+				// and `display` get the sub identity
+				setMainDisplay(info.identity.displayParent);
+			} else {
+				// There should not be a `displayParent` without a `display`
+				// but we can't be too sure.
+				setMainDisplay(info.identity.displayParent || info.identity.display || info.nickname || '' );
+			}
+			const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
+			const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+			const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+			setIsGood(Boolean(isGood));
+			setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+
+		})
+			.then(unsub => { unsubscribe = unsub; })
+			.catch(e => console.error(e));
+
+		return () => unsubscribe && unsubscribe();
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady]);
 
 	const gov1Items: {[x:string]: ItemType[]} = {
 		overviewItems: [
@@ -313,7 +358,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	const userDropdown = getUserDropDown(handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
+	const userDropdown = getUserDropDown( handleIdentityButtonClick, isIdentityUnverified, isGood, handleLogout,network ,picture, (mainDisplay || username)! , `${className} ${poppins.className} ${poppins.variable}`);
+	// const userDropdown = getUserDropDown(handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
 	const govOverviewItems = isOpenGovSupported(network) ? [
 		!isMobile ? getSiderMenuItem('', '', <div className={`${className} svgLogo logo-container logo-display-block -mt-[8px] w-[412px] -ml-[106px] flex items-center justify-center h-[66px]`}>
 			{sidedrawer &&
@@ -411,6 +457,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		sidebarItems = [userDropdown, ...sidebarItems];
 	}
 
+	// const userDropdown = getUserDropDown( handleIdentityButtonClick, isIdentityUnverified, isGood, handleLogout,network ,picture, (mainDisplay || username)! , `${className} ${poppins.className} ${poppins.variable}`);
+
 	return (
 		<Layout className={className}>
 			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} sidedrawerHover={true} previousRoute={previousRoute} />
@@ -475,6 +523,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</Layout>
 				}
 			</Layout>
+			{ onchainIdentitySupportedNetwork.includes(network) && <OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>}
+
 			<Footer />
 			<Modal
 				open={identityMobileModal}
@@ -487,12 +537,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				</span>
 				}
 			>
-				<div className='flex items-center text-center flex-col gap-6 p-4'>
+				<div className='flex items-center text-center flex-col gap-6 py-4'>
 					<DelegationDashboardEmptyState/>
 					<span>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
-			<OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>
 		</Layout>
 	);
 };

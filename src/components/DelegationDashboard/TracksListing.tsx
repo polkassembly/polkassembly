@@ -21,6 +21,7 @@ import { IDelegation } from '~src/types';
 interface Props{
   className?: string;
   address: string;
+  theme?: string;
 }
 
 export interface ITrackDataType{
@@ -34,10 +35,12 @@ export interface ITrackDataType{
   trackNo: number;
 }
 
-const DashboardTrackListing = ({ className }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const DashboardTrackListing = ({ className , theme }: Props) => {
 
 	const [status, setStatusValue ] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.All);
 	const  { network } = useNetworkContext();
+	console.log('tjeme', theme);
 	const [delegatedCount, setDelegatedCount] = useState<number>(0);
 	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
 	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
@@ -185,13 +188,13 @@ const DashboardTrackListing = ({ className }: Props) => {
 	}, [status]);
 
 	return <div className={className} >
-		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] border-b-[1px] border-solid'} max-lg:px-4`}>
+		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] border-b-[1px] border-solid'} max-lg:px-4 dark:text-blue-dark-high`}>
       Tracks
 			<Radio.Group buttonStyle='solid' defaultValue={'all'} onChange={(e) => {setStatusValue(e.target.value); filterByStatus(e.target.value); }} value={status} className='flex max-md:flex-col ml-[24px] flex-shrink-0 '>
-				<Radio disabled={loading} className={`text-[#243A57B2] text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.All === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.All}>All ({allCount})</Radio>
-				<Radio disabled={loading}  className={`text-[rgba(36,58,87,0.7)] text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Delegated === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.Delegated}>Delegated ({delegatedCount})</Radio>
-				<Radio disabled={loading}  className={`text-[#243A57B2] text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Undelegated === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.Undelegated}>Undelegated ({undelegatedCount})</Radio>
-				<Radio disabled={loading}  className={`text-[#243A57B2] text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Received_Delegation === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.Received_Delegation}>Received delegation ({receivedDelegationCount})</Radio>
+				<Radio disabled={loading} className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.All === status && 'bg-[#FEF2F8] dark:bg-pink_primary rounded-[26px]'}`} value={ETrackDelegationStatus.All}>All ({allCount})</Radio>
+				<Radio disabled={loading}  className={`text-[rgba(36,58,87,0.7)] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Delegated === status && 'bg-[#FEF2F8] dark:bg-pink_primary rounded-[26px]'}`} value={ETrackDelegationStatus.Delegated}>Delegated ({delegatedCount})</Radio>
+				<Radio disabled={loading}  className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Undelegated === status && 'bg-[#FEF2F8] dark:bg-pink_primary rounded-[26px]'}`} value={ETrackDelegationStatus.Undelegated}>Undelegated ({undelegatedCount})</Radio>
+				<Radio disabled={loading}  className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Received_Delegation === status && 'bg-[#FEF2F8] dark:bg-pink_primary rounded-[26px]'}`} value={ETrackDelegationStatus.Received_Delegation}>Received delegation ({receivedDelegationCount})</Radio>
 			</Radio.Group>
 		</div>
 		{showTable  && status && delegationDashboardAddress && <Table
@@ -248,7 +251,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 };
 export default styled(DashboardTrackListing)`
 .column .ant-table-thead > tr > th{
-  color:#485F7D !important;
+  color: ${props => props.theme=== 'dark' ? '#909090' : '#485F7D'} !important;
   font-size: 14px;
   font-weight: 600px;
   line-height: 21px;
@@ -256,6 +259,9 @@ export default styled(DashboardTrackListing)`
 }
 .column .ant-table-thead > tr > th:nth-child(1){
   text-align: center;
+}
+.ant-table-cell{
+	background: ${props => props.theme=== 'dark' ? '#0D0D0D' : ''} !important;
 }
 @media only screen and (max-width: 1024px) {
  .column .ant-table-thead > tr > th:nth-child(2){

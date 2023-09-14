@@ -3,8 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import ActiveProposalsIcon from '~assets/icons/active-proposals.svg';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
+import { ExpandIcon, CollapseIcon } from '~src/ui-components/CustomIcons';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
 import dynamic from 'next/dynamic';
 import { Empty, Skeleton } from 'antd';
@@ -40,7 +39,7 @@ const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo 
 					{count < 10 && count !==0 && 0}{count}
 				</span>
 			</div>
-			<div  className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
+			<div  className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/> : <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px] flex flex-col gap-6'>
 			{posts?.length > 0 ? posts?.map((proposal, index) => (

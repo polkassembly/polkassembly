@@ -10,7 +10,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from './Address';
 import { EditIcon } from './CustomIcons';
 import copyToClipboard from '~src/util/copyToClipboard';
-import CopyIcon from '~assets/icons/content-copy.svg';
+import { CopyIcon } from './CustomIcons';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
@@ -85,12 +85,12 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					<Address address={address} displayInline className='text-sm text-blue-light-high dark:text-blue-dark-high' truncateUsername={false} identiconSize={34} />
 					<span className='flex items-center cursor-pointer ml-2' onClick={(e) => {isSearch && e.preventDefault(); copyLink(address || addresses[0]) ;success();}}>
 						{contextHolder}
-						<CopyIcon/>
+						<CopyIcon className='text-lightBlue dark:text-blue-dark-medium'/>
 					</span>
 				</div> }
 
 				{bio?.length === 0
-					? <h2 className={`text-sm font-normal text-[#576D8BCC] mt-2 ${username === userProfile.username && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
+					? <h2 className={`text-sm font-normal text-[#576D8BCC] dark:text-blue-dark-medium mt-2 ${username === userProfile.username && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
 						{username === userProfile.username ? 'Click here to add bio' : 'No Bio' }
 					</h2>
 					: <h2  onClick={() => setOpenEditModal(true)} className={`text-sm mt-2 text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] cursor-pointer font-normal ${username === userProfile.username && 'cursor-pointer'}`}>{bio}</h2>
@@ -125,7 +125,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 				<MessengerIcon/>
 			</Tooltip>
 			<span>
-				{username === userProfile.username && <Button onClick={() => setOpenEditModal(true)} className='text-pink_primary border-[1px] border-solid border-pink_primary h-[40px] w-[87px] max-lg:w-auto font-medium'>
+				{username === userProfile.username && <Button onClick={() => setOpenEditModal(true)} className='text-pink_primary dark:bg-transparent border-[1px] border-solid border-pink_primary h-[40px] w-[87px] max-lg:w-auto font-medium'>
 					<EditIcon className='text-pink_primary text-[14px] tracking-wide ' />
 					<span className='max-md:hidden'>
 					Edit

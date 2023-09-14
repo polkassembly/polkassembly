@@ -109,6 +109,10 @@ import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
 import Comments from '~assets/icons/chat-icon.svg';
 import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
+import ExpandSVG from '~assets/icons/expand.svg';
+import CollapseSVG from '~assets/icons/collapse.svg';
+import NovaWalletSVG from '~assets/delegation-tracks/nova-wallet.svg';
+import ParityTechSVG from '~assets/icons/polkadot-logo.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -467,6 +471,23 @@ export const WebIcon = (props: Partial<CustomIconComponentProps>) => (
 export const CopyIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CopySVG} {...props} />
 );
+
+export const ExpandIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ExpandSVG} {...props} />
+);
+
+export const CollapseIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CollapseSVG} {...props} />
+);
+
+export const NovaWalletIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={NovaWalletSVG} {...props} />
+);
+
+export const ParityTechIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ParityTechSVG} {...props} />
+);
+
 export const CreatePropoosalIcon  = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CreatePropoosalSVG} {...props} />
 );

@@ -15,8 +15,8 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import DelegatedIcon from '~assets/icons/delegate.svg';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
+import { ExpandIcon, CollapseIcon } from '~src/ui-components/CustomIcons';
+import styled from 'styled-components';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,
@@ -26,10 +26,12 @@ const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 interface Props{
   className?: string;
   trackDetails: any;
-  disabled?: boolean
+  disabled?: boolean;
+  theme?: string;
 }
 
-const Delegate = ( { className, trackDetails, disabled }: Props ) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Delegate = ( { className, trackDetails, disabled , theme }: Props ) => {
 
 	const { api, apiReady } = useApiContext();
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
@@ -85,7 +87,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
           Delegate
 				</span>
 			</div>
-			<div  className='p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
+			<div className='p-2'>{!expandProposals ? <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/> : <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}</div>
 		</div>
 
 		{expandProposals && <div className='mt-[24px]'>
@@ -97,7 +99,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 			<div className='flex gap-4 items-center'>
 				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full'>
 
-					<Input disabled={disabled} placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none'/>
+					<Input disabled={disabled} placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none dark:bg-transparent dark:text-white'/>
 
 					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress || getEncodedAddress(address, network) === delegationDashboardAddress || disabled } className={`h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1 ${disabled && 'opacity-50'}`}>
 						<DelegatesProfileIcon/>
@@ -142,4 +144,8 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 
 	</div>;
 };
-export default Delegate;
+export default styled(Delegate)`
+	.ant-input::placeholder{
+		color: ${props => props.theme=='dark' ? '#909090' : '#576D8BCC'} !important;
+	}
+`;

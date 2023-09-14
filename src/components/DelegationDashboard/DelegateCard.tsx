@@ -8,8 +8,7 @@ import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import { Button, Modal } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
-import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
-import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
+import { NovaWalletIcon,ParityTechIcon } from '~src/ui-components/CustomIcons';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext, useNetworkContext } from '~src/context';
@@ -75,13 +74,13 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 	return <div className={`border-solid border-[1px] border-[#D2D8E0] rounded-[6px]  ${delegate?.dataSource === 'nova' ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'} ${className}`}>
 
-		{delegate?.dataSource === 'nova' && <div className='h-[36px] border-[#3C74E1] border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#e2eafb] px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
+		{delegate?.dataSource === 'nova' && <div className='h-[36px] border-[#3C74E1] border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#e2eafb] dark:bg-blue-300 px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
 			<NovaWalletIcon/>
 			<span className='text-xs text-blue-light-high dark:text-blue-dark-high font-normal'>Nova Wallet Delegate</span>
 		</div>}
 
 		{
-			delegate?.dataSource === 'parity' && <div className='h-[36px] border-pink_primary border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#FCE5F2] px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
+			delegate?.dataSource === 'parity' && <div className='h-[36px] border-pink_primary border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#FCE5F2] dark:bg-pink_primary px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
 				<ParityTechIcon />
 				<span className='text-xs text-blue-light-high dark:text-blue-dark-high font-normal'>Polkadot Delegate</span>
 			</div>
@@ -118,7 +117,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			</Button>
 		</div>
 
-		<div className={'text-sm tracking-[0.015em] text-[#576D8B] pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1'}>
+		<div className={'text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-medium pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1'}>
 			<p className ='w-[80%] bio'>
 				{delegate?.bio ? delegate?.bio : 'No Bio'}
 			</p>
@@ -130,15 +129,15 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					{formatedBalance(balance.toString(), unit, 2)}
 					<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 				</div>
-				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
+				<div className='text-xs font-normal mt-[4px] text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>
 			</div>
 			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold'>
 				{delegate?.voted_proposals_count}
-				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
+				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal dark:text-blue-dark-medium'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>(Past 30 days)</span>
 			</div>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold'>
 				{delegate?.active_delegation_count}
-				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center'>Received Delegation</span>
+				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center dark:text-blue-dark-medium'>Received Delegation</span>
 			</div>
 		</div>
 		<DelegateModal defaultTarget={delegate?.address} open={open} trackNum={trackNum} setOpen={setOpen} />

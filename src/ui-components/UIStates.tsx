@@ -48,7 +48,7 @@ export const PostEmptyState : FC<IPostEmptyStateProps> = ({ className, descripti
 				postCategory?
 					<span className='text-md text-navBlue'>
 					We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.
-					</span> : description ? <span className='text-md text-navBlue'>{description}</span> : <span className='text-md text-navBlue'>No data.</span>
+					</span> : description ? <span className='text-md text-navBlue'>{description}</span> : <span className='text-md text-navBlue dark:text-blue-dark-high'>No data.</span>
 			}
 		/>
 	);

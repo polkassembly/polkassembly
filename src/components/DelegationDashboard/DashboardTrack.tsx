@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
@@ -78,6 +79,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 	const { query : { track } } = useRouter();
 	const { network } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 	const [status, setStatus] = useState<ETrackDelegationStatus[]>([]);
 	const router = useRouter();
 	const [showTable, setShowTable] = useState<boolean>(false);
@@ -194,9 +196,9 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			<ProfileBalances address={address}/>
 		</div>
 		<div className='flex gap-2 mb-4 md:mb-5 mt-5 dashboard-heading items-center max-lg:pt-[60px]'>
-			<span className='text-sm cursor-pointer' onClick={() => handleReroute('dashboard')}>Dashboard</span>
+			<span className='text-sm cursor-pointer dark:text-blue-dark-medium' onClick={() => handleReroute('dashboard')}>Dashboard</span>
 			<span className='mt-[-2px]'>
-				<RightOutlined className='text-xs' />
+				<RightOutlined className='text-xs text-lightBlue dark:text-blue-dark-medium' />
 			</span>
 			<span className='text-pink_primary text-sm cursor-pointer' onClick={() => handleReroute(String(track))}>
 				{handleTrack(String(track))}
@@ -235,7 +237,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 				<div className='text-blue-light-high dark:text-blue-dark-high mt-[18px] text-center'>
 					<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
         Voting power for this track has not been delegated yet
-						<Button onClick={() => setOpenDelegateModal(true)} className='text-pink_primary font-normal tracking-wide text-sm ml-1 flex items-center justify-center max-md:mt-[10px] border-none shadow-none' >
+						<Button onClick={() => setOpenDelegateModal(true)} className='text-pink_primary dark:bg-transparent font-normal tracking-wide text-sm ml-1 flex items-center justify-center max-md:mt-[10px] border-none shadow-none' >
 							<DelegatedProfileIcon className='mr-[7px]'/>
 							<span className='mt-[1px]'>
                Delegate
@@ -252,6 +254,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 		{ status.length > 0  ? <div>
 			<Delegate
+				theme={theme}
 				disabled={status.includes(ETrackDelegationStatus.Delegated)}
 				trackDetails={trackDetails}
 			/>

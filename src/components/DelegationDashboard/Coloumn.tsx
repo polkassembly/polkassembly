@@ -19,35 +19,35 @@ import { chainProperties } from '~src/global/networkConstants';
 export const handleTracksIcon =  (index:string, size:number ) => {
 	switch(index){
 	case 'Root':
-		return <RootTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <RootTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Treasurer':
-		return <TreasurerTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <TreasurerTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Whitelisted Caller':
-		return <WhitelistedCallerTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <WhitelistedCallerTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Lease Admin':
-		return <LeaseAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <LeaseAdminTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'General Admin':
-		return <GeneralAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <GeneralAdminTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Staking Admin':
-		return <StakingAdminTrackTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <StakingAdminTrackTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Fellowship Admin':
-		return <FellowshipAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <FellowshipAdminTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Small Tipper':
-		return <SmallTipperTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <SmallTipperTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Medium Spender':
-		return <MediumSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <MediumSpenderTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Small Spender':
-		return <SmallSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <SmallSpenderTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Auction Admin':
-		return <AuctionAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <AuctionAdminTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Big Spender':
-		return <BigSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <BigSpenderTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case'Big Tipper':
-		return <BigTipperTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <BigTipperTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Referendum Killer':
-		return <ReferendumKillerTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <ReferendumKillerTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	case 'Referendum Canceller':
-		return <ReferendumCancellerTrackIcon style={{ fontSize: `${size}px` }}/>;
+		return <ReferendumCancellerTrackIcon className='text-lightBlue dark:text-blue-dark-medium' style={{ fontSize: `${size}px` }}/>;
 	default:
 		return null;
 	}
@@ -87,7 +87,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ return <div className='text-blue-light-high dark:text-blue-dark-high tracking-wider flex items-center justify-start font-medium gap-2 max-md:flex-col'>
 
 			{status.map((item: ETrackDelegationStatus, index:number)  => <h2 key={index}
-				className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center ${item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'truncate w-[95px]'} `}>
+				className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] dark:bg-orange-500'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8] dark:bg-orange-500'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-red-500'} rounded-[26px] py-[6px] px-[12px] text-center ${item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'truncate w-[95px]'} `}>
 				{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 			</h2>)}
 

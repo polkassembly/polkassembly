@@ -34,10 +34,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
-	useEffect(() => {
-		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance });
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady]);
+	userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance });
 
 	useEffect(() => {
 
@@ -120,12 +117,18 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	return (
 		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
 			<span>Free Balance</span>
-			<HelperTooltip placement='topRight' className="mx-1" text={
-				<div>
-					<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 0, withUnit: true }, network)}</span>
-					<br/>
-					<span>Locked Balance: {formatedBalance(lockBalance, unit, 2)} {unit}</span>
-				</div>}/><span>:</span><span className='ml-2 text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+			<HelperTooltip placement='topRight' className="mx-1" text=
+				{
+					<div>
+						<span>Free Balance: {formatBnBalance(balance, { numberAfterComma: 0, withUnit: true }, network)}</span><br/>
+						<span>Locked Balance: {formatedBalance(lockBalance, unit, 2)} {unit}</span>
+					</div>
+				}
+			/>
+			<span>:</span>
+			<span className='ml-2 text-pink_primary'>
+				{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}
+			</span>
 		</div>
 	);
 };

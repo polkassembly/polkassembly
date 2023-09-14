@@ -21,6 +21,7 @@ import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import CloseIcon from '~assets/icons/close.svg';
+import BN from 'bn.js';
 
 interface Props{
   delegate: IDelegate;
@@ -28,16 +29,13 @@ interface Props{
   trackNum?: number;
   disabled?: boolean;
 }
+const ZERO_BN = new BN(0);
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
-	const [balance, setBalance] = useState<string>('0');
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [lockBalance, setLockBalance] = useState<string>('0');
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [transferableBalance, setTransferableBalance] = useState<string>('0');
+	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -57,13 +55,16 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	useEffect(() => {
 
-		if(!api || !apiReady) return;
+		if(!api || !apiReady || !delegate?.address) return;
 
 		api.derive.accounts.info(delegate?.address, (info: DeriveAccountInfo) => {
 			setSocial_links([...social_links, { link: info.identity?.email, type: ESocialType.EMAIL }, { link: info.identity?.twitter, type: ESocialType.TWITTER }]);
 		});
 
-		userProfileBalances({ address: delegate?.address , api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
+		(async() => {
+			const balances = await userProfileBalances({ address: delegate?.address , api, apiReady, network });
+			setBalance(balances?.freeBalance || ZERO_BN);
+		})();
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
@@ -126,8 +127,8 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high'>
 				<div className='flex gap-1 items-end justify-center'>
-					{formatedBalance(balance, unit)}
-					<span className='text-sm font-normal text-blue-light-high dark:text-blue-dark-high'>{unit}</span>
+					{formatedBalance(balance.toString(), unit, 2)}
+					<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
 			</div>
@@ -183,8 +184,8 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
 					<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						<div className='flex gap-1 items-end justify-center'>
-							{formatedBalance(balance, unit)}
-							<span className='text-sm font-normal text-blue-light-high dark:text-blue-dark-high'>{unit}</span>
+							{formatedBalance(balance.toString(), unit, 2)}
+							<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 						</div>
 						<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
 					</div>

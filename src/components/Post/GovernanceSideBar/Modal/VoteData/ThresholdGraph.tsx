@@ -31,10 +31,11 @@ interface IThresholdGraph {
 	setData: React.Dispatch<any>;
 	thresholdOpen: boolean;
 	setThresholdOpen: any;
+	forGovSidebar?: boolean;
 }
 
 const ThresholdGraph: FC<IThresholdGraph> = (props) => {
-	const { data, progress, curvesError, curvesLoading, setData, thresholdOpen, setThresholdOpen } = props;
+	const { data, progress, curvesError, curvesLoading, setData, thresholdOpen, setThresholdOpen, forGovSidebar } = props;
 
 	const toggleData = (index: number) => {
 		setData((prev: any) => {
@@ -70,7 +71,10 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 				{curvesError ? (
 					<p className='text-center font-medium text-red-500'>{curvesError}</p>
 				) : (
-					<section className='w-[400px]'>
+					<section
+						// className='w-[400px]'
+						style={{ width: forGovSidebar ? '345px' : '400px' }}
+					>
 						<article>
 							<Chart.Line
 								className='h-full w-full'
@@ -176,90 +180,94 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 								}}
 							/>
 						</article>
-						<article className='mt-3 flex items-center justify-center gap-x-3 xs:gap-x-5'>
-							<button
-								onClick={() => {
-									toggleData(1);
-								}}
-								className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
-							>
-								<span className='h-1 w-[32px] border-0 border-t border-solid border-[#E5007A]'></span>
-								<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Support</span>
-							</button>
-							<button
-								onClick={() => {
-									toggleData(3);
-								}}
-								className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
-							>
-								<span className='h-1 w-[32px] border-0 border-t border-dashed border-[#E5007A]'></span>
-								<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Current Support</span>
-							</button>
-							<button
-								onClick={() => {
-									toggleData(0);
-								}}
-								className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
-							>
-								<span className='h-1 w-[32px] border-0 border-t border-solid border-[#5BC044]'></span>
-								<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Approval</span>
-							</button>
-							<button
-								onClick={() => {
-									toggleData(2);
-								}}
-								className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
-							>
-								<span className='h-1 w-[32px] border-0 border-t border-dashed border-[#5BC044]'></span>
-								<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Current Approval</span>
-							</button>
-						</article>
-						<article className='mt-5 flex flex-col items-center gap-3 gap-x-2'>
-							<div className='w-full rounded-[5px] border border-solid border-[#68D183] bg-[#68D18330] px-3 py-2 shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
-								<p className='m-0 flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
-									<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
-										{' '}
-										<span>
-											<AyeApprovalIcon />
-										</span>{' '}
-										Current Approval
-									</span>
-									<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.approval}%</span>
-								</p>
-								<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
-									<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
-										{' '}
-										<span>
-											<AyeThresholdIcon />
+						{!forGovSidebar && (
+							<article className='mt-3 flex items-center justify-center gap-x-3 xs:gap-x-5'>
+								<button
+									onClick={() => {
+										toggleData(1);
+									}}
+									className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
+								>
+									<span className='h-1 w-[32px] border-0 border-t border-solid border-[#E5007A]'></span>
+									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Support</span>
+								</button>
+								<button
+									onClick={() => {
+										toggleData(3);
+									}}
+									className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
+								>
+									<span className='h-1 w-[32px] border-0 border-t border-dashed border-[#E5007A]'></span>
+									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Current Support</span>
+								</button>
+								<button
+									onClick={() => {
+										toggleData(0);
+									}}
+									className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
+								>
+									<span className='h-1 w-[32px] border-0 border-t border-solid border-[#5BC044]'></span>
+									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Approval</span>
+								</button>
+								<button
+									onClick={() => {
+										toggleData(2);
+									}}
+									className='flex cursor-pointer flex-col justify-center border-none bg-transparent outline-none'
+								>
+									<span className='h-1 w-[32px] border-0 border-t border-dashed border-[#5BC044]'></span>
+									<span className='text-[8px] font-normal leading-[12px] text-sidebarBlue sm:text-[10px]'>Current Approval</span>
+								</button>
+							</article>
+						)}
+						{!forGovSidebar && (
+							<article className='mt-5 flex flex-col items-center gap-3 gap-x-2'>
+								<div className='w-full rounded-[5px] border border-solid border-[#68D183] bg-[#68D18330] px-3 py-2 shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
+									<p className='m-0 flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
+										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+											{' '}
+											<span>
+												<AyeApprovalIcon />
+											</span>{' '}
+											Current Approval
 										</span>
-										Threshold
-									</span>
-									<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%</span>
-								</p>
-							</div>
-							<div className='w-full rounded-[5px] border border-solid border-[#E5007A] bg-[#FFF5FB] px-3 py-2 shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
-								<p className='m-0 flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
-									<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
-										{' '}
-										<span>
-											<NayApprovalIcon />
+										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.approval}%</span>
+									</p>
+									<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
+										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+											{' '}
+											<span>
+												<AyeThresholdIcon />
+											</span>
+											Threshold
 										</span>
-										Current Support
-									</span>
-									<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.support}%</span>
-								</p>
-								<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
-									<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
-										{' '}
-										<span>
-											<NayThresholdIcon />
+										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%</span>
+									</p>
+								</div>
+								<div className='w-full rounded-[5px] border border-solid border-[#E5007A] bg-[#FFF5FB] px-3 py-2 shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
+									<p className='m-0 flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
+										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+											{' '}
+											<span>
+												<NayApprovalIcon />
+											</span>
+											Current Support
 										</span>
-										Threshold
-									</span>
-									<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%</span>
-								</p>
-							</div>
-						</article>
+										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.support}%</span>
+									</p>
+									<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
+										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+											{' '}
+											<span>
+												<NayThresholdIcon />
+											</span>
+											Threshold
+										</span>
+										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%</span>
+									</p>
+								</div>
+							</article>
+						)}
 					</section>
 				)}
 			</Spin>

@@ -1037,6 +1037,21 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															setOpen={setOpen}
 															referendumId={onchainId as number}
 															tally={tally}
+															showVoteHistory={false}
+														/>
+														<ReferendumV2VoteInfo
+															setThresholdOpen={setThresholdOpen}
+															setOpen={setOpen}
+															referendumId={onchainId as number}
+															tally={tally}
+															showVoteHistory={true}
+															thresholdData={{
+																curvesError,
+																curvesLoading,
+																data,
+																progress,
+																setData
+															}}
 														/>
 														<Modal
 															onCancel={() => {

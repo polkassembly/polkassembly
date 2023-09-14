@@ -48,7 +48,9 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
         selfVotingPower
         totalVotingPower
         delegatedVotingPower
-        delegatedVotes(limit: 10, orderBy: votingPower_DESC) {
+        delegatedVotes(limit: 10, orderBy: votingPower_DESC, where: {
+          removedAtBlock_isNull: true
+        }) {
           decision
           lockPeriod
           voter
@@ -87,6 +89,7 @@ query ConvictionVotesListingByTypeAndIndex(
       },
       limit: 1) {
       delegatedVotes(limit: $limit, orderBy: votingPower_DESC, offset: $offset, where:{
+        removedAtBlock_isNull: true
         decision_eq: $decision
         delegatedTo:{
           removedAtBlock_isNull: true

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Select, Tabs } from 'antd';
+import { Button, Select, Tabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -91,6 +91,10 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
 	const { setNetwork } = useNetworkContext();
 	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
+	const [voteClicked, setVoteClicked] = useState(false);
+	const [postsClicked, setPostsClicked] = useState(false);
+	const [showVoteData, setShowVoteData] = useState(false);
+	const [showPostData, setShowPostData] = useState(false);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -165,13 +169,43 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							]}
 						/>
 					</div>
-					<div className='fullHeight'>
-						<Tabs
-							className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
-							type='card'
-							items={tabItems as any}
-						/>
+					<div
+						className='-ml-1 flex h-10 w-[152px] items-center justify-center px-[12px] py-[6px] pt-1'
+						style={{ backgroundColor: '#F5F6F8', borderRadius: '10px' }}
+					>
+						<Button
+							onClick={() => {
+								setVoteClicked(true);
+								setPostsClicked(false);
+								setShowPostData(false);
+								setShowVoteData(true);
+							}}
+							className={`border-none px-3 text-base ${voteClicked ? 'bg-white font-semibold text-pink_primary' : 'text-darkBlue bg-transparent font-normal'}`}
+						>
+							Votes
+						</Button>
+						<Button
+							onClick={() => {
+								setVoteClicked(false);
+								setPostsClicked(true);
+								setShowPostData(true);
+								setShowVoteData(false);
+							}}
+							className={`border-none px-4 text-base ${postsClicked ? 'bg-white font-semibold text-pink_primary' : 'text-darkBlue bg-transparent font-normal'}`}
+						>
+							Posts
+						</Button>
 					</div>
+					{showPostData && (
+						<div className='fullHeight mt-6'>
+							<Tabs
+								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+								type='card'
+								items={tabItems as any}
+							/>
+						</div>
+					)}
+					{showVoteData && <div className='fullHeight mt-6'>votedata</div>}
 				</article>
 			</section>
 		</>

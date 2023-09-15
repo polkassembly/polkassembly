@@ -253,7 +253,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			setLoading(false);
 			setOpenSuccessModal(true);
 			closeModal(true);
-			router.replace('/');
+			router.push('/');
 		} else if (error) {
 			queueNotification({
 				header: 'Error!',

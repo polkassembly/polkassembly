@@ -136,7 +136,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			key: 2
 		});
 	}
-	const handleLocalStorageSave = (field: any) => {
+	const handleLocalStorageSave = (field: any, socialsChanging?: boolean) => {
 		let data: any = localStorage.getItem('identityForm');
 		if (data) {
 			data = JSON.parse(data);
@@ -148,22 +148,21 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 				...field
 			})
 		);
-		setSocials({
-			...socials,
-			email: { ...email, ...data?.email },
-			twitter: { ...twitter, ...data?.twitter }
-		});
+		socialsChanging &&
+			setSocials({
+				...socials,
+				email: { ...email, ...data?.email },
+				twitter: { ...twitter, ...data?.twitter }
+			});
 	};
 
 	const handleSetStates = (fieldName: ESocials, verified: boolean, verificationStatus: VerificationStatus, noStatusUpdate?: boolean) => {
 		if (ESocials.EMAIL === fieldName) {
-			setSocials({ ...socials, email: { ...email, verified } });
 			!noStatusUpdate && setStatus({ ...status, email: verificationStatus });
-			handleLocalStorageSave({ email: { ...email, verified } });
+			handleLocalStorageSave({ email: { ...email, verified } }, true);
 		} else {
-			setSocials({ ...socials, twitter: { ...twitter, verified } });
 			!noStatusUpdate && setStatus({ ...status, twitter: verificationStatus });
-			handleLocalStorageSave({ twitter: { ...twitter, verified } });
+			handleLocalStorageSave({ twitter: { ...twitter, verified } }, true);
 		}
 	};
 

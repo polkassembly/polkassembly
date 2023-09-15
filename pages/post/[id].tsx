@@ -40,23 +40,36 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} Discussion`} desc={post.content} network={network}/>
+	if (post)
+		return (
+			<>
+				<SEOHead
+					title={post.title || `${noTitle} Discussion`}
+					desc={post.content}
+					network={network}
+				/>
 
-		<BackToListingView postCategory={PostCategory.DISCUSSION} />
+				<BackToListingView postCategory={PostCategory.DISCUSSION} />
 
-		<div className='mt-6' >
-			<Post post={post} proposalType={ProposalType.DISCUSSIONS} />
+				<div className='mt-6'>
+					<Post
+						post={post}
+						proposalType={ProposalType.DISCUSSIONS}
+					/>
+				</div>
+			</>
+		);
+
+	return (
+		<div className='mt-16'>
+			<LoadingState />
 		</div>
-	</>);
-
-	return <div className='mt-16'><LoadingState /></div>;
-
+	);
 };
 
 export default DiscussionPost;

@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ProfileDetailsR
 
 	const userQuerySnapshot = await firestore.collection('users').where('id', '==', Number(userId)).limit(1).get();
 
-	if(userQuerySnapshot.size == 0) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
+	if (userQuerySnapshot.size == 0) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
 
 	const userDoc = userQuerySnapshot.docs[0].data() as User;
 	const user_addresses = await getAddressesFromUserId(userDoc.id);
@@ -33,7 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ProfileDetailsR
 		...userDoc.profile
 	};
 
-	res.status(200).json(user);
+	return res.status(200).json(user);
 }
 
 export default withErrorHandling(handler);

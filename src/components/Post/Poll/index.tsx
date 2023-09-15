@@ -20,17 +20,22 @@ interface Props {
 
 const PollComponent = ({ postId, canEdit, proposalType }: Props) => {
 	const [error, setError] = useState('');
-	const { postData: { polls }, setPostData } = usePostDataContext();
+	const {
+		postData: { polls },
+		setPostData
+	} = usePostDataContext();
 
 	const getPolls = useCallback(async () => {
-		const { data: fetchData , error: fetchError } = await nextApiClientFetch<IPollsResponse>( `api/v1/polls?postId=${postId}&pollType=${POLL_TYPE.NORMAL}&proposalType=${proposalType}`);
+		const { data: fetchData, error: fetchError } = await nextApiClientFetch<IPollsResponse>(
+			`api/v1/polls?postId=${postId}&pollType=${POLL_TYPE.NORMAL}&proposalType=${proposalType}`
+		);
 
-		if(fetchError) {
+		if (fetchError) {
 			setError(fetchError);
 			return;
 		}
 
-		if(fetchData && fetchData.polls) {
+		if (fetchData && fetchData.polls) {
 			setError('');
 			setPostData((prev) => {
 				return {
@@ -40,7 +45,7 @@ const PollComponent = ({ postId, canEdit, proposalType }: Props) => {
 			});
 		}
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postId, proposalType]);
 
 	useEffect(() => {
@@ -53,7 +58,7 @@ const PollComponent = ({ postId, canEdit, proposalType }: Props) => {
 
 	return (
 		<>
-			{polls.map(poll =>
+			{polls.map((poll) => (
 				<Poll
 					proposalType={proposalType}
 					key={poll.id}
@@ -62,7 +67,7 @@ const PollComponent = ({ postId, canEdit, proposalType }: Props) => {
 					votes={poll.poll_votes}
 					canEdit={canEdit}
 				/>
-			)}
+			))}
 		</>
 	);
 };

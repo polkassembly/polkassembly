@@ -26,7 +26,7 @@ const PROPOSAL_TYPES = [
 	ProposalType.ALLIANCE_MOTION
 ];
 
-const SLUG: {[key: string]: string} = {
+const SLUG: { [key: string]: string } = {
 	[ProposalType.DISCUSSIONS]: 'post',
 	[ProposalType.DEMOCRACY_PROPOSALS]: 'proposal',
 	[ProposalType.TECH_COMMITTEE_PROPOSALS]: 'tech',
@@ -41,7 +41,7 @@ const SLUG: {[key: string]: string} = {
 	[ProposalType.GRANTS]: 'grant'
 };
 
-const GOV2: {[key: string]: boolean} = {
+const GOV2: { [key: string]: boolean } = {
 	kusama: true
 };
 
@@ -84,7 +84,9 @@ const generateSiteMap = (network: string, urls: string[]): string => {
 			<url>
 				<loc>https://${network}.${DOMAIN}/tech-comm-proposals</loc>
 			</url>
-			${GOV2[network] ? `
+			${
+				GOV2[network]
+					? `
 			<url>
 				<loc>https://${network}.${DOMAIN}/opengov</loc>
 			</url>
@@ -145,13 +147,15 @@ const generateSiteMap = (network: string, urls: string[]): string => {
 			<url>
 				<loc>https://${network}.${DOMAIN}/fellowship-admin</loc>
 			</url>
-			` : ''}
+			`
+					: ''
+			}
 			${urls.map((url) => `<url><loc>${url}</loc></url>`).join('\n')}
 	 </urlset>
  `;
 };
 
-export const getServerSideProps:GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const allUrls = [];

@@ -31,9 +31,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 interface IMotionsProps {
-  data?: {posts: any[]; count: number};
-  error?: string;
-  network: string;
+	data?: { posts: any[]; count: number };
+	error?: string;
+	network: string;
 }
 export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	const { data, error, network } = props;
@@ -62,23 +62,28 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title="Alliance Motion" network={network}/>
-			<h1 className="dashboard-heading mb-4 md:mb-6">Alliance Motions</h1>
-			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-          This is the place to discuss on-chain motions. On-chain posts are
-          automatically generated as soon as they are created on the chain. Only
-          the proposer is able to edit them.
+			<SEOHead
+				title='Alliance Motion'
+				network={network}
+			/>
+			<h1 className='dashboard-heading mb-4 md:mb-6'>Alliance Motions</h1>
+			<div className='flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md md:p-8 md:text-base'>
+					This is the place to discuss on-chain motions. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able to edit
+					them.
 				</p>
 			</div>
-			<div className="shadow-md bg-white p-3 md:p-8 rounded-md">
-				<div className="flex items-center justify-between">
-					<h1 className="dashboard-heading">{count} Motions</h1>
+			<div className='rounded-md bg-white p-3 shadow-md md:p-8'>
+				<div className='flex items-center justify-between'>
+					<h1 className='dashboard-heading'>{count} Motions</h1>
 				</div>
 
 				<div>
-					<Listing posts={posts} proposalType={ProposalType.ALLIANCE_MOTION} />
-					<div className="flex justify-end mt-6">
+					<Listing
+						posts={posts}
+						proposalType={ProposalType.ALLIANCE_MOTION}
+					/>
+					<div className='mt-6 flex justify-end'>
 						{!!count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
 								defaultCurrent={1}

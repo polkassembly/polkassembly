@@ -15,29 +15,30 @@ import styled from 'styled-components';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 
 const StyledDiv = styled.div`
-display: flex;
-align-items: center;
-text-transform: capitalize;
+	display: flex;
+	align-items: center;
+	text-transform: capitalize;
 
-img {
+	img {
 		width: 22px;
 		border-radius: 50%;
 		margin-right: 0.5rem;
-}
+	}
 `;
 
-function NetworkSelect({ selectedNetwork, setSelectedNetwork }: {selectedNetwork:string, setSelectedNetwork: React.Dispatch<React.SetStateAction<string>>}) {
-
-	const StyledNetworkItem = ({ className, showNetwork }: {className?: string,showNetwork: string}) => {
-		return <StyledDiv className={className}>
-			<Image
-				src={chainProperties[showNetwork]?.logo ? chainProperties[showNetwork].logo : chainLogo}
-				alt={showNetwork}
-				height={24}
-				width={24}
-			/>
-			{showNetwork}
-		</StyledDiv>;
+function NetworkSelect({ selectedNetwork, setSelectedNetwork }: { selectedNetwork: string; setSelectedNetwork: React.Dispatch<React.SetStateAction<string>> }) {
+	const StyledNetworkItem = ({ className, showNetwork }: { className?: string; showNetwork: string }) => {
+		return (
+			<StyledDiv className={className}>
+				<Image
+					src={chainProperties[showNetwork]?.logo ? chainProperties[showNetwork].logo : chainLogo}
+					alt={showNetwork}
+					height={24}
+					width={24}
+				/>
+				{showNetwork}
+			</StyledDiv>
+		);
 	};
 
 	const networkOptions: MenuProps['items'] = [];
@@ -50,7 +51,7 @@ function NetworkSelect({ selectedNetwork, setSelectedNetwork }: {selectedNetwork
 		networkOptions.push(optionObj);
 	}
 
-	const handleSetSelectedNetwork : MenuProps['onClick'] = ({ key }) => {
+	const handleSetSelectedNetwork: MenuProps['onClick'] = ({ key }) => {
 		setSelectedNetwork(`${key}`);
 	};
 
@@ -58,9 +59,20 @@ function NetworkSelect({ selectedNetwork, setSelectedNetwork }: {selectedNetwork
 		<div className='select-div filter-by-chain-div pt-1'>
 			{/* <label>Filter by</label> */}
 			<label>Network</label>
-			<Dropdown disabled trigger={['click']} dropdownRender={menus => (<div className='max-h-[20rem] rounded-md drop-shadow-xl overflow-auto'>{menus}</div>)} menu={{ items:networkOptions, onClick:handleSetSelectedNetwork }} ><Space className='cursor-pointer'><StyledNetworkItem className='text-pink_primary' showNetwork={selectedNetwork}/>
-				{/* <DownOutlined className='text-pink_primary align-middle' /> */}
-			</Space></Dropdown>
+			<Dropdown
+				disabled
+				trigger={['click']}
+				dropdownRender={(menus) => <div className='max-h-[20rem] overflow-auto rounded-md drop-shadow-xl'>{menus}</div>}
+				menu={{ items: networkOptions, onClick: handleSetSelectedNetwork }}
+			>
+				<Space className='cursor-pointer'>
+					<StyledNetworkItem
+						className='text-pink_primary'
+						showNetwork={selectedNetwork}
+					/>
+					{/* <DownOutlined className='text-pink_primary align-middle' /> */}
+				</Space>
+			</Dropdown>
 		</div>
 	);
 }

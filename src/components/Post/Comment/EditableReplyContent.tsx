@@ -386,7 +386,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							)}
 							{id === userId ? (
 								<Button
-									className={'flex items-center border-none text-xs text-pink_primary shadow-none'}
+									className={'-ml-[18px] flex items-center border-none text-xs text-pink_primary shadow-none'}
 									onClick={deleteReply}
 								>
 									<DeleteOutlined />
@@ -425,7 +425,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										color='#E5007A'
 									>
 										<Button
-											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
+											className={`ml-2 mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
 												reply.reply_source ? 'disabled-reply' : ''
 											}`}
 										>

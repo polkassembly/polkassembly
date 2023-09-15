@@ -914,7 +914,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				title='Voted'
 				vote={vote}
 				isVote={true}
-				redirect={false}
 				balance={voteValues.totalVoteValue}
 				open={successModal}
 				setOpen={setSuccessModal}

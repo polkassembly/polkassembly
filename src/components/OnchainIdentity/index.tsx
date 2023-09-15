@@ -425,7 +425,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			</Modal>
 			<DelegationSuccessPopup
 				open={openSuccessModal}
-				redirect={false}
 				setOpen={setOpenSuccessModal}
 				title='On-chain identity verified successfully'
 			/>

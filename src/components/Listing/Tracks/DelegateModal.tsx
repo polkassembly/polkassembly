@@ -595,6 +595,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			</Modal>
 			<DelegationSuccessPopup
 				open={openSuccessPopup}
+				redirect={true}
 				setOpen={setOpenSuccessPopup}
 				tracks={checkedTrackArr}
 				address={target}

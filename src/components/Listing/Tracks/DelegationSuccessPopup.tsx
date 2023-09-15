@@ -61,7 +61,7 @@ const DelegationSuccessPopup = ({
 	nayVoteValue,
 	abstainVoteValue,
 	isMultisig,
-	redirect,
+	redirect = false,
 	isVote
 }: Props) => {
 	const { network } = useNetworkContext();

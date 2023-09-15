@@ -105,6 +105,7 @@ import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
 import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
+import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 
 export const IconVoteHistory = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -755,6 +756,12 @@ export const SetIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
+export const AmountBreakdownModalIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AmountBreakdownModalSVG}
+		{...props}
+	/>
+);
 export const ApplayoutIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ApplayoutIdentitySVG}

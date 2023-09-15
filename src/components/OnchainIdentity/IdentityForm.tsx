@@ -243,11 +243,6 @@ const IdentityForm = ({
 			});
 			setLoading(false);
 			startLoading(false);
-
-			closeModal(true);
-			setOpen(true);
-			handleLocalStorageSave({ setIdentity: true });
-			setIsIdentityCallDone(true);
 		};
 
 		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });

@@ -14,6 +14,7 @@ import BN from 'bn.js';
 import { useEffect, useState } from 'react';
 import InprogressState from './InprogressState';
 import VerifiedTick from '~assets/icons/verified-tick.svg';
+import { useRouter } from 'next/router';
 
 interface Props {
 	className?: string;
@@ -90,6 +91,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 	const [status, setStatus] = useState({ email: '', twitter: '' });
 	const [fieldLoading, setFieldLoading] = useState<{ twitter: boolean; email: boolean }>({ email: false, twitter: false });
 	const [twitterVerificationStart, setTwitterVerificationStart] = useState<boolean>(false);
+	const router = useRouter();
 
 	const items: TimelineItemProps[] = [];
 
@@ -136,7 +138,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			key: 2
 		});
 	}
-	const handleLocalStorageSave = (field: any) => {
+	const handleLocalStorageSave = (field: any, socialsChanging?: boolean) => {
 		let data: any = localStorage.getItem('identityForm');
 		if (data) {
 			data = JSON.parse(data);
@@ -148,22 +150,21 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 				...field
 			})
 		);
-		setSocials({
-			...socials,
-			email: { ...email, ...data?.email },
-			twitter: { ...twitter, ...data?.twitter }
-		});
+		socialsChanging &&
+			setSocials({
+				...socials,
+				email: { ...email, ...data?.email },
+				twitter: { ...twitter, ...data?.twitter }
+			});
 	};
 
 	const handleSetStates = (fieldName: ESocials, verified: boolean, verificationStatus: VerificationStatus, noStatusUpdate?: boolean) => {
 		if (ESocials.EMAIL === fieldName) {
-			setSocials({ ...socials, email: { ...email, verified } });
 			!noStatusUpdate && setStatus({ ...status, email: verificationStatus });
-			handleLocalStorageSave({ email: { ...email, verified } });
+			handleLocalStorageSave({ email: { ...email, verified } }, true);
 		} else {
-			setSocials({ ...socials, twitter: { ...twitter, verified } });
 			!noStatusUpdate && setStatus({ ...status, twitter: verificationStatus });
-			handleLocalStorageSave({ twitter: { ...twitter, verified } });
+			handleLocalStorageSave({ twitter: { ...twitter, verified } }, true);
 		}
 	};
 
@@ -254,6 +255,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			setLoading(false);
 			setOpenSuccessModal(true);
 			closeModal(true);
+			router.replace('/');
 		} else if (error) {
 			queueNotification({
 				header: 'Error!',

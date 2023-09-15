@@ -181,7 +181,7 @@ const getUserDropDown = (
 				{isGood && !isIdentityUnverified && (
 					<CheckCircleFilled
 						style={{ color: 'green' }}
-						className='rounded-[50%] border-none bg-white'
+						className='rounded-[50%] border-none bg-transparent'
 					/>
 				)}
 				<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />

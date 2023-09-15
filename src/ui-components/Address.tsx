@@ -302,7 +302,7 @@ const Address = ({
 									)}
 									<span
 										title={mainDisplay || encoded_addr}
-										className={`flex max-w-[85px] gap-x-1 font-semibold text-bodyBlue ${textClassName}`}
+										className={`flex ${truncateUsername && 'max-w-[85px] truncate'} gap-x-1 font-semibold text-bodyBlue ${textClassName}`}
 									>
 										{t1 && <span className={`${truncateUsername && 'truncate'}`}>{t1}</span>}
 										{sub && isSubVisible && <span className={`sub truncate ${textClassName}`}>{sub}</span>}

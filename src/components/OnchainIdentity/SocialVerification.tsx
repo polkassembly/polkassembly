@@ -14,6 +14,7 @@ import BN from 'bn.js';
 import { useEffect, useState } from 'react';
 import InprogressState from './InprogressState';
 import VerifiedTick from '~assets/icons/verified-tick.svg';
+import { useRouter } from 'next/router';
 
 interface Props {
 	className?: string;
@@ -90,6 +91,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 	const [status, setStatus] = useState({ email: '', twitter: '' });
 	const [fieldLoading, setFieldLoading] = useState<{ twitter: boolean; email: boolean }>({ email: false, twitter: false });
 	const [twitterVerificationStart, setTwitterVerificationStart] = useState<boolean>(false);
+	const router = useRouter();
 
 	const items: TimelineItemProps[] = [];
 
@@ -253,6 +255,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			setLoading(false);
 			setOpenSuccessModal(true);
 			closeModal(true);
+			router.replace('/');
 		} else if (error) {
 			queueNotification({
 				header: 'Error!',

@@ -14,11 +14,16 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST, track } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	const { page = 1, sortBy = sortValues.NEWEST, track } = query;
 	const trackDetails: any = getQueryToTrack(String(track), network);
 
 	const { data, error = '' } = await getOnChainPosts({

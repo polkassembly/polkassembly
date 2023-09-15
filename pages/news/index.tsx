@@ -15,9 +15,14 @@ import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { NetworkSocials } from '~src/types';
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { data, error } = await getNetworkSocials({ network });
 	return { props: { data, error, network } };
 };

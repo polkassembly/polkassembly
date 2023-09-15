@@ -28,6 +28,7 @@ import { redisGet, redisSet } from '~src/auth/redis';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -45,6 +46,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const LATEST_POSTS_LIMIT = 8;
 
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(`${network}_latestActivity_OpenGov`);

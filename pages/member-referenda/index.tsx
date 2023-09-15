@@ -17,12 +17,18 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export interface IFellowshipReferendumPostsByTrackName {
 	[key: string]: IApiResponse<IPostsListingResponse> | undefined;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackName } = query;
 	if (!trackName) {
 		return {
@@ -32,7 +38,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-	const network = getNetworkFromReqHeaders(req.headers);
 	const fellowshipReferendumPostOrigins: string[] = [];
 	if (networkTrackInfo?.[network]) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {

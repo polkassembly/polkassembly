@@ -15,6 +15,7 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import SEOHead from '~src/global/SEOHead';
 import { IPreimagesListingResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
@@ -25,6 +26,9 @@ const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1 } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
 
 	const { data, error } = await getPreimages({
 		listingLimit: LISTING_LIMIT,

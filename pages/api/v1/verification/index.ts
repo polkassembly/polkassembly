@@ -39,7 +39,7 @@ if (apiKey) {
 const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
-	const { account, type, checkingVerified } = req.query as unknown as IReq;
+	const { account, type, checkingVerified } = req.body as unknown as IReq;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });

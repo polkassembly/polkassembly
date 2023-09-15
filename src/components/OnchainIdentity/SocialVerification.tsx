@@ -177,9 +177,11 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			setLoading(true);
 		}
 
-		const { data, error } = await nextApiClientFetch<IVerificationResponse>(
-			`api/v1/verification?type=${fieldName}&checkingVerified=${Boolean(checkingVerified)}&account=${account}`
-		);
+		const { data, error } = await nextApiClientFetch<IVerificationResponse>('api/v1/verification', {
+			account,
+			checkingVerified: Boolean(checkingVerified),
+			type: fieldName
+		});
 		if (error) {
 			handleSetStates(fieldName, false, VerificationStatus.NOT_VERIFIED, false);
 			setFieldLoading({ ...fieldLoading, [fieldName]: false });

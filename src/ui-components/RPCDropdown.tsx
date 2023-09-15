@@ -52,6 +52,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 				trigger={['click']}
 				menu={{ defaultSelectedKeys: [(wsProvider? wsProvider: (network? chainProperties?.[network]?.rpcEndpoint: ''))], items: rpcEndpoints, onClick: handleEndpointChange, selectable: true }}
 				className={className}
+				overlayClassName='navbar-dropdowns'
 			>
 				{
 					isSmallScreen?

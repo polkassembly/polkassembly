@@ -457,8 +457,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		sidebarItems = [userDropdown, ...sidebarItems];
 	}
 
-	// const userDropdown = getUserDropDown( handleIdentityButtonClick, isIdentityUnverified, isGood, handleLogout,network ,picture, (mainDisplay || username)! , `${className} ${poppins.className} ${poppins.variable}`);
-
 	return (
 		<Layout className={className}>
 			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} sidedrawerHover={true} previousRoute={previousRoute} />
@@ -478,7 +476,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[15px]`}
+						className={`${username?'auth-sider-menu':''} mt-[20px]`}
 					/>
 				</Sider>
 				<Drawer

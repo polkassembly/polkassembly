@@ -131,14 +131,13 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 		}
 	];
 	const AuthDropdown = ({ children }: {children: ReactNode}) => (
-		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
+		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']} overlayClassName='navbar-dropdowns'>
 			{children}
 		</Dropdown>
 	);
 
 	const MenuDropdown = ({ children }: {children: ReactNode}) => (
-
-		<Dropdown menu={{ items: menudropDownItems }} trigger={['click']}>
+		<Dropdown menu={{ items: menudropDownItems }} trigger={['click']} overlayClassName='navbar-dropdowns'>
 			{children}
 		</Dropdown>
 
@@ -386,4 +385,9 @@ navbar-user-dropdown {
 		margin-left: -4px!important;
 	}
 }	
+
+.user-profile.ant-dropdown-menu {
+	margin-top: 500px !important;
+	border: 1px solid black;
+}
 `;

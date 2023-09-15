@@ -475,3 +475,7 @@ color: var(--lightBlue) !important;
   padding: 12px 1rem;
   cursor: pointer;
 }
+
+.navbar-dropdowns .ant-dropdown-menu {
+	margin-top: 14px !important;
+}

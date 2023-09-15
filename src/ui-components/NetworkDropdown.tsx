@@ -103,7 +103,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			trigger={[isSearch ? 'hover' :'click']}
 			dropdownRender={() => {
 				return (
-					<Card className='max-w-[356px] max-h-[52vh] overflow-y-auto'>
+					<Card className='max-w-[356px] max-h-[52vh] overflow-y-auto mt-3'>
 						<>
 							<div className='text-bodyBlue font-medium'>Polkadot &amp; Parachains</div>
 							<Row className="mt-2">

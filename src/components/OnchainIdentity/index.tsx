@@ -21,7 +21,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import { SetIdentityIcon } from '~src/ui-components/CustomIcons';
-import { Wallet } from '~src/types';
+import { ILoading, Wallet } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
@@ -70,7 +70,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 	const { id: userId } = useContext(UserDetailsContext);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 	const [address, setAddress] = useState<string>('');
 	const [name, setName] = useState<IName>({ displayName: '', legalName: '' });
@@ -98,14 +98,14 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 
 	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?: string | null): Promise<void> => {
 		if (!api || !apiReady) return;
-		setLoading(true);
+		setLoading({ ...loading, isLoading: true });
 
 		const injectedWindow = window as Window & InjectedWindow;
 
 		const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
 
 		if (!wallet) {
-			setLoading(false);
+			setLoading({ ...loading, isLoading: false });
 			return;
 		}
 		let injected: Injected | undefined;
@@ -129,16 +129,16 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			});
 		} catch (err) {
 			console.log(err?.message);
-			setLoading(false);
+			setLoading({ ...loading, isLoading: false });
 		}
 		if (!injected) {
-			setLoading(false);
+			setLoading({ ...loading, isLoading: false });
 			return;
 		}
 
 		const accounts = await injected.accounts.get();
 		if (accounts.length === 0) {
-			setLoading(false);
+			setLoading({ ...loading, isLoading: false });
 			return;
 		}
 
@@ -159,7 +159,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			}
 		}
 
-		setLoading(false);
+		setLoading({ ...loading, isLoading: false });
 		return;
 	};
 
@@ -187,7 +187,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		});
 
 		if (!api || !apiReady) return;
-		setLoading(true);
+		setLoading({ ...loading, isLoading: true });
 
 		(async () => {
 			const bondFee = api.consts.identity.fieldDeposit;
@@ -197,7 +197,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			const minDeposite = api.consts.identity.basicDeposit;
 			setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
 			setPerSocialBondFee(bondFee);
-			setLoading(false);
+			setLoading({ ...loading, isLoading: false });
 		})();
 		const address = localStorage.getItem('identityAddress');
 		const wallet = localStorage.getItem('identityWallet');
@@ -218,21 +218,22 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			.info(encoded_addr, (info: DeriveAccountInfo) => {
 				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
 				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+				const unverified = judgementProvided || !info?.identity?.judgements?.length;
 				const identity = info?.identity;
 				setName({ displayName: identity?.display || '', legalName: identity?.legal || '' });
 				setSocials({
 					...socials,
 					email: {
 						value: identity?.email || '',
-						verified: !!identity?.email
+						verified: !unverified && !!identity?.email
 					},
 					twitter: {
 						value: identity?.twitter || '',
-						verified: !!identity?.twitter
+						verified: !unverified && !!identity?.twitter
 					}
 				});
 				setAlreadyVerifiedFields({
-					alreadyVerified: !(judgementProvided || !info?.identity?.judgements?.length),
+					alreadyVerified: !unverified,
 					displayName: identity?.display || '',
 					email: identity?.email || '',
 					legalName: identity?.legal || '',
@@ -243,11 +244,11 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				form?.setFieldValue('email', identity?.email || '');
 				form?.setFieldValue('twitter', identity?.twitter || '');
 
-				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+				setIsIdentityUnverified(unverified);
 
 				if (!identityForm || !identityForm?.setIdentity) return;
 
-				if (!(judgementProvided || !info?.identity?.judgements?.length)) {
+				if (!unverified) {
 					localStorage.removeItem('identityForm');
 				}
 			})
@@ -327,7 +328,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 								setIsExitModal(false);
 								setOpen(false);
 								handleLocalStorageSetUnverified();
-								setLoading(false);
+								setLoading({ ...loading, isLoading: false });
 							}}
 							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary'
 						>
@@ -363,7 +364,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							<OnChainIdentityIcon />
 						)}
 						<span className='text-bodyBlue'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
-						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading && (
+						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
 							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue'>
 								<IdentityProgressIcon />
 								In Progress
@@ -373,12 +374,13 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				}
 			>
 				<Spin
-					spinning={loading}
+					spinning={loading?.isLoading}
 					className='-mt-6'
+					tip={loading?.message || ''}
 				>
 					{step === ESetIdentitySteps.AMOUNT_BREAKDOWN && (
 						<TotalAmountBreakdown
-							loading={loading}
+							loading={loading?.isLoading}
 							txFee={txFee}
 							perSocialBondFee={perSocialBondFee}
 							changeStep={setStep}
@@ -397,7 +399,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							onChangeSocials={setSocials}
 							address={address}
 							setTxFee={setTxFee}
-							startLoading={setLoading}
+							setStartLoading={setLoading}
 							onCancel={handleCancel}
 							perSocialBondFee={perSocialBondFee}
 							changeStep={(step) => setStep(step)}
@@ -414,7 +416,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							startLoading={setLoading}
 							onCancel={handleCancel}
 							perSocialBondFee={perSocialBondFee}
-							setLoading={setLoading}
 							changeStep={setStep}
 							closeModal={(open) => setOpen(!open)}
 							setSocials={setSocials}

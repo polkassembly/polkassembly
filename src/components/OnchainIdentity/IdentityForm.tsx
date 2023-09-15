@@ -15,7 +15,7 @@ import BN from 'bn.js';
 import { BN_ONE } from '@polkadot/util';
 import SuccessState from './SuccessState';
 import executeTx from '~src/util/executeTx';
-import { NotificationStatus } from '~src/types';
+import { ILoading, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -33,7 +33,7 @@ interface Props {
 	socials: ISocials;
 	onChangeSocials: (pre: ISocials) => void;
 	setTxFee: (pre: ITxFee) => void;
-	startLoading: (pre: boolean) => void;
+	setStartLoading: (pre: ILoading) => void;
 	onCancel: () => void;
 	perSocialBondFee: BN;
 	changeStep: (pre: ESetIdentitySteps) => void;
@@ -82,7 +82,7 @@ const IdentityForm = ({
 	onChangeName,
 	onChangeSocials,
 	setTxFee,
-	startLoading,
+	setStartLoading,
 	onCancel,
 	perSocialBondFee,
 	alreadyVerifiedfields,
@@ -222,12 +222,12 @@ const IdentityForm = ({
 		const identityTx = api.tx?.identity?.setIdentity(info);
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
 		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-		startLoading(true);
+		setStartLoading({ isLoading: true, message: 'awaiting for confirmation' });
 
 		const onSuccess = async () => {
 			const identityHash = await api.query.identity.identityOf(address).then((res) => res.unwrap().info.hash.toHex());
 			setIdentityHash(identityHash);
-			startLoading(false);
+			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
 			setOpen(true);
 			handleLocalStorageSave({ setIdentity: true });
@@ -242,10 +242,19 @@ const IdentityForm = ({
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
-			startLoading(false);
+			setStartLoading({ isLoading: false, message: '' });
 		};
 
-		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
+		await executeTx({
+			address,
+			api,
+			errorMessageFallback: 'failed.',
+			network,
+			onFailed,
+			onSuccess,
+			setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
+			tx
+		});
 	};
 
 	return (

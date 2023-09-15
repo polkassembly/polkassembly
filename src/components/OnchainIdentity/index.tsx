@@ -52,7 +52,13 @@ export interface ISocials {
 	twitter: { value: string; verified: boolean };
 	riot: { value: string; verified: boolean };
 }
-
+export interface IVerifiedFields {
+	email: string;
+	twitter: string;
+	displayName: string;
+	legalName: string;
+	alreadyVerified: boolean;
+}
 interface Propos {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
@@ -61,7 +67,7 @@ interface Propos {
 }
 const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Propos) => {
 	const { network } = useContext(NetworkContext);
-	const { setUserDetailsContextState, id: userId } = useContext(UserDetailsContext);
+	const { id: userId } = useContext(UserDetailsContext);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -80,8 +86,15 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 	const [isIdentityCallDone, setIsIdentityCallDone] = useState<boolean>(false);
 	const [step, setStep] = useState<ESetIdentitySteps>(isIdentityCallDone ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 	const [identityHash, setIdentityHash] = useState<string>('');
-	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
+	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
+	const [alreadyVerifiedfields, setAlreadyVerifiedFields] = useState<IVerifiedFields>({
+		alreadyVerified: false,
+		displayName: '',
+		email: '',
+		legalName: '',
+		twitter: ''
+	});
 
 	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?: string | null): Promise<void> => {
 		if (!api || !apiReady) return;
@@ -199,14 +212,41 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 
 		let unsubscribe: () => void;
 		const encoded_addr = address ? getEncodedAddress(address, network) : '';
-		if (!identityForm || !identityForm?.setIdentity) return;
+		if (!encoded_addr) return;
 
 		api.derive.accounts
 			.info(encoded_addr, (info: DeriveAccountInfo) => {
 				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
 				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+				const identity = info?.identity;
+				setName({ displayName: identity?.display || '', legalName: identity?.legal || '' });
+				setSocials({
+					...socials,
+					email: {
+						value: identity?.email || '',
+						verified: !!identity?.email
+					},
+					twitter: {
+						value: identity?.twitter || '',
+						verified: !!identity?.twitter
+					}
+				});
+				setAlreadyVerifiedFields({
+					alreadyVerified: !(judgementProvided || !info?.identity?.judgements?.length),
+					displayName: identity?.display || '',
+					email: identity?.email || '',
+					legalName: identity?.legal || '',
+					twitter: identity?.twitter || ''
+				});
+				form.setFieldValue('displayName', identity?.display || '');
+				form?.setFieldValue('legalName', identity?.legal || '');
+				form?.setFieldValue('email', identity?.email || '');
+				form?.setFieldValue('twitter', identity?.twitter || '');
 
 				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+
+				if (!identityForm || !identityForm?.setIdentity) return;
+
 				if (!(judgementProvided || !info?.identity?.judgements?.length)) {
 					localStorage.removeItem('identityForm');
 				}
@@ -219,19 +259,13 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		return () => unsubscribe && unsubscribe();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, network, step]);
+	}, [api, apiReady, network, step, addressModal, openAddressLinkedModal]);
 
 	const handleLocalStorageSetUnverified = () => {
 		let data: any = localStorage.getItem('identityForm');
 		if (data) {
 			data = JSON.parse(data);
 		}
-		setUserDetailsContextState((prev) => {
-			return {
-				...prev,
-				isIdentityUnverified: true
-			};
-		});
 	};
 
 	const handleCancel = () => {
@@ -329,9 +363,8 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							<OnChainIdentityIcon />
 						)}
 						<span className='text-bodyBlue'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
-						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && (
+						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading && (
 							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue'>
-								{' '}
 								<IdentityProgressIcon />
 								In Progress
 							</span>
@@ -353,6 +386,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					)}
 					{step === ESetIdentitySteps.SET_IDENTITY_FORM && (
 						<IdentityForm
+							alreadyVerifiedfields={alreadyVerifiedfields}
 							setIsIdentityCallDone={setIsIdentityCallDone}
 							className='mt-3'
 							txFee={txFee}
@@ -391,8 +425,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			</Modal>
 			<DelegationSuccessPopup
 				open={openSuccessModal}
+				redirect={false}
 				setOpen={setOpenSuccessModal}
-				title='On-chain identity verified successfully '
+				title='On-chain identity verified successfully'
 			/>
 		</>
 	);

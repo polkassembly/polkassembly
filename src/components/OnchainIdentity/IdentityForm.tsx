@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useEffect, useState } from 'react';
-import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
+import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { Alert, Button, Divider, Form, FormInstance, Input, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
@@ -20,6 +20,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
+import VerifiedTick from '~assets/icons/verified-tick.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -41,6 +42,7 @@ interface Props {
 	setIsIdentityCallDone: (pre: boolean) => void;
 	setIdentityHash: (pre: string) => void;
 	setAddressChangeModalOpen: () => void;
+	alreadyVerifiedfields?: IVerifiedFields;
 }
 interface ValueState {
 	info: Record<string, unknown>;
@@ -83,6 +85,7 @@ const IdentityForm = ({
 	startLoading,
 	onCancel,
 	perSocialBondFee,
+	alreadyVerifiedfields,
 	changeStep,
 	closeModal,
 	setIsIdentityCallDone,
@@ -100,7 +103,7 @@ const IdentityForm = ({
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
-	const totalFee = gasFee.add(bondFee.add(registerarFee.add(minDeposite)));
+	const totalFee = gasFee.add(bondFee.add(registerarFee.add(alreadyVerifiedfields?.alreadyVerified ? ZERO_BN : minDeposite)));
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -157,11 +160,11 @@ const IdentityForm = ({
 		// const okWeb = checkValue((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
 		let okSocials = 1;
-		if (okEmail && emailVal.length > 0) {
+		if (okEmail && emailVal.length > 0 && alreadyVerifiedfields?.email !== emailVal) {
 			okSocials += 1;
 		}
 		// if(okRiot && riotVal.length > 0){okSocials+=1;}
-		if (okTwitter && twitterVal.length > 0) {
+		if (okTwitter && twitterVal.length > 0 && alreadyVerifiedfields?.twitter !== twitterVal) {
 			okSocials += 1;
 		}
 		// if(okWeb && webVal.length > 0){okSocials+=1;}
@@ -189,6 +192,20 @@ const IdentityForm = ({
 		handleInfo(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const handleAllowSetIdentity = () => {
+		const displayNameVal = form.getFieldValue('displayName')?.trim();
+		const legalNameVal = form.getFieldValue('legalName')?.trim();
+		const emailVal = form.getFieldValue('email')?.trim();
+		const twitterVal = form.getFieldValue('twitter').trim();
+
+		return (
+			displayNameVal === alreadyVerifiedfields?.displayName &&
+			twitterVal === alreadyVerifiedfields?.twitter &&
+			emailVal === alreadyVerifiedfields?.email &&
+			legalNameVal === alreadyVerifiedfields?.legalName
+		);
+	};
 
 	const handleIdentityHashSave = async (hash: string) => {
 		if (!hash) return;
@@ -226,6 +243,11 @@ const IdentityForm = ({
 			});
 			setLoading(false);
 			startLoading(false);
+
+			closeModal(true);
+			setOpen(true);
+			handleLocalStorageSave({ setIdentity: true });
+			setIsIdentityCallDone(true);
 		};
 
 		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
@@ -237,12 +259,20 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) && (
+				{availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) && !alreadyVerifiedfields?.alreadyVerified && (
 					<Alert
 						showIcon
 						type='error'
-						className=' h-[40px] rounded-[4px] text-sm text-bodyBlue'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue'
 						message={`Minimum Balance of ${formatedBalance(totalFee.toString(), unit, 2)} ${unit} is required to proceed`}
+					/>
+				)}
+				{alreadyVerifiedfields?.alreadyVerified && (
+					<Alert
+						showIcon
+						type='info'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue'
+						message='Your identity has already been set. Please edit a field to proceed.'
 					/>
 				)}
 				<div className='mt-6 flex items-center justify-between text-lightBlue'>
@@ -261,7 +291,7 @@ const IdentityForm = ({
 					)}
 				</div>
 				<div className='flex w-full items-end gap-2 text-sm '>
-					<div className='flex h-[40px] w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
+					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
 						<Address
 							address={address}
 							truncateUsername={false}
@@ -302,7 +332,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='displayName'
-							className='mt-0.5 h-[40px] rounded-[4px] text-bodyBlue'
+							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue'
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
@@ -333,7 +363,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='legalName'
-							className='h-[40px] rounded-[4px] text-bodyBlue'
+							className='h-10 rounded-[4px] text-bodyBlue'
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
@@ -368,7 +398,7 @@ const IdentityForm = ({
 								callback();
 							}
 						} }]}>
-						<Input name='web' value={web} placeholder='Enter your website address' className='h-[40px] rounded-[4px] text-bodyBlue' onChange={(e) => {onChangeSocials({ ...socials, web: e.target.value }); handleInfo({ webVal: e.target.value });}}/>
+						<Input name='web' value={web} placeholder='Enter your website address' className='h-10 rounded-[4px] text-bodyBlue' onChange={(e) => {onChangeSocials({ ...socials, web: e.target.value }); handleInfo({ webVal: e.target.value });}}/>
 					</Form.Item>
 				</div> */}
 
@@ -401,10 +431,11 @@ const IdentityForm = ({
 						>
 							<Input
 								onBlur={() => getGasFee()}
+								addonAfter={email?.verified && alreadyVerifiedfields?.email === form?.getFieldValue('email') && <VerifiedTick />}
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
-								className='h-[40px] rounded-[4px] text-bodyBlue'
+								className='h-10 rounded-[4px] text-bodyBlue'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 									handleInfo();
@@ -440,9 +471,10 @@ const IdentityForm = ({
 							<Input
 								onBlur={() => getGasFee()}
 								name='twitter'
+								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
 								value={twitter?.value}
 								placeholder='Enter your twitter name'
-								className='h-[40px] rounded-[4px] text-bodyBlue'
+								className='h-10 rounded-[4px] text-bodyBlue'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
 									handleInfo();
@@ -466,36 +498,35 @@ const IdentityForm = ({
 								callback();
 							}
 						} }]}>
-						<Input name='riot' value={riot} placeholder='@Yourname.matrix.org' className='h-[40px] rounded-[4px] text-bodyBlue' onChange={(e) => {onChangeSocials({ ...socials, riot: e.target.value }); handleInfo({ riotVal: e.target.value });}}/>
+						<Input name='riot' value={riot} placeholder='@Yourname.matrix.org' className='h-10 rounded-[4px] text-bodyBlue' onChange={(e) => {onChangeSocials({ ...socials, riot: e.target.value }); handleInfo({ riotVal: e.target.value });}}/>
 					</Form.Item>
 				</div> */}
 				</div>
 			</Form>
-			<div className='mt-6 flex items-center gap-4 text-sm'>
-				<span className='font-medium text-lightBlue'>
-					Min Deposit{' '}
-					<HelperTooltip
-						className='ml-1'
-						text='Amount that needs held in an address for a verified account.'
-					/>
-				</span>
-				<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue'>
-					{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
-				</span>
-			</div>
+			{!alreadyVerifiedfields?.alreadyVerified && (
+				<div className='mt-6 flex items-center gap-4 text-sm'>
+					<span className='font-medium text-lightBlue'>
+						Min Deposit{' '}
+						<HelperTooltip
+							className='ml-1'
+							text='Amount that needs held in an address for a verified account.'
+						/>
+					</span>
+					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue'>
+						{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
+					</span>
+				</div>
+			)}
 
 			{(!gasFee.eq(ZERO_BN) || loading) && (
-				<Spin
-					spinning={loading}
-					tip='calculating gas fee'
-				>
+				<Spin spinning={loading}>
 					<Alert
 						className='mt-6 rounded-[4px]'
 						type='info'
 						showIcon
 						message={
 							<span className='text-sm font-medium text-bodyBlue '>
-								Total Fees of {formatedBalance(totalFee.toString(), unit, 2)} {unit} will be applied to the transaction.
+								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
 									onClick={() => setHideDetails(!hideDetails)}
@@ -554,14 +585,14 @@ const IdentityForm = ({
 			<div className='-mx-6 mt-6 flex justify-end gap-4 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5'>
 				<Button
 					onClick={onCancel}
-					className='h-[40px] w-[134px] rounded-[4px]  border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary'
+					className='h-10 w-[134px] rounded-[4px]  border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary'
 				>
 					Cancel
 				</Button>
 				<Button
-					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN)}
-					className={`h-[40px] w-[134px] rounded-[4px] border-none bg-pink_primary text-sm tracking-wide text-white ${
-						(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee))) && 'opacity-50'
+					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
+					className={`h-10 w-[134px] rounded-[4px] border-none bg-pink_primary text-sm tracking-wide text-white ${
+						(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee)) || handleAllowSetIdentity()) && 'opacity-50'
 					}`}
 					onClick={handleSetIdentity}
 					loading={loading}
@@ -597,5 +628,14 @@ export default styled(IdentityForm)`
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
 		color: #798aa2 !important;
+	}
+	input {
+		height: 40px !important;
+		border-radius: 4px 0px 0px 4px;
+	}
+	.ant-input-group .ant-input-group-addon {
+		border-radius: 0px 4px 4px 0px !important;
+		background: white !important;
+		border
 	}
 `;

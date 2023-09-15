@@ -143,18 +143,19 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 		if (data) {
 			data = JSON.parse(data);
 		}
+		const newData = { ...data, ...field };
 		localStorage.setItem(
 			'identityForm',
 			JSON.stringify({
 				...data,
-				...field
+				...newData
 			})
 		);
 		socialsChanging &&
 			setSocials({
 				...socials,
-				email: { ...email, ...data?.email },
-				twitter: { ...twitter, ...data?.twitter }
+				email: { ...email, ...newData?.email },
+				twitter: { ...twitter, ...newData?.twitter }
 			});
 	};
 
@@ -200,11 +201,6 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 				}
 			} else if (!checkingVerified || isNotificaiton) {
 				setStatus({ ...status, email: VerificationStatus?.VERFICATION_EMAIL_SENT });
-				queueNotification({
-					header: 'Success!',
-					message: 'Verification email sent successfully',
-					status: NotificationStatus.SUCCESS
-				});
 				if (fieldName === ESocials.EMAIL) {
 					closeModal(true);
 					setOpen(true);

@@ -227,7 +227,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 										</div>
 
 									</div>:	<div className={'flex items-center justify-between gap-x-2'} >
-										<UserDropdown className="navbar-user-dropdown" address={defaultAddress || ''}/>
+										<UserDropdown className="navbar-user-dropdown h-[32px] w-[130px]" address={defaultAddress || ''}/>
 									</div>
 								}
 

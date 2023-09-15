@@ -160,7 +160,7 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 			{img ? <Avatar className='-ml-1 mr-2 user-image' size={20} src={img} /> :
 				<Avatar className='-ml-1 mr-2 user-image' size={20} icon={<UserOutlined />} />
 			}
-			{!disableAddress && <div className={`content ${clickable ? 'cursor-pointer' : 'cursor-not-allowed' }`} onClick={async () => {
+			{!disableAddress && <div className={`content -mr-[3px] ${clickable ? 'cursor-pointer' : 'cursor-not-allowed' }`} onClick={async () => {
 				if(!clickable){
 					return;
 				}

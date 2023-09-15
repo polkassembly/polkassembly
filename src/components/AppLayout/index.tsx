@@ -29,7 +29,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import PaLogo from './PaLogo';
 import dynamic from 'next/dynamic';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
@@ -125,7 +124,7 @@ const getUserDropDown = (handleSetIdentityClick: any, isIdentityUnverified: bool
 			<div className='flex items-center justify-between gap-x-2'>
 				<span className='truncate w-[85%] normal-case'>{username || ''}</span>
 				{isGood  && !isIdentityUnverified && <CheckCircleFilled style={ { color:'green' } } className='rounded-[50%] bg-white border-none' />}
-				<DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
+				<DownOutlined className='arrow-dropdown text-navBlue hover:text-pink_primary text-base -mt-1' />
 			</div>
 		</AuthDropdown>,
 		'userMenu',
@@ -361,13 +360,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const userDropdown = getUserDropDown( handleIdentityButtonClick, isIdentityUnverified, isGood, handleLogout,network ,picture, (mainDisplay || username)! , `${className} ${poppins.className} ${poppins.variable}`);
 	// const userDropdown = getUserDropDown(handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
 	const govOverviewItems = isOpenGovSupported(network) ? [
-		!isMobile ? getSiderMenuItem('', '', <div className={`${className} svgLogo logo-container logo-display-block -mt-[8px] w-[412px] -ml-[106px] flex items-center justify-center h-[66px]`}>
-			{sidedrawer &&
-			<div className={'-ml-[72px] mt-[14px] logo-padding'}>
-				<PaLogo className='h-full mt-[10px]' sidedrawer={sidedrawer} />
-				<div className={`${sidedrawer ? 'border-bottom' : 'border-none'} mt-[10px] w-[220px] ml-[68px]`}></div>
-			</div>}
-		</div>): null,
 		getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -467,7 +459,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed z-40'}
+					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 top-[62px] h-screen fixed z-40'}
 				>
 
 					<Menu
@@ -490,7 +482,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						bottom: 0,
 						height: '100vh',
 						left: 0,
-						position: 'fixed'
+						position: 'fixed',
+						top: '62px'
 					}}
 				>
 					<Menu
@@ -676,6 +669,10 @@ margin-top: -17px !important;
 
 .menu-container {
 	top: 0px;
+}
+
+.arrow-dropdown {
+	transform: scale(0.8);
 }
 
 @media (max-width: 468px) and (min-width: 380px){

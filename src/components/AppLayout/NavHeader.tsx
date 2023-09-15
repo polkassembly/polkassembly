@@ -57,9 +57,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
 	const isClicked = useRef(false);
-	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
-	// const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
+	// const isMobile = typeof window !== 'undefined' && window.screen.width < 381;
+	const isMobile = true;
 	const handleLogout = async () => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
@@ -146,15 +145,16 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	return (
 		<Header className={`${className} shadow-md ${sidedrawer?'z-1':'z-[1001]'} sticky top-0 flex items-center  bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
 			<span onClick={() => { setSidedrawer(!sidedrawer); }} >
-				<Dashboard className='text-2xl mt-1 lg:hidden mr-5'/>
+				<Dashboard className='dashboard-container text-2xl mt-1 lg:hidden mr-5'/>
 			</span>
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={'/'}>
+					<Link className='flex pa-logo' href={'/'}>
 						<PaLogo className='-ml-[2px] logo-container' sidedrawer={isMobile}/>
 					</Link>
 
 					<div className='flex items-center type-container'>
+						<span className='line-container bg-pink_primary h-5 md:h-10 w-[1.5px] mr-[8px] md:mr-[10px]'></span>
 						<h2 className='text-container font-semibold m-0 p-0 ml-[84px] text-[#243A57] text-base lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{
 								govType === EGovType.OPEN_GOV ? 'OpenGov': 'Gov1'
@@ -354,6 +354,10 @@ navbar-user-dropdown {
 	display: inline-block !important;
 }
 
+.line-container {
+	margin-left: -8px !important;
+}
+
 @media (max-width: 468px) and (min-width: 380px){
 	.type-container {
 		margin-left:5px !important;
@@ -368,11 +372,24 @@ navbar-user-dropdown {
 	}
 
 	.text-container {
-		margin-left: 8px!important;
+		margin-left: 2px!important;
+	}
+
+	.line-container {
+		margin-left: 8px !important;
 	}
 }	
 
 @media (max-width: 380px) and (min-width: 320px){
+
+	.dashboard-container{
+		margin-left: 4px !important;
+	}
+
+	.pa-logo {
+		margin-left: -3px!important;
+	}
+
 	.logo-container {
 		margin-left: -15px !important;
 	}
@@ -383,6 +400,10 @@ navbar-user-dropdown {
 
 	.text-container {
 		margin-left: -4px!important;
+	}
+
+	.line-container {
+		margin-left: 16px !important;
 	}
 }	
 

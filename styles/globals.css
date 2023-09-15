@@ -379,10 +379,9 @@ color: var(--lightBlue) !important;
   color: #000 !important;
 }
 
-.ant-menu-root > li:first-child {
-  /* padding:50px !important; */
+/* .ant-menu-root > li:first-child {
   height: 60px !important;
-}
+} */
 
 .vector {
   position: relative;
@@ -478,4 +477,10 @@ color: var(--lightBlue) !important;
 
 .navbar-dropdowns .ant-dropdown-menu {
 	margin-top: 14px !important;
+}
+
+@media (max-width: 480px) and (min-width: 320px){
+  .ant-menu-root > li:first-child {
+    height: 60px !important;
+  }
 }

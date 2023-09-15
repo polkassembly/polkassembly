@@ -109,7 +109,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 				<SocialsLayout
 					title='Email'
 					description='Check your primary inbox or spam to verify your email address.'
-					onVerify={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT ? true : false, true)}
+					onVerify={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT ? true : false)}
 					value={email?.value}
 					verified={email?.verified}
 					status={status?.email as VerificationStatus}
@@ -143,18 +143,19 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 		if (data) {
 			data = JSON.parse(data);
 		}
+		const newData = { ...data, ...field };
 		localStorage.setItem(
 			'identityForm',
 			JSON.stringify({
 				...data,
-				...field
+				...newData
 			})
 		);
 		socialsChanging &&
 			setSocials({
 				...socials,
-				email: { ...email, ...data?.email },
-				twitter: { ...twitter, ...data?.twitter }
+				email: { ...email, ...newData?.email },
+				twitter: { ...twitter, ...newData?.twitter }
 			});
 	};
 
@@ -168,7 +169,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 		}
 	};
 
-	const handleVerify = async (fieldName: ESocials, checkingVerified?: boolean, isNotificaiton?: boolean) => {
+	const handleVerify = async (fieldName: ESocials, checkingVerified?: boolean) => {
 		const account = fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] || socials?.[fieldName]?.value : socials?.[fieldName]?.value;
 
 		if (!checkingVerified) {
@@ -198,13 +199,8 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 				} else if (ESocials.TWITTER === fieldName) {
 					handleSetStates(fieldName, false, VerificationStatus.PLEASE_VERIFY_TWITTER);
 				}
-			} else if (!checkingVerified || isNotificaiton) {
+			} else if (!checkingVerified) {
 				setStatus({ ...status, email: VerificationStatus?.VERFICATION_EMAIL_SENT });
-				queueNotification({
-					header: 'Success!',
-					message: 'Verification email sent successfully',
-					status: NotificationStatus.SUCCESS
-				});
 				if (fieldName === ESocials.EMAIL) {
 					closeModal(true);
 					setOpen(true);

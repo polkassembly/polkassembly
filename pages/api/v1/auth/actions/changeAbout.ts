@@ -5,6 +5,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType, ProfileDetails } from '~src/auth/types';
 import getUserFromUserId from '~src/auth/utils/getUserFromUserId';
@@ -17,7 +18,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if (!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { address, title, description, image = '', signature, wallet } = req.body;
 	if (!address || !title || !description || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });

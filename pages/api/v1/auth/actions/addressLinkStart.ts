@@ -6,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
 import { Address, ChallengeMessage, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
@@ -17,7 +18,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessag
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if (!network) return res.status(400).json({ message: 'Missing network in headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network in headers' });
 
 	const { address: addressRes } = req.body;
 

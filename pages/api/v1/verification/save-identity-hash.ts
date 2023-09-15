@@ -18,7 +18,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		return res.status(405).json({ message: 'Invalid method in request' });
 	}
 
-	if (!isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 	if (!identityHash) return res.status(400).json({ message: 'Invalid identity hash' });
 
 	const token = getTokenFromReq(req);

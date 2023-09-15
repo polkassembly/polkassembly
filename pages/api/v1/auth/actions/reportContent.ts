@@ -5,7 +5,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isProposalTypeValid } from '~src/api-utils';
+import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import { networkDocRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 
 	const network = String(req.headers['x-network']);
 	const TTL_DURATION = 3600 * 6; // 6 Hours or 21600 seconds
-	if (!network) return res.status(400).json({ message: 'Missing network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network in request header' });
 
 	const { type, reason, comments, proposalType, post_id, reply_id, comment_id } = req.body;
 	if (!type || !reason || !comments || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });

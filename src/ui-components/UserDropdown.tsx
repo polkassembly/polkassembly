@@ -60,7 +60,6 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);
-	// const [username, setUsername] = useState(passedUsername);
 	const[img, setImg] = useState<string>('');
 	const { username } = useUserDetailsContext();
 
@@ -90,7 +89,6 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 				}
 
 				console.log(data);
-				// setUsername(data.username);
 				setImg(data?.profile?.image || '');
 				if(isOnclick){
 					return;
@@ -156,7 +154,7 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 	return (
-		<div className={`${displayInline ? className + ' display_inline': className} bg-[#f6f7f9] rounded-3xl user-container px-2 flex justify-center items-center`} style={{ border:'1px solid #d7dce3' }}>
+		<div className={`${displayInline ? className + ' display_inline': className} bg-[#f6f7f9] rounded-3xl font-semibold user-container px-2 flex justify-center items-center`} style={{ border:'1px solid #d7dce3' }}>
 			{img ? <Avatar className='-ml-1 mr-2 user-image' size={20} src={img} /> :
 				<Avatar className='-ml-1 mr-2 user-image' size={20} icon={<UserOutlined />} />
 			}
@@ -168,7 +166,7 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 					await fetchUsername(true);
 				}
 			}}>
-				<div className={`description ${addressClassName} max-w-[50px] user-details-container text-ellipsis overflow-hidden text-sm text-bodyBlue`}>
+				<div className={`description ${addressClassName} w-[50px] user-details-container text-ellipsis overflow-hidden text-xs text-bodyBlue`}>
 					{ username }
 				</div>
 			</div>}
@@ -189,7 +187,8 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 			}
 			<div className='flex justify-center items-center w-15'><svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 20 21" fill="none">
 				<path d="M6.76693 8.2418L10.0003 11.4751L13.2336 8.2418C13.5586 7.9168 14.0836 7.9168 14.4086 8.2418C14.7336 8.5668 14.7336 9.0918 14.4086 9.4168L10.5836 13.2418C10.2586 13.5668 9.73359 13.5668 9.40859 13.2418L5.58359 9.4168C5.25859 9.0918 5.25859 8.5668 5.58359 8.2418C5.90859 7.92513 6.44193 7.9168 6.76693 8.2418Z" fill="#485F7D"/>
-			</svg></div>
+			</svg>
+			</div>
 		</div>
 	);
 };

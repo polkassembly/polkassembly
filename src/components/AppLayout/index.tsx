@@ -72,21 +72,21 @@ const getUserDropDown = (handleSetIdentityClick: any, isIdentityUnverified: bool
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+			label: <Link className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
 				<UserOutlined />
 				<span>View Profile</span>
 			</Link>
 		},
 		{
 			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+			label: <Link className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
 				<SettingOutlined />
 				<span>Settings</span>
 			</Link>
 		},
 		{
 			key: 'logout',
-			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
+			label: <Link href='/' className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
 				onClick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();

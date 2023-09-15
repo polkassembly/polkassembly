@@ -25,13 +25,13 @@ import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { logout } from '~src/services/auth.service';
 import { EGovType } from '~src/global/proposalType';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { UserDetailsContextType } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -47,22 +47,6 @@ interface Props {
 }
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
-	// const { network } = useNetworkContext();
-	// const currentUser = useUserDetailsContext();
-	// const router = useRouter();
-	// const { pathname, query } = router;
-	// const { username,defaultAddress,web3signup } = currentUser;
-	// const [open, setOpen] = useState(false);
-	// const [openLogin,setLoginOpen]=useState<boolean>(false);
-	// const [openSignup,setSignupOpen]=useState<boolean>(false);
-	// const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
-	// const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
-	// const isClicked = useRef(false);
-	// const { setUserDetailsContextState } = useUserDetailsContext();
-	// const handleLogout = async () => {
-	// 	logout(setUserDetailsContextState);
-	// 	router.replace(router.asPath);
-	// };
 
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
@@ -96,23 +80,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[network]);
 
-	// useEffect(() => {
-	// 	const handleResize = () => {
-	// 		setIsMobile(window.innerWidth <= 768);
-	// 	};
-	// 	window.addEventListener('resize', handleResize);
-	// 	handleResize();
-	// 	return () => {
-	// 		window.removeEventListener('resize', handleResize);
-	// 	};
-	// }, []);
-
-	// useEffect(() => {
-	// 	if(isMobile){
-
-	// 	}
-	// }, []);
-
 	const menudropDownItems: ItemType[]= [
 		{
 			className:'logo-class',
@@ -143,22 +110,22 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
-				<UserOutlined />
+			label: <Link className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+				<IconProfile className='text-2xl' />
 				<span>View Profile</span>
 			</Link>
 		},
 		{
 			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
-				<SettingOutlined />
+			label: <Link className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+				<IconSettings className='text-2xl' />
 				<span>Settings</span>
 			</Link>
 		},
 		{
 			key: 'logout',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'	onClick={handleLogout} href='/'>
-				<LogoutOutlined />
+			label: <Link className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2'	onClick={handleLogout} href='/'>
+				<IconLogout className='text-2xl' />
 				<span>Logout</span>
 			</Link>
 		}
@@ -189,8 +156,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 					</Link>
 
 					<div className='flex items-center type-container'>
-						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] mr-[8px] md:mr-[10px] ml-[16px]'></span>
-						<h2 className={` text-container m-0 p-0 ${sidedrawer ? 'ml-[200px]' : 'ml-[64px]'} text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]`}>
+						<h2 className='text-container font-semibold m-0 p-0 ml-[84px] text-[#243A57] text-base lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{
 								govType === EGovType.OPEN_GOV ? 'OpenGov': 'Gov1'
 							}
@@ -237,20 +203,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 							<MenuDropdown>
 								<OptionMenu className="text-2xl mt-[6px]"/>
 							</MenuDropdown>
-							{/* <MenuDropdown>
-								<svg width="24" height="100%" viewBox="0 0 24 24"  fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M17.7143 18.8571C17.7143 19.4883 18.226 20 18.8571 20C19.4883 20 20 19.4883 20 18.8571C20 18.226 19.4883 17.7143 18.8571 17.7143C18.226 17.7143 17.7143 18.226 17.7143 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-									<path d="M10.8571 18.8571C10.8571 19.4883 11.3688 20 12 20C12.6312 20 13.1429 19.4883 13.1429 18.8571C13.1429 18.226 12.6312 17.7143 12 17.7143C11.3688 17.7143 10.8571 18.226 10.8571 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-									<path d="M4 18.8571C4 19.4883 4.51167 20 5.14286 20C5.77404 20 6.28571 19.4883 6.28571 18.8571C6.28571 18.226 5.77404 17.7143 5.14286 17.7143C4.51167 17.7143 4 18.226 4 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-									<path d="M17.7143 12C17.7143 12.6312 18.226 13.1429 18.8571 13.1429C19.4883 13.1429 20 12.6312 20 12C20 11.3688 19.4883 10.8571 18.8571 10.8571C18.226 10.8571 17.7143 11.3688 17.7143 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-									<path d="M10.8571 12C10.8571 12.6312 11.3688 13.1429 12 13.1429C12.6312 13.1429 13.1429 12.6312 13.1429 12C13.1429 11.3688 12.6312 10.8571 12 10.8571C11.3688 10.8571 10.8571 11.3688 10.8571 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-									<path d="M4 12C4 12.6312 4.51167 13.1429 5.14286 13.1429C5.77404 13.1429 6.28571 12.6312 6.28571 12C6.28571 11.3688 5.77404 10.8571 5.14286 10.8571C4.51167 10.8571 4 11.3688 4 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-									<path d="M17.7143 5.14286C17.7143 5.77404 18.226 6.28571 18.8571 6.28571C19.4883 6.28571 20 5.77404 20 5.14286C20 4.51167 19.4883 4 18.8571 4C18.226 4 17.7143 4.51167 17.7143 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-									<path d="M10.8571 5.14286C10.8571 5.77404 11.3688 6.28571 12 6.28571C12.6312 6.28571 13.1429 5.77404 13.1429 5.14286C13.1429 4.51167 12.6312 4 12 4C11.3688 4 10.8571 4.51167 10.8571 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-									<path d="M4 5.14286C4 5.77404 4.51167 6.28571 5.14286 6.28571C5.77404 6.28571 6.28571 5.77404 6.28571 5.14286C6.28571 4.51167 5.77404 4 5.14286 4C4.51167 4 4 4.51167 4 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-								</svg>
-
-							</MenuDropdown> */}
 						</div>
 
 					</Space>

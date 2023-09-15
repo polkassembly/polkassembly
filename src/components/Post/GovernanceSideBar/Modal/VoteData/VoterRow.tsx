@@ -69,16 +69,14 @@ const getPercentage = (userVotes: string, totalVotes: string) => {
 		return;
 	}
 	if (isNaN(Number(userVotes[userVotes.length - 1]))) {
-		console.log(userVotes);
 		userVotes = userVotes.substring(0, userVotes.length - 1);
 	}
 	if (isNaN(Number(totalVotes[totalVotes.length - 1]))) {
-		console.log(totalVotes);
 		totalVotes = totalVotes.substring(0, totalVotes.length - 1);
 	}
 	const percentage = Number(((Number(userVotes) / Number(totalVotes)) * 100).toFixed(2));
 	if (percentage < 1) {
-		return 'less than 1';
+		return ' <1';
 	}
 
 	return percentage;
@@ -196,7 +194,9 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 							<span className='flex items-center gap-1 text-xs font-medium text-lightBlue'>
 								<PowerIcon />
 								Voting Power:{' '}
-								<span className='text-bodyBlue'>{getPercentage(voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0, tally)}%</span>
+								<span className='text-bodyBlue'>
+									{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
+								</span>
 							</span>
 						)}
 					</div>

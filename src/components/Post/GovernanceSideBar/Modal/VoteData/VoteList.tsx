@@ -41,6 +41,15 @@ const StyledSegmented = styled(Segmented)`
 // }
 // `;
 
+const VoteContainer = styled.div`
+	@media (max-width: 640px) {
+		overflow-y: auto;
+		overflow-x: auto;
+	}
+	overflow-y: auto;
+	overflow-x: hidden;
+`;
+
 const Modal = styled(AntdModal)`
 	.ant-modal-content {
 		padding-top: 12px;
@@ -135,34 +144,30 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const getReferendumV2VoteInfo = useCallback(async () => {
 		if (!api || !apiReady || !network) return;
-		setLoadingStatus({ isLoading: true, message: '' });
-		(async () => {
-			const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
-			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
-			if (parsedReferendumInfo?.ongoing?.tally) {
-				setTallyData({
-					abstain:
-						typeof parsedReferendumInfo.ongoing.tally.abstain === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString()
-							: new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
-					ayes:
-						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString()
-							: new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
-					nays:
-						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString()
-							: new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
-				});
-			} else {
-				setTallyData({
-					abstain: new BN(tally?.abstain || 0, 'hex').toString(),
-					ayes: new BN(tally?.ayes || 0, 'hex').toString(),
-					nays: new BN(tally?.nays || 0, 'hex').toString()
-				});
-			}
-			setLoadingStatus({ isLoading: false, message: '' });
-		})();
+		const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
+		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
+		if (parsedReferendumInfo?.ongoing?.tally) {
+			setTallyData({
+				abstain:
+					typeof parsedReferendumInfo.ongoing.tally.abstain === 'string'
+						? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString()
+						: new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
+				ayes:
+					typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+						? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString()
+						: new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
+				nays:
+					typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+						? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString()
+						: new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
+			});
+		} else {
+			setTallyData({
+				abstain: new BN(tally?.abstain || 0, 'hex').toString(),
+				ayes: new BN(tally?.ayes || 0, 'hex').toString(),
+				nays: new BN(tally?.nays || 0, 'hex').toString()
+			});
+		}
 	}, [api, apiReady, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]);
 
 	useEffect(() => {
@@ -170,44 +175,46 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			isLoading: true,
 			message: 'Loading votes'
 		});
-		const url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
-		nextApiClientFetch<IVotesResponse>(url)
-			.then((res) => {
-				if (res.error) {
-					console.log(res.error);
-					setLoadingStatus({
-						isLoading: false,
-						message: ''
-					});
-				} else {
-					const votesRes = res.data;
-					setVotesRes(votesRes);
-					if (votesRes && firstRef.current) {
-						firstRef.current = false;
-						let decision: DecisionType = 'yes';
-						if (votesRes.yes.count > 0) {
-							decision = 'yes';
-						} else if (votesRes.no.count > 0) {
-							decision = 'no';
-						} else if (votesRes.abstain.count > 0) {
-							decision = 'abstain';
+		getReferendumV2VoteInfo().then(() => {
+			const url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
+			nextApiClientFetch<IVotesResponse>(url)
+				.then((res) => {
+					if (res.error) {
+						console.log(res.error);
+						setLoadingStatus({
+							isLoading: false,
+							message: ''
+						});
+					} else {
+						const votesRes = res.data;
+						setVotesRes(votesRes);
+						if (votesRes && firstRef.current) {
+							firstRef.current = false;
+							let decision: DecisionType = 'yes';
+							if (votesRes.yes.count > 0) {
+								decision = 'yes';
+							} else if (votesRes.no.count > 0) {
+								decision = 'no';
+							} else if (votesRes.abstain.count > 0) {
+								decision = 'abstain';
+							}
+							setDecision(decision);
 						}
-						setDecision(decision);
+						setLoadingStatus({
+							isLoading: false,
+							message: ''
+						});
 					}
+				})
+				.catch((err) => {
+					console.log(err);
 					setLoadingStatus({
 						isLoading: false,
 						message: ''
 					});
-				}
-			})
-			.catch((err) => {
-				console.log(err);
-				setLoadingStatus({
-					isLoading: false,
-					message: ''
 				});
-			});
-	}, [currentPage, referendumId, sortBy, voteType]);
+		});
+	}, [currentPage, getReferendumV2VoteInfo, referendumId, sortBy, voteType]);
 
 	useEffect(() => {
 		getReferendumV2VoteInfo();
@@ -221,8 +228,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex gap-6'>
-					<div className='flex flex-col justify-between md:overflow-visible'>
-						<div className='w-[340px] sm:w-full'>
+					<div className='flex flex-col justify-between'>
+						<div className='w-[320px] sm:w-full'>
 							<div className='mb-8 flex w-full items-center justify-center'>
 								<StyledSegmented
 									block
@@ -236,7 +243,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									options={decisionOptions}
 								/>
 							</div>
-							<div className='flex flex-col overflow-x-auto overflow-y-hidden px-0 text-xs text-sidebarBlue sm:overflow-y-auto'>
+							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
 									<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									<div
@@ -266,23 +273,27 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</div>
 									) : null}
 									{isReferendum2 && (
-										<div
-											className='flex w-[120px] cursor-pointer items-center gap-1 text-lightBlue'
-											onClick={() => {
-												handleSortByClick({
-													key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
-												});
-												setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
-											}}
-										>
-											Voting Power
-											<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
-											<Tooltip
-												color='#E5007A'
-												title='Vote Power for delegated votes is the self vote power + delegated vote power.'
+										<div className='flex w-[120px] items-center gap-1 text-lightBlue'>
+											<span
+												className='flex cursor-pointer'
+												onClick={() => {
+													handleSortByClick({
+														key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
+													});
+													setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
+												}}
 											>
-												<InfoCircleOutlined className='text-sm text-lightBlue' />
-											</Tooltip>
+												Voting Power
+												<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
+											</span>
+											<span>
+												<Tooltip
+													color='#E5007A'
+													title='Vote Power for delegated votes is the self vote power + delegated vote power.'
+												>
+													<InfoCircleOutlined className='text-xs text-lightBlue' />
+												</Tooltip>
+											</span>
 										</div>
 									)}
 								</div>
@@ -308,7 +319,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										))}
 									{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
 								</div>
-							</div>
+							</VoteContainer>
 						</div>
 						<div className='z-10 flex items-center justify-between bg-white pt-6'>
 							<p className='m-0 text-xs text-bodyBlue'>d: Delegation s: Split sa: Split Abstain</p>

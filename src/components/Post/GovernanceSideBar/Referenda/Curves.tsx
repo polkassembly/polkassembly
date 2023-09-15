@@ -70,21 +70,17 @@ const Curves: FC<ICurvesProps> = (props) => {
 			) : (
 				<section>
 					{progress.approval >= progress.approvalThreshold && progress.support >= progress.supportThreshold ? (
-						<p className='row m-0 flex gap-1 text-sm font-medium'>
-							<span>
-								<ChartIcon />
-							</span>
-							<p>
-								Proposal is <span className='text-aye_green'>passing</span> as both support and approval are above the threshold
+						<p className='row mb-2 flex items-center gap-1 text-sm font-medium'>
+							<ChartIcon />
+							<p className='m-0'>
+								Proposal has <span className='text-aye_green'>passed</span> as both support and approval are above the threshold
 							</p>
 						</p>
 					) : (
-						<p className='row m-0 flex gap-1 text-sm font-medium text-bodyBlue'>
-							<span>
-								<ChartIcon />
-							</span>
-							<p>
-								Proposal is <span className='text-nay_red'>failing</span> as both support and approval are below the threshold
+						<p className='row mb-2 flex items-center gap-1 text-sm font-medium text-bodyBlue'>
+							<ChartIcon />
+							<p className='m-0'>
+								Proposal has <span className='text-nay_red'>failed</span> as both support and approval are below the threshold
 							</p>
 						</p>
 					)}
@@ -273,28 +269,6 @@ const Curves: FC<ICurvesProps> = (props) => {
 							</p>
 						</div>
 					</article>
-					{/* <article className='mt-5 flex items-center justify-between gap-x-2'>
-						<div className='flex-1 rounded-[5px] bg-[#FFF5FB] p-[12.5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
-							<p className='flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
-								<span className='font-semibold'>Current Approval</span>
-								<span className='font-normal'>{progress.approval}%</span>
-							</p>
-							<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
-								<span className='font-semibold'>Threshold</span>
-								<span className='font-normal'>{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%</span>
-							</p>
-						</div>
-						<div className='flex-1 rounded-[5px] bg-[#FFF5FB] p-[12.5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
-							<p className='flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
-								<span className='font-semibold'>Current Support</span>
-								<span className='font-normal'>{progress.support}%</span>
-							</p>
-							<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
-								<span className='font-semibold'>Threshold</span>
-								<span className='font-normal'>{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%</span>
-							</p>
-						</div>
-					</article> */}
 				</section>
 			)}
 		</Spin>

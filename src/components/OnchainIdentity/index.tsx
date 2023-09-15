@@ -224,11 +224,11 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					...socials,
 					email: {
 						value: identity?.email || '',
-						verified: identity?.email ? true : false
+						verified: !!identity?.email
 					},
 					twitter: {
 						value: identity?.twitter || '',
-						verified: identity?.twitter ? true : false
+						verified: !!identity?.twitter
 					}
 				});
 				setAlreadyVerifiedFields({

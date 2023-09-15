@@ -159,13 +159,13 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 			});
 	};
 
-	const handleSetStates = (fieldName: ESocials, verified: boolean, verificationStatus: VerificationStatus, noStatusUpdate?: boolean) => {
+	const handleSetStates = (fieldName: ESocials, verifiedField: boolean, verificationStatus: VerificationStatus, noStatusUpdate?: boolean) => {
 		if (ESocials.EMAIL === fieldName) {
 			!noStatusUpdate && setStatus({ ...status, email: verificationStatus });
-			handleLocalStorageSave({ email: { ...email, verified } }, true);
+			handleLocalStorageSave({ email: { ...email, verified: verifiedField } }, true);
 		} else {
 			!noStatusUpdate && setStatus({ ...status, twitter: verificationStatus });
-			handleLocalStorageSave({ twitter: { ...twitter, verified } }, true);
+			handleLocalStorageSave({ twitter: { ...twitter, verified: verifiedField } }, true);
 		}
 	};
 

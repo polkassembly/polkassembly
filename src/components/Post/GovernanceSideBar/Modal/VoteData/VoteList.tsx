@@ -17,12 +17,12 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import styled from 'styled-components';
 import VoterRow from './VoterRow';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
-import ChartIcon from '~assets/chart-icon.svg';
-import ThresholdGraph from './ThresholdGraph';
+// import ChartIcon from '~assets/chart-icon.svg';
+// import ThresholdGraph from './ThresholdGraph';
 import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationVotersList from './DelegateVoteList';
-import GraphExpandIcon from '~assets/graph-expand.svg';
+// import GraphExpandIcon from '~assets/graph-expand.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 
@@ -35,11 +35,11 @@ const StyledSegmented = styled(Segmented)`
 	}
 `;
 
-const Container = styled.div`
-	@media (max-width: 1024px) {
-		display: none !important;
-	}
-`;
+// const Container = styled.div`
+// @media (max-width: 1024px) {
+// display: none !important;
+// }
+// `;
 
 const Modal = styled(AntdModal)`
 	.ant-modal-content {
@@ -72,7 +72,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		postData: { postType }
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
-	const { className, referendumId, voteType, thresholdData, tally } = props;
+	// const { className, referendumId, voteType, thresholdData, tally } = props;
+	const { className, referendumId, voteType, tally } = props;
 	const { api, apiReady } = useApiContext();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
@@ -87,7 +88,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [delegationVoteModal, setDelegationVoteModal] = useState<{ isOpen: boolean; voter: string | null }>({ isOpen: false, voter: null });
 	const [activeKey, setActiveKey] = useState<any>(null);
 	const [orderBy, setOrderBy] = useState<{ [key: string]: boolean }>(sortedCheck);
-	const [thresholdOpen, setThresholdOpen] = useState<boolean>(false);
+	// const [thresholdOpen, setThresholdOpen] = useState<boolean>(false);
 
 	const [tallyData, setTallyData] = useState({
 		abstain: ZERO,
@@ -173,18 +174,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		nextApiClientFetch<IVotesResponse>(url)
 			.then((res) => {
 				if (res.error) {
+					console.log(res.error);
 					setLoadingStatus({
 						isLoading: false,
 						message: ''
 					});
-					console.log(res.error);
 				} else {
 					const votesRes = res.data;
 					setVotesRes(votesRes);
-					setLoadingStatus({
-						isLoading: false,
-						message: ''
-					});
 					if (votesRes && firstRef.current) {
 						firstRef.current = false;
 						let decision: DecisionType = 'yes';
@@ -197,10 +194,18 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						}
 						setDecision(decision);
 					}
+					setLoadingStatus({
+						isLoading: false,
+						message: ''
+					});
 				}
 			})
 			.catch((err) => {
 				console.log(err);
+				setLoadingStatus({
+					isLoading: false,
+					message: ''
+				});
 			});
 	}, [currentPage, referendumId, sortBy, voteType]);
 
@@ -282,7 +287,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									)}
 								</div>
 								<div className='max-h-[360px]'>
-									{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
+									{votesRes &&
+										decision &&
+										!!votesRes[decision]?.votes?.length &&
 										votesRes[decision]?.votes.map((voteData: any, index: number) => (
 											<VoterRow
 												className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
@@ -298,10 +305,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 												decision={decision}
 												referendumId={referendumId}
 											/>
-										))
-									) : (
-										<PostEmptyState />
-									)}
+										))}
+									{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
 								</div>
 							</div>
 						</div>
@@ -332,7 +337,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							/>
 						</div>
 					</div>
-					{thresholdData && (
+					{/* {thresholdData && (
 						<Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
 							{thresholdData.progress.approval >= thresholdData.progress.approvalThreshold.toFixed(1) &&
 							thresholdData.progress.support >= thresholdData.progress.supportThreshold.toFixed(1) ? (
@@ -366,7 +371,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								setThresholdOpen={setThresholdOpen}
 							/>
 						</Container>
-					)}
+					)} */}
 				</div>
 			</Spin>
 			{delegationVoteModal.isOpen && delegationVoteModal.voter && decision && (

@@ -8,7 +8,6 @@ import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
 import { Divider, Modal as AntdModal } from 'antd';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
 interface IVoteDataModal {
 	setOpen?: any;
 	open?: any;
@@ -32,7 +31,6 @@ const Modal = styled(AntdModal)`
 `;
 
 const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally }) => {
-	const { network } = useNetworkContext();
 	return (
 		<Modal
 			title={
@@ -49,7 +47,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 			open={open}
 			closable
 			closeIcon={<CloseIcon />}
-			className={`sm:w-[600px] lg:w-[1040px] ${network === 'polymesh' ? 'lg:w-[600px]' : ''}`}
+			className={'sm:w-[600px]'}
 			onCancel={() => {
 				setOpen(false);
 			}}

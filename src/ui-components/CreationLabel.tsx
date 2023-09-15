@@ -159,7 +159,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						<>
 							&nbsp;
 							<Divider
-								className={`ml-1 md:inline-block ${!isRow ? 'hidden' : 'inline-block'}`}
+								className={`-ml-1 md:inline-block ${!isRow ? 'hidden' : 'inline-block'}`}
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
@@ -175,12 +175,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					{vote && (
 						<div className='flex items-center justify-center'>
 							<Divider
-								className='mb-[-1px] ml-1 hidden md:inline-block'
+								className='-ml-[7px] -mt-1 mb-[-1px] hidden md:inline-block'
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 							{vote === EVoteDecisionType.AYE ? (
-								<p className='mb-[-1px]'>
+								<p className='ml-1 mt-2'>
 									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted {vote}</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (

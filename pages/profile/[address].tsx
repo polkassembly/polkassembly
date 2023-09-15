@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	return { props: props };
 };
 
-const ProfileComponent = dynamic(() => import('~src/components/Profile'),{
+const ProfileComponent = dynamic(() => import('~src/components/Profile'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -56,13 +56,19 @@ const Profile: FC<IProfileProps> = (props) => {
 	const { setNetwork } = useNetworkContext();
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Profile' network={network}/>
-			<ProfileComponent className={className} profileDetails={userProfile.data} />
+			<SEOHead
+				title='Profile'
+				network={network}
+			/>
+			<ProfileComponent
+				className={className}
+				profileDetails={userProfile.data}
+			/>
 		</>
 	);
 };

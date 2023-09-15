@@ -24,7 +24,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	if(!user.two_factor_auth?.base32_secret) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_NOT_INIT });
+	if (!user.two_factor_auth?.base32_secret) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_NOT_INIT });
 
 	const totp = new TOTP({
 		algorithm: 'SHA1',
@@ -35,10 +35,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		secret: user.two_factor_auth?.base32_secret
 	});
 
-	const isValidToken = totp.validate({ token: String(authCode).replaceAll(/\s/g,'') }) !== null;
-	if(!isValidToken) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_INVALID_TOKEN });
+	const isValidToken = totp.validate({ token: String(authCode).replaceAll(/\s/g, '') }) !== null;
+	if (!isValidToken) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_INVALID_TOKEN });
 
-	const newUser2FADetails : IUser2FADetails = {
+	const newUser2FADetails: IUser2FADetails = {
 		...(user.two_factor_auth || {}),
 		enabled: true,
 		verified: true
@@ -47,7 +47,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	await firestore_db
 		.collection('users')
 		.doc(String(user.id))
-		.update({ two_factor_auth : newUser2FADetails })
+		.update({ two_factor_auth: newUser2FADetails })
 		.catch((error) => {
 			console.error('Error verifying 2FA : ', error);
 			return res.status(500).json({ message: 'Error verifying two factor auth code.' });
@@ -61,7 +61,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const updatedJWT = await authServiceInstance.getSignedToken(newUser);
 
 	return res.status(200).json({ token: updatedJWT });
-
 }
 
 export default withErrorHandling(handler);

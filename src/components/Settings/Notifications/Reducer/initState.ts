@@ -34,7 +34,7 @@ const subscribePost = [
 		value: 'Comments on subscribed posts'
 	}
 ];
-export const notificationInitialState = (network:string) => ({
+export const notificationInitialState = (network: string) => ({
 	gov1Post: allGov1,
 	myProposal,
 	openGov: getOpenGov(network),

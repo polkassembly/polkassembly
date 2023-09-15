@@ -13,14 +13,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network) return res.status(400).json({ message: 'Missing network in request header' });
+	if (!network) return res.status(400).json({ message: 'Missing network in request header' });
 
 	const { proxied, proxy, message, signature } = req.body;
 
-	if(!proxied || !proxy || !message || !signature) res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!proxied || !proxy || !message || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const updatedJWT = await authServiceInstance.LinkProxyAddress(token, network, proxied, proxy, message, signature);
 

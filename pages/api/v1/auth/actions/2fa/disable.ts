@@ -18,12 +18,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	if(!user.two_factor_auth?.base32_secret) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_NOT_INIT });
+	if (!user.two_factor_auth?.base32_secret) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_NOT_INIT });
 
 	await firestore_db
 		.collection('users')
 		.doc(String(user.id))
-		.update({ two_factor_auth : firebaseAdmin.firestore.FieldValue.delete() })
+		.update({ two_factor_auth: firebaseAdmin.firestore.FieldValue.delete() })
 		.catch((error) => {
 			console.error('Error disabling 2FA : ', error);
 			return res.status(500).json({ message: 'Error disabling two factor authentication.' });

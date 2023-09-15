@@ -13,7 +13,7 @@ const networks: any = {
 	// test: []
 };
 
-const networkLabel: {[index: string]: string} = {
+const networkLabel: { [index: string]: string } = {
 	kusama: 'Kusama',
 	polkadot: 'Polkadot',
 	solo: 'Solo Chains'
@@ -30,17 +30,17 @@ for (const key of Object.keys(network)) {
 	};
 
 	switch (chainProperties[keyVal]?.category) {
-	case 'polkadot':
-		networks.polkadot.push(optionObj);
-		break;
-	case 'kusama':
-		networks.kusama.push(optionObj);
-		break;
-	case 'test':
-		networks.test.push(optionObj);
-		break;
-	default:
-		networks.solo.push(optionObj);
+		case 'polkadot':
+			networks.polkadot.push(optionObj);
+			break;
+		case 'kusama':
+			networks.kusama.push(optionObj);
+			break;
+		case 'test':
+			networks.test.push(optionObj);
+			break;
+		default:
+			networks.solo.push(optionObj);
 	}
 }
 export { networks, networkLabel };

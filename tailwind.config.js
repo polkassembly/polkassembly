@@ -5,10 +5,7 @@
 /* eslint-disable sort-keys */
 module.exports = {
 	important: true,
-	content: [
-		'./pages/**/*.{js,ts,jsx,tsx}',
-		'./src/**/*.{jsx,tsx}'
-	],
+	content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{jsx,tsx}'],
 	theme: {
 		extend: {
 			fontFamily: {
@@ -43,10 +40,10 @@ module.exports = {
 				comment_bg: 'var(--comment_bg)'
 			},
 			screens: {
-				'xs': '320px'
+				xs: '320px'
 			},
 			borderRadius: {
-				'xxl': '0.875rem'
+				xxl: '0.875rem'
 			}
 		}
 	},

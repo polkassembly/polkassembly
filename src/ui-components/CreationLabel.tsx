@@ -130,7 +130,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						{topic && (
 							<div className='flex sm:-mt-0.5'>
 								{' '}
-								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>{' '}
+								<span className='mr-2 mt-1 text-lightBlue'>in</span>{' '}
 								<TopicTag
 									topic={topic}
 									className={topic}

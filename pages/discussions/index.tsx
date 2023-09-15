@@ -20,6 +20,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -28,6 +29,11 @@ interface IDiscussionsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.COMMENTED, filterBy } = query;
 
 	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
@@ -38,8 +44,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-
-	const network = getNetworkFromReqHeaders(req.headers);
 
 	const redisKey = generateKey({ filterBy: filterBy, keyType: 'page', network: network, page: page, proposalType: ProposalType.DISCUSSIONS, sortBy: sortBy });
 

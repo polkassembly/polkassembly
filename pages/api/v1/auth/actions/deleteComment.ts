@@ -5,6 +5,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
 import { deleteKeys } from '~src/auth/redis';
@@ -17,7 +18,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if (!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { commentId, postId, postType, trackNumber = null } = req.body;
 	if (!commentId || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });

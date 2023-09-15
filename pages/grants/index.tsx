@@ -19,6 +19,7 @@ import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useRouter } from 'next/router';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -27,6 +28,11 @@ interface IGrantsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 
 	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
@@ -37,9 +43,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const network = getNetworkFromReqHeaders(req.headers);
 
 	const { data, error = '' } = await getOffChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],

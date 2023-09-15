@@ -17,7 +17,7 @@ const handler: NextApiHandler<MessageType | string> = async (req, res) => {
 		return res.status(400).json({ message: 'Invalid method in request body' });
 	}
 
-	if (!isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(403).json({ message: messages.UNAUTHORISED });

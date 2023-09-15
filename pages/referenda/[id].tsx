@@ -19,12 +19,17 @@ import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { useApiContext } from '~src/context';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,

@@ -550,7 +550,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									backgroundColor: 'transparent',
 									borderColor: '#5BC044',
 									borderWidth: 2,
-									data: approvalData.filter((_, index) => index % 2 == 0),
+									data: approvalData,
 									label: 'Approval',
 									pointHitRadius: 10,
 									pointHoverRadius: 5,
@@ -561,7 +561,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									backgroundColor: 'transparent',
 									borderColor: '#E5007A',
 									borderWidth: 2,
-									data: supportData.filter((_, index) => index % 2 == 0),
+									data: supportData,
 									label: 'Support',
 									pointHitRadius: 10,
 									pointHoverRadius: 5,
@@ -573,7 +573,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									borderColor: '#5BC044',
 									borderDash: [4, 4],
 									borderWidth: 2,
-									data: currentApprovalData.filter((_, index) => index % 2 == 0),
+									data: currentApprovalData,
 									label: 'Current Approval',
 									pointHitRadius: 10,
 									pointHoverRadius: 5,
@@ -585,7 +585,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									borderColor: '#E5007A',
 									borderDash: [4, 4],
 									borderWidth: 2,
-									data: currentSupportData.filter((_, index) => index % 2 == 0),
+									data: currentSupportData,
 									label: 'Current Support',
 									pointHitRadius: 10,
 									pointHoverRadius: 5,
@@ -1018,7 +1018,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																if (!isCurvesRender.current) {
 																	setTimeout(() => {
 																		isCurvesRender.current = true;
-																	}, 100);
+																	}, 50);
 																}
 																setThresholdOpen(open);
 															}}
@@ -1036,15 +1036,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															closeIcon={<CloseIcon />}
 															title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue'>Threshold Curves</h2>}
 														>
-															<div className='relative mt-5 min-h-[400px]'>
+															<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>
 																{!isCurvesRender.current ? (
 																	<div className='absolute inset-0'>
 																		<Skeleton.Input
 																			block={true}
 																			active={true}
-																			style={{
-																				height: '400px'
-																			}}
+																			className='min-h-[250px] md:min-h-[400px]'
 																		/>
 																	</div>
 																) : (

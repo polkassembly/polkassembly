@@ -63,7 +63,10 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [isSentimentPost, setIsSentimentPost] = useState(false);
 	const [showEmojiMenu, setShowEmojiMenu] = useState(false);
 	const [selectedIcon, setSelectedIcon] = useState(null);
+	// TODO: fix isPosted state
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isPosted, setIsPosted] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [formContent, setFormContent] = useState('');
 
 	useEffect(() => {
@@ -247,144 +250,144 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				size={'large'}
 				id={id}
 			/>
-			{isPosted ? (
+			{/* {isPosted ? (
 				<div className='comment-message -mt-[4px]'>
 					<div className='h-30 mt-[35px] w-[500px] overflow-hidden text-center'>
 						<p className='truncate text-lightBlue'>&apos;{formContent}&apos;</p>
 					</div>
 					<div className='-mt-[4px] mb-5 ml-[140px] text-green-600'>Comment posted successfully.</div>
 				</div>
-			) : (
-				<div className={isUsedInSuccessModal ? 'w-[95%] p-[1rem]' : 'comment-box bg-white p-[1rem]'}>
-					{error && (
-						<ErrorAlert
-							errorMsg={error}
-							className='mb-2'
-						/>
-					)}
-					<Form
-						form={form}
-						name='comment-content-form'
-						layout='vertical'
-						onFinish={handleModalOpen}
-						initialValues={{
-							content
-						}}
-						disabled={loading}
-						validateMessages={{ required: "Please add the  '${name}'" }}
-					>
-						<div className={isUsedInSuccessModal ? '-ml-[30px] flex w-[522px] items-center justify-between' : ''}>
-							{isUsedInSuccessModal && (
-								<Form.Item
+			) : ( */}
+			<div className={isUsedInSuccessModal ? 'w-[95%] p-[1rem]' : 'comment-box bg-white p-[1rem]'}>
+				{error && (
+					<ErrorAlert
+						errorMsg={error}
+						className='mb-2'
+					/>
+				)}
+				<Form
+					form={form}
+					name='comment-content-form'
+					layout='vertical'
+					onFinish={handleModalOpen}
+					initialValues={{
+						content
+					}}
+					disabled={loading}
+					validateMessages={{ required: "Please add the  '${name}'" }}
+				>
+					<div className={isUsedInSuccessModal ? '-ml-[30px] flex w-[522px] items-center justify-between' : ''}>
+						{isUsedInSuccessModal && (
+							<Form.Item
+								name='content'
+								className='w-full'
+							>
+								<textarea
 									name='content'
-									className='w-full'
-								>
-									<textarea
-										name='content'
-										className={
-											'suffixColor input-container mt-2 max-h-10 w-full flex-1 resize-none rounded-[4px] border-[1px] text-sm hover:border-pink_primary focus:border-pink_primary'
-										}
-										onChange={(e) => {
-											onContentChange(e.target.value);
-										}}
-										placeholder={'Type your comment here'}
-										style={{ border: '1px solid #D2D8E0', padding: '8px 8px' }}
-									/>
-								</Form.Item>
-							)}
-							{!isUsedInSuccessModal && (
-								<ContentForm
-									onChange={(content: any) => onContentChange(content)}
-									height={200}
+									className={
+										'suffixColor input-container mt-2 max-h-10 w-full flex-1 resize-none rounded-[4px] border-[1px] text-sm hover:border-pink_primary focus:border-pink_primary'
+									}
+									onChange={(e) => {
+										onContentChange(e.target.value);
+									}}
+									placeholder={'Type your comment here'}
+									style={{ border: '1px solid #D2D8E0', padding: '8px 8px' }}
 								/>
-							)}
-							<Form.Item>
-								<div className={isUsedInSuccessModal ? 'ml-2' : 'mt-[-40px] flex items-center justify-end'}>
-									{isUsedInSuccessModal ? (
-										<div className='relative'>
-											<div className='flex'>
-												{showEmojiMenu && (
-													<div
-														className='absolute right-[77px] top-[-55px] -mt-1 flex h-[50px] w-[234px] space-x-1 p-2 pb-12 pt-[7px]'
-														style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
-													>
-														<EmojiOption
-															icon={<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-															currentSentiment={1}
-															title={'Completely Against'}
-														/>
-														<EmojiOption
-															icon={<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-															currentSentiment={2}
-															title={'Slightly Against'}
-														/>
-														<EmojiOption
-															icon={<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-															currentSentiment={3}
-															title={'Neutral'}
-														/>
-														<EmojiOption
-															icon={<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-															currentSentiment={4}
-															title={'Slightly For'}
-														/>
-														<EmojiOption
-															icon={<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-															currentSentiment={5}
-															title={'Completely For'}
-														/>
-													</div>
-												)}
-												{!selectedIcon && (
-													<div
-														className='mr-[7px] h-10 w-10'
-														onClick={() => setShowEmojiMenu(!showEmojiMenu)}
-													>
-														<EmojiOption
-															disabled={!content}
-															emojiButton={true}
-															icon={sentimentsIcons[sentiment]}
-															currentSentiment={3}
-															clickable={false}
-														/>
-													</div>
-												)}
-												{selectedIcon && (
-													<Button
-														className='mr-[7px] h-10 w-10 border-solid p-0 pt-1'
-														onClick={() => setShowEmojiMenu(!showEmojiMenu)}
-													>
-														{selectedIcon}
-													</Button>
-												)}
-												<Button
-													disabled={!content}
-													loading={loading}
-													htmlType='submit'
-													className={`my-0 flex h-[40px] w-[67px] items-center justify-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${
-														!content ? 'opacity-50' : ''
-													}`}
-												>
-													Post
-												</Button>
-											</div>
-										</div>
-									) : (
-										<Button
-											disabled={!content}
-											loading={loading}
-											htmlType='submit'
-											className={`my-0 flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
-										>
-											<CheckOutlined /> Comment
-										</Button>
-									)}
-								</div>
 							</Form.Item>
-						</div>
-					</Form>
-				</div>
-			)}
+						)}
+						{!isUsedInSuccessModal && (
+							<ContentForm
+								onChange={(content: any) => onContentChange(content)}
+								height={200}
+							/>
+						)}
+						<Form.Item>
+							<div className={isUsedInSuccessModal ? 'ml-2' : 'mt-[-40px] flex items-center justify-end'}>
+								{isUsedInSuccessModal ? (
+									<div className='relative'>
+										<div className='flex'>
+											{showEmojiMenu && (
+												<div
+													className='absolute right-[77px] top-[-55px] -mt-1 flex h-[50px] w-[234px] space-x-1 p-2 pb-12 pt-[7px]'
+													style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
+												>
+													<EmojiOption
+														icon={<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+														currentSentiment={1}
+														title={'Completely Against'}
+													/>
+													<EmojiOption
+														icon={<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+														currentSentiment={2}
+														title={'Slightly Against'}
+													/>
+													<EmojiOption
+														icon={<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+														currentSentiment={3}
+														title={'Neutral'}
+													/>
+													<EmojiOption
+														icon={<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+														currentSentiment={4}
+														title={'Slightly For'}
+													/>
+													<EmojiOption
+														icon={<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+														currentSentiment={5}
+														title={'Completely For'}
+													/>
+												</div>
+											)}
+											{!selectedIcon && (
+												<div
+													className='mr-[7px] h-10 w-10'
+													onClick={() => setShowEmojiMenu(!showEmojiMenu)}
+												>
+													<EmojiOption
+														disabled={!content}
+														emojiButton={true}
+														icon={sentimentsIcons[sentiment]}
+														currentSentiment={3}
+														clickable={false}
+													/>
+												</div>
+											)}
+											{selectedIcon && (
+												<Button
+													className='mr-[7px] h-10 w-10 border-solid p-0 pt-1'
+													onClick={() => setShowEmojiMenu(!showEmojiMenu)}
+												>
+													{selectedIcon}
+												</Button>
+											)}
+											<Button
+												disabled={!content}
+												loading={loading}
+												htmlType='submit'
+												className={`my-0 flex h-[40px] w-[67px] items-center justify-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${
+													!content ? 'opacity-50' : ''
+												}`}
+											>
+												Post
+											</Button>
+										</div>
+									</div>
+								) : (
+									<Button
+										disabled={!content}
+										loading={loading}
+										htmlType='submit'
+										className={`my-0 flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
+									>
+										<CheckOutlined /> Comment
+									</Button>
+								)}
+							</div>
+						</Form.Item>
+					</div>
+				</Form>
+			</div>
+			{/* )} */}
 			{openModal && (
 				<CommentSentimentModal
 					setSentiment={setSentiment}
@@ -418,7 +421,7 @@ export default styled(PostCommentForm)`
 		justify-content: flex-end;
 	}
 
-	.emoji-button: hover {
+	.emoji-button:hover {
 		background-color: #fbdbec;
 	}
 

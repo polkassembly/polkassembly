@@ -136,6 +136,12 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						ref={ref}
 						disabled={isDisabled}
 						onEditorChange={(content) => {
+							const textContent = ref.current?.editor?.getContent({ format: 'text' }).trim();
+							const cleanContent = content.replace(/<p>|<\/p>|&nbsp;/g, '').trim();
+							if (!textContent && !cleanContent) {
+								onChange('');
+								return;
+							}
 							onChange(content);
 						}}
 						apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}

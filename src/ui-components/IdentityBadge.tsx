@@ -67,7 +67,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 	const identityArr = [
 		{ key: 'Email', value: identity?.email },
-		{ key: 'Judgements', value: identity?.judgements },
+		{ key: 'Judgements', value: identity?.judgements || [] },
 		{ key: 'Legal', value: identity?.legal },
 		{ key: 'Pgp', value: identity?.pgp },
 		{ key: 'Riot', value: identity?.riot },
@@ -98,20 +98,20 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		<StyledPopup>
 			{identityArr.map((item, index) => {
 				{
-					return item?.key === 'Judgements'
-						? item?.value?.length
-						: item?.value && (
-								<li
-									className='flex items-center'
-									key={index}
-								>
-									<span className='desc flex items-center text-sm font-medium capitalize text-bodyBlue'>
-										{getIdentityIcons(item?.key)}
-										{item?.key}:
-									</span>
-									<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}</span>
-								</li>
-						  );
+					return (
+						(item?.key === 'Judgements' ? !!identity?.judgements?.length : !!item?.value) && (
+							<li
+								className='flex items-center'
+								key={index}
+							>
+								<span className='desc flex items-center text-sm font-medium capitalize text-bodyBlue'>
+									{getIdentityIcons(item?.key)}
+									{item?.key}:
+								</span>
+								<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}</span>
+							</li>
+						)
+					);
 				}
 			})}
 

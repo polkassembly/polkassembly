@@ -43,6 +43,7 @@ import {
 	fetchTreasurySpend
 } from '~src/util/getCalendarEvents';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -57,6 +58,10 @@ const localizer = dayjsLocalizer(dayjs);
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return {
 		props: {
 			network

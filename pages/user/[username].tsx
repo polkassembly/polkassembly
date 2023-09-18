@@ -19,6 +19,7 @@ import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -34,6 +35,12 @@ interface IUserProfileProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+	const req = context.req;
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const username = context.params?.username;
 	if (!username) {
 		return {
@@ -42,8 +49,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			}
 		};
 	}
-	const req = context.req;
-	const network = getNetworkFromReqHeaders(req.headers);
 
 	const userProfile = await getUserProfileWithUsername(username.toString());
 	const userPosts = await getUserPosts({

@@ -19,9 +19,15 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { generateKey } from '~src/util/getRedisKeys';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
 	if (!trackStatus && !filterBy) {
 		return {
@@ -31,7 +37,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-	const network = getNetworkFromReqHeaders(req.headers);
 
 	if (!networkTrackInfo[network][PostOrigin.LEASE_ADMIN]) {
 		return { props: { error: `Invalid track for ${network}` } };

@@ -12,6 +12,7 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active />,
@@ -21,6 +22,9 @@ const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { hash = '' } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
 
 	const { data, error } = await getLatestPreimage({ hash: String(hash), network });
 

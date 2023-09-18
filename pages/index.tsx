@@ -38,6 +38,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useRouter } from 'next/router';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -57,6 +58,10 @@ interface IHomeProps {
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	if (isOpenGovSupported(network) && !req.headers.referer) {
 		return {
 			props: {},

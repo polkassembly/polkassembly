@@ -8,7 +8,7 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip, Skeleton } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -161,6 +161,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		support: 0,
 		supportThreshold: 0
 	});
+	const isCurvesRender = useRef(false);
 	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 
@@ -619,20 +620,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				}));
 				return;
 			}
-			const endHeight = currentBlock ? currentBlock?.toNumber() : getReferendumVotingFinishHeight(post?.timeline, proposalType as TOpenGov);
-			const percentage = getDecidingEndPercentage(Number(trackInfo.decisionPeriod || 0), Number(post?.deciding?.since || 0), Number(endHeight || 0));
-			const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
-			if (typeof approvalCalc === 'function' && typeof supportCalc === 'function') {
-				const approvalThreshold = approvalCalc(percentage) * 100;
-				const supportThreshold = supportCalc(percentage) * 100;
-				setProgress((prev) => {
-					return {
-						...prev,
-						approvalThreshold,
-						supportThreshold
-					};
-				});
-			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
@@ -1033,7 +1020,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 												{proposalType === ProposalType.OPEN_GOV && (
 													<div className={className}>
 														<ReferendumV2VoteInfo
-															setThresholdOpen={setThresholdOpen}
+															setThresholdOpen={(open) => {
+																if (!isCurvesRender.current) {
+																	setTimeout(() => {
+																		isCurvesRender.current = true;
+																	}, 50);
+																}
+																setThresholdOpen(open);
+															}}
 															setOpen={setOpen}
 															referendumId={onchainId as number}
 															tally={tally}
@@ -1063,14 +1057,24 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															closeIcon={<CloseIcon />}
 															title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue'>Threshold Curves</h2>}
 														>
-															<div className='mt-5'>
-																<Curves
-																	curvesError={curvesError}
-																	curvesLoading={curvesLoading}
-																	data={data}
-																	progress={progress}
-																	setData={setData}
-																/>
+															<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>
+																{!isCurvesRender.current ? (
+																	<div className='absolute inset-0'>
+																		<Skeleton.Input
+																			block={true}
+																			active={true}
+																			className='min-h-[250px] md:min-h-[400px]'
+																		/>
+																	</div>
+																) : (
+																	<Curves
+																		curvesError={curvesError}
+																		curvesLoading={curvesLoading}
+																		data={data}
+																		progress={progress}
+																		setData={setData}
+																	/>
+																)}
 															</div>
 														</Modal>
 													</div>

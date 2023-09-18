@@ -40,8 +40,9 @@ interface Props {
 	ayeVoteValue?: BN;
 	nayVoteValue?: BN;
 	abstainVoteValue?: BN;
-	isVote?: boolean;
 	isMultisig?: boolean;
+	redirect?: boolean;
+	isVote?: boolean;
 }
 
 const DelegationSuccessPopup = ({
@@ -59,8 +60,9 @@ const DelegationSuccessPopup = ({
 	ayeVoteValue,
 	nayVoteValue,
 	abstainVoteValue,
-	isVote = false,
-	isMultisig
+	isMultisig,
+	redirect = false,
+	isVote
 }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -82,7 +84,7 @@ const DelegationSuccessPopup = ({
 			wrapClassName={className}
 			closeIcon={isDelegate ? <CloseIcon /> : <UndelegateCloseIcon />}
 			onCancel={() => {
-				!isVote && router.reload();
+				redirect && router.reload();
 				setOpen(false);
 			}}
 			centered

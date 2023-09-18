@@ -230,20 +230,33 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 		startLoading({ isLoading: false, message: '' });
 	};
 
+	const handleDeleteSocialVerificationRef = async () => {
+		const { data: apiData, error: err } = await nextApiClientFetch('api/v1/verification/remove-verification-ref');
+		if (apiData) {
+			console.log('verification details are not deleted ');
+		} else {
+			console.log(err);
+		}
+	};
+
+	const handleFirbaseUserData = async () => {
+		const { data: apiData, error: err } = await nextApiClientFetch('api/v1/verification/onchain-identity-via-polkassembly');
+		if (apiData) {
+			console.log('identity_via_polkassembly key set ');
+		} else {
+			console.log(err);
+		}
+	};
 	const handleJudgement = async () => {
-		startLoading({ isLoading: true, message: '' });
+		startLoading({ isLoading: true, message: 'Awaiting Judgement from polkassembly' });
 		const { data, error } = await nextApiClientFetch<IJudgementResponse>('api/v1/verification/judgement-call', {
 			identityHash,
 			userAddress: address
 		});
 
 		if (data) {
-			const { data: apiData, error: err } = await nextApiClientFetch('api/v1/verification/onchain-identity-via-polkassembly');
-			if (apiData) {
-				console.log('identity_via_polkassembly key set');
-			} else {
-				console.log(err);
-			}
+			await handleFirbaseUserData();
+			await handleDeleteSocialVerificationRef();
 			localStorage.removeItem('identityForm');
 			localStorage.removeItem('identityAddress');
 			localStorage.removeItem('identityWallet');
@@ -252,6 +265,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 			startLoading({ isLoading: false, message: '' });
 			setOpenSuccessModal(true);
 			closeModal(true);
+
 			changeStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 			router.replace('/');
 		} else if (error) {

@@ -113,6 +113,7 @@ import ExpandSVG from '~assets/icons/expand.svg';
 import CollapseSVG from '~assets/icons/collapse.svg';
 import NovaWalletSVG from '~assets/delegation-tracks/nova-wallet.svg';
 import ParityTechSVG from '~assets/icons/polkadot-logo.svg';
+import RedirectSVG from '~assets/icons/redirect-icon.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -504,4 +505,8 @@ export const SetIdentityIcon  = (props: Partial<CustomIconComponentProps>) => (
 
 export const ApplayoutIdentityIcon  = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={ApplayoutIdentitySVG} {...props} />
+);
+
+export const RedirectIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={RedirectSVG} {...props} />
 );

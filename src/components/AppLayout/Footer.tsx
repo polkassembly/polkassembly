@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import styled from 'styled-components';
 import PaLogo from './PaLogo';
-import RedirectIcon from '~assets/icons/redirect-icon.svg';
+import { RedirectIcon } from '~src/ui-components/CustomIcons';
 import { Divider, Space } from 'antd';
 import TwitterIcon from '~assets/icons/twitter-pink-bg.svg';
 import DiscordIcon from '~assets/icons/discord-icon.svg';
@@ -64,18 +64,18 @@ const Footer = ({ className } : { className?:string }) => {
 							<p className="text-lg font-bold text-blue-light-high dark:text-blue-dark-high mb-[-5px] max-[650px]:mt-[-15px] ">Help Center</p>
 
 							<nav aria-label="Footer About Nav" className="mt-4 md:mt-3">
-								<div className="space-y-2 text-sm text-lightBlue font-normal">
+								<div className="space-y-2 text-sm text-lightBlue dark:text-blue-dark-medium font-normal">
 
 									<div>
 										<a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer'>
 											Report an Issue
-											<RedirectIcon className='ml-3' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-medium' />
 										</a>
 									</div>
 									<div className='max-[650px]:mb-[-5px]'>
 										<a href='https://feedback.polkassembly.io' target='_blank' rel='noreferrer'>
 											Feedback
-											<RedirectIcon className='ml-3' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-medium' />
 										</a>
 									</div>
 									<div className='max-[650px]:hidden'>
@@ -86,14 +86,14 @@ const Footer = ({ className } : { className?:string }) => {
 									<div>
 										<a href='https://github.com/polkassembly/polkassembly' target='_blank' rel='noreferrer'>
 											Github
-											<RedirectIcon className='ml-3' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-medium' />
 										</a>
 									</div>
 								</div>
 							</nav>
 						</div>
 
-						<div className="mt-8 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-lightBlue font-normal">
+						<div className="mt-8 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-lightBlue dark:text-blue-dark-medium font-normal">
 							<p className="text-lg font-bold text-blue-light-high dark:text-blue-dark-high mb-[-5px] max-[650px]:mt-[-15px] ">Our Services</p>
 
 							<nav aria-label="Footer Services Nav" className="mt-4 md:mt-3">
@@ -124,7 +124,7 @@ const Footer = ({ className } : { className?:string }) => {
 
 				{/* Below divider */}
 				<Divider className='mb-0' />
-				<div className="mt-5 pb-3 text-sm text-lightBlue font-medium">
+				<div className="mt-5 pb-3 text-sm text-lightBlue dark:text-blue-dark-medium font-medium">
 					<div className="text-center sm:flex sm:justify-between sm:text-left">
 						<div className='flex max-[650px]:flex-col'>
 							<p className=" max-[650px]:mb-0 mr-1 ">

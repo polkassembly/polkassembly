@@ -27,11 +27,11 @@ import {
 	ParachainsIcon,
 	PreimagesIcon,
 	ReferendaIcon,
+	RootIcon,
 	StakingAdminIcon,
 	TreasuryGroupIcon,
 	TechComProposalIcon,
 	DelegatedIcon,
-	RootIcon,
 	ApplayoutIdentityIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
@@ -56,7 +56,6 @@ import IdentityCaution from '~assets/icons/identity-caution.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import { poppins } from 'pages/_app';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import GovernanceSwitchButton from './GovernanceSwitchButton';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton.Button active />,
@@ -73,7 +72,7 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 		icon,
 		key,
 		label,
-		type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
+		type: key === 'tracksHeading' ? 'group' : ''
 	} as MenuItem;
 }
 
@@ -179,17 +178,13 @@ const getUserDropDown = (
 	return getSiderMenuItem(
 		<AuthDropdown>
 			<div className='flex items-center justify-between gap-x-2'>
-				<div className={`flex gap-2 text-sm ${!isGood && isIdentityUnverified && 'w-[85%]'}`}>
-					<span className={`normal-case ${!isGood && isIdentityUnverified && 'truncate'}`}>
-						{username && username?.length > 12 && isGood && !isIdentityUnverified ? `${username?.slice(0, 12)}...` : username || ''}
-					</span>
-					{isGood && !isIdentityUnverified && (
-						<CheckCircleFilled
-							style={{ color: 'green' }}
-							className='rounded-full border-none bg-transparent text-sm'
-						/>
-					)}
-				</div>
+				<span className='w-[85%] truncate normal-case'>{username || ''}</span>
+				{isGood && !isIdentityUnverified && (
+					<CheckCircleFilled
+						style={{ color: 'green' }}
+						className='rounded-[50%] border-none bg-white'
+					/>
+				)}
 				<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
 			</div>
 		</AuthDropdown>,
@@ -223,15 +218,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
+	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
+	const router = useRouter();
+	const [open, setOpen] = useState<boolean>(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+
+	// const currentUser = useUserDetailsContext();
+	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 
 	// const { defaultAddress,web3signup } = currentUser;
-	const router = useRouter();
-	const [previousRoute, setPreviousRoute] = useState(router.asPath);
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
-	const [open, setOpen] = useState<boolean>(false);
-	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) || false;
-	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
-	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
+	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 
@@ -341,19 +338,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			}
 		}
 	};
-	if (isMobile) {
-		gov1Items.overviewItems = [
-			getSiderMenuItem(
-				<GovernanceSwitchButton
-					previousRoute={previousRoute}
-					className='flex lg:hidden'
-				/>,
-				'opengov',
-				''
-			),
-			...gov1Items.overviewItems
-		];
-	}
 
 	let items: MenuProps['items'] = [...gov1Items.overviewItems];
 
@@ -668,51 +652,31 @@ const CustomContent = memo(function CustomContent({ Component, pageProps }: Prop
 });
 
 export default styled(AppLayout)`
+	.svgLogo svg {
+		height: 60%;
+	}
 
-.svgLogo svg{
-	height:60%;
-}
+	.border-bottom {
+		border-bottom: 1px solid #d2d8e0;
+	}
+	.border-right {
+		border-right: 1px solid #d2d8e0;
+	}
 
-.border-bottom {
-	border-bottom: 1px solid #D2D8E0 ;
+	.logo-border li:nth-child(1):hover {
+		background: transparent !important;
+	}
 
-  }
-  .border-right {
-	border-right:1px solid #D2D8E0;
-  }
+	#rc-menu-uuid-75314-4- {
+		border-bottom: 1px solid gray;
+	}
 
-.logo-border li:nth-child(1):hover{
-	background:transparent !important;
-}
+	#rc-menu-uuid-44115-4- .logo-container {
+		height: 100px !important;
+	}
 
-#rc-menu-uuid-75314-4-{
-	border-bottom:1px solid gray;
-}
-
-#rc-menu-uuid-44115-4- .logo-container {
-	height: 100px !important;
-}
-
-.ant-drawer .ant-drawer-mask{
-	position: fixed !important;
-}
-
-.ant-drawer .ant-drawer-content{
-	height: auto !important;
-}
-
-.ant-drawer-content-wrapper, .ant-drawer-content{
-	max-width: 256px !important;
-	box-shadow: none !important;
-	min-width: 60px !important;
-}
-
-.ant-drawer-body{
-	text-transform: capitalize !important;
-	padding: 0 !important;
-
-	ul{
-		margin-top: 0 !important;
+	.ant-drawer .ant-drawer-mask {
+		position: fixed !important;
 	}
 
 	.ant-drawer .ant-drawer-content {
@@ -760,94 +724,90 @@ export default styled(AppLayout)`
 		color: var(--pink_primary) !important;
 	}
 
-.ant-menu-title-content:hover {
-	color: var(--pink_primary) !important;
-}
+	.ant-menu-item::after {
+		border-right: none !important;
+	}
 
-.ant-menu-item::after {
-	border-right: none !important;
-}
+	.ant-menu-title-content {
+		color: #485f7d !important;
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 21px;
+		letter-spacing: 0.01em;
+	}
 
-.ant-menu-title-content {
-	color: #485F7D !important;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 21px;
-	letter-spacing: 0.01em;
-}
+	.auth-sider-menu {
+		list-style: none !important;
+	}
 
-.auth-sider-menu {
-	list-style: none !important;
-}
+	.ant-empty-image {
+		display: flex;
+		justify-content: center;
+	}
 
-.ant-empty-image{
-	display: flex;
-	justify-content: center;
-}
+	.sidebar .ant-menu-item-selected .anticon {
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	}
 
-.sidebar .ant-menu-item-selected .anticon {
-	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
-}
-
-.sidebar .ant-menu-item-selected .opacity {
-  background-color: var(--pink_primary) !important;
-}
-.ant-menu-inline-collapsed-noicon {
-	color: var(--lightBlue);
-}
-
-.ant-menu-item-selected {
+	.sidebar .ant-menu-item-selected .opacity {
+		background-color: var(--pink_primary) !important;
+	}
 	.ant-menu-inline-collapsed-noicon {
-		color: var(--pink_primary);
+		color: var(--lightBlue);
 	}
 
-.ant-menu-sub {
-	background: #fff !important;
-}
+	.ant-menu-item-selected {
+		.ant-menu-inline-collapsed-noicon {
+			color: var(--pink_primary);
+		}
+	}
 
-.ant-menu-item > .logo-container {
-	height:100px ;
-}
+	.ant-menu-sub {
+		background: #fff !important;
+	}
 
-.logo-container:hover {
-	background: #fff !important;
-}
+	.ant-menu-item > .logo-container {
+		height: 100px;
+	}
 
-.menu-container {
-	top: 0px;
-}
+	.logo-container:hover {
+		background: #fff !important;
+	}
 
-@media (max-width: 468px) and (min-width: 380px){
 	.menu-container {
-		top:62px !important;
+		top: 0px;
 	}
 
-	.logo-display-block {
-		display: none !important;
-	}
+	@media (max-width: 468px) and (min-width: 380px) {
+		.menu-container {
+			top: 62px !important;
+		}
 
-	.user-container {
-		display: flex!important;
-		width: 200px !important;
-		border: none !important;
-		background-color: #fff !important;
-	}
+		.logo-display-block {
+			display: none !important;
+		}
 
-	.logo-container {
-		display:flex !important;
-	}
+		.user-container {
+			display: flex !important;
+			width: 200px !important;
+			border: none !important;
+			background-color: #fff !important;
+		}
 
-	.user-image {
-		font-size: 14px !important;
-	}
+		.logo-container {
+			display: flex !important;
+		}
 
-	.user-info {
-		font-size: 14px !important;
-	}
+		.user-image {
+			font-size: 14px !important;
+		}
 
-	.user-info-dropdown {
-		transform: scale(0.7);
-	}
-}
+		.user-info {
+			font-size: 14px !important;
+		}
 
+		.user-info-dropdown {
+			transform: scale(0.7);
+		}
+	}
 `;

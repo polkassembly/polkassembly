@@ -321,10 +321,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</div>
 							</VoteContainer>
 						</div>
-						<div className='z-10 flex items-center justify-between bg-white pt-6'>
-							<p className='m-0 flex-1 text-xs text-bodyBlue'>d: Delegation s: Split sa: Split Abstain</p>
+						<div className='z-10 flex justify-between bg-white pt-6 max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
+							<p className='m-0 text-xs text-bodyBlue'>d: Delegation s: Split sa: Split Abstain</p>
 							<Pagination
-								className='flex-2'
 								size='small'
 								defaultCurrent={1}
 								current={currentPage}

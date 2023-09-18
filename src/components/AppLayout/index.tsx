@@ -358,10 +358,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const userDropdown = getUserDropDown( handleIdentityButtonClick, isIdentityUnverified, isGood, handleLogout,network ,picture, (mainDisplay || username)! , `${className} ${poppins.className} ${poppins.variable}`);
 	const govOverviewItems = isOpenGovSupported(network) ? [
-		!isMobile ? getSiderMenuItem('', '', <div className={`${className} bg-grey svgLogo logo-container logo-display-block flex items-center justify-center h-[66px]`}>
-			<div className>
+		!isMobile ? getSiderMenuItem('', '', <div className={`${className} ${sidedrawer ? 'mt-2 w-[300px] -ml-20':'mt-0'} bg-transparent svgLogo logo-container logo-display-block flex items-center justify-center h-[66px]`}>
+			<div>
 				<PaLogo className={`${sidedrawer ? 'ml-2':'ml-0'}h-full`} sidedrawer={sidedrawer} />
-				<div className='border-bottom my-2 -mx-4'></div>
+				<div className={`${sidedrawer ? 'w-56 ml-[38px]':''} border-bottom my-2 -mx-4`}></div>
 			</div>
 		</div>): null,
 		getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),

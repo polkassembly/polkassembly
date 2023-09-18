@@ -233,7 +233,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	const handleDeleteSocialVerificationRef = async () => {
 		const { data: apiData, error: err } = await nextApiClientFetch('api/v1/verification/remove-verification-ref');
 		if (apiData) {
-			console.log('verification details are not deleted ');
+			console.log('verification details have been deleted');
 		} else {
 			console.log(err);
 		}

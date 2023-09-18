@@ -140,7 +140,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 		setIsEditing(false);
 
-		setLoading(true);
 		const { data, error: editReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editCommentReply', {
 			commentId,
 			content: newContent,
@@ -155,7 +154,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			console.error('Error saving reply: ', editReplyError);
 			queueNotification({
 				header: 'Error!',
-				message: 'Your reply was edited.',
+				message: 'Failed to save reply',
 				status: NotificationStatus.ERROR
 			});
 			setError(editReplyError || 'Error in saving reply');
@@ -192,16 +191,23 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			});
 		}
 		if(data){
-			setComments((prev) => {
+			setComments((prev:any) => {
 				const comments:any = Object.assign({}, prev);
-				const keys = Object.keys(comments);
 				for(const key of keys){
 					let flag = false;
 					if (prev?.[key]) {
-						comments[key] = prev[key].map((comment) => {
+						comments[key] = prev[key].map((comment:any) => {
 							if (comment.id === commentId) {
 								if (comment?.replies && Array.isArray(comment.replies)) {
-									comment.replies = comment.replies.map(reply => reply.id === replyId ? { ...reply, isReplyError:false }: reply) ;
+									comment.replies = comment.replies.map((reply:any) => {
+										if (reply.id === replyId) {
+											reply.content = newContent;
+											reply.updated_at = new Date();
+										}
+										return {
+											...reply
+										};
+									});
 								}
 								flag = true;
 							}
@@ -223,8 +229,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		await replyToreplyForm.validateFields();
 		const replyContent = replyToreplyForm.getFieldValue('content');
 		if(!replyContent) return;
-		// setLoading(true);
-		setError('');
 		global.window.localStorage.removeItem(newReplyKey(commentId));
 		const keys = Object.keys(comments);
 		setComments((prev:any) => {

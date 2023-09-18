@@ -98,6 +98,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		};
 		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		console.log(comments, setTimelines);
+		queueNotification({
+			header: 'Success!',
+			message: 'Comment created successfully.',
+			status: NotificationStatus.SUCCESS
+		});
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
@@ -122,12 +127,29 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					status: NotificationStatus.ERROR
 				});
 			} else {
-				comment.id = data.id || '';
-				queueNotification({
-					header: 'Success!',
-					message: 'Comment created successfully.',
-					status: NotificationStatus.SUCCESS
+				setComments((prev) => {
+					const comments:any = Object.assign({}, prev);
+					for(const key of Object.keys(comments)) {
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev?.[key]?.map((comment:IComment) => {
+								const newComment = comment;
+								if (comment.id === commentId) {
+									newComment.id = data.id;
+									flag = true;
+								}
+								return {
+									...newComment
+								};
+							});
+						}
+						if(flag){
+							break;
+						}
+					}
+					return comments;
 				});
+				comment.id = data.id || '';
 			}
 		} catch (error) {
 			console.error('Error while saving comment:', error);

@@ -161,6 +161,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					break;
 				}
 			}
+			queueNotification({
+				header: 'Success!',
+				message: 'Your comment was edited.',
+				status: NotificationStatus.SUCCESS
+			});
 			return comments;
 		});
 		form.setFieldValue('content', currentContent.current);
@@ -188,14 +193,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 			console.error('Error saving comment ', editPostCommentError);
 		}
-		else{
-			queueNotification({
-				header: 'Success!',
-				message: 'Your comment was edited.',
-				status: NotificationStatus.SUCCESS
-			});
-		}
-
 		if(data){
 			setComments((prev) => {
 				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
@@ -243,11 +240,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		setErrorReply('');
 		global.window.localStorage.removeItem(replyKey(commentId));
 		const keys = Object.keys(comments);
+		const replyId = v4();
 		setComments((prev) => {
 			const comments:any = Object.assign({}, prev);
 			for(const key of keys ){
 				let flag = false;
-				const replyId = v4();
 				if (prev?.[key]) {
 					comments[key] = prev[key].map((comment) => {
 						if (comment.id === commentId) {
@@ -283,7 +280,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			message: 'Your reply was added.',
 			status: NotificationStatus.SUCCESS
 		});
-
 		if(id){
 			setIsReplying(false);
 
@@ -315,6 +311,41 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								if (comment.id === commentId) {
 									if (comment?.replies && Array.isArray(comment.replies)) {
 										comment.replies = comment.replies.map(reply => reply.id === replyId ? { ...reply, isReplyError:true }: reply) ;
+									}
+									flag = true;
+								}
+								return {
+									...comment
+								};
+							});
+						}
+						if(flag){
+							break;
+						}
+					}
+					return comments;
+				});
+			}
+			else {
+				console.log(data);
+				setComments((prev) => {
+					const comments:any = Object.assign({}, prev);
+					for(const key of keys ){
+						let flag = false;
+						const replyId = v4();
+						if (prev?.[key]) {
+							comments[key] = prev[key].map((comment) => {
+								if (comment.id === commentId) {
+									if (comment?.replies && Array.isArray(comment.replies)) {
+										comment.replies = comment.replies.map((reply:any) => {
+											console.log(reply.id);
+											if (reply.id !== replyId) {
+												reply.id = data.id;
+											}
+											return {
+												...reply
+											};
+										});
 									}
 									flag = true;
 								}
@@ -506,9 +537,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								</Dropdown>
 								{ comment.isError &&
 								<div className="flex text-xs text-lightBlue ml-[164px]">
-									<IconCaution className="text-2xl -mr-2 mt-[3px]"/>
-									<span className="m-0 p-0 mt-[4px]">Comment not posted</span>
-									<div onClick={handleRetry} className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>
+									<IconCaution className="text-2xl -mr-2 mt-[3px] icon-container"/>
+									<span className="m-0 p-0 mt-[4px] msg-container">Comment not posted</span>
+									<div onClick={handleRetry} className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer retry-container" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>
 										<IconRetry className='text-2xl mt-[4px]'/>
 										<span className='m-0 p-0 -ml-2 mt-[4px]'>Retry</span>
 									</div>
@@ -580,5 +611,19 @@ export default styled(EditableCommentContent)`
 
   code{
 	display:initial;
+  }
+
+  @media (min-width: 320px) and (max-width: 468px){
+	.icon-container {
+		display: none;
+	}
+	.msg-container {
+		display: none;
+	}
+	.retry-container {
+		position: relative !important;
+		top: -36px !important;
+		left: 106px !important;
+	}
   }
 `;

@@ -621,8 +621,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				return;
 			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
+	}, [currentBlock, post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
 
 	useEffect(() => {
 		if (!api || !!apiReady) return;
@@ -1021,11 +1020,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<div className={className}>
 														<ReferendumV2VoteInfo
 															setThresholdOpen={(open) => {
-																if (!isCurvesRender.current) {
-																	setTimeout(() => {
-																		isCurvesRender.current = true;
-																	}, 50);
-																}
 																setThresholdOpen(open);
 															}}
 															setOpen={setOpen}
@@ -1034,7 +1028,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															showVoteHistory={false}
 														/>
 														<ReferendumV2VoteInfo
-															setThresholdOpen={setThresholdOpen}
+															setThresholdOpen={(open) => {
+																if (!isCurvesRender.current) {
+																	setTimeout(() => {
+																		isCurvesRender.current = true;
+																	}, 50);
+																}
+																setThresholdOpen(open);
+															}}
 															setOpen={setOpen}
 															referendumId={onchainId as number}
 															tally={tally}

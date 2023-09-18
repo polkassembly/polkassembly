@@ -6,10 +6,11 @@ import { Button, Dropdown, Tag } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
-import Address, { EAddressOtherTextType } from 'src/ui-components/Address';
+import Address from 'src/ui-components/Address';
 import { useUserDetailsContext } from '~src/context';
 import DownIcon from '~assets/icons/down-icon.svg';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { EAddressOtherTextType } from '~src/types';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -76,13 +77,12 @@ const AddressDropdown = ({
 			key: account.address,
 			label: (
 				<Address
-					disableAddressClick={true}
 					className={`flex items-center ${poppins.className} ${poppins.className}`}
-					otherTextType={getOtherTextType(account)}
-					otherTextClassName='ml-auto'
+					addressOtherTextType={getOtherTextType(account)}
 					addressClassName='text-lightBlue'
 					extensionName={account.name}
 					address={account.address}
+					disableAddressClick
 				/>
 			)
 		});
@@ -136,13 +136,13 @@ const AddressDropdown = ({
 					</Tag>
 				)}
 				<Address
-					textClassName={addressTextClassName}
-					disableAddressClick={true}
+					usernameClassName={addressTextClassName}
 					extensionName={dropdownList[selectedAddress]}
 					address={defaultAddress || selectedAddress}
-					otherTextType={getOtherTextType(filteredAccounts.find((account) => account.address === selectedAddress || account.address === defaultAddress))}
+					addressOtherTextType={getOtherTextType(filteredAccounts.find((account) => account.address === selectedAddress || account.address === defaultAddress))}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
-					otherTextClassName='ml-auto'
+					addressClassName='text-lightBlue'
+					disableAddressClick
 				/>
 				<span className='mx-2 mb-1'>
 					<DownIcon />

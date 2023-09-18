@@ -87,9 +87,9 @@ const About: FC<IAboutProps> = (props) => {
 									<Address
 										disableAddressClick={true}
 										disableHeader={true}
-										identiconSize={24}
+										iconSize={24}
 										ethIdenticonSize={30}
-										shortenAddressLength={10}
+										addressMaxLength={10}
 										key={address}
 										className='border-0 border-b border-solid border-b-[#E1E6EB] p-3 py-4 text-sidebarBlue'
 										address={address}
@@ -114,24 +114,24 @@ const About: FC<IAboutProps> = (props) => {
 								{identity && (
 									<Row gutter={[8, 40]}>
 										<Col span={12}>
-											<div className='text-sm font-medium text-[#485F7D]'>Account</div>
+											<div className='text-sm font-medium text-lightBlue'>Account</div>
 											<Address
-												className='mt-1 text-xs'
-												textClassName='text-xs text-[#5E7087]'
+												className='mt-1'
+												usernameClassName='text-xs'
 												displayInline={true}
-												identiconSize={28}
+												iconSize={28}
 												address={`${addresses[0]}`}
 											/>
 										</Col>
 										{identity?.legal && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-[#485F7D]'>Legal</div>
+												<div className='text-sm font-medium text-lightBlue'>Legal</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>{identity.legal}</p>
 											</Col>
 										)}
 										{identity?.email && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-[#485F7D]'>
+												<div className='text-sm font-medium text-lightBlue'>
 													<EmailIcon className='mr-1' />
 													<span>Email</span>
 												</div>
@@ -145,7 +145,7 @@ const About: FC<IAboutProps> = (props) => {
 										)}
 										{identity?.riot && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-[#485F7D]'>
+												<div className='text-sm font-medium text-lightBlue'>
 													<RiotIcon className='mr-1' />
 													<span>Riot</span>
 												</div>
@@ -154,7 +154,7 @@ const About: FC<IAboutProps> = (props) => {
 										)}
 										{identity?.twitter && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-[#485F7D]'>
+												<div className='text-sm font-medium text-lightBlue'>
 													<TwitterIcon className='mr-1' />
 													<span>Twitter</span>
 												</div>
@@ -168,7 +168,7 @@ const About: FC<IAboutProps> = (props) => {
 										)}
 										{identity?.judgements?.length > 0 && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-[#485F7D]'>Judgements</div>
+												<div className='text-sm font-medium text-lightBlue'>Judgements</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>
 													{icon} {displayJudgements}
 												</p>
@@ -176,7 +176,7 @@ const About: FC<IAboutProps> = (props) => {
 										)}
 										{identity?.web && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-[#485F7D]'>Web</div>
+												<div className='text-sm font-medium text-lightBlue'>Web</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>{identity.web}</p>
 											</Col>
 										)}

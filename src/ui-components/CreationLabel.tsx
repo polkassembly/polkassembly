@@ -117,14 +117,14 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	return (
 		<div className={`${className} flex w-[100%] justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
-				<div className={'flex w-full min-[320px]:w-auto min-[320px]:flex-row min-[320px]:items-center '}>
+				<div className={'flex w-full items-center min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex items-center '}>
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
-							clickable={commentSource === 'polkassembly'}
+							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
-							textClassName={'text-[12px] text-ellipsis overflow-hidden'}
+							usernameClassName='text-xs text-ellipsis overflow-hidden'
 						/>
 						{text}&nbsp;
 						{topic && (

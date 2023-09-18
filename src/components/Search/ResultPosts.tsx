@@ -58,7 +58,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 										<Address
 											address={post?.proposer_address}
 											displayInline
-											textClassName='text-xs text-lightBlue'
+											usernameClassName='text-xs'
 										/>
 									) : (
 										<div className='mb-1 text-xs font-medium text-lightBlue'>{post?.username}</div>

@@ -95,7 +95,8 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<Address
 						address={delegate?.address}
 						displayInline
-						identiconSize={34}
+						iconSize={34}
+						usernameClassName='font-semibold'
 					/>
 
 					<div className='-mt-5 mr-2 flex gap-2'>
@@ -177,8 +178,8 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							<Address
 								address={delegate?.address}
 								displayInline
-								identiconSize={40}
-								textClassName='text-[20px] font-medium'
+								iconSize={40}
+								usernameClassName='text-[20px] font-medium'
 							/>
 
 							<div className='-mt-4 mr-2 flex gap-2'>

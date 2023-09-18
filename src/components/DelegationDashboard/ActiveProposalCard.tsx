@@ -149,7 +149,8 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 										<Address
 											address={String(proposal?.proposer)}
 											className='address ml-1.5'
-											displayInline={true}
+											displayInline
+											usernameClassName='text-xs font-medium'
 										/>
 									</span>
 								</div>
@@ -198,6 +199,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 					>
 						{status.includes(ETrackDelegationStatus.Delegated) && (
 							<Address
+								usernameClassName='text-xs font-medium'
 								address={String(delegatedTo)}
 								displayInline
 							/>
@@ -225,6 +227,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							{status.includes(ETrackDelegationStatus.Delegated) && (
 								<Address
 									address={String(delegatedTo)}
+									usernameClassName='text-xs font-medium'
 									displayInline
 								/>
 							)}

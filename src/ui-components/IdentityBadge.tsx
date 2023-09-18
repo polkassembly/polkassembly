@@ -47,6 +47,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const { legal, email, twitter, pgb, riot, web  } = identity;
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const CouncilEmoji = () => (

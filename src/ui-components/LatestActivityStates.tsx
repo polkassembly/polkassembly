@@ -101,8 +101,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 								<Address
 									address={rowData.proposer}
 									className='mx-2 text-sm'
-									displayInline={true}
-									disableIdenticon={false}
+									displayInline
 								/>
 							)}
 						</span>
@@ -162,8 +161,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 								<Address
 									address={rowData.proposer}
 									className='mx-2 text-sm'
-									displayInline={true}
-									disableIdenticon={false}
+									displayInline
 								/>
 							)}
 						</span>

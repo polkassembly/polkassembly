@@ -12,20 +12,20 @@ interface Props {
 	defaultAddress?: string | null;
 	username?: string;
 	disableIdenticon?: boolean;
-	textClassName?: string;
-	clickable?: boolean;
+	usernameClassName?: string;
+	disableAddressClick?: boolean;
 	truncateUsername?: boolean;
 }
 
-const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable = true, truncateUsername }: Props) => {
+const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, usernameClassName, disableAddressClick = true, truncateUsername }: Props) => {
 	const router = useRouter();
 	return (
 		<div className={`${className}`}>
 			{!defaultAddress ? (
 				<span
-					className={`username mr-1.5 font-semibold text-bodyBlue ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+					className={`username mr-1.5 font-semibold text-bodyBlue ${disableAddressClick ? 'cursor-pointer' : 'cursor-not-allowed'}`}
 					onClick={() => {
-						if (clickable) {
+						if (disableAddressClick) {
 							router.push(`/user/${username}`);
 						}
 					}}
@@ -38,11 +38,11 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 					passedUsername={username}
 					address={defaultAddress}
 					className='text-sm'
-					textClassName={textClassName}
-					displayInline={true}
+					displayInline
+					usernameClassName={usernameClassName}
 					disableIdenticon={disableIdenticon}
-					clickable={clickable}
-					truncateUsername={truncateUsername}
+					disableAddressClick={disableAddressClick}
+					isTruncateUsername={truncateUsername}
 					isSubVisible={false}
 				/>
 			)}

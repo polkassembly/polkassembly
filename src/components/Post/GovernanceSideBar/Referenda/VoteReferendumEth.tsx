@@ -585,7 +585,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				</>
 			</Modal>
 			<DelegationSuccessPopup
-				title='Voted'
+				title='Voted Successfully'
 				vote={vote}
 				isVote={true}
 				balance={lockedBalance}

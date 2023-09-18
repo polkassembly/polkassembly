@@ -10,13 +10,11 @@ import { ProposalType } from '~src/global/proposalType';
 import messages from '~src/util/messages';
 import { MessageType } from '~src/auth/types';
 
-export const getSubsquareCommentsFromFirebase = async ({ postId, network, postType }: {
-	postId: string, network: string, postType: ProposalType
-}) => {
+export const getSubsquareCommentsFromFirebase = async ({ postId, network, postType }: { postId: string; network: string; postType: ProposalType }) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
-		const commentsSnapshot = await postRef.collection('comments').where('comment_source','==' ,'subsquare').get();
-		const commentId = commentsSnapshot.docs.map(doc => doc.id);
+		const commentsSnapshot = await postRef.collection('comments').where('comment_source', '==', 'subsquare').get();
+		const commentId = commentsSnapshot.docs.map((doc) => doc.id);
 		return {
 			data: commentId,
 			error: null,

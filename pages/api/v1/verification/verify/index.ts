@@ -20,7 +20,7 @@ const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) 
 	const { token, type } = req.query;
 	const network = String(req.headers['x-network']);
 
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	if (!token || !type || type !== 'email' || typeof token !== 'string') {
 		return res.status(400).json({ message: 'Please provide valid token and type to verify' });
@@ -50,7 +50,6 @@ const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) 
 	}
 
 	return res.status(200).json({ message: 'Email verified successfully', status: true });
-
 };
 
 export default withErrorHandling(handler);

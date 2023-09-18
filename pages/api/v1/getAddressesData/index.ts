@@ -13,7 +13,7 @@ export interface IAddressData {
 }
 
 export interface IAddressesResponse {
-    addressesData: IAddressData[];
+	addressesData: IAddressData[];
 }
 
 const handler: NextApiHandler<IAddressesResponse | { error: string }> = async (req, res) => {

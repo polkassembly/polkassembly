@@ -17,8 +17,8 @@ import { fetchSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-p
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 
 export interface ILatestActivityPostsListingResponse {
-    count: number;
-    posts: any;
+	count: number;
+	posts: any;
 }
 
 interface IGetLatestActivityOnChainPostsParams {
@@ -34,7 +34,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
-			throw apiErrorWithStatusCode( `Invalid listingLimit "${listingLimit}"`, 400);
+			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
 		}
 
 		const strProposalType = String(proposalType);
@@ -63,7 +63,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		if (network === 'collectives') {
 			query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
 		}
-		if(network === 'polymesh'){
+		if (network === 'polymesh') {
 			query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 		}
 
@@ -78,7 +78,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			const data = await fetchSubsquare(network, 10, Number(1), Number(trackNo));
 			if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
 				subsquidRes['data'] = {
-					'proposals': data.items.map((item: any) => {
+					proposals: data.items.map((item: any) => {
 						return {
 							createdAt: item?.createdAt,
 							end: 0,
@@ -94,7 +94,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 							type: 'ReferendumV2'
 						};
 					}),
-					'proposalsConnection': {
+					proposalsConnection: {
 						totalCount: data.total
 					}
 				};
@@ -127,14 +127,14 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 					}
 				});
 			}
-			const postId = proposalType === ProposalType.TIPS?  hash: index;
+			const postId = proposalType === ProposalType.TIPS ? hash : index;
 			const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 			const postDoc = await postDocRef.get();
 			if (postDoc && postDoc.exists) {
 				const data = postDoc?.data();
 				if (data) {
 					let subsquareTitle = '';
-					if(data?.title === '' || data?.title === method || data.title === null){
+					if (data?.title === '' || data?.title === method || data.title === null) {
 						const res = await getSubSquareContentAndTitle(strProposalType as ProposalType, network, postId);
 						subsquareTitle = res?.title;
 					}
@@ -148,7 +148,8 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 						origin,
 						post_id: postId,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator,
-						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
+						spam_users_count:
+							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						status: status,
 						title: data?.title || subsquareTitle,
 						track_number: trackNumber,
@@ -157,7 +158,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 				}
 			}
 
-			let subsquareTitle =  '';
+			let subsquareTitle = '';
 			const res = await getSubSquareContentAndTitle(strProposalType as ProposalType, network, postId);
 			subsquareTitle = res?.title;
 
@@ -208,7 +209,7 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	const { trackNo, proposalType = ProposalType.DEMOCRACY_PROPOSALS, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getLatestActivityOnChainPosts({
 		listingLimit,
@@ -217,9 +218,9 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 		trackNo
 	});
 
-	if(error || !data) {
+	if (error || !data) {
 		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
+	} else {
 		return res.status(status).json(data);
 	}
 };

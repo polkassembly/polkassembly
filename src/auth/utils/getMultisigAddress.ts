@@ -37,7 +37,7 @@ export default function getMultisigAddress(addresses: string[], ss58Prefix: numb
 
 	let multisigAddress = '';
 
-	if(addresses[0].startsWith('0x')) {
+	if (addresses[0].startsWith('0x')) {
 		const pubkey = derivePubkey(addresses, Number(threshold));
 		multisigAddress = encodeAddress(pubkey, Number(ss58Prefix));
 	}

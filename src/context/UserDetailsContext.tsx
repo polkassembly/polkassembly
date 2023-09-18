@@ -11,11 +11,11 @@ import { JWTPayloadType } from '~src/auth/types';
 import { getLocalStorageToken } from '../services/auth.service';
 import { EGovType, UserDetailsContextType } from '../types';
 
-const initialUserDetailsContext : UserDetailsContextType = {
+const initialUserDetailsContext: UserDetailsContextType = {
 	addresses: [],
 	allowed_roles: [],
 	defaultAddress: '',
-	delegationDashboardAddress:'',
+	delegationDashboardAddress: '',
 	email: null,
 	email_verified: false,
 	govType: EGovType.OPEN_GOV,
@@ -27,13 +27,13 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	loginAddress: '',
 	loginWallet: null,
 	multisigAssociatedAddress: '',
-	networkPreferences:{
+	networkPreferences: {
 		channelPreferences: {},
-		triggerPreferences:{}
+		triggerPreferences: {}
 	},
 	picture: null,
-	primaryNetwork:'',
-	setUserDetailsContextState : (): void => {
+	primaryNetwork: '',
+	setUserDetailsContextState: (): void => {
 		throw new Error('setUserDetailsContextState function must be overridden');
 	},
 	setWalletConnectProvider: (): void => {
@@ -89,7 +89,6 @@ try {
 export const UserDetailsContext = createContext(initialUserDetailsContext);
 
 export const UserDetailsProvider = ({ children }: React.PropsWithChildren<{}>) => {
-
 	const [userDetailsContextState, setUserDetailsContextState] = useState(initialUserDetailsContext);
 	const [walletConnectProvider, setWalletConnectProvider] = useState<WalletConnectProvider | null>(null);
 

@@ -14,11 +14,13 @@ interface IPostTimelineProps {
 
 const PostTimeline: FC<IPostTimelineProps> = (props) => {
 	const { className } = props;
-	const { postData: { timeline } } = usePostDataContext();
+	const {
+		postData: { timeline }
+	} = usePostDataContext();
 	return (
 		<div className={`${className} ml-9`}>
-			{
-				timeline && Array.isArray(timeline) && timeline.length > 0 ?timeline?.map((obj: any, index) => {
+			{timeline && Array.isArray(timeline) && timeline.length > 0 ? (
+				timeline?.map((obj: any, index) => {
 					return (
 						<TimelineContainer
 							key={index}
@@ -26,8 +28,9 @@ const PostTimeline: FC<IPostTimelineProps> = (props) => {
 						/>
 					);
 				})
-					: <PostEmptyState />
-			}
+			) : (
+				<PostEmptyState />
+			)}
 		</div>
 	);
 };

@@ -10,15 +10,7 @@ import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
 import * as validation from 'src/util/validation';
 
-const ChangePassword = ({
-	open,
-	onConfirm,
-	onCancel
-}: {
-	open: boolean;
-	onConfirm?: () => void;
-	onCancel: () => void;
-}) => {
+const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfirm?: () => void; onCancel: () => void }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
 	const { password } = validation;
@@ -75,8 +67,8 @@ const ChangePassword = ({
 	return (
 		<Modal
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
-					<h3 className='ml-[24px] mb-0 flex items-center gap-2 text-base md:text-md'>
+				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+					<h3 className='md:text-md mb-0 ml-[24px] flex items-center gap-2 text-base'>
 						<ChangePasswordIcon /> Change your username
 					</h3>
 					<Divider />
@@ -89,14 +81,14 @@ const ChangePassword = ({
 			onOk={onConfirm}
 			footer={null}
 		>
-			<div className='flex gap-[10px] flex-wrap items-center'>
+			<div className='flex flex-wrap items-center gap-[10px]'>
 				<Form
 					onFinish={handleClick}
 					form={form}
-					className='flex flex-col gap-6 w-full'
+					className='flex w-full flex-col gap-6'
 				>
 					<div>
-						<label htmlFor="currentPassword">Current Password</label>
+						<label htmlFor='currentPassword'>Current Password</label>
 						<Form.Item
 							name='currentPassword'
 							className='m-0 w-full min-w-[250px]'
@@ -119,7 +111,7 @@ const ChangePassword = ({
 						</Form.Item>
 					</div>
 					<div>
-						<label htmlFor="newPassword">New Password</label>
+						<label htmlFor='newPassword'>New Password</label>
 						<Form.Item
 							name='newPassword'
 							className='m-0 w-full min-w-[250px]'
@@ -142,7 +134,7 @@ const ChangePassword = ({
 						</Form.Item>
 					</div>
 					<div>
-						<label htmlFor="confirmPassword">Confirm New Password</label>
+						<label htmlFor='confirmPassword'>Confirm New Password</label>
 						<Form.Item
 							name='confirmPassword'
 							className='m-0 w-full min-w-[250px]'
@@ -169,14 +161,14 @@ const ChangePassword = ({
 						</Form.Item>
 					</div>
 					<div>
-						<div className='mr-[-24px] ml-[-24px]'>
+						<div className='ml-[-24px] mr-[-24px]'>
 							<Divider className='my-4' />
 						</div>
 						<div className='flex justify-end gap-4'>
 							<Button
 								key='1'
 								onClick={onCancel}
-								className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
 							>
 								Cancel
 							</Button>
@@ -185,7 +177,7 @@ const ChangePassword = ({
 								loading={loading}
 								htmlType='submit'
 								key='2'
-								className='h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
 							>
 								Save
 							</Button>

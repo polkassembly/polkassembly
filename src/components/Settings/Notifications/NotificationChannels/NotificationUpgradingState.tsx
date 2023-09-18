@@ -6,10 +6,18 @@ import PaLogo from '~src/components/AppLayout/PaLogo';
 
 const NotificationUpgradingState = () => {
 	return (
-		<div className='w-full flex flex-col items-center pt-[18px]'>
-			<h3 className='text-[20px]'>If you&apos;d like notifications enabled for your chain, please reach out to us on <a className='text-pink_primary' href="mailto:hello@polkassembly.io">hello@polkassembly.io</a></h3>
+		<div className='flex w-full flex-col items-center pt-[18px]'>
+			<h3 className='text-[20px]'>
+				If you&apos;d like notifications enabled for your chain, please reach out to us on{' '}
+				<a
+					className='text-pink_primary'
+					href='mailto:hello@polkassembly.io'
+				>
+					hello@polkassembly.io
+				</a>
+			</h3>
 			<div className='w-[200px]'>
-				<PaLogo sidedrawer={false}/>
+				<PaLogo sidedrawer={false} />
 			</div>
 		</div>
 	);

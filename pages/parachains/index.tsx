@@ -6,6 +6,7 @@ import { Col,Row,Tabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ParachainInfoCard from '~src/components/Parachains/ParachainInfoCard';
@@ -13,7 +14,7 @@ import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
-import ChainDataTable from '../../src/components/Parachains/ChainDataTable';
+import ChainData from '../../src/components/Parachains/ChainDataTable';
 
 interface Props {
   className?: string
@@ -25,9 +26,20 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
+const ChainDataTable = styled(ChainData)`
+	.ant-table-thead > tr > th, .ant-table-tbody > tr {
+		background-color: ${props => props.theme === 'dark' ? 'blue' : 'white'} !important;
+	}
+	td{
+		color: ${props => props.theme === 'dark' ? 'white' : '#243A57'} !important;
+		font-weight: 500;
+		background-color: ${props => props.theme === 'dark' ? 'blue' : 'white'} !important;
+	}
+`;
+
 const Parachains = ({ className, network }: Props) => {
 	const { setNetwork } = useNetworkContext();
-
+	const { resolvedTheme:theme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,9 +60,9 @@ const Parachains = ({ className, network }: Props) => {
 
 	const tabItems = [
 		// eslint-disable-next-line sort-keys
-		{ label: <CountBadgePill label='Polkadot' count={polkadotProjects} />, key: 'polkadot', children: <ChainDataTable data={parachainsData} chain='polkadot' /> },
+		{ label: <CountBadgePill label='Polkadot' count={polkadotProjects} />, key: 'polkadot', children: <ChainDataTable theme={theme} data={parachainsData} chain='polkadot' /> },
 		// eslint-disable-next-line sort-keys
-		{ label: <CountBadgePill label='Kusama' count={kusamaProjects} />, key: 'kusama', children: <ChainDataTable data={parachainsData} chain='kusama' /> }
+		{ label: <CountBadgePill label='Kusama' count={kusamaProjects} />, key: 'kusama', children: <ChainDataTable theme={theme} data={parachainsData} chain='kusama' /> }
 	];
 
 	return (
@@ -61,10 +73,10 @@ const Parachains = ({ className, network }: Props) => {
 
 				<Row gutter={[{ lg:16 }, 16]} className='mb-4 md:mb-6'>
 					<Col span={24} lg={{ span:12 }}>
-						<ParachainInfoCard projects={polkadotProjects} network='polkadot' />
+						<ParachainInfoCard projects={polkadotProjects} theme={theme} network='polkadot' />
 					</Col>
 					<Col span={24} lg={{ span:12 }}>
-						<ParachainInfoCard projects={kusamaProjects} network='kusama' />
+						<ParachainInfoCard projects={kusamaProjects} theme={theme} network='kusama' />
 					</Col>
 				</Row>
 
@@ -122,7 +134,7 @@ export default styled(Parachains)`
 	}
 
 	.ant-table-thead{
-		color: var(--bodyBlue) !important;
+		color: ${props => props.theme === 'dark' ? 'white' : '#243A57'} !important;
 		font-weight: 500;
 	}
 

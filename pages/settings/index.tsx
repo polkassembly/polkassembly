@@ -74,12 +74,12 @@ const Settings: FC<Props> = (props) => {
 			<Col className='w-full h-full'>
 				<div className='mt-6 w-full bg-white dark:bg-section-dark-overlay shadow-md p-8 rounded-md'>
 					<h3
-						className='font-semibold text-xl tracking-wide leading-7 text-sidebarBlue'
+						className='font-semibold text-xl tracking-wide leading-7 text-sidebarBlue dark:text-blue-dark-high'
 					>
 						Settings
 					</h3>
 					<Tabs
-						className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue font-medium'
+						className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue dark:text-blue-dark-medium font-medium'
 						type="card"
 						defaultActiveKey={tab || 'account'}
 						onTabClick={handleTabClick}

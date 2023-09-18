@@ -483,13 +483,13 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 				<div>
 					<Row className='pt-0'>
 						{!small && width > 992 &&
-						<Col span={8} id='calendar-left-panel' className='calendar-left-panel'>
+						<Col span={8} id='calendar-left-panel' className='calendar-left-panel dark:bg-section-dark-overlay'>
 							<div className='p-5 pl-2 pt-0'>
-								<p className='text-sidebarBlue font-medium text-md text-center mb-2'>Current Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
+								<p className='text-sidebarBlue dark:text-blue-dark-medium font-medium text-md text-center mb-2'>Current Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
 
 								<Spin spinning={categoriesLoading} indicator={<></>}>
 									<Calendar
-										className='events-calendar-mini'
+										className='events-calendar-mini dark:bg-section-dark-overlay'
 										date={miniCalSelectedDate}
 										onNavigate={setMiniCalSelectedDate}
 										localizer={localizer}
@@ -510,14 +510,14 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 									/>
 								</Spin>
 
-								<div className='font-medium text-md text-sidebarBlue mb-3'>Proposal Status: </div>
+								<div className='font-medium text-md text-sidebarBlue dark:text-blue-dark-medium mb-3'>Proposal Status: </div>
 								<Space direction='vertical'>
 									{listData.map((item) => (
 										<Badge key={item.color} text={item.label} color={item.color} />
 									))}
 								</Space>
 
-								<div className='font-medium text-md text-sidebarBlue mt-8 mb-3'>Categories: </div>
+								<div className='font-medium text-md text-sidebarBlue dark:text-blue-dark-medium mt-8 mb-3'>Categories: </div>
 								<Checkbox.Group disabled={categoriesLoading} className='flex-wrap' defaultValue={initCategories} onChange={(checkedValues) => setSelectedCategories(checkedValues)}>
 									<Row>
 										{

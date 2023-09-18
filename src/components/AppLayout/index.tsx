@@ -298,8 +298,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Tech Committee...', 'gov1_democracy_group', <TechComProposalIcon className='text-sidebarBlue' />, [
 				...gov1Items.techCommItems
 			])
-			// getSiderMenuItem('Council Motions', '/motions', <MotionsIcon className='text-white' />),
-			// getSiderMenuItem('Tech Committee Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		]);
 	}
 
@@ -359,14 +357,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	const userDropdown = getUserDropDown( handleIdentityButtonClick, isIdentityUnverified, isGood, handleLogout,network ,picture, (mainDisplay || username)! , `${className} ${poppins.className} ${poppins.variable}`);
-	// const userDropdown = getUserDropDown(handleIdentityButtonClick, handleLogout,network ,picture, username!, `${className} ${poppins.className} ${poppins.variable}`);
 	const govOverviewItems = isOpenGovSupported(network) ? [
-		!isMobile ? getSiderMenuItem('', '', <div className={`${className} svgLogo logo-container logo-display-block -mt-[8px] w-[412px] -ml-[106px] flex items-center justify-center h-[66px]`}>
-			{sidedrawer &&
-			<div className={'-ml-[72px] mt-[14px] logo-padding'}>
-				<PaLogo className='h-full mt-[10px]' sidedrawer={sidedrawer} />
-				<div className={`${sidedrawer ? 'border-bottom' : 'border-none'} mt-[10px] w-[220px] ml-[68px]`}></div>
-			</div>}
+		!isMobile ? getSiderMenuItem('', '', <div className={`${className} bg-grey svgLogo logo-container logo-display-block flex items-center justify-center h-[66px]`}>
+			<div className>
+				<PaLogo className={`${sidedrawer ? 'ml-2':'ml-0'}h-full`} sidedrawer={sidedrawer} />
+				<div className='border-bottom my-2 -mx-4'></div>
+			</div>
 		</div>): null,
 		getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
@@ -427,9 +423,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [
 			...gov2TrackItems.fellowshipItems
 		]),
-		// getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2  text-base font-medium'>Gov1</span>, 'tracksHeading', null,[
 		...items
-		// ])
 	];
 
 	if (isFellowshipSupported(network)) {
@@ -467,7 +461,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed z-40'}
+					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed z-[1005]'}
 				>
 
 					<Menu
@@ -476,7 +470,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[20px]`}
+						className={`${username?'auth-sider-menu':''}`}
 					/>
 				</Sider>
 				<Drawer

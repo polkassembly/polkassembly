@@ -61,19 +61,6 @@ const getIdentityIcons = (key: string) => {
 			return <WebIcon />;
 	}
 };
-
-const Identity = ({ title, value, icon }: { title: string; value: string; icon: any }) => {
-	return (
-		<li className='flex items-center'>
-			<span className='desc flex items-center text-sm font-medium capitalize text-bodyBlue'>
-				{icon}
-				{title}:
-			</span>
-			<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{value}</span>
-		</li>
-	);
-};
-
 const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
@@ -111,16 +98,20 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		<StyledPopup>
 			{identityArr.map((item, index) => {
 				{
-					return (
-						item?.value && (
-							<Identity
-								icon={getIdentityIcons(item?.key)}
-								title={item?.key}
-								value={(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}
-								key={index}
-							/>
-						)
-					);
+					return item?.key === 'Judgements'
+						? item?.value?.length
+						: item?.value && (
+								<li
+									className='flex items-center'
+									key={index}
+								>
+									<span className='desc flex items-center text-sm font-medium capitalize text-bodyBlue'>
+										{getIdentityIcons(item?.key)}
+										{item?.key}:
+									</span>
+									<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}</span>
+								</li>
+						  );
 				}
 			})}
 

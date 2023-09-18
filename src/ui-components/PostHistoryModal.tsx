@@ -60,7 +60,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							<NameLabel
 								defaultAddress={defaultAddress}
 								username={username}
-								textClassName='text-xs text-[#334D6E]'
+								usernameClassName='text-xs text-[#334D6E]'
 							/>
 						</div>
 						<div className='flex items-center'>

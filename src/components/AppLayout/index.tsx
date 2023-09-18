@@ -459,7 +459,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	return (
 		<Layout className={className}>
-			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} sidedrawerHover={true} previousRoute={previousRoute} />
+			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
 			<Layout hasSider>
 				<Sider
 					trigger={null}

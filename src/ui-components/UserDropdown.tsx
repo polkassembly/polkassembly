@@ -166,7 +166,7 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 					await fetchUsername(true);
 				}
 			}}>
-				<div className={`description ${addressClassName} w-[50px] user-details-container text-ellipsis overflow-hidden text-xs text-bodyBlue`}>
+				<div className={`description ${addressClassName} w-[78px] user-details-container text-ellipsis overflow-hidden text-xs text-bodyBlue`}>
 					{ username }
 				</div>
 			</div>}

@@ -41,7 +41,6 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 interface Props {
 	className?: string
 	sidedrawer: boolean
-	sidedrawerHover: boolean
   previousRoute?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -144,7 +143,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	);
 
 	return (
-		<Header className={`${className} shadow-md ${sidedrawer?'z-1':'z-[1001]'} sticky top-0 flex items-center  bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
+		<Header className={`${className} shadow-md ${sidedrawer?'z-1':'z-[1000]'} sticky top-0 flex items-center  bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
 			<span onClick={() => { setSidedrawer(!sidedrawer); }} >
 				<Dashboard className='text-2xl mt-1 lg:hidden mr-5'/>
 			</span>
@@ -155,6 +154,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 					</Link>
 
 					<div className='flex items-center type-container'>
+						<span className='line-container bg-pink_primary h-5 md:h-10 w-[1.5px] mr-[8px] md:mr-[10px] ml-[16px]'></span>
 						<h2 className='text-container font-semibold m-0 p-0 ml-[84px] text-[#243A57] text-base lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{
 								govType === EGovType.OPEN_GOV ? 'OpenGov': 'Gov1'
@@ -164,7 +164,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 				</div>
 
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
-					<SearchBar/>
+					<SearchBar className='searchbar-container'/>
 
 					<Space className='hidden md:flex items-center justify-between gap-x-2 md:gap-x-4'>
 
@@ -192,7 +192,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 										</div>
 
 									</div>:	<div className={'flex items-center justify-between gap-x-2'} >
-										<UserDropdown className="navbar-user-dropdown h-[32px] w-[130px]" address={defaultAddress || ''}/>
+										<UserDropdown className="navbar-user-dropdown h-[32px] max-w-[160px]" address={defaultAddress || ''}/>
 									</div>
 								}
 
@@ -232,7 +232,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 										className='p-4 bg-white'
 									>
 										<div className='flex flex-col'>
-											<SearchBar  />
+											<SearchBar/>
 											<div>
 												<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em] text-left'>Network</p>
 												<NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} />
@@ -354,6 +354,21 @@ navbar-user-dropdown {
 	display: inline-block !important;
 }
 
+.line-container {
+	display: none !important;
+}
+
+@media (max-width: 1023px) and (min-width: 468px){
+	.text-container {
+		margin-left: -2px!important;
+	}
+
+	.line-container {
+		display: block !important;
+		margin-left: -15px !important;
+	}
+}
+
 @media (max-width: 468px) and (min-width: 380px){
 	.type-container {
 		margin-left:5px !important;
@@ -368,7 +383,16 @@ navbar-user-dropdown {
 	}
 
 	.text-container {
-		margin-left: 8px!important;
+		margin-left: -2px!important;
+	}
+
+	.line-container {
+		display: block !important;
+		margin-left: 4px !important;
+	}
+
+	.searchbar-container {
+		display: none !important;
 	}
 }	
 
@@ -383,6 +407,14 @@ navbar-user-dropdown {
 
 	.text-container {
 		margin-left: -4px!important;
+	}
+
+	.line-container {
+		display: block !important;
+	}
+
+	.searchbar-container {
+		display: none !important;
 	}
 }	
 

@@ -7,7 +7,7 @@ import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWi
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import styled from 'styled-components';
-import {  Avatar } from 'antd';
+import { Avatar } from 'antd';
 
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -20,51 +20,61 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 
 export enum EAddressOtherTextType {
-	CONNECTED='Connected',
-	COUNCIL='Council',
-	COUNCIL_CONNECTED='Council (Connected)',
-	LINKED_ADDRESS= 'Linked',
-    UNLINKED_ADDRESS = 'Address not linked',
+	CONNECTED = 'Connected',
+	COUNCIL = 'Council',
+	COUNCIL_CONNECTED = 'Council (Connected)',
+	LINKED_ADDRESS = 'Linked',
+	UNLINKED_ADDRESS = 'Address not linked'
 }
 
 interface Props {
-	address: string
-	className?: string
-	displayInline?: boolean
-	disableIdenticon?: boolean
-	extensionName?: string
-	popupContent?: string
-	disableAddress?:boolean
-	shortenAddressLength?:number
-	isShortenAddressLength?:boolean
-	textClassName?:string
+	address: string;
+	className?: string;
+	displayInline?: boolean;
+	disableIdenticon?: boolean;
+	extensionName?: string;
+	popupContent?: string;
+	disableAddress?: boolean;
+	shortenAddressLength?: number;
+	isShortenAddressLength?: boolean;
+	textClassName?: string;
 	identiconSize?: number;
 	ethIdenticonSize?: number;
 	disableHeader?: boolean;
 	disableAddressClick?: boolean;
 	isSubVisible?: boolean;
 	addressClassName?: string;
-	clickable?:boolean;
-	truncateUsername?:boolean;
+	clickable?: boolean;
+	truncateUsername?: boolean;
 	otherTextType?: EAddressOtherTextType;
 	otherTextClassName?: string;
-	passedUsername?:string
-	passedImageURL?:string;
+	passedUsername?: string;
+	passedImageURL?: string;
 	isVoterAddress?: boolean;
 	isSimpleDropdown?: boolean;
 }
 
-const UserDropdown = ({ address, className, displayInline, disableAddress, disableAddressClick, addressClassName, clickable=true , otherTextType, otherTextClassName, isVoterAddress }: Props): JSX.Element => {
-
+const UserDropdown = ({
+	address,
+	className,
+	displayInline,
+	disableAddress,
+	disableAddressClick,
+	addressClassName,
+	clickable = true,
+	otherTextType,
+	otherTextClassName,
+	isVoterAddress
+}: Props): JSX.Element => {
 	const { network } = useNetworkContext();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);
-	const[img, setImg] = useState<string>('');
+	const [img, setImg] = useState<string>('');
 	const { username } = useUserDetailsContext();
 
 	useEffect(() => {
-		if (network === AllNetworks.COLLECTIVES && (apiContext.relayApi && apiContext.relayApiReady)) {
+		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			setApi(apiContext.relayApi);
 			setApiReady(apiContext.relayApiReady);
 		} else {
@@ -75,7 +85,7 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady]);
 
 	const encoded_addr = address ? getEncodedAddress(address, network) || '' : '';
-	const fetchUsername = async (isOnclick:boolean) => {
+	const fetchUsername = async (isOnclick: boolean) => {
 		if (isVoterAddress) {
 			return;
 		}
@@ -84,24 +94,22 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 		if (substrateAddress) {
 			try {
 				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
-				if (error|| !data || !data.username) {
+				if (error || !data || !data.username) {
 					return;
 				}
 
 				console.log(data);
 				setImg(data?.profile?.image || '');
-				if(isOnclick){
+				if (isOnclick) {
 					return;
 				}
 
-				if(MANUAL_USERNAME_25_CHAR.includes(data.username) || data.custom_username || data.username.length !== 25){
+				if (MANUAL_USERNAME_25_CHAR.includes(data.username) || data.custom_username || data.username.length !== 25) {
 					return;
 				}
-
 			} catch (error) {
 				console.log(error);
 			}
-
 		}
 	};
 
@@ -109,29 +117,31 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 		if (!api || !apiReady) return;
 	};
 
-	useEffect( () => {
+	useEffect(() => {
 		try {
-			if(!username)
-				fetchUsername(false);
+			if (!username) fetchUsername(false);
 		} catch (error) {
 			// console.log(error);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 
 		let unsubscribe: () => void;
 
-		api.derive.accounts.info(encoded_addr, () => {
-			// setIdentity(info.identity);
-		})
-			.then(unsub => { unsubscribe = unsub; })
-			.catch(e => console.error(e));
+		api.derive.accounts
+			.info(encoded_addr, () => {
+				// setIdentity(info.identity);
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => console.error(e));
 
 		return () => unsubscribe && unsubscribe();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [encoded_addr, api, apiReady]);
 
 	useEffect(() => {
@@ -139,55 +149,80 @@ const UserDropdown = ({ address, className, displayInline, disableAddress, disab
 
 		let unsubscribe: () => void;
 
-		api.derive.accounts.flags(encoded_addr, () => {
-		})
-			.then(unsub => { unsubscribe = unsub; })
-			.catch(e => console.error(e));
+		api.derive.accounts
+			.flags(encoded_addr, () => {})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => console.error(e));
 
 		return () => unsubscribe && unsubscribe();
 	}, [encoded_addr, api, apiReady]);
 
 	useEffect(() => {
-		if(network === 'kilt') {
+		if (network === 'kilt') {
 			getKiltName();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 	return (
-		<div className={`${displayInline ? className + ' display_inline': className} bg-[#f6f7f9] rounded-3xl font-semibold user-container px-2 flex justify-center items-center`} style={{ border:'1px solid #d7dce3' }}>
-			{img ? <Avatar className='-ml-1 mr-2 user-image' size={20} src={img} /> :
-				<Avatar className='-ml-1 mr-2 user-image' size={20} icon={<UserOutlined />} />
-			}
-			{!disableAddress && <div className={`content -mr-[3px] ${clickable ? 'cursor-pointer' : 'cursor-not-allowed' }`} onClick={async () => {
-				if(!clickable){
-					return;
-				}
-				if (!disableAddressClick) {
-					await fetchUsername(true);
-				}
-			}}>
-				<div className={`description ${addressClassName} w-[78px] user-details-container text-ellipsis overflow-hidden text-xs text-bodyBlue`}>
-					{ username }
+		<div
+			className={`${displayInline ? className + ' display_inline' : className} user-container flex items-center justify-center rounded-3xl bg-[#f6f7f9] px-2 font-semibold`}
+			style={{ border: '1px solid #d7dce3' }}
+		>
+			{img ? (
+				<Avatar
+					className='user-image -ml-1 mr-2'
+					size={20}
+					src={img}
+				/>
+			) : (
+				<Avatar
+					className='user-image -ml-1 mr-2'
+					size={20}
+					icon={<UserOutlined />}
+				/>
+			)}
+			{!disableAddress && (
+				<div
+					className={`content -mr-[3px] ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+					onClick={async () => {
+						if (!clickable) {
+							return;
+						}
+						if (!disableAddressClick) {
+							await fetchUsername(true);
+						}
+					}}
+				>
+					<div className={`description ${addressClassName} user-details-container w-[78px] overflow-hidden text-ellipsis text-xs text-bodyBlue`}>{username}</div>
 				</div>
-			</div>}
-			{
-				otherTextType? <p className={`m-0 flex items-center gap-x-1 text-lightBlue leading-[15px] text-[10px] ${otherTextClassName}`}>
+			)}
+			{otherTextType ? (
+				<p className={`m-0 flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue ${otherTextClassName}`}>
 					<span
-						className={classNames('w-[6px] h-[6px] rounded-full', {
+						className={classNames('h-[6px] w-[6px] rounded-full', {
 							'bg-aye_green ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(otherTextType),
 							'bg-blue ': otherTextType === EAddressOtherTextType.COUNCIL,
 							'bg-nay_red': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.UNLINKED_ADDRESS].includes(otherTextType)
 						})}
-					>
-					</span>
-					<span className='text-xs text-lightBlue'>
-						{otherTextType}
-					</span>
-				</p>: null
-			}
-			<div className='flex justify-center items-center w-15'><svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 20 21" fill="none">
-				<path d="M6.76693 8.2418L10.0003 11.4751L13.2336 8.2418C13.5586 7.9168 14.0836 7.9168 14.4086 8.2418C14.7336 8.5668 14.7336 9.0918 14.4086 9.4168L10.5836 13.2418C10.2586 13.5668 9.73359 13.5668 9.40859 13.2418L5.58359 9.4168C5.25859 9.0918 5.25859 8.5668 5.58359 8.2418C5.90859 7.92513 6.44193 7.9168 6.76693 8.2418Z" fill="#485F7D"/>
-			</svg>
+					></span>
+					<span className='text-xs text-lightBlue'>{otherTextType}</span>
+				</p>
+			) : null}
+			<div className='w-15 flex items-center justify-center'>
+				<svg
+					xmlns='http://www.w3.org/2000/svg'
+					width='30'
+					height='25'
+					viewBox='0 0 20 21'
+					fill='none'
+				>
+					<path
+						d='M6.76693 8.2418L10.0003 11.4751L13.2336 8.2418C13.5586 7.9168 14.0836 7.9168 14.4086 8.2418C14.7336 8.5668 14.7336 9.0918 14.4086 9.4168L10.5836 13.2418C10.2586 13.5668 9.73359 13.5668 9.40859 13.2418L5.58359 9.4168C5.25859 9.0918 5.25859 8.5668 5.58359 8.2418C5.90859 7.92513 6.44193 7.9168 6.76693 8.2418Z'
+						fill='#485F7D'
+					/>
+				</svg>
 			</div>
 		</div>
 	);
@@ -205,12 +240,10 @@ export default styled(UserDropdown)`
 
 	.identicon {
 		margin-right: 0.25rem;
-		
 	}
 	.identicon svg {
-		width:20px;
-		font-size:15px;
-		
+		width: 20px;
+		font-size: 15px;
 	}
 
 	.identityName {
@@ -226,7 +259,6 @@ export default styled(UserDropdown)`
 	.description {
 		color: nav_blue;
 		margin-right: 0.4rem;
-		
 	}
 
 	.display_inline {
@@ -242,7 +274,7 @@ export default styled(UserDropdown)`
 		width: 60px;
 	}
 
-	@media (max-width: 468px) and (min-width: 380px){
+	@media (max-width: 468px) and (min-width: 380px) {
 		.user-details-container {
 			width: 100px !important;
 			font-size: 14px !important;

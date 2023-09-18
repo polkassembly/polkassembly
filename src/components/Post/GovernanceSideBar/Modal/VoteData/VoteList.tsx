@@ -228,8 +228,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex gap-6'>
-					<div className='flex flex-col justify-between'>
-						<div className='w-[320px] sm:w-full'>
+					<div className='flex w-full flex-col justify-between'>
+						<div className='w-full'>
 							<div className='mb-8 flex w-full items-center justify-center'>
 								<StyledSegmented
 									block

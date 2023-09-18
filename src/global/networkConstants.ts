@@ -227,7 +227,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: kusamaLogo,
 		rpcEndpoint: 'wss://kusama-rpc.polkadot.io',
 		ss58Format: 2,
-		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/v/v4/graphql',
+		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/v/v2/graphql',
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.KSM,
 		treasuryProposalBondPercent: '5.00%',

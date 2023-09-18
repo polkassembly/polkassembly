@@ -67,6 +67,7 @@ import VoteDataModal from './Modal/VoteData';
 import { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import VotersList from './Referenda/VotersList';
+import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -1018,16 +1019,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											<>
 												{proposalType === ProposalType.OPEN_GOV && (
 													<div className={className}>
-														<ReferendumV2VoteInfo
-															setThresholdOpen={(open) => {
-																setThresholdOpen(open);
-															}}
-															setOpen={setOpen}
-															referendumId={onchainId as number}
-															tally={tally}
-															showVoteHistory={false}
-														/>
-														<ReferendumV2VoteInfo
+														<ReferendumV2VoteInfo tally={tally} />
+														<RefV2ThresholdData
 															setThresholdOpen={(open) => {
 																if (!isCurvesRender.current) {
 																	setTimeout(() => {
@@ -1037,9 +1030,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																setThresholdOpen(open);
 															}}
 															setOpen={setOpen}
-															referendumId={onchainId as number}
-															tally={tally}
-															showVoteHistory={true}
 															thresholdData={{
 																curvesError,
 																curvesLoading,

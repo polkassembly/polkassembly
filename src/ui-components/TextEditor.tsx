@@ -136,8 +136,12 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						ref={ref}
 						disabled={isDisabled}
 						onEditorChange={(content) => {
+							const allowedTags = ['ul', 'li', 'img', 'table'];
+							const regex = new RegExp(`<(?!\\/?(${allowedTags.join('|')})\\b)[^>]+>|&nbsp;|\\n`, 'gi');
+							const cleanContent = content.replace(regex, '');
+
 							const textContent = ref.current?.editor?.getContent({ format: 'text' }).trim();
-							const cleanContent = content.replace(/<p>|<\/p>|&nbsp;/g, '').trim();
+
 							if (!textContent && !cleanContent) {
 								onChange('');
 								return;

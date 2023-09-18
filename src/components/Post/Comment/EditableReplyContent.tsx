@@ -171,6 +171,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 	const handleRetry = async() => {
 		await replyToreplyForm.validateFields();
+		const newContent = form.getFieldValue('content');
 		const replyContent = replyToreplyForm.getFieldValue('content');
 		if(!replyContent) return;
 		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
@@ -193,7 +194,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		if(data){
 			setComments((prev:any) => {
 				const comments:any = Object.assign({}, prev);
-				for(const key of keys){
+				for(const key of Object.keys(comments)){
 					let flag = false;
 					if (prev?.[key]) {
 						comments[key] = prev[key].map((comment:any) => {

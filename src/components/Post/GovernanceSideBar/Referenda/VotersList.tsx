@@ -176,18 +176,18 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const decisionOptions = [
 		{
-			label: <div className='flex items-center justify-center'><LikeFilled className='mr-1.5' /> <span>Ayes</span></div>,
+			label: <div className='flex items-center justify-center dark:text-blue-dark-medium'><LikeFilled className='mr-1.5 dark:text-green-500' /> <span>Ayes</span></div>,
 			value: 'yes'
 		},
 		{
-			label: <div className='flex items-center justify-center'><DislikeFilled className='mr-1.5' /> <span>Nays</span></div>,
+			label: <div className='flex items-center justify-center dark:text-blue-dark-medium'><DislikeFilled className='mr-1.5 dark:text-pink_primary' /> <span>Nays</span></div>,
 			value: 'no'
 		}
 	];
 
 	if(voteType === VoteType.REFERENDUM_V2) {
 		decisionOptions.push({
-			label: <div className='flex items-center justify-center'><MinusCircleFilled className='mr-1.5' /> <span>Abstain</span></div>,
+			label: <div className='flex items-center justify-center dark:text-blue-dark-medium'><MinusCircleFilled className='mr-1.5 dark:text-blue-500' /> <span>Abstain</span></div>,
 			value: 'abstain'
 		});
 	}
@@ -227,7 +227,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			}}
 			trigger={['click']}
 		>
-			<div className='dropdown-div flex items-center cursor-pointer hover:text-pink_primary py-1 px-2 rounded'>
+			<div className='dropdown-div flex items-center cursor-pointer hover:text-pink_primary dark:text-pink_primary py-1 px-2 rounded'>
 				<span className='mr-2'>Sort By</span>
 				<SwapOutlined rotate={90} style={ { fontSize: '14px' } } />
 			</div>
@@ -236,7 +236,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		<>
 			<Spin className={className} spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
 				<div className="flex justify-between mb-6 bg-white dark:bg-section-dark-overlay z-10">
-					<h6 className='dashboard-heading'>Votes</h6>
+					<h6 className='dashboard-heading dark:text-white'>Votes</h6>
 					{ ![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) && <div>
 						{sortByDropdown}
 					</div>}
@@ -245,7 +245,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				<div className="w-full flex items-center justify-center mb-8">
 					<Segmented
 						block
-						className='px-3 py-2 rounded-md w-full'
+						className='px-3 py-2 rounded-md w-full dark:bg-section-dark-background'
 						size="large"
 						value={decision}
 						onChange={(value) => {
@@ -256,7 +256,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					/>
 				</div>
 
-				<div className='flex flex-col text-xs xl:text-sm xl:max-h-screen gap-y-1 overflow-y-auto px-0 text-sidebarBlue'>
+				<div className='flex flex-col text-xs xl:text-sm xl:max-h-screen gap-y-1 overflow-y-auto px-0 text-sidebarBlue dark:text-blue-dark-medium'>
 					<div className='flex text-xs items-center justify-between mb-9 font-semibold'>
 						<div className='w-[110px]'>Voter</div>
 						<div className={classNames('', {

@@ -21,6 +21,7 @@ import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import dayjs from 'dayjs';
+import { useTheme } from 'next-themes';
 
 const Styled = styled.div`
     padding:0;
@@ -80,6 +81,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource= 'polkassembly', cid ,spam_users_count = 0, truncateUsername , vote , votesArr = [] , isRow } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal,setShowVotesModal] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const items : MenuProps['items']=[
 		sentiment === 1 ? { key:1,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely Against</div> }:null,
@@ -189,12 +191,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`w-[400px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px]`}
+								className={`w-[400px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 								closeIcon={<CloseCross/>}
 								wrapClassName={className}
 								title={
-									<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex  items-center gap-2'>
-										<span className='text-bodyBlue font-semibold tracking-[0.0015em] ml-4 text-xl'>Votes</span>
+									<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-black'>
+										<span className='text-bodyBlue font-semibold tracking-[0.0015em] ml-4 text-xl dark:text-white'>Votes</span>
 									</div>
 								}
 							>
@@ -210,7 +212,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 																Aye
 															</span>
 														</div>
-														<p>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+														<p className='dark:text-blue-dark-medium'>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
 													</div> :
 													vote.decision == 'no' ?
 														<div className='w-[90%] flex justify-between'>
@@ -220,7 +222,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 																	Nay
 																</span>
 															</div>
-															<p>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+															<p className='dark:text-blue-dark-medium'>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
 														</div> :
 														vote.decision == 'abstain' && !(vote.balance as any).abstain ?
 															<div className='w-[90%] mb-[-1px] flex justify-between '>
@@ -230,7 +232,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 																		Split
 																	</span>
 																</div>
-																<p>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+																<p className='dark:text-blue-dark-medium'>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
 															</div> :
 															vote.decision == 'abstain' && (vote.balance as any).abstain ?
 																<div className=' w-[90%] flex align-center justify-between mb-[1px]'>
@@ -240,7 +242,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 																			Abstain
 																		</span>
 																	</div>
-																	<p>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+																	<p className='dark:text-blue-dark-medium'>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
 																</div> : null
 												}
 											</div>

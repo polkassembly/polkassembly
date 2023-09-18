@@ -312,7 +312,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											{comments[`${timeline.index}_${timeline.type}`]?.[0]?.id ? <AnchorLink
 												href={`#${comments[`${timeline.index}_${timeline.type}`]?.[0]?.id}`}
 												title={
-													<div className='flex flex-col text-lightBlue sticky top-10'>
+													<div className='flex flex-col text-lightBlue sticky top-10 dark:text-blue-dark-medium'>
 														<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
 														<div className='text-xs'>({comments[`${timeline.index}_${timeline.type}`]?.length || 0})</div>

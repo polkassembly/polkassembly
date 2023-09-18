@@ -29,6 +29,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import { gov2ReferendumStatus } from '~src/global/statuses';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -40,6 +41,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme:theme } =  useTheme();
 	const router = useRouter();
 	const { loginWallet, loginAddress } = useUserDetailsContext();
 	const [address, setAddress] = useState<string>('');
@@ -230,19 +232,19 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		<Button onClick={() => setOpenModal(true)} className='bg-pink_primary text-sm font-medium text-white mt-4 rounded-[4px] h-[40px] w-full tracking-wide'>Pay Decision Deposit</Button>
 		<Modal
 			wrapClassName={className}
-			className = {`${poppins.className} ${poppins.variable} pay-decision-deposite `}
+			className = {`${poppins.className} ${poppins.variable} pay-decision-deposite ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 			open = {openModal}
 			closeIcon={<CloseIcon/>}
 			onCancel={() => setOpenModal(false)}
-			title = {<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>Pay Decision Deposit</div>}
+			title = {<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-black'>Pay Decision Deposit</div>}
 			footer = {<div className='px-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] pt-4'>
-				<Button onClick={() => setOpenModal(false)} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider'>Back</Button>
+				<Button onClick={() => setOpenModal(false)} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider dark:bg-transparent'>Back</Button>
 				<Button onClick={handleSubmit} disabled={!accounts.length || availableBalance.lte(amount)} className={`text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider ${!accounts.length || availableBalance.lte(amount) && 'opacity-50'}`}>Continue</Button>
 			</div>}
 		>
 			<Spin spinning={loading} indicator={<LoadingOutlined />}>
 				<div className='flex flex-col px-6'>
-					<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
+					<h3 className='text-sm font-normal text-lightBlue text-center dark:text-blue-dark-medium'>Select a wallet</h3>
 					<div className='flex items-center justify-center gap-x-4 mb-6'>
 						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
 
@@ -293,7 +295,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 											/>: !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 
 										<div className='mt-6 flex gap-4 items-center mb-4'>
-											<span className='text-sm text-lightBlue tracking-wide flex gap-1.5'>
+											<span className='text-sm text-lightBlue tracking-wide flex gap-1.5 dark:text-blue-dark-medium'>
                                  Decision Deposit
 												<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.'/>
 											</span>

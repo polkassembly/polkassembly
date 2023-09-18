@@ -18,6 +18,8 @@ import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
 import { poppins } from 'pages/_app';
+import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -33,7 +35,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	const { network } = useNetworkContext();
 	const { postData: { status, postIndex } } = usePostDataContext();
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
-
+	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const [activeIssuance, setActiveIssuance] = useState<BN | null>(null);
 	const[isLoading,setIsLoading] = useState(true);
@@ -103,7 +105,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						nayVotes={tallyData.nays}
 					/>
 				</div>
-				<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue -mt-4'>
+				<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium -mt-4'>
 					<article className='flex items-center justify-between gap-x-2'>
 						<div className='flex items-center gap-x-1'>
 							<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
@@ -193,7 +195,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</div>
 						]}
-						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full`}
+						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 						closeIcon={<CloseIcon className="mt-2"/>}
 						title={
 							<label className={`${poppins.variable} ${poppins.className} text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></label>
@@ -300,7 +302,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									</div>
 								</article>
 							</div>
-							<p className='p-0 m-0 text-sidebarBlue font-normal text-sm leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.</p>
+							<p className='p-0 m-0 text-sidebarBlue font-normal text-sm leading-[18px] dark:text-blue-dark-high'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.</p>
 						</section>
 					</Modal>
 				</section>
@@ -309,4 +311,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	);
 };
 
-export default React.memo(ReferendumV2VoteInfo);
+export default styled(React.memo(ReferendumV2VoteInfo))`
+	.ant-modal .ant-modal-header {
+		background-color: ${({ theme }) => theme === 'dark' ? '#1E1E1E' : '#F5F7FF'} !important;
+	}
+`;

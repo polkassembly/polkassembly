@@ -47,6 +47,7 @@ import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -91,10 +92,11 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, theme }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
 	const userDetails = useUserDetailsContext();
 	const { addresses, isLoggedOut, loginAddress } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
+	const { resolvedTheme:theme } = useTheme();
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
@@ -615,7 +617,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={
@@ -850,11 +852,11 @@ export default styled(VoteReferendum)`
 	width: 100%;
 }
 .ant-modal .ant-modal-content{
-	background:  ${(props) => props.theme === 'dark'? '#0D0D0D' : '' } !important;
+	background-color:  ${(props) => props.theme === 'dark'? '' : '' } !important;
 }
 
 .ant-segmented-item-label{
-	background: ${(props) => props.theme === 'dark'? '#0D0D0D' : '' } !important;
+	background-color: ${(props) => props.theme === 'dark'? '#0D0D0D' : '' } !important;
 }
 .vote-form-cont {
 	padding: 12px;

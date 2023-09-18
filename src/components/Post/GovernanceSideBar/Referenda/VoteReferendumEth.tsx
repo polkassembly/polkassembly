@@ -511,7 +511,11 @@ export default styled(VoteReferendum)`
 		width: 100%;
 	}
 	.ant-modal .ant-modal-content{
-		background: black !important;
+		background-color:  ${(props) => props.theme === 'dark'? '#0D0D0D' : '' } !important;
+	}
+
+	.ant-segmented-item-label{
+		background-color: ${(props) => props.theme === 'dark'? '#0D0D0D' : '' } !important;
 	}
 	.vote-form-cont {
 		padding: 12px;

@@ -16,6 +16,7 @@ import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 interface IReferendaV2Messages {
     className?: string;
@@ -51,6 +52,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const { progress } = props;
 	const { postData: { track_name, track_number, created_at, status, timeline, requested } } = usePostDataContext();
 	const { network } = useNetworkContext();
+	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const trackData = getTrackData(network, track_name, track_number);
 	const proposalCreatedAt = dayjs(created_at);
@@ -242,13 +244,14 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			}
 			<Modal
 				open={open}
-				title={<div className='flex items-center justify-between gap-x-5 py-3 px-2'>
-					<h3 className='text-blue-light-high dark:text-blue-dark-high font-medium text-xl leading-[24px] tracking-[0.0015em] m-0 p-0'>Status</h3>
+				title={<div className='flex items-center justify-between gap-x-5 py-3 px-2 dark:bg-black'>
+					<h3 className='text-blue-light-high dark:text-blue-dark-high dark:bg-transparent font-medium text-xl leading-[24px] tracking-[0.0015em] m-0 p-0'>Status</h3>
 					<button onClick={() => setOpen(false)} className='border-none outline-none cursor-pointer bg-transparent flex items-center justify-center'><CloseIcon /></button>
 				</div>}
 				onCancel={() => setOpen(false)}
 				closable={false}
 				footer={[]}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 			>
 				<section className='text-sidebarBlue mt-[24px] pl-[21px]'>
 					<article className='flex gap-x-[23px]'>
@@ -268,8 +271,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									<PreparePeriodIcon className={`${prepare.periodPercent > 0? 'text-pink_primary': 'text-[#FFD3EC]'} text-xl`} />
 								</span>
 							</div>
-							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium'>Prepare Period</h4>
-							<p className='text-sm leading-[21px] tracking-[0.01em]'>The prepare period is used to avoid decision sniping. It occurs before a referendum goes into voting.</p>
+							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium dark:text-white'>Prepare Period</h4>
+							<p className='text-sm leading-[21px] tracking-[0.01em] dark:text-blue-dark-medium'>The prepare period is used to avoid decision sniping. It occurs before a referendum goes into voting.</p>
 						</div>
 					</article>
 					<article className='flex gap-x-[23px]'>
@@ -289,8 +292,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									<DecisionPeriodIcon className={`${decision.periodPercent > 0 && decidingStatusBlock? 'text-pink_primary': 'text-[#FFD3EC]'} text-xl`} />
 								</span>
 							</div>
-							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium'>Voting Period</h4>
-							<ul className='text-sm leading-[21px] tracking-[0.01em] px-5'>
+							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium dark:text-white'>Voting Period</h4>
+							<ul className='text-sm leading-[21px] tracking-[0.01em] px-5 dark:text-blue-dark-medium'>
 								<li>A referendum will be in voting till the decision period is completed or the proposal is passed.</li>
 								<li>For a referendum to pass, the support and approval should be greater than the threshold for the track for the confirmation period.</li>
 								<li>If the referendum does not pass during the decision period, it is considered as failed.</li>
@@ -314,8 +317,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									<EnactmentPeriodIcon className={`${minEnactment.periodPercent > 0? 'text-pink_primary': 'text-[#FFD3EC]'} text-xl`} />
 								</span>
 							</div>
-							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium'>After Voting Period</h4>
-							<ul className='text-sm leading-[21px] tracking-[0.01em] m-0 p-0 px-5'>
+							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium dark:text-white'>After Voting Period</h4>
+							<ul className='text-sm leading-[21px] tracking-[0.01em] m-0 p-0 px-5 dark:text-blue-dark-medium'>
 								<li>A referendum is executed after the completion of the enactment period.
 								</li>
 								<li>For treasury referenda, the funds will be disbursed after completion of the funds disbursal period.
@@ -330,8 +333,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 };
 
 export default styled(ReferendaV2Messages)`
-	.ant-modal .ant-modal-content{
-		background: black !important;
+	.ant-modal .ant-modal-header {
+		background-color: ${({ theme }) => theme === 'dark'? '#1E1E1E': '#fff'};
 	}
 `;
 

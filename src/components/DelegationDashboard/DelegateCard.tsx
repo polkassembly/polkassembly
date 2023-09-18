@@ -21,6 +21,7 @@ import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import CloseIcon from '~assets/icons/close.svg';
 import BN from 'bn.js';
+import { useTheme } from 'next-themes';
 
 interface Props{
   delegate: IDelegate;
@@ -36,6 +37,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const [address, setAddress] = useState<string>('');
 	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [social_links, setSocial_links]= useState<any[]>([]);
@@ -144,7 +146,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		<Modal
 			open={openReadMore}
 			onCancel={() => setOpenReadMore(false)}
-			className='w-[725px] max-md:w-full modal'
+			className={`w-[725px] max-md:w-full modal ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 			footer={false}
 			wrapClassName={className}
 			closeIcon={<CloseIcon/>}
@@ -175,7 +177,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 				</div>
 
-				<div className={'text-sm tracking-[0.015em] text-[#576D8B] pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1 '}>
+				<div className={'text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-medium pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1 '}>
 					<p className ='w-[90%]'>
 						{delegate?.bio ? delegate?.bio : 'No Bio'}
 					</p>
@@ -186,15 +188,15 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							{formatedBalance(balance.toString(), unit, 2)}
 							<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 						</div>
-						<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
+						<div className='text-xs font-normal mt-[4px] text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>
 					</div>
 					<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold'>
 						{delegate?.voted_proposals_count}
-						<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
+						<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal dark:text-blue-dark-medium'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>(Past 30 days)</span>
 					</div>
 					<div className='pt-4 flex items-center flex-col w-[33%] text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold'>
 						{delegate?.active_delegation_count}
-						<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center'>Received Delegation</span>
+						<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center dark:text-blue-dark-medium'>Received Delegation</span>
 					</div>
 				</div></div>
 		</Modal>

@@ -196,44 +196,44 @@ const Curves: FC<ICurvesProps> = (props) => {
 								toggleData(1);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-solid border-[#E5007A] w-[32px]'></span>
-								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Support</span>
+								<span className='text-sidebarBlue dark:text-blue-dark-medium font-normal text-[8px] sm:text-[10px] leading-[12px]'>Support</span>
 							</button>
 							<button onClick={() => {
 								toggleData(3);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-dashed border-[#E5007A] w-[32px]'></span>
-								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Current Support</span>
+								<span className='text-sidebarBlue dark:text-blue-dark-medium font-normal text-[8px] sm:text-[10px] leading-[12px]'>Current Support</span>
 							</button>
 							<button onClick={() => {
 								toggleData(0);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-solid border-[#5BC044] w-[32px]'></span>
-								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Approval</span>
+								<span className='text-sidebarBlue dark:text-blue-dark-medium font-normal text-[8px] sm:text-[10px] leading-[12px]'>Approval</span>
 							</button>
 							<button onClick={() => {
 								toggleData(2);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-dashed border-[#5BC044] w-[32px]'></span>
-								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Current Approval</span>
+								<span className='text-sidebarBlue dark:text-blue-dark-medium font-normal text-[8px] sm:text-[10px] leading-[12px]'>Current Approval</span>
 							</button>
 						</article>
 						<article className='mt-5 flex items-center justify-between gap-x-2'>
-							<div className='flex-1 p-[12.5px] bg-[#FFF5FB] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
-								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
+							<div className='flex-1 p-[12.5px] bg-[#FFF5FB] dark:bg-section-dark-background rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
+								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E] dark:text-blue-dark-medium'>
 									<span className='font-semibold'>Current Approval</span>
 									<span className='font-normal'>{progress.approval}%</span>
 								</p>
-								<p className='m-0 p-0 flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
+								<p className='m-0 p-0 flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E] dark:text-blue-dark-medium'>
 									<span className='font-semibold'>Threshold</span>
 									<span className='font-normal'>{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%</span>
 								</p>
 							</div>
-							<div className='flex-1 p-[12.5px] bg-[#FFF5FB] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
-								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
+							<div className='flex-1 p-[12.5px] bg-[#FFF5FB] dark:bg-section-dark-background rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
+								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E] dark:text-blue-dark-medium'>
 									<span className='font-semibold'>Current Support</span>
 									<span className='font-normal'>{progress.support}%</span>
 								</p>
-								<p className='m-0 p-0 flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
+								<p className='m-0 p-0 flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E] dark:text-blue-dark-medium'>
 									<span className='font-semibold'>Threshold</span>
 									<span className='font-normal'>{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%</span>
 								</p>

@@ -37,6 +37,7 @@ import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
 import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import LockIcon from '~assets/icons/lock.svg';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -52,6 +53,7 @@ interface Props {
 const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
+	const { resolvedTheme:theme } = useTheme();
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsContext();
@@ -269,7 +271,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
 
-	const content = (<div className='flex flex-col'>
+	const content = (<div className='flex flex-col dark:bg-section-dark-overlay'>
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
 			{trackArr?.filter(( item ) => item?.trackId !== trackNum)?.map((track, index) => (
 				<div
@@ -294,10 +296,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			<Modal
 				maskClosable={false}
 				closeIcon={<CloseIcon/>}
-				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full` }
+				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}` }
 				wrapClassName={className}
 				title={
-					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold mb-6'>
+					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high dark:bg-black text-[20px] font-semibold mb-6'>
 						<DelegateProfileGreyIcon className='mr-2'/>Delegate
 					</div>
 				}
@@ -307,7 +309,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				onCancel={handleCloseModal}
 				footer={
 					<div className='flex items-center justify-end -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-1'>
-						<Button key="back" disabled={loading} className='h-[40px] w-[134px] rounded-[4px]' onClick={() => setOpen?.(false)}>
+						<Button key="back" disabled={loading} className='h-[40px] w-[134px] rounded-[4px] dark:bg-transparent dark:text-pink_primary dark:border-pink_primary' onClick={() => setOpen?.(false)}>
 										Cancel
 						</Button>
 						<Button
@@ -336,13 +338,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							<div className='flex flex-col'>
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && <Alert className='mb-4 rounded-[4px]' showIcon message='Insufficient balance'/> }
 								<div className=''>
-									<label className='text-sm text-lightBlue mb-[2px]'>Your Address</label>
+									<label className='text-sm text-lightBlue mb-[2px] dark:text-blue-dark-medium'>Your Address</label>
 									<AddressInput
 										name='dashboardAddress'
 										defaultAddress={delegationDashboardAddress}
 										onChange={() => setLoading(false)}
-										inputClassName={' font-normal text-sm h-[40px] text-lightBlue'}
-										className='text-bodyBlue text-sm font-normal -mt-6'
+										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium'}
+										className='text-bodyBlue dark:text-blue-dark-medium text-sm font-normal -mt-6'
 										disabled
 										size='large'
 										identiconSize={30}
@@ -354,7 +356,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									defaultAddress={defaultTarget}
 									label={'Beneficiary Address'}
 									placeholder='Add beneficiary address'
-									className='text-lightBlue text-sm font-normal'
+									className='text-lightBlue text-sm font-normal dark:text-blue-dark-medium dark:bg-transparent'
 									onChange={(address) => {
 										setTarget(address);
 										handleSubstrateAddressChangeAlert(address);
@@ -369,7 +371,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 								{addressAlert && <Alert className='mb mt-2 rounded-[4px]' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
-								<div className='flex justify-between items-center mt-6 cursor-pointer text-lightBlue' >
+								<div className='flex justify-between items-center mt-6 cursor-pointer text-lightBlue dark:text-blue-dark-medium' >
                 Balance
 									<span onClick={() => {
 										setBnBalance(availableBalance);
@@ -382,18 +384,18 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								<BalanceInput
 									onBlur={getTxFee}
 									placeholder={'Enter balance'}
-									className='text-lightBlue text-sm font-normal'
+									className='text-lightBlue text-sm font-normal dark:text-blue-dark-medium dark:bg-transparent'
 									address={delegationDashboardAddress}
 									onAccountBalanceChange={handleOnBalanceChange}
 									onChange={(balance) => setBnBalance(balance)}
 									size='middle'
-									inputClassName='text-[#7c899b] text-sm'
+									inputClassName='text-[#7c899b] text-sm dark:text-blue-dark-medium dark:bg-transparent'
 								/>
-								<div className='mb-2 border-solid border-white mt-4'>
-									<label  className='text-lightBlue flex items-center text-sm'>
+								<div className='mb-2 border-solid border-white mt-4 dark:border-none'>
+									<label  className='text-lightBlue flex items-center text-sm dark:text-blue-dark-medium'>
                   Conviction
 										<span>
-											<HelperTooltip className='ml-1' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
+											<HelperTooltip className='ml-1 dark:text-blue-dark-medium' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
 										</span>
 									</label>
 
@@ -415,36 +417,31 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 												}} }
 											step={7}
 											marks={{
-												1:{ label:<div>0.1x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-												2:{ label:<div>1x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-												3:{ label:<div>2x</div> , style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-												4:{ label:<div>3x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-												5:{ label:<div>4x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-												6:{ label:<div>5x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-												7:{ label:<div>6x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px',marginTop:'16px' } }  }}
+												1:{ label:<div>0.1x</div>, style: { color: `${theme === 'dark'? '#909090' : '#243A57'}`, fontSize:'12px', marginTop:'16px' } },
+												2:{ label:<div>1x</div>, style: { color: `${theme === 'dark'? '#909090' : '#243A57'}`, fontSize:'12px', marginTop:'16px' } },
+												3:{ label:<div>2x</div> , style: { color: `${theme === 'dark'? '#909090' : '#243A57'}`, fontSize:'12px', marginTop:'16px' } },
+												4:{ label:<div>3x</div>, style: { color: `${theme === 'dark'? '#909090' : '#243A57'}`, fontSize:'12px', marginTop:'16px' } },
+												5:{ label:<div>4x</div>, style: { color: `${theme === 'dark'? '#909090' : '#243A57'}`, fontSize:'12px', marginTop:'16px' } },
+												6:{ label:<div>5x</div>, style: { color: `${theme === 'dark'? '#909090' : '#243A57'}`, fontSize:'12px', marginTop:'16px' } },
+												7:{ label:<div>6x</div>, style: { color: `${theme === 'dark'? '#909090' : '#243A57'}`, fontSize:'12px',marginTop:'16px' } }  }}
 											min={1}
 											max={7}
 											defaultValue={1}
 										/></div>
 								</div>
-								<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
-									<div className='flex gap-[10px] items-center justify-center text-lightBlue text-sm'> <LockIcon/><span>Locking period</span>
+								<div className='bg-[#F6F7F9] dark:bg-section-dark-background py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
+									<div className='flex gap-[10px] items-center justify-center text-lightBlue text-sm dark:text-blue-dark-medium'> <LockIcon/><span>Locking period</span>
 									</div>
 									<div className='text-blue-light-high dark:text-blue-dark-high font-medium text-sm flex justify-center items-center' >
 										{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 									</div>
-									<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
-										<div className='flex gap-[10px] items-center justify-center text-lightBlue text-sm'> <LockIcon/><span>Locking period</span></div>
-										<div className='text-bodyBlue font-medium text-sm flex justify-center items-center' >
-											{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
-										</div>
-									</div>
 									<div className='mt-6 mb-2 flex justify-between items-center'>
-										<span className='text-sm text-lightBlue'>Selected track(s)</span>
+										<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
 										<Popover
+											className={`${theme === 'dark' ? '[&>.ant-popover-content]:bg-black': ''}`}
 											content={content}
 											placement='topLeft'>
-											<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Select available tracks</Checkbox>
+											<Checkbox className='dark:text-blue-dark-medium' indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Select available tracks</Checkbox>
 										</Popover>
 									</div>
 									{ <div className='flex flex-wrap gap-2 mt-0 mb-6 ' >

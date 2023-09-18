@@ -96,7 +96,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
 	return (
-		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
+		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] dark:text-blue-dark-medium tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
       Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);

@@ -34,6 +34,7 @@ import InputClearIcon from '~assets/icons/close-tags.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import LeftArrow from '~assets/icons/arrow-left.svg';
 import PaLogo from '../AppLayout/PaLogo';
+import { useTheme } from 'next-themes';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -101,6 +102,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const addressIndex = algolia_client?.initIndex('polkassembly_addresses');
 
 	const { network } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [finalSearchInput, setFinalSearchInput] = useState<string>('');
 	const [filterBy, setFilterBy] = useState<EFilterBy>(EFilterBy.Referenda);
@@ -429,11 +431,11 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	},[sortedAutoCompleteResults]);
 
 	return <Modal
-		title={<label className={'text-blue-light-high dark:text-blue-dark-high text-xl font-semibold flex flex-wrap search gap-1'}>{isSuperSearch ? <span className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><span className='supersearch'><LeftArrow className='mr-2'/></span> {'Super Search'} </span> : 'Search'}{finalSearchInput.length > 0 && ` Results for "${finalSearchInput}"`}</label>}
+		title={<label className={'text-blue-light-high dark:text-blue-dark-high dark:bg-black text-xl font-semibold flex flex-wrap search gap-1'}>{isSuperSearch ? <span className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><span className='supersearch'><LeftArrow className='mr-2'/></span> {'Super Search'} </span> : 'Search'}{finalSearchInput.length > 0 && ` Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
 		onCancel={() => handleClearFilters(true)}
 		footer={false}
-		className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} `}
+		className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 		closeIcon={<CloseIcon/>}
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>

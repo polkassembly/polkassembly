@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
+import { CollapseIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import ProfileIcon from '~assets/icons/profile-icon.svg';
 import EditPencilIcon from '~assets/icons/edit-pencil.svg';
 import PasswordDotIcon from '~assets/icons/password-dot.svg';
@@ -14,6 +13,8 @@ import ChangeUsername from '../Modals/ChangeUsername';
 import ChangeEmail from '../Modals/ChangeEmail';
 import ChangePassword from '../Modals/ChangePassword';
 import TwoFactorAuth from '../../TwoFactorAuth';
+import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 
@@ -41,17 +42,18 @@ export enum ModalType {
 	PASSWORD = 'password',
 }
 
-export default function ProfileSettings() {
+const ProfileSettings = () => {
 	const { username, email, web3signup } = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<ModalType | null>(null);
 	const { id } = useUserDetailsContext();
+	const { resolvedTheme:theme } =  useTheme();
 	return (
 		<Collapse
 			size='large'
-			className='bg-white dark:bg-section-dark-overlay'
+			className={`bg-white dark:bg-section-dark-overlay ${theme === 'dark'? '[&>.ant-collapse-content]:bg-black' : ''}`}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
-				return isActive ? <CollapseIcon /> : <ExpandIcon />;
+				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/>;
 			}}
 		>
 			<Panel
@@ -65,7 +67,7 @@ export default function ProfileSettings() {
 				}
 				key='1'
 			>
-				<div className='flex flex-col gap-6'>
+				<div className='flex flex-col gap-6 b-red'>
 					<Row label='Username' data={username || ''} handleEdit={() => setShowModal(ModalType.USERNAME)} />
 					<Divider className='m-0 text-[#D2D8E0]' />
 					<Row label='Email' data={email || ''} handleEdit={() => setShowModal(ModalType.EMAIL)} />
@@ -87,4 +89,13 @@ export default function ProfileSettings() {
 			</Panel>
 		</Collapse>
 	);
+};
+
+export default styled(ProfileSettings)`
+ant-collapse-content .ant-collapse-content-active{
+	background-color: blue !important;
 }
+.ant-collapse .ant-collapse-content{
+	background-color: blue !important;
+}
+`;

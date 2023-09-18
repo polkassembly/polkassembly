@@ -18,9 +18,11 @@ interface Props {
 	className?: string
 	network: 'polkadot' | 'kusama'
 	projects: number
+	theme?: string
 }
 
-const ParachainInfoCard = ({ className, network, projects }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const ParachainInfoCard = ({ className, network, projects, theme }: Props) => {
 	const polkadotMetrics = {
 		auction: '14th',
 		crowdloans: '5',
@@ -44,7 +46,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 					<Image src={network=='polkadot' ? polkadotLogo : kusamaLogo} alt="Chain Logo" />
 					<span className='network-name'>{network}</span>
 				</div>
-				<div className='parachain-card-meta text-blue-light-high dark:text-blue-dark-high opacity-90'>
+				<div className='parachain-card-meta text-blue-light-high dark:text-blue-dark-high opacity-80'>
 					{network == 'polkadot' ? '11%' : '31%' } of Total Supply Locked<span className='hidden-sm'> in Parachains and Crowdloans</span>
 				</div>
 				<Divider className='my-3' />
@@ -55,7 +57,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 							<Image className='h-[14px] w-auto md:h-auto' src={auctionIcon} alt="Auction Icon" />
 							<span className='metric-num ml-[7px] font-medium text-xs md:text-base text-blue-light-high dark:text-blue-dark-high'>{metrics.auction}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Auction</div>
+						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue dark:text-blue-dark-medium'>Auction</div>
 					</div>
 
 					{/* Crowdloans */}
@@ -64,7 +66,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 							<Image className='h-[14px] w-auto md:h-auto' src={crowdloansIcon} alt="Crowdloans Icon" />
 							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-blue-light-high dark:text-blue-dark-high'>{metrics.crowdloans}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Crowdloans</div>
+						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue dark:text-blue-dark-medium'>Crowdloans</div>
 					</div>
 
 					{/* Parachains */}
@@ -73,7 +75,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 							<Image className='h-[14px] w-auto md:h-auto' src={chainIcon} alt="Parachains Icon" />
 							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-blue-light-high dark:text-blue-dark-high'>{metrics.parachains}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Parachains</div>
+						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue dark:text-blue-dark-medium'>Parachains</div>
 					</div>
 
 					{/* Projects */}
@@ -82,7 +84,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 							<Image className='h-[14px] w-auto md:h-auto' src={projectsIcon} alt="Parachains Icon" />
 							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-blue-light-high dark:text-blue-dark-high'>{metrics.projects}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Projects</div>
+						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue dark:text-blue-dark-medium'>Projects</div>
 					</div>
 				</div>
 			</div>
@@ -117,7 +119,7 @@ export default styled(ParachainInfoCard)`
 			.network-name {
 				text-transform: capitalize;
 				font-weight: 500;
-				color: var(--bodyBlue) !important;
+				color: ${props => props.theme === 'dark'? 'white' : '#243A57'} !important;
 			}
 
 			.dotDivider {

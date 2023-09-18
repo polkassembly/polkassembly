@@ -12,8 +12,7 @@ import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import styled from 'styled-components';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
+import { ExpandIcon,CollapseIcon } from '~src/ui-components/CustomIcons';
 import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Collapse } from './Notifications/common-ui/Collapse';
@@ -71,7 +70,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
-				return isActive ? <CollapseIcon /> : <ExpandIcon />;
+				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium' />;
 			}}
 		>
 			<Panel

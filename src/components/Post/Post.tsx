@@ -459,7 +459,7 @@ const Post: FC<IPostProps> = (props) => {
 				{
 					proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
 						<Link href={`/bounty/${post.parent_bounty_index}`}>
-							<div className='bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+							<div className='bg-white dark:bg-section-dark-overlay dark:text-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
 								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
 							</div>
 						</Link>

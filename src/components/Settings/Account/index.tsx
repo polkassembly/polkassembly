@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, Row, Skeleton } from 'antd';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
+import { CollapseIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
@@ -66,7 +65,7 @@ const Account: FC<Props> = ({ className }) => {
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive || false);
-				return isActive ? <CollapseIcon /> : <ExpandIcon />;
+				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/>;
 			}}
 		>
 			<Panel

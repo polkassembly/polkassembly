@@ -15,11 +15,16 @@ import Post from '~src/components/Post/Post';
 import { noTitle } from '~src/global/noTitle';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { data, error } = await getOffChainPost({
 		network,
 		postId: id,

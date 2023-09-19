@@ -13,9 +13,14 @@ import VerificationSuccessScreen from '~src/components/OnchainIdentity/Verificat
 import SEOHead from '~src/global/SEOHead';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { oauth_verifier: oauthVerifier, oauth_token: oauthRequestToken } = query;
 	const { data, error } = await getTwitterCallback({
 		network,

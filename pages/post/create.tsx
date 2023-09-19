@@ -10,6 +10,7 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
 	loading: () => (
@@ -38,6 +39,10 @@ const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 

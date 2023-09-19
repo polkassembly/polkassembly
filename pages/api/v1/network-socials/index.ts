@@ -5,6 +5,7 @@
 import { NextApiHandler } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import { isValidNetwork } from '~src/api-utils';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -45,7 +46,7 @@ export async function getNetworkSocials(params: IGetNetworkSocialsParams): Promi
 
 const handler: NextApiHandler<NetworkSocials | { error: string }> = async (req, res) => {
 	const network = req.headers['x-network'] as string;
-	if (!network) return res.status(400).json({ error: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Missing network name in request headers' });
 
 	const { data, error, status } = await getNetworkSocials({
 		network

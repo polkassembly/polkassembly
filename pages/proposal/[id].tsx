@@ -21,6 +21,7 @@ import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import { useApiContext } from '~src/context';
 import { useState } from 'react';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const Post = dynamic(() => import('src/components/Post/Post'), {
 	loading: () => <Skeleton active />,
@@ -33,6 +34,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,

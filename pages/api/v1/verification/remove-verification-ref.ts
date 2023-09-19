@@ -5,14 +5,13 @@
 import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
-import firebaseAdmin from '~src/services/firebaseInit';
+import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
 
 const firestore = firebaseAdmin.firestore();
-
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
@@ -23,16 +22,20 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const userId = user?.id;
 
 	if (!userId) return res.status(403).json({ message: messages.UNAUTHORISED });
+	const batch = firestore_db.batch();
 
 	const emailVerificationDoc = await firestore.collection('email_verification_tokens').doc(String(userId)).get();
-	if (!emailVerificationDoc.exists) return res.status(400).json({ message: `No doc found with the user id ${userId}` });
+	if (!emailVerificationDoc.exists) return res.status(400).json({ message: "We couldn't find any documents associated with your user ID" });
 
-	await emailVerificationDoc.ref.delete();
+	batch.delete(emailVerificationDoc.ref);
+
 	const twitterVerificationDoc = await firestore.collection('twitter_verification_tokens').doc(String(userId)).get();
 
-	if (!twitterVerificationDoc.exists) return res.status(400).json({ message: `No doc found with the user id ${userId}` });
+	if (!twitterVerificationDoc.exists) return res.status(400).json({ message: "We couldn't find any documents associated with your user ID" });
 
-	await twitterVerificationDoc.ref.delete();
+	batch.delete(twitterVerificationDoc.ref);
+
+	await batch.commit();
 
 	return res.status(200).json({ message: messages?.SUCCESS });
 };

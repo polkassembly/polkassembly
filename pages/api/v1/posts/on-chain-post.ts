@@ -387,26 +387,48 @@ export async function getComments(
 				}
 			}
 
-			const comment = {
-				comment_reactions: comment_reactions,
-				comment_source: data.comment_source || 'polkassembly',
-				content: data.content,
-				created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
-				history: history,
-				id: data.id,
-				is_custom_username: false,
-				post_index: postIndex,
-				post_type: postType,
-				profile: user?.profile || null,
-				proposer: data.proposer || '',
-				replies: data.replies || ([] as any[]),
-				sentiment: data.sentiment || 0,
-				spam_users_count: 0,
-				updated_at: getUpdatedAt(data),
-				user_id: data.user_id,
-				username: data.username,
-				votes: [] as any[]
-			};
+			// Send empty comment data with username and userid if comment is deleted (for replies)
+			const comment = data.isDeleted
+				? {
+						comment_reactions: getDefaultReactionObj(),
+						comment_source: 'polkassembly',
+						content: '[deleted]',
+						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						history: [],
+						id: data.id,
+						is_custom_username: false,
+						post_index: postIndex,
+						post_type: postType,
+						profile: null,
+						proposer: '',
+						replies: data.replies || ([] as any[]),
+						sentiment: 3,
+						spam_users_count: 0,
+						updated_at: getUpdatedAt(data),
+						user_id: data.user_id,
+						username: data.username,
+						votes: [] as any[]
+				  }
+				: {
+						comment_reactions: comment_reactions,
+						comment_source: data.comment_source || 'polkassembly',
+						content: data.content,
+						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						history: history,
+						id: data.id,
+						is_custom_username: false,
+						post_index: postIndex,
+						post_type: postType,
+						profile: user?.profile || null,
+						proposer: data.proposer || '',
+						replies: data.replies || ([] as any[]),
+						sentiment: data.sentiment || 0,
+						spam_users_count: 0,
+						updated_at: getUpdatedAt(data),
+						user_id: data.user_id,
+						username: data.username,
+						votes: [] as any[]
+				  };
 
 			const replyIds: string[] = [];
 			const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted', '==', false).orderBy('created_at', 'asc').get();

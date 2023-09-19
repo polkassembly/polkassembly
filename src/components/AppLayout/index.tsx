@@ -178,16 +178,32 @@ const getUserDropDown = (
 	return getSiderMenuItem(
 		<AuthDropdown>
 			<div className='flex items-center justify-between gap-x-2'>
-				<span className='w-[85%] truncate normal-case'>{username || ''}</span>
-				{isGood && !isIdentityUnverified && (
-					<CheckCircleFilled
-						style={{ color: 'green' }}
-						className='rounded-[50%] border-none bg-white'
-					/>
-				)}
+				<div className={`flex gap-2 text-sm ${!isGood && isIdentityUnverified && 'w-[85%]'}`}>
+					<span className={`normal-case ${!isGood && isIdentityUnverified && 'truncate'}`}>
+						{username && username?.length > 12 && isGood && !isIdentityUnverified ? `${username?.slice(0, 12)}...` : username || ''}
+					</span>
+					{isGood && !isIdentityUnverified && (
+						<CheckCircleFilled
+							style={{ color: 'green' }}
+							className='rounded-full border-none bg-transparent text-sm'
+						/>
+					)}
+				</div>
 				<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
 			</div>
 		</AuthDropdown>,
+		// <AuthDropdown>
+		// 	<div className='flex items-center justify-between gap-x-2'>
+		// 		<span className='w-[85%] truncate normal-case'>{username || ''}</span>
+		// 		{isGood && !isIdentityUnverified && (
+		// 			<CheckCircleFilled
+		// 				style={{ color: 'green' }}
+		// 				className='rounded-[50%] border-none bg-white'
+		// 			/>
+		// 		)}
+		// 		<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
+		// 	</div>
+		// </AuthDropdown>,
 		'userMenu',
 		<AuthDropdown>
 			{img ? (

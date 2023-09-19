@@ -5,13 +5,14 @@
 import { NextApiHandler } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { NetworkEvent } from '~src/types';
 
 const handler: NextApiHandler<NetworkEvent | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
-	if (!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { post_id } = req.body;
 	if (!post_id) return res.status(400).json({ message: 'post_id is required' });

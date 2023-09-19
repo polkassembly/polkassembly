@@ -39,7 +39,7 @@ if (apiKey) {
 const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
-	const { account, type, checkingVerified } = req.query as unknown as IReq;
+	const { account, type, checkingVerified } = req.body as unknown as IReq;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
@@ -66,43 +66,47 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			if (emailData?.verified) {
 				return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
 			}
+			if (checkingVerified) return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
+
 			if (emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT) {
 				return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
 			}
 		}
-		if (checkingVerified === true) return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
-
-		const message = {
-			from: FROM.email,
-			html: `Hello ${user.username},
-			<br>Click on the following link to complete email verification for your on chain identity: <a href="https://${network}.polkassembly.io/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a></br>
-			<br/>
-			<br>
-			Thank you,
-			</br>
-			<br>
-			Polkassembly Team
-			</br>`,
-			subject: 'Email Verification',
-			to: account
-		};
-		await sgMail
-			.send(message)
-			.then(() => {
-				res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
-			})
-			.catch((error: any) => {
-				return res.status(500).json({ message: error || 'Error sending email' });
+		if (checkingVerified) {
+			return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
+		} else {
+			const message = {
+				from: FROM.email,
+				html: `Hello ${user.username},
+				<br>Click on the following link to complete email verification for your on chain identity: <a href="https://${network}.polkassembly.io/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a></br>
+				<br/>
+				<br>
+				Thank you,
+				</br>
+				<br>
+				Polkassembly Team
+				</br>`,
+				subject: 'Email Verification',
+				to: account
+			};
+			await sgMail
+				.send(message)
+				.then(() => {
+					res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
+				})
+				.catch((error: any) => {
+					return res.status(500).json({ message: error || 'Error sending email' });
+				});
+			await tokenVerificationRef.set({
+				created_at: new Date(),
+				email: account,
+				status: VerificationStatus.VERFICATION_EMAIL_SENT,
+				token: verificationToken,
+				user_id: userId,
+				verified: false
 			});
-		await tokenVerificationRef.set({
-			created_at: new Date(),
-			email: account,
-			status: VerificationStatus.VERFICATION_EMAIL_SENT,
-			token: verificationToken,
-			user_id: userId,
-			verified: false
-		});
-		return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
+			return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
+		}
 	} else if (type === 'twitter') {
 		const twitterVerificationDoc = await firestore.collection('twitter_verification_tokens').doc(String(userId)).get();
 

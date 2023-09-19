@@ -23,6 +23,7 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { isCreationOfTreasuryProposalSupported } from '~src/util/isCreationOfTreasuryProposalSupported';
 import DiamondIcon from '~assets/icons/diamond-icon.svg';
 import FilteredTags from '~src/ui-components/filteredTags';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -34,9 +35,13 @@ const TreasuryOverview = dynamic(() => import('src/components/Home/TreasuryOverv
 });
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.TREASURY_PROPOSALS;
-	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,

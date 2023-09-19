@@ -309,6 +309,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				</Spin>
 			</Modal>
 			<DelegationSuccessPopup
+				redirect={true}
 				open={openSuccessPopup}
 				setOpen={setOpenSuccessPopup}
 				balance={balance}

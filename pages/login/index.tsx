@@ -12,6 +12,7 @@ import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 interface Props {
@@ -37,6 +38,10 @@ const WalletConnectLogin = dynamic(() => import('src/components/Login/WalletConn
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 

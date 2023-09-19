@@ -20,7 +20,11 @@ import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { IconExpand, IconVote, IconDeligation, IconCapital, IconConviction } from '~src/ui-components/CustomIcons';
+import DownArrow from '~assets/icons/down-icon.svg';
+import UpArrow from '~assets/icons/up-arrow.svg';
 
+// import ExpandIcon from '~assets/Expand.svg';
 interface IUserProfileProps {
 	userPosts: {
 		data: IUserPostsListingResponse;
@@ -96,10 +100,9 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
 	const { setNetwork } = useNetworkContext();
 	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
-	const [voteClicked, setVoteClicked] = useState(false);
+	const [voteClicked, setVoteClicked] = useState(true);
 	const [postsClicked, setPostsClicked] = useState(false);
-	const [showVoteData, setShowVoteData] = useState(false);
-	const [showPostData, setShowPostData] = useState(false);
+	const [isCollapsed, setIsCollapsed] = useState(false);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -117,6 +120,11 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	if (userPosts.error || userProfile.error) {
 		return <ErrorAlert errorMsg={userPosts.error || userProfile.error || ''} />;
 	}
+
+	const toggleCollapse = () => {
+		setIsCollapsed(!isCollapsed);
+	};
+
 	const tabItems = Object.entries(userPosts.data?.[selectedGov]).map(([key, value]) => {
 		if (!value) return null;
 		let count = 0;
@@ -140,6 +148,67 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			)
 		};
 	});
+
+	const voteInfo = () => {
+		return (
+			<>
+				<div
+					className='w-55 mt-6 flex h-[174px]'
+					style={{ backgroundColor: '#FFF' }}
+				>
+					<div className='relative top-[14px] px-3'>
+						<p className='text-xs text-lightBlue'>Vote Details:</p>
+						<div className='flex'>
+							<div
+								className='h-[100px] w-[390px] justify-start'
+								style={{ borderRight: '0.8px dashed #d2d8e0' }}
+							>
+								<p className='relative top-[4px] text-xs font-semibold text-bodyBlue'>Self Votes</p>
+								<div>
+									<div className='relative top-[4px] flex'>
+										<IconVote className='relative' />
+										<p className='history-text relative left-[6px] m-0 p-0 text-xs'>Votes</p>
+										<p className='history-text relative left-[182px] m-0 p-0 text-xs'>150 DOTS</p>
+									</div>
+									<div className='relative top-[12px] flex'>
+										<IconConviction className='relative' />
+										<p className='history-text relative left-[6px] m-0 p-0 text-xs'>Conviction</p>
+										<p className='history-text relative left-[152px] m-0 p-0 text-xs'>150 DOTS</p>
+									</div>
+									<div className='relative top-[20px] flex'>
+										<IconCapital className='relative' />
+										<p className='history-text relative left-[6px] m-0 p-0 text-xs'>Capital</p>
+										<p className='history-text relative left-[173px] m-0 p-0 text-xs'>150 DOTS</p>
+									</div>
+								</div>
+							</div>
+							<div className='relative left-[92px] h-[100px] w-[380px] justify-end px-[12px] py-0'>
+								<p className='relative top-[4px] text-xs font-semibold text-bodyBlue'>Delegations Votes</p>
+								<div>
+									<div className='relative top-[4px] flex'>
+										<IconVote className='relative' />
+										<p className='history-text relative left-[6px] m-0 p-0 text-xs'>Votes</p>
+										<p className='history-text relative left-[182px] m-0 p-0 text-xs'>150 DOTS</p>
+									</div>
+									<div className='relative top-[12px] flex'>
+										<IconDeligation className='relative' />
+										<p className='history-text relative left-[6px] m-0 p-0 text-xs'>Delegators</p>
+										<p className='history-text relative left-[152px] m-0 p-0 text-xs'>150 DOTS</p>
+									</div>
+									<div className='relative top-[20px] flex'>
+										<IconCapital className='relative' />
+										<p className='history-text relative left-[6px] m-0 p-0 text-xs'>Capital</p>
+										<p className='history-text relative left-[173px] m-0 p-0 text-xs'>150 DOTS</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className='solid-border w-55 relative'></div>
+			</>
+		);
+	};
 	return (
 		<>
 			<SEOHead
@@ -182,8 +251,6 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							onClick={() => {
 								setVoteClicked(true);
 								setPostsClicked(false);
-								setShowPostData(false);
-								setShowVoteData(true);
 							}}
 							className={`border-none px-3 text-base ${voteClicked ? 'bg-white font-semibold text-pink_primary' : 'text-darkBlue bg-transparent font-normal'}`}
 						>
@@ -193,15 +260,13 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							onClick={() => {
 								setVoteClicked(false);
 								setPostsClicked(true);
-								setShowPostData(true);
-								setShowVoteData(false);
 							}}
 							className={`border-none px-4 text-base ${postsClicked ? 'bg-white font-semibold text-pink_primary' : 'text-darkBlue bg-transparent font-normal'}`}
 						>
 							Posts
 						</Button>
 					</div>
-					{showPostData && (
+					{postsClicked && (
 						<div className='fullHeight mt-6'>
 							<Tabs
 								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
@@ -210,7 +275,46 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							/>
 						</div>
 					)}
-					{showVoteData && <div className='fullHeight mt-6'>votedata</div>}
+					{voteClicked && (
+						<>
+							<div className='solid-border w-55 relative mt-6'></div>
+							<div
+								className='w-55 flex h-[50px]'
+								style={{ backgroundColor: '#F5F6F8' }}
+							>
+								<div className='flex w-[457px]'>
+									<p className='relative top-[16px] m-0 px-3 py-0 text-xs text-lightBlue'>Proposal</p>
+									<IconExpand className='relative -left-[8px] top-[3px] text-2xl' />
+								</div>
+								<div className='flex w-[232px]'>
+									<p className='relative top-[16px] m-0 px-3 py-0 text-xs text-lightBlue'>Vote</p>
+									<IconExpand className='relative -left-[8px] top-[3px] text-2xl' />
+								</div>
+								<div className='flex'>
+									<p className='relative top-[16px] m-0 px-3 py-0 text-xs text-lightBlue'>Status</p>
+									<IconExpand className='relative -left-[8px] top-[3px] text-2xl' />
+								</div>
+							</div>
+							<div className='solid-border w-55 relative'></div>
+							<div
+								className='w-55 border-bottom h-[50px]'
+								style={{ backgroundColor: '#FFF' }}
+							>
+								<div className='relative top-[16px] flex px-3'>
+									<p className='relative m-0 p-0 text-xs text-bodyBlue'>#1234</p>
+									<p className='relative left-[8px] m-0 p-0 text-xs text-bodyBlue'>Omni: Polkadot Enterprise desktop app Treasury Proposal</p>
+									<span
+										className={`relative ${!isCollapsed ? 'left-[398px]' : '-top-[2px] left-[390px]'}`}
+										onClick={toggleCollapse}
+									>
+										{isCollapsed ? <UpArrow className='upArrow-container' /> : <DownArrow />}
+									</span>
+								</div>
+								<div className={`${isCollapsed ? '' : 'hidden'}`}>{voteInfo()}</div>
+							</div>
+							<div className={`${isCollapsed ? 'dashed-border' : 'solid-border'} w-55 relative`}></div>
+						</>
+					)}
 				</article>
 			</section>
 		</>
@@ -229,5 +333,18 @@ export default styled(UserProfile)`
 	}
 	.fullHeight .ant-tabs-tabpane {
 		height: 100% !important;
+	}
+	.solid-border {
+		border: 0.5px solid #d2d8e0;
+	}
+	.dashed-border {
+		border: 0.8px dashed #d2d8e0;
+	}
+	.upArrow-container {
+		transform: scale(0.8) !important;
+		right: 2px !important;
+	}
+	.history-text {
+		color: rgba(87, 109, 139, 0.8) !important;
 	}
 `;

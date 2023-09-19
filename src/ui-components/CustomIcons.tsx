@@ -105,6 +105,46 @@ import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
 import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
+import ExpandIcon from '~assets/icons/ExpandIcon.svg';
+import voteIcon from '~assets/icons/vote-history-icons/voteIcon.svg';
+import deligationIcon from '~assets/icons/vote-history-icons/deligatorIcon.svg';
+import capitalIcon from '~assets/icons/vote-history-icons/capital.svg';
+import convictionIcon from '~assets/icons/vote-history-icons/convictionIcon.svg';
+
+export const IconVote = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={voteIcon}
+		{...props}
+	/>
+);
+
+export const IconDeligation = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={deligationIcon}
+		{...props}
+	/>
+);
+
+export const IconCapital = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={capitalIcon}
+		{...props}
+	/>
+);
+
+export const IconConviction = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={convictionIcon}
+		{...props}
+	/>
+);
+
+export const IconExpand = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ExpandIcon}
+		{...props}
+	/>
+);
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon

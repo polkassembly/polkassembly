@@ -39,7 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	await replyRef
 		.update({
-			content: '[deleted]'
+			isDeleted: true
 		})
 		.then(() => {
 			postRef.update({

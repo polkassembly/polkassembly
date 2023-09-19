@@ -784,7 +784,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						>
 							<span title='Conviction'>
 								<ConvictionIcon className='mr-1' />
-								{conviction}x
+								{conviction || '0.1x'}x
 							</span>
 						</Tooltip>
 					)}

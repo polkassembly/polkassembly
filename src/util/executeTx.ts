@@ -43,6 +43,7 @@ const executeTx = async ({ api, network, tx, address, params = {}, errorMessageF
 					setStatus?.('Transaction Success');
 					await onSuccess();
 				} else if (event.method === 'ExtrinsicFailed') {
+					setStatus?.('Transaction failed');
 					console.log('Transaction failed');
 					setStatus?.('Transaction failed');
 					const dispatchError = (event.data as any)?.dispatchError;

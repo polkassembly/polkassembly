@@ -3,8 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
@@ -16,9 +15,7 @@ import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
-import { APPNAME } from '~src/global/appName';
 import { ProposalType } from '~src/global/proposalType';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
@@ -29,13 +26,13 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import dayjs from 'dayjs';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import executeTx from '~src/util/executeTx';
 import VoteInitiatedModal from '../Referenda/Modal/VoteSuccessModal';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 
 const ZERO_BN = new BN(0);
 
@@ -149,82 +146,24 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		setAvailableWallets(injectedWindow.injectedWeb3);
 	};
 
-	const getAccounts = async (chosenWallet: Wallet, chosenAddress?: string): Promise<undefined> => {
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
-
-		if (!wallet) {
-			return;
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if (wallet && wallet.enable) {
-					wallet
-						.enable(APPNAME)
-						.then((value) => {
-							clearTimeout(timeoutId);
-							resolve(value);
-						})
-						.catch((error) => {
-							reject(error);
-						});
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-		if (!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			return;
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		if (accounts && Array.isArray(accounts)) {
-			const substrate_address = getSubstrateAddress(loginAddress);
-			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
-			if (index >= 0) {
-				const account = accounts[index];
-				accounts.splice(index, 1);
-				accounts.unshift(account);
-			}
-		}
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			if (api && apiReady) {
-				api.setSigner(injected.signer);
-			}
-
-			onAccountChange(chosenAddress || accounts[0].address);
-		}
-
-		return;
-	};
-
 	useEffect(() => {
 		getWallet();
-		if (!loginWallet) return;
-		getAccounts(loginWallet);
+		if (!loginWallet || !api || !apiReady) return;
+		(async () => {
+			const accountData = await getAccountsFromWallet({ api, chosenWallet: loginWallet, loginAddress, network });
+			setAccounts(accountData?.accounts || []);
+			onAccountChange(accountData?.account || '');
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginWallet]);
 
 	useEffect(() => {
-		if (!address || !wallet) return;
-		getAccounts(wallet, address);
+		if (!address || !wallet || !api || !apiReady) return;
+		(async () => {
+			const accountData = await getAccountsFromWallet({ api, chosenAddress: address, chosenWallet: wallet, loginAddress, network });
+			setAccounts(accountData?.accounts || []);
+			onAccountChange(accountData?.account || '');
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, wallet]);
 
@@ -247,13 +186,18 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		}
 	};
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		if (!api || !apiReady) return;
 		localStorage.setItem('selectedWallet', wallet);
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		setAccounts([]);
 		onAccountChange('');
 		event.preventDefault();
 		setWallet(wallet);
-		await getAccounts(wallet);
+		(async () => {
+			const accountData = await getAccountsFromWallet({ api, chosenWallet: wallet, loginAddress, network });
+			setAccounts(accountData?.accounts || []);
+			onAccountChange(accountData?.account || '');
+		})();
 		setLoadingStatus({ ...loadingStatus, isLoading: false });
 	};
 
@@ -511,7 +455,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										withBalance
 										onAccountChange={onAccountChange}
 										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										withoutInfo={true}
 									/>

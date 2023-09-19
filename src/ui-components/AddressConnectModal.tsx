@@ -10,12 +10,10 @@ import { ApiContext } from '~src/context/ApiContext';
 import { useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
 import WalletButton from '~src/components/WalletButton';
-import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import getEncodedAddress from '~src/util/getEncodedAddress';
+import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
@@ -35,6 +33,7 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 
 interface Props {
 	className?: string;
@@ -43,12 +42,9 @@ interface Props {
 	closable?: boolean;
 	localStorageWalletKeyName: string;
 	localStorageAddressKeyName: string;
-	onConfirm?: (pre?: any) => void;
+	onConfirm?: () => void;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
-	walletAlertTitle: string;
-	accountAlertTitle?: string;
-	accountSelectionFormTitle?: string;
 }
 
 const ZERO_BN = new BN(0);
@@ -62,10 +58,7 @@ const AddressConnectModal = ({
 	localStorageAddressKeyName,
 	onConfirm,
 	linkAddressNeeded = false,
-	usingMultisig = false,
-	walletAlertTitle,
-	accountAlertTitle = 'Wallet extension not detected.',
-	accountSelectionFormTitle = 'Select an address'
+	usingMultisig = false
 }: Props) => {
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -88,6 +81,7 @@ const AddressConnectModal = ({
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
+	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
@@ -106,7 +100,7 @@ const AddressConnectModal = ({
 		}
 	};
 
-	const isUnlinkedAddress = getAddressType(accounts?.filter((account) => account.address === address)?.[0]) === EAddressOtherTextType.UNLINKED_ADDRESS;
+	const isUnlinkedAddress = getAddressType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS;
 
 	const handleAddressLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
 		setLoading(true);
@@ -258,7 +252,7 @@ const AddressConnectModal = ({
 			});
 			setShowMultisig(false);
 			setMultisig('');
-			onConfirm && onConfirm(address);
+			onConfirm && onConfirm();
 			setOpen(false);
 			setLoading(false);
 		}
@@ -270,118 +264,20 @@ const AddressConnectModal = ({
 		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
 	};
 
-	const getMetamaskAccounts = async (): Promise<InjectedAccount[]> => {
-		const ethereum = (window as any).ethereum;
-		if (!ethereum) return [];
-
-		let addresses = await ethereum.request({ method: 'eth_requestAccounts' });
-		addresses = addresses.map((address: string) => address);
-
-		if (addresses.length > 0) {
-			addresses = addresses.map((address: string): InjectedAccount => {
-				return {
-					address: address.toLowerCase(),
-					genesisHash: null,
-					name: 'metamask',
-					type: 'ethereum'
-				};
-			});
-		}
-
-		return addresses as InjectedAccount[];
-	};
-
-	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?: string | null): Promise<void> => {
-		if (!api || !apiReady) return;
-		setLoading(true);
-
-		setExtentionOpen(false);
-
-		if (chosenWallet === Wallet.METAMASK) {
-			const accounts = await getMetamaskAccounts();
-			setAccounts(accounts);
-			setAddress(accounts[0]?.address);
-			if (defaultWalletAddress) {
-				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)?.[0]?.address || accounts[0]?.address);
-			} else {
-				setAddress(accounts[0]?.address);
-			}
-		} else {
-			const injectedWindow = window as Window & InjectedWindow;
-
-			const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
-
-			if (!wallet) {
-				setExtentionOpen(true);
-				setLoading(false);
-				return;
-			}
-
-			let injected: Injected | undefined;
-			try {
-				injected = await new Promise((resolve, reject) => {
-					const timeoutId = setTimeout(() => {
-						reject(new Error('Wallet Timeout'));
-					}, 60000); // wait 60 sec
-
-					if (wallet && wallet.enable) {
-						wallet
-							.enable(APPNAME)
-							.then((value) => {
-								clearTimeout(timeoutId);
-								resolve(value);
-							})
-							.catch((error) => {
-								reject(error);
-							});
-					}
-				});
-			} catch (err) {
-				console.log(err?.message);
-				setLoading(false);
-			}
-			if (!injected) {
-				setLoading(false);
-				return;
-			}
-
-			const accounts = await injected.accounts.get();
-			if (accounts.length === 0) {
-				setLoading(false);
-				return;
-			}
-
-			accounts.forEach((account) => {
-				account.address = getEncodedAddress(account.address, network) || account.address;
-			});
-
-			setAccounts(accounts);
-			if (accounts.length > 0) {
-				if (api && apiReady) {
-					api.setSigner(injected.signer);
-				}
-
-				setAddress(accounts[0]?.address);
-				if (defaultWalletAddress) {
-					setAddress(
-						accounts.filter((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))?.[0]?.address || accounts[0]?.address
-					);
-				} else {
-					setAddress(accounts[0]?.address);
-				}
-			}
-		}
-		setLoading(false);
-		return;
-	};
-
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		if (!api || !apiReady) return;
 		localStorage.setItem('selectedWallet', wallet);
 		setAccounts([]);
 		setAddress('');
 		event.preventDefault();
 		setWallet(wallet);
-		await getAccounts(wallet);
+		(async () => {
+			setLoading(true);
+			const accountData = await getAccountsFromWallet({ api, chosenWallet: wallet, loginAddress, network, setExtentionOpen });
+			setAccounts(accountData?.accounts || []);
+			setAddress(accountData?.account || '');
+			setLoading(false);
+		})();
 	};
 
 	const handleOnBalanceChange = async (balanceStr: string) => {
@@ -400,33 +296,41 @@ const AddressConnectModal = ({
 		const wallet = localStorage.getItem('loginWallet') || '';
 		const address = localStorage.getItem('loginAddress');
 		setWallet((loginWallet || wallet) as Wallet);
-		getAccounts((loginWallet || wallet) as Wallet, loginAddress || address);
+		if (!api || !apiReady) return;
+		(async () => {
+			setLoading(true);
+			const accountData = await getAccountsFromWallet({
+				api,
+				chosenAddress: (loginAddress || address) as string,
+				chosenWallet: (loginWallet || wallet) as Wallet,
+				loginAddress,
+				network,
+				setExtentionOpen
+			});
+			setAccounts(accountData?.accounts || []);
+			setAddress(accountData?.account || '');
+			setLoading(false);
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginWallet, loginAddress]);
 
-	const handleInitiatorBalance = useCallback(
-		async () => {
-			if (!api || !apiReady) {
-				return;
-			}
-			try {
-				//deposit balance
-				const depositBase = api.consts.multisig.depositBase?.toString() || '0';
-				const depositFactor = api.consts.multisig.depositFactor?.toString() || '0';
-				setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
-			} catch (e) {
-				setTotalDeposit(ZERO_BN);
-			} finally {
-				//initiator balance
-				if (multisig) {
-					const initiatorBalance = await api?.query?.system?.account(address);
-					setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString()));
-				}
-			}
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[address, api, apiReady]
-	);
+	const handleInitiatorBalance = useCallback(async () => {
+		if (!api || !apiReady) {
+			return;
+		}
+		try {
+			//deposit balance
+			const depositBase = api.consts.multisig.depositBase?.toString() || '0';
+			const depositFactor = api.consts.multisig.depositFactor?.toString() || '0';
+			setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
+		} catch (e) {
+			setTotalDeposit(ZERO_BN);
+		} finally {
+			//initiator balance
+			const initiatorBalance = await api.query.system.account(address);
+			setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+		}
+	}, [address, api, apiReady]);
 
 	useEffect(() => {
 		if (canUsePolkasafe(network)) {
@@ -457,21 +361,16 @@ const AddressConnectModal = ({
 				<Button
 					onClick={handleSubmit}
 					disabled={accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
-					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
-						accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit) && 'opacity-50')
-					}`}
+					className='mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white'
 				>
-					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
+					{isUnlinkedAddress ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
 				</Button>
 			}
 			closable={closable}
 			onCancel={() => setOpen(!closable)}
 			closeIcon={<CloseIcon />}
 		>
-			<Spin
-				spinning={loading}
-				indicator={<LoadingOutlined />}
-			>
+			<Spin spinning={loading}>
 				<div className='flex flex-col'>
 					{linkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
@@ -657,7 +556,7 @@ const AddressConnectModal = ({
 
 					{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0 && !loading && (
 						<Alert
-							message={`For using ${walletAlertTitle}:`}
+							message={`For using ${linkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`}
 							description={
 								<ul className='mt-[-5px] text-sm'>
 									<li>Give access to Polkassembly on your selected wallet.</li>
@@ -671,7 +570,7 @@ const AddressConnectModal = ({
 					)}
 					{Object.keys(availableWallets || {}).length === 0 && !loading && (
 						<Alert
-							message={accountAlertTitle}
+							message={linkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
 							description={`${
 								linkAddressNeeded
 									? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
@@ -691,6 +590,8 @@ const AddressConnectModal = ({
 							{accounts.length > 0 ? (
 								showMultisig ? (
 									<MultisigAccountSelectionForm
+										multisigBalance={multisigBalance}
+										setMultisigBalance={setMultisigBalance}
 										title='Select Address'
 										accounts={accounts}
 										address={address}
@@ -709,7 +610,7 @@ const AddressConnectModal = ({
 									/>
 								) : (
 									<AccountSelectionForm
-										title={accountSelectionFormTitle}
+										title={linkAddressNeeded ? 'Select Proposer Address' : 'Select an address'}
 										accounts={accounts}
 										address={address}
 										withBalance={true}
@@ -721,7 +622,6 @@ const AddressConnectModal = ({
 							) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 								<Alert
 									type='info'
-									className='mt-4 rounded-[4px]'
 									showIcon
 									message='Please select a wallet.'
 								/>

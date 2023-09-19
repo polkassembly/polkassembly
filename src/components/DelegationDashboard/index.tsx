@@ -9,9 +9,9 @@ import DashboardTrackListing from './TracksListing';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
-import { Wallet } from '~src/types';
 import { Skeleton } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
+import { Wallet } from '~src/types';
 
 interface Props {
 	className?: string;
@@ -33,6 +33,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
+
 	useEffect(() => {
 		if (!window) return;
 		const wallet = localStorage.getItem('delegationWallet') || '';
@@ -46,7 +47,8 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		}
 		isMobile ? userDetails.isLoggedOut() && setOpenLoginModal(false) : userDetails.isLoggedOut() && setOpenLoginModal(true);
 		!userDetails.isLoggedOut() && setOpenLoginModal(false);
-	}, [userDetails, isMobile]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isMobile]);
 
 	useEffect(() => {
 		if (window.innerWidth < 768) {

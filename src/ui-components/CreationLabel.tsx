@@ -126,7 +126,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							truncateUsername={truncateUsername}
 							textClassName={'text-[12px] text-ellipsis overflow-hidden'}
 						/>
-						{text}&nbsp;
+						<div className='mr-[10px]'>{text}&nbsp;</div>
 						{topic && (
 							<div className='flex sm:-mt-0.5'>
 								{' '}
@@ -181,11 +181,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							/>
 							{vote === EVoteDecisionType.AYE ? (
 								<p className='ml-1 mt-2'>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted {vote}</span>
+									<LikeFilled className='relative -top-[1px] text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted {vote}</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (
 								<div>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted {vote}</span>
+									<DislikeFilled className='relative -top-[1px] text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted {vote}</span>
 								</div>
 							) : vote === EVoteDecisionType.SPLIT ? (
 								<div className='align-center mb-[-1px] flex justify-center'>
@@ -212,7 +212,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							}}
 						>
 							<Divider
-								className='mb-[-1px] ml-1 hidden md:inline-block'
+								className='mb-[-1px] ml-2 mr-3 hidden md:inline-block'
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>

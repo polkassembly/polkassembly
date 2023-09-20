@@ -390,7 +390,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					title={
 						<div className='ml-[-24px] mr-[-24px] text-[18px]'>
 							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>
-								<span className='relative top-1'>
+								<span className='relative top-[3px]'>
 									<VoteDataIcon />
 								</span>
 								<span className='text-xl font-semibold text-bodyBlue'>Voting Data</span>

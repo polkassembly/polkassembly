@@ -11,29 +11,34 @@ import getSubstrateAddress from './getSubstrateAddress';
 import { ApiPromise } from '@polkadot/api';
 import getMetamaskWalletAccounts from './getMetamaskWalletAccounts';
 
-interface Props{
-  network: string,
-  api: ApiPromise,
-  loginAddress: string,
-  chosenWallet: Wallet,
-  chosenAddress?: string;
-	setExtentionOpen?: (pre: boolean)=> void;
+interface Props {
+	network: string;
+	api: ApiPromise;
+	apiReady: boolean;
+	loginAddress: string;
+	chosenWallet: Wallet;
+	chosenAddress?: string;
+	setExtentionOpen?: (pre: boolean) => void;
 }
 
-const getAccountsFromWallet = async ({ network, api, loginAddress, chosenWallet, chosenAddress, setExtentionOpen }: Props): Promise<{accounts:InjectedAccount[], account: string} | undefined > => {
-
-	if(chosenWallet === Wallet.METAMASK){
+const getAccountsFromWallet = async ({
+	network,
+	api,
+	apiReady,
+	loginAddress,
+	chosenWallet,
+	chosenAddress,
+	setExtentionOpen
+}: Props): Promise<{ accounts: InjectedAccount[]; account: string } | undefined> => {
+	if (chosenWallet === Wallet.METAMASK) {
 		const accountData = await getMetamaskWalletAccounts({ chosenWallet, loginAddress, network });
-		return  { account: accountData?.account || chosenAddress || '', accounts: (accountData?.accounts || []) as InjectedAccount[] };
-
-	}else{
+		return { account: accountData?.account || chosenAddress || '', accounts: (accountData?.accounts || []) as InjectedAccount[] };
+	} else {
 		const injectedWindow = window as Window & InjectedWindow;
 
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
+		const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
 
-		if (!wallet || !api) {
+		if (!wallet || !api || !apiReady) {
 			setExtentionOpen?.(true);
 			return;
 		}
@@ -45,10 +50,16 @@ const getAccountsFromWallet = async ({ network, api, loginAddress, chosenWallet,
 					reject(new Error('Wallet Timeout'));
 				}, 60000); // wait 60 sec
 
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
+				if (wallet && wallet.enable) {
+					wallet
+						.enable(APPNAME)
+						.then((value) => {
+							clearTimeout(timeoutId);
+							resolve(value);
+						})
+						.catch((error) => {
+							reject(error);
+						});
 				}
 			});
 		} catch (err) {
@@ -78,13 +89,12 @@ const getAccountsFromWallet = async ({ network, api, loginAddress, chosenWallet,
 		}
 
 		if (accounts.length > 0) {
-			if(api) {
+			if (api) {
 				api.setSigner(injected.signer);
 			}
-
 		}
 
-		return  { account: chosenAddress || accounts[0].address, accounts };
+		return { account: chosenAddress || accounts[0].address, accounts };
 	}
 };
 export default getAccountsFromWallet;

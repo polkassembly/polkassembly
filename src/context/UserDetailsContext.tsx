@@ -79,8 +79,8 @@ try {
 		initialUserDetailsContext.web3signup = web3signup || false;
 		initialUserDetailsContext.is2FAEnabled = is2FAEnabled;
 		initialUserDetailsContext.loginAddress = login_address || window?.localStorage?.getItem('loginAddress') || '';
-		initialUserDetailsContext.loginWallet = login_wallet || (window?.localStorage?.getItem('loginWallet') as Wallet || null);
-		initialUserDetailsContext.delegationDashboardAddress = (window?.localStorage?.getItem('delegationDashboardAddress') as Wallet);
+		initialUserDetailsContext.loginWallet = login_wallet || (window?.localStorage?.getItem('loginWallet') as Wallet) || null;
+		initialUserDetailsContext.delegationDashboardAddress = window?.localStorage?.getItem('delegationDashboardAddress') as Wallet;
 	}
 } catch {
 	//do nothing, the user will be authenticated as soon as there's a new call to the server.

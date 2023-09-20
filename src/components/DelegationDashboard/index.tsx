@@ -11,6 +11,7 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { Skeleton } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
+import { Wallet } from '~src/types';
 
 interface Props {
 	className?: string;
@@ -35,6 +36,12 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 	useEffect(() => {
 		if (!window) return;
+		const wallet = localStorage.getItem('delegationWallet') || '';
+		const address = localStorage.getItem('delegationDashboardAddress') || '';
+		(!userDetails?.delegationDashboardAddress || !userDetails?.loginWallet) &&
+			userDetails.setUserDetailsContextState((prev) => {
+				return { ...prev, delegationDashboardAddress: address || userDetails?.delegationDashboardAddress, loginWallet: wallet as Wallet };
+			});
 		if (window.innerWidth < 768) {
 			setIsMobile(true);
 		}
@@ -42,7 +49,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		!userDetails.isLoggedOut() && setOpenLoginModal(false);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isMobile]);
+	}, [isMobile, userDetails]);
 
 	useEffect(() => {
 		if (window.innerWidth < 768) {

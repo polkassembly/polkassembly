@@ -150,7 +150,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		getWallet();
 		if (!loginWallet || !api || !apiReady) return;
 		(async () => {
-			const accountData = await getAccountsFromWallet({ api, chosenWallet: loginWallet, loginAddress, network });
+			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
 			setAccounts(accountData?.accounts || []);
 			onAccountChange(accountData?.account || '');
 		})();
@@ -160,7 +160,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 	useEffect(() => {
 		if (!address || !wallet || !api || !apiReady) return;
 		(async () => {
-			const accountData = await getAccountsFromWallet({ api, chosenAddress: address, chosenWallet: wallet, loginAddress, network });
+			const accountData = await getAccountsFromWallet({ api, apiReady, chosenAddress: address, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountData?.accounts || []);
 			onAccountChange(accountData?.account || '');
 		})();
@@ -194,7 +194,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		event.preventDefault();
 		setWallet(wallet);
 		(async () => {
-			const accountData = await getAccountsFromWallet({ api, chosenWallet: wallet, loginAddress, network });
+			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountData?.accounts || []);
 			onAccountChange(accountData?.account || '');
 		})();

@@ -147,7 +147,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setWallet(loginWallet);
 			(async () => {
 				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
-				const accountsData = await getAccountsFromWallet({ api, chosenWallet: loginWallet, loginAddress, network });
+				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
 				setAccounts(accountsData?.accounts || []);
 				onAccountChange(accountsData?.account || '');
 				setLoadingStatus({ isLoading: false, message: '' });
@@ -158,7 +158,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			if (loginWallet) {
 				setWallet(loginWallet as Wallet);
 				(async () => {
-					const accountsData = await getAccountsFromWallet({ api, chosenWallet: loginWallet as Wallet, loginAddress, network });
+					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
 					setAccounts(accountsData?.accounts || []);
 					onAccountChange(accountsData?.account || '');
 				})();
@@ -207,7 +207,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	useEffect(() => {
 		if (!address || !wallet || !api || !apiReady) return;
 		(async () => {
-			const accountsData = await getAccountsFromWallet({ api, chosenAddress: address, chosenWallet: wallet, loginAddress, network });
+			const accountsData = await getAccountsFromWallet({ api, apiReady, chosenAddress: address, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountsData?.accounts || []);
 			onAccountChange(accountsData?.account || '');
 		})();
@@ -243,7 +243,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setMultisig('');
 		if (!api || !apiReady) return;
 		(async () => {
-			const accountsData = await getAccountsFromWallet({ api, chosenWallet: wallet, loginAddress, network });
+			const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountsData?.accounts || []);
 			onAccountChange(accountsData?.account || '');
 		})();

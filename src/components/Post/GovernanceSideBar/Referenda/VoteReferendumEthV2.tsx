@@ -244,7 +244,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	};
 
 	const handleLastVoteSave = (vote: EVoteDecisionType, totalVoteValue: BN) => {
-		console.log(vote);
 		switch (vote) {
 			case EVoteDecisionType.AYE:
 				setLastVote({

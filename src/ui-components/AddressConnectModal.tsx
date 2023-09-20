@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { LoadingOutlined } from '@ant-design/icons';
+
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Alert, Button, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
@@ -10,10 +10,10 @@ import { ApiContext } from '~src/context/ApiContext';
 import { useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
 import WalletButton from '~src/components/WalletButton';
+import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
@@ -34,6 +34,7 @@ import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSele
 import ArrowLeft from '~assets/icons/arrow-left.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
+import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 
 interface Props {
 	className?: string;
@@ -279,7 +280,7 @@ const AddressConnectModal = ({
 		setWallet(wallet);
 		(async () => {
 			setLoading(true);
-			const accountData = await getAccountsFromWallet({ api, chosenWallet: wallet, loginAddress, network, setExtentionOpen });
+			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network, setExtentionOpen });
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
 			setLoading(false);
@@ -307,6 +308,7 @@ const AddressConnectModal = ({
 			setLoading(true);
 			const accountData = await getAccountsFromWallet({
 				api,
+				apiReady,
 				chosenAddress: (loginAddress || address) as string,
 				chosenWallet: (loginWallet || wallet) as Wallet,
 				loginAddress,

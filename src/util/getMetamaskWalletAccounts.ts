@@ -6,19 +6,23 @@ import { Wallet } from '~src/types';
 import addEthereumChain from './addEthereumChain';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import getSubstrateAddress from './getSubstrateAddress';
-interface Props{
-  chosenWallet: Wallet,
-  network:string,
-  loginAddress:string;
+interface Props {
+	chosenWallet: Wallet;
+	network: string;
+	loginAddress: string;
 }
 
-const getMetamaskWalletAccounts = async ({ chosenWallet, network, loginAddress }: Props): Promise<{accounts:InjectedAccountWithMeta[], account: string, isTalismanEthereum: boolean} | undefined> => {
+const getMetamaskWalletAccounts = async ({
+	chosenWallet,
+	network,
+	loginAddress
+}: Props): Promise<{ accounts: InjectedAccountWithMeta[]; account: string; isTalismanEthereum: boolean } | null> => {
 	let isTalismanEthereum = true;
 
-	const ethereum = chosenWallet === Wallet.TALISMAN? (window as any).talismanEth : (window as any).ethereum;
+	const ethereum = chosenWallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum;
 
 	if (!ethereum) {
-		return;
+		return null;
 	}
 
 	try {
@@ -27,26 +31,28 @@ const getMetamaskWalletAccounts = async ({ chosenWallet, network, loginAddress }
 			network
 		});
 	} catch (error) {
-		return;
+		return null;
 	}
 
 	const addresses = await ethereum.request({ method: 'eth_requestAccounts' });
 
 	if (addresses.length === 0) {
-		return;
+		return null;
 	}
-	if((chosenWallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0)){
+	if (chosenWallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0, 2) === '0x').length === 0) {
 		isTalismanEthereum = false;
 	}
+
+	const meta = {
+		genesisHash: null,
+		name: 'metamask',
+		source: 'metamask'
+	};
 
 	const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
 		const account = {
 			address,
-			meta: {
-				genesisHash: null,
-				name: 'metamask',
-				source: 'metamask'
-			}
+			meta
 		};
 
 		return account;
@@ -61,7 +67,7 @@ const getMetamaskWalletAccounts = async ({ chosenWallet, network, loginAddress }
 			accounts.unshift(account);
 		}
 	}
-	return{
+	return {
 		account: accounts[0].address,
 		accounts,
 		isTalismanEthereum

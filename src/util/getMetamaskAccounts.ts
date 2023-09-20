@@ -6,16 +6,20 @@ import { Wallet } from '~src/types';
 import addEthereumChain from './addEthereumChain';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import getSubstrateAddress from './getSubstrateAddress';
-interface Props{
-  chosenWallet: Wallet,
-  network:string,
-  loginAddress:string;
+interface Props {
+	chosenWallet: Wallet;
+	network: string;
+	loginAddress: string;
 }
 
-const getMetamaskAccounts = async ({ chosenWallet, network, loginAddress }: Props): Promise<{accounts:InjectedAccountWithMeta[], account: string, isTalismanEthereum: boolean} | undefined> => {
+const getMetamaskAccounts = async ({
+	chosenWallet,
+	network,
+	loginAddress
+}: Props): Promise<{ accounts: InjectedAccountWithMeta[]; account: string; isTalismanEthereum: boolean } | undefined> => {
 	let isTalismanEthereum = true;
 
-	const ethereum = chosenWallet === Wallet.TALISMAN? (window as any).talismanEth : (window as any).ethereum;
+	const ethereum = chosenWallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum;
 
 	if (!ethereum) {
 		return;
@@ -35,7 +39,7 @@ const getMetamaskAccounts = async ({ chosenWallet, network, loginAddress }: Prop
 	if (addresses.length === 0) {
 		return;
 	}
-	if((chosenWallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0)){
+	if (chosenWallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0, 2) === '0x').length === 0) {
 		isTalismanEthereum = false;
 	}
 
@@ -61,7 +65,7 @@ const getMetamaskAccounts = async ({ chosenWallet, network, loginAddress }: Prop
 			accounts.unshift(account);
 		}
 	}
-	return{
+	return {
 		account: accounts[0].address,
 		accounts,
 		isTalismanEthereum

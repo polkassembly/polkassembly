@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
@@ -18,6 +18,7 @@ import classNames from 'classnames';
 import { ApiPromise } from '@polkadot/api';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 export enum EAddressOtherTextType {
 	CONNECTED = 'Connected',
@@ -72,7 +73,10 @@ const UserDropdown = ({
 	const [apiReady, setApiReady] = useState(false);
 	const [img, setImg] = useState<string>('');
 	const { username } = useUserDetailsContext();
-
+	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
+	const [isGood, setIsGood] = useState<boolean>(false);
+	const [mainDisplay, setMainDisplay] = useState<string>('');
+	const displayUsername = mainDisplay || username;
 	useEffect(() => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			setApi(apiContext.relayApi);
@@ -165,6 +169,42 @@ const UserDropdown = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+
+		let unsubscribe: () => void;
+		const address = localStorage.getItem('loginAddress');
+		const encoded_addr = address ? getEncodedAddress(address, network) : '';
+
+		if (!encoded_addr) return;
+
+		api.derive.accounts
+			.info(encoded_addr, (info: DeriveAccountInfo) => {
+				if (info.identity.displayParent && info.identity.display) {
+					// when an identity is a sub identity `displayParent` is set
+					// and `display` get the sub identity
+					setMainDisplay(info.identity.displayParent);
+				} else {
+					// There should not be a `displayParent` without a `display`
+					// but we can't be too sure.
+					setMainDisplay(info.identity.displayParent || info.identity.display || info.nickname || '');
+				}
+				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
+				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+				setIsGood(Boolean(isGood));
+				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => console.error(e));
+
+		return () => unsubscribe && unsubscribe();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady]);
 	return (
 		<div
 			className={`${displayInline ? className + ' display_inline' : className} user-container flex items-center justify-center rounded-3xl bg-[#f6f7f9] px-2 font-semibold`}
@@ -195,7 +235,17 @@ const UserDropdown = ({
 						}
 					}}
 				>
-					<div className={`description ${addressClassName} user-details-container w-[78px] overflow-hidden text-ellipsis text-xs text-bodyBlue`}>{username}</div>
+					<div className={`description ${addressClassName} user-details-container overflow-hidden text-xs text-bodyBlue`}>
+						<div className={`text-ellipsis ${isGood ? '' : 'w-[66px]'}`}>
+							{displayUsername && displayUsername?.length > 7 && isGood && !isIdentityUnverified ? `${displayUsername?.slice(0, 7)}...` : displayUsername || ''}
+							{isGood && !isIdentityUnverified && (
+								<CheckCircleFilled
+									style={{ color: 'green' }}
+									className='relative top-[1px] ml-1 rounded-full border-none bg-transparent text-sm'
+								/>
+							)}
+						</div>
+					</div>
 				</div>
 			)}
 			{otherTextType ? (
@@ -268,10 +318,6 @@ export default styled(UserDropdown)`
 	.sub {
 		color: nav_blue;
 		line-height: inherit;
-	}
-
-	.user-details-container {
-		width: 60px;
 	}
 
 	@media (max-width: 468px) and (min-width: 380px) {

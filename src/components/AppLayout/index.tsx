@@ -192,18 +192,6 @@ const getUserDropDown = (
 				<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
 			</div>
 		</AuthDropdown>,
-		// <AuthDropdown>
-		// 	<div className='flex items-center justify-between gap-x-2'>
-		// 		<span className='w-[85%] truncate normal-case'>{username || ''}</span>
-		// 		{isGood && !isIdentityUnverified && (
-		// 			<CheckCircleFilled
-		// 				style={{ color: 'green' }}
-		// 				className='rounded-[50%] border-none bg-white'
-		// 			/>
-		// 		)}
-		// 		<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
-		// 	</div>
-		// </AuthDropdown>,
 		'userMenu',
 		<AuthDropdown>
 			{img ? (

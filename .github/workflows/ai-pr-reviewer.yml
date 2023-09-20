@@ -18,16 +18,23 @@ concurrency:
   cancel-in-progress: ${{ github.event_name != 'pull_request_review_comment' }}
 
 jobs:
-  review:
+  check_branch_and_review:
     runs-on: ubuntu-latest
     steps:
+      - name: Check PR branch name
+        run: |
+          if [[ "${{ github.ref }}" != "refs/heads/preview" ]]; then
+            echo "Skipping workflow on this PR because it's not on the 'preview' branch."
+            exit 0  # Exit with success status to skip the workflow
+          fi
+
       - uses: coderabbitai/ai-pr-reviewer@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:
           debug: true
-          review_comment_lgtm: true
+          review_comment_lgtm: false
           openai_heavy_model: gpt-3.5-turbo
           path_filters: |
             !.next/**

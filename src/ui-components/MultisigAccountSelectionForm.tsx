@@ -18,9 +18,9 @@ import { BN } from '@polkadot/util';
 import formatBnBalance from '~src/util/formatBnBalance';
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
 `;
 
 interface Props {
@@ -40,7 +40,7 @@ interface Props {
 	setWalletAddress?: any;
 	containerClassName?: string;
 	canMakeTransaction?: boolean;
-	showMultisigBalance?:boolean
+	showMultisigBalance?: boolean;
 }
 
 const MultisigAccountSelectionForm = ({
@@ -103,15 +103,23 @@ const MultisigAccountSelectionForm = ({
 	}, [multisig, setWalletAddress]);
 
 	return (
-		<Container style={{ width: '100%' }} className={containerClassName}>
-			<article className={`w-full flex flex-col ${className}`}>
-
-				<div className="flex items-center mb-[2px] gap-2">
+		<Container
+			style={{ width: '100%' }}
+			className={containerClassName}
+		>
+			<article className={`flex w-full flex-col ${className}`}>
+				<div className='mb-[2px] flex items-center gap-2'>
 					{title && (
 						<>
-							<h3 className="text-sm mb-0 font-normal">{title}</h3>
-							{!withoutInfo && <HelperTooltip text="You can choose an account from the extension." />}
-							{address && withBalance && <Balance address={address} onChange={onBalanceChange} classname={!canMakeTransaction ? 'text-nay_red [&>span]:text-nay_red': 'opacity-50'}/>}
+							<h3 className='mb-0 text-sm font-normal'>{title}</h3>
+							{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
+							{address && withBalance && (
+								<Balance
+									address={address}
+									onChange={onBalanceChange}
+									classname={!canMakeTransaction ? 'text-nay_red [&>span]:text-nay_red' : 'opacity-50'}
+								/>
+							)}
 						</>
 					)}
 				</div>
@@ -129,18 +137,14 @@ const MultisigAccountSelectionForm = ({
 			{loader ? (
 				<Loader />
 			) : multisig && multisig.length > 0 ? (
-				<article className={`w-full flex flex-col ${className}`}>
-					<div className="flex items-center mb-[2px] gap-2">
+				<article className={`flex w-full flex-col ${className}`}>
+					<div className='mb-[2px] flex items-center gap-2'>
 						{title && (
 							<>
-								<h3 className="text-sm mb-0 font-normal">
-									Choose linked multisig account
-								</h3>
-								{!withoutInfo && (
-									<HelperTooltip text="You can choose an multisig account that are linked from the selected address." />
-								)}
+								<h3 className='mb-0 text-sm font-normal'>Choose linked multisig account</h3>
+								{!withoutInfo && <HelperTooltip text='You can choose an multisig account that are linked from the selected address.' />}
 								{showMultisigBalance && walletAddress && (
-									<div className={`${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px]`}>
+									<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B]`}>
 										Available: <span className='text-pink_primary'>{formatBnBalance(multisigBalance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 									</div>
 								)}
@@ -159,25 +163,35 @@ const MultisigAccountSelectionForm = ({
 				</article>
 			) : (
 				<MultisigNotFound />
-			)
-			}
+			)}
 		</Container>
 	);
 };
 
 export default MultisigAccountSelectionForm;
 
-const MultisigNotFound = () => <Alert
-	message={
-		<div className='flex gap-x-2'>
-			<span className='capitalize'>No multisig account found.</span>
-		</div>
-	}
-	description={
-		<div className='max-w-md'>
-			Please integrate a multisig account or change your address. To create a multisig account, please visit <a className='text-pink_primary' href='https://polkasafe.xyz/' target='_blank' rel="noreferrer">Polkasafe</a> to create or manage your multisig account.
-		</div>
-	}
-	type="info"
-	showIcon
-/>;
+const MultisigNotFound = () => (
+	<Alert
+		message={
+			<div className='flex gap-x-2'>
+				<span className='capitalize'>No multisig account found.</span>
+			</div>
+		}
+		description={
+			<div className='max-w-md'>
+				Please integrate a multisig account or change your address. To create a multisig account, please visit{' '}
+				<a
+					className='text-pink_primary'
+					href='https://polkasafe.xyz/'
+					target='_blank'
+					rel='noreferrer'
+				>
+					Polkasafe
+				</a>{' '}
+				to create or manage your multisig account.
+			</div>
+		}
+		type='info'
+		showIcon
+	/>
+);

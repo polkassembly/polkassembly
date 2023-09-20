@@ -17,11 +17,16 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
 	if (!trackStatus && !filterBy) {
-
 		return {
 			props: {},
 			redirect: {
@@ -29,9 +34,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-	const network = getNetworkFromReqHeaders(req.headers);
 
-	if(!networkTrackInfo[network][PostOrigin.ROOT]) {
+	if (!networkTrackInfo[network][PostOrigin.ROOT]) {
 		return { props: { error: `Invalid track for ${network}` } };
 	}
 
@@ -42,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		const strTrackStatus = trackStatus ? String(trackStatus) : 'all';
 		if (status.toLowerCase().includes(strTrackStatus)) {
 			prev[strTrackStatus] = getOnChainPosts({
-				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
@@ -104,18 +108,23 @@ const Root: FC<IRootProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
-	return <>
-		<SEOHead title={PostOrigin.ROOT.split(/(?=[A-Z])/).join(' ')} network={network}/>
-		<TrackListing
-			trackName={PostOrigin.ROOT}
-			posts={posts}
-		/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={PostOrigin.ROOT.split(/(?=[A-Z])/).join(' ')}
+				network={network}
+			/>
+			<TrackListing
+				trackName={PostOrigin.ROOT}
+				posts={posts}
+			/>
+		</>
+	);
 };
 
 export default Root;

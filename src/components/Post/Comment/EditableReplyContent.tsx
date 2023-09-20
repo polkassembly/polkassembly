@@ -40,7 +40,7 @@ interface Props {
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
+const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
@@ -52,14 +52,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const [isEditing, setIsEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
-	const [isReplying,setIsReplying] = useState(false);
+	const [isReplying, setIsReplying] = useState(false);
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
 
 	const toggleEdit = () => setIsEditing(!isEditing);
 
-	const { postData: {
-		postType, postIndex, track_number
-	} } = usePostDataContext();
+	const {
+		postData: { postType, postIndex, track_number }
+	} = usePostDataContext();
 
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
@@ -68,7 +68,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 	useEffect(() => {
 		(async () => {
-			if(!api || !apiReady || !proposer) return;
+			if (!api || !apiReady || !proposer) return;
 			const onChainUsername = await getOnChainUsername(api, proposer, network === 'kilt');
 			setOnChainUsername(onChainUsername);
 		})();
@@ -77,7 +77,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	useEffect(() => {
 		let usernameContent = '';
 
-		if(!is_custom_username && onChainUsername && proposer) {
+		if (!is_custom_username && onChainUsername && proposer) {
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else if (!is_custom_username && !onChainUsername && proposer) {
 			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
@@ -101,21 +101,21 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const handleSave = async () => {
 		await form.validateFields();
 		const newContent = form.getFieldValue('content');
-		if(!newContent) return;
+		if (!newContent) return;
 		setError('');
 		global.window.localStorage.removeItem(editReplyKey(replyId));
 		form.setFieldValue('content', '');
-		const oldComments:any = Object.assign({}, comments);
+		const oldComments: any = Object.assign({}, comments);
 		const keys = Object.keys(comments);
-		setComments((prev:any) => {
-			const comments:any = Object.assign({}, prev);
-			for(const key of keys ){
+		setComments((prev: any) => {
+			const comments: any = Object.assign({}, prev);
+			for (const key of keys) {
 				let flag = false;
 				if (prev?.[key]) {
-					comments[key] = prev[key].map((comment:any) => {
+					comments[key] = prev[key].map((comment: any) => {
 						if (comment.id === commentId) {
 							if (comment?.replies && Array.isArray(comment.replies)) {
-								comment.replies = comment.replies.map((reply:any) => {
+								comment.replies = comment.replies.map((reply: any) => {
 									if (reply.id === replyId) {
 										reply.content = newContent;
 										reply.updated_at = new Date();
@@ -132,7 +132,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						};
 					});
 				}
-				if(flag){
+				if (flag) {
 					break;
 				}
 			}
@@ -144,7 +144,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		const { data, error: editReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editCommentReply', {
 			commentId,
 			content: newContent,
-			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 			postType: reply.post_type || postType,
 			replyId,
 			trackNumber: track_number,
@@ -160,8 +160,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				status: NotificationStatus.ERROR
 			});
 			setError(editReplyError || 'Error in saving reply');
-		}
-		else{
+		} else {
 			queueNotification({
 				header: 'Success!',
 				message: 'Your reply was edited.',
@@ -171,11 +170,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		setLoading(false);
 	};
 
-	const handleRetry = async() => {
+	const handleRetry = async () => {
 		await replyToreplyForm.validateFields();
 		const newContent = form.getFieldValue('content');
 		const replyContent = replyToreplyForm.getFieldValue('content');
-		if(!replyContent) return;
+		if (!replyContent) return;
 		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 			commentId: commentId,
 			content: replyContent,
@@ -193,16 +192,16 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				status: NotificationStatus.ERROR
 			});
 		}
-		if(data){
-			setComments((prev:any) => {
-				const comments:any = Object.assign({}, prev);
-				for(const key of Object.keys(comments)){
+		if (data) {
+			setComments((prev: any) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of Object.keys(comments)) {
 					let flag = false;
 					if (prev?.[key]) {
-						comments[key] = prev[key].map((comment:any) => {
+						comments[key] = prev[key].map((comment: any) => {
 							if (comment.id === commentId) {
 								if (comment?.replies && Array.isArray(comment.replies)) {
-									comment.replies = comment.replies.map((reply:any) => {
+									comment.replies = comment.replies.map((reply: any) => {
 										if (reply.id === replyId) {
 											reply.content = newContent;
 											reply.updated_at = new Date();
@@ -219,7 +218,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 							};
 						});
 					}
-					if(flag){
+					if (flag) {
 						break;
 					}
 				}
@@ -231,27 +230,30 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const handleReplySave = async () => {
 		await replyToreplyForm.validateFields();
 		const replyContent = replyToreplyForm.getFieldValue('content');
-		if(!replyContent) return;
+		if (!replyContent) return;
 		global.window.localStorage.removeItem(newReplyKey(commentId));
 		const keys = Object.keys(comments);
-		setComments((prev:any) => {
-			const comments:any = Object.assign({}, prev);
-			for(const key of keys ){
+		setComments((prev: any) => {
+			const comments: any = Object.assign({}, prev);
+			for (const key of keys) {
 				let flag = false;
 				if (prev?.[key]) {
-					comments[key] = prev[key].map((comment:any) => {
+					comments[key] = prev[key].map((comment: any) => {
 						if (comment.id === commentId) {
 							if (comment?.replies && Array.isArray(comment.replies)) {
-								comment.replies = [...comment.replies,{
-									content: replyContent,
-									created_at: new Date(),
-									id:replyId,
-									proposer: loginAddress,
-									updated_at: new Date(),
-									user_id: id,
-									user_profile_img: picture || '',
-									username: username
-								}];
+								comment.replies = [
+									...comment.replies,
+									{
+										content: replyContent,
+										created_at: new Date(),
+										id: replyId,
+										proposer: loginAddress,
+										updated_at: new Date(),
+										user_id: id,
+										user_profile_img: picture || '',
+										username: username
+									}
+								];
 							}
 							flag = true;
 						}
@@ -260,7 +262,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						};
 					});
 				}
-				if(flag){
+				if (flag) {
 					break;
 				}
 			}
@@ -274,7 +276,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			message: 'Your reply was added.',
 			status: NotificationStatus.SUCCESS
 		});
-		if(id){
+		if (id) {
 			const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 				commentId: commentId,
 				content: replyContent,
@@ -292,14 +294,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 					status: NotificationStatus.ERROR
 				});
 				setComments((prev) => {
-					const comments:any = Object.assign({}, prev);
-					for(const key of keys ){
+					const comments: any = Object.assign({}, prev);
+					for (const key of keys) {
 						let flag = false;
 						if (prev?.[key]) {
 							comments[key] = prev[key].map((comment) => {
 								if (comment.id === commentId) {
 									if (comment?.replies && Array.isArray(comment.replies)) {
-										comment.replies = comment.replies.map(reply => reply.id === replyId ? { ...reply, isReplyError:true }: reply) ;
+										comment.replies = comment.replies.map((reply) => (reply.id === replyId ? { ...reply, isReplyError: true } : reply));
 									}
 									flag = true;
 								}
@@ -308,7 +310,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								};
 							});
 						}
-						if(flag){
+						if (flag) {
 							break;
 						}
 					}
@@ -321,14 +323,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 	const deleteReply = async () => {
 		const keys = Object.keys(comments);
-		setComments((prev:any) => {
-			const comments:any = Object.assign({}, prev);
-			for(const key of keys ){
+		setComments((prev: any) => {
+			const comments: any = Object.assign({}, prev);
+			for (const key of keys) {
 				let flag = false;
 				if (prev?.[key]) {
-					comments[key] = prev[key].map((comment:any) => {
+					comments[key] = prev[key].map((comment: any) => {
 						if (comment.id === commentId) {
-							comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
+							comment.replies = comment?.replies?.filter((reply: any) => reply.id !== replyId) || [];
 							flag = true;
 						}
 						return {
@@ -336,7 +338,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						};
 					});
 				}
-				if(flag){
+				if (flag) {
 					break;
 				}
 			}
@@ -344,7 +346,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		});
 		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
 			commentId,
-			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 			postType: reply.post_type || postType,
 			replyId,
 			trackNumber: track_number
@@ -357,8 +359,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				message: deleteReplyError || 'Error in deleting reply',
 				status: NotificationStatus.ERROR
 			});
-		}
-		else{
+		} else {
 			queueNotification({
 				header: 'Success!',
 				message: 'Your reply was deleted.',
@@ -372,113 +373,170 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		<>
 			<div className={className}>
 				{error && <div>{error}</div>}
-				{
-					isEditing
-						?
-						<Form
-							form={form}
-							name="reply-content-form"
-							onFinish={handleSave}
-							layout="vertical"
-							// disabled={formDisabled}
-							validateMessages= {
-								{ required: "Please add the '${name}'" }
-							}
-						>
-							<ContentForm
-								autofocus={true}
-								onChange={(content: string) => {
-									global.window.localStorage.setItem(editReplyKey(replyId), content);
-									return content.length ? content : null;
-								}}
-							/>
-							<Form.Item>
-								<div className='flex items-center justify-end'>
-									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center'>
-										<CloseOutlined /> Cancel
-									</Button>
-									<Button htmlType="submit" className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
-										<CheckOutlined /> Reply
-									</Button>
-								</div>
-							</Form.Item>
-						</Form>
-						:
-						<>
-							<Markdown className='py-2 px-2 md:px-4 bg-blue-grey rounded-b-md text-sm' md={content} />
-							<div className='flex items-center flex-wrap'>
-								{id === userId &&
-									<Button className={'text-pink_primary flex items-center border-none shadow-none'} disabled={loading} onClick={toggleEdit}>
-										{
-											loading
-												? <span className='flex items-center text-xs'><LoadingOutlined className='mr-2' /> Editing</span>
-												: <span className='flex items-center text-xs'><FormOutlined className='mr-2' /> Edit</span>
-										}
-									</Button>
-								}
-								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
-								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
-
-								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${reply.reply_source ? 'disabled-reply' : ''}` }>
-										<ReplyIcon className='mr-1'/> Reply
-									</Button>
-								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
-									: null
-								}
-								{reply.isReplyError &&
-									<div className="flex text-xs text-lightBlue ml-[325px] -mt-[28px]">
-										<IconCaution className="text-2xl -mr-2 mt-[3px]"/>
-										<span className="m-0 p-0 mt-[4px]">Reply not posted</span>
-										<div onClick={handleRetry} className="m-0 px-[8px] ml-[6px] mt-0 flex cursor-pointer" style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}>
-											<IconRetry className='text-2xl mt-[4px]'/>
-											<span className='m-0 p-0 -ml-2 mt-[4px]'>Retry</span>
-										</div>
-									</div>
-								}
-								
+				{isEditing ? (
+					<Form
+						form={form}
+						name='reply-content-form'
+						onFinish={handleSave}
+						layout='vertical'
+						// disabled={formDisabled}
+						validateMessages={{ required: "Please add the '${name}'" }}
+					>
+						<ContentForm
+							autofocus={true}
+							onChange={(content: string) => {
+								global.window.localStorage.setItem(editReplyKey(replyId), content);
+								return content.length ? content : null;
+							}}
+						/>
+						<Form.Item>
+							<div className='flex items-center justify-end'>
+								<Button
+									htmlType='button'
+									onClick={handleCancel}
+									className='mr-2 flex items-center'
+								>
+									<CloseOutlined /> Cancel
+								</Button>
+								<Button
+									htmlType='submit'
+									className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+								>
+									<CheckOutlined /> Reply
+								</Button>
 							</div>
-							{
-								isReplying
-										&&
-										<Form
-											form={replyToreplyForm}
-											name="reply-to-reply-form"
-											layout="vertical"
-											disabled={loading}
-											validateMessages= {
-												{ required: "Please add the '${name}'" }
-											}
+						</Form.Item>
+					</Form>
+				) : (
+					<>
+						<Markdown
+							className='bg-blue-grey rounded-b-md px-2 py-2 text-sm md:px-4'
+							md={content}
+						/>
+						<div className='flex flex-wrap items-center'>
+							{id === userId && (
+								<Button
+									className={'flex items-center border-none text-pink_primary shadow-none'}
+									disabled={loading}
+									onClick={toggleEdit}
+								>
+									{loading ? (
+										<span className='flex items-center text-xs'>
+											<LoadingOutlined className='mr-2' /> Editing
+										</span>
+									) : (
+										<span className='flex items-center text-xs'>
+											<FormOutlined className='mr-2' /> Edit
+										</span>
+									)}
+								</Button>
+							)}
+							{id === userId && (
+								<Button
+									className={'flex items-center border-none text-xs text-pink_primary shadow-none'}
+									onClick={deleteReply}
+								>
+									<DeleteOutlined />
+									Delete
+								</Button>
+							)}
+							{id && !isEditing && (
+								<ReportButton
+									className='text-xs'
+									proposalType={postType}
+									postId={postIndex}
+									commentId={commentId}
+									type='reply'
+									replyId={replyId}
+								/>
+							)}
+
+							{id ? (
+								reply.reply_source === 'subsquare' ? (
+									<Tooltip
+										title='Reply are disabled for imported comments.'
+										color='#E5007A'
+									>
+										<Button
+											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
+												reply.reply_source ? 'disabled-reply' : ''
+											}`}
 										>
-											<ContentForm
-												height={250}
-												autofocus={true}
-												onChange={(content: string) => {
-													global.window.localStorage.setItem(newReplyKey(commentId), content);
-													return content.length ? content : null;
-												}}
-											/>
-											<Form.Item>
-												<div className='flex items-center justify-end '>
-													<Button htmlType="button" onClick={() => handleReplyCancel()} className='mr-2 flex items-center'>
-														<CloseOutlined /> Cancel
-													</Button>
-													<Button loading={loading} onClick={() => handleReplySave()} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
-														<CheckOutlined />Reply
-													</Button>
-												</div>
-											</Form.Item>
-										</Form>
-							}
-						</>
-				}
+											<ReplyIcon className='mr-1' /> Reply
+										</Button>
+									</Tooltip>
+								) : (
+									!isReplying && (
+										<Button
+											className={'flex items-center border-none text-xs text-pink_primary shadow-none'}
+											onClick={() => setIsReplying(!isReplying)}
+										>
+											<ReplyIcon className='mr-1' />
+											Reply
+										</Button>
+									)
+								)
+							) : null}
+							{reply.isReplyError && (
+								<div className='-mt-[28px] ml-[325px] flex text-xs text-lightBlue'>
+									<IconCaution className='-mr-2 mt-[3px] text-2xl' />
+									<span className='m-0 mt-[4px] p-0'>Reply not posted</span>
+									<div
+										onClick={handleRetry}
+										className='m-0 ml-[6px] mt-0 flex cursor-pointer px-[8px]'
+										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}
+									>
+										<IconRetry className='mt-[4px] text-2xl' />
+										<span className='m-0 -ml-2 mt-[4px] p-0'>Retry</span>
+									</div>
+								</div>
+							)}
+						</div>
+						{isReplying && (
+							<Form
+								form={replyToreplyForm}
+								name='reply-to-reply-form'
+								layout='vertical'
+								disabled={loading}
+								validateMessages={{ required: "Please add the '${name}'" }}
+							>
+								<ContentForm
+									height={250}
+									autofocus={true}
+									onChange={(content: string) => {
+										global.window.localStorage.setItem(newReplyKey(commentId), content);
+										return content.length ? content : null;
+									}}
+								/>
+								<Form.Item>
+									<div className='flex items-center justify-end '>
+										<Button
+											htmlType='button'
+											onClick={() => handleReplyCancel()}
+											className='mr-2 flex items-center'
+										>
+											<CloseOutlined /> Cancel
+										</Button>
+										<Button
+											loading={loading}
+											onClick={() => handleReplySave()}
+											className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+										>
+											<CheckOutlined />
+											Reply
+										</Button>
+									</div>
+								</Form.Item>
+							</Form>
+						)}
+					</>
+				)}
 			</div>
 		</>
 	);
 };
 
 export default styled(EditableReplyContent)`
-
 	.button-container {
 		width: 100%;
 		display: flex;
@@ -505,12 +563,12 @@ export default styled(EditableReplyContent)`
 		margin-top: 2rem;
 	}
 
-	.disabled-reply{
-		cursor:not-allowed;
+	.disabled-reply {
+		cursor: not-allowed;
 		opacity: 0.5;
 	}
 
-	.bg-blue-grey{
-		background: #EBF0F5 !important;
+	.bg-blue-grey {
+		background: #ebf0f5 !important;
 	}
 `;

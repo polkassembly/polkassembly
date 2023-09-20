@@ -9,15 +9,14 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
-interface Props{
-	className?: string,
-	reply: any
-	commentId: string
-	userName?:string
-
+interface Props {
+	className?: string;
+	reply: any;
+	commentId: string;
+	userName?: string;
 }
 
-export const Reply = ({ className, commentId, reply ,userName } : Props) => {
+export const Reply = ({ className, commentId, reply, userName }: Props) => {
 	const { user_id, username, content, created_at, id, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
@@ -34,7 +33,11 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 	if (!user_id || !username || !content) return <div>Reply not available</div>;
 
 	return (
-		<div id={id} ref={replyRef} className={`${className} flex gap-x-4`}>
+		<div
+			id={id}
+			ref={replyRef}
+			className={`${className} flex gap-x-4`}
+		>
 			<UserAvatar
 				className='mt-1 hidden md:inline-block'
 				username={username}
@@ -43,15 +46,14 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 			/>
 			<div className='comment-box'>
 				<CreationLabel
-					className='py-2 pt-4 px-0 md:px-4 bg-[#EBF0F5] rounded-t-md'
+					className='rounded-t-md bg-[#EBF0F5] px-0 py-2 pt-4 md:px-4'
 					created_at={created_at}
 					defaultAddress={proposer}
 					text={'replied'}
 					username={username}
 					spam_users_count={reply.spam_users_count}
 					commentSource={reply.reply_source}
-				>
-				</CreationLabel>
+				></CreationLabel>
 				<EditableReplyContent
 					userId={user_id}
 					className='rounded-md'

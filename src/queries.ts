@@ -170,7 +170,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
   }
 }
 `;
-export const GET_PROPOSALS_LISTING_FOR_POLYMESH =`
+export const GET_PROPOSALS_LISTING_FOR_POLYMESH = `
 query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset: Int = 0) {
   proposals(orderBy: createdAt_DESC, limit: $limit, offset: $offset, where: {type_in: $type_in}) {
     createdAt
@@ -184,6 +184,7 @@ query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset
     proposer
     index
     status
+    identity
     statusHistory {
       id
     }
@@ -265,6 +266,7 @@ export const GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query Polymesh
     endedAtBlock
     endedAt
     hash
+    identity
     fee
     description
     proposer

@@ -9,15 +9,18 @@ import getPrivacyPolicy from '~assets/privacy-policy';
 import TOW from '~assets/terms-of-website';
 import { useNetworkContext } from '~src/context';
 
-interface Props{
-	md: string
+interface Props {
+	md: string;
 }
 
-const MdScreen = ({ md } : Props) => {
+const MdScreen = ({ md }: Props) => {
 	return (
 		<section>
-			<article className={`${poppins.variable} ${poppins.className} bg-white text-sm rounded-md whitespace-pre-wrap mb-[-6px]`}>
-				<Markdown className="markdown text-black" md={md}/>
+			<article className={`${poppins.variable} ${poppins.className} mb-[-6px] whitespace-pre-wrap rounded-md bg-white text-sm`}>
+				<Markdown
+					className='markdown text-black'
+					md={md}
+				/>
 			</article>
 		</section>
 	);
@@ -27,7 +30,6 @@ const StyledMdScreen = MdScreen;
 
 export const PrivacyPolicy = () => {
 	const { network } = useNetworkContext();
-	return <StyledMdScreen md={getPrivacyPolicy(network)}/>;
+	return <StyledMdScreen md={getPrivacyPolicy(network)} />;
 };
-export const TermsOfWebsite = () => <StyledMdScreen md={TOW}/>;
-
+export const TermsOfWebsite = () => <StyledMdScreen md={TOW} />;

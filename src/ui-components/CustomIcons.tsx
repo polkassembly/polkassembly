@@ -50,6 +50,7 @@ import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
 import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
 import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
+import DiscussionListingSVG from '~assets/icons/discussions-icon.svg';
 import AuctionAdminSVG from '~assets/sidebar/auction-admin-gov2.svg';
 import FellowshipGroupSVG from '~assets/sidebar/gov2_fellowship_group.svg';
 import GovernanceGroupSVG from '~assets/sidebar/gov2_governance_group.svg';
@@ -141,6 +142,10 @@ export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const DiscussionsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DiscussionsSVG} {...props} />
+);
+
+export const DiscussionsListingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DiscussionListingSVG} {...props} />
 );
 
 export const NewsIcon = (props: Partial<CustomIconComponentProps>) => (

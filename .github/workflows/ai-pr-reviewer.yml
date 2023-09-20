@@ -5,29 +5,16 @@ permissions:
   pull-requests: write
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-  pull_request_review_comment:
-    types: [created]
-
-concurrency:
-  group:
-    ${{ github.repository }}-${{ github.event.number || github.head_ref ||
-    github.sha }}-${{ github.workflow }}-${{ github.event_name ==
-    'pull_request_review_comment' && 'pr_comment' || 'pr' }}
-  cancel-in-progress: ${{ github.event_name != 'pull_request_review_comment' }}
+  push:
+    branches:
+      - preview
 
 jobs:
   check_branch_and_review:
     runs-on: ubuntu-latest
+    if:
+      contains('refs/heads/preview', github.ref)
     steps:
-      - name: Check PR branch name
-        run: |
-          if [[ "${{ github.ref }}" != "refs/heads/preview" ]]; then
-            echo "Skipping workflow on this PR because it's not on the 'preview' branch."
-            exit 0  # Exit with success status to skip the workflow
-          fi
-
       - uses: coderabbitai/ai-pr-reviewer@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

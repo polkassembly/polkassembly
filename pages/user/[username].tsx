@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Select, Tabs } from 'antd';
+import { Button, Collapse, Select, Tabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -21,8 +21,10 @@ import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { IconExpand, IconVote, IconDeligation, IconCapital, IconConviction } from '~src/ui-components/CustomIcons';
-import DownArrow from '~assets/icons/down-icon.svg';
-import UpArrow from '~assets/icons/up-arrow.svg';
+// import DownArrow from '~assets/icons/down-icon.svg';
+// import UpArrow from '~assets/icons/up-arrow.svg';
+
+const { Panel } = Collapse;
 
 // import ExpandIcon from '~assets/Expand.svg';
 interface IUserProfileProps {
@@ -153,7 +155,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		return (
 			<>
 				<div
-					className='w-55 mt-6 flex h-[174px]'
+					className='w-55 flex h-[164px]'
 					style={{ backgroundColor: '#FFF' }}
 				>
 					<div className='relative top-[14px] px-3'>
@@ -296,23 +298,61 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 								</div>
 							</div>
 							<div className='solid-border w-55 relative'></div>
-							<div
-								className='w-55 border-bottom h-[50px]'
-								style={{ backgroundColor: '#FFF' }}
-							>
-								<div className='relative top-[16px] flex px-3'>
-									<p className='relative m-0 p-0 text-xs text-bodyBlue'>#1234</p>
-									<p className='relative left-[8px] m-0 p-0 text-xs text-bodyBlue'>Omni: Polkadot Enterprise desktop app Treasury Proposal</p>
-									<span
-										className={`relative ${!isCollapsed ? 'left-[398px]' : '-top-[2px] left-[390px]'}`}
-										onClick={toggleCollapse}
-									>
-										{isCollapsed ? <UpArrow className='upArrow-container' /> : <DownArrow />}
-									</span>
+							{/* <div>
+								<div
+									className='w-55 border-bottom h-[50px]'
+									style={{ backgroundColor: '#FFF' }}
+								>
+									<div className='relative top-[16px] flex px-3'>
+										<p className='relative m-0 p-0 text-xs text-bodyBlue'>#1234</p>
+										<p className='relative left-[8px] m-0 p-0 text-xs text-bodyBlue'>Omni: Polkadot Enterprise desktop app Treasury Proposal</p>
+										<span
+											className={`relative ${!isCollapsed ? 'left-[398px]' : '-top-[2px] left-[390px]'}`}
+											onClick={toggleCollapse}
+										>
+											{isCollapsed ? <UpArrow className='upArrow-container' /> : <DownArrow />}
+										</span>
+									</div>
+									<div className={`${isCollapsed ? '' : 'hidden'}`}>{voteInfo()}</div>
 								</div>
-								<div className={`${isCollapsed ? '' : 'hidden'}`}>{voteInfo()}</div>
-							</div>
-							<div className={`${isCollapsed ? 'dashed-border' : 'solid-border'} w-55 relative`}></div>
+								<div className={`${isCollapsed ? 'dashed-border' : 'solid-border'} w-55 relative`}></div>
+							</div> */}
+							<Collapse
+								defaultActiveKey={['1']}
+								className='border-none bg-white'
+								expandIconPosition='end'
+								onChange={toggleCollapse}
+							>
+								<Panel
+									className='m-0 h-[50px] border-none bg-white p-0'
+									header={
+										<>
+											<div className='-mt-3 h-[48px]'>
+												<div
+													className='w-65 border-bottom'
+													style={{ backgroundColor: '#FFF' }}
+												>
+													<div className='relative top-[16px] flex px-3'>
+														<p className='relative -left-[16px] m-0 p-0 text-xs text-bodyBlue'>#1234</p>
+														<p className='relative -left-[8px] m-0 p-0 text-xs text-bodyBlue'>Omni: Polkadot Enterprise desktop app Treasury Proposal</p>
+														{/* <span
+														className={`relative ${!isCollapsed ? 'left-[398px]' : '-top-[2px] left-[390px]'}`}
+														onClick={toggleCollapse}
+													>
+														{isCollapsed ? <UpArrow className='upArrow-container' /> : <DownArrow />}
+													</span> */}
+													</div>
+													{/* <div className={`${isCollapsed ? '' : 'hidden'}`}>{voteInfo()}</div> */}
+												</div>
+											</div>
+											<div className={`${!isCollapsed ? 'dashed-border' : 'solid-border'} relative -left-[16px] w-[816px]`}></div>
+										</>
+									}
+									key='1'
+								>
+									<p className='m-0 border-none p-0'>{voteInfo()}</p>
+								</Panel>
+							</Collapse>
 						</>
 					)}
 				</article>
@@ -346,5 +386,15 @@ export default styled(UserProfile)`
 	}
 	.history-text {
 		color: rgba(87, 109, 139, 0.8) !important;
+	}
+	.ant-collapse .ant-collapse-content {
+		border: none !important;
+	}
+	.ant-collapse .ant-collapse-content > .ant-collapse-content-box {
+		padding: 0 !important;
+	}
+	.ant-collapse.ant-collapse-icon-position-end > .ant-collapse-item > .ant-collapse-header .ant-collapse-expand-icon {
+		position: relative;
+		right: 55px !important;
 	}
 `;

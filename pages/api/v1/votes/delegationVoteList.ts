@@ -8,6 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from './query';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import { votesSortValues } from '~src/global/sortOptions';
 
 export interface IVotesResponse {
 	count: number;
@@ -16,7 +17,7 @@ export interface IVotesResponse {
 
 // expects optional id, page, voteType and listingLimit
 async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
-	const { postId = 0, page = 1, listingLimit = VOTES_LISTING_LIMIT, decision, type, voter } = req.query;
+	const { postId = 0, page = 1, listingLimit = VOTES_LISTING_LIMIT, decision, type, voter, sortBy = votesSortValues.VOTING_POWER_DESC } = req.query;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) {
@@ -38,11 +39,35 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 		return res.status(400).json({ error: `The postId "${postId}" is invalid.` });
 	}
 
+	const getOrderBy = (sortByValue: string) => {
+		switch (sortByValue) {
+			case votesSortValues.BALANCE_ASC:
+				return ['balance_value_ASC', 'id_ASC'];
+			case votesSortValues.BALANCE_DESC:
+				return ['balance_value_DESC', 'id_DESC'];
+			case votesSortValues.CONVICTION_ASC:
+				return ['lockPeriod_ASC', 'id_ASC'];
+			case votesSortValues.CONVICTION_DESC:
+				return ['lockPeriod_DESC', 'id_DESC'];
+			case votesSortValues.VOTING_POWER_ASC:
+				return ['votingPower_ASC', 'id_ASC'];
+			case votesSortValues.VOTING_POWER_DESC:
+				return ['votingPower_DESC', 'id_DESC'];
+			case votesSortValues.TIME_ASC:
+				return ['timestamp_ASC', 'id_ASC'];
+			default:
+				return ['createdAtBlock_DESC', 'id_DESC'];
+		}
+	};
+
+	const strSortBy = String(sortBy);
+
 	const variables: any = {
 		decision: decision,
 		index_eq: Number(postId),
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
+		orderBy: getOrderBy(strSortBy),
 		type_eq: type,
 		voter_eq: voter
 	};

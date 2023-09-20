@@ -17,7 +17,7 @@ import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import EmailIcon from '~assets/icons/email_icon.svg';
 import styled from 'styled-components';
-import { Divider, Skeleton, Tooltip } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import DelegationListRow from './DelegationListRow';
 import dayjs from 'dayjs';
 import { parseBalance } from './utils/parseBalaceToReadable';
@@ -160,12 +160,19 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 				)}
 
 				{(voteData.totalVotingPower || voteData.votingPower) && (
-					<div className='w-[90px] overflow-ellipsis text-bodyBlue'>{parseBalance((voteData.totalVotingPower || voteData.votingPower).toString(), 2, true, network)}</div>
+					<div className='w-[90px] overflow-ellipsis text-bodyBlue'>
+						{parseBalance(
+							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (Number(voteData?.balance?.abstain) || 0) * 0.1,
+							2,
+							true,
+							network
+						)}
+					</div>
 				)}
 			</div>
 		</div>
 	);
-	return voteData?.delegatedVotes?.length > 0 ? (
+	return voteData?.delegatedVotes?.length > 0 && voteData?.decision !== 'abstain' ? (
 		<StyledCollapse
 			className={`${active ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-[#D2D8E0]'} w-[550px] gap-[0px] rounded-none border-0 ${className}`}
 			size='large'
@@ -259,13 +266,10 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 					<div>
 						<p className='mb-4 text-sm font-medium text-bodyBlue'>Delegation list</p>
 						<div className='mb-2 flex items-center text-xs font-semibold'>
-							<div className='w-[200px] text-sm font-medium text-lightBlue'>Delegators</div>
-							<div className='flex w-[110px] items-center gap-1 text-lightBlue'>Amount</div>
-							{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 flex w-[110px] items-center gap-1 text-lightBlue'>Conviction</div> : null}
-							<div className='flex w-[100px] items-center gap-1 text-lightBlue'>
-								Voting Power
-								{<Tooltip></Tooltip>}
-							</div>
+							<div className='w-[200px] text-lightBlue'>Delegators</div>
+							<div className='w-[110px] items-center text-lightBlue'>Amount</div>
+							{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue'>Conviction</div> : null}
+							<div className='w-[100px] items-center text-lightBlue'>Voting Power</div>
 						</div>
 						<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
 							{voteData.delegatedVotes.map((data: any, i: number) => (

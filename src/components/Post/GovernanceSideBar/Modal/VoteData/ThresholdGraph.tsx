@@ -71,7 +71,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 				{curvesError ? (
 					<p className='text-center font-medium text-red-500'>{curvesError}</p>
 				) : (
-					<section style={{ marginLeft: forGovSidebar ? '-6px' : '0', width: forGovSidebar ? '350px' : '400px' }}>
+					<section className={`${forGovSidebar ? 'ml-[-6px] w-[350px]' : 'ml-0 w-[400px]'}`}>
 						<article>
 							<Chart.Line
 								className='h-full w-full'

@@ -48,7 +48,7 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
         selfVotingPower
         totalVotingPower
         delegatedVotingPower
-        delegatedVotes(limit: 10, orderBy: votingPower_DESC, where: {
+        delegatedVotes(limit: 5, orderBy: votingPower_DESC, where: {
           removedAtBlock_isNull: true
         }) {
           decision
@@ -77,6 +77,7 @@ query ConvictionVotesListingByTypeAndIndex(
   $limit: Int = 10,
   $offset: Int = 0,
   $decision: VoteDecision = yes,
+  $orderBy: [ConvictionDelegatedVotesOrderByInput!] = votingPower_DESC,
   $voter_eq: String = "") {
     convictionVotes(
       where: {
@@ -88,7 +89,7 @@ query ConvictionVotesListingByTypeAndIndex(
         voter_eq: $voter_eq
       },
       limit: 1) {
-      delegatedVotes(limit: $limit, orderBy: votingPower_DESC, offset: $offset, where:{
+      delegatedVotes(limit: $limit, orderBy: $orderBy, offset: $offset, where:{
         removedAtBlock_isNull: true
         decision_eq: $decision
         delegatedTo:{

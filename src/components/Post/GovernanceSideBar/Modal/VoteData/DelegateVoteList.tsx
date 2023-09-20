@@ -13,6 +13,8 @@ import { PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import VoterRow from './VoterRow';
+import { votesSortValues } from '~src/global/sortOptions';
+import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 
 interface IVotersListProps {
 	className?: string;
@@ -32,6 +34,12 @@ type DecisionType = 'yes' | 'no' | 'abstain';
 
 const VOTES_LISTING_LIMIT = 10;
 
+const sortedCheck = {
+	balanceIsAsc: false,
+	convictionIsAsc: false,
+	votingIsAsc: false
+};
+
 const DelegationVotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkContext();
 	const {
@@ -46,6 +54,12 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 	});
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [votesRes, setVotesRes] = useState<IDelegationList>();
+	const [sortBy, setSortBy] = useState<string>(votesSortValues.VOTING_POWER_DESC);
+	const [orderBy, setOrderBy] = useState<{ [key: string]: boolean }>(sortedCheck);
+
+	const handleSortByClick = ({ key }: { key: string }) => {
+		setSortBy(key);
+	};
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -54,7 +68,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 		});
 		const url = `api/v1/votes/delegationVoteList?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&page=${currentPage}&decision=${
 			decision || 'yes'
-		}&type=${voteType}&voter=${voter}`;
+		}&type=${voteType}&voter=${voter}&sortBy=${sortBy}`;
 		nextApiClientFetch<IDelegationList>(url)
 			.then((res) => {
 				if (res.error) {
@@ -73,7 +87,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 					message: ''
 				});
 			});
-	}, [referendumId, currentPage, voteType, decision, voter]);
+	}, [referendumId, currentPage, voteType, decision, voter, sortBy]);
 
 	const onChange: PaginationProps['onChange'] = (page) => {
 		setCurrentPage(page);
@@ -90,11 +104,46 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 						<div className='flex flex-col overflow-x-auto px-0 text-xs text-sidebarBlue'>
 							<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
 								<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue`}>Voter</div>
-								<div className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex items-center gap-1 text-lightBlue`}>Amount</div>
+								<div
+									className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex items-center gap-1 text-lightBlue`}
+									onClick={() => {
+										handleSortByClick({
+											key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
+										});
+										setOrderBy((prev) => ({ ...sortedCheck, balanceIsAsc: !prev.balanceIsAsc }));
+									}}
+								>
+									Amount
+									<ExpandIcon className={orderBy.balanceIsAsc ? 'rotate-180' : ''} />
+								</div>
 								{network !== AllNetworks.COLLECTIVES ? (
-									<div className={`${isReferendum2 ? 'w-[110px]' : 'w-[150px]'} flex items-center gap-1 text-lightBlue`}>Conviction</div>
+									<div
+										className={`${isReferendum2 ? 'w-[110px]' : 'w-[150px]'} flex items-center gap-1 text-lightBlue`}
+										onClick={() => {
+											handleSortByClick({
+												key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
+											});
+											setOrderBy((prev) => ({ ...sortedCheck, convictionIsAsc: !prev.convictionIsAsc }));
+										}}
+									>
+										Conviction
+										<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />
+									</div>
 								) : null}
-								{isReferendum2 && <div className='flex w-[110px] items-center gap-1 text-lightBlue'>Voting Power</div>}
+								{isReferendum2 && (
+									<div
+										className='flex w-[110px] items-center gap-1 text-lightBlue'
+										onClick={() => {
+											handleSortByClick({
+												key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
+											});
+											setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
+										}}
+									>
+										Voting Power
+										<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
+									</div>
+								)}
 							</div>
 
 							{votesRes && decision && !!votesRes?.votes?.length ? (

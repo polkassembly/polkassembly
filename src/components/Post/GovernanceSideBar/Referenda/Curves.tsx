@@ -33,6 +33,18 @@ interface ICurvesProps {
 	setData: React.Dispatch<any>;
 }
 
+const getStatement = (ApprovalCondition: boolean, supportCondition: boolean) => {
+	if (ApprovalCondition && supportCondition) {
+		return 'both support and approval are above';
+	}
+	if (!ApprovalCondition) {
+		return 'approval are below';
+	}
+	if (!supportCondition) {
+		return 'support are below';
+	}
+};
+
 const Curves: FC<ICurvesProps> = (props) => {
 	const { data, progress, curvesError, curvesLoading, setData } = props;
 	const toggleData = (index: number) => {
@@ -71,16 +83,21 @@ const Curves: FC<ICurvesProps> = (props) => {
 				<section>
 					{progress.approval >= progress.approvalThreshold && progress.support >= progress.supportThreshold ? (
 						<p className='row mb-2 flex items-center gap-1 text-sm font-medium'>
-							<ChartIcon />
+							<span className='flex'>
+								<ChartIcon />
+							</span>
 							<p className='m-0'>
 								Proposal has <span className='text-aye_green'>passed</span> as both support and approval are above the threshold
 							</p>
 						</p>
 					) : (
 						<p className='row mb-2 flex items-center gap-1 text-sm font-medium text-bodyBlue'>
-							<ChartIcon />
+							<span className='flex'>
+								<ChartIcon />
+							</span>
 							<p className='m-0'>
-								Proposal has <span className='text-nay_red'>failed</span> as both support and approval are below the threshold
+								Proposal has <span className='text-nay_red'>failed</span> as{' '}
+								{getStatement(progress.approval >= progress.approvalThreshold, progress.support >= progress.supportThreshold)} the threshold
 							</p>
 						</p>
 					)}

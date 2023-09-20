@@ -55,34 +55,36 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, setOp
 									forGovSidebar={true}
 								/>
 							</div>
-							<div className='flex justify-between'>
-								<div className='mt-4 flex flex-col gap-x-5'>
-									<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
-										<span>
-											<AyeApprovalIcon />
+							<div className='flex justify-center'>
+								<div className='flex justify-between gap-5 md:w-[350px]'>
+									<div className='mt-4 flex flex-col gap-x-5'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
+											<span>
+												<AyeApprovalIcon />
+											</span>
+											Current Approval
 										</span>
-										Current Approval
-									</span>
-									<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
-										<span>
-											<AyeThresholdIcon />
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
+											<span>
+												<AyeThresholdIcon />
+											</span>
+											Threshold
 										</span>
-										Threshold
-									</span>
-								</div>
-								<div className='mt-4 flex flex-col gap-x-5'>
-									<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
-										<span>
-											<NayApprovalIcon />
+									</div>
+									<div className='mt-4 flex flex-col gap-x-5'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
+											<span>
+												<NayApprovalIcon />
+											</span>
+											Current Support
 										</span>
-										Current Support
-									</span>
-									<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
-										<span>
-											<NayThresholdIcon />
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
+											<span>
+												<NayThresholdIcon />
+											</span>
+											Threshold
 										</span>
-										Threshold
-									</span>
+									</div>
 								</div>
 							</div>
 						</div>

@@ -12,23 +12,23 @@ import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IUserNotificationSettings } from '~src/types';
 
-export async function getNotificationSettings(token: string){
+export async function getNotificationSettings(token: string) {
 	const user = await authServiceInstance.GetUser(token);
-	if(!user) return null;
+	if (!user) return null;
 
 	const userDoc = await firestore_db.collection('users').doc(String(user.id)).get();
-	if(!userDoc.exists) return null;
+	if (!userDoc.exists) return null;
 
 	const userData = userDoc.data() as User;
-	return userData.notification_preferences || {} as IUserNotificationSettings;
+	return userData.notification_preferences || ({} as IUserNotificationSettings);
 }
 
-async function handler(req: NextApiRequest, res: NextApiResponse<{notification_preferences: IUserNotificationSettings} | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<{ notification_preferences: IUserNotificationSettings } | MessageType>) {
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Token not found' });
 
 	const notification_preferences = await getNotificationSettings(token);
-	if(!notification_preferences) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+	if (!notification_preferences) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	return res.status(200).json({ notification_preferences });
 }

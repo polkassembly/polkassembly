@@ -16,8 +16,8 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import messages from '~src/util/messages';
 
 export interface IProposalsObj {
-    democracy: any[],
-    treasury: any[]
+	democracy: any[];
+	treasury: any[];
 }
 
 export interface IPostsByAddressListingResponse {
@@ -46,8 +46,8 @@ export async function getPostsByAddress(params: IGetPostsByAddressParams): Promi
 			}
 		});
 		const proposalsObj: IProposalsObj = {
-			'democracy': [],
-			'treasury': []
+			democracy: [],
+			treasury: []
 		};
 		const subsquidData = subsquidRes?.data;
 		const postTypesColRef = netDocRef.collection('post_types');
@@ -91,15 +91,15 @@ const handler: NextApiHandler<IPostsByAddressListingResponse | { error: string }
 	const { proposerAddress } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const { data, error, status } = await getPostsByAddress({
 		network,
 		proposerAddress
 	});
 
-	if(error || !data) {
+	if (error || !data) {
 		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
+	} else {
 		return res.status(status).json({
 			proposals: data
 		});

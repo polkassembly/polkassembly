@@ -5,22 +5,23 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 
-interface Props{
-  api: ApiPromise;
-  network: string;
-  tx: SubmittableExtrinsic<'promise'>;
-  address: string;
-  params?: any;
-  errorMessageFallback: string;
-  onSuccess:() => Promise<void> | void;
-  onFailed: (errorMessageFallback: string) => Promise<void> | void;
-  onBroadcast?: () => void;
-	setStatus?: (pre:string) => void;
+interface Props {
+	api: ApiPromise;
+	apiReady: boolean;
+	network: string;
+	tx: SubmittableExtrinsic<'promise'>;
+	address: string;
+	params?: any;
+	errorMessageFallback: string;
+	onSuccess: () => Promise<void> | void;
+	onFailed: (errorMessageFallback: string) => Promise<void> | void;
+	onBroadcast?: () => void;
+	setStatus?: (pre: string) => void;
 }
-const executeTx = async({ api, network, tx, address, params= {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
-	if(!api || !tx)return;
+const executeTx = async ({ api, apiReady, network, tx, address, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
+	if (!api || apiReady || !tx) return;
 
-	tx.signAndSend(address, params,  async({ status, events, txHash }: any) => {
+	tx.signAndSend(address, params, async ({ status, events, txHash }: any) => {
 		if (status.isInvalid) {
 			console.log('Transaction invalid');
 			setStatus?.('Transaction invalid');
@@ -42,26 +43,32 @@ const executeTx = async({ api, network, tx, address, params= {}, errorMessageFal
 				if (event.method === 'ExtrinsicSuccess') {
 					setStatus?.('Transaction Success');
 					await onSuccess();
-
 				} else if (event.method === 'ExtrinsicFailed') {
 					setStatus?.('Transaction failed');
 					console.log('Transaction failed');
-					const errorModule = (event.data as any)?.dispatchError?.asModule;
-					if(!errorModule) {
+					setStatus?.('Transaction failed');
+					const dispatchError = (event.data as any)?.dispatchError;
+
+					if (dispatchError?.isModule) {
+						const errorModule = (event.data as any)?.dispatchError?.asModule;
 						const { method, section, docs } = api.registry.findMetaError(errorModule);
 						errorMessageFallback = `${section}.${method} : ${docs.join(' ')}`;
-						console.log(errorMessageFallback);
+						console.log(errorMessageFallback, 'error module');
 						await onFailed(errorMessageFallback);
-					}else{
-						await onFailed(errorMessageFallback);
-					}}
+					} else if (dispatchError?.isToken) {
+						console.log(`${dispatchError.type}.${dispatchError.asToken.type}`);
+						await onFailed(`${dispatchError.type}.${dispatchError.asToken.type}`);
+					} else {
+						await onFailed(`${dispatchError.type}` || errorMessageFallback);
+					}
+				}
 			}
 		}
 	}).catch((error: string) => {
 		console.log(':( transaction failed');
+		setStatus?.(':( transaction failed');
 		console.error('ERROR:', error);
 		onFailed(errorMessageFallback);
 	});
-
 };
 export default executeTx;

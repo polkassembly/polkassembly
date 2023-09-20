@@ -62,7 +62,7 @@ const extractContent = async (markdownContent: string, network: any) => {
 const convertReply = async (subSquareReply: any, network: any) => {
 	const res = [];
 	for (const reply of subSquareReply) {
-		if(reply.content.trim()){
+		if (reply.content.trim()) {
 			const content = await extractContent(reply.content, network);
 			res.push({
 				content,
@@ -84,7 +84,7 @@ const convertDataToComment = async (data: any[], network: string | string[] | un
 	for (const comment of data) {
 		const reactionUsers = getReactionUsers(comment.reactions);
 		const replies = await convertReply(comment?.replies || [], network);
-		if(comment.content.trim()){
+		if (comment.content.trim()) {
 			res.push({
 				comment_reactions: {
 					'👍': {

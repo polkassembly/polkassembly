@@ -21,8 +21,8 @@ import { getUpdatedAt } from '../../posts/off-chain-post';
 import { firestore_db } from '~src/services/firebaseInit';
 
 export interface ILinkPostStartResponse {
-    title: string;
-    description: string;
+	title: string;
+	description: string;
 	created_at: Date | string;
 	last_edited_at?: Date | string;
 	proposer?: string;
@@ -37,17 +37,17 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { postId, postType } = req.body;
 
-	if((!postId && postId !== 0) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if ((!postId && postId !== 0) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const strProposalType = String(postType) as ProposalType;
 	const isOffChainPost = isOffChainProposalTypeValid(strProposalType);
@@ -78,7 +78,7 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 		linkPostRes.username = postData?.username;
 		linkPostRes.topic = getTopicFromFirestoreData(postData, ProposalType.DISCUSSIONS);
 		linkPostRes.last_edited_at = getUpdatedAt(postData);
-		linkPostRes.created_at = postData?.created_at && postData?.created_at?.toDate? postData?.created_at?.toDate(): '';
+		linkPostRes.created_at = postData?.created_at && postData?.created_at?.toDate ? postData?.created_at?.toDate() : '';
 		if (postData?.tags && Array.isArray(postData?.tags)) {
 			linkPostRes.tags = postData?.tags;
 		}
@@ -117,15 +117,15 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 		}
 		const post = subsquidData.proposals[0];
 		const preimage = post?.preimage;
-		if(!post || (!post?.proposer && !preimage?.proposer)) return res.status(500).json({ message: 'Proposer address is not present in subsquid response.' });
+		if (!post || (!post?.proposer && !preimage?.proposer)) return res.status(500).json({ message: 'Proposer address is not present in subsquid response.' });
 
 		const proposerAddress = post.proposer || post.preimage?.proposer || post?.curator;
 
 		const substrateAddress = getSubstrateAddress(proposerAddress);
-		if(!substrateAddress)  return res.status(500).json({ message: 'Something went wrong while getting encoded address corresponding to network' });
+		if (!substrateAddress) return res.status(500).json({ message: 'Something went wrong while getting encoded address corresponding to network' });
 
 		const userAddresses = await getAddressesFromUserId(user.id, true);
-		const isAuthor = userAddresses.some(address => address.address === substrateAddress) || (isPostExist && user.id === postData.user_id);
+		const isAuthor = userAddresses.some((address) => address.address === substrateAddress) || (isPostExist && user.id === postData.user_id);
 		if (!isAuthor) {
 			return res.status(403).json({ message: 'You can not link the post, because you are not the user who created this post.' });
 		}

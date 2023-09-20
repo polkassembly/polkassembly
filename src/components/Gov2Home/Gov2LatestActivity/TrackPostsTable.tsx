@@ -31,11 +31,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<div
-						className='truncate'
-					>
-						{title}
-					</div>
+					<div className='truncate'>{title}</div>
 				</>
 			);
 		}
@@ -44,7 +40,14 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <NameLabel textClassName='text-bodyBlue max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} />
+		render: (username, { proposer }) => (
+			<NameLabel
+				textClassName='text-bodyBlue max-w-[9vw] 2xl:max-w-[12vw]'
+				defaultAddress={proposer}
+				username={username}
+				disableIdenticon={false}
+			/>
+		)
 	},
 	{
 		title: 'Created',
@@ -52,9 +55,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		dataIndex: 'created_at',
 		render: (createdAt) => {
 			const relativeCreatedAt = getRelativeCreatedAt(createdAt);
-			return (
-				<span>{relativeCreatedAt}</span>
-			);
+			return <span>{relativeCreatedAt}</span>;
 		}
 	},
 	{
@@ -62,7 +63,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		dataIndex: 'status',
 		key: 'status',
 		render: (status) => {
-			if(status) return <StatusTag status={status} />;
+			if (status) return <StatusTag status={status} />;
 		}
 	}
 ];
@@ -75,12 +76,12 @@ interface ITrackPostsTableProps {
 const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 	const router = useRouter();
 
-	function gotoPost(rowData: IPostsRowData){
+	function gotoPost(rowData: IPostsRowData) {
 		let urlPrefix = '/referenda';
 		if (rowData.type === 'FellowshipReferendum') {
 			urlPrefix = '/member-referenda';
 		}
-		if(rowData.origin) {
+		if (rowData.origin) {
 			if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
 				window?.open(`${urlPrefix}/${rowData.post_id}`, '_blank');
 			} else {
@@ -92,21 +93,20 @@ const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 	//error state
 	if (error) return <ErrorLatestActivity errorMessage={error} />;
 
-	if(posts) {
+	if (posts) {
 		//empty state
-		if(!posts || !posts.length) return <EmptyLatestActivity />;
+		if (!posts || !posts.length) return <EmptyLatestActivity />;
 
 		const tableData: IPostsRowData[] = [];
 
-		posts.forEach((post:any) => {
-
-			if(post) {
+		posts.forEach((post: any) => {
+			if (post) {
 				// truncate title
 				let title = post.title || post.method || noTitle;
-				title = title.length > 80 ? `${title.substring(0, Math.min(80, title.length))}...`  : title.substring(0, Math.min(80, title.length));
-				const subTitle = !title && post.method? post.method : null;
+				title = title.length > 80 ? `${title.substring(0, Math.min(80, title.length))}...` : title.substring(0, Math.min(80, title.length));
+				const subTitle = !title && post.method ? post.method : null;
 
-				const tableDataObj:IPostsRowData = {
+				const tableDataObj: IPostsRowData = {
 					key: post.post_Id,
 					post_id: post.post_id,
 					title,
@@ -127,11 +127,18 @@ const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 		return (
 			<>
 				<div className='hidden md:block'>
-					<PopulatedLatestActivity columns={columns} tableData={tableData} onClick={(rowData) => gotoPost(rowData)} />
+					<PopulatedLatestActivity
+						columns={columns}
+						tableData={tableData}
+						onClick={(rowData) => gotoPost(rowData)}
+					/>
 				</div>
 
-				<div className="block md:hidden h-[520px] overflow-y-auto">
-					<Gov2PopulatedLatestActivityCard tableData={tableData} onClick={(rowData) => gotoPost(rowData)} />
+				<div className='block h-[520px] overflow-y-auto md:hidden'>
+					<Gov2PopulatedLatestActivityCard
+						tableData={tableData}
+						onClick={(rowData) => gotoPost(rowData)}
+					/>
 				</div>
 			</>
 		);

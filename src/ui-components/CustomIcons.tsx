@@ -109,11 +109,17 @@ import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 
 export const IconRetry = (props: Partial<CustomIconComponentProps>) => (
-	<Icon component={RetryIcon} {...props} />
+	<Icon
+		component={RetryIcon}
+		{...props}
+	/>
 );
 
 export const IconCaution = (props: Partial<CustomIconComponentProps>) => (
-	<Icon component={CautionIcon} {...props} />
+	<Icon
+		component={CautionIcon}
+		{...props}
+	/>
 );
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (

@@ -97,7 +97,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 			/>
 			<div className='w-full overflow-hidden'>
 				<CreationLabel
-					className='creation-label rounded-t-md bg-comment_bg px-0 py-2 pt-4 md:px-4 mt-0'
+					className='creation-label mt-0 rounded-t-md bg-comment_bg px-0 py-2 pt-4 md:px-4'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
 					username={comment.username}

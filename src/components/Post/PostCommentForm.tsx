@@ -33,6 +33,7 @@ interface IPostCommentFormProps {
 	setSuccessModalOpen?: (pre: boolean) => void;
 	setCurrentState?: (postId: string, type: string, comment: IComment) => void;
 	posted?: boolean;
+	voteReason?: boolean;
 }
 
 interface IEmojiOption {
@@ -48,7 +49,7 @@ interface IEmojiOption {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted } = props;
+	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
 	const { id, username, picture } = useUserDetailsContext();
 	const {
 		postData: { postIndex, postType, track_number }
@@ -192,7 +193,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		}
 		if (data) {
 			setContent('');
-			setIsPosted(true);
+			setIsPosted(voteReason);
 			form.resetFields();
 			form.setFieldValue('content', '');
 			global.window.localStorage.removeItem(commentKey());
@@ -374,7 +375,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 											disabled={!content}
 											loading={loading}
 											htmlType='submit'
-											className={`my-0 flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
+											className={`my-0 mt-3 flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
 										>
 											<CheckOutlined /> Comment
 										</Button>
@@ -418,7 +419,7 @@ export default styled(PostCommentForm)`
 		justify-content: flex-end;
 	}
 
-	.emoji-button: hover {
+	.emoji-button:hover {
 		background-color: #fbdbec;
 	}
 

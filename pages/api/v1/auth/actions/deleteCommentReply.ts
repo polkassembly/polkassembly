@@ -38,7 +38,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (replyDoc.data()?.user_id !== user.id) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	await replyRef
-		.delete()
+		.update({
+			isDeleted: true
+		})
 		.then(() => {
 			postRef.update({
 				last_comment_at

@@ -92,8 +92,10 @@ const getUserDropDown = (
 	network: string,
 	img?: string | null,
 	username?: string,
+	identityUsername?: string,
 	className?: string
 ): MenuItem => {
+	const profileUsername = identityUsername || username || '';
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
@@ -180,7 +182,7 @@ const getUserDropDown = (
 			<div className='flex items-center justify-between gap-x-2'>
 				<div className={`flex gap-2 text-sm ${!isGood && isIdentityUnverified && 'w-[85%]'}`}>
 					<span className={`normal-case ${!isGood && isIdentityUnverified && 'truncate'}`}>
-						{username && username?.length > 12 && isGood && !isIdentityUnverified ? `${username?.slice(0, 12)}...` : username || ''}
+						{profileUsername && profileUsername?.length > 12 && isGood && !isIdentityUnverified ? `${profileUsername?.slice(0, 12)}...` : profileUsername}
 					</span>
 					{isGood && !isIdentityUnverified && (
 						<CheckCircleFilled
@@ -220,7 +222,7 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
-	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
+	const { setUserDetailsContextState, username, picture, loginAddress } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const router = useRouter();
@@ -301,7 +303,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		return () => unsubscribe && unsubscribe();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [api, apiReady, loginAddress]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [],
@@ -444,9 +446,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		handleLogout,
 		network,
 		picture,
-		(mainDisplay || username)!,
+		username!,
+		mainDisplay!,
 		`${className} ${poppins.className} ${poppins.variable}`
 	);
+
 	const govOverviewItems = isOpenGovSupported(network)
 		? [
 				!isMobile

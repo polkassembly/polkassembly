@@ -53,6 +53,7 @@ export const Reply = ({ className, commentId, reply, userName }: Props) => {
 					username={username}
 					spam_users_count={reply.spam_users_count}
 					commentSource={reply.reply_source}
+					isRow={true}
 				></CreationLabel>
 				<EditableReplyContent
 					userId={user_id}

@@ -165,12 +165,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							/>
 						</>
 					)}
-					{created_at && (
-						<span className='mt-2 flex items-center pl-5 md:mt-0 md:pl-0'>
-							<ClockCircleOutlined className='mx-1' />
-							{relativeCreatedAt}
-						</span>
-					)}
+					{created_at && <span className={`flex items-center md:pl-0 mr-1 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 pl-5 md:pl-0'}`}><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
+					{children}
 					{/* showing vote from local state */}
 					{vote && (
 						<div className='flex items-center justify-center'>
@@ -289,9 +285,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							</Modal>
 						</div>
 					) : null}
-
-					{/* {created_at && <span className={`flex items-center md:pl-0 mr-1 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0'}`}><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>} */}
-					{children}
 				</div>
 			</div>
 

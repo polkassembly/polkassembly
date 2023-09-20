@@ -167,9 +167,17 @@ export default React.memo(styled(Gov2LatestActivity)`
 		border-bottom: ${props => props.theme=='dark' ? '1px solid #272C31' : '1px solid #E1E6EB'} !important;
 	}
 	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab{
-		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
 	}
 	.ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
 		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+	}
+	.ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, .ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
+		background: none !important;
+	}
+	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab-active{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
+		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
 	}
 `);

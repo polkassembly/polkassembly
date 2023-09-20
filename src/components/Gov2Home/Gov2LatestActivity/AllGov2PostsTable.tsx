@@ -23,7 +23,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: '#',
 		dataIndex: 'post_id',
 		key: 'id',
-		render: (post_id: any) => <div className='truncate'>{post_id}</div>,
+		render: (post_id: any) => <div className='truncate dark:font-normal'>{post_id}</div>,
 		width: 80,
 		fixed: 'left'
 	},
@@ -37,7 +37,7 @@ const columns: ColumnsType<IPostsRowData> = [
 			return (
 				<>
 					<h4
-						className='truncate m-0'
+						className='truncate m-0 dark:font-normal'
 					>
 						{title}
 					</h4>
@@ -49,7 +49,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw] text-blue-light-high dark:text-blue-dark-high font-semibold' defaultAddress={proposer} username={username} disableIdenticon={false} /></div>,
+		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw] text-blue-light-high dark:text-blue-dark-high font-semibold dark:font-normal' defaultAddress={proposer} username={username} disableIdenticon={false} /></div>,
 		width: 200
 	},
 	{

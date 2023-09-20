@@ -418,7 +418,7 @@ export default styled(PostCommentForm)`
 		justify-content: flex-end;
 	}
 
-	.emoji-button: hover {
+	.emoji-button:hover {
 		background-color: #fbdbec;
 	}
 

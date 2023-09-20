@@ -37,11 +37,14 @@ const getStatement = (ApprovalCondition: boolean, supportCondition: boolean) => 
 	if (ApprovalCondition && supportCondition) {
 		return 'both support and approval are above';
 	}
+	if (!ApprovalCondition && !supportCondition) {
+		return 'both support and approval are below';
+	}
 	if (!ApprovalCondition) {
-		return 'approval are below';
+		return 'approval is below';
 	}
 	if (!supportCondition) {
-		return 'support are below';
+		return 'support is below';
 	}
 };
 

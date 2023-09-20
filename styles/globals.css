@@ -444,3 +444,10 @@ color: var(--lightBlue) !important;
   padding: 12px 1rem;
   cursor: pointer;
 }
+
+.tox-statusbar__path-item, .tox-statusbar__path-divider {
+    display: none !important;
+}
+.tox-statusbar {
+    border: none !important;
+}

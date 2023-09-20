@@ -186,6 +186,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 		if (editPostCommentError || !data) {
 			setError( editPostCommentError || 'There was an error in editing your comment.');
+			setComments((prev) => {
+				const key = `${postIndex}_${ getSubsquidLikeProposalType(postType)}`;
+				const payload = Object.assign(prev, {});
+				payload[key] = prev[key].map( comment => comment.id === commentId ? { ...comment, isError: true } : comment);
+				return payload;
+			});
 			queueNotification({
 				header: 'Error!',
 				message: 'There was an error in editing your comment.',
@@ -241,6 +247,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		global.window.localStorage.removeItem(replyKey(commentId));
 		const keys = Object.keys(comments);
 		const replyId = v4();
+		const oldComment:any = Object.assign({}, comments);
 		setComments((prev) => {
 			const comments:any = Object.assign({}, prev);
 			for(const key of keys ){
@@ -296,6 +303,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			if (addCommentError || !data) {
 				setErrorReply('There was an error in saving your reply.');
 				console.error('Error saving reply: ', addCommentError);
+				setComments(oldComment);
 				queueNotification({
 					header: 'Error!',
 					message: 'There was an error in saving your reply.',
@@ -327,7 +335,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				});
 			}
 			else {
-				console.log(data);
 				setComments((prev) => {
 					const comments:any = Object.assign({}, prev);
 					for(const key of keys ){

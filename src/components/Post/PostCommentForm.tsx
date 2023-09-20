@@ -32,7 +32,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, setCurrentState } = props;
 	const { id, username, picture } = useUserDetailsContext();
-	const { comments, setComments, setTimelines } = useCommentDataContext();
+	const { setComments } = useCommentDataContext();
 	const { postData: { postIndex, postType, track_number } } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
@@ -97,7 +97,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			username: username || ''
 		};
 		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
-		console.log(comments, setTimelines);
 		queueNotification({
 			header: 'Success!',
 			message: 'Comment created successfully.',

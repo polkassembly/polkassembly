@@ -105,6 +105,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		setError('');
 		global.window.localStorage.removeItem(editReplyKey(replyId));
 		form.setFieldValue('content', '');
+		const oldComments:any = Object.assign({}, comments);
 		const keys = Object.keys(comments);
 		setComments((prev:any) => {
 			const comments:any = Object.assign({}, prev);
@@ -152,6 +153,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 		if (editReplyError || !data) {
 			console.error('Error saving reply: ', editReplyError);
+			setComments(oldComments);
 			queueNotification({
 				header: 'Error!',
 				message: 'Failed to save reply',

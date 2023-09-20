@@ -481,7 +481,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					label: (
 						<ReportButton
 							proposalType={postType}
-							className={`ml-[-7px] flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+							className={`ml-[-7px] mr-2 flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
 							type='comment'
 							commentId={commentId}
 							postId={postIndex}

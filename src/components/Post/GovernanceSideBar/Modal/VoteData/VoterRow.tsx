@@ -234,8 +234,8 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 								</div>
 							</div>
 							<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0]'></div>
-							<div className='flex w-[200px] flex-col gap-1'>
-								<div className='text-xs font-medium text-lightBlue'>Delegation Votes</div>
+							<div className='mr-3 flex w-[200px] flex-col gap-1'>
+								<div className='text-xs font-medium text-lightBlue'>Delegated Votes</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 										<VoterIcon /> Voting Power

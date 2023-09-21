@@ -32,6 +32,7 @@ interface ICurvesProps {
 	curvesError: string;
 	setData: React.Dispatch<any>;
 	canVote?: boolean;
+	status?: string;
 }
 
 const getStatement = (ApprovalCondition: boolean, supportCondition: boolean) => {
@@ -50,7 +51,7 @@ const getStatement = (ApprovalCondition: boolean, supportCondition: boolean) => 
 };
 
 const Curves: FC<ICurvesProps> = (props) => {
-	const { data, progress, curvesError, curvesLoading, setData, canVote } = props;
+	const { data, progress, curvesError, curvesLoading, setData, canVote, status } = props;
 	const toggleData = (index: number) => {
 		setData((prev: any) => {
 			if (prev.datasets && Array.isArray(prev.datasets) && prev.datasets.length > index) {
@@ -85,13 +86,24 @@ const Curves: FC<ICurvesProps> = (props) => {
 				<p className='text-center font-medium text-red-500'>{curvesError}</p>
 			) : (
 				<section>
-					{progress.approval >= progress.approvalThreshold && progress.support >= progress.supportThreshold ? (
+					{['Executed', 'Confirmed', 'Approved'].includes(status || '') || (progress.approval >= progress.approvalThreshold && progress.support >= progress.supportThreshold) ? (
 						<p className='row mb-2 flex items-center gap-1 text-sm font-medium'>
 							<span className='flex'>
 								<ChartIcon />
 							</span>
 							<p className='m-0'>
-								Proposal <span className='text-aye_green'>{canVote ? 'is passing' : 'has passed'}</span> as both support and approval are above the threshold
+								Proposal{' '}
+								{canVote ? (
+									<span>
+										is <span className='text-aye_green'>passing</span>
+									</span>
+								) : (
+									<span>
+										has <span className='text-aye_green'>passed</span>
+									</span>
+								)}{' '}
+								{/* Currently removing because not sure about the condition */}
+								{/* as both support and approval are above the threshold */}
 							</p>
 						</p>
 					) : (

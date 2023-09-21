@@ -23,6 +23,7 @@ import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { IconRetry } from '~src/ui-components/CustomIcons';
 import { IconCaution } from '~src/ui-components/CustomIcons';
+import { v4 } from 'uuid';
 // import { v4 } from 'uuid';
 
 interface Props {
@@ -233,6 +234,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		if (!replyContent) return;
 		global.window.localStorage.removeItem(newReplyKey(commentId));
 		const keys = Object.keys(comments);
+		const replyId = v4();
 		setComments((prev: any) => {
 			const comments: any = Object.assign({}, prev);
 			for (const key of keys) {
@@ -316,6 +318,31 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 					}
 					return comments;
 				});
+			} else {
+				setComments((prev) => {
+					const comments: any = Object.assign({}, prev);
+					console.log(data.id, reply.id);
+					for (const key of keys) {
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev[key].map((comment) => {
+								if (comment.id === commentId) {
+									if (comment?.replies && Array.isArray(comment.replies)) {
+										comment.replies = comment.replies.map((reply) => (reply.id === replyId ? { ...reply, id: data.id } : reply));
+									}
+									flag = true;
+								}
+								return {
+									...comment
+								};
+							});
+						}
+						if (flag) {
+							break;
+						}
+					}
+					return comments;
+				});
 			}
 			setLoading(false);
 		}
@@ -330,7 +357,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				if (prev?.[key]) {
 					comments[key] = prev[key].map((comment: any) => {
 						if (comment.id === commentId) {
-							comment.replies = comment?.replies?.filter((reply: any) => reply.id !== replyId) || [];
+							comment.replies =
+								comment?.replies?.filter((reply: any) => {
+									console.log(`${reply.id} --> ${replyId}`);
+									return reply.id !== replyId;
+								}) || [];
 							flag = true;
 						}
 						return {

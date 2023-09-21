@@ -26,23 +26,48 @@ export const sortOptions = [
 ];
 
 export const votesSortValues = {
-	BALANCE: 'balance',
-	CONVICTION: 'conviction',
-	TIME: 'time'
+	BALANCE_ASC: 'balance_asc',
+	BALANCE_DESC: 'balance_desc',
+	CONVICTION_ASC: 'conviction_asc',
+	CONVICTION_DESC: 'conviction_desc',
+	TIME_ASC: 'time_asc',
+	TIME_DESC: 'time_desc',
+	VOTING_POWER_ASC: 'voting_power_asc',
+	VOTING_POWER_DESC: 'voting_power_dsc'
 };
 
 export const votesSortOptions = [
 	{
-		key: votesSortValues.TIME,
-		label: 'Time'
+		key: votesSortValues.TIME_ASC,
+		label: 'Time Asc'
 	},
 	{
-		key: votesSortValues.BALANCE,
-		label: 'Balance'
+		key: votesSortValues.BALANCE_ASC,
+		label: 'Balance Asc'
 	},
 	{
-		key: votesSortValues.CONVICTION,
-		label: 'Conviction'
+		key: votesSortValues.CONVICTION_ASC,
+		label: 'Conviction Asc'
+	},
+	{
+		key: votesSortValues.TIME_DESC,
+		label: 'Time Desc'
+	},
+	{
+		key: votesSortValues.BALANCE_DESC,
+		label: 'Balance Desc'
+	},
+	{
+		key: votesSortValues.CONVICTION_DESC,
+		label: 'Conviction Desc'
+	},
+	{
+		key: votesSortValues.VOTING_POWER_ASC,
+		label: 'Voting Power Asc'
+	},
+	{
+		key: votesSortValues.VOTING_POWER_DESC,
+		label: 'Voting Power Desc'
 	}
 ];
 

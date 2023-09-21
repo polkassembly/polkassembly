@@ -13,7 +13,7 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, ThresholdGraphIcon, VoteAmountIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
+import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, VoteAmountIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
@@ -21,15 +21,12 @@ import { poppins } from 'pages/_app';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
-	referendumId: number;
 	tally?: any;
-	setOpen: (value: React.SetStateAction<boolean>) => void;
-	setThresholdOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, setOpen, setThresholdOpen }) => {
+const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally }) => {
 	const { network } = useNetworkContext();
 	const {
 		postData: { status, postIndex }
@@ -96,90 +93,72 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	}, [status, api, apiReady]);
 
 	return (
-		<GovSidebarCard className={className}>
-			<div className='relative z-50 flex items-center justify-between'>
-				<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue'>Voting</h6>
-				<div className='flex items-center gap-x-2'>
-					{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
-						<PassingInfoTag
-							status={status}
-							isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}
+		<>
+			<GovSidebarCard className={className}>
+				<div className='relative z-50 flex items-center justify-between'>
+					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue'>Summary</h6>
+					<div className='flex items-center gap-x-2'>
+						{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
+							<PassingInfoTag
+								status={status}
+								isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}
+							/>
+						)}
+						<button
+							onClick={() => setVoteCalculationModalOpen(true)}
+							className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
+						>
+							<InfoCircleOutlined style={{ color: '#90A0B7' }} />
+						</button>
+					</div>
+				</div>
+				<Spin
+					spinning={isLoading}
+					indicator={<LoadingOutlined />}
+				>
+					<div>
+						<VoteProgress
+							ayeVotes={tallyData.ayes}
+							className='vote-progress'
+							nayVotes={tallyData.nays}
 						/>
-					)}
-					<button
-						onClick={() => setVoteCalculationModalOpen(true)}
-						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
-					>
-						<InfoCircleOutlined style={{ color: '#90A0B7' }} />
-					</button>
-				</div>
-			</div>
-			<Spin
-				spinning={isLoading}
-				indicator={<LoadingOutlined />}
-			>
-				<div>
-					<VoteProgress
-						ayeVotes={tallyData.ayes}
-						className='vote-progress'
-						nayVotes={tallyData.nays}
-					/>
-				</div>
-				<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue'>
-					<article className='flex items-center justify-between gap-x-2'>
-						<div className='flex items-center gap-x-1'>
-							<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Ayes</span>
-						</div>
-						<div className='text-xs font-medium leading-[22px] text-navBlue'>
-							{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-						</div>
-					</article>
-					<article className='flex items-center justify-between gap-x-2'>
-						<div className='flex items-center gap-x-1'>
-							<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nays</span>
-						</div>
-						<div className='text-xs font-medium leading-[22px] text-navBlue'>
-							{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-						</div>
-					</article>
-					<article className='flex items-center justify-between gap-x-2'>
-						<div className='flex items-center gap-x-1'>
-							<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Support</span>
-						</div>
-						<div className='text-xs font-medium leading-[22px] text-navBlue'>
-							{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-						</div>
-					</article>
-					{activeIssuance ? (
+					</div>
+					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue'>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Issuance</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Ayes</span>
 							</div>
 							<div className='text-xs font-medium leading-[22px] text-navBlue'>
-								{formatUSDWithUnits(formatBnBalance(activeIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+								{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 							</div>
 						</article>
-					) : null}
-				</section>
-				<section className='mt-[18px] flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] pb-[14px] pt-[18px]'>
-					<button
-						className='m-0 flex cursor-pointer items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium leading-[22px] text-pink_primary outline-none'
-						onClick={() => {
-							setOpen(true);
-						}}
-					>
-						<VotingHistoryIcon />
-						<span>Voting History</span>
-					</button>
-					<button
-						className='m-0 flex cursor-pointer items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium leading-[22px] text-pink_primary outline-none'
-						onClick={() => {
-							setThresholdOpen(true);
-						}}
-					>
-						<ThresholdGraphIcon />
-						<span>Threshold Data</span>
-					</button>
+						<article className='flex items-center justify-between gap-x-2'>
+							<div className='flex items-center gap-x-1'>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nays</span>
+							</div>
+							<div className='text-xs font-medium leading-[22px] text-navBlue'>
+								{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+							</div>
+						</article>
+						<article className='flex items-center justify-between gap-x-2'>
+							<div className='flex items-center gap-x-1'>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Support</span>
+							</div>
+							<div className='text-xs font-medium leading-[22px] text-navBlue'>
+								{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+							</div>
+						</article>
+						{activeIssuance ? (
+							<article className='flex items-center justify-between gap-x-2'>
+								<div className='flex items-center gap-x-1'>
+									<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Issuance</span>
+								</div>
+								<div className='text-xs font-medium leading-[22px] text-navBlue'>
+									{formatUSDWithUnits(formatBnBalance(activeIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+								</div>
+							</article>
+						) : null}
+					</section>
 					<Modal
 						onCancel={() => {
 							setVoteCalculationModalOpen(false);
@@ -326,9 +305,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</p>
 						</section>
 					</Modal>
-				</section>
-			</Spin>
-		</GovSidebarCard>
+				</Spin>
+			</GovSidebarCard>
+		</>
 	);
 };
 

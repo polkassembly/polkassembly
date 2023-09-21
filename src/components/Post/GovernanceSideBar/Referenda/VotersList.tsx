@@ -43,7 +43,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [decision, setDecision] = useState<DecisionType>('yes');
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
-	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME);
+	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
 	const [polymeshVotesData, setPolymeshVotesData] = useState<{ ayeVotes: any[]; nayVotes: any[] }>({ ayeVotes: [], nayVotes: [] });
 
 	const getVoterFromPolkadot = async (identityId: string) => {
@@ -110,7 +110,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				isLoading: true,
 				message: ''
 			});
-			if (sortBy === votesSortValues.BALANCE) {
+			if (sortBy === votesSortValues.BALANCE_DESC) {
 				const sortedAyeVotes = polymeshVotesData.ayeVotes.sort((a, b) => Number(b?.balance?.value || 0) - Number(a?.balance?.value || 0));
 				const sortedNayVotes = polymeshVotesData.nayVotes.sort((a, b) => Number(b?.balance?.value || 0) - Number(a?.balance?.value || 0));
 
@@ -227,7 +227,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const sortByDropdown = (
 		<Dropdown
 			menu={{
-				defaultSelectedKeys: [votesSortValues.TIME],
+				defaultSelectedKeys: [votesSortValues.TIME_DESC],
 				items: [...(network === AllNetworks.POLYMESH ? votesSortOptions.slice(1, 2) : votesSortOptions)],
 				onClick: handleSortByClick,
 				selectable: true
@@ -397,4 +397,4 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	);
 };
 
-export default VotersList;
+export default React.memo(VotersList);

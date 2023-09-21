@@ -57,6 +57,34 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 
 				setMembers(members);
 			});
+		} else if (network === 'picasso') {
+			if (!api.query.technicalCommittee) {
+				setNoMembers(true);
+				return;
+			}
+			api.query.technicalCommittee
+				.members()
+				.then((members) => {
+					let membersArr: WhitelistMember[] = [];
+
+					if (!members.length) {
+						setNoMembers(true);
+						return;
+					}
+
+					members.forEach((m: any) => {
+						membersArr.push({
+							accountId: m.toString()
+						});
+					});
+
+					membersArr = _.orderBy(membersArr, ['rank'], ['asc']);
+
+					setMembers(membersArr);
+				})
+				.catch((err) => {
+					setError(err);
+				});
 		} else {
 			if (!api.query.fellowshipCollective) {
 				setNoMembers(true);

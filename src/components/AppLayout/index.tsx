@@ -535,7 +535,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
-		gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [...gov2TrackItems.treasuryItems]));
+		if (network !== 'picasso') {
+			gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [...gov2TrackItems.treasuryItems]));
+		} else {
+			gov2CollapsedItems.splice(gov2CollapsedItems.length - 2, 1);
+		}
 	}
 
 	const handleMenuClick = (menuItem: any) => {

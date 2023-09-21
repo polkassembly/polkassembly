@@ -286,7 +286,6 @@ const Post: FC<IPostProps> = (props) => {
 						hash={hash}
 					/>
 				</StickyBox>
-				{/* decision deposite placed. */}
 
 				{isOffchainPost && (
 					<div className={'sticky top-[65px] mb-6 '}>

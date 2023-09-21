@@ -3,8 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { Divider, Switch } from 'antd';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
+import { CollapseIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import OverallPostsNotification from '~assets/icons/gov-icon.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
 import { useNetworkContext } from '~src/context';
@@ -13,6 +12,7 @@ import { iconMapper, postOriginMapper, titleMapper } from './utils';
 import { ACTIONS } from '../Reducer/action';
 import { INotificationObject } from '../types';
 import { Collapse } from '../common-ui/Collapse';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = {
@@ -43,6 +43,8 @@ export default function OpenGovNotification({
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
 	const [all, setAll] = useState(false);
+	const { resolvedTheme:theme } = useTheme();
+
 	const openGovTwoOptions = getConsecutiveKeys(networkTrackInfo[network] || {});
 
 	const handleAllClick = (checked: boolean) => {
@@ -152,10 +154,11 @@ export default function OpenGovNotification({
 		<Collapse
 			size='large'
 			className='bg-white dark:bg-section-dark-overlay'
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
-				return isActive ? <CollapseIcon /> : <ExpandIcon />;
+				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/>;
 			}}
 		>
 			<Panel

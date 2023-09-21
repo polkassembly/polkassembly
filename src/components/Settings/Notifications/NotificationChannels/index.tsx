@@ -3,11 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import { Divider } from 'antd';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
-import NotificationChannelsIcon from '~assets/icons/notification-channel-svg.svg';
-import SlackIcon from '~assets/icons/slack.svg';
-import ElementIcon from '~assets/icons/element.svg';
+import { CollapseIcon, ExpandIcon,NotificationChannelsIcon, MailFilledIcon,TelegramNotificationIcon,DiscordNotificationIcon,SlackIcon,ElementIcon } from '~src/ui-components/CustomIcons';
 import EmailNotificationCard from './EmailNotificationCard';
 import BotSetupCard from './BotSetupCard';
 import TelegramInfoModal from './Modals/Telegram';
@@ -18,9 +14,7 @@ import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import DiscordInfoModal from './Modals/Discord';
 import SlackInfoModal from './Modals/Slack';
 import { Collapse } from '../common-ui/Collapse';
-import MailFilled from '~assets/icons/email-notification.svg';
-import TelegramIcon from '~assets/icons/telegram-notification.svg';
-import DiscordIcon from '~assets/icons/discord-notification.svg';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = { handleEnableDisabled: any, handleReset: any };
@@ -39,6 +33,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	const { network } = useNetworkContext();
 	const { id, networkPreferences, email, email_verified } = useUserDetailsContext();
 	const [active, setActive] = useState<boolean | undefined>(false);
+	const { resolvedTheme:theme } = useTheme();
 	const handleClick = (channelName: CHANNEL) => {
 		setShowModal(channelName);
 	};
@@ -91,14 +86,15 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
-				return isActive ? <CollapseIcon /> : <ExpandIcon />;
+				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/>;
 			}}
+			theme={theme}
 		>
 			<Panel
 				header={
 					<div className='flex justify-between gap-[8px] items-center'>
 						<div className='flex items-center gap-[6px] channel-header'>
-							<NotificationChannelsIcon />
+							<NotificationChannelsIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 							<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 pt-1'>
 								Notification Channels
 							</h3>
@@ -107,7 +103,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 							<div className='gap-4 hidden items-center md:flex'>
 								<div className={`${!networkPreferences?.channelPreferences?.[
 									CHANNEL.EMAIL]?.enabled ? '[&>svg]:opacity-50' : ''}`}>
-									<MailFilled />
+									<MailFilledIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 								</div>
 								{Bots.map((bot, i) => <div className={`${!networkPreferences?.channelPreferences?.[
 									bot.channel]?.enabled ? '[&>svg]:opacity-50' : ''}`} key={i}>{bot.Icon}</div>)}
@@ -163,7 +159,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					))}
 				</div>
 				<TelegramInfoModal
-					icon={<TelegramIcon />}
+					icon={<TelegramNotificationIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					title='How to add Bot to Telegram'
 					open={showModal === CHANNEL.TELEGRAM}
 					getVerifyToken={getVerifyToken}
@@ -175,7 +171,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					}
 				/>
 				<DiscordInfoModal
-					icon={<DiscordIcon />}
+					icon={<DiscordNotificationIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 					title='How to add Bot to Discord'
 					open={showModal === CHANNEL.DISCORD}
 					getVerifyToken={getVerifyToken}
@@ -187,7 +183,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					}
 				/>
 				<SlackInfoModal
-					icon={<SlackIcon />}
+					icon={<SlackIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 					title='How to add Bot to Slack'
 					open={showModal === CHANNEL.SLACK}
 					getVerifyToken={getVerifyToken}
@@ -205,25 +201,25 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 
 const Bots = [
 	{
-		Icon: <TelegramIcon />,
+		Icon: <TelegramNotificationIcon className='text-lightBlue dark:text-icon-dark-inactive' />,
 		channel: CHANNEL.TELEGRAM,
 		description: 'a Telegram chat to get Telegram notifications',
 		title: 'Telegram'
 	},
 	{
-		Icon: <DiscordIcon />,
+		Icon: <DiscordNotificationIcon className='text-lightBlue dark:text-icon-dark-inactive' />,
 		channel: CHANNEL.DISCORD,
 		description: 'a Discord Channel chat to get Discord notifications',
 		title: 'Discord'
 	},
 	{
-		Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
+		Icon: <SlackIcon className='text-lightBlue dark:text-icon-dark-inactive' style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.SLACK,
 		description: '',
 		title: 'Slack'
 	},
 	{
-		Icon: <ElementIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
+		Icon: <ElementIcon className='text-lightBlue dark:text-icon-dark-inactive' style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.ELEMENT,
 		description: '',
 		title: 'Element'

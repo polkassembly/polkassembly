@@ -3,8 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import { Checkbox, Divider, Space } from 'antd';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
+import { CollapseIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import ParachainNotification from '~assets/icons/parachain-notification-icon.svg';
 import ImportIcon from '~assets/icons/import-icon.svg';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
@@ -17,6 +16,7 @@ import SetPrimaryNetworkSettingModal from './PrimaryNetworkConfirmModal';
 import { ISelectedNetwork } from '../types';
 import Image from 'next/image';
 import { Collapse } from '../common-ui/Collapse';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = {
@@ -42,6 +42,7 @@ export default function Parachain({
 	const { network } = useNetworkContext();
 	const [openModal, setOpenModal] = useState(false);
 	const [active, setActive] = useState<boolean | undefined>(false);
+	const { resolvedTheme:theme } = useTheme();
 	const handleModalConfirm = (networks: ISelectedNetwork) => {
 		setSelectedNetwork(networks);
 		setOpenModal(false);
@@ -80,10 +81,11 @@ export default function Parachain({
 		<Collapse
 			className='bg-white dark:bg-section-dark-overlay'
 			size='large'
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
-				return isActive ? <CollapseIcon /> : <ExpandIcon />;
+				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/>;
 			}}
 		>
 			<Panel

@@ -389,7 +389,7 @@ const UpcomingEvents = ({ className }:Props) => {
 			<div className="hidden lg:flex lg:flex-row h-[520px] lg:h-[450px]">
 				<div className="w-full lg:w-[55%] p-3">
 					<CalendarElement />
-					<span className='text-xs text-navBlue'>*DateTime in UTC</span>
+					<span className='text-xs text-navBlue dark:text-blue-dark-medium'>*DateTime in UTC</span>
 				</div>
 
 				<div className="w-[45%] ml-4 p-2">

@@ -115,6 +115,12 @@ import CollapseSVG from '~assets/icons/collapse.svg';
 import NovaWalletSVG from '~assets/delegation-tracks/nova-wallet.svg';
 import ParityTechSVG from '~assets/icons/polkadot-logo.svg';
 import RedirectSVG from '~assets/icons/redirect-icon.svg';
+import NotificationChannelsSVG from '~assets/icons/notification-channel-svg.svg';
+import MailFilledSVG from '~assets/icons/email-notification.svg';
+import TelegramIconSVG from '~assets/icons/telegram-notification.svg';
+import DiscordIconSVG from '~assets/icons/discord-notification.svg';
+import SlackSVG from '~assets/icons/slack.svg';
+import ElementSVG from '~assets/icons/element.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -514,4 +520,28 @@ export const ApplayoutIdentityIcon  = (props: Partial<CustomIconComponentProps>)
 
 export const RedirectIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={RedirectSVG} {...props} />
+);
+
+export const NotificationChannelsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={NotificationChannelsSVG} {...props} />
+);
+
+export const MailFilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={MailFilledSVG} {...props} />
+);
+
+export const TelegramNotificationIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TelegramIconSVG} {...props} />
+);
+
+export const DiscordNotificationIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DiscordIconSVG} {...props} />
+);
+
+export const SlackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SlackSVG} {...props} />
+);
+
+export const ElementIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ElementSVG} {...props} />
 );

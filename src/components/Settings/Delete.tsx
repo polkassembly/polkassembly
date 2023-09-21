@@ -12,6 +12,7 @@ import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 import { ExpandIcon,CollapseIcon } from '~src/ui-components/CustomIcons';
 import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -27,6 +28,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 	const [form] = Form.useForm();
 	const { setUserDetailsContextState } = useUserDetailsContext();
 	const router = useRouter();
+	const { resolvedTheme:theme } = useTheme();
 
 	const handleLogout = async () => {
 		logout(setUserDetailsContextState);
@@ -69,6 +71,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 			size='large'
 			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
+			theme={theme}
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium' />;
 			}}

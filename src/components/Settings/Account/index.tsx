@@ -8,7 +8,7 @@ import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import AccountIcon from '~assets/icons/account-icon.svg';
 import { Collapse } from '../Notifications/common-ui/Collapse';
-
+import { useTheme } from 'next-themes';
 const { Panel } = Collapse;
 
 const Address = dynamic(() => import('./Address'),{
@@ -58,10 +58,12 @@ const Account: FC<Props> = ({ className }) => {
 	const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
 	const [isLinkProxy, setIsLinkProxy] = useState(false);
 	const [active, setActive] = useState(false);
+	const { resolvedTheme:theme } =  useTheme();
 	return (
 		<Collapse
 			size='large'
 			className='bg-white dark:bg-section-dark-overlay'
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive || false);
@@ -80,7 +82,7 @@ const Account: FC<Props> = ({ className }) => {
 				key='1'
 			>
 				<Row className={`${className} flex flex-col w-full`}>
-					<div className='flex flex-col gap-4'>
+					<div className='flex flex-col gap-4 dark:text-blue-dark-medium'>
 						<section>
 							<AddressHeader
 								checked={isLinkAddress}

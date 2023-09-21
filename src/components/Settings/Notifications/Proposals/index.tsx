@@ -3,13 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { Switch } from 'antd';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
+import { CollapseIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import ChatActive from '~assets/icons/chat-active.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
 import { ACTIONS } from '../Reducer/action';
 import { EMentionType, INotificationObject } from '../types';
 import { Collapse } from '../common-ui/Collapse';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 
@@ -28,6 +28,7 @@ export default function Proposals({
 }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
+	const { resolvedTheme:theme } = useTheme();
 	useEffect(() => {
 		setAll(options.every((category: any) => category.selected));
 	}, [options]);
@@ -118,10 +119,11 @@ export default function Proposals({
 		<Collapse
 			size='large'
 			className='bg-white dark:bg-section-dark-overlay'
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
-				return isActive ? <CollapseIcon /> : <ExpandIcon />;
+				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/>;
 			}}
 		>
 			<Panel
@@ -143,7 +145,7 @@ export default function Proposals({
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D]'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
 								</span>
 							</>
 						)}

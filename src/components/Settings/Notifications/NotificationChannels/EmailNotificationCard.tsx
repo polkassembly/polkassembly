@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import MailFilled from '~assets/icons/email-notification.svg';
+import { MailFilledIcon } from '~src/ui-components/CustomIcons';
 import { Switch } from 'antd';
 import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
@@ -23,7 +23,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 		<div className='flex flex-col mb-2'>
 			<h3 className='flex gap-2 items-center text-base text-blue-light-high dark:text-blue-dark-high font-medium m-0 gap-1'>
 				<span>
-					<MailFilled /> Email Notifications{' '}
+					<MailFilledIcon className='text-lightBlue dark:text-icon-dark-inactive' /> Email Notifications{' '}
 					{!verified && <span className='text-[10px] px-[4px] py-[2px] bg-[red] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>  {verifiedEmail ? 'Not Verified' : 'Not Added'}</span>}
 
 				</span>

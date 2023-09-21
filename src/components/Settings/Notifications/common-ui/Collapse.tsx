@@ -16,6 +16,10 @@ export const Collapse = styled(AntDCollapse)`
     padding: 16px 20px !important;
 }
 
+.ant-collapse-content-box {
+	background-color: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'};
+}
+
 @media (max-width: 768px){
     &.ant-collapse-large >.ant-collapse-item >.ant-collapse-header{
         padding:8px 12px !important;

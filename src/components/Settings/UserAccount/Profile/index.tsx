@@ -13,7 +13,6 @@ import ChangeUsername from '../Modals/ChangeUsername';
 import ChangeEmail from '../Modals/ChangeEmail';
 import ChangePassword from '../Modals/ChangePassword';
 import TwoFactorAuth from '../../TwoFactorAuth';
-import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
@@ -21,7 +20,7 @@ const { Panel } = Collapse;
 const Row = ({ label, data, handleEdit }: { label: string, data: string, handleEdit: any }) => (
 	<div className='flex justify-between items-baseline'>
 		<div>
-			<label className='text-[#485F7D] text-[14px]' htmlFor={label}>{label}</label>
+			<label className='text-[#485F7D] text-[14px] dark:text-blue-dark-medium' htmlFor={label}>{label}</label>
 			<p className='font-medium text-blue-light-high dark:text-blue-dark-high'>{
 				label === 'Password' ?
 					<div className='flex gap-1 mt-2'>
@@ -50,8 +49,9 @@ const ProfileSettings = () => {
 	return (
 		<Collapse
 			size='large'
-			className={`bg-white dark:bg-section-dark-overlay ${theme === 'dark'? '[&>.ant-collapse-content]:bg-black' : ''}`}
+			className={'bg-white dark:bg-section-dark-overlay'}
 			expandIconPosition='end'
+			theme={theme}
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium' /> : <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/>;
 			}}
@@ -91,11 +91,4 @@ const ProfileSettings = () => {
 	);
 };
 
-export default styled(ProfileSettings)`
-ant-collapse-content .ant-collapse-content-active{
-	background-color: blue !important;
-}
-.ant-collapse .ant-collapse-content{
-	background-color: blue !important;
-}
-`;
+export default ProfileSettings;

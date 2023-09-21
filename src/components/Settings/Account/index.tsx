@@ -17,6 +17,11 @@ const Address = dynamic(() => import('./Address'), {
 	ssr: false
 });
 
+const MultiSignatureAddress = dynamic(() => import('./MultiSignatureAddress'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
 const Proxy = dynamic(() => import('./Proxy'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -55,6 +60,7 @@ interface Props {
 
 const Account: FC<Props> = ({ className }) => {
 	const [isLinkAddress, setIsLinkAddress] = useState(false);
+	const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
 	const [isLinkProxy, setIsLinkProxy] = useState(false);
 	const [active, setActive] = useState(false);
 	return (
@@ -72,8 +78,7 @@ const Account: FC<Props> = ({ className }) => {
 					<div className='channel-header flex items-center gap-[6px]'>
 						<AccountIcon />
 						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>
-							Account Settings&nbsp;
-							{active && <span className='text-sm font-normal text-[#243A57]'>Update your account settings here</span>}
+							Account Settings {active && <span className='text-sm font-normal text-[#243A57]'>Update your account settings here</span>}
 						</h3>
 					</div>
 				}
@@ -92,6 +97,22 @@ const Account: FC<Props> = ({ className }) => {
 									<Address
 										open={isLinkAddress}
 										dismissModal={() => setIsLinkAddress(false)}
+									/>
+								}
+							/>
+						</section>
+						<Divider className='m-0 text-[#D2D8E0]' />
+						<section>
+							<AddressHeader
+								checked={isMultiSigAddress}
+								header='Link Multi Signature Address'
+								id='link_multi_address'
+								onChange={setIsMultiSigAddress}
+								subHeading='For participating in governance activities with your multisig'
+								modal={
+									<MultiSignatureAddress
+										open={isMultiSigAddress}
+										dismissModal={() => setIsMultiSigAddress(false)}
 									/>
 								}
 							/>

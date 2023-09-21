@@ -42,7 +42,7 @@ interface Props {
 	setIsIdentityCallDone: (pre: boolean) => void;
 	setIdentityHash: (pre: string) => void;
 	setAddressChangeModalOpen: () => void;
-	alreadyVerifiedfields?: IVerifiedFields;
+	alreadyVerifiedfields: IVerifiedFields;
 }
 interface ValueState {
 	info: Record<string, unknown>;
@@ -103,7 +103,7 @@ const IdentityForm = ({
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
-	const totalFee = gasFee.add(bondFee.add(registerarFee.add(alreadyVerifiedfields?.alreadyVerified ? ZERO_BN : minDeposite)));
+	const totalFee = gasFee.add(bondFee.add(registerarFee.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -507,7 +507,7 @@ const IdentityForm = ({
 				</div> */}
 				</div>
 			</Form>
-			{!alreadyVerifiedfields?.alreadyVerified && (
+			{!alreadyVerifiedfields?.alreadyVerified && !alreadyVerifiedfields.isIdentitySet && (
 				<div className='mt-6 flex items-center gap-4 text-sm'>
 					<span className='font-medium text-lightBlue'>
 						Min Deposit{' '}
@@ -521,7 +521,6 @@ const IdentityForm = ({
 					</span>
 				</div>
 			)}
-
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert

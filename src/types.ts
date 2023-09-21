@@ -528,3 +528,7 @@ export enum ESocials {
 	TWITTER = 'twitter',
 	WEB = 'web'
 }
+export interface ILoading {
+	isLoading: boolean;
+	message: string;
+}

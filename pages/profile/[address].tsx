@@ -12,6 +12,7 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ProfileDetails } from '~src/auth/types';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface IProfileProps {
 	className?: string;
@@ -26,6 +27,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const address = context.params?.address;
 
 	const network = getNetworkFromReqHeaders(context.req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
 
 	const { data, error } = await getProfileWithAddress({
 		address

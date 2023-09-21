@@ -17,6 +17,7 @@ import SEOHead from '~src/global/SEOHead';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
 import queueNotification from '~src/ui-components/QueueNotification';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
@@ -26,8 +27,13 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+	const network = getNetworkFromReqHeaders(context.req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const props: Props = {
-		network: getNetworkFromReqHeaders(context.req.headers),
+		network,
 		token: `${context.query.token}`,
 		userId: `${context.query.userId}`
 	};

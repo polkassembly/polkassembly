@@ -245,6 +245,7 @@ const VoteInitiatedModal = ({
 						setCurrentState={handleCurrentCommentAndTimeline}
 						voteDecision={vote}
 						setSuccessModalOpen={setOpen}
+						voteReason={true}
 					/>
 				</div>
 				<span

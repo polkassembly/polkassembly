@@ -5,7 +5,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import { GET_DELEGATED_CONVICTION_VOTES_COUNT } from './query';
+import { voteTypes } from '~src/global/proposalType';
+import { GET_DELEGATED_CONVICTION_VOTES_COUNT } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IVotesResponse {
@@ -13,9 +14,21 @@ export interface IVotesResponse {
 	voteCapital: number;
 }
 
-// expects optional id, page, voteType and listingLimit
 async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
 	const { postId = 0, decision, type, voter } = req.query;
+
+	if (!String(voter)) {
+		return res.status(400).json({ error: `Invalid voter: "${voter}"` });
+	}
+
+	const strType = String(type);
+	if (!voteTypes.includes(strType)) {
+		return res.status(400).json({ error: `The type "${type}" is invalid.` });
+	}
+
+	if (!['yes', 'no', 'abstain'].includes(String(decision))) {
+		return res.status(400).json({ error: `Invalid voter: "${decision}"` });
+	}
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) {
@@ -42,11 +55,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 
 	const subsquidData = result?.data;
 	const voteCapital = subsquidData?.convictionVotes?.[0]?.delegatedVotes.map((cap: any) => cap?.balance?.value).reduce((a: string, b: string) => Number(a) + Number(b), 0);
-	const resObj = {
+	return res.status(200).json({
 		count: subsquidData?.convictionDelegatedVotesConnection?.totalCount,
 		voteCapital
-	};
-	return res.status(200).json(resObj);
+	});
 }
 
 export default withErrorHandling(handler);

@@ -68,6 +68,7 @@ import { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import VotersList from './Referenda/VotersList';
 import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
+import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -89,10 +90,6 @@ interface IGovernanceSidebarProps {
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
-
-const isSupportedNestedVoteNetwork = (network: string) => {
-	return ['polkadot', 'kusama'].includes(network);
-};
 
 export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
 	let height = 0;

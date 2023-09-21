@@ -17,8 +17,9 @@ import {
 	GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE,
 	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
 	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
-} from './query';
+} from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import { getOrderBy } from './utils/votesSorted';
 
 export interface IVotesResponse {
 	yes: {
@@ -67,26 +68,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 	const strSortBy = String(sortBy);
 	const isOpenGov = voteType === VoteType.REFERENDUM_V2;
 
-	const getOrderBy = (sortByValue: string) => {
-		switch (sortByValue) {
-			case votesSortValues.BALANCE_ASC:
-				return ['balance_value_ASC', 'id_ASC'];
-			case votesSortValues.BALANCE_DESC:
-				return ['balance_value_DESC', 'id_DESC'];
-			case votesSortValues.CONVICTION_ASC:
-				return ['lockPeriod_ASC', 'id_ASC'];
-			case votesSortValues.CONVICTION_DESC:
-				return ['lockPeriod_DESC', 'id_DESC'];
-			case votesSortValues.VOTING_POWER_ASC:
-				return ['totalVotingPower_ASC', 'id_ASC'];
-			case votesSortValues.VOTING_POWER_DESC:
-				return ['totalVotingPower_DESC', 'id_DESC'];
-			case votesSortValues.TIME_ASC:
-				return ['timestamp_ASC', 'id_ASC'];
-			default:
-				return isOpenGov ? ['createdAtBlock_DESC', 'id_DESC'] : ['timestamp_DESC', 'id_DESC'];
-		}
-	};
 	if (!isVotesSortOptionsValid(strSortBy)) {
 		return res.status(400).json({ error: `The sortBy "${sortBy}" is invalid.` });
 	}
@@ -94,7 +75,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 		index_eq: numPostId,
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
-		orderBy: getOrderBy(strSortBy),
+		orderBy: getOrderBy(strSortBy, true, isOpenGov),
 		type_eq: voteType
 	};
 

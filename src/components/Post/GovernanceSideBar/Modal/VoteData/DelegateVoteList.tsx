@@ -4,7 +4,7 @@
 
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Pagination, PaginationProps, Spin } from 'antd';
+import { Pagination, Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
 import { useNetworkContext, usePostDataContext } from '~src/context';
@@ -88,10 +88,6 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 				});
 			});
 	}, [referendumId, currentPage, voteType, decision, voter, sortBy]);
-
-	const onChange: PaginationProps['onChange'] = (page) => {
-		setCurrentPage(page);
-	};
 	return (
 		<div>
 			<Spin
@@ -168,7 +164,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 								size='small'
 								defaultCurrent={1}
 								current={currentPage}
-								onChange={onChange}
+								onChange={setCurrentPage}
 								total={votesRes && decision ? votesRes?.count || 0 : 0}
 								showSizeChanger={false}
 								pageSize={VOTES_LISTING_LIMIT}

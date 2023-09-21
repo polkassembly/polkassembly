@@ -6,9 +6,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from './query';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { votesSortValues } from '~src/global/sortOptions';
+import { GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from '~src/queries';
+import { getOrderBy } from './utils/votesSorted';
+import { voteTypes } from '~src/global/proposalType';
 
 export interface IVotesResponse {
 	count: number;
@@ -21,12 +23,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) {
-		res.status(400).json({ error: 'Invalid network in request header' });
+		return res.status(400).json({ error: 'Invalid network in request header' });
 	}
 
 	const numListingLimit = Number(listingLimit);
 	if (isNaN(numListingLimit)) {
-		res.status(400).json({ error: `The listingLimit "${listingLimit}" is invalid.` });
+		return res.status(400).json({ error: `The listingLimit "${listingLimit}" is invalid.` });
 	}
 
 	const numPage = Number(page);
@@ -39,35 +41,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 		return res.status(400).json({ error: `The postId "${postId}" is invalid.` });
 	}
 
-	const getOrderBy = (sortByValue: string) => {
-		switch (sortByValue) {
-			case votesSortValues.BALANCE_ASC:
-				return ['balance_value_ASC', 'id_ASC'];
-			case votesSortValues.BALANCE_DESC:
-				return ['balance_value_DESC', 'id_DESC'];
-			case votesSortValues.CONVICTION_ASC:
-				return ['lockPeriod_ASC', 'id_ASC'];
-			case votesSortValues.CONVICTION_DESC:
-				return ['lockPeriod_DESC', 'id_DESC'];
-			case votesSortValues.VOTING_POWER_ASC:
-				return ['votingPower_ASC', 'id_ASC'];
-			case votesSortValues.VOTING_POWER_DESC:
-				return ['votingPower_DESC', 'id_DESC'];
-			case votesSortValues.TIME_ASC:
-				return ['timestamp_ASC', 'id_ASC'];
-			default:
-				return ['createdAtBlock_DESC', 'id_DESC'];
-		}
-	};
-
 	const strSortBy = String(sortBy);
+
+	if (!String(voter)) {
+		return res.status(400).json({ error: `Invalid voter: "${voter}"` });
+	}
+
+	const strType = String(type);
+	if (!voteTypes.includes(strType)) {
+		return res.status(400).json({ error: `The type "${type}" is invalid.` });
+	}
+
+	if (!['yes', 'no', 'abstain'].includes(String(decision))) {
+		return res.status(400).json({ error: `Invalid voter: "${decision}"` });
+	}
 
 	const variables: any = {
 		decision: decision,
 		index_eq: Number(postId),
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
-		orderBy: getOrderBy(strSortBy),
+		orderBy: getOrderBy(strSortBy, false, true),
 		type_eq: type,
 		voter_eq: voter
 	};
@@ -81,11 +75,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 	});
 
 	const subsquidData = result?.data;
-	const resObj = {
+	res.status(200).json({
 		count: subsquidData?.convictionDelegatedVotesConnection?.totalCount,
 		votes: subsquidData?.convictionVotes?.[0]?.delegatedVotes
-	};
-	res.status(200).json(resObj);
+	});
 }
 
 export default withErrorHandling(handler);

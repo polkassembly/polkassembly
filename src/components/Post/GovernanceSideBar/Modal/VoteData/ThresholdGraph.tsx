@@ -13,7 +13,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import { Modal, Spin } from 'antd';
 import Curves from '../../Referenda/Curves';
 
-export interface IProgress {
+interface IProgress {
 	approval: number;
 	approvalThreshold: number;
 	support: number;

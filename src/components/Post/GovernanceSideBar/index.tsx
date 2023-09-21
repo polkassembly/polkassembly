@@ -1061,6 +1061,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																		data={data}
 																		progress={progress}
 																		setData={setData}
+																		canVote={canVote}
 																	/>
 																)}
 															</div>

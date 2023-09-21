@@ -393,7 +393,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								<span className='relative top-[3px]'>
 									<VoteDataIcon />
 								</span>
-								<span className='text-xl font-semibold text-bodyBlue'>Voting Data</span>
+								<span className='text-xl font-semibold text-bodyBlue'>Delegated Data</span>
 							</h3>
 							<Divider className='my-2 mb-5 text-[#D2D8E0]' />
 						</div>

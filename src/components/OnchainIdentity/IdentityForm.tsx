@@ -222,7 +222,7 @@ const IdentityForm = ({
 		const identityTx = api.tx?.identity?.setIdentity(info);
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
 		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-		setStartLoading({ isLoading: true, message: 'awaiting for confirmation' });
+		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
 		const onSuccess = async () => {
 			const identityHash = await api.query.identity.identityOf(address).then((res) => res.unwrap().info.hash.toHex());

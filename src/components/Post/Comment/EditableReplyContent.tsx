@@ -321,7 +321,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 			} else {
 				setComments((prev) => {
 					const comments: any = Object.assign({}, prev);
-					console.log(data.id, reply.id);
 					for (const key of keys) {
 						let flag = false;
 						if (prev?.[key]) {
@@ -359,7 +358,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 						if (comment.id === commentId) {
 							comment.replies =
 								comment?.replies?.filter((reply: any) => {
-									console.log(`${reply.id} --> ${replyId}`);
 									return reply.id !== replyId;
 								}) || [];
 							flag = true;

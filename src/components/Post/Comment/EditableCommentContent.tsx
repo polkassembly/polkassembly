@@ -199,18 +199,18 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 		if (editPostCommentError || !data) {
 			setError(editPostCommentError || 'There was an error in editing your comment.');
-			setComments((prev) => {
-				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
-				const payload = Object.assign(prev, {});
-				payload[key] = prev[key].map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
-				return payload;
-			});
 			queueNotification({
 				header: 'Error!',
 				message: 'There was an error in editing your comment.',
 				status: NotificationStatus.ERROR
 			});
 			console.error('Error saving comment ', editPostCommentError);
+			setComments((prev) => {
+				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+				const payload = Object.assign(prev, {});
+				payload[key] = prev[key].map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
+				return payload;
+			});
 		}
 		if (data) {
 			setComments((prev) => {
@@ -233,7 +233,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			userId: id
 		});
 
-		if (addCommentError || !data) {
+		if (error || !data) {
 			setErrorReply('There was an error in saving your reply.');
 			console.error('Error saving reply: ', addCommentError);
 			queueNotification({
@@ -241,13 +241,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				message: 'There was an error in saving your reply.',
 				status: NotificationStatus.ERROR
 			});
-		}
-
-		if (data) {
+		} else {
 			setComments((prev) => {
 				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
-				prev[key].map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
-				return prev;
+				const comment = Object.assign(prev, {});
+				comment[key] = comment[key].map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
+				return comment;
 			});
 		}
 	};
@@ -357,8 +356,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								if (comment.id === commentId) {
 									if (comment?.replies && Array.isArray(comment.replies)) {
 										comment.replies = comment.replies.map((reply: any) => {
-											console.log(reply.id);
-											if (reply.id !== replyId) {
+											if (reply.id === replyId) {
 												reply.id = data.id;
 											}
 											return {

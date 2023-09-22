@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import styled from 'styled-components';
 import PaLogo from './PaLogo';
+import PaLogoDark from '~assets/PALogoDark.svg';
 import { RedirectIcon } from '~src/ui-components/CustomIcons';
 import { Divider, Space } from 'antd';
 import TwitterIcon from '~assets/icons/twitter-pink-bg.svg';
@@ -17,7 +18,7 @@ import InternetIconSm from '~assets/icons/internet-icon-sm.svg';
 import AiBot from '../AiBot/AiBot';
 import { useState } from 'react';
 
-const Footer = ({ className } : { className?:string }) => {
+const Footer = ({ className, theme } : { className?:string, theme?:string }) => {
 
 	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
 	const [floatButtonOpen , setFloatButtonOpen] = useState(false);
@@ -30,7 +31,12 @@ const Footer = ({ className } : { className?:string }) => {
 					<div>
 						<div className="flex justify-center sm:justify-start">
 							<Link className='flex' href='/'>
-								<PaLogo className='h-auto w-[180px]' />
+								{
+									theme === 'dark' ?
+										<PaLogoDark className='h-auto w-[180px]' />
+										:
+										<PaLogo className='h-auto w-[180px]' />
+								}
 							</Link>
 						</div>
 

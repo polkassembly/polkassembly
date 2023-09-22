@@ -464,7 +464,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	return (
 		//@ts-ignore
 		<Layout className={className} theme={theme}>
-			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
+			<NavHeader theme={theme} sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
 			<Layout hasSider>
 				<Sider
 					trigger={null}
@@ -527,7 +527,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				}
 			</Layout>
 			{ onchainIdentitySupportedNetwork.includes(network) && <OnChainIdentity open={open} setOpen={setOpen} openAddressLinkedModal={openAddressLinkedModal} setOpenAddressLinkedModal={setOpenAddressLinkedModal}/>}
-			<Footer />
+			<Footer theme={theme} />
 			<Modal
 				open={identityMobileModal}
 				footer={false}

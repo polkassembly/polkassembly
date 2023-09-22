@@ -22,6 +22,7 @@ import SearchBar from '~src/ui-components/SearchBar';
 
 import GovernanceSwitchButton from './GovernanceSwitchButton';
 import PaLogo from './PaLogo';
+import PaLogoDark from '~assets/PALogoDark.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -35,10 +36,11 @@ interface Props {
 	className?: string
 	sidedrawer: boolean
   previousRoute?: string;
+  theme?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute, theme } : Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
@@ -58,9 +60,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' /></Link>
+					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}>
+						{
+							theme === 'dark' ?
+								<PaLogoDark className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' /> :
+								<PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' />
+						}
+					</Link>
 					<div className='flex items-center'>
-						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[10px]'></span>
+						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[10px] dark:ml-3'></span>
 						<h2 className='m-0 p-0 text-blue-light-high dark:text-blue-dark-high text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{
 								isGov2Route? 'OpenGov': 'Gov1'

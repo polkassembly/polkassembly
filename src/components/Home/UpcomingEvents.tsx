@@ -3,10 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CalendarFilled } from '@ant-design/icons';
-import { Calendar, List, Spin, Tooltip } from 'antd';
+import { Calendar as StyledCalendar, List, Spin, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 import { useApiContext, useNetworkContext } from '~src/context';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { NetworkEvent } from '~src/types';
@@ -19,9 +20,19 @@ interface Props{
 	className?: string
 }
 
+const Calendar = styled(StyledCalendar)`
+	.ant-picker-calendar{
+		background: ${props => props.theme === 'dark' ? '#1E2A47' : '#fff'} !important;
+	}
+	.ant-picker-calendar .ant-picker-panel{
+		background: ${props => props.theme === 'dark' ? '#1E2A47' : '#fff'} !important;
+	}
+`;
+
 const UpcomingEvents = ({ className }:Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	const [showCalendar, setShowCalendar] = useState<boolean>(false);
 	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
@@ -342,7 +353,8 @@ const UpcomingEvents = ({ className }:Props) => {
 	const CalendarElement = () => (
 		<Spin spinning={loading}>
 			<Calendar
-				className='border border-solid border-gray-200 rounded-xl mb-4'
+				theme={theme}
+				className='border border-solid border-gray-200 rounded-xl mb-4 dark:bg-section-dark-overlay'
 				fullscreen={false}
 				cellRender={dateCellRender}
 			/>

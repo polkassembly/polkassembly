@@ -5,30 +5,32 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
+import { deleteKeys } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, postId, reaction, postType } = req.body;
-	if(!userId || isNaN(postId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { userId, postId, reaction, postType, trackNumber = null } = req.body;
+	if (!userId || isNaN(postId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postRef = postsByTypeRef(network, postType).doc(String(postId));
-	const reactionsCollRef = postRef
-		.collection('post_reactions');
+	const reactionsCollRef = postRef.collection('post_reactions');
 
 	const userReactionQuery = reactionsCollRef.where('user_id', '==', user.id);
 
@@ -36,7 +38,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	let reactionData = {};
 
 	const userReactionQuerySnapshot = await userReactionQuery.get();
-	if(!userReactionQuerySnapshot.empty) {
+	if (!userReactionQuerySnapshot.empty) {
 		reactionDoc = userReactionQuerySnapshot.docs[0];
 		reactionData = {
 			...reactionDoc.data(),
@@ -44,9 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			updated_at: new Date()
 		};
 	} else {
-		reactionDoc = postRef
-			.collection('post_reactions')
-			.doc();
+		reactionDoc = postRef.collection('post_reactions').doc();
 
 		reactionData = {
 			created_at: new Date(),
@@ -58,12 +58,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		};
 	}
 
-	await reactionsCollRef.doc(reactionDoc.id).set(reactionData, { merge: true }).then(() => {
-		return res.status(200).json({ message: 'Reaction updated.' });
-	}).catch((error) => {
-		console.error('Error updating reaction: ', error);
-		return res.status(500).json({ message: 'Error updating reaction' });
-	});
+	const subsquidProposalType = getSubsquidLikeProposalType(postType);
+
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		if (!isNaN(trackNumber)) {
+			// delete referendum v2 redis cache
+			if (postType == ProposalType.REFERENDUM_V2) {
+				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${trackNumber}_*`;
+				await deleteKeys(trackListingKey);
+			}
+		} else if (postType == ProposalType.DISCUSSIONS) {
+			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+			await deleteKeys(discussionListingKey);
+		}
+	}
+
+	await reactionsCollRef
+		.doc(reactionDoc.id)
+		.set(reactionData, { merge: true })
+		.then(() => {
+			return res.status(200).json({ message: 'Reaction updated.' });
+		})
+		.catch((error) => {
+			console.error('Error updating reaction: ', error);
+			return res.status(500).json({ message: 'Error updating reaction' });
+		});
 }
 
 export default withErrorHandling(handler);

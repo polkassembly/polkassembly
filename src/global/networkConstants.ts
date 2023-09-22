@@ -103,7 +103,7 @@ export const network = {
 	PICASSO: 'picasso',
 	PICHIU: 'pichiu',
 	PICHIUROCOCO: 'pichiu-rococo',
-	POLYMESH:'polymesh',
+	POLYMESH: 'polymesh',
 	POLYMESHTEST: 'polymesh-test',
 	TURING: 'turing',
 	VARA: 'vara',
@@ -165,6 +165,7 @@ export const tokenSymbol = {
 
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
+		preImageBaseDeposit: '400000000000',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
@@ -209,12 +210,17 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://polkadot.public.curie.radiumblock.co/ws'
 			},
 			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-polkadot.luckyfriday.io'
+			},
+			{
 				label: 'light client (experimental)',
 				key: 'light://substrate-connect/polkadot'
 			}
 		]
 	},
 	[network.KUSAMA]: {
+		preImageBaseDeposit: '1330000000000',
 		blockTime: 6000,
 		category: 'kusama',
 		chainId: 0,
@@ -255,12 +261,16 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://kusama.public.curie.radiumblock.co/ws'
 			},
 			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-kusama.luckyfriday.io'
+			},
+			{
 				label: 'light client (experimental)',
 				key: 'light://substrate-connect/kusama'
 			}
 		]
 	},
-	[network.ACALA]:{
+	[network.ACALA]: {
 		blockTime: 12000,
 		chainId: 0,
 		logo: acalaLogo,
@@ -306,7 +316,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.BNC,
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '100',
-		treasuryProposalMaxBond:'500',
+		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://altair.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
@@ -374,7 +384,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.BSX,
 		treasuryProposalBondPercent: '3%',
 		treasuryProposalMinBond: '10000',
-		treasuryProposalMaxBond:'50000',
+		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://basilisk.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
@@ -391,7 +401,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.BNC,
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
-		treasuryProposalMaxBond:'50',
+		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://pioneer.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
@@ -425,7 +435,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.CFG,
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1000',
-		treasuryProposalMaxBond:'5000',
+		treasuryProposalMaxBond: '5000',
 		externalLinks: 'https://centrifuge.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
@@ -490,7 +500,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.LAYR,
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '5',
-		treasuryProposalMaxBond:'1000',
+		treasuryProposalMaxBond: '1000',
 		externalLinks: 'https://composable.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
@@ -538,14 +548,13 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 68,
 		tokenDecimals: 9,
 		tokenSymbol: tokenSymbol.TOKEN,
-		subsquidUrl:'https://squid.subsquid.io/equilibrium-polkassembly/graphql',
+		subsquidUrl: 'https://squid.subsquid.io/equilibrium-polkassembly/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://equilibrium.api.subscan.io',
 		gTag: 'G-PPZV91T0GH',
 		rpcEndpoints: []
-
 	},
 	[network.FREQUENCY]: {
 		blockTime: 12000,
@@ -661,7 +670,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.HDX,
 		treasuryProposalBondPercent: '3%',
 		treasuryProposalMinBond: '10000',
-		treasuryProposalMaxBond:'50000',
+		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://hydradx.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
@@ -678,7 +687,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.TEER,
 		treasuryProposalBondPercent: '3%',
 		treasuryProposalMinBond: '10000',
-		treasuryProposalMaxBond:'50000',
+		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://integritee.api.subscan.io',
 		gTag: 'G-D4LGZ5LEGK',
 		rpcEndpoints: []
@@ -695,7 +704,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.KAR,
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '5',
-		treasuryProposalMaxBond:'25',
+		treasuryProposalMaxBond: '25',
 		externalLinks: 'https://karura.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
@@ -865,7 +874,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenSymbol: tokenSymbol.PARA,
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
-		treasuryProposalMaxBond:'5',
+		treasuryProposalMaxBond: '5',
 		externalLinks: 'https://parallel.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
@@ -913,7 +922,7 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 12,
 		tokenDecimals: 6,
 		tokenSymbol: tokenSymbol.POLYX,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/polymesh-polkassembly/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
@@ -1040,7 +1049,7 @@ export const chainProperties: types.ChainPropType = {
 		gTag: null,
 		rpcEndpoints: []
 	},
-	[network.SNOW]:{
+	[network.SNOW]: {
 		blockTime: 12000,
 		chainId: 0,
 		logo: snowLogo,
@@ -1201,15 +1210,17 @@ export const chainLinks: types.ChainLinksType = {
 	}
 };
 
-export const chainDetails: { [index: string]: string} = {
-	[network.POLKADOT]: 'Polkadot enables scalability by allowing specialized blockchains to communicate with each other in a secure, trust-free environment. Polkadot is built to connect and secure unique blockchains, whether they be public, permission-less networks, private consortium chains, or oracles and other Web3 technologies. It enables an internet where independent blockchains can exchange information under common security guarantees. Polkadot uses a sophisticated governance mechanism that allows it to evolve gracefully overtime at the ultimate behest of its assembled stakeholders. The stated goal is to ensure that the majority of the stake can always command the network.',
-	[network.KUSAMA]: 'Kusama is an early release of Polkadot: a scalable, multichain network for radical innovation. Kusama serves as a proving ground that allows teams and developers to build and deploy a parachain, and experiment with Polkadot’s governance and NPoS functionality in a real environment.'
+export const chainDetails: { [index: string]: string } = {
+	[network.POLKADOT]:
+		'Polkadot enables scalability by allowing specialized blockchains to communicate with each other in a secure, trust-free environment. Polkadot is built to connect and secure unique blockchains, whether they be public, permission-less networks, private consortium chains, or oracles and other Web3 technologies. It enables an internet where independent blockchains can exchange information under common security guarantees. Polkadot uses a sophisticated governance mechanism that allows it to evolve gracefully overtime at the ultimate behest of its assembled stakeholders. The stated goal is to ensure that the majority of the stake can always command the network.',
+	[network.KUSAMA]:
+		'Kusama is an early release of Polkadot: a scalable, multichain network for radical innovation. Kusama serves as a proving ground that allows teams and developers to build and deploy a parachain, and experiment with Polkadot’s governance and NPoS functionality in a real environment.'
 };
 
 export const addressPrefix: Record<string, number> = {
-	'kusama': 2,
-	'moonbeam': 1284,
-	'moonriver': 1285,
-	'moonbase': 1287,
-	'polkadot': 0
+	kusama: 2,
+	moonbeam: 1284,
+	moonriver: 1285,
+	moonbase: 1287,
+	polkadot: 0
 };

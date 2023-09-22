@@ -14,8 +14,10 @@ export const proposalStatus = {
 export const referendumStatus = {
 	CANCELLED: 'Cancelled',
 	EXECUTED: 'Executed',
+	EXPIRED: 'Expired',
 	NOTPASSED: 'NotPassed',
 	PASSED: 'Passed',
+	SCHEDULED: 'Scheduled',
 	STARTED: 'Started',
 	VETOED: 'Vetoed'
 };
@@ -23,7 +25,9 @@ export const referendumStatus = {
 export const gov2ReferendumStatus = {
 	CANCELLED: 'Cancelled',
 	CONFIRMED: 'Confirmed',
+	CONFIRM_ABORTED: 'ConfirmAborted',
 	CONFIRM_STARTED: 'ConfirmStarted',
+	CREATED: 'Created',
 	DECIDING: 'Deciding',
 	DECISION_DEPOSIT_PLACED: 'DecisionDepositPlaced',
 	EXECUTION_FAILED: 'ExecutionFailed',

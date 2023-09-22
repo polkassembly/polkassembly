@@ -10,7 +10,7 @@ import { ApiContext } from 'src/context/ApiContext';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { useFetch } from 'src/hooks';
 import { getFailingThreshold } from 'src/polkassemblyutils';
-import { LoadingStatusType } from 'src/types';
+import { LoadingStatusType, VoteInfo } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import Loader from 'src/ui-components/Loader';
 import PassingInfoTag from 'src/ui-components/PassingInfoTag';
@@ -26,20 +26,10 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/queries';
 
 interface IReferendumVoteInfoProps {
-	className?: string
-	referendumId: number
+	className?: string;
+	referendumId: number;
 	setOpen: (value: React.SetStateAction<boolean>) => void;
 	voteThreshold?: string;
-}
-
-type VoteInfo = {
-	aye_amount: BN;
-	aye_without_conviction: BN;
-	isPassing: boolean | null;
-	nay_amount: BN;
-	nay_without_conviction: BN;
-	turnout: BN;
-	voteThreshold: string;
 }
 
 const ZERO = new BN(0);
@@ -49,20 +39,17 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 
 	const { api, apiReady } = useContext(ApiContext);
 	const [totalIssuance, setTotalIssuance] = useState<BN | null>(null);
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message:'Loading votes' });
+	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: 'Loading votes' });
 	const [voteInfo, setVoteInfo] = useState<VoteInfo | null>(null);
 	const [isFetchingCereVoteInfo, setIsFetchingCereVoteInfo] = useState(true);
 
-	const { data: voteInfoData, error:voteInfoError } = useFetch<any>(
-		`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`,
-		{
-			body: JSON.stringify({
-				referendum_index: referendumId
-			}),
-			headers: subscanApiHeaders,
-			method: 'POST'
-		}
-	);
+	const { data: voteInfoData, error: voteInfoError } = useFetch<any>(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`, {
+		body: JSON.stringify({
+			referendum_index: referendumId
+		}),
+		headers: subscanApiHeaders,
+		method: 'POST'
+	});
 
 	useEffect(() => {
 		if (network === 'cere') {
@@ -120,7 +107,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						voteInfo.turnout = voteInfo.aye_without_conviction.add(voteInfo.nay_without_conviction);
 						if (voteThreshold) {
 							voteInfo.voteThreshold = voteThreshold?.split(/(?=[A-Z])/).join(' ');
-							if(totalIssuance !== null) {
+							if (totalIssuance !== null) {
 								let capitalizedVoteThreshold = voteThreshold?.toLowerCase();
 								capitalizedVoteThreshold = `${capitalizedVoteThreshold.charAt(0).toUpperCase()}${capitalizedVoteThreshold.slice(1)}`;
 								//nays needed for a referendum to fail
@@ -130,14 +117,14 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 									threshold: capitalizedVoteThreshold as any,
 									totalIssuance: totalIssuance
 								});
-								if(failingThreshold){
+								if (failingThreshold) {
 									try {
-										if(voteInfo.nay_amount.gte(failingThreshold)) {
+										if (voteInfo.nay_amount.gte(failingThreshold)) {
 											voteInfo.isPassing = false;
 										} else {
 											voteInfo.isPassing = true;
 										}
-									} catch(e) {
+									} catch (e) {
 										console.log('Error calculating Passing state: ', e);
 									}
 								}
@@ -167,24 +154,25 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 			message: 'Loading Data'
 		});
 
-		if (['equilibrium'].includes(network)){
+		if (['equilibrium'].includes(network)) {
 			setTotalIssuance(ZERO);
-		}
-		else if(['genshiro'].includes(network)){
+		} else if (['genshiro'].includes(network)) {
 			// eslint-disable-next-line  @typescript-eslint/no-unused-vars
 			const { collateral, debt } = api.query.eqAggregates.totalUserGroup('Balances', { '0': 1734700659 }) as any;
 			setTotalIssuance(collateral);
-		}
-		else{
-			api.query.balances.totalIssuance((result) => {
-				setTotalIssuance(result);
-			})
-				.then( unsub => {unsubscribe = unsub;})
+		} else {
+			api.query.balances
+				.totalIssuance((result) => {
+					setTotalIssuance(result);
+				})
+				.then((unsub) => {
+					unsubscribe = unsub;
+				})
 				.catch(console.error);
 		}
 
 		return () => unsubscribe && unsubscribe();
-	},[api, apiReady, network]);
+	}, [api, apiReady, network]);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -192,11 +180,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 			message: 'Loading Data'
 		});
 
-		if(!voteInfoError && voteInfoData && voteInfoData.data && voteInfoData.data.info) {
+		if (!voteInfoError && voteInfoData && voteInfoData.data && voteInfoData.data.info) {
 			const info = voteInfoData.data.info;
 
 			const voteInfo: VoteInfo = {
-				aye_amount : ZERO,
+				aye_amount: ZERO,
 				aye_without_conviction: ZERO,
 				isPassing: null,
 				nay_amount: ZERO,
@@ -212,7 +200,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 			voteInfo.turnout = new BN(info.turnout);
 			voteInfo.voteThreshold = info.vote_threshold.split(/(?=[A-Z])/).join(' ');
 
-			if(totalIssuance !== null) {
+			if (totalIssuance !== null) {
 				let capitalizedVoteThreshold = info.vote_threshold.toLowerCase();
 				capitalizedVoteThreshold = `${capitalizedVoteThreshold.charAt(0).toUpperCase()}${capitalizedVoteThreshold.slice(1)}`;
 				//nays needed for a referendum to fail
@@ -223,14 +211,14 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 					totalIssuance: totalIssuance
 				});
 
-				if(failingThreshold){
+				if (failingThreshold) {
 					try {
-						if(voteInfo.nay_amount.gte(failingThreshold)) {
+						if (voteInfo.nay_amount.gte(failingThreshold)) {
 							voteInfo.isPassing = false;
 						} else {
 							voteInfo.isPassing = true;
 						}
-					} catch(e) {
+					} catch (e) {
 						console.log('Error calculating Passing state: ', e);
 					}
 				}
@@ -252,195 +240,175 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		if (totalIssuance.isZero()) {
 			return 0;
 		}
-		return voteInfo?.turnout.muln(10000).div(totalIssuance).toNumber()/100;
-	} , [voteInfo, totalIssuance]);
+		return voteInfo?.turnout.muln(10000).div(totalIssuance).toNumber() / 100;
+	}, [voteInfo, totalIssuance]);
 	return (
 		<>
-			{isSubscanSupport(network)? !voteInfo ?
-				<GovSidebarCard className='flex items-center justify-center min-h-[100px]'>
-					<Loader />
-				</GovSidebarCard>
-				:
-				<GovSidebarCard>
-					<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
-						<div className='flex items-center justify-between gap-x-2'>
-							<h6 className='text-bodyBlue font-medium text-xl leading-[24px] m-0 p-0'>Voting</h6>
-							<div className='flex items-center justify-center gap-x-2'>
-								<div className={'text-bodyBlue border-solid border-bodyBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
-									{ voteInfo?.voteThreshold }
+			{isSubscanSupport(network) ? (
+				!voteInfo ? (
+					<GovSidebarCard className='flex min-h-[100px] items-center justify-center'>
+						<Loader />
+					</GovSidebarCard>
+				) : (
+					<GovSidebarCard>
+						<Spin
+							spinning={loadingStatus.isLoading}
+							indicator={<LoadingOutlined />}
+						>
+							<div className='flex items-center justify-between gap-x-2'>
+								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue'>Voting</h6>
+								<div className='flex items-center justify-center gap-x-2'>
+									<div
+										className={
+											'h-min truncate whitespace-nowrap rounded-full border border-solid border-bodyBlue px-3 py-1 text-xs text-bodyBlue xl:max-w-[120px] 2xl:max-w-[100%]'
+										}
+									>
+										{voteInfo?.voteThreshold}
+									</div>
+									{voteInfo.isPassing !== null && <PassingInfoTag isPassing={voteInfo?.isPassing} />}
 								</div>
-								{voteInfo.isPassing !== null && <PassingInfoTag isPassing={voteInfo?.isPassing}/>}
 							</div>
-						</div>
-						<VoteProgress
-							turnoutPercentage={turnoutPercentage || 0}
-							ayeVotes={voteInfo?.aye_amount}
-							className='vote-progress'
-							nayVotes={voteInfo?.nay_amount}
-						/>
-						<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue -mt-4'>
-							<article className='flex items-center justify-between gap-x-2'>
-								<div className='flex items-center gap-x-1'>
-									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-										Aye
-									</span>
-								</div>
-								<div
-									className='text-lightBlue text-xs font-medium leading-[22px]'
-								>
-									{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-								</div>
-							</article>
-							<article className='flex items-center text-lightBlue justify-between gap-x-2'>
-								<div className='flex items-center gap-x-1'>
-									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-										Nay
-									</span>
-								</div>
-								<div
-									className='text-lightBlue text-xs font-medium leading-[22px]'
-								>
-									{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-								</div>
-							</article>
-							<article className='flex items-center justify-between gap-x-2'>
-								<div className='flex items-center gap-x-1'>
-									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-										Turnout
-									</span>
-								</div>
-								<div
-									className='text-lightBlue text-xs font-medium leading-[22px]'
-								>
-									{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-								</div>
-							</article>
-							{
-								totalIssuance?
+							<VoteProgress
+								turnoutPercentage={turnoutPercentage || 0}
+								ayeVotes={voteInfo?.aye_amount}
+								className='vote-progress'
+								nayVotes={voteInfo?.nay_amount}
+							/>
+							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue'>
+								<article className='flex items-center justify-between gap-x-2'>
+									<div className='flex items-center gap-x-1'>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>
+									</div>
+									<div className='text-xs font-medium leading-[22px] text-lightBlue'>
+										{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									</div>
+								</article>
+								<article className='flex items-center justify-between gap-x-2 text-lightBlue'>
+									<div className='flex items-center gap-x-1'>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay</span>
+									</div>
+									<div className='text-xs font-medium leading-[22px] text-lightBlue'>
+										{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									</div>
+								</article>
+								<article className='flex items-center justify-between gap-x-2'>
+									<div className='flex items-center gap-x-1'>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Turnout</span>
+									</div>
+									<div className='text-xs font-medium leading-[22px] text-lightBlue'>
+										{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									</div>
+								</article>
+								{totalIssuance ? (
 									<article className='flex items-center justify-between gap-x-2'>
 										<div className='flex items-center gap-x-1'>
-											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-												Issuance
-											</span>
+											<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Issuance</span>
 										</div>
-										<div
-											className='text-lightBlue text-xs font-medium leading-[22px]'
-										>
+										<div className='text-xs font-medium leading-[22px] text-lightBlue'>
 											{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
 									</article>
-									: null
-							}
-						</section>
-						<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
-							<button
-								className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
-								onClick={() => {
-									setOpen(true);
-								}}
-							>
-								<VotingHistoryIcon />
-								<span>Voting History</span>
-							</button>
-						</section>
-					</Spin>
-				</GovSidebarCard>
-				: network === 'cere'?
-					<>
-						<GovSidebarCard>
-							<Spin spinning={isFetchingCereVoteInfo} className='bg-white' indicator={<LoadingOutlined />}>
-								<div className='flex items-center justify-between gap-x-2'>
-									<h6 className='text-bodyBlue font-medium text-xl leading-[24px] m-0 p-0'>Voting</h6>
-									<div className='flex items-center justify-center gap-x-2 relative z-50'>
-										<div title={voteInfo?.voteThreshold} className={'text-bodyBlue border-solid border-navBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
-											{ voteInfo?.voteThreshold }
-										</div>
-										{voteInfo !== null && <PassingInfoTag isPassing={voteInfo?.isPassing}/>}
-									</div>
-								</div>
-								<VoteProgress
-									turnoutPercentage={turnoutPercentage || 0}
-									ayeVotes={voteInfo?.aye_amount}
-									className='vote-progress'
-									nayVotes={voteInfo?.nay_amount}
-								/>
-								<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] -mt-4'>
-									<article className='flex items-center justify-between gap-x-2'>
-										<div className='flex items-center gap-x-1'>
-											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-														Aye
-											</span>
-										</div>
-										<div
-											className='text-navBlue text-xs font-medium leading-[22px]'
-										>
-											{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-										</div>
-									</article>
-									<article className='flex items-center justify-between gap-x-2'>
-										<div className='flex items-center gap-x-1'>
-											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-														Nay
-											</span>
-										</div>
-										<div
-											className='text-navBlue text-xs font-medium leading-[22px]'
-										>
-											{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-										</div>
-									</article>
-									<article className='flex items-center justify-between gap-x-2'>
-										<div className='flex items-center gap-x-1'>
-											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-												Turnout
-											</span>
-										</div>
-										<div
-											className='text-navBlue text-xs font-medium leading-[22px]'
-										>
-											{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-										</div>
-									</article>
-									{
-										totalIssuance?
-											<article className='flex items-center justify-between gap-x-2'>
-												<div className='flex items-center gap-x-1'>
-													<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-																Issuance
-													</span>
-												</div>
-												<div
-													className='text-navBlue text-xs font-medium leading-[22px]'
-												>
-													{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-												</div>
-											</article>
-											: null
-									}
-								</section>
-								<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
-									<button
-										className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
-										onClick={() => {
-											setOpen(true);
-										}}
+								) : null}
+							</section>
+							<section className='mt-[18px] flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] pb-[14px] pt-[18px]'>
+								<button
+									className='m-0 flex cursor-pointer items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium leading-[22px] text-pink_primary outline-none'
+									onClick={() => {
+										setOpen(true);
+									}}
+								>
+									<VotingHistoryIcon />
+									<span>Voting History</span>
+								</button>
+							</section>
+						</Spin>
+					</GovSidebarCard>
+				)
+			) : network === 'cere' ? (
+				<>
+					<GovSidebarCard>
+						<Spin
+							spinning={isFetchingCereVoteInfo}
+							className='bg-white'
+							indicator={<LoadingOutlined />}
+						>
+							<div className='flex items-center justify-between gap-x-2'>
+								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue'>Voting</h6>
+								<div className='relative z-50 flex items-center justify-center gap-x-2'>
+									<div
+										title={voteInfo?.voteThreshold}
+										className={'h-min truncate whitespace-nowrap rounded-full border border-solid border-navBlue px-3 py-1 text-xs text-bodyBlue xl:max-w-[120px] 2xl:max-w-[100%]'}
 									>
-										<VotingHistoryIcon />
-										<span>Voting History</span>
-									</button>
-								</section>
-							</Spin>
-						</GovSidebarCard>
-					</>
-					: null
-			}
+										{voteInfo?.voteThreshold}
+									</div>
+									{voteInfo !== null && <PassingInfoTag isPassing={voteInfo?.isPassing} />}
+								</div>
+							</div>
+							<VoteProgress
+								turnoutPercentage={turnoutPercentage || 0}
+								ayeVotes={voteInfo?.aye_amount}
+								className='vote-progress'
+								nayVotes={voteInfo?.nay_amount}
+							/>
+							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D]'>
+								<article className='flex items-center justify-between gap-x-2'>
+									<div className='flex items-center gap-x-1'>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>
+									</div>
+									<div className='text-xs font-medium leading-[22px] text-navBlue'>
+										{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									</div>
+								</article>
+								<article className='flex items-center justify-between gap-x-2'>
+									<div className='flex items-center gap-x-1'>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay</span>
+									</div>
+									<div className='text-xs font-medium leading-[22px] text-navBlue'>
+										{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									</div>
+								</article>
+								<article className='flex items-center justify-between gap-x-2'>
+									<div className='flex items-center gap-x-1'>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Turnout</span>
+									</div>
+									<div className='text-xs font-medium leading-[22px] text-navBlue'>
+										{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									</div>
+								</article>
+								{totalIssuance ? (
+									<article className='flex items-center justify-between gap-x-2'>
+										<div className='flex items-center gap-x-1'>
+											<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Issuance</span>
+										</div>
+										<div className='text-xs font-medium leading-[22px] text-navBlue'>
+											{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+										</div>
+									</article>
+								) : null}
+							</section>
+							<section className='mt-[18px] flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] pb-[14px] pt-[18px]'>
+								<button
+									className='m-0 flex cursor-pointer items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium leading-[22px] text-pink_primary outline-none'
+									onClick={() => {
+										setOpen(true);
+									}}
+								>
+									<VotingHistoryIcon />
+									<span>Voting History</span>
+								</button>
+							</section>
+						</Spin>
+					</GovSidebarCard>
+				</>
+			) : null}
 		</>
 	);
 };
 
 export default memo(ReferendumVoteInfo);
 
-{/* <GovSidebarCard className={className}>
+{
+	/* <GovSidebarCard className={className}>
 	<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
 		<div className="flex justify-between mb-7">
 			<h6 className='dashboard-heading text-base whitespace-pre mr-3'>Voting Status</h6>
@@ -477,4 +445,5 @@ export default memo(ReferendumVoteInfo);
 			</div>
 		</div>
 	</Spin>
-</GovSidebarCard> */}
+</GovSidebarCard> */
+}

@@ -11,12 +11,12 @@ import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	blocks: number | BN;
-	className?: string
+	className?: string;
 }
 
-const BlocksToTime = ({ blocks, className }:Props ) => {
+const BlocksToTime = ({ blocks, className }: Props) => {
 	const { network } = useNetworkSelector();
-	const blocktime:number = chainProperties?.[network]?.blockTime;
+	const blocktime: number = chainProperties?.[network]?.blockTime;
 
 	return (
 		<div className={className}>

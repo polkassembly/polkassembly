@@ -4,7 +4,7 @@
 
 import { ColumnsType } from 'antd/es/table';
 
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getFirestoreProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import NameLabel from '~src/ui-components/NameLabel';
 import StatusTag from '~src/ui-components/StatusTag';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
@@ -14,9 +14,10 @@ import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { Tooltip } from 'antd';
 import Router from 'next/router';
 import getUsernameByAddress from '~src/util/getUsernameByAddress';
+import { noTitle } from '~src/global/noTitle';
 
-async function goToProfileByAddress (address: string) {
-	if(!address) return;
+async function goToProfileByAddress(address: string) {
+	if (!address) return;
 	const username = await getUsernameByAddress(address);
 	if (!username) return;
 
@@ -41,6 +42,15 @@ const Title: any = {
 	width: 420
 };
 
+const Description: any = {
+	dataIndex: 'description',
+	fixed: 'left',
+	key: 'description',
+	render: (description: any) => <div className='truncate font-medium text-bodyBlue'>{description || noTitle}</div>,
+	title: 'Description',
+	width: 320
+};
+
 const Creator: any = {
 	dataIndex: 'username',
 	key: 'creator',
@@ -48,15 +58,46 @@ const Creator: any = {
 		return {
 			onClick: async (e: any) => {
 				e.stopPropagation();
-				if(record.username) {
+				if (record.username) {
 					Router.push(`/user/${record.username}`);
-				}else {
+				} else {
 					await goToProfileByAddress(record.proposer || '');
 				}
 			}
 		};
 	},
-	render: (username: any, { proposer }: { proposer: any }) => <div className='truncate'><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={true} /></div>,
+	render: (username: any, { proposer }: { proposer: any }) => (
+		<div className='truncate'>
+			<NameLabel
+				textClassName='max-w-[9vw] 2xl:max-w-[12vw]'
+				defaultAddress={proposer}
+				username={username}
+				disableIdenticon={true}
+			/>
+		</div>
+	),
+	title: 'Creator'
+};
+const Proposer: any = {
+	dataIndex: 'proposer',
+	key: 'creator',
+	onCell: (record: any) => {
+		return {
+			onClick: async (e: any) => {
+				e.stopPropagation();
+				await goToProfileByAddress(record.proposer || '');
+			}
+		};
+	},
+	render: (username: any, { proposer }: { proposer: any }) => (
+		<div className='truncate'>
+			<NameLabel
+				textClassName='max-w-[9vw] 2xl:max-w-[12vw]'
+				defaultAddress={proposer}
+				username={username}
+			/>
+		</div>
+	),
 	title: 'Creator'
 };
 
@@ -64,22 +105,22 @@ const Status: any = {
 	dataIndex: 'status',
 	key: 'status',
 	render: (status: any, obj: any) => {
-		if(status || obj.spam_users_count) return <div className='flex items-center gap-x-2'>
-			{
-				status?
-					<StatusTag status={status} />
-					: null
-			}
-			{
-				obj.spam_users_count ?
-					<div className='flex items-center justify-center'>
-						<Tooltip color="#E5007A" title="This post could be a spam.">
-							<WarningMessageIcon className='text-lg text-[#FFA012]' />
-						</Tooltip>
-					</div>
-					: null
-			}
-		</div>;
+		if (status || obj.spam_users_count)
+			return (
+				<div className='flex items-center gap-x-2'>
+					{status ? <StatusTag status={status} /> : null}
+					{obj.spam_users_count ? (
+						<div className='flex items-center justify-center'>
+							<Tooltip
+								color='#E5007A'
+								title='This post could be a spam.'
+							>
+								<WarningMessageIcon className='text-lg text-[#FFA012]' />
+							</Tooltip>
+						</div>
+					) : null}
+				</div>
+			);
 	},
 	title: 'Status',
 	width: 200
@@ -90,20 +131,20 @@ const CreatedAt: any = {
 	key: 'created',
 	render: (createdAt: any) => {
 		const relativeCreatedAt = getRelativeCreatedAt(createdAt);
-		return (
-			<span>{relativeCreatedAt}</span>
-		);
+		return <span>{relativeCreatedAt}</span>;
 	},
 	title: 'Created'
 };
 
-const columns: ColumnsType<IPostsRowData> = [
-	Index,
-	Title,
-	Creator,
-	Status,
-	CreatedAt
-];
+const PIPsType = {
+	dataIndex: 'type',
+	key: 'Type',
+	render: (type: any) => <span className='capitalize'>{getProposalTypeTitle(getFirestoreProposalType(type) as ProposalType)}</span>,
+	title: 'Type',
+	width: 200
+};
+
+const columns: ColumnsType<IPostsRowData> = [Index, Title, Creator, Status, CreatedAt];
 
 const allColumns: ColumnsType<IPostsRowData> = [
 	Index,
@@ -114,11 +155,7 @@ const allColumns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<div
-						className='truncate'
-					>
-						{title}
-					</div>
+					<div className='truncate'>{title}</div>
 				</>
 			);
 		},
@@ -132,15 +169,24 @@ const allColumns: ColumnsType<IPostsRowData> = [
 			return {
 				onClick: async (e) => {
 					e.stopPropagation();
-					if(record.username) {
+					if (record.username) {
 						Router.push(`/user/${record.username}`);
-					}else {
+					} else {
 						await goToProfileByAddress(record.proposer || '');
 					}
 				}
 			};
 		},
-		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={true} /></div>,
+		render: (username, { proposer }) => (
+			<div className='truncate'>
+				<NameLabel
+					textClassName='max-w-[9vw] 2xl:max-w-[12vw]'
+					defaultAddress={proposer}
+					username={username}
+					disableIdenticon={true}
+				/>
+			</div>
+		),
 		title: 'Posted By'
 	},
 	CreatedAt,
@@ -150,12 +196,12 @@ const allColumns: ColumnsType<IPostsRowData> = [
 		render: (postCategory) => {
 			return (
 				<span className='flex items-center'>
-					<span className='capitalize '>{postCategory}</span></span>
+					<span className='capitalize '>{postCategory}</span>
+				</span>
 			);
 		},
 		title: 'Type',
 		width: 200
-
 	},
 	Status
 ];
@@ -183,11 +229,7 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<div
-						className='truncate'
-					>
-						{title}
-					</div>
+					<div className='truncate'>{title}</div>
 				</>
 			);
 		},
@@ -204,15 +246,19 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 	CreatedAt
 ];
 
+const PIPsColumns = [Index, Description, Proposer, CreatedAt, PIPsType, Status];
+
 export function getColumns(key: 'all' | ProposalType): ColumnsType<IPostsRowData> {
 	if (key === 'all') {
 		return allColumns;
 	} else if (key === ProposalType.TIPS) {
 		return tipColumns;
-	} else if ([ProposalType.BOUNTIES,ProposalType.DEMOCRACY_PROPOSALS, ProposalType.REFERENDUMS, ProposalType.COUNCIL_MOTIONS, ProposalType.TREASURY_PROPOSALS].includes(key)) {
+	} else if ([ProposalType.BOUNTIES, ProposalType.DEMOCRACY_PROPOSALS, ProposalType.REFERENDUMS, ProposalType.COUNCIL_MOTIONS, ProposalType.TREASURY_PROPOSALS].includes(key)) {
 		return columns;
 	} else if ([ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(key)) {
 		return offChainColumns;
+	} else if ([ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(key)) {
+		return PIPsColumns;
 	}
 	return [];
 }

@@ -19,7 +19,7 @@ import { getBlockLink } from '~src/util/subscanCheck';
 
 interface ICouncilVotesProps {
 	address: string;
-	className?: string
+	className?: string;
 }
 
 const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
@@ -33,42 +33,52 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 
 	const url = getBlockLink(network);
 
-	const columns : ColumnsType<any> = [
+	const columns: ColumnsType<any> = [
 		{
-			dataIndex:'index',
+			dataIndex: 'index',
 			key: 'index',
 			render: (index, obj) => {
 				return (
 					<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(obj.proposalType) as any)}/${index}`}>
-						<div className='text-sidebarBlue'>{obj.type} #{index}</div>
+						<div className='text-sidebarBlue'>
+							{obj.type} #{index}
+						</div>
 					</Link>
 				);
 			},
-			title:'Proposals'
+			title: 'Proposals'
 		},
 		{
-			dataIndex:'blockNumber',
+			dataIndex: 'blockNumber',
 			key: 'block',
 			render: (block) => (
-				<a target='_blank' href={`${url}${block}`} rel="noreferrer">
+				<a
+					target='_blank'
+					href={`${url}${block}`}
+					rel='noreferrer'
+				>
 					<div className='text-sidebarBlue'>#{block}</div>
 				</a>
 			),
-			title:'Block'
+			title: 'Block'
 		},
 		{
-			dataIndex:'decision',
+			dataIndex: 'decision',
 			key: 'decision',
 			render: (decision) => (
 				<>
-					{decision === 'yes' ? <div className='flex items-center'>
-						<LikeFilled className='text-green_primary' /> <span className='text-green_primary ml-2'>Aye</span>
-					</div> : <div className='flex items-center'>
-						<DislikeFilled className='text-red_primary' /> <span className='text-red_primary ml-2'>Nay</span>
-					</div>}
+					{decision === 'yes' ? (
+						<div className='flex items-center'>
+							<LikeFilled className='text-green_primary' /> <span className='ml-2 text-green_primary'>Aye</span>
+						</div>
+					) : (
+						<div className='flex items-center'>
+							<DislikeFilled className='text-red_primary' /> <span className='ml-2 text-red_primary'>Nay</span>
+						</div>
+					)}
 				</>
 			),
-			title:'Vote'
+			title: 'Vote'
 		}
 	];
 
@@ -97,33 +107,47 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	return (
 		<div className={`${className}`}>
 			{error ? <ErrorState errorMessage={error} /> : null}
-			<Spin spinning={loading} indicator={<LoadingOutlined />}>
-				{
-					votesHistory.length > 0?
-						<div>
-							<Table dataSource={votesHistory} columns={columns} pagination={false} />
-							<div className='flex justify-end mt-6 bg-white z-10'>
-								<Pagination
-									size="small"
-									defaultCurrent={1}
-									current={currentPage}
-									onChange={onChange}
-									total={count}
-									showSizeChanger={false}
-									pageSize={VOTES_LISTING_LIMIT}
-									responsive={true}
-									hideOnSinglePage={true}
-									nextIcon={<div className={`ml-1 ${currentPage > Math.floor(((count || 0) / VOTES_LISTING_LIMIT))? 'text-grey_secondary': ''}`}><RightOutlined /></div>}
-									prevIcon={<div className={`mr-1 ${currentPage <= 1? 'text-grey_secondary': ''}`}><LeftOutlined /></div>}
-								/>
-							</div>
+			<Spin
+				spinning={loading}
+				indicator={<LoadingOutlined />}
+			>
+				{votesHistory.length > 0 ? (
+					<div>
+						<Table
+							dataSource={votesHistory}
+							columns={columns}
+							pagination={false}
+						/>
+						<div className='z-10 mt-6 flex justify-end bg-white'>
+							<Pagination
+								size='small'
+								defaultCurrent={1}
+								current={currentPage}
+								onChange={onChange}
+								total={count}
+								showSizeChanger={false}
+								pageSize={VOTES_LISTING_LIMIT}
+								responsive={true}
+								hideOnSinglePage={true}
+								nextIcon={
+									<div className={`ml-1 ${currentPage > Math.floor((count || 0) / VOTES_LISTING_LIMIT) ? 'text-grey_secondary' : ''}`}>
+										<RightOutlined />
+									</div>
+								}
+								prevIcon={
+									<div className={`mr-1 ${currentPage <= 1 ? 'text-grey_secondary' : ''}`}>
+										<LeftOutlined />
+									</div>
+								}
+							/>
 						</div>
-						: <PostEmptyState />
-				}
+					</div>
+				) : (
+					<PostEmptyState />
+				)}
 			</Spin>
 		</div>
 	);
-
 };
 
 export default styled(CouncilVotes)`

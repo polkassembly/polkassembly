@@ -9,20 +9,28 @@ import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { redisGet, redisSet } from '~src/auth/redis';
 import TrackListing from '~src/components/Listing/Tracks/TrackListing';
 import { useDispatch } from 'react-redux';
 import { networkActions } from '~src/redux/network';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { ProposalType } from '~src/global/proposalType';
+import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { generateKey } from '~src/util/getRedisKeys';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
-	if (!trackStatus) {
+	if (!trackStatus && !filterBy) {
 		return {
 			props: {},
 			redirect: {
@@ -30,20 +38,33 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-	const network = getNetworkFromReqHeaders(req.headers);
 
-	if(!networkTrackInfo[network][PostOrigin.TREASURER]) {
+	if (!networkTrackInfo[network][PostOrigin.TREASURER]) {
 		return { props: { error: `Invalid track for ${network}` } };
 	}
 
 	const { trackId } = networkTrackInfo[network][PostOrigin.TREASURER];
 	const proposalType = ProposalType.OPEN_GOV;
 
+	const subsquidProposalType = getSubsquidProposalType(proposalType);
+
+	const redisKey = generateKey({ filterBy, keyType: 'trackId', network, page, sortBy, subsquidProposalType, trackId, trackStatus });
+
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		const redisData = await redisGet(redisKey);
+		if (redisData) {
+			const props = JSON.parse(redisData);
+			if (!props.error) {
+				return { props };
+			}
+		}
+	}
+
 	const fetches = ['CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed', 'All'].reduce((prev: any, status) => {
-		const strTrackStatus = String(trackStatus);
+		const strTrackStatus = trackStatus ? String(trackStatus) : 'all';
 		if (status.toLowerCase().includes(strTrackStatus)) {
 			prev[strTrackStatus] = getOnChainPosts({
-				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
@@ -84,6 +105,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		(props.posts as any)[key] = results[index];
 	});
 
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		await redisSet(redisKey, JSON.stringify(props));
+	}
+
 	return { props };
 };
 interface ITreasurerProps {
@@ -98,18 +123,23 @@ const Treasurer: FC<ITreasurerProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
-	return <>
-		<SEOHead title={PostOrigin.TREASURER.split(/(?=[A-Z])/).join(' ')} network={network}/>
-		<TrackListing
-			trackName={PostOrigin.TREASURER}
-			posts={posts}
-		/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={PostOrigin.TREASURER.split(/(?=[A-Z])/).join(' ')}
+				network={network}
+			/>
+			<TrackListing
+				trackName={PostOrigin.TREASURER}
+				posts={posts}
+			/>
+		</>
+	);
 };
 
 export default Treasurer;

@@ -15,15 +15,20 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 
-export const getServerSideProps: GetServerSideProps = async ({ req , query }) => {
-	const { page = 1,sortBy = sortValues.NEWEST, track } = query;
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
-	const  trackDetails:any = getQueryToTrack(String(track), network);
 
-	const { data, error = ''  }  = await getOnChainPosts({
-		listingLimit:LISTING_LIMIT,
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	const { page = 1, sortBy = sortValues.NEWEST, track } = query;
+	const trackDetails: any = getQueryToTrack(String(track), network);
+
+	const { data, error = '' } = await getOnChainPosts({
+		listingLimit: LISTING_LIMIT,
 		network,
 		page,
 		proposalType: ProposalType.OPEN_GOV,
@@ -46,25 +51,33 @@ interface ITrackProps {
 	data?: IPostsListingResponse;
 	error?: string;
 	network: string;
-  trackDetails: any
+	trackDetails: any;
 }
 
-const DashboardTracks:FC<ITrackProps> = ( props  ) => {
-	const { data, error , trackDetails, network } = props;
+const DashboardTracks: FC<ITrackProps> = (props) => {
+	const { data, error, trackDetails, network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
 	const { posts } = data;
 
-	return <>
-		<SEOHead title='Delegation Dashboard' network={network}/>
-		<DashboardTrackListing posts= {posts} trackDetails= {trackDetails}/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title='Delegation Dashboard'
+				network={network}
+			/>
+			<DashboardTrackListing
+				posts={posts}
+				trackDetails={trackDetails}
+			/>
+		</>
+	);
 };
 export default DashboardTracks;

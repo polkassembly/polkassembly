@@ -26,16 +26,17 @@ export interface IPostsRowData {
 	topic?: {
 		id?: number;
 		name?: string;
-	}
+	};
 	tip_id?: number;
 	spam_users_count?: number;
+	description?: string;
 }
 
 interface IPostsTableProps {
 	posts: any[];
 	error?: string;
-    columns: ColumnsType<IPostsRowData>;
-    type: 'all' | ProposalType;
+	columns: ColumnsType<IPostsRowData>;
+	type: 'all' | ProposalType;
 	count: number;
 }
 
@@ -48,7 +49,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 	if (error) return <ErrorLatestActivity errorMessage={error} />;
 
 	//empty state
-	if(!posts || !posts.length) return <EmptyLatestActivity />;
+	if (!posts || !posts.length) return <EmptyLatestActivity />;
 
 	const tableData: IPostsRowData[] = [];
 
@@ -58,18 +59,19 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 		// if(post?.author?.username) {
 		// truncate title
 		let title = post.title || description || method || post?.preimage?.method || post?.description || noTitle;
-		title = title.length > 80 ? `${title.substring(0, Math.min(80, title.length))}...`  : title.substring(0, Math.min(80, title.length));
+		title = title.length > 80 ? `${title.substring(0, Math.min(80, title.length))}...` : title.substring(0, Math.min(80, title.length));
 
 		const isTip = type === ProposalType.TIPS;
-		const id = isTip? hash: post_id;
+		const id = isTip ? hash : post_id;
 		const tableDataObj: IPostsRowData = {
 			created_at: created_at,
-			hash: isTip? hash?.substring(0,4): hash,
+			description: post?.description || '',
+			hash: isTip ? hash?.substring(0, 4) : hash,
 			key: id,
 			post_id: id,
 			proposer: proposer,
 			spam_users_count: spam_users_count,
-			status: status||'-',
+			status: status || '-',
 			tip_id: count - index - 1,
 			title,
 			topic: post?.topic?.name,
@@ -78,41 +80,46 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 		};
 
 		tableData.push(tableDataObj);
-		// }
 	});
 
-	return(<>
-		<div className='hidden md:block'>
-			<PopulatedLatestActivity
-				columns={columns}
-				tableData={tableData}
-				onClick={(rowData) => {
-					const firestoreProposalType = getFirestoreProposalType(['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` :  rowData.type);
-					const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
-					if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-						window?.open(`/${link}/${rowData.post_id}`, '_blank');
-					} else {
-						router.push(`/${link}/${rowData.post_id}`);
-					}
-				}}
-			/>
-		</div>
+	return (
+		<>
+			<div className='hidden md:block'>
+				<PopulatedLatestActivity
+					columns={columns}
+					tableData={tableData}
+					onClick={(rowData) => {
+						const firestoreProposalType = getFirestoreProposalType(
+							['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` : rowData.type
+						);
+						const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
+						if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+							window?.open(`/${link}/${rowData.post_id}`, '_blank');
+						} else {
+							router.push(`/${link}/${rowData.post_id}`);
+						}
+					}}
+				/>
+			</div>
 
-		<div className="block md:hidden h-[520px] overflow-y-auto px-0">
-			<PopulatedLatestActivityCard
-				tableData={tableData}
-				onClick={(rowData) => {
-					const firestoreProposalType = getFirestoreProposalType(['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` :  rowData.type);
-					const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
-					if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-						window?.open(`/${link}/${rowData.post_id}`, '_blank');
-					} else {
-						router.push(`/${link}/${rowData.post_id}`);
-					}
-				}}
-			/>
-		</div>
-	</>);
+			<div className='block h-[520px] overflow-y-auto px-0 md:hidden'>
+				<PopulatedLatestActivityCard
+					tableData={tableData}
+					onClick={(rowData) => {
+						const firestoreProposalType = getFirestoreProposalType(
+							['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` : rowData.type
+						);
+						const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
+						if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+							window?.open(`/${link}/${rowData.post_id}`, '_blank');
+						} else {
+							router.push(`/${link}/${rowData.post_id}`);
+						}
+					}}
+				/>
+			</div>
+		</>
+	);
 };
 
 export default PostsTable;

@@ -7,7 +7,7 @@ import { Button } from 'antd';
 import React from 'react';
 import { useNetworkSelector } from '~src/redux/selectors';
 
-const ShareButton = function ({ title }: {title?: string | null}) {
+const ShareButton = function ({ title }: { title?: string | null }) {
 	const { network } = useNetworkSelector();
 
 	const share = () => {
@@ -29,7 +29,7 @@ const ShareButton = function ({ title }: {title?: string | null}) {
 	return (
 		<>
 			<Button
-				className={'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2'}
+				className={'flex items-center border-none px-1 text-pink_primary shadow-none md:px-2'}
 				onClick={share}
 			>
 				<ShareAltOutlined /> {' Share'}

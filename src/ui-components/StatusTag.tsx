@@ -3,10 +3,22 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { ReactNode } from 'react';
-import { announcementStatus, bountyStatus, bountyStatusMap, childBountyStatus, childBountyStatusMap, gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus, tipStatus, tipStatusMap } from 'src/global/statuses';
+import {
+	announcementStatus,
+	bountyStatus,
+	bountyStatusMap,
+	childBountyStatus,
+	childBountyStatusMap,
+	gov2ReferendumStatus,
+	motionStatus,
+	proposalStatus,
+	referendumStatus,
+	tipStatus,
+	tipStatusMap
+} from 'src/global/statuses';
 import styled from 'styled-components';
 
-interface Props{
+interface Props {
 	children?: ReactNode;
 	className?: string;
 	content?: string;
@@ -29,107 +41,111 @@ const StatusTag = ({ className, content, status, colorInverted, type }: Props) =
 	}
 
 	return (
-		<div className={`${className} ${status} ${colorInverted && 'bg-white inverted'} text-xs rounded-full  px-3 py-1 whitespace-nowrap h-min`}>
+		<div className={`${className} ${status} ${colorInverted && 'inverted bg-white'} h-min whitespace-nowrap  rounded-full px-3 py-1 text-xs`}>
 			{content?.split(/(?=[A-Z])/).join(' ')}
 		</div>
 	);
 };
 
-export default styled(StatusTag).attrs(( { status }: Props) => ({
+export default styled(StatusTag).attrs(({ status }: Props) => ({
 	className: status,
 	content: status
 }))`
-	
 	max-width: min-content;
+	background: #666;
+	color: #fff;
 
 	&.inverted {
 		color: #666;
+		background: transparent;
 	}
-	&.${gov2ReferendumStatus.DECIDING},
-	&.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED},
-	&.${bountyStatus.ACTIVE},
-	&.${bountyStatus.EXTENDED},
-	&.${tipStatus.CLOSING} {
+
+	&.${gov2ReferendumStatus.DECIDING}, &.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED}, &.${bountyStatus.ACTIVE}, &.${bountyStatus.EXTENDED}, &.${tipStatus.CLOSING} {
 		color: #fff;
-		border:2px solid #FF6700;
-		background: #FF6700;
+		border: 2px solid #ff6700;
+		background: #ff6700;
 
 		&.inverted {
-			color: #CA5CDD;
-			border-color: #CA5CDD;
+			color: #ca5cdd;
+			border-color: #ca5cdd;
 		}
 	}
 
-	&.${gov2ReferendumStatus.SUBMITTED},
-	&.${gov2ReferendumStatus.CONFIRM_STARTED},
-	&.${referendumStatus.STARTED},
-	&.${proposalStatus.PROPOSED},
-	&.${motionStatus.PROPOSED},
-	&.${bountyStatus.PROPOSED},
-	&.${tipStatus.OPENED},
-	&.${childBountyStatus.ADDED} {
+	&.${gov2ReferendumStatus.CREATED},
+		&.${gov2ReferendumStatus.SUBMITTED},
+		&.${gov2ReferendumStatus.CONFIRM_STARTED},
+		&.${referendumStatus.STARTED},
+		&.${referendumStatus.SCHEDULED},
+		&.${proposalStatus.PROPOSED},
+		&.${motionStatus.PROPOSED},
+		&.${bountyStatus.PROPOSED},
+		&.${tipStatus.OPENED},
+		&.${childBountyStatus.ADDED} {
 		color: #fff;
-		border:2px solid #407AFC;
-		background: #407AFC;
+		border: 2px solid #407afc;
+		background: #407afc;
 
 		&.inverted {
-			color: #6495ED;
+			color: #6495ed;
 		}
 	}
 	&.${gov2ReferendumStatus.KILLED},
-	&.${gov2ReferendumStatus.REJECTED},
-	&.${gov2ReferendumStatus.TIMEDOUT},
-	&.${proposalStatus.CLEARED},
-	&.${referendumStatus.CANCELLED},
-	&.${referendumStatus.VETOED},
-	&.${motionStatus.DISAPPROVED},
-	&.${tipStatus.RETRACTED},
-	&.${bountyStatus.CANCELED},
-	&.${bountyStatus.REJECTED},
-	&.${gov2ReferendumStatus.EXECUTION_FAILED},
-	&.${childBountyStatus.CANCELED} {
+		&.${gov2ReferendumStatus.REJECTED},
+		&.${gov2ReferendumStatus.TIMEDOUT},
+		&.${proposalStatus.CLEARED},
+		&.${referendumStatus.CANCELLED},
+		&.${referendumStatus.EXPIRED},
+		&.${referendumStatus.VETOED},
+		&.${motionStatus.DISAPPROVED},
+		&.${tipStatus.RETRACTED},
+		&.${bountyStatus.CANCELED},
+		&.${bountyStatus.REJECTED},
+		&.${gov2ReferendumStatus.EXECUTION_FAILED},
+		&.${childBountyStatus.CANCELED},
+		&.${gov2ReferendumStatus.CONFIRM_ABORTED} {
 		color: #fff;
-		border:2px solid #FF0000 !important;
-		background: #FF0000 !important;
+		border: 2px solid #ff0000 !important;
+		background: #ff0000 !important;
 
 		&.inverted {
-			color: #FF0000 ;
+			color: #ff0000;
 			background: #fff !important;
 		}
 	}
-	&.${referendumStatus.NOTPASSED}{
+	&.${referendumStatus.NOTPASSED} {
 		color: #fff;
-		border:2px solid #FF0000 !important;
-		background: #FF0000 !important;
+		border: 2px solid #ff0000 !important;
+		background: #ff0000 !important;
 		&.inverted {
-			color: #FF0000 !important;
+			color: #ff0000 !important;
 		}
 	}
 	&.${gov2ReferendumStatus.CONFIRMED},
-	&.${proposalStatus.TABLED},
-	&.${referendumStatus.PASSED},
-	&.${referendumStatus.EXECUTED},
-	&.${motionStatus.EXECUTED},
-	&.${motionStatus.APPROVED},
-	&.${motionStatus.CLOSED},
-	&.${tipStatus.CLOSED},
-	&.${bountyStatus.AWARDED},
-	&.${bountyStatus.CLAIMED},
-	&.${childBountyStatus.AWARDED},
-	&.${bountyStatus.AWARDED},
-	&.${announcementStatus.Announced} {
+		&.${proposalStatus.TABLED},
+		&.${referendumStatus.PASSED},
+		&.${referendumStatus.EXECUTED},
+		&.${motionStatus.EXECUTED},
+		&.${motionStatus.APPROVED},
+		&.${motionStatus.CLOSED},
+		&.${tipStatus.CLOSED},
+		&.${bountyStatus.AWARDED},
+		&.${bountyStatus.CLAIMED},
+		&.${childBountyStatus.AWARDED},
+		&.${bountyStatus.AWARDED},
+		&.${announcementStatus.Announced} {
 		color: #fff;
-		border:2px solid #5BC044;
-		background: #5BC044;
+		border: 2px solid #5bc044;
+		background: #5bc044;
 
 		&.inverted {
-			color: #5BC044;
+			color: #5bc044;
 		}
 	}
-	&.${childBountyStatus.CLAIMED},
-	&.prime, &.Prime {
+
+	&.${childBountyStatus.CLAIMED}, &.prime,
+	&.Prime {
 		color: #fff;
-		border:2px solid var(--green_primary);
+		border: 2px solid var(--green_primary);
 		background-color: var(--green_primary);
 
 		&.inverted {

@@ -29,6 +29,4 @@ export const networkStore = createSlice({
 
 export default networkStore.reducer;
 const networkActions = networkStore.actions;
-export {
-	networkActions
-};
+export { networkActions };

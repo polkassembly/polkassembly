@@ -6,7 +6,7 @@ import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
@@ -15,7 +15,6 @@ import PostDataContextProvider from '~src/context/PostDataContext';
 import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
-import OtherProposals from '../OtherProposals';
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
@@ -30,39 +29,47 @@ import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
+import { checkIsProposer } from './utils/checkIsProposer';
+import ScrollToTopButton from '~src/ui-components/ScrollToTop';
+import CommentsDataContextProvider from '~src/context/CommentDataContext';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 const Poll = dynamic(() => import('./Poll'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 const PostTimeline = dynamic(() => import('./Tabs/PostTimeline'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 const ClaimPayoutModal = dynamic(() => import('./ClaimPayoutModal'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
@@ -83,18 +90,12 @@ function formatDuration(duration: any) {
 }
 
 const Post: FC<IPostProps> = (props) => {
-	const {
-		className,
-		post,
-		trackName,
-		proposalType
-	} = props;
+	const { className, post, trackName, proposalType } = props;
 
-	const { id, addresses } = useContext(UserDetailsContext);
+	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkSelector();
 	const [duration, setDuration] = useState(dayjs.duration(0));
@@ -105,42 +106,49 @@ const Post: FC<IPostProps> = (props) => {
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
 
-	useEffect(() => {
-		if(!post) return;
-
+	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
-		if(isOffchainPost) {
+		if (isOffchainPost) {
 			setCanEdit(post.user_id === id);
-			return;
 		}
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
 		const network = getNetwork();
-		if(network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23){
+		if (network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23) {
 			isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
 		}
-		if(network == 'moonriver' && proposalType == ProposalType.REFERENDUM_V2 && post_id == 3){
+		if (network == 'moonriver' && proposalType == ProposalType.REFERENDUM_V2 && post_id == 3) {
 			isProposer = addresses?.includes('0x16095c509f728721ad19a51704fc39116157be3a');
 		}
 
 		const substrateAddress = getSubstrateAddress(proposer);
-		if(!isProposer || !substrateAddress) return;
-
+		if (!isProposer) {
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...(addresses || loginAddress)]);
+			if (isProposer) {
+				setCanEdit(true);
+				return;
+			}
+		}
+		if (!isProposer || !substrateAddress) return;
 		(async () => {
 			//check if proposer address is verified
-			const { data , error: fetchError } = await nextApiClientFetch<IVerified>( 'api/v1/auth/data/isAddressVerified', {
+			const { data, error: fetchError } = await nextApiClientFetch<IVerified>('api/v1/auth/data/isAddressVerified', {
 				address: substrateAddress
 			});
 
-			if(fetchError || !data) return console.log('error checking verified address : ', fetchError);
+			if (fetchError || !data) return console.log('error checking verified address : ', fetchError);
 
-			if(data.verified && !isEditing) {
+			if (data.verified && !isEditing) {
 				setCanEdit(true);
 			}
 		})();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [addresses, id, isEditing, post, proposalType]);
+	}, [addresses, id, isEditing, isOffchainPost, loginAddress, post, proposalType]);
+
+	useEffect(() => {
+		if (!post) return;
+		handleCanEdit();
+	}, [handleCanEdit, post]);
 
 	useEffect(() => {
 		if (proposalType !== ProposalType.GRANTS || dayjs(post.created_at).isBefore(dayjs().subtract(6, 'days'))) return;
@@ -179,24 +187,25 @@ const Post: FC<IPostProps> = (props) => {
 				}
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post]);
 
 	const networkModified = network?.charAt(0)?.toUpperCase() + network?.slice(1);
-	let postType:any = proposalType;
+	let postType: any = proposalType;
 
-	if(postType === ProposalType.REFERENDUM_V2){
+	if (postType === ProposalType.REFERENDUM_V2) {
 		postType = 'OpenGov';
-	}
-	else if(postType === ProposalType.DISCUSSIONS){
+	} else if (postType === ProposalType.DISCUSSIONS) {
 		postType = 'Discussion';
 	}
 	const productData = async () => {
 		try {
-			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS? post.hash: post.post_id}`,
+			const response = await fetch(
+				`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS ? post.hash : post.post_id}`,
 				{
 					headers: {
-						'Accept': 'application/vnd.github.v3+json',
-						'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+						Accept: 'application/vnd.github.v3+json',
+						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
 						'X-GitHub-Api-Version': '2022-11-28'
 					}
 				}
@@ -204,33 +213,32 @@ const Post: FC<IPostProps> = (props) => {
 			if (response.ok) {
 				const data = await response.json();
 				setAuditData(data);
-				const count = (data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png'))).length || 0;
+				const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
 				setTotalAuditCount(count);
-
 			} else {
 				// throw new Error('Request failed');
 			}
 		} catch (error) {
 			// console.log('Error:', error);
 		}
-
 	};
 	const videosData = async () => {
 		try {
-			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS? post.hash: post.post_id}/video.json`,
+			const response = await fetch(
+				`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS ? post.hash : post.post_id}/video.json`,
 				{
 					headers: {
-						'Accept': 'application/vnd.github.v3+json',
-						'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+						Accept: 'application/vnd.github.v3+json',
+						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
 						'X-GitHub-Api-Version': '2022-11-28'
 					}
-				});
+				}
+			);
 			if (response.ok) {
 				const data = await response.json();
 				const decoded = atob(data.content).replace(/}\s*{/g, '}, {');
 				setVideoData(JSON.parse(decoded) as IDataVideoType[]);
 				setTotalVideoCount(JSON.parse(decoded).length);
-
 			} else {
 				// throw new Error('Request failed');
 			}
@@ -242,7 +250,7 @@ const Post: FC<IPostProps> = (props) => {
 	useEffect(() => {
 		productData().then(() => {});
 		videosData().then(() => {});
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	if (!post) {
@@ -253,24 +261,34 @@ const Post: FC<IPostProps> = (props) => {
 		);
 	}
 	const { post_id, hash, status: postStatus } = post;
-	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
+	const onchainId = proposalType === ProposalType.TIPS ? hash : post_id;
 
-	const Sidebar = ({ className } : {className?:string}) => {
+	const Sidebar = ({ className }: { className?: string }) => {
 		return (
-			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-				<GovernanceSideBar
-					toggleEdit={toggleEdit}
-					proposalType={proposalType}
-					onchainId={onchainId}
-					status={postStatus}
-					canEdit={canEdit}
-					startTime={post.created_at}
-					post={post}
-					tally={post?.tally}
-					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
-				/>
-				{
-					isOffchainPost &&
+			<div className={`${className} flex w-full flex-col xl:col-span-4`}>
+				<StickyBox
+					offsetTop={65}
+					offsetBottom={65}
+					className='mb-6'
+				>
+					<GovernanceSideBar
+						toggleEdit={toggleEdit}
+						proposalType={proposalType}
+						onchainId={onchainId}
+						status={postStatus}
+						canEdit={canEdit}
+						startTime={post.created_at}
+						post={post}
+						tally={post?.tally}
+						trackName={trackName}
+						className={`${!isOffchainPost}`}
+						pipsVoters={post?.pips_voters || []}
+						hash={hash}
+					/>
+				</StickyBox>
+				{/* decision deposite placed. */}
+
+				{isOffchainPost && (
 					<div className={'sticky top-[65px] mb-6 '}>
 						<Poll
 							proposalType={proposalType}
@@ -279,48 +297,51 @@ const Post: FC<IPostProps> = (props) => {
 						/>
 						<OptionPoll
 							proposalType={proposalType}
-							postId={proposalType === ProposalType.TIPS? post.hash: post.post_id}
+							postId={proposalType === ProposalType.TIPS ? post.hash : post.post_id}
 							canEdit={post.user_id === id}
 						/>
 					</div>
-				}
+				)}
 			</div>
 		);
 	};
 
-	const TrackerButtonComp = <>
-		{id && !isNaN(Number(onchainId)) && isOnchainPost && !isEditing &&
-			<TrackerButton
-				onchainId={onchainId}
-				proposalType={proposalType}
-			/>
-		}
-	</>;
+	const TrackerButtonComp = (
+		<>
+			{id && !isNaN(Number(onchainId)) && isOnchainPost && !isEditing && (
+				<TrackerButton
+					onchainId={onchainId}
+					proposalType={proposalType}
+				/>
+			)}
+		</>
+	);
 
-	const handleOpenSidebar = (address:string) => {
-		setSidebarOpen(true);
-		setProposerAddress(address);
-	};
 	const getOnChainTabs = () => {
 		const tabs: any[] = [
 			{
-				children: (
-					<PostTimeline />
-				),
+				children: <PostTimeline />,
 				key: 'timeline',
 				label: 'Timeline'
 			}
 		];
-		if (['polkadot', 'kusama'].includes(network)){
+		if (['polkadot', 'kusama'].includes(network)) {
 			tabs.push({
 				children: (
-					<PostAudit auditData={auditData} videoData={videoData}/>
+					<PostAudit
+						auditData={auditData}
+						videoData={videoData}
+					/>
 				),
 				key: 'audit',
-				label:<div className='flex gap-2 items-center justify-center audit'>
-          Audit
-					{(totalAuditCount + totalVideoCount) > 0 && <span className='bg-[#d6d8da] card-bg text-xs font-medium rounded-full px-1.5 text-bodyBlue py-0.5'>{totalAuditCount + totalVideoCount}</span>
-					}          </div>
+				label: (
+					<div className='audit flex items-center justify-center gap-2'>
+						Audit
+						{totalAuditCount + totalVideoCount > 0 && (
+							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue'>{totalAuditCount + totalVideoCount}</span>
+						)}{' '}
+					</div>
+				)
 			});
 		}
 
@@ -365,7 +386,6 @@ const Post: FC<IPostProps> = (props) => {
 							version: post?.version,
 							vote_threshold: post?.vote_threshold
 						}}
-						handleOpenSidebar={handleOpenSidebar}
 						proposalType={proposalType}
 					/>
 				),
@@ -379,65 +399,84 @@ const Post: FC<IPostProps> = (props) => {
 
 	const tabItems: any[] = [
 		{
-			children: <PostDescription
-				id={id}
-				isEditing={isEditing}
-				canEdit={canEdit}
-				toggleEdit={toggleEdit}
-				isOnchainPost={isOnchainPost}
-				TrackerButtonComp={TrackerButtonComp}
-				Sidebar={() => <Sidebar />}
-			/>,
+			children: (
+				<PostDescription
+					id={id}
+					isEditing={isEditing}
+					canEdit={canEdit}
+					toggleEdit={toggleEdit}
+					isOnchainPost={isOnchainPost}
+					TrackerButtonComp={TrackerButtonComp}
+					Sidebar={() => <Sidebar />}
+				/>
+			),
 			key: 'description',
 			label: 'Description'
 		},
 		...getOnChainTabs()
 	];
+
 	return (
-		<PostDataContextProvider initialPostData={{
-			cid: post?.cid || '',
-			comments: post?.comments || [],
-			content: post?.content,
-			created_at: post?.created_at || '',
-			curator: post?.curator || '',
-			description: post?.description,
-			history: post?.history || [],
-			last_edited_at: post?.last_edited_at,
-			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
-			postType: proposalType,
-			post_link: post?.post_link,
-			post_reactions: post?.post_reactions,
-			proposer: post?.proposer || '',
-			requested: post?.requested,
-			reward: post?.reward,
-			spam_users_count: post?.spam_users_count,
-			status: post?.status,
-			subscribers: post?.subscribers || [],
-			summary: post?.summary,
-			tags: post?.tags || [],
-			timeline: post?.timeline,
-			title: post?.title,
-			topic: post?.topic,
-			track_name: trackName,
-			track_number: post?.track_number,
-			username: post?.username
-		}}>
-			<>
+		<PostDataContextProvider
+			initialPostData={{
+				cid: post?.cid || '',
+				comments: post?.comments || [],
+				content: post?.content,
+				created_at: post?.created_at || '',
+				curator: post?.curator || '',
+				currentTimeline: post.currentTimeline,
+				description: post?.description,
+				history: post?.history || [],
+				identityId: post?.identity || null,
+				last_edited_at: post?.last_edited_at,
+				postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
+				postType: proposalType,
+				post_link: post?.post_link,
+				post_reactions: post?.post_reactions,
+				proposer: post?.proposer || '',
+				requested: post?.requested,
+				reward: post?.reward,
+				spam_users_count: post?.spam_users_count,
+				status: post?.status,
+				statusHistory: post?.statusHistory,
+				subscribers: post?.subscribers || [],
+				summary: post?.summary,
+				tags: post?.tags || [],
+				timeline: post?.timeline,
+				title: post?.title || '',
+				topic: post?.topic || '',
+				track_name: trackName,
+				track_number: post?.track_number,
+				username: post?.username
+			}}
+		>
+			<CommentsDataContextProvider
+				initialCommentsData={{
+					comments: {},
+					currentTimeline: post.currentTimeline,
+					overallSentiments: post?.overallSentiments,
+					timelines: []
+				}}
+			>
 				<SpamAlert />
-				{
-					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES &&
-          ( post?.timeline.length === 1 ? getFirestoreProposalType(post?.timeline[0]?.type) !== proposalType : true  ) && <LinkCard timeline={post?.timeline} proposalType={proposalType}/>
-				}
-				{
-					proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
-						<Link href={`/bounty/${post.parent_bounty_index}`}>
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
-							</div>
-						</Link>
-				}
-				{ post && proposalType ===  ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-					<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md  mb-6 dashboard-heading flex items-center gap-x-2 w-full'>
+				{!isEditing &&
+					Boolean(post.timeline?.length) &&
+					proposalType !== ProposalType.CHILD_BOUNTIES &&
+					(post?.timeline.length === 1 ? getFirestoreProposalType(post?.timeline[0]?.type) !== proposalType : true) && (
+						<LinkCard
+							timeline={post?.timeline}
+							proposalType={proposalType}
+						/>
+					)}
+				{proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) && (
+					<Link href={`/bounty/${post.parent_bounty_index}`}>
+						<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+							This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
+						</div>
+					</Link>
+				)}
+				{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
+					<div className='dashboard-heading mb-6 flex w-full items-center  gap-x-2 rounded-md bg-white p-3 drop-shadow-md md:p-6'>
 						<span>The child bounty payout is ready to be claimed</span>
 						<ClaimPayoutModal
 							parentBountyId={post?.parentBountyId}
@@ -446,55 +485,47 @@ const Post: FC<IPostProps> = (props) => {
 					</div>
 				)}
 
-				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
+				<div className={`${className} grid grid-cols-1 gap-9 xl:grid-cols-12`}>
 					<div className='xl:col-span-8'>
-						{
-							proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) &&
-						<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-							This grant will be closed in <span className='text-pink_primary'>{
-								formatDuration(duration)
-							}</span>
-						</div>
-						}
+						{proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) && (
+							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+								This grant will be closed in <span className='text-pink_primary'>{formatDuration(duration)}</span>
+							</div>
+						)}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6 '>
-							{isEditing &&
-              <EditablePostContent toggleEdit={toggleEdit} />}
+						<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md md:p-4 lg:p-6 '>
+							{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
 
-							{!isEditing && <>
-								<PostHeading
-									className='mb-8'
-								/>
-								<Tabs
-									type="card"
-									className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
-									items={tabItems}
-								/>
-
-							</>}
-
+							{!isEditing && (
+								<>
+									<PostHeading className='mb-5' />
+									<Tabs
+										type='card'
+										className='ant-tabs-tab-bg-white font-medium text-bodyBlue'
+										items={tabItems}
+									/>
+								</>
+							)}
 						</div>
 					</div>
 
-					{!isEditing ? <Sidebar className='hidden xl:block' />: null}
+					{!isEditing ? <Sidebar className='hidden xl:block' /> : null}
 				</div>
+				<ScrollToTopButton />
 
 				<SidebarRight
 					open={sidebarOpen}
 					closeSidebar={() => setSidebarOpen(false)}
-				>
-					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
-				</SidebarRight>
-			</>
+				></SidebarRight>
+			</CommentsDataContextProvider>
 		</PostDataContextProvider>
 	);
 };
 
 export default styled(Post)`
-.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn .audit .card-bg{
-  background-color: var(--pink_primary) !important;
-  color: white !important;
-
-}
+	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn .audit .card-bg {
+		background-color: var(--pink_primary) !important;
+		color: white !important;
+	}
 `;

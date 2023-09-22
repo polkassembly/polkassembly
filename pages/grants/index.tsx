@@ -6,20 +6,21 @@ import { Button } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 import { useDispatch } from 'react-redux';
 import { networkActions } from '~src/redux/network';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useRouter } from 'next/router';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -28,9 +29,14 @@ interface IGrantsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST ,filterBy } = query;
+	const network = getNetworkFromReqHeaders(req.headers);
 
-	if(!Object.values(sortValues).includes(sortBy.toString()) || filterBy && filterBy.length!==0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))) {
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
+
+	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
 		return {
 			redirect: {
 				destination: `/grants?page=${page}&sortBy=${sortValues.NEWEST}&filterBy=${filterBy}`,
@@ -39,11 +45,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		};
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const network = getNetworkFromReqHeaders(req.headers);
-
-	const { data, error = ''  } = await getOffChainPosts({
-		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+	const { data, error = '' } = await getOffChainPosts({
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page: Number(page),
@@ -63,47 +66,72 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const Grants: FC<IGrantsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
-	const [openModal,setModalOpen]=useState<boolean>(false);
+	const [openModal, setModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
 	const { posts, count } = data;
 
-	const handleClick=() => {
-		if(id){
+	const handleClick = () => {
+		if (id) {
 			router.push('/grant/create');
-		}else{
+		} else {
 			setModalOpen(true);
 		}
-
 	};
 
 	return (
 		<>
-			<SEOHead title='Discussions' network={network}/>
-			<div className='w-full flex flex-col sm:flex-row sm:items-center'>
-				<h1 className='dashboard-heading flex-1 mb-4 sm:mb-0'>Grants Discussion</h1>
-				<Button onClick={handleClick} className='outline-none border-none h-[59px] w-[174px] px-6 py-4 font-medium text-lg leading-[27px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer'>New Grant post</Button>
+			<SEOHead
+				title='Discussions'
+				network={network}
+			/>
+			<div className='flex w-full flex-col sm:flex-row sm:items-center'>
+				<h1 className='dashboard-heading mb-4 flex-1 sm:mb-0'>Grants Discussion</h1>
+				<Button
+					onClick={handleClick}
+					className='flex h-[59px] w-[174px] cursor-pointer items-center justify-center rounded-[4px] border-none bg-pink_primary px-6 py-4 text-lg font-medium leading-[27px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'
+				>
+					New Grant post
+				</Button>
 			</div>
 
 			{/* Intro and Create Post Button */}
-			<div className="flex flex-col md:flex-row mt-8">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-                    This is the place to discuss grants for {network}. Anyone can start a new grants discussion.
-					{' '}<a className='text-pink_primary' href='https://github.com/moonbeam-foundation/grants/blob/main/interim/interim_grant_proposal.md' target='_blank' rel="noreferrer" >Guidelines of the Interim Grants Program.</a>
+			<div className='mt-8 flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md md:p-8 md:text-base'>
+					This is the place to discuss grants for {network}. Anyone can start a new grants discussion.{' '}
+					<a
+						className='text-pink_primary'
+						href='https://github.com/moonbeam-foundation/grants/blob/main/interim/interim_grant_proposal.md'
+						target='_blank'
+						rel='noreferrer'
+					>
+						Guidelines of the Interim Grants Program.
+					</a>
 				</p>
 			</div>
 
-			<OffChainPostsContainer proposalType={OffChainProposalType.GRANTS} posts={posts} count={count} className='mt-8' />
-			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
+			<OffChainPostsContainer
+				proposalType={OffChainProposalType.GRANTS}
+				posts={posts}
+				count={count}
+				className='mt-8'
+			/>
+			<ReferendaLoginPrompts
+				modalOpen={openModal}
+				setModalOpen={setModalOpen}
+				image='/assets/referenda-discussion.png'
+				title='Join Polkassembly to Start a New Discussion.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+			/>
 		</>
 	);
 };

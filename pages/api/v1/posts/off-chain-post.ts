@@ -16,32 +16,37 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
+import { checkReportThreshold, getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
+import dayjs from 'dayjs';
+import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
+import { redisGet, redisSet } from '~src/auth/redis';
+import { generateKey } from '~src/util/getRedisKeys';
 
 interface IGetOffChainPostParams {
 	network: string;
 	postId?: string | string[] | number;
 	proposalType: OffChainProposalType | string | string[];
 	isExternalApiCall?: boolean;
+	noComments?: boolean;
 }
 
 export const getUpdatedAt = (data: any) => {
 	let updated_at: Date | string | undefined;
 	if (data) {
 		if (data.last_edited_at) {
-			updated_at = data.last_edited_at?.toDate? data.last_edited_at.toDate(): data.last_edited_at;
+			updated_at = data.last_edited_at?.toDate ? data.last_edited_at.toDate() : data.last_edited_at;
 		} else if (data.updated_at) {
-			updated_at = data.updated_at?.toDate? data.updated_at?.toDate(): data.updated_at;
+			updated_at = data.updated_at?.toDate ? data.updated_at?.toDate() : data.updated_at;
 		}
 	}
 	return updated_at;
 };
 
-export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<IApiResponse<IPostResponse>> {
+export async function getOffChainPost(params: IGetOffChainPostParams): Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, proposalType, isExternalApiCall } = params;
+		const { network, postId, proposalType, isExternalApiCall, noComments = true } = params;
 		if (postId === undefined || postId === null) {
 			throw apiErrorWithStatusCode('Please send postId', 400);
 		}
@@ -49,6 +54,18 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		const strProposalType = String(proposalType);
 		if (!isFirestoreProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The off chain proposal type "${proposalType}" is invalid.`, 400);
+		}
+
+		if (proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
+			const redisKey = generateKey({ keyType: 'postId', network, postId: postId, proposalType: ProposalType.DISCUSSIONS });
+			const redisData = await redisGet(redisKey);
+			if (redisData) {
+				return {
+					data: JSON.parse(redisData),
+					error: null,
+					status: 200
+				};
+			}
 		}
 
 		const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
@@ -66,12 +83,12 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 
 		const timeline = [
 			{
-				created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
+				created_at: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
 				index: Number(postId),
 				statuses: [
 					{
 						status: 'Created',
-						timestamp: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at
+						timestamp: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at
 					}
 				],
 				type: 'Discussions'
@@ -83,14 +100,20 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId), 'post');
 		const tags = data?.tags || [];
 		const gov_type = data?.gov_type;
-		const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+		const history = data?.history
+			? data?.history.map((item: any) => {
+					return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
+			  })
+			: [];
 		const proposer = getProposerAddressFromFirestorePostData(data, network);
 		const post: IPostResponse = {
 			comments: [],
 			content: data?.content,
-			created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
+			created_at: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
 			gov_type: gov_type,
 			history,
+			isSpam: data?.isSpam,
+			isSpamReportInvalid: data?.isSpamReportInvalid,
 			last_edited_at: getUpdatedAt(data),
 			post_id: data?.id,
 			post_link: null,
@@ -102,15 +125,30 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			tags: tags || [],
 			timeline: [],
 			title: data?.title,
-			topic: topic? topic: isTopicIdValid(topic_id)? {
-				id: topic_id,
-				name: getTopicNameFromTopicId(topic_id)
-			}: getTopicFromType(strProposalType as ProposalType),
-			type: (strProposalType === 'discussions'? 'Discussions': strProposalType === 'grants'? 'Grants': ''),
+			topic: topic
+				? topic
+				: isTopicIdValid(topic_id)
+				? {
+						id: topic_id,
+						name: getTopicNameFromTopicId(topic_id)
+				  }
+				: getTopicFromType(strProposalType as ProposalType),
+			type: strProposalType === 'discussions' ? 'Discussions' : strProposalType === 'grants' ? 'Grants' : '',
 			user_id: data?.user_id,
 			username: data?.username
-
 		};
+
+		// spam users count
+		if (post?.isSpam) {
+			const threshold = process.env.REPORTS_THRESHOLD || 50;
+			post.spam_users_count = Number(threshold);
+		} else {
+			post.spam_users_count = checkReportThreshold(post.spam_users_count);
+		}
+
+		if (post?.isSpamReportInvalid) {
+			post.spam_users_count = 0;
+		}
 
 		if (post && (post.user_id || post.user_id === 0)) {
 			let { user_id } = post;
@@ -174,43 +212,74 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			}
 			post.post_link = post_link;
 		}
-		post.timeline = [...timeline, ...(post.timeline? post.timeline: [])];
+		post.timeline = [...timeline, ...(post.timeline ? post.timeline : [])];
 
 		// Comments
-		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
-			const commentPromises = post.timeline.map(async (timeline: any) => {
-				const type = getFirestoreProposalType(timeline.type) as ProposalType;
-				const index = timeline.type === 'Tips'? timeline.hash: timeline.index;
-				const postDocRef = postsByTypeRef(network, type).doc(String(index));
-				const commentsSnapshot = await postDocRef.collection('comments').get();
-				const comments = await getComments(commentsSnapshot, postDocRef, network, type, index);
-				return comments;
-			});
-			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
-			commentPromiseSettledResults.forEach((result) => {
-				if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
-					if (!post.comments || !Array.isArray(post.comments)) {
-						post.comments = [];
-					}
-					post.comments = post.comments.concat(result.value);
-				}
-			});
+		if (noComments) {
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				const commentPromises = post.timeline.map(async (timeline: any) => {
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(
+						String(timeline.type === 'Tips' ? timeline.hash : timeline.index)
+					);
+					const commentsCount = (await postDocRef.collection('comments').where('isDeleted', '==', false).count().get())?.data()?.count;
+					return { ...timeline, commentsCount };
+				});
+				const timelines: Array<any> = await Promise.allSettled(commentPromises);
+				post.timeline = timelines.map((timeline) => timeline.value);
+			}
+			const currentTimelineObj = post.timeline?.[0] || null;
+			if (currentTimelineObj) {
+				post.currentTimeline = {
+					commentsCount: currentTimelineObj.commentsCount,
+					date: dayjs(currentTimelineObj?.created_at),
+					firstCommentId: '',
+					id: 1,
+					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+					status: getStatus(currentTimelineObj?.type),
+					type: currentTimelineObj?.type
+				};
+			}
 		} else {
-			if (post.post_link) {
-				const { id, type } = post.post_link;
-				const postDocRef = postsByTypeRef(network, type).doc(String(id));
-				const commentsSnapshot = await postDocRef.collection('comments').get();
-				post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
-			}
-			const commentsSnapshot = await postDocRef.collection('comments').get();
-			const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType, Number(postId));
-			if (post.comments && Array.isArray(post.comments)) {
-				post.comments = post.comments.concat(comments);
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				const commentPromises = post.timeline.map(async (timeline: any) => {
+					const type = getFirestoreProposalType(timeline.type) as ProposalType;
+					const index = timeline.type === 'Tips' ? timeline.hash : timeline.index;
+					const postDocRef = postsByTypeRef(network, type).doc(String(index));
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+					const comments = await getComments(commentsSnapshot, postDocRef, network, type, index);
+					return comments;
+				});
+				const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
+				commentPromiseSettledResults.forEach((result) => {
+					if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
+						if (!post.comments || !Array.isArray(post.comments)) {
+							post.comments = [];
+						}
+						post.comments = post.comments.concat(result.value);
+					}
+				});
 			} else {
-				post.comments = comments;
+				if (post.post_link) {
+					const { id, type } = post.post_link;
+					const postDocRef = postsByTypeRef(network, type).doc(String(id));
+					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
+				}
+				const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType, Number(postId));
+				if (post.comments && Array.isArray(post.comments)) {
+					post.comments = post.comments.concat(comments);
+				} else {
+					post.comments = comments;
+				}
 			}
+			post.comments_count = post.comments.length;
 		}
+
 		await getContentSummary(post, network, isExternalApiCall);
+		if (proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1') {
+			await redisSet(generateKey({ keyType: 'postId', network, postId: postId, proposalType: ProposalType.DISCUSSIONS }), JSON.stringify(post));
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -230,22 +299,23 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	const { postId = 0, proposalType = OffChainProposalType.DISCUSSIONS } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getOffChainPost({
 		isExternalApiCall: true,
 		network,
+		noComments: false,
 		postId,
 		proposalType
 	});
 
-	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
+	if (error || !data) {
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+	} else {
 		if (data.summary) {
 			delete data.summary;
 		}
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

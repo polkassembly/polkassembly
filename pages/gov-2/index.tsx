@@ -25,9 +25,10 @@ import { EGovType, OffChainProposalType, ProposalType } from '~src/global/propos
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
@@ -38,9 +39,13 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps:GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
-	if(isOpenGovSupported(network) && !req.headers.referer || network === 'polkadot') {
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	if ((isOpenGovSupported(network) && !req.headers.referer) || network === 'polkadot') {
 		return {
 			props: {},
 			redirect: {
@@ -52,7 +57,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	const networkSocialsData = await getNetworkSocials({ network });
 
-	if(!networkTrackInfo[network]) {
+	if (!networkTrackInfo[network]) {
 		return { props: { error: 'Network does not support OpenGov yet.' } };
 	}
 
@@ -70,7 +75,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 	};
 
 	for (const trackName of Object.keys(networkTrackInfo[network])) {
-		fetches [trackName as keyof typeof fetches] =  getLatestActivityOnChainPosts({
+		fetches[trackName as keyof typeof fetches] = getLatestActivityOnChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network,
 			proposalType: ProposalType.OPEN_GOV,
@@ -89,7 +94,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		(gov2LatestPosts as any)[trackName as keyof typeof gov2LatestPosts] = responseArr[Object.keys(fetches).indexOf(trackName as keyof typeof fetches)];
 	}
 
-	const props:Props = {
+	const props: Props = {
 		error: '',
 		gov2LatestPosts,
 		network,
@@ -99,33 +104,41 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 	return { props };
 };
 
-const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Props) => {
+const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
 		<>
-			<SEOHead title='OpenGov' network={network}/>
+			<SEOHead
+				title='OpenGov'
+				network={network}
+			/>
 
-			<div className="mt-6 mx-1">
-				{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData?.data} showGov2Links />}
+			<div className='mx-1 mt-6'>
+				{networkSocialsData && (
+					<AboutNetwork
+						networkSocialsData={networkSocialsData?.data}
+						showGov2Links
+					/>
+				)}
 			</div>
 
-			<div className="mt-8 mx-1">
+			<div className='mx-1 mt-8'>
 				<TreasuryOverview />
 			</div>
 
-			<div className="mt-8 mx-1">
+			<div className='mx-1 mt-8'>
 				<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
 			</div>
 
-			<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
+			<div className='mx-1 mt-8 flex flex-col items-center justify-between gap-4 xl:flex-row'>
 				<div className='w-full xl:w-[60%]'>
 					<UpcomingEvents />
 				</div>
@@ -134,7 +147,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 					<News twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
-			<ChatFloatingModal/>
+			<ChatFloatingModal />
 		</>
 	);
 };

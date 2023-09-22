@@ -8,22 +8,15 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { GET_PREIMAGES_TABLE_QUERY } from '~src/queries';
-import { IApiResponse } from '~src/types';
+import { IApiResponse, IPreimagesListingResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 
-export interface IPreimagesListing {}
-
-export interface IPreimagesListingResponse {
-    count: number;
-    preimages: IPreimagesListing[];
-}
-
 interface IGetPreimagesParams {
-    network: string;
-    listingLimit: number | string | string [];
-    page: number | string | string [];
+	network: string;
+	listingLimit: number | string | string[];
+	page: number | string | string[];
 }
 
 export async function getPreimages(params: IGetPreimagesParams): Promise<IApiResponse<IPreimagesListingResponse>> {
@@ -71,7 +64,7 @@ const handler: NextApiHandler<IPreimagesListingResponse | { error: string }> = a
 	const { page = 1, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getPreimages({
 		listingLimit,
@@ -79,10 +72,10 @@ const handler: NextApiHandler<IPreimagesListingResponse | { error: string }> = a
 		page
 	});
 
-	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
-		res.status(status).json(data);
+	if (error || !data) {
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+	} else {
+		return res.status(status).json(data);
 	}
 };
 

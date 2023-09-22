@@ -11,11 +11,11 @@ import { JWTPayloadType } from '~src/auth/types';
 import { getLocalStorageToken } from '../services/auth.service';
 import { UserDetailsContextType } from '../types';
 
-const initialUserDetailsContext : UserDetailsContextType = {
+const initialUserDetailsContext: UserDetailsContextType = {
 	addresses: [],
 	allowed_roles: [],
 	defaultAddress: '',
-	delegationDashboardAddress:'',
+	delegationDashboardAddress: '',
 	email: null,
 	email_verified: false,
 	id: null,
@@ -26,13 +26,13 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	loginAddress: '',
 	loginWallet: null,
 	multisigAssociatedAddress: '',
-	networkPreferences:{
+	networkPreferences: {
 		channelPreferences: {},
-		triggerPreferences:{}
+		triggerPreferences: {}
 	},
 	picture: null,
-	primaryNetwork:'',
-	setUserDetailsContextState : (): void => {
+	primaryNetwork: '',
+	setUserDetailsContextState: (): void => {
 		throw new Error('setUserDetailsContextState function must be overridden');
 	},
 	setWalletConnectProvider: (): void => {
@@ -78,7 +78,7 @@ try {
 		initialUserDetailsContext.allowed_roles = roles.allowedRoles;
 		initialUserDetailsContext.web3signup = web3signup || false;
 		initialUserDetailsContext.is2FAEnabled = is2FAEnabled;
-		initialUserDetailsContext.loginAddress = login_address || '';
+		initialUserDetailsContext.loginAddress = login_address || window?.localStorage?.getItem('loginAddress') || '';
 		initialUserDetailsContext.loginWallet = login_wallet || null;
 	}
 } catch {
@@ -88,7 +88,6 @@ try {
 export const UserDetailsContext = createContext(initialUserDetailsContext);
 
 export const UserDetailsProvider = ({ children }: React.PropsWithChildren<{}>) => {
-
 	const [userDetailsContextState, setUserDetailsContextState] = useState(initialUserDetailsContext);
 	const [walletConnectProvider, setWalletConnectProvider] = useState<WalletConnectProvider | null>(null);
 

@@ -17,7 +17,7 @@ import AllGov2PostsTable from './AllGov2PostsTable';
 import TrackPostsTable from './TrackPostsTable';
 import { useNetworkSelector } from '~src/redux/selectors';
 
-const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string, gov2LatestPosts: any }) => {
+const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string; gov2LatestPosts: any }) => {
 	const [currentTab, setCurrentTab] = useState('all');
 	const { network } = useNetworkSelector();
 
@@ -57,7 +57,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 		}
 	];
 
-	if(network) {
+	if (network) {
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
 			tabItems.push({
 				children: (
@@ -66,8 +66,11 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 						posts={gov2LatestPosts[trackName]?.data?.posts}
 					/>
 				),
-				key: trackName.split(/(?=[A-Z])/).join('-').toLowerCase(),
-				label:(
+				key: trackName
+					.split(/(?=[A-Z])/)
+					.join('-')
+					.toLowerCase(),
+				label: (
 					<CountBadgePill
 						label={trackName.split(/(?=[A-Z])/).join(' ')}
 						count={gov2LatestPosts[trackName]?.data?.count}
@@ -78,15 +81,22 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 	}
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
-			<div className="flex justify-between items-center pr-4 pl-1">
-				<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-3.5 lg:mx-0'>Latest Activity</h2>
-				{currentTab !== 'all' && <Link className='text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
+		<div className={`${className} rounded-xxl bg-white p-0 drop-shadow-md lg:p-6`}>
+			<div className='flex items-center justify-between pl-1 pr-4'>
+				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue lg:mx-0 lg:mt-0'>Latest Activity</h2>
+				{currentTab !== 'all' && (
+					<Link
+						className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary'
+						href={`/${currentTab}`}
+					>
+						View all
+					</Link>
+				)}
 			</div>
 			<Tabs
-				type="card"
+				type='card'
 				items={tabItems}
-				className='ant-tabs-tab-bg-white text-bodyBlue text-sm md:px-2 font-medium'
+				className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue md:px-2'
 				onChange={(key) => setCurrentTab(key)}
 			/>
 		</div>
@@ -95,7 +105,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 
 export default React.memo(styled(Gov2LatestActivity)`
 	th {
-		color: #485F7D !important;
+		color: #485f7d !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -103,7 +113,7 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 
 	th.ant-table-cell {
-		color: #485F7D !important;
+		color: #485f7d !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -111,21 +121,21 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 
 	.ant-table-thead > tr > th {
-		color: #485F7D !important;
+		color: #485f7d !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		white-space: nowrap;
 	}
 
-	.ant-table-row{
-		color: #243A57 !important;
+	.ant-table-row {
+		color: #243a57 !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 	}
 
-	tr{
-		color: #243A57 !important;
+	tr {
+		color: #243a57 !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 		cursor: pointer !important;
@@ -137,17 +147,17 @@ export default React.memo(styled(Gov2LatestActivity)`
 		border-top-color: white;
 		border-left-color: white;
 		border-right-color: white;
-		border-bottom-color: #E1E6EB;
+		border-bottom-color: #e1e6eb;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-tab-active{
-		border-top-color: #E1E6EB;
-		border-left-color: #E1E6EB;
-		border-right-color: #E1E6EB;
+	.ant-tabs-tab-bg-white .ant-tabs-tab-active {
+		border-top-color: #e1e6eb;
+		border-left-color: #e1e6eb;
+		border-right-color: #e1e6eb;
 		border-radius: 6px 6px 0 0 !important;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-nav:before{
-		border-bottom: 1px solid #E1E6EB;
+	.ant-tabs-tab-bg-white .ant-tabs-nav:before {
+		border-bottom: 1px solid #e1e6eb;
 	}
 `);

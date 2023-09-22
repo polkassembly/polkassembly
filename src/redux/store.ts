@@ -1,9 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-// Copyright 2019-2025 @polka-labs/townhall authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Action, ThunkAction, combineReducers, configureStore } from '@reduxjs/toolkit';
 import { modalStore } from './modal';
@@ -12,13 +9,15 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistReducer, pers
 import storage from 'redux-persist/lib/storage';
 import { notificationStore } from './notification';
 import { networkStore } from './network';
+import { userDetailsStore } from './userDetails';
 
 export const makeStore = () => {
 	const isServer = typeof window === 'undefined';
 	const rootReducer = combineReducers({
 		[modalStore.name]: modalStore.reducer,
 		[notificationStore.name]: notificationStore.reducer,
-		[networkStore.name]: networkStore.reducer
+		[networkStore.name]: networkStore.reducer,
+		[userDetailsStore.name]: userDetailsStore.reducer
 	});
 
 	if (isServer) {
@@ -33,7 +32,7 @@ export const makeStore = () => {
 		});
 		return store;
 	} else {
-	// we need it only on client side
+		// we need it only on client side
 		const persistConfig = {
 			key: 'polkassembly',
 			storage,
@@ -58,11 +57,6 @@ export const makeStore = () => {
 
 export type TAppStore = ReturnType<typeof makeStore>;
 export type TAppState = ReturnType<TAppStore['getState']>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  TAppState,
-  unknown,
-  Action
->;
+export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, TAppState, unknown, Action>;
 
 export const wrapper = createWrapper<TAppStore>(makeStore);

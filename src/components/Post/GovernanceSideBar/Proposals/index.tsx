@@ -17,7 +17,7 @@ type IProposalDisplayProps = SecondProposalProps & {
 	canVote: boolean;
 	status?: string;
 	seconds?: any;
-}
+};
 
 const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 	const { proposalId, accounts, address, canVote, getAccounts, onAccountChange, seconds } = props;
@@ -26,7 +26,7 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { walletConnectProvider } = useUserDetailsContext();
 	const metaMaskError = useHandleMetaMask();
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'Loading proposal info' });
+	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: 'Loading proposal info' });
 
 	useEffect(() => {
 		setLoadingStatus((prev) => ({
@@ -43,31 +43,37 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 
 	return (
 		<GovSidebarCard>
-			<h6 className="dashboard-heading mb-6">Second this Proposal!</h6>
-			{canVote &&
-			<>
-				{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
-					<>
-						{metaMaskError && !walletConnectProvider?.wc.connected && <>{metaMaskError}</>}
-						{(!metaMaskError || walletConnectProvider?.wc.connected) &&
-						<SecondProposalEth proposalId={proposalId} seconds={seconds}  />}
-					</>
-					:
-					<SecondProposal
-						accounts={accounts}
-						address={address}
-						getAccounts={getAccounts}
-						onAccountChange={onAccountChange}
-						proposalId={proposalId}
-					/> }
-			</>
-			}
-			{(proposalId || proposalId === 0) &&
+			<h6 className='dashboard-heading mb-6'>Second this Proposal!</h6>
+			{canVote && (
+				<>
+					{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
+						<>
+							{metaMaskError && !walletConnectProvider?.wc.connected && <>{metaMaskError}</>}
+							{(!metaMaskError || walletConnectProvider?.wc.connected) && (
+								<SecondProposalEth
+									proposalId={proposalId}
+									seconds={seconds}
+								/>
+							)}
+						</>
+					) : (
+						<SecondProposal
+							accounts={accounts}
+							address={address}
+							getAccounts={getAccounts}
+							onAccountChange={onAccountChange}
+							proposalId={proposalId}
+						/>
+					)}
+				</>
+			)}
+			{(proposalId || proposalId === 0) && (
 				<ProposalVoteInfo
 					deposit={deposit}
 					loadingStatus={loadingStatus}
 					seconds={seconds}
-				/>}
+				/>
+			)}
 		</GovSidebarCard>
 	);
 };

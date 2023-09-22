@@ -19,12 +19,16 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 
-	if(!networkTrackInfo[network][PostOrigin.FELLOWSHIP_ADMIN]) {
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	if (!networkTrackInfo[network][PostOrigin.FELLOWSHIP_ADMIN]) {
 		return { props: { error: `Invalid track for ${network}` } };
 	}
 
@@ -33,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const fetches = {
 		all: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
@@ -43,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			trackStatus: 'All'
 		}),
 		closed: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
@@ -53,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			trackStatus: CustomStatus.Closed
 		}),
 		submitted: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
@@ -63,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			trackStatus: CustomStatus.Submitted
 		}),
 		voting: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
@@ -108,19 +112,24 @@ const FellowshipAdmin: FC<IFellowshipAdminProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
-	return <>
-		<SEOHead title={PostOrigin.FELLOWSHIP_ADMIN.split(/(?=[A-Z])/).join(' ')} network={network}/>
-		<TrackListing
-			trackName={PostOrigin.FELLOWSHIP_ADMIN}
-			posts={posts}
-		/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={PostOrigin.FELLOWSHIP_ADMIN.split(/(?=[A-Z])/).join(' ')}
+				network={network}
+			/>
+			<TrackListing
+				trackName={PostOrigin.FELLOWSHIP_ADMIN}
+				posts={posts}
+			/>
+		</>
+	);
 };
 
 export default FellowshipAdmin;

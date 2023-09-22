@@ -9,6 +9,7 @@ import { TermsOfWebsite } from '~src/components/LegalDocuments';
 import { useDispatch } from 'react-redux';
 import { networkActions } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface ITermsOfWebsitePage {
 	network: string;
@@ -16,6 +17,10 @@ interface ITermsOfWebsitePage {
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return {
 		props: {
 			network
@@ -28,13 +33,16 @@ const TermsOfWebsitePage: FC<ITermsOfWebsitePage> = (props) => {
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Terms of Website' network={network}/>
-			<TermsOfWebsite/>
+			<SEOHead
+				title='Terms of Website'
+				network={network}
+			/>
+			<TermsOfWebsite />
 		</>
 	);
 };

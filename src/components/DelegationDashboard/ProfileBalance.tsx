@@ -4,9 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useApiContext, useUserDetailsContext } from '~src/context';
-import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
-import LockBalanceIcon from '~assets/icons/lock-balance.svg';
-import RightTickIcon from '~assets/icons/right-tick.svg';
 import { Divider } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
@@ -20,68 +17,63 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { formatBalance } from '@polkadot/util';
 import Image from 'next/image';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { formatedBalance } from '~src/util/formatedBalance';
+import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
+import LockBalanceIcon from '~assets/icons/lock-balance.svg';
+import RightTickIcon from '~assets/icons/right-tick.svg';
+import BN from 'bn.js';
 
-interface Props{
-  className?: string;
-  address: string;
+interface Props {
+	className?: string;
+	address: string;
 }
 
-const DelegationWalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
+const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
 });
+const ZERO_BN = new BN(0);
 
-export const formatedBalance = (balance: string, unit: string) => {
-	const formated = formatBalance(balance, { forceUnit: unit, withUnit: false }).split('.');
-	if(Number(formated?.[0][0]) > 0){
-		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,1)}`: `${formated[0]}`;
-	}else{
-		return formated.join('.');
-	}
-
-};
-
-const ProfileBalances = ({ className, address }: Props ) => {
-
-	const [balance, setBalance] = useState<string>('0');
-	const [lockBalance, setLockBalance] = useState<string>('0');
-	const [transferableBalance, setTransferableBalance] = useState<string>('0');
+const ProfileBalances = ({ className, address }: Props) => {
+	const [balance, setBalance] = useState<BN>(ZERO_BN);
+	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
+	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const unit =`${chainProperties[network]?.tokenSymbol}`;
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [loading, setLoading] = useState<boolean>(false);
 	const { loginWallet, setUserDetailsContextState, delegationDashboardAddress } = useUserDetailsContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
 
 	useEffect(() => {
-
-		if(!network) return ;
+		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
+		if (!api || !apiReady || !address) return;
+		(async () => {
+			const balances = await userProfileBalances({ address, api, apiReady, network });
+			setBalance(balances?.freeBalance || ZERO_BN);
+			setTransferableBalance(balances?.transferableBalance || ZERO_BN);
+			setLockBalance(balances?.lockedBalance || ZERO_BN);
+		})();
 
-		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-		if(!api || !apiReady || !chosenWallet) return;
+		if (!api || !apiReady || !chosenWallet) return;
 
 		const injectedWindow = window as Window & InjectedWindow;
 
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[String(chosenWallet)]
-			: null;
+		const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[String(chosenWallet)] : null;
 
 		if (!wallet) {
 			return;
@@ -94,10 +86,16 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				const timeoutId = setTimeout(() => {
 					reject(new Error('Wallet Timeout'));
 				}, 60000); // wait 60 sec
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
+				if (wallet && wallet.enable) {
+					wallet
+						.enable(APPNAME)
+						.then((value) => {
+							clearTimeout(timeoutId);
+							resolve(value);
+						})
+						.catch((error) => {
+							reject(error);
+						});
 				}
 			});
 		} catch (err) {
@@ -119,20 +117,16 @@ const ProfileBalances = ({ className, address }: Props ) => {
 
 		setAccounts(accounts);
 		if (accounts.length > 0) {
-			if(api && apiReady) {
+			if (api && apiReady) {
 				api.setSigner(injected.signer);
 			}
 
-			if(loginWallet){
-				setLoading(true);
+			if (loginWallet) {
 				localStorage.setItem('delegationWallet', loginWallet);
 				localStorage.setItem('delegationDashboardAddress', address || delegationDashboardAddress);
 				setUserDetailsContextState((prev) => {
-					return { ...prev,
-						delegationDashboardAddress: address || delegationDashboardAddress
-					};
+					return { ...prev, delegationDashboardAddress: address || delegationDashboardAddress };
 				});
-				setLoading(false);
 			}
 			setAddress(address);
 		}
@@ -142,65 +136,79 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	useEffect(() => {
 		loginWallet && getAccounts(loginWallet);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[loginWallet, delegationDashboardAddress, api, apiReady]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginWallet, delegationDashboardAddress, api, apiReady]);
 
-	return <div className={'flex justify-between items-center w-full pl-[70px] max-md:pl-4 '}>
-		<div className={`${className} flex py-[17px] items-center  h-full gap-1 max-md:px-[10px]`}>
-			<div className='h-[71px] flex flex-col justify-start py-2 gap-1 '>
-				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-					{formatedBalance(balance, unit)}
-					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
-				<div className='flex items-center justify-start gap-2 ml-[1px]'>
-					<Image
-						className='w-5 h-5 object-contain rounded-full'
-						src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
-						alt='Logo'
+	return (
+		<div className={'flex w-full items-center justify-between pl-[40px] max-md:pl-4 '}>
+			<div className={`${className} flex h-full items-center  gap-1 py-[17px] max-md:px-[10px]`}>
+				<div className='flex h-[71px] flex-col justify-start gap-1 py-2 '>
+					<div className='gap-1 text-2xl font-semibold tracking-[0.0015em] text-white'>
+						{formatedBalance(balance.toString(), unit, 2)}
+						<span className='ml-1 text-sm font-medium tracking-[0.015em] text-white'>{unit}</span>
+					</div>
+					<div className='ml-[1px] flex items-center justify-start gap-2'>
+						<Image
+							className='h-5 w-5 rounded-full object-contain'
+							src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
+							alt='Logo'
+						/>
+						<span className='text-sm font-normal tracking-[0.01em] text-white'>Balance</span>
+					</div>
+				</div>
+				<Divider
+					type='vertical'
+					style={{ borderLeft: '1px solid #D2D8E0', height: '100%' }}
+				/>
+				<div className='flex justify-start gap-4 py-2 max-md:gap-2'>
+					<div className='flex h-[71px] flex-col gap-1 py-2'>
+						<div className='gap-1 text-2xl font-semibold tracking-[0.0015em] text-white'>
+							{formatedBalance(transferableBalance.toString(), unit, 2)}
+							<span className='ml-1 text-sm font-medium tracking-[0.015em] text-white'>{unit}</span>
+						</div>
+						<div className='ml-1 flex items-center justify-start gap-2'>
+							<RightTickIcon />
+							<span className='text-sm font-normal tracking-[0.01em] text-white'>Transferable</span>
+						</div>
+					</div>
+					<div className='flex h-[71px] flex-col justify-start gap-1 py-2'>
+						<div className='gap-1 text-2xl font-semibold tracking-[0.0015em] text-white'>
+							{formatedBalance(lockBalance.toString(), unit, 2)}
+							<span className='ml-1 text-sm font-medium tracking-[0.015em] text-white'>{unit}</span>
+						</div>
+						<div className='ml-1 flex items-center justify-start gap-2'>
+							<LockBalanceIcon />
+							<span className='text-sm font-normal tracking-[0.01em] text-white'>Total Locked</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className='-mt-6 mr-6 w-[275px]'>
+				{accounts.length > 0 && (
+					<AccountSelectionForm
+						addressTextClassName='text-white'
+						accounts={accounts}
+						address={delegationDashboardAddress}
+						withBalance={false}
+						className='cursor-pointer text-sm text-[#788698]'
+						onAccountChange={setAddress}
+						inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
+						isSwitchButton={true}
+						setSwitchModalOpen={setOpenModal}
+						withoutInfo={true}
 					/>
-					<span className='text-white text-sm font-normal tracking-[0.01em]'>
-          Balance
-					</span>
-				</div>
+				)}
 			</div>
-			<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
-			<div className='flex gap-4 py-2 justify-start max-md:gap-2'>
-				<div className='h-[71px] flex flex-col py-2 gap-1'>
-					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-						{formatedBalance(transferableBalance, unit)}
-						<span className='text-sm font-medium text-white tracking-[0.015em] ml-[1px]'>{unit}</span></div>
-					<div className='flex items-center justify-start gap-2 ml-1'>
-						<RightTickIcon/>
-						<span className='text-white text-sm font-normal tracking-[0.01em]'>
-          Transferable
-						</span>
-					</div>
-				</div>
-				<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
-					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-						{formatedBalance(lockBalance, unit)}
-						<span className='text-sm font-medium text-white tracking-[0.015em] ml-[1px]'>{unit}</span></div>
-					<div className='flex items-center justify-start gap-2 ml-1'>
-						<LockBalanceIcon/>
-						<span className='text-white text-sm font-normal tracking-[0.01em]'>
-             Total Locked
-						</span>
-					</div>
-				</div>
-			</div>
+			<AddressConnectModal
+				localStorageWalletKeyName='delegationWallet'
+				usingMultisig
+				localStorageAddressKeyName='delegationDashboardAddress'
+				open={openModal}
+				setOpen={setOpenModal}
+				closable={true}
+				walletAlertTitle='Delegation dashboard'
+			/>
 		</div>
-		<div className='w-[250px] mr-6 -mt-6'>
-			{ accounts.length > 0 && <AccountSelectionForm
-				accounts={accounts}
-				address={delegationDashboardAddress}
-				withBalance={false}
-				className='text-[#788698] text-sm cursor-pointer'
-				onAccountChange={setAddress}
-				inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
-				isSwitchButton={true}
-				setSwitchModalOpen={setOpenModal}
-				withoutInfo={true}
-			/>}</div>
-		<DelegationWalletConnectModal open={openModal} setOpen={setOpenModal} closable={true}/>
-	</div>;
+	);
 };
 export default ProfileBalances;

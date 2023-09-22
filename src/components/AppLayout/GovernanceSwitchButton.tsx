@@ -11,22 +11,26 @@ import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
-  previousRoute?: string;
+	previousRoute?: string;
 }
 
-const GovernanceSwitchButton = ({ className, previousRoute } : Props) => {
-
+const GovernanceSwitchButton = ({ className, previousRoute }: Props) => {
 	const { network } = useNetworkSelector();
 	const router = useRouter();
-	const { pathname , query } = router;
+	const { pathname, query } = router;
 	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
 
 	return (
 		<div className={`${className}`}>
-			<Link className='m-0 border border-solid border-[rgba(72,95,125,0.2)] rounded-full flex items-center justify-center min-w-[200px] p-2 py-1' href={isGov2Route ? '/' : '/opengov'}>
-				<p className='text-sidebarBlue font-normal text-[10px] leading-[15px] tracking-[0.02em] m-0'>Switch to</p>
-				<p className='font-poppins ml-[6px] mr-[11px] text-sidebarBlue text-xs font-semibold leading-[18px] tracking-[0.02em] m-0'> {isGov2Route ? 'Governance V1' : 'OpenGov'} </p>
-				<p className='flex items-center justify-center text-navBlue text-base m-0'><SyncIcon /></p>
+			<Link
+				className='m-0 flex min-w-[200px] items-center justify-center rounded-full border border-solid border-[rgba(72,95,125,0.2)] p-2 py-1'
+				href={isGov2Route ? '/' : '/opengov'}
+			>
+				<p className='m-0 text-[10px] font-normal leading-[15px] tracking-[0.02em] text-sidebarBlue'>Switch to</p>
+				<p className='m-0 ml-[6px] mr-[11px] font-poppins text-xs font-semibold leading-[18px] tracking-[0.02em] text-sidebarBlue'> {isGov2Route ? 'Governance V1' : 'OpenGov'} </p>
+				<p className='m-0 flex items-center justify-center text-base text-navBlue'>
+					<SyncIcon />
+				</p>
 			</Link>
 		</div>
 	);

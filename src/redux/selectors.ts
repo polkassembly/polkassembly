@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { TAppState } from './store';
 import { IModalStore } from './modal/@types';
 import { INetworkStore } from './network/@types';
+import { IUserDetailsStore } from './userDetails/@types';
 
 const useModalSelector = () => {
 	return useSelector<TAppState, IModalStore>((state) => state.modal);
@@ -15,7 +16,8 @@ const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state.network);
 };
 
-export {
-	useModalSelector,
-	useNetworkSelector
+const useUserDetailsSelector = () => {
+	return useSelector<TAppState, IUserDetailsStore>((state) => state.userDetails);
 };
+
+export { useModalSelector, useNetworkSelector, useUserDetailsSelector };

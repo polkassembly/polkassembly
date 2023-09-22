@@ -13,30 +13,50 @@ import HelperTooltip from './HelperTooltip';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 
-interface Props{
-	className?: string
-	label?: string
-	helpText?: string
-	onChange: (address: string) => void
-	placeholder?: string
+interface Props {
+	className?: string;
+	label?: string;
+	helpText?: string;
+	onChange: (address: string) => void;
+	placeholder?: string;
 	size?: 'large' | 'small' | 'middle';
-  defaultAddress?: string;
+	defaultAddress?: string;
 	skipFormatCheck?: boolean;
-  inputClassName?: string;
-
+	inputClassName?: string;
+	identiconSize?: number;
+	iconClassName?: string;
+	checkValidAddress?: (pre: boolean) => void;
+	disabled?: boolean;
+	name?: string;
+	onBlur?: () => void;
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName } : Props) => {
+const AddressInput = ({
+	className,
+	helpText,
+	label,
+	placeholder,
+	size,
+	onChange,
+	defaultAddress,
+	skipFormatCheck,
+	inputClassName,
+	identiconSize,
+	iconClassName,
+	checkValidAddress,
+	disabled,
+	name,
+	onBlur
+}: Props) => {
 	const { network } = useNetworkSelector();
-
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
 
 	const [isValid, setIsValid] = useState<boolean>(false);
 	const handleAddressChange = (address: string) => {
 		setAddress(address);
 
-		if(skipFormatCheck) {
-			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
+		if (skipFormatCheck) {
+			if (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) {
 				onChange(address);
 			}
 			return;
@@ -45,20 +65,31 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
 		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
-		if(validAddress || isValidMetaAddress) {
+		if (validAddress || isValidMetaAddress) {
 			setIsValid(true);
+			checkValidAddress?.(true);
 			onChange(address);
 		} else {
 			setIsValid(false);
+			checkValidAddress?.(false);
 			onChange('');
 		}
 	};
 
 	useEffect(() => {
-		if(skipFormatCheck) {
-			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
-				setIsValid(true);
-				onChange(address);
+		if (skipFormatCheck) {
+			if (address) {
+				if (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) {
+					setIsValid(true);
+					checkValidAddress?.(true);
+					onChange(address);
+				} else {
+					setIsValid(false);
+					checkValidAddress?.(false);
+				}
+			} else {
+				setIsValid(false);
+				checkValidAddress?.(false);
 			}
 			return;
 		}
@@ -66,43 +97,65 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
 		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
-		if(validAddress || isValidMetaAddress) {
+		if (validAddress || isValidMetaAddress) {
 			setIsValid(true);
 			onChange(address);
 		} else {
 			setIsValid(false);
 			onChange('');
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
 	return (
-		<div className={`${className} mb-2 mt-6`}>
-			{label && <label className=' flex items-center text-sm mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>}
+		<div className={`${className} mt-6`}>
+			{label && (
+				<label className=' mb-[2px] flex items-center text-sm'>
+					{' '}
+					{label}{' '}
+					{helpText && (
+						<HelperTooltip
+							className='ml-1'
+							text={helpText}
+						/>
+					)}{' '}
+				</label>
+			)}
 			<div className={`${className} flex items-center`}>
-
-				{
-					isValid &&
+				{isValid && (
 					<>
-						{
-							address.startsWith('0x') ?
-								<EthIdenticon className='z-10 absolute left-[8px] flex justify-center items-center' size={26} address={address} />
-								:
-								<Identicon
-									className='z-10 absolute left-[8px]'
-									value={address}
-									size={26}
-									theme={'polkadot'}
-								/>
-						}
+						{address.startsWith('0x') ? (
+							<EthIdenticon
+								className={`absolute z-10 flex items-center justify-center ${iconClassName ? iconClassName : 'left-[8px]'}`}
+								size={identiconSize || 26}
+								address={address}
+							/>
+						) : (
+							<Identicon
+								className={`absolute z-10 ${iconClassName ? iconClassName : 'left-[8px]'}`}
+								value={address}
+								size={identiconSize || 26}
+								theme={'polkadot'}
+							/>
+						)}
 					</>
-				}
+				)}
 
-				<Form.Item className='mb-0 w-full' validateStatus={address && !isValid ? 'error' : ''} >
+				<Form.Item
+					name={name || 'address'}
+					className='mb-0 w-full'
+					validateStatus={address && !isValid ? 'error' : 'success'}
+				>
 					<Input
+						onBlur={() => onBlur?.()}
 						value={address}
-						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName}`}
-						onChange={ (e) => {handleAddressChange(e.target.value); onChange(e.target.value);}}
+						disabled={disabled}
+						name={name || 'address'}
+						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} h-[40px] w-full rounded-[4px] border-[1px] text-sm ${inputClassName}`}
+						onChange={(e) => {
+							handleAddressChange(e.target.value);
+							onChange(e.target.value);
+						}}
 						placeholder={placeholder || 'Address'}
 						size={size}
 					/>

@@ -6,13 +6,14 @@
 import { ProfileOutlined } from '@ant-design/icons';
 import { Button, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { IPreimagesListing } from 'pages/api/v1/listing/preimages';
-import React, { FC, useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
 import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { IPreimagesListing } from '~src/types';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -20,9 +21,15 @@ interface IPreImagesTableProps {
 
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkSelector();
-
+	const router = useRouter();
 	const { preimages } = props;
 	const [modalArgs, setModalArgs] = useState<any>(null);
+
+	useEffect(() => {
+		if (!router?.query?.hash) return;
+		setModalArgs(preimages?.[0]?.proposedCall.args);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router]);
 
 	const columns: ColumnsType<any> = [
 		{
@@ -30,7 +37,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'hash',
 			key: 'hash',
 			width: 350,
-			render: (hash) => <span className='text-sidebarBlue font-medium'>{hash}</span>
+			render: (hash) => <span className='font-medium text-sidebarBlue'>{hash}</span>
 		},
 		{
 			title: 'Author',
@@ -44,43 +51,55 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'deposit',
 			key: 'deposit',
 			width: 120,
-			render: (deposit) => <span className='text-sidebarBlue font-medium whitespace-pre'>{deposit && formatBnBalance(deposit, { numberAfterComma: 2, withUnit: true }, network)}</span>
+			render: (deposit) => (
+				<span className='whitespace-pre font-medium text-sidebarBlue'>{deposit && formatBnBalance(deposit, { numberAfterComma: 2, withUnit: true }, network)}</span>
+			)
 		},
 		{
 			title: 'Arguments',
 			dataIndex: 'proposedCall',
 			key: 'proposedCall',
 			width: 265,
-			render: (proposedCall) => proposedCall && proposedCall.section && proposedCall.method && <div className='flex items-center'>
-				<code className='px-2 rounded-md'>{proposedCall.section}.{proposedCall.method}</code>
-				{proposedCall.args && <ProfileOutlined className='ml-2 p-1 text-base rounded-md hover:text-pink_primary cursor-pointer' onClick={() => setModalArgs(proposedCall.args)} />}
-			</div>
+			render: (proposedCall) =>
+				proposedCall &&
+				proposedCall.section &&
+				proposedCall.method && (
+					<div className='flex items-center'>
+						<code className='rounded-md px-2'>
+							{proposedCall.section}.{proposedCall.method}
+						</code>
+						{proposedCall.args && (
+							<ProfileOutlined
+								className='ml-2 cursor-pointer rounded-md p-1 text-base hover:text-pink_primary'
+								onClick={() => setModalArgs(proposedCall.args)}
+							/>
+						)}
+					</div>
+				)
 		},
 		{
 			title: 'Size',
 			dataIndex: 'length',
 			key: 'length',
 			width: 65,
-			render: (length) => <span className='text-sidebarBlue font-medium'>{length}</span>
+			render: (length) => <span className='font-medium text-sidebarBlue'>{length}</span>
 		},
 		{
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
 			width: 135,
-			render: (status) => <span className='text-sidebarBlue font-medium'>
-				{ status }
-			</span>
+			render: (status) => <span className='font-medium text-sidebarBlue'>{status}</span>
 		}
 	];
 
-	if(preimages) {
-		if(!preimages || !preimages.length) return <PostEmptyState />;
+	if (preimages) {
+		if (!preimages || !preimages.length) return <PostEmptyState />;
 
 		const tableData: any[] = [];
 
-		preimages.forEach((preImageObj: any, index:number) => {
-			tableData.push({ key:index, ...preImageObj });
+		preimages.forEach((preImageObj: any, index: number) => {
+			tableData.push({ key: index, ...preImageObj });
 		});
 
 		return (
@@ -98,18 +117,25 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					onOk={() => setModalArgs(null)}
 					onCancel={() => setModalArgs(null)}
 					footer={[
-						<Button key="back" onClick={() => setModalArgs(null)}> Close </Button>
+						<Button
+							key='back'
+							onClick={() => setModalArgs(null)}
+						>
+							{' '}
+							Close{' '}
+						</Button>
 					]}
 				>
-					{modalArgs &&
-					<div className='w-full max-h-[60vh] overflow-auto'>
-						<ReactJson
-							src={modalArgs}
-							iconStyle='circle'
-							enableClipboard={false}
-							displayDataTypes={false}
-						/>
-					</div>}
+					{modalArgs && (
+						<div className='max-h-[60vh] w-full overflow-auto'>
+							<ReactJson
+								src={modalArgs}
+								iconStyle='circle'
+								enableClipboard={false}
+								displayDataTypes={false}
+							/>
+						</div>
+					)}
 				</Modal>
 			</div>
 		);

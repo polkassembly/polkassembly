@@ -3,19 +3,19 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export interface IModalStore {
-    open: boolean;
-    footerType?: EFooterType;
-    contentType?: EContentType;
-    titleType?: ETitleType
+	open: boolean;
+	footerType?: EFooterType;
+	contentType?: EContentType;
+	titleType?: ETitleType;
 }
 
 export enum ETitleType {
-    NONE = 'none',
+	NONE = 'none'
 }
 
 export enum EFooterType {
-    NONE = 'none',
+	NONE = 'none'
 }
 export enum EContentType {
-    NONE = 'none',
+	NONE = 'none'
 }

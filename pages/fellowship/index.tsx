@@ -10,9 +10,14 @@ import WhitelistMembersContainer from '~src/components/Listing/WhitelistMembers/
 import { useDispatch } from 'react-redux';
 import { networkActions } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 
@@ -22,21 +27,28 @@ const FellowshipMembers = (props: { network: string }) => {
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Fellowship' network={network}/>
+			<SEOHead
+				title='Fellowship'
+				network={network}
+			/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>Fellowship</h1>
 
 			{/* Intro and Create Post Button */}
-			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-					Fellowship is a mostly self-governing expert body with a primary goal of representing the humans who embody and contain the technical knowledge base of the Polkadot network and protocol.
+			<div className='flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md md:p-8 md:text-base'>
+					Fellowship is a mostly self-governing expert body with a primary goal of representing the humans who embody and contain the technical knowledge base of the Polkadot
+					network and protocol.
 				</p>
 			</div>
-			<WhitelistMembersContainer membersType={EMembersType.FELLOWSHIP} className='mt-8' />
+			<WhitelistMembersContainer
+				membersType={EMembersType.FELLOWSHIP}
+				className='mt-8'
+			/>
 		</>
 	);
 };

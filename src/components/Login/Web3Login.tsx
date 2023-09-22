@@ -4,17 +4,12 @@
 
 import { CheckOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import {
-	Injected,
-	InjectedAccount,
-	InjectedWindow
-} from '@polkadot/extension-inject/types';
+import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -34,18 +29,18 @@ import Image from 'next/image';
 import WalletButtons from './WalletButtons';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import TFALoginForm from './TFALoginForm';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
-  chosenWallet: Wallet;
-  setDisplayWeb2: () => void;
-  setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
-  isModal?:boolean;
-  setLoginOpen?:(pre: boolean) => void;
-  setSignupOpen?: (pre: boolean) => void;
-  onWalletUpdate?: () => void;
-  withPolkasafe?: boolean;
-  setChosenWallet: any;
+	chosenWallet: Wallet;
+	setDisplayWeb2: () => void;
+	setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
+	isModal?: boolean;
+	setLoginOpen?: (pre: boolean) => void;
+	setSignupOpen?: (pre: boolean) => void;
+	onWalletUpdate?: () => void;
+	withPolkasafe?: boolean;
+	setChosenWallet: any;
 }
 
 const initAuthResponse: IAuthResponse = {
@@ -55,21 +50,11 @@ const initAuthResponse: IAuthResponse = {
 	user_id: 0
 };
 
-const Web3Login: FC<Props> = ({
-	chosenWallet,
-	setDisplayWeb2,
-	setWalletError,
-	isModal,
-	setLoginOpen,
-	setSignupOpen,
-	withPolkasafe,
-	setChosenWallet,
-	onWalletUpdate
-}) => {
+const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, isModal, setLoginOpen, setSignupOpen, withPolkasafe, setChosenWallet, onWalletUpdate }) => {
 	const { network } = useNetworkSelector();
 
 	const router = useRouter();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -83,11 +68,11 @@ const Web3Login: FC<Props> = ({
 	const [isSignUp, setIsSignUp] = useState(false);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
 
-	const handleClick=() => {
-		if(isModal && setSignupOpen && setLoginOpen){
+	const handleClick = () => {
+		if (isModal && setSignupOpen && setLoginOpen) {
 			setSignupOpen(true);
-			setLoginOpen(false);}
-		else{
+			setLoginOpen(false);
+		} else {
 			router.push('/signup');
 		}
 	};
@@ -95,9 +80,7 @@ const Web3Login: FC<Props> = ({
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
+		const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
 
 		if (!wallet) {
 			setExtensionNotFound(true);
@@ -114,10 +97,16 @@ const Web3Login: FC<Props> = ({
 					reject(new Error('Wallet Timeout'));
 				}, 60000); // wait 60 sec
 
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
+				if (wallet && wallet.enable) {
+					wallet
+						.enable(APPNAME)
+						.then((value) => {
+							clearTimeout(timeoutId);
+							resolve(value);
+						})
+						.catch((error) => {
+							reject(error);
+						});
 				}
 			});
 		} catch (err) {
@@ -126,18 +115,11 @@ const Web3Login: FC<Props> = ({
 			if (err?.message == 'Rejected') {
 				setWalletError('');
 				handleToggle();
-			} else if (
-				err?.message ==
-        'Pending authorisation request already exists for this site. Please accept or reject the request.'
-			) {
-				setWalletError(
-					'Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.'
-				);
+			} else if (err?.message == 'Pending authorisation request already exists for this site. Please accept or reject the request.') {
+				setWalletError('Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.');
 				handleToggle();
 			} else if (err?.message == 'Wallet Timeout') {
-				setWalletError(
-					'Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.'
-				);
+				setWalletError('Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.');
 				handleToggle();
 			}
 		}
@@ -172,14 +154,12 @@ const Web3Login: FC<Props> = ({
 		setMultisigAddress('');
 	};
 
-	const handleLogin: ( values: React.BaseSyntheticEvent<object, any, any> | undefined ) => void = async  () => {
+	const handleLogin: (values: React.BaseSyntheticEvent<object, any, any> | undefined) => void = async () => {
 		if (!accounts.length) return getAccounts(chosenWallet);
 
 		try {
 			const injectedWindow = window as Window & InjectedWindow;
-			const wallet = isWeb3Injected
-				? injectedWindow.injectedWeb3[chosenWallet]
-				: null;
+			const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
 
 			if (!wallet) {
 				setExtensionNotFound(true);
@@ -189,7 +169,7 @@ const Web3Login: FC<Props> = ({
 				setExtensionNotFound(false);
 			}
 
-			const injected = wallet && wallet.enable && await wallet.enable(APPNAME);
+			const injected = wallet && wallet.enable && (await wallet.enable(APPNAME));
 
 			const signRaw = injected && injected.signer && injected.signer.signRaw;
 			if (!signRaw) return console.error('Signer not available');
@@ -197,15 +177,18 @@ const Web3Login: FC<Props> = ({
 			setLoading(true);
 
 			let substrate_address;
-			if(!address.startsWith('0x')) {
+			if (!address.startsWith('0x')) {
 				substrate_address = getSubstrateAddress(address);
-				if(!substrate_address) return console.error('Invalid address');
-			}else {
+				if (!substrate_address) return console.error('Invalid address');
+			} else {
 				substrate_address = address;
 			}
 
-			const { data: loginStartData , error: loginStartError } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressLoginStart', { address: substrate_address, wallet: chosenWallet });
-			if(loginStartError) {
+			const { data: loginStartData, error: loginStartError } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressLoginStart', {
+				address: substrate_address,
+				wallet: chosenWallet
+			});
+			if (loginStartError) {
 				console.log('Error in address login start', loginStartError);
 				setError(loginStartError);
 				setLoading(false);
@@ -223,15 +206,20 @@ const Web3Login: FC<Props> = ({
 				type: 'bytes'
 			});
 
-			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<IAuthResponse>( 'api/v1/auth/actions/addressLogin', { address: substrate_address,multisig:multisigAddress, signature, wallet: chosenWallet });
-			if(addressLoginError) {
+			const { data: addressLoginData, error: addressLoginError } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/addressLogin', {
+				address: substrate_address,
+				multisig: multisigAddress,
+				signature,
+				wallet: chosenWallet
+			});
+			if (addressLoginError) {
 				setError(addressLoginError);
 				// TODO: change this method of checking if user is already signed up
 				if (addressLoginError === 'Please sign up prior to logging in with a web3 address') {
 					setIsSignUp(true);
 					try {
 						setLoading(true);
-						const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressSignupStart', { address: substrate_address,multisig:multisigAddress });
+						const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address: substrate_address, multisig: multisigAddress });
 						if (error || !data) {
 							setError(error || 'Something went wrong');
 							setLoading(false);
@@ -239,7 +227,7 @@ const Web3Login: FC<Props> = ({
 						}
 
 						const signMessage = data?.signMessage;
-						if (!signMessage){
+						if (!signMessage) {
 							setError('Challenge message not found');
 							setLoading(false);
 							return;
@@ -251,9 +239,9 @@ const Web3Login: FC<Props> = ({
 							type: 'bytes'
 						});
 
-						const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
+						const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignupConfirm', {
 							address: substrate_address,
-							multisig:multisigAddress,
+							multisig: multisigAddress,
 							signature: signature,
 							wallet: chosenWallet
 						});
@@ -264,56 +252,57 @@ const Web3Login: FC<Props> = ({
 							return;
 						}
 
-						if(confirmData.token) {
-							currentUser.loginWallet= chosenWallet;
+						if (confirmData.token) {
+							currentUser.loginWallet = chosenWallet;
 							currentUser.loginAddress = multisigAddress || address;
 							currentUser.multisigAssociatedAddress = address;
 							currentUser.delegationDashboardAddress = multisigAddress || address;
 							localStorage.setItem('delegationWallet', chosenWallet);
 							localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
-							localStorage.setItem('multisigDelegationAssociatedAddress', address );
+							localStorage.setItem('multisigDelegationAssociatedAddress', address);
 							localStorage.setItem('loginWallet', chosenWallet);
+							localStorage.setItem('loginAddress', address);
 							localStorage.setItem('multisigAssociatedAddress', address);
 							handleTokenChange(confirmData.token, currentUser);
-							if(isModal){
+							if (isModal) {
 								setLoginOpen && setLoginOpen(false);
 								setLoading(false);
 								return;
 							}
 							router.push('/');
-						}else {
+						} else {
 							throw new Error('Web3 Login failed');
 						}
-
 					} catch (error) {
 						setError(error.message);
 						setLoading(false);
 					}
-
 				}
 				setLoading(false);
 				return;
 			}
 
-			if(addressLoginData?.token){
-				currentUser.loginWallet= chosenWallet;
+			if (addressLoginData?.token) {
+				currentUser.loginWallet = chosenWallet;
 				currentUser.loginAddress = multisigAddress || address;
 				currentUser.delegationDashboardAddress = multisigAddress || address;
 				currentUser.multisigAssociatedAddress = address;
 				localStorage.setItem('delegationWallet', chosenWallet);
 				localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
-				localStorage.setItem('multisigDelegationAssociatedAddress', address );
+				localStorage.setItem('multisigDelegationAssociatedAddress', address);
 				localStorage.setItem('loginWallet', chosenWallet);
+				localStorage.setItem('loginAddress', address);
+
 				localStorage.setItem('multisigAssociatedAddress', address);
 				handleTokenChange(addressLoginData.token, currentUser);
-				if(isModal){
+				if (isModal) {
 					setLoginOpen?.(false);
 					setLoading(false);
 					return;
 				}
 				router.push('/');
-			}else if(addressLoginData?.isTFAEnabled) {
-				if(!addressLoginData?.tfa_token) {
+			} else if (addressLoginData?.isTFAEnabled) {
+				if (!addressLoginData?.tfa_token) {
 					setError(error || 'TFA token missing. Please try again.');
 					setLoading(false);
 					return;
@@ -322,7 +311,6 @@ const Web3Login: FC<Props> = ({
 				setAuthResponse(addressLoginData);
 				setLoading(false);
 			}
-
 		} catch (error) {
 			setError(error.message);
 			setLoading(false);
@@ -331,10 +319,10 @@ const Web3Login: FC<Props> = ({
 
 	const handleSubmitAuthCode = async (formData: any) => {
 		const { authCode } = formData;
-		if(isNaN(authCode)) return;
+		if (isNaN(authCode)) return;
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
+		const { data, error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
 			auth_code: String(authCode), //use string for if it starts with 0
 			login_address: address,
 			login_wallet: chosenWallet,
@@ -342,7 +330,7 @@ const Web3Login: FC<Props> = ({
 			user_id: Number(authResponse.user_id)
 		});
 
-		if(error || !data) {
+		if (error || !data) {
 			setError(error || 'Login failed. Please try again later.');
 			setLoading(false);
 			return;
@@ -351,7 +339,7 @@ const Web3Login: FC<Props> = ({
 		if (data?.token) {
 			setError('');
 			handleTokenChange(data.token, currentUser);
-			if(isModal){
+			if (isModal) {
 				setLoading(false);
 				setAuthResponse(initAuthResponse);
 				setLoginOpen?.(false);
@@ -363,42 +351,43 @@ const Web3Login: FC<Props> = ({
 
 	const handleToggle = () => setDisplayWeb2();
 
-	const handleBackToLogin = ():void => {
+	const handleBackToLogin = (): void => {
 		onWalletUpdate && onWalletUpdate();
 	};
 
-	const handleChangeWalletWithPolkasafe = (wallet:string) => {
+	const handleChangeWalletWithPolkasafe = (wallet: string) => {
 		setChosenWallet(wallet);
 		setAccounts([]);
 	};
 	useEffect(() => {
-		if(withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE){
+		if (withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE) {
 			getAccounts(chosenWallet)
 				.then(() => setFetchAccounts(false))
 				.catch((err) => {
 					console.error(err);
-				}).finally(() => setLoading(false));
+				})
+				.finally(() => setLoading(false));
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[accounts.length, chosenWallet, withPolkasafe]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [accounts.length, chosenWallet, withPolkasafe]);
 
 	return (
 		<>
 			<div className='flex items-center'>
 				<LoginLogo className='ml-6 mr-2' />
-				<h3 className="text-xl font-semibold text-bodyBlue mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
+				<h3 className='mt-3 text-xl font-semibold text-bodyBlue'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />
-			<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
-				<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-2">
-					{!withPolkasafe &&<p className='flex gap-x-2 items-center justify-start p-0 m-0'>
-						<span className='mt-2'>
-							<WalletIcon which={chosenWallet} />
-						</span>
-						<span className='text-bodyBlue text-lg sm:text-xl'>
-							{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
-						</span>
-					</p>}
+			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md'>
+				<h3 className='flex flex-col gap-y-2 text-2xl font-semibold text-[#1E232C]'>
+					{!withPolkasafe && (
+						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
+							<span className='mt-2'>
+								<WalletIcon which={chosenWallet} />
+							</span>
+							<span className='text-lg text-bodyBlue sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+						</p>
+					)}
 					{withPolkasafe && (
 						<WalletButtons
 							disabled={loading}
@@ -409,69 +398,87 @@ const Web3Login: FC<Props> = ({
 						/>
 					)}
 				</h3>
-				{fetchAccounts ?
-					<div className='flex flex-col justify-center items-center'>
+				{fetchAccounts ? (
+					<div className='flex flex-col items-center justify-center'>
 						<p className='text-base text-bodyBlue'>
-							{withPolkasafe ? 'To fetch your Multisig details, please select a wallet extension' :'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
+							{withPolkasafe
+								? 'To fetch your Multisig details, please select a wallet extension'
+								: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 						</p>
 						<div className='flex'>
-							<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToLogin()}>
-								Go Back</Button>
-							{!withPolkasafe && <Button
-								key='got-it'
-								icon={<CheckOutlined />}
-								className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-5 px-8 font-medium text-lg leading-none flex items-center justify-center'
-								onClick={() => {
-									getAccounts(chosenWallet)
-										.then(() => {
-											setFetchAccounts(false);
-										})
-										.catch((err) => {
-											console.error(err);
-										});
-								} }
+							<Button
+								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+								onClick={() => handleBackToLogin()}
 							>
-								Got it!
-							</Button>}
+								Go Back
+							</Button>
+							{!withPolkasafe && (
+								<Button
+									key='got-it'
+									icon={<CheckOutlined />}
+									className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
+									onClick={() => {
+										getAccounts(chosenWallet)
+											.then(() => {
+												setFetchAccounts(false);
+											})
+											.catch((err) => {
+												console.error(err);
+											});
+									}}
+								>
+									Got it!
+								</Button>
+							)}
 						</div>
 					</div>
-					: (
-						<>
-							{authResponse.isTFAEnabled ?
-								<TFALoginForm
-									onBack={() => {setAuthResponse(initAuthResponse); setError(''); }}
-									onSubmit={handleSubmitAuthCode}
-									error={error || ''}
-									loading={loading}
-								/> :
-								<AuthForm onSubmit={handleLogin} className="flex flex-col px-4">
-									{extensionNotFound ?
-										<div className='flex justify-center items-center my-5'>
-											<ExtensionNotDetected chosenWallet={chosenWallet} />
-										</div>
-										: null}
-									{accountsNotFound && (
-										<div className='flex justify-center items-center my-5'>
-											<Alert
-												message="You need at least one account in Polkadot-js extension to login."
-												description="Please reload this page after adding accounts."
-												type="info"
-												showIcon />
-										</div>
-									)}
-									{isAccountLoading ? (
-										<div className="my-5">
-											<Loader
-												size="large"
-												timeout={3000}
-												text="Requesting Web3 accounts" />
-										</div>
-									) : accounts.length > 0 && (
+				) : (
+					<>
+						{authResponse.isTFAEnabled ? (
+							<TFALoginForm
+								onBack={() => {
+									setAuthResponse(initAuthResponse);
+									setError('');
+								}}
+								onSubmit={handleSubmitAuthCode}
+								error={error || ''}
+								loading={loading}
+							/>
+						) : (
+							<AuthForm
+								onSubmit={handleLogin}
+								className='flex flex-col px-4'
+							>
+								{extensionNotFound ? (
+									<div className='my-5 flex items-center justify-center'>
+										<ExtensionNotDetected chosenWallet={chosenWallet} />
+									</div>
+								) : null}
+								{accountsNotFound && (
+									<div className='my-5 flex items-center justify-center'>
+										<Alert
+											message='You need at least one account in Polkadot-js extension to login.'
+											description='Please reload this page after adding accounts.'
+											type='info'
+											showIcon
+										/>
+									</div>
+								)}
+								{isAccountLoading ? (
+									<div className='my-5'>
+										<Loader
+											size='large'
+											timeout={3000}
+											text='Requesting Web3 accounts'
+										/>
+									</div>
+								) : (
+									accounts.length > 0 && (
 										<>
-											<div className='flex justify-center items-center my-5'>
+											<div className='my-5 flex items-center justify-center'>
 												{withPolkasafe ? (
 													<MultisigAccountSelectionForm
-														title="Choose linked account"
+														title='Choose linked account'
 														accounts={accounts}
 														address={address}
 														onAccountChange={onAccountChange}
@@ -483,63 +490,97 @@ const Web3Login: FC<Props> = ({
 														title='Choose linked account'
 														accounts={accounts}
 														address={address}
-														onAccountChange={onAccountChange} />
+														onAccountChange={onAccountChange}
+														linkAddressTextDisabled
+													/>
 												)}
 											</div>
-											{isSignUp && <Alert showIcon className='mb-2' type='info' message={<>By Signing up you agree to the terms of the <Link href='/terms-and-conditions' className='text-pink_primary'>Polkassembly end user agreement</Link>.</>} />}
-											<div className="flex justify-center items-center">
+											{isSignUp && (
+												<Alert
+													showIcon
+													className='mb-2'
+													type='info'
+													message={
+														<>
+															By Signing up you agree to the terms of the{' '}
+															<Link
+																href='/terms-and-conditions'
+																className='text-pink_primary'
+															>
+																Polkassembly end user agreement
+															</Link>
+															.
+														</>
+													}
+												/>
+											)}
+											<div className='flex items-center justify-center'>
 												<Button
 													loading={loading}
 													disabled={withPolkasafe && !multisigAddress}
-													htmlType="submit"
-													size="large"
-													className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
+													htmlType='submit'
+													size='large'
+													className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
 												>
-												Login
+													Login
 												</Button>
 											</div>
 											<div>
 												<Divider>
-													<div className="flex gap-x-2 items-center">
-														<span className="text-grey_primary text-md">Or</span>
+													<div className='flex items-center gap-x-2'>
+														<span className='text-md text-grey_primary'>Or</span>
 														<Button
-															className="p-0 border-none outline-none text-pink_primary text-md font-semibold"
+															className='text-md border-none p-0 font-semibold text-pink_primary outline-none'
 															disabled={loading}
 															onClick={handleToggle}
 														>
-														Login with Username
+															Login with Username
 														</Button>
 													</div>
 												</Divider>
 											</div>
 										</>
-									)}
-									<div>
-										{error && <FilteredError text={error} />}
-									</div>
-								</AuthForm>
-							}
+									)
+								)}
+								<div>{error && <FilteredError text={error} />}</div>
+							</AuthForm>
+						)}
 
-							{!authResponse.isTFAEnabled && <div className='flex items-center justify-center'>
-								<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToLogin()}>
-								Go Back
+						{!authResponse.isTFAEnabled && (
+							<div className='flex items-center justify-center'>
+								<Button
+									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+									onClick={() => handleBackToLogin()}
+								>
+									Go Back
 								</Button>
-							</div>}
-						</>
-					)}
-				<div className="flex justify-center items-center pb-5 font-medium mt-6">
-					<label className="text-lg text-bodyBlue">
-						Don&apos;t have an account?
-					</label>
-					<div onClick={handleClick} className='text-lg text-pink_primary cursor-pointer'>&nbsp; Sign Up </div>
+							</div>
+						)}
+					</>
+				)}
+				<div className='mt-6 flex items-center justify-center pb-5 font-medium'>
+					<label className='text-lg text-bodyBlue'>Don&apos;t have an account?</label>
+					<div
+						onClick={handleClick}
+						className='cursor-pointer text-lg text-pink_primary'
+					>
+						&nbsp; Sign Up{' '}
+					</div>
 				</div>
-			</article></>
+			</article>
+		</>
 	);
 };
 
 const PolkasafeWithIcon = () => (
 	<>
-		Login by Polkasafe <Image width={25} height={25} src='/assets/polkasafe-logo.svg' alt='polkasafe'/>
+		Login by Polkasafe{' '}
+		<Image
+			width={25}
+			height={25}
+			src='/assets/polkasafe-logo.svg'
+			alt='polkasafe'
+		/>
 	</>
 );
 

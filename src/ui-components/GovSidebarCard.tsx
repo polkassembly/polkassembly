@@ -10,9 +10,11 @@ interface Props {
 	children?: ReactNode;
 }
 
-const GovSidebarCard = ({ className, children } : Props) => {
+const GovSidebarCard = ({ className, children }: Props) => {
 	return (
-		<div className={`${className} bg-white overflow-y-auto mx-auto max-h-[500px] xl:max-h-full xl:drop-shadow-md md:py-6 md:px-6 rounded-xxl mb-9 lg:max-w-[512px] max-[770px]:rounded-none`}>
+		<div
+			className={`${className} mx-auto mb-9 max-h-[500px] overflow-y-auto rounded-xxl bg-white max-[770px]:rounded-none md:px-6 md:py-6 lg:max-w-[512px] xl:max-h-full xl:drop-shadow-md`}
+		>
 			{children}
 		</div>
 	);

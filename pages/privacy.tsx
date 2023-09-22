@@ -9,6 +9,7 @@ import { PrivacyPolicy } from '~src/components/LegalDocuments';
 import { useDispatch } from 'react-redux';
 import { networkActions } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface IPrivacyPage {
 	network: string;
@@ -16,6 +17,10 @@ interface IPrivacyPage {
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return {
 		props: {
 			network
@@ -28,13 +33,16 @@ const PrivacyPage: FC<IPrivacyPage> = (props) => {
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Privacy Policy' network={network}/>
-			<PrivacyPolicy/>
+			<SEOHead
+				title='Privacy Policy'
+				network={network}
+			/>
+			<PrivacyPolicy />
 		</>
 	);
 };

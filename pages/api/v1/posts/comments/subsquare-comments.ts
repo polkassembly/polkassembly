@@ -7,6 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { ProposalType } from '~src/global/proposalType';
 import { getProfileWithAddress } from '../../auth/data/profileWithAddress';
+import fetchWithTimeout from '~src/api-utils/timeoutFetch';
 
 const urlMapper: any = {
 	[ProposalType.BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
@@ -61,7 +62,7 @@ const extractContent = async (markdownContent: string, network: any) => {
 const convertReply = async (subSquareReply: any, network: any) => {
 	const res = [];
 	for (const reply of subSquareReply) {
-		if(reply.content.trim()){
+		if (reply.content.trim()) {
 			const content = await extractContent(reply.content, network);
 			res.push({
 				content,
@@ -83,7 +84,7 @@ const convertDataToComment = async (data: any[], network: string | string[] | un
 	for (const comment of data) {
 		const reactionUsers = getReactionUsers(comment.reactions);
 		const replies = await convertReply(comment?.replies || [], network);
-		if(comment.content.trim()){
+		if (comment.content.trim()) {
 			res.push({
 				comment_reactions: {
 					'👍': {
@@ -113,7 +114,7 @@ const convertDataToComment = async (data: any[], network: string | string[] | un
 export const getSubSquareComments = async (proposalType: string, network: string | string[] | undefined, id: string | string[] | undefined) => {
 	try {
 		const url = urlMapper[proposalType]?.(id, network);
-		const data = await (await fetch(url)).json();
+		const data = await (await fetchWithTimeout(url, { timeout: 5000 })).json();
 		const comments = await convertDataToComment(data.items, network);
 		return comments;
 	} catch (error) {
@@ -125,13 +126,13 @@ const handler: NextApiHandler<{ data: any } | { error: string }> = async (req, r
 	const { proposalType, id } = req.query;
 	const network = String(req.headers['x-network']);
 
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const data = await getSubSquareComments(proposalType as string, network, id);
 	if (data.length === 0) {
-		res.status(200).json({ data: [] });
+		return res.status(200).json({ data: [] });
 	} else {
-		res.status(200).json({ data });
+		return res.status(200).json({ data });
 	}
 };
 

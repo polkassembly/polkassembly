@@ -39,6 +39,4 @@ export const modalStore = createSlice({
 
 export default modalStore.reducer;
 const modalActions = modalStore.actions;
-export {
-	modalActions
-};
+export { modalActions };

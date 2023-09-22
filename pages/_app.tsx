@@ -17,6 +17,7 @@ import { antdTheme } from 'styles/antdTheme';
 import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
 import getNetwork from '~src/util/getNetwork';
+import { initGA, logPageView } from '../analytics';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -43,6 +44,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { wrapper } from '~src/redux/store';
 import { useDispatch, useStore } from 'react-redux';
 import { networkActions } from '~src/redux/network';
+import ErrorBoundary from '~src/ui-components/ErrorBoundary';
 
 function App({ Component, pageProps }: AppProps) {
 	const store: any = useStore();
@@ -56,40 +58,54 @@ function App({ Component, pageProps }: AppProps) {
 	}, [router.isReady]);
 
 	useEffect(() => {
-		if(!global?.window) return;
+		if (!global?.window) return;
 		const networkStr = getNetwork();
 		dispatch(networkActions.setNetwork(networkStr));
 		setNetwork(networkStr);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+
+		if (!window.GA_INITIALIZED) {
+			initGA();
+			// @ts-ignore
+			window.GA_INITIALIZED = true;
+		}
+		logPageView();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const SplashLoader = () => <div style={{ background:'#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
-		<Image
-			style={{ left:'calc(50vw - 16px)', position:'absolute', top:'calc(50vh - 16px)' }}
-			width={32}
-			height={32}
-			src='/favicon.ico'
-			alt={'Loading'}
-		/>
-	</div>;
+	const SplashLoader = () => (
+		<div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
+			<Image
+				style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
+				width={32}
+				height={32}
+				src='/favicon.ico'
+				alt={'Loading'}
+			/>
+		</div>
+	);
 
 	return (
 		<>
 			<PersistGate persistor={store.__persistor}>
 				<ConfigProvider theme={antdTheme}>
 					<ModalProvider>
-						<UserDetailsProvider>
-							<ApiContextProvider network={network}>
-								<>
-									{ showSplashScreen && <SplashLoader /> }
-									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-										<NextNProgress color="#E5007A" />
-										<CMDK />
-										<AppLayout Component={Component} pageProps={pageProps} />
-									</main>
-								</>
-							</ApiContextProvider>
-						</UserDetailsProvider>
+						<ErrorBoundary>
+							<UserDetailsProvider>
+								<ApiContextProvider network={network}>
+									<>
+										{showSplashScreen && <SplashLoader />}
+										<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+											<NextNProgress color='#E5007A' />
+											<CMDK />
+											<AppLayout
+												Component={Component}
+												pageProps={pageProps}
+											/>
+										</main>
+									</>
+								</ApiContextProvider>
+							</UserDetailsProvider>
+						</ErrorBoundary>
 					</ModalProvider>
 				</ConfigProvider>
 			</PersistGate>

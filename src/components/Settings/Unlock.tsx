@@ -9,7 +9,7 @@ import DemocracyUnlock from './DemocracyUnlock';
 import ReferendaUnlock from './ReferendaUnlock';
 
 interface IUnlockProps {
-    network: string;
+	network: string;
 }
 
 const Unlock: FC<IUnlockProps> = (props) => {
@@ -18,29 +18,24 @@ const Unlock: FC<IUnlockProps> = (props) => {
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState(false);
 	return (
 		<>
-
-			{
-				!metaMaskError && ['moonbase', 'moonriver', 'moonbeam'].includes(network)?
-					<>
-						<DemocracyUnlock
-							isBalanceUpdated={isBalanceUpdated}
-							setIsBalanceUpdated={setIsBalanceUpdated}
-						/>
-						<Divider/>
-					</>
-					: null
-			}
-			{
-				!metaMaskError && ['moonbase', 'moonriver'].includes(network)?
-					<>
-						<ReferendaUnlock
-							isBalanceUpdated={isBalanceUpdated}
-							setIsBalanceUpdated={setIsBalanceUpdated}
-						/>
-						<Divider/>
-					</>
-					: null
-			}
+			{!metaMaskError && ['moonbase', 'moonriver', 'moonbeam'].includes(network) ? (
+				<>
+					<DemocracyUnlock
+						isBalanceUpdated={isBalanceUpdated}
+						setIsBalanceUpdated={setIsBalanceUpdated}
+					/>
+					<Divider />
+				</>
+			) : null}
+			{!metaMaskError && ['moonbase', 'moonriver', 'moonbeam'].includes(network) ? (
+				<>
+					<ReferendaUnlock
+						isBalanceUpdated={isBalanceUpdated}
+						setIsBalanceUpdated={setIsBalanceUpdated}
+					/>
+					<Divider />
+				</>
+			) : null}
 		</>
 	);
 };

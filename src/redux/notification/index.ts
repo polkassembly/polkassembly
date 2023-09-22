@@ -33,6 +33,4 @@ export const notificationStore = createSlice({
 
 export default notificationStore.reducer;
 const notificationActions = notificationStore.actions;
-export {
-	notificationActions
-};
+export { notificationActions };

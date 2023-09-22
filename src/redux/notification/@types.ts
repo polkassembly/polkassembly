@@ -5,15 +5,15 @@
 export interface INotificationStore {}
 
 export enum ENotificationStatus {
-    SUCCESS= 'success',
-    ERROR = 'error',
-    WARNING = 'warning',
-    INFO = 'info'
+	SUCCESS = 'success',
+	ERROR = 'error',
+	WARNING = 'warning',
+	INFO = 'info'
 }
 
 export interface ISendNotificationPayloadType {
-    title: string;
-    status: ENotificationStatus;
-    message: string;
-    duration?: number;
+	title: string;
+	status: ENotificationStatus;
+	message: string;
+	duration?: number;
 }

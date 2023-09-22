@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { GetServerSideProps } from 'next';
-import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOffChainPost } from 'pages/api/v1/posts/off-chain-post';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
@@ -18,19 +17,22 @@ import { networkActions } from '~src/redux/network';
 import { noTitle } from '~src/global/noTitle';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { data, error } = await getOffChainPost({
 		network,
 		postId: id,
 		proposalType: OffChainProposalType.DISCUSSIONS
 	});
-	const comments = await getSubSquareComments(OffChainProposalType.DISCUSSIONS, network, id);
-	const post = data && { ...data, comments: [...data.comments, ...comments] };
-	return { props: { error, network, post } };
+	return { props: { error, network, post: data } };
 };
 
 interface IDiscussionPostProps {
@@ -44,23 +46,36 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} Discussion`} desc={post.content} network={network}/>
+	if (post)
+		return (
+			<>
+				<SEOHead
+					title={post.title || `${noTitle} Discussion`}
+					desc={post.content}
+					network={network}
+				/>
 
-		<BackToListingView postCategory={PostCategory.DISCUSSION} />
+				<BackToListingView postCategory={PostCategory.DISCUSSION} />
 
-		<div className='mt-6' >
-			<Post post={post} proposalType={ProposalType.DISCUSSIONS} />
+				<div className='mt-6'>
+					<Post
+						post={post}
+						proposalType={ProposalType.DISCUSSIONS}
+					/>
+				</div>
+			</>
+		);
+
+	return (
+		<div className='mt-16'>
+			<LoadingState />
 		</div>
-	</>);
-
-	return <div className='mt-16'><LoadingState /></div>;
-
+	);
 };
 
 export default DiscussionPost;

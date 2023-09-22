@@ -8,25 +8,34 @@ import React from 'react';
 import Address from './Address';
 
 interface Props {
-	className?: string
-	defaultAddress?: string | null
-	username?: string
-	disableIdenticon?: boolean
-	textClassName?: string
-	clickable?:boolean
-	truncateUsername?:boolean;
+	className?: string;
+	defaultAddress?: string | null;
+	username?: string;
+	disableIdenticon?: boolean;
+	textClassName?: string;
+	clickable?: boolean;
+	truncateUsername?: boolean;
 }
 
-const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable=true , truncateUsername } : Props) => {
+const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable = true, truncateUsername }: Props) => {
 	const router = useRouter();
 	return (
 		<div className={`${className}`}>
-			{!defaultAddress ? <span className={`username text-bodyBlue font-semibold mr-1.5 ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`} onClick={() => {
-				if(clickable){
-					router.push(`/user/${username}`);
-				}
-			}}> { username } </span> :
+			{!defaultAddress ? (
+				<span
+					className={`username mr-1.5 font-semibold text-bodyBlue ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+					onClick={() => {
+						if (clickable) {
+							router.push(`/user/${username}`);
+						}
+					}}
+				>
+					{' '}
+					{username}{' '}
+				</span>
+			) : (
 				<Address
+					passedUsername={username}
 					address={defaultAddress}
 					className='text-sm'
 					textClassName={textClassName}
@@ -36,7 +45,7 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 					truncateUsername={truncateUsername}
 					isSubVisible={false}
 				/>
-			}
+			)}
 		</div>
 	);
 };

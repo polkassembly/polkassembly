@@ -18,13 +18,19 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export interface IFellowshipReferendumPostsByTrackName {
 	[key: string]: IApiResponse<IPostsListingResponse> | undefined;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST,filterBy, trackName } = query;
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackName } = query;
 	if (!trackName) {
 		return {
 			props: {},
@@ -33,7 +39,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-	const network = getNetworkFromReqHeaders(req.headers);
 	const fellowshipReferendumPostOrigins: string[] = [];
 	if (networkTrackInfo?.[network]) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
@@ -51,7 +56,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		const trackId: any = networkTrackInfo?.[network]?.[currTrackName]?.trackId;
 		if (trackName === currTrackName) {
 			prev[currTrackName] = getOnChainPosts({
-				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
@@ -114,13 +119,18 @@ const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 			}
 		});
 	}
-	return <>
-		<SEOHead title={'Fellowship Referendum'} network={network}/>
-		<TrackListing
-			posts={posts}
-			fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
-		/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={'Fellowship Referendum'}
+				network={network}
+			/>
+			<TrackListing
+				posts={posts}
+				fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
+			/>
+		</>
+	);
 };
 
 export default FellowshipAdmin;

@@ -9,6 +9,7 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { LoadingOutlined } from '@ant-design/icons';
 import { I2FAGenerateResponse, TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTheme } from 'next-themes';
 import CopyIcon from '~assets/icons/content-copy.svg';
 
 import { poppins } from 'pages/_app';
@@ -16,10 +17,10 @@ import { handleTokenChange } from '~src/services/auth.service';
 import { useUserDetailsContext } from '~src/context';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
 
-const Title = <>
-	<span className='text-lg tracking-wide text-sidebarBlue font-bold'>Two Factor Authentication</span>
+const Title = <div className='dark:bg-black'>
+	<span className='text-lg tracking-wide text-sidebarBlue font-bold dark:text-blue-dark-medium'>Two Factor Authentication</span>
 	<Divider className='mt-2 mb-0' />
-</>;
+</div>;
 
 const init2FARes: I2FAGenerateResponse = {
 	base32_secret: '',
@@ -34,6 +35,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 	const currentUser = useUserDetailsContext();
 
 	const [form] = Form.useForm();
+	const { resolvedTheme:theme } = useTheme();
 
 	const handleSubmit = async (formData: any) => {
 		// don't submit if loading or if user is already 2FA enabled
@@ -114,7 +116,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 	return (
 		<Form className={className} form={form} disabled={loading || currentUser.is2FAEnabled} onFinish={handleSubmit}>
 			<Modal
-				className={`${className} ${poppins.variable} ${poppins.className}`}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${className} ${poppins.variable} ${poppins.className}`}
 				closable={false}
 				title={Title}
 				open={showModal}
@@ -122,7 +124,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 					<Button
 						key="cancel"
 						onClick={dismissModal}
-						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white dark:bg-section-dark-container'
+						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white dark:bg-transparent'
 						disabled={loading}
 					>
 						Cancel
@@ -147,9 +149,9 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 						<section className='flex flex-col'>
 							{/* Instructions for Google Auth */}
 							<article>
-								<h2 className='text-base text-sidebarBlue'>Configuring Google Authenticator</h2>
+								<h2 className='text-base text-sidebarBlue dark:text-blue-dark-medium'>Configuring Google Authenticator</h2>
 
-								<ol className='ml-4'>
+								<ol className='ml-4 dark:text-blue-dark-medium'>
 									<li className='mb-1'>Install Google Authenticator (iOS/Android).</li>
 									<li className='mb-1'>In the authenticator app, select the &quot;+&quot; icon.</li>
 									<li className='mb-1'>Select &quot;Scan a QR code&quot; and use the phone&apos;s camera to scan this QR code.</li>
@@ -158,7 +160,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 
 							{/* QR Code */}
 							<div className='mt-2'>
-								<h2 className='text-base text-sidebarBlue'>Scan the QR Code</h2>
+								<h2 className='text-base text-sidebarBlue dark:text-blue-dark-medium'>Scan the QR Code</h2>
 
 								{tfaResponse.url && <QRCodeAntD
 									size={200}
@@ -170,7 +172,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 
 							{/* Secret Key code */}
 							<article className='mt-4'>
-								<h2 className='text-base text-sidebarBlue'>Or Enter the Code to Your App (base32 encoded) :</h2>
+								<h2 className='text-base text-sidebarBlue dark:text-blue-dark-medium'>Or Enter the Code to Your App (base32 encoded) :</h2>
 								{tfaResponse.base32_secret && <span
 									onClick={() => handleCopyClicked(tfaResponse.base32_secret)}
 									className='p-1 px-2 cursor-pointer rounded-md text-pink_primary border border-solid border-text_secondary text-sm'
@@ -181,8 +183,8 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 
 							{/* Code Input */}
 							<div className='mt-6 mb-4'>
-								<h2 className='text-base text-sidebarBlue'>Verify Code</h2>
-								<p>Please input the authentication code :</p>
+								<h2 className='text-base text-sidebarBlue dark:text-blue-dark-medium'>Verify Code</h2>
+								<p className='dark:text-blue-dark-medium'>Please input the authentication code :</p>
 
 								<Form.Item
 									name='authCode'
@@ -201,12 +203,12 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 										}
 									]}
 								>
-									<Input placeholder='Auth Code' name='authCode' className='w-[60%] text-black' />
+									<Input placeholder='Auth Code' name='authCode' className='w-[60%] text-black dark:bg-transparent dark:text-white' />
 								</Form.Item>
 							</div>
 						</section>
 					</Spin>
-					: <div className='text-center my-10'>Two factor authentication enabled successfully.</div>
+					: <div className='text-center my-10 dark:text-white'>Two factor authentication enabled successfully.</div>
 				}
 			</Modal>
 

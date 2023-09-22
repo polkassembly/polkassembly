@@ -159,6 +159,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					))}
 				</div>
 				<TelegramInfoModal
+					theme={theme}
 					icon={<TelegramNotificationIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					title='How to add Bot to Telegram'
 					open={showModal === CHANNEL.TELEGRAM}
@@ -171,6 +172,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					}
 				/>
 				<DiscordInfoModal
+					theme={theme}
 					icon={<DiscordNotificationIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 					title='How to add Bot to Discord'
 					open={showModal === CHANNEL.DISCORD}

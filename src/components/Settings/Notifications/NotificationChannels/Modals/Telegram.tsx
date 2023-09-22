@@ -4,7 +4,7 @@
 
 import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
-import CopyIcon from '~assets/icons/content-copy.svg';
+import { CopyIcon } from '~src/ui-components/CustomIcons';
 import { CHANNEL } from '..';
 import { useUserDetailsContext } from '~src/context';
 
@@ -15,6 +15,7 @@ type Props = {
 	getVerifyToken: (channel: CHANNEL) => Promise<any>;
 	generatedToken?: string;
 	onClose: () => void;
+	theme?: string;
 };
 
 const TelegramInfoModal = ({
@@ -23,7 +24,8 @@ const TelegramInfoModal = ({
 	open,
 	getVerifyToken,
 	generatedToken = '',
-	onClose
+	onClose,
+	theme
 }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
@@ -43,7 +45,7 @@ const TelegramInfoModal = ({
 	return (
 		<Modal
 			title={
-				<h3 className='flex items-center gap-3 mb-5'>
+				<h3 className='flex items-center gap-3 mb-5 dark:bg-black dark:text-white'>
 					{icon} {title}
 				</h3>
 			}
@@ -51,10 +53,11 @@ const TelegramInfoModal = ({
 			closable
 			onCancel={onClose}
 			footer={null}
+			className = {`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 		>
 			<div className=''>
 				<ol>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-blue-dark-medium'>
 						Click this invite link
 						<span className='p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
 							<a
@@ -71,12 +74,12 @@ const TelegramInfoModal = ({
 							onClick={() => handleCopyClicked('@PolkassemblyBot')}
 							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
 						>
-							<CopyIcon className='relative top-[6px] color-pink_primary' />{' '}
+							<CopyIcon className='relative text-pink_primary' />{' '}
 							@PolkassemblyBot
 						</span>
 						to your Telegram Chat as a member
 					</li>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-blue-dark-medium'>
 						Send this command to the chat with the bot:
 						<br />
 						<span
@@ -87,7 +90,7 @@ const TelegramInfoModal = ({
 							}
 							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
 						>
-							<CopyIcon className='relative top-[6px]' />{' '}
+							<CopyIcon className='relative text-pink_primary' />{' '}
 							{'<username>'} {'<verificationToken>'}
 						</span>
 						<Button
@@ -105,7 +108,7 @@ const TelegramInfoModal = ({
 									onClick={() => handleCopyClicked(`/add ${username} ${token}`)}
 									className='flex items-center max-w-[230px] p-0 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary h-[30px]'
 								>
-									<CopyIcon className='relative' />{' '}
+									<CopyIcon className='relative text-pink_primary' />{' '}
 									<span className='max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block mr-2'>
 										{username}
 									</span>
@@ -116,13 +119,13 @@ const TelegramInfoModal = ({
 							</div>
 						)}
 					</li>
-					<li className='list-inside'>
+					<li className='list-inside dark:text-blue-dark-medium'>
 						(Optional) Send this command to get help:
 						<span
 							onClick={() => handleCopyClicked('/start')}
 							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
 						>
-							<CopyIcon className='relative top-[6px]' /> /start
+							<CopyIcon className='relative text-pink_primary' /> /start
 						</span>
 					</li>
 				</ol>

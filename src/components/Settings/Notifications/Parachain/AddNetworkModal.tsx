@@ -10,6 +10,7 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import { networkLabel } from './utils';
 import { ISelectedNetwork } from '../types';
 import Modal from '~src/ui-components/Modal';
+import { useTheme } from 'next-themes';
 
 const AddNetworkModal = ({
 	open,
@@ -25,6 +26,7 @@ const AddNetworkModal = ({
 	const [allNetworks, setAllNetworks] = useState(selectedNetwork);
 	const { network } = useNetworkContext();
 	const [showSureModal, setShowSureModal] = useState(false);
+	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 		setAllNetworks(selectedNetwork);
@@ -68,6 +70,7 @@ const AddNetworkModal = ({
 	return (
 		<>
 			<Modal
+				theme={theme}
 				title='Add Networks'
 				titleIcon={<PlusCircleOutlined />}
 				open={open}
@@ -89,7 +92,7 @@ const AddNetworkModal = ({
 							}
 							onCancel();
 						}}
-						className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+						className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize dark:bg-transparent'
 					>
                     Cancel
 					</Button>,
@@ -108,7 +111,7 @@ const AddNetworkModal = ({
 						: 'Please select network(s) for which you want to replicate settings:'}
 				</p>
 				{showSureModal ? (
-					<div className='flex gap-[10px] flex-wrap'>
+					<div className='flex gap-[10px] flex-wrap dark:text-blue-dark-medium'>
 						{Object.keys(allNetworks).map((chain) => {
 							return allNetworks[chain].filter(net => net.selected).map(
 								({
@@ -149,7 +152,7 @@ const AddNetworkModal = ({
 							<div key={chain}>
 								<div className='flex items-center gap-[8px] mb-2'>
 									<SmallParachainIcon />
-									<h3 className='font-semibold text-sm tracking-wide leading-[21px] text-sidebarBlue mb-0'>
+									<h3 className='font-semibold text-sm tracking-wide leading-[21px] text-sidebarBlue dark:text-blue-dark-medium mb-0'>
 										{networkLabel[chain] === 'Kusama' ||
                                     networkLabel[chain] === 'Polkadot'
 											? `${networkLabel[chain]} and Parachains`
@@ -166,7 +169,7 @@ const AddNetworkModal = ({
 												(network: any) => network.selected
 											)}
 										/>
-										<p className='m-0 text-[#485F7D]'>All</p>
+										<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
 									</span>
 								</div>
 								<div className='flex gap-[10px] flex-wrap'>

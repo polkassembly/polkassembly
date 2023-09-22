@@ -10,6 +10,7 @@ import messages from 'src/util/messages';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { username as usernameValidation } from 'src/util/validation';
 import { useUserDetailsContext } from '~src/context';
+import { useTheme } from 'next-themes';
 
 const ChangeUsername = ({
 	open,
@@ -25,6 +26,7 @@ const ChangeUsername = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
 	const { setUserDetailsContextState } = useUserDetailsContext();
+	const { resolvedTheme:theme } = useTheme();
 	const handleClick = async () => {
 		try {
 			const values = await form.validateFields();
@@ -69,7 +71,7 @@ const ChangeUsername = ({
 	return (
 		<Modal
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
 					<h3 className='ml-[24px] mb-0 flex items-center gap-2 text-base md:text-md'>
 						<ChangeUserIcon /> Change your username
 					</h3>
@@ -78,7 +80,7 @@ const ChangeUsername = ({
 			}
 			open={open}
 			closable
-			className='min-w-[350px] md:min-w-[600px]'
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} min-w-[350px] md:min-w-[600px]`}
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
@@ -93,15 +95,15 @@ const ChangeUsername = ({
 						name={'oldUsername'}
 						className='m-0 w-full min-w-[250px]'
 					>
-						<label htmlFor="old-username">Old Username</label>
+						<label className='dark:text-blue-dark-medium' htmlFor="old-username">Old Username</label>
 						<Input
-							className='p-2 text-sm leading-[21px]'
+							className='p-2 text-sm leading-[21px] dark:text-blue-dark-medium'
 							value={username}
 							disabled
 						/>
 					</Form.Item>
 					<div>
-						<label htmlFor="new-username">New Username</label>
+						<label className='dark:text-blue-dark-medium' htmlFor="new-username">New Username</label>
 						<Form.Item
 							name={'newUsername'}
 							className='m-0 w-full min-w-[250px]'
@@ -122,7 +124,7 @@ const ChangeUsername = ({
 						>
 							<Input
 								disabled={loading}
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:bg-black dark:text-white'
 								placeholder='Enter your username'
 							/>
 						</Form.Item>
@@ -135,7 +137,7 @@ const ChangeUsername = ({
 							<Button
 								key='1'
 								onClick={onCancel}
-								className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+								className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize dark:bg-transparent'
 							>
                                 Cancel
 							</Button>

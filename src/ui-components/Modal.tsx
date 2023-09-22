@@ -13,6 +13,7 @@ type Props = PropsWithChildren<{
     onConfirm: any,
     onCancel: any,
     footer?: Array<ReactElement>
+	theme?: string;
 }>
 
 const StyledModal = styled(AntdModal)`
@@ -22,16 +23,16 @@ const StyledModal = styled(AntdModal)`
 }
 `;
 
-const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, children }: Props) => {
+const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, children,theme }: Props) => {
 	return (
-		<StyledModal title={<div className='mr-[-24px] ml-[-24px] text-[18px]'>
+		<StyledModal title={<div className='mr-[-24px] ml-[-24px] text-[18px] dark:bg-black'>
 			<h3 className='ml-[24px] mb-0 font-semibold text-blue-light-high dark:text-blue-dark-high flex align-center gap-2'> {titleIcon} {title} </h3>
 			<Divider className='text-[#D2D8E0]'/>
 		</div>}
 		open={open}
 		closable
 		closeIcon={<CloseIcon />}
-		className='min-w-[350px] md:min-w-[600px]'
+		className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} min-w-[350px] md:min-w-[600px]`}
 		onCancel={onCancel}
 		onOk={onConfirm}
 		footer={footer || null}

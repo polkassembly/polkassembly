@@ -9,22 +9,24 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { LoadingOutlined } from '@ant-design/icons';
 import { TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTheme } from 'next-themes';
 
 import { poppins } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
 import { useUserDetailsContext } from '~src/context';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
 
-const Title = <>
+const Title = <div className='dark:bg-black'>
 	<span className='text-lg tracking-wide text-sidebarBlue font-bold'>Disable Two Factor Authentication</span>
 	<Divider className='mt-2 mb-0' />
-</>;
+</div>;
 
 const Disable2FA: FC<{className?: string}> = ({ className }) => {
 	const [error, setError] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const currentUser = useUserDetailsContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	const handleSubmit = async () => {
 		// don't submit if loading or if user is already 2FA enabled
@@ -66,7 +68,7 @@ const Disable2FA: FC<{className?: string}> = ({ className }) => {
 	return (
 		<>
 			<Modal
-				className={`${className} ${poppins.variable} ${poppins.className}`}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${className} ${poppins.variable} ${poppins.className}`}
 				closable={false}
 				title={Title}
 				open={showModal}
@@ -94,12 +96,12 @@ const Disable2FA: FC<{className?: string}> = ({ className }) => {
 					<Spin spinning={loading} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}>
 						{error && !loading && <div className='mb-4'><FilteredError text={error || 'Error in disabling two factor auth. Please reload and try again.'}/></div>}
 
-						<section className='text-center my-10'>
+						<section className='text-center my-10 dark:text-blue-dark-medium'>
 							<p className='mb-3'>Are you sure you want to disable two factor authentication ?</p>
 							<small><em>Note: Please remember to remove the auth account from your authenticator app too</em></small>
 						</section>
 					</Spin>
-					: <section className='text-center my-10'>Two factor authentication disabled successfully.</section>
+					: <section className='text-center my-10 dark:text-white'>Two factor authentication disabled successfully.</section>
 				}
 			</Modal>
 
@@ -108,8 +110,8 @@ const Disable2FA: FC<{className?: string}> = ({ className }) => {
 				htmlType="submit"
 				className='w-full bg-[#F6F7F9] text-blue-light-high dark:text-blue-dark-high text-left h-full p-[16px] border-[#D2D8E0]'
 			>
-				<span className='flex align-center text-[16px] font-medium'>Disable Two Factor Authentication <KeyboardDownIcon/></span>
-				<span className='block text-[14px]'>Disabling two-factor authentication may compromise the security of your account.</span>
+				<span className='flex align-center text-[16px] font-medium dark:text-blue-dark-medium'>Disable Two Factor Authentication <KeyboardDownIcon/></span>
+				<span className='block text-[14px] dark:text-blue-dark-medium'>Disabling two-factor authentication may compromise the security of your account.</span>
 			</Button>
 		</>
 	);

@@ -55,7 +55,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	}
 
 	await commentRef
-		.delete()
+		.update({
+			isDeleted: true
+		})
 		.then(() => {
 			postRef.update({
 				last_comment_at

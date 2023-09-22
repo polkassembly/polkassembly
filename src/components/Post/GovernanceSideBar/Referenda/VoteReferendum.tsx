@@ -1050,7 +1050,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	return VoteUI;
 };
 
-export default styled(VoteReferendum)`
+export default React.memo(styled(VoteReferendum)`
 	.LoaderWrapper {
 		height: 40rem;
 		position: absolute;
@@ -1112,4 +1112,4 @@ export default styled(VoteReferendum)`
 	.vote-referendum .ant-segmented-item {
 		padding: 0px !important;
 	}
-`;
+`);

@@ -15,7 +15,7 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
+import { ProposalType, VoteType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
@@ -32,7 +32,6 @@ import VoteReferendumEthV2 from './Referenda/VoteReferendumEthV2';
 import EndorseTip from './Tips/EndorseTip';
 import TipInfo from './Tips/TipInfo';
 import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
-import VotersList from './Referenda/VotersList';
 import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
 import blockToTime from '~src/util/blockToTime';
 import { getTrackFunctions } from './Referenda/util';
@@ -64,8 +63,12 @@ import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
+import VoteDataModal from './Modal/VoteData';
 import { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
+import VotersList from './Referenda/VotersList';
+import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
+import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -122,7 +125,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, pipsVoters, hash, trackName } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters } = props;
 	const [lastVote, setLastVote] = useState<ILastVote>();
 
 	const { network } = useNetworkContext();
@@ -1013,7 +1016,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											<>
 												{proposalType === ProposalType.OPEN_GOV && (
 													<div className={className}>
-														<ReferendumV2VoteInfo
+														<ReferendumV2VoteInfo tally={tally} />
+														<RefV2ThresholdData
 															setThresholdOpen={(open) => {
 																if (!isCurvesRender.current) {
 																	setTimeout(() => {
@@ -1023,8 +1027,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																setThresholdOpen(open);
 															}}
 															setOpen={setOpen}
-															referendumId={onchainId as number}
-															tally={tally}
+															thresholdData={{
+																curvesError,
+																curvesLoading,
+																data,
+																progress,
+																setData
+															}}
 														/>
 														<Modal
 															onCancel={() => {
@@ -1052,6 +1061,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																		data={data}
 																		progress={progress}
 																		setData={setData}
+																		canVote={canVote}
+																		status={status}
 																	/>
 																)}
 															</div>
@@ -1071,23 +1082,42 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									</>
 								)}
 								{(onchainId || onchainId === 0) && (
-									<Modal
-										closeIcon={false}
-										onCancel={() => {
-											setOpen(false);
-										}}
-										open={open}
-										footer={[]}
-										closable={false}
-									>
-										<VotersList
-											className={className}
-											pipsVoters={pipsVoters}
-											referendumId={onchainId as number}
-											voteType={getVotingTypeFromProposalType(proposalType)}
-											proposalType={proposalType}
-										/>
-									</Modal>
+									<>
+										{getVotingTypeFromProposalType(proposalType) === VoteType.REFERENDUM_V2 && isSupportedNestedVoteNetwork(network) ? (
+											<VoteDataModal
+												onchainId={onchainId}
+												open={open}
+												setOpen={setOpen}
+												proposalType={proposalType}
+												tally={tally}
+												thresholdData={{
+													curvesError,
+													curvesLoading,
+													data,
+													progress,
+													setData
+												}}
+											/>
+										) : (
+											<Modal
+												closeIcon={false}
+												onCancel={() => {
+													setOpen(false);
+												}}
+												open={open}
+												footer={[]}
+												closable={false}
+											>
+												<VotersList
+													className={className}
+													pipsVoters={pipsVoters}
+													referendumId={onchainId as number}
+													voteType={getVotingTypeFromProposalType(proposalType)}
+													proposalType={proposalType}
+												/>
+											</Modal>
+										)}
+									</>
 								)}
 
 								<div>

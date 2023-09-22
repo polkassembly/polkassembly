@@ -16,6 +16,7 @@ import SEOHead from '~src/global/SEOHead';
 import { IPreimagesListingResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import { useTheme } from 'next-themes';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active /> ,
@@ -43,6 +44,7 @@ interface IPreImagesProps {
 const PreImages: FC<IPreImagesProps> = (props) => {
 	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -75,7 +77,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 
 			<div className='shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-xxl'>
 				<div>
-					<PreImagesTable preimages={preimages} />
+					<PreImagesTable theme={theme} preimages={preimages} />
 
 					<div className='flex justify-end mt-6'>
 						{

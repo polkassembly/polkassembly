@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
-import { Button, Modal, Table } from 'antd';
+import { Button, Modal, Table as AntdTable } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -12,18 +12,35 @@ import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
 import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
+import styled from 'styled-components';
 
 import { useNetworkContext } from '~src/context';
 import { IPreimagesListing } from '~src/types';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
+	theme?: string;
 }
+
+const Table = styled(AntdTable)`
+	.ant-table-thead > tr > th {
+		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+		color: ${props => props.theme === 'dark' ? 'white' : 'black'} !important;
+		font-weight: 500 !important;
+	}
+	.ant-table-tbody > tr {
+		background-color: ${props => props.theme === 'dark' ? '#0D0D0D' : 'white'} !important;
+	}
+	.ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, .ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
+		background-color: none !important;
+	}
+`;
 
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkContext();
 	const router = useRouter();
-	const { preimages } = props;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { preimages, theme } = props;
 	const [modalArgs, setModalArgs] = useState<any>(null);
 
 	useEffect(() => {
@@ -38,7 +55,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'hash',
 			key: 'hash',
 			width: 350,
-			render: (hash) => <span className='text-sidebarBlue font-medium'>{hash}</span>
+			render: (hash) => <span className='text-sidebarBlue font-medium dark:text-white dark:font-normal'>{hash}</span>
 		},
 		{
 			title: 'Author',
@@ -52,7 +69,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'deposit',
 			key: 'deposit',
 			width: 120,
-			render: (deposit) => <span className='text-sidebarBlue font-medium whitespace-pre'>{deposit && formatBnBalance(deposit, { numberAfterComma: 2, withUnit: true }, network)}</span>
+			render: (deposit) => <span className='text-sidebarBlue font-medium whitespace-pre dark:text-white dark:font-normal'>{deposit && formatBnBalance(deposit, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		},
 		{
 			title: 'Arguments',
@@ -69,14 +86,14 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'length',
 			key: 'length',
 			width: 65,
-			render: (length) => <span className='text-sidebarBlue font-medium'>{length}</span>
+			render: (length) => <span className='text-sidebarBlue font-medium dark:text-white dark:font-normal'>{length}</span>
 		},
 		{
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
 			width: 135,
-			render: (status) => <span className='text-sidebarBlue font-medium'>
+			render: (status) => <span className='text-sidebarBlue font-medium dark:text-white dark:font-normal'>
 				{ status }
 			</span>
 		}
@@ -94,6 +111,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 		return (
 			<div>
 				<Table
+					theme={theme}
 					columns={columns}
 					dataSource={tableData}
 					pagination={false}
@@ -127,4 +145,11 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	return <LoadingState />;
 };
 
-export default React.memo(PreImagesTable);
+export default styled(React.memo(PreImagesTable))`
+	.ant-table-wrapper .ant-table-thead >tr>th, .ant-table-wrapper .ant-table-thead >tr>td{
+		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+	.ant-table-row .ant-table-row-level-0{
+		background: ${props => props.theme === 'dark' ? '#1E1E1E' : 'white'} !important;
+	}
+`;

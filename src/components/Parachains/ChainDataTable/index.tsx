@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Tooltip } from 'antd';
-import Table, { ColumnsType } from 'antd/lib/table';
+import { ColumnsType } from 'antd/lib/table';
+import { Table as AntdTable } from 'antd';
 import Image from 'next/image';
 import React, { Key, useEffect,useState } from 'react';
 import { LoadingLatestActivity } from 'src/ui-components/LatestActivityStates';
@@ -17,6 +18,8 @@ import w3fGreenLogo from '~assets/parachains/w3f-green.png';
 import w3fRedLogo from '~assets/parachains/w3f-red.png';
 
 import Cards from './Cards';
+import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 interface Props{
     chain: string
@@ -37,7 +40,24 @@ interface ParachainRowData{
 	key: Key | null | undefined
 }
 
-const columns: ColumnsType<ParachainRowData> = [
+const Table = styled(AntdTable)`
+	.ant-table-thead > tr > th {
+		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+		color: ${props => props.theme === 'dark' ? 'white' : 'black'} !important;
+		font-weight: 500 !important;
+	}
+	.ant-table-tbody > tr {
+		background-color: ${props => props.theme === 'dark' ? '#0D0D0D' : 'white'} !important;
+	}
+	.ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, .ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
+		background-color: none !important;
+	}
+	td{
+		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+`;
+
+const columns: ColumnsType<any> = [
 	{
 		dataIndex: 'index',
 		fixed: 'left',
@@ -145,6 +165,7 @@ const columns: ColumnsType<ParachainRowData> = [
 const ChainDataTable = ({ chain, data }:Props) => {
 
 	const [chainData, setChainData] = useState<any>(null);
+	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 		const filteredData: any = data.filter((project: any) => {
@@ -182,6 +203,7 @@ const ChainDataTable = ({ chain, data }:Props) => {
 		return(<>
 			<div className='hidden lg:block'>
 				<Table
+					theme={theme}
 					columns={columns}
 					dataSource={tableData}
 					pagination={false}

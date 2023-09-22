@@ -41,7 +41,6 @@ import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
 import Curves from './Referenda/Curves';
 import PostEditOrLinkCTA from './PostEditOrLinkCTA';
-import { useCurrentBlock } from '~src/hooks';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
@@ -129,8 +128,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [lastVote, setLastVote] = useState<ILastVote>();
 
 	const { network } = useNetworkContext();
-	const currentBlock = useCurrentBlock();
 	const { api, apiReady } = useApiContext();
+
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
 	const {
 		postData: { created_at, track_number, post_link, statusHistory }
@@ -619,7 +618,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				return;
 			}
 		}
-	}, [currentBlock, post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
+	}, [post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
 
 	useEffect(() => {
 		if (!api || !!apiReady) return;

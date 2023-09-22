@@ -2039,5 +2039,59 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				}
 			}
 		}
+	},
+	picasso: {
+		[PostOrigin.ROOT]: {
+			trackId: 0,
+			description: 'Origin for General network-wide improvements',
+			group: 'Main',
+			name: 'root',
+			maxDeciding: 1,
+			decisionDeposit: '0x000000000000000006f05b59d3b20000',
+			preparePeriod: 600,
+			decisionPeriod: 50400,
+			confirmPeriod: 7200,
+			minEnactmentPeriod: 7200,
+			minApproval: {
+				reciprocal: {
+					factor: 222222224,
+					xOffset: 333333335,
+					yOffset: 333333332
+				}
+			},
+			minSupport: {
+				linearDecreasing: {
+					length: 1000000000,
+					floor: 0,
+					ceil: 500000000
+				}
+			}
+		},
+		[PostOrigin.WHITELISTED_CALLER]: {
+			trackId: 1,
+			description: 'Origin able to dispatch a whitelisted call.',
+			group: 'Whitelist',
+			name: 'whitelisted_caller',
+			maxDeciding: 2,
+			decisionDeposit: '0x000000000000000006f05b59d3b20000',
+			preparePeriod: 150,
+			decisionPeriod: 28800,
+			confirmPeriod: 50,
+			minEnactmentPeriod: 50,
+			minApproval: {
+				reciprocal: {
+					factor: 270899180,
+					xOffset: 389830523,
+					yOffset: 305084738
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 8650766,
+					xOffset: 18867926,
+					yOffset: 41509433
+				}
+			}
+		}
 	}
 };

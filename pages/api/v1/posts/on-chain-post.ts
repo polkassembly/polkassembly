@@ -387,26 +387,48 @@ export async function getComments(
 				}
 			}
 
-			const comment = {
-				comment_reactions: comment_reactions,
-				comment_source: data.comment_source || 'polkassembly',
-				content: data.content,
-				created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
-				history: history,
-				id: data.id,
-				is_custom_username: false,
-				post_index: postIndex,
-				post_type: postType,
-				profile: user?.profile || null,
-				proposer: data.proposer || '',
-				replies: data.replies || ([] as any[]),
-				sentiment: data.sentiment || 0,
-				spam_users_count: 0,
-				updated_at: getUpdatedAt(data),
-				user_id: data.user_id,
-				username: data.username,
-				votes: [] as any[]
-			};
+			// Send empty comment data with username and userid if comment is deleted (for replies)
+			const comment = data.isDeleted
+				? {
+						comment_reactions: getDefaultReactionObj(),
+						comment_source: 'polkassembly',
+						content: '[deleted]',
+						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						history: [],
+						id: data.id,
+						is_custom_username: false,
+						post_index: postIndex,
+						post_type: postType,
+						profile: user?.profile || null,
+						proposer: data.proposer || '',
+						replies: data.replies || ([] as any[]),
+						sentiment: 0,
+						spam_users_count: 0,
+						updated_at: getUpdatedAt(data),
+						user_id: data.user_id,
+						username: data.username,
+						votes: [] as any[]
+				  }
+				: {
+						comment_reactions: comment_reactions,
+						comment_source: data.comment_source || 'polkassembly',
+						content: data.content,
+						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						history: history,
+						id: data.id,
+						is_custom_username: false,
+						post_index: postIndex,
+						post_type: postType,
+						profile: user?.profile || null,
+						proposer: data.proposer || '',
+						replies: data.replies || ([] as any[]),
+						sentiment: data.sentiment || 0,
+						spam_users_count: 0,
+						updated_at: getUpdatedAt(data),
+						user_id: data.user_id,
+						username: data.username,
+						votes: [] as any[]
+				  };
 
 			const replyIds: string[] = [];
 			const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted', '==', false).orderBy('created_at', 'asc').get();
@@ -851,7 +873,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			version: postData?.version,
 			vote_threshold: postData?.threshold?.type
 		};
-
 		// Timeline
 		updatePostTimeline(post, postData);
 
@@ -1079,7 +1100,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					const post_index = timeline.type === 'Tip' ? timeline.hash : timeline.index;
 					const type = getFirestoreProposalType(timeline.type) as ProposalType;
 					const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+					const commentsSnapshot = await postDocRef.collection('comments').get();
 					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
 					return comments;
 				});
@@ -1096,10 +1117,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				if (post.post_link) {
 					const { id, type } = post.post_link;
 					const postDocRef = postsByTypeRef(network, type).doc(String(id));
-					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+					const commentsSnapshot = await postDocRef.collection('comments').get();
 					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
 				}
-				const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+				const commentsSnapshot = await postDocRef.collection('comments').get();
 				const comments = await getComments(
 					commentsSnapshot,
 					postDocRef,

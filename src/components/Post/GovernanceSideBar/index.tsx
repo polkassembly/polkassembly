@@ -8,7 +8,7 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip, Skeleton } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -39,7 +39,6 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
-import Curves from './Referenda/Curves';
 import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -144,7 +143,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [signersMap, setSignersMap] = useState<{ [key: string]: Signer }>({});
 	const [open, setOpen] = useState(false);
 	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
-	const [thresholdOpen, setThresholdOpen] = useState(false);
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [curvesError, setCurvesError] = useState('');
 	const [data, setData] = useState<any>({
@@ -158,7 +156,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		support: 0,
 		supportThreshold: 0
 	});
-	const isCurvesRender = useRef(false);
 	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 
@@ -1017,14 +1014,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<div className={className}>
 														<ReferendumV2VoteInfo tally={tally} />
 														<RefV2ThresholdData
-															setThresholdOpen={(open) => {
-																if (!isCurvesRender.current) {
-																	setTimeout(() => {
-																		isCurvesRender.current = true;
-																	}, 50);
-																}
-																setThresholdOpen(open);
-															}}
 															setOpen={setOpen}
 															thresholdData={{
 																curvesError,
@@ -1034,38 +1023,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																setData
 															}}
 														/>
-														<Modal
-															onCancel={() => {
-																setThresholdOpen(false);
-															}}
-															open={thresholdOpen}
-															footer={[]}
-															className='md:min-w-[700px]'
-															closeIcon={<CloseIcon />}
-															title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue'>Threshold Curves</h2>}
-														>
-															<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>
-																{!isCurvesRender.current ? (
-																	<div className='absolute inset-0'>
-																		<Skeleton.Input
-																			block={true}
-																			active={true}
-																			className='min-h-[250px] md:min-h-[400px]'
-																		/>
-																	</div>
-																) : (
-																	<Curves
-																		curvesError={curvesError}
-																		curvesLoading={curvesLoading}
-																		data={data}
-																		progress={progress}
-																		setData={setData}
-																		canVote={canVote}
-																		status={status}
-																	/>
-																)}
-															</div>
-														</Modal>
 													</div>
 												)}
 												{proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && (

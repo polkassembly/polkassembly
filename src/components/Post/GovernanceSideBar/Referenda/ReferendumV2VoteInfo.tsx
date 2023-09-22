@@ -47,9 +47,15 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		if (!api || !apiReady) return;
 
 		(async () => {
-			const totalIssuance = await api.query.balances.totalIssuance();
-			const inactiveIssuance = await api.query.balances.inactiveIssuance();
-			setActiveIssuance(totalIssuance.sub(inactiveIssuance));
+			if (network === 'picasso') {
+				const totalIssuance = await api.query.openGovBalances.totalIssuance();
+				const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
+				setActiveIssuance((totalIssuance as any).sub(inactiveIssuance));
+			} else {
+				const totalIssuance = await api.query.balances.totalIssuance();
+				const inactiveIssuance = await api.query.balances.inactiveIssuance();
+				setActiveIssuance(totalIssuance.sub(inactiveIssuance));
+			}
 		})();
 
 		if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
@@ -90,7 +96,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		})();
 		setIsLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, api, apiReady]);
+	}, [status, api, apiReady, network]);
 
 	return (
 		<>

@@ -8,8 +8,8 @@ import { isValidNetwork } from '~src/api-utils';
 import messages from '~src/auth/utils/messages';
 import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
-import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const firestore = firebaseAdmin.firestore();
 
@@ -18,17 +18,34 @@ const handler: NextApiHandler<MessageType | string> = async (req, res) => {
 	if (req.method !== 'POST') {
 		return res.status(400).json({ message: 'Invalid method in request body' });
 	}
+	const { userAddress } = req.body;
 
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+	if (userAddress || typeof userAddress !== 'string') return res.status(400).json({ message: 'Invalid user address in request body' });
 
 	const token = getTokenFromReq(req);
-	if (!token) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!token || token !== process.env.IDENTITY_JUDGEMENT_AUTH) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const user = await authServiceInstance.GetUser(token);
-	const userId = user?.id;
+	const substrateAddress = getSubstrateAddress(String(userAddress));
+	if (!substrateAddress) {
+		return res.status(500).json({ message: 'Invalid substrate address' });
+	}
+	const addressDoc = await firestore_db.collection('addresses').doc(substrateAddress).get();
+	if (!addressDoc.exists) {
+		return res.status(404).json({ message: `No user found with the address '${userAddress}'.` });
+	}
+
+	const userDoc = await firestore_db
+		.collection('users')
+		.doc(String(addressDoc.data()?.user_id))
+		.get();
+	if (!userDoc.exists) {
+		return res.status(404).json({ message: `No user found with the address '${userAddress}'.` });
+	}
+	const userData: any = userDoc.data();
+	const userId = userData.user_id;
+
 	if (!userId) return res.status(403).json({ message: messages.UNAUTHORISED });
-
-	const userDoc = await firestore_db.collection('users').doc(String(userId)).get();
 
 	const batch = firestore_db.batch();
 

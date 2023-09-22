@@ -15,7 +15,6 @@ import { useEffect, useState } from 'react';
 import InprogressState from './InprogressState';
 import VerifiedTick from '~assets/icons/verified-tick.svg';
 import { useRouter } from 'next/router';
-import { MessageType } from '~src/auth/types';
 
 interface Props {
 	className?: string;
@@ -231,19 +230,6 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 		startLoading({ isLoading: false, message: '' });
 	};
 
-	const handleDeleteSocialVerificationRef = async () => {
-		const { error } = await nextApiClientFetch<MessageType>('api/v1/verification/remove-verification-ref');
-		if (error) {
-			console.log(error);
-		}
-	};
-
-	const handleFirbaseUserData = async () => {
-		const { error } = await nextApiClientFetch('api/v1/verification/onchain-identity-via-polkassembly');
-		if (error) {
-			console.log(error);
-		}
-	};
 	const handleJudgement = async () => {
 		startLoading({ isLoading: true, message: 'Awaiting Judgement from Polkassembly' });
 		const { data, error } = await nextApiClientFetch<IJudgementResponse>('api/v1/verification/judgement-call', {
@@ -252,8 +238,6 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 		});
 
 		if (data) {
-			await handleFirbaseUserData();
-			await handleDeleteSocialVerificationRef();
 			localStorage.removeItem('identityForm');
 			localStorage.removeItem('identityAddress');
 			localStorage.removeItem('identityWallet');

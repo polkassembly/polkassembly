@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 
 export default function useCurrentBlock() {
@@ -33,7 +33,5 @@ export default function useCurrentBlock() {
 		return () => unsubscribe && unsubscribe();
 	}, [api, apiReady]);
 
-	return useMemo(() => {
-		return currentBlock;
-	}, [currentBlock]);
+	return currentBlock;
 }

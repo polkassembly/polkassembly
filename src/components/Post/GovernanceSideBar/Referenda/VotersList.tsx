@@ -9,18 +9,19 @@ import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
 import Address from 'src/ui-components/Address';
-import formatBnBalance from 'src/util/formatBnBalance';
+// import formatBnBalance from 'src/util/formatBnBalance';
 
 import { useApiContext, useNetworkContext } from '~src/context';
 import { LISTING_LIMIT, VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortOptions, votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
-import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+// import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import classNames from 'classnames';
 import { IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
+import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 
 interface IVotersListProps {
 	className?: string;
@@ -43,7 +44,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [decision, setDecision] = useState<DecisionType>('yes');
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
-	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME);
+	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
 	const [polymeshVotesData, setPolymeshVotesData] = useState<{ ayeVotes: any[]; nayVotes: any[] }>({ ayeVotes: [], nayVotes: [] });
 
 	const getVoterFromPolkadot = async (identityId: string) => {
@@ -110,7 +111,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				isLoading: true,
 				message: ''
 			});
-			if (sortBy === votesSortValues.BALANCE) {
+			if (sortBy === votesSortValues.BALANCE_DESC) {
 				const sortedAyeVotes = polymeshVotesData.ayeVotes.sort((a, b) => Number(b?.balance?.value || 0) - Number(a?.balance?.value || 0));
 				const sortedNayVotes = polymeshVotesData.nayVotes.sort((a, b) => Number(b?.balance?.value || 0) - Number(a?.balance?.value || 0));
 
@@ -227,8 +228,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const sortByDropdown = (
 		<Dropdown
 			menu={{
-				defaultSelectedKeys: [votesSortValues.TIME],
-				items: [...(network === AllNetworks.POLYMESH ? votesSortOptions.slice(1, 2) : votesSortOptions)],
+				defaultSelectedKeys: [votesSortValues.TIME_DESC],
+				items: [
+					...(network === AllNetworks.POLYMESH
+						? votesSortOptions.slice(2, 5)
+						: proposalType === ProposalType.REFERENDUM_V2
+						? votesSortOptions.slice(2, votesSortOptions.length - 2)
+						: votesSortOptions.slice(0, votesSortOptions.length - 2))
+				],
 				onClick: handleSortByClick,
 				selectable: true
 			}}
@@ -324,15 +331,16 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								{![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) ? (
 									network !== AllNetworks.COLLECTIVES ? (
 										<>
-											<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
-												{formatUSDWithUnits(
+											<div className='w-[80px] max-w-[80px] overflow-ellipsis whitespace-nowrap'>
+												{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
+												{/* {formatUSDWithUnits(
 													formatBnBalance(
 														voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || voteData?.balance?.replaceAll(',', '') || 0,
 														{ numberAfterComma: 1, withThousandDelimitor: false, withUnit: true },
 														network
 													),
 													1
-												)}
+												)} */}
 											</div>
 											{network !== AllNetworks.POLYMESH && (
 												<div className='w-[50px] max-w-[50px] overflow-ellipsis'>
@@ -397,4 +405,4 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	);
 };
 
-export default VotersList;
+export default React.memo(VotersList);

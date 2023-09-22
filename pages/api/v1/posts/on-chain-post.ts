@@ -873,7 +873,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			version: postData?.version,
 			vote_threshold: postData?.threshold?.type
 		};
-
 		// Timeline
 		updatePostTimeline(post, postData);
 

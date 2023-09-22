@@ -9,6 +9,7 @@ import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pa
 import React, { FC, useEffect, useState } from 'react';
 import { useNetworkContext } from 'src/context';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ProfileDetailsResponse } from '~src/auth/types';
@@ -89,6 +90,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
 	const { setNetwork } = useNetworkContext();
 	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setNetwork(network);
@@ -128,6 +130,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			children: (
 				<PostsTab
 					posts={value}
+					theme={theme}
 				/>
 			),
 			key: key,
@@ -141,7 +144,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				<Details userPosts={userPosts.data} userProfile={userProfile} />
 				<article className='hidden md:flex flex-1 py-6 px-10 flex-col w-[calc(100%-330px)]'>
 					<div className='flex items-start justify-between'>
-						<h2 className='font-semibold text-[28px] leading-[42px] text-sidebarBlue'>
+						<h2 className='font-semibold text-[28px] leading-[42px] text-sidebarBlue dark:text-blue-dark-high'>
 						Activity
 						</h2>
 						<Select
@@ -168,7 +171,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						className='fullHeight'
 					>
 						<Tabs
-							className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue font-medium'
+							className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue dark:text-blue-dark-medium font-medium'
 							type="card"
 							items={tabItems as any}
 						/>

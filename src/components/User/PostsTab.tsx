@@ -13,10 +13,12 @@ interface IPostsTabProps {
         [key: string]: IUserPost[];
     } | IUserPost[];
     className?: string;
+	theme?: string;
 }
 
 const PostsTab: FC<IPostsTabProps> = (props) => {
-	const { posts, className } = props;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { posts, className, theme } = props;
 	if (!posts) return null;
 	const tabItems = Array.isArray(posts)? []: Object.entries(posts).sort((a, b) => b?.[1].length - a?.[1]?.length).map(([key, value]) => {
 		return {
@@ -34,7 +36,7 @@ const PostsTab: FC<IPostsTabProps> = (props) => {
 					<PostTab posts={posts} />
 					: (
 						<Tabs
-							className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-navBlue font-normal text-sm borderRemove'
+							className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-navBlue font-normal dark:text-blue-dark-medium text-sm borderRemove'
 							tabPosition='left'
 							type="card"
 							items={tabItems as any}
@@ -50,9 +52,12 @@ export default styled(PostsTab)`
         border: none !important;
     }
     .borderRemove .ant-tabs-nav-list {
-        background: white;
+        background: ${props => props.theme === 'dark' ? 'transparent' : 'white'} !important;
     }
 	.borderRemove .ant-tabs-nav {
 		min-width: 135px;
+	}
+	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab-active{
+		background: ${props => props.theme === 'dark' ? 'none' : 'white'} !important;
 	}
 `;

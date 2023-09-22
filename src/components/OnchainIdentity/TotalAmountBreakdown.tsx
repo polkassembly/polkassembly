@@ -91,7 +91,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					showIcon
 					type='info'
 					className='mt-4 rounded-[4px] text-sm text-bodyBlue'
-					description='To request judgement from Polkassembly please provide both twitter and email credential for verification before requesting judgement.'
+					description='To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.'
 				/>
 			)}
 

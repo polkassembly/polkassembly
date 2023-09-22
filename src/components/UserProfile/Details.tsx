@@ -9,6 +9,7 @@ import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import Addresses from './Addresses';
 import EditProfile from './EditProfile';
+import { useTheme } from 'next-themes';
 
 import { DeriveAccountRegistration } from '@polkadot/api-derive/accounts/types';
 
@@ -80,6 +81,7 @@ const Details: FC<IDetailsProps> = (props) => {
 	const { userProfile, userPosts } = props;
 	const userDetails = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
 		judgements: [],
@@ -273,7 +275,7 @@ const Details: FC<IDetailsProps> = (props) => {
 						onChainIdentity && addresses && addresses.length > 0?
 							<>
 								<Divider className='bg-[#FCE5F2] my-6 border-0 border-t-[0.5px]' />
-								<OnChainIdentity onChainIdentity={onChainIdentity} addresses={addresses} />
+								<OnChainIdentity theme={theme} onChainIdentity={onChainIdentity} addresses={addresses} />
 							</>
 							: null
 					}

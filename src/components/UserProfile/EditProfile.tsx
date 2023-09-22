@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import { useUserDetailsContext } from '~src/context';
 import { poppins } from 'pages/_app';
 import validator from 'validator';
+import { useTheme } from 'next-themes';
 
 interface IEditProfileModalProps {
     id?: number | null;
@@ -51,6 +52,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const userDetailsContext = useUserDetailsContext();
 	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
 	const router = useRouter();
+	const { resolvedTheme:theme } = useTheme();
 
 	const validateData = ( image: string | undefined, social_links: ISocial[] | undefined) => {
 
@@ -199,18 +201,18 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	return (
 		<div>
 			<Modal
-				className={`max-w-[648px] w-full max-h-[774px] h-full ${poppins.variable} ${poppins.className}`}
+				className={`max-w-[648px] w-full max-h-[774px] h-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${poppins.variable} ${poppins.className}`}
 				onCancel={() => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);
 				}}
 				title={
-					<h3 className='font-semibold text-xl text-[#1D2632]'>
+					<h3 className='font-semibold text-xl text-[#1D2632] dark:text-white dark:bg-black'>
 						Edit Profile
 					</h3>
 				}
 				closeIcon={
-					<CloseOutlined className='text-sm text-[#485F7D]' />
+					<CloseOutlined className='text-sm text-[#485F7D] dark:text-icon-dark-inactive' />
 				}
 				footer={
 					<div className='-mx-6 px-6 -mb-5 pb-4'>
@@ -224,7 +226,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									}}
 									disabled={loading}
 									size='middle'
-									className='border-pink_primary border border-solid rounded-[4px] w-[134px] h-[40px] text-pink_primary font-medium text-sm'
+									className='border-pink_primary border border-solid rounded-[4px] w-[134px] h-[40px] text-pink_primary font-medium text-sm dark:bg-transparent'
 								>
 									Cancel
 								</Button>,
@@ -257,7 +259,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			>
 				<Tabs
 					type="card"
-					className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue font-medium mt-4'
+					className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue dark:text-blue-dark-medium font-medium mt-4'
 					items={[
 						{
 							children: (

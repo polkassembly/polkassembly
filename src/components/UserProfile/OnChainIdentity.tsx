@@ -12,10 +12,11 @@ import { TOnChainIdentity } from './Details';
 interface IOnChainIdentityProps {
 	addresses: string[];
 	onChainIdentity: TOnChainIdentity;
+	theme?: string;
 }
 
 const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
-	const { addresses, onChainIdentity } = props;
+	const { addresses, onChainIdentity, theme } = props;
 	const [open, setOpen] = useState(false);
 	const toggleOpen = () => setOpen((prev) => !prev);
 
@@ -35,14 +36,14 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 					<RightOutlined className='ml-auto text-[#D6DBE2] text-base' />
 				</button>
 				<Modal
-					className='min-w-[648px]'
+					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} min-w-[648px]`}
 					title={
-						<h3 className='font-semibold text-xl text-[#1D2632]'>
+						<h3 className='font-semibold text-xl text-[#1D2632] dark:bg-black dark:text-white'>
                             On-chain identity
 						</h3>
 					}
 					closeIcon={
-						<CloseOutlined className='text-[#485F7D] text-sm' />
+						<CloseOutlined className='text-[#485F7D] text-sm dark:text-icon-dark-inactive' />
 					}
 					onCancel={toggleOpen}
 					open={open}
@@ -52,41 +53,41 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 						{addresses && addresses.length > 0 ? <>
 							{onChainIdentity && <Row gutter={[8, 40]}>
 								<Col span={8}>
-									<div className='text-[#485F7D] font-medium text-sm'>Account</div>
+									<div className='text-[#485F7D] font-medium text-sm dark:text-blue-dark-medium'>Account</div>
 									<Address className='text-xs mt-1' textClassName='text-xs text-[#5E7087]' displayInline={true} identiconSize={28} address={`${addresses[0]}`}/>
 								</Col>
 								{onChainIdentity?.legal && <Col span={8}>
-									<div className='text-[#485F7D] font-medium text-sm'>Legal</div>
+									<div className='text-[#485F7D] font-medium text-sm dark:text-blue-dark-medium'>Legal</div>
 									<p className=' text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.legal}</p>
 								</Col>}
 								{onChainIdentity?.email && <Col span={8}>
-									<div className='text-[#485F7D] font-medium text-sm'>
+									<div className='text-[#485F7D] font-medium text-sm dark:text-blue-dark-medium'>
 										<EmailIcon className='mr-1' />
 										<span>Email</span>
 									</div>
 									<a target='_blank' rel="noreferrer" href={`mailto:${onChainIdentity.email}`} className=' text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.email}</a>
 								</Col>}
 								{onChainIdentity?.riot && <Col span={8}>
-									<div className='text-[#485F7D] font-medium text-sm'>
+									<div className='text-[#485F7D] font-medium text-sm dark:text-blue-dark-medium'>
 										<RiotIcon className='mr-1' />
 										<span>Riot</span>
 									</div>
-									<a target='_blank' rel="noreferrer" href={`https://matrix.to/#/${onChainIdentity.riot}`} className=' text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.riot}</a>
+									<a target='_blank' rel="noreferrer" href={`https://matrix.to/#/${onChainIdentity.riot}`} className=' text-[#5E7087] text-sm font-normal mt-1 dark:text-blue-dark-medium'>{onChainIdentity.riot}</a>
 								</Col>}
 								{onChainIdentity?.twitter && <Col span={8}>
-									<div className='text-[#485F7D] font-medium text-sm'>
+									<div className='text-[#485F7D] font-medium text-sm dark:text-blue-dark-medium'>
 										<TwitterIcon className='mr-1' />
 										<span>Twitter</span>
 									</div>
-									<a target='_blank' rel="noreferrer" href={`https://twitter.com/${onChainIdentity.twitter.substring(1)}`} className='text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.twitter}</a>
+									<a target='_blank' rel="noreferrer" href={`https://twitter.com/${onChainIdentity.twitter.substring(1)}`} className='text-[#5E7087] text-sm font-normal mt-1 dark:text-blue-dark-medium'>{onChainIdentity.twitter}</a>
 								</Col>}
 								{judgements?.length > 0 && <Col span={8}>
-									<div className='text-[#485F7D] font-medium text-sm'>Judgements</div>
-									<p className=' text-[#5E7087] text-sm font-normal mt-1'>{icon} {displayJudgements}</p>
+									<div className='text-[#485F7D] font-medium text-sm dark:text-blue-dark-medium'>Judgements</div>
+									<p className=' text-[#5E7087] text-sm font-normal mt-1 dark:text-blue-dark-medium'>{icon} {displayJudgements}</p>
 								</Col>}
 								{onChainIdentity?.web && <Col span={8}>
-									<div className='text-[#485F7D] font-medium text-sm'>Web</div>
-									<p className=' text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.web}</p>
+									<div className='text-[#485F7D] font-medium text-sm dark:text-blue-dark-medium'>Web</div>
+									<p className=' text-[#5E7087] text-sm font-normal mt-1 dark:text-blue-dark-medium'>{onChainIdentity.web}</p>
 								</Col>}
 							</Row>}
 						</> : <p>No address attached to this account</p>}

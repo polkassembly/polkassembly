@@ -80,8 +80,8 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 				<div
 					className='flex flex-col'
 				>
-					<h4 className='text-sm text-[#485F7D] font-medium '>Profile Image</h4>
-					<p className='font-normal text-sm -mt-1'>
+					<h4 className='text-sm text-[#485F7D] font-medium dark:text-blue-dark-medium'>Profile Image</h4>
+					<p className='font-normal text-sm -mt-1 dark:text-blue-dark-medium'>
 						Please provide a url of your profile photo using a service such as
 						<a href='https://postimages.org/' target='_blank' rel="noreferrer">
 							{' '}postimages.org{' '}
@@ -110,7 +110,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					<Divider className='my-6' style={{ borderColor: '#d2d8e0' }}/>
 					<article>
 						<label
-							className='text-sm cursor-pointer font-medium text-[#485F7D]'
+							className='text-sm cursor-pointer font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='title'
 						>
 							Job Title
@@ -129,8 +129,8 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px]"
 						/>
 					</article>
-					<article className='text-sm cursor-pointer mt-4 text-[#485F7D]' >
-						<label className='text-sm text-[#485F7D] font-medium mb-0'>Username</label>
+					<article className='text-sm cursor-pointer mt-4 text-[#485F7D] dark:text-blue-dark-medium' >
+						<label className='text-sm text-[#485F7D] font-medium mb-0 dark:text-blue-dark-medium'>Username</label>
 						<Input
 							className='rounded-[4px] border border-solid border-[#d2d8e0] text-[#7788a0] h-10 text-sm px-[14px] py-1'
 							placeholder='eg. John'
@@ -143,7 +143,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					</article>
 					<article className='mt-4'>
 						<label
-							className='text-sm cursor-pointer font-medium text-[#485F7D]'
+							className='text-sm cursor-pointer font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='bio'
 						>
 							Bio
@@ -164,7 +164,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					</article>
 					<article className='mt-4'>
 						<label
-							className='text-sm cursor-pointer font-medium text-[#485F7D]'
+							className='text-sm cursor-pointer font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='badges'
 						>
 							Badges

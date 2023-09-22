@@ -26,7 +26,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 					return (
 						<article key={strLink}>
 							<label
-								className='flex items-center gap-x-[6px] text-base cursor-pointer font-normal text-[#485F7D]'
+								className='flex items-center gap-x-[6px] text-base cursor-pointer font-normal text-[#485F7D] dark:text-blue-dark-medium'
 								htmlFor={strLink}
 							>
 								<SocialIcon type={socialLink} />

@@ -8,12 +8,13 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { NetworkContext } from '~src/context/NetworkContext';
-import { ESetIdentitySteps, ITxFee } from '.';
-import { Button } from 'antd';
+import { ESetIdentitySteps, ITxFee, IVerifiedFields } from '.';
+import { Alert, Button } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -21,6 +22,8 @@ interface Props {
 	changeStep: (step: ESetIdentitySteps) => void;
 	perSocialBondFee: BN;
 	loading: boolean;
+	isIdentityAlreadySet: boolean;
+	alreadyVerifiedfields: IVerifiedFields;
 }
 const getLearnMoreRedirection = (network: string) => {
 	switch (network) {
@@ -31,13 +34,27 @@ const getLearnMoreRedirection = (network: string) => {
 	}
 };
 
-const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, loading }: Props) => {
+const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, loading, isIdentityAlreadySet, alreadyVerifiedfields }: Props) => {
 	const { registerarFee, minDeposite } = txFee;
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsContext();
+	const [showAlert, setShowAlert] = useState<boolean>(false);
 
+	const handleLocalStorageSave = (field: any) => {
+		let data: any = localStorage.getItem('identityForm');
+		if (data) {
+			data = JSON.parse(data);
+		}
+		localStorage.setItem(
+			'identityForm',
+			JSON.stringify({
+				...data,
+				...field
+			})
+		);
+	};
 	useEffect(() => {
 		let identityForm: any = localStorage.getItem('identityForm');
 		identityForm = JSON.parse(identityForm);
@@ -51,8 +68,33 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 		);
 	}, [network, userId]);
 
+	const handleRequestJudgement = () => {
+		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
+			handleLocalStorageSave({ setIdentity: true });
+			changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
+		} else {
+			setShowAlert(true);
+		}
+	};
 	return (
 		<div className={className}>
+			{!isIdentityAlreadySet && showAlert && !alreadyVerifiedfields.email && !alreadyVerifiedfields.twitter && (
+				<Alert
+					showIcon
+					type='info'
+					className='mt-4 h-10 rounded-[4px] text-sm text-bodyBlue'
+					message='No identity request found for judgment.'
+				/>
+			)}
+			{isIdentityAlreadySet && showAlert && (!alreadyVerifiedfields.email || !alreadyVerifiedfields.twitter) && (
+				<Alert
+					showIcon
+					type='info'
+					className='mt-4 rounded-[4px] text-sm text-bodyBlue'
+					description='To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.'
+				/>
+			)}
+
 			<span className='-mt-6 flex items-center justify-center text-[350px]'>
 				<AmountBreakdownModalIcon />
 			</span>
@@ -120,7 +162,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					</div>
 				)}
 			</div>
-			<div className='-mx-6 mt-6 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5'>
+			<div className='-mx-6 mt-6 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5'>
 				<Button
 					loading={loading}
 					onClick={() => changeStep(ESetIdentitySteps.SET_IDENTITY_FORM)}
@@ -128,9 +170,31 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				>
 					Let&apos;s Begin
 				</Button>
+				<button
+					onClick={handleRequestJudgement}
+					className='mt-2 h-[40px] w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary'
+				>
+					Request Judgement
+					<HelperTooltip
+						className='ml-2 w-[20px]'
+						text={<span className='break-words'>If you have already set your identity, you can request a judgment directly from here </span>}
+					/>
+				</button>
 			</div>
 		</div>
 	);
 };
 
-export default TotalAmountBreakdown;
+export default styled(TotalAmountBreakdown)`
+	button {
+		border: 1px solid var(--pink_primary);
+	}
+	.ant-alert-with-description {
+		padding-block: 12px !important;
+		padding-inline: 12px;
+	}
+	.ant-alert-with-description .ant-alert-icon {
+		font-size: 18px !important;
+		margin-top: 4px;
+	}
+`;

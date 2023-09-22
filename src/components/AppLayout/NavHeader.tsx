@@ -120,7 +120,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='text-2xl' />
@@ -132,7 +132,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<IconSettings className='text-2xl' />
@@ -144,7 +144,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 			key: 'logout',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
 					onClick={handleLogout}
 					href='/'
 				>
@@ -201,7 +201,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 
 					<div className='type-container flex items-center'>
 						<span className='line-container ml-[16px] mr-[8px] h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
-						<h2 className='text-container m-0 ml-[84px] p-0 text-base font-semibold text-[#243A57] lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-[#243A57] lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{govType === EGovType.OPEN_GOV ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
@@ -413,6 +413,11 @@ export default styled(NavHeader)`
 		display: none !important;
 	}
 
+	.text-container {
+		font-size: 16px !important;
+		font-weight: 600;
+	}
+
 	@media (max-width: 1023px) and (min-width: 468px) {
 		.text-container {
 			margin-left: -2px !important;
@@ -438,6 +443,8 @@ export default styled(NavHeader)`
 		}
 
 		.text-container {
+			font-size: 12px !important;
+			font-weight: 600;
 			margin-left: -2px !important;
 		}
 

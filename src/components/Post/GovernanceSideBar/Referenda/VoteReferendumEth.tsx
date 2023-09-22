@@ -116,7 +116,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const handleModalReset = () => {
 		setLockedBalance(ZERO_BN);
-		ayeNayForm.setFieldValue('balance', ZERO_BN);
+		ayeNayForm.setFieldValue('balance', '');
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 

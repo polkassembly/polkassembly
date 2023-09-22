@@ -19,8 +19,7 @@ interface Props {
 	setStatus?: (pre: string) => void;
 }
 const executeTx = async ({ api, apiReady, network, tx, address, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
-	if (!api || apiReady || !tx) return;
-
+	if (!api || !apiReady || !tx) return;
 	tx.signAndSend(address, params, async ({ status, events, txHash }: any) => {
 		if (status.isInvalid) {
 			console.log('Transaction invalid');

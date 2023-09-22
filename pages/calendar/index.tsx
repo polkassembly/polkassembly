@@ -10,7 +10,7 @@ import { dayjs } from 'dayjs-init';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { Calendar, DateHeaderProps, dayjsLocalizer, View } from 'react-big-calendar';
+import { DateHeaderProps, dayjsLocalizer, View,  Calendar } from 'react-big-calendar';
 import SidebarRight from 'src/components/SidebarRight';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { approvalStatus } from 'src/global/statuses';
@@ -18,6 +18,7 @@ import { NetworkEvent, NotificationStatus } from 'src/types';
 import { Role } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 import chainLink from '~assets/chain-link.png';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -40,6 +41,32 @@ interface ICalendarViewProps {
 	emitCalendarEvents?: React.Dispatch<React.SetStateAction<any[]>> | undefined;
 }
 
+const StyledCalendar = styled(Calendar)`
+	.events-calendar-mini{
+		.rbc-month-view{
+			background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'} !important;
+		}
+		.rbc-month-row{
+			background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'} !important;
+		}
+	}
+    .rbc-month-view{
+		background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'};
+	}
+	.custom-calendar-toolbar{
+		background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'};
+	}
+	.rbc-off-range-bg {
+		background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'} !important;
+	}
+	.rbc-month-row {
+		.rbc-day-bg.rbc-today {
+			border: 1px solid #E6007A;
+			background-color: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'} !important;
+		}
+	}
+`;
+
 const ALLOWED_ROLE = Role.EVENT_BOT;
 
 const localizer = dayjsLocalizer(dayjs);
@@ -55,13 +82,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const categoryOptions = [
-	{ label: 'Staking', value: 'Staking' },
-	{ label: 'Council', value: 'Council' },
-	{ label: 'Schedule', value: 'Schedule' },
-	{ label: 'Treasury', value: 'Treasury' },
-	{ label: 'Democracy', value: 'Democracy' },
-	{ label: 'Society', value: 'Society' },
-	{ label: 'Parachains', value: 'Parachains' }
+	{ label: <span className='dark:text-blue-dark-medium'>Staking</span>, value: 'Staking' },
+	{ label: <span className='dark:text-blue-dark-medium'>Council</span>, value: 'Council' },
+	{ label: <span className='dark:text-blue-dark-medium'>Schedule</span>, value: 'Schedule' },
+	{ label: <span className='dark:text-blue-dark-medium'>Treasury</span>, value: 'Treasury' },
+	{ label: <span className='dark:text-blue-dark-medium'>Democracy</span>, value: 'Democracy' },
+	{ label: <span className='dark:text-blue-dark-medium'>Society</span>, value: 'Society' },
+	{ label: <span className='dark:text-blue-dark-medium'>Parachains</span>, value: 'Parachains' }
 ];
 
 const initCategories = ['Staking', 'Council', 'Schedule', 'Treasury', 'Democracy', 'Society', 'Parachains'];
@@ -69,6 +96,7 @@ const initCategories = ['Staking', 'Council', 'Schedule', 'Treasury', 'Democracy
 const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCalendarEvents = undefined, network }) => {
 	const { api, apiReady } = useApiContext();
 	const { setNetwork } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 	const [width, setWidth] = useState(0);
 	const [calLeftPanelWidth, setCalLeftPanelWidth] = useState<any>(0);
 	const [error, setError] = useState('');
@@ -454,9 +482,9 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	};
 
 	const listData = [
-		{ color:'#EA8612', label: 'Working' },
-		{ color:'#5BC044', label: 'Completed' },
-		{ color:'#FF0000', label: 'Overdue' }
+		{ color:'#EA8612', label: <span className='dark:text-blue-dark-medium'>Working</span> },
+		{ color:'#5BC044', label: <span className='dark:text-blue-dark-medium'>Completed</span> },
+		{ color:'#FF0000', label: <span className='dark:text-blue-dark-medium'>Overdue</span> }
 	];
 
 	return (
@@ -488,14 +516,12 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								<p className='text-sidebarBlue dark:text-blue-dark-medium font-medium text-md text-center mb-2'>Current Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
 
 								<Spin spinning={categoriesLoading} indicator={<></>}>
-									<Calendar
+									<StyledCalendar
 										className='events-calendar-mini dark:bg-section-dark-overlay'
 										date={miniCalSelectedDate}
 										onNavigate={setMiniCalSelectedDate}
 										localizer={localizer}
 										events={calendarEvents}
-										startAccessor="start_time"
-										endAccessor="end_time"
 										components={{
 											event: () => null,
 											eventWrapper: EventWrapperComponent,
@@ -513,7 +539,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								<div className='font-medium text-md text-sidebarBlue dark:text-blue-dark-medium mb-3'>Proposal Status: </div>
 								<Space direction='vertical'>
 									{listData.map((item) => (
-										<Badge key={item.color} text={item.label} color={item.color} />
+										<Badge className='dark:text-blue-dark-medium' key={item.color} text={item.label} color={item.color} />
 									))}
 								</Space>
 
@@ -536,14 +562,13 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 						{<Col span={!small && width > 992 ? 16 : 24} className=' h-full' >
 							<Spin spinning={categoriesLoading}>
 								{!categoriesLoading ? // this is needed to render (+3 more) without changing views
-									<Calendar
+									<StyledCalendar
+										theme={theme}
 										className={`events-calendar ${small || width < 768 ? 'small' : '' }`}
 										localizer={localizer}
 										date={selectedDate}
 										view={selectedView}
 										events={calendarEvents}
-										startAccessor='start_time'
-										endAccessor='end_time'
 										popup={false}
 										components={{
 											event: Event,
@@ -899,9 +924,7 @@ export default styled(CalendarView)`
 			}
 		}
 
-		.rbc-month-view,
 		.rbc-header,
-		.rbc-month-row,
 		.rbc-day-bg {
 			background: #fff;
 			border: none;
@@ -1022,8 +1045,6 @@ export default styled(CalendarView)`
 		margin-top: 6px;
 	}
 
-	.custom-calendar-toolbar,
-	.rbc-month-view,
 	.rbc-time-view,
 	.rbc-agenda-view  {
 		background: #fff;
@@ -1317,10 +1338,6 @@ export default styled(CalendarView)`
 		border-left: none;
 	}
 
-	.rbc-off-range-bg {
-		background: #fff !important;
-	}
-
 	.rbc-off-range {
 		color: #CFCFCF;
 	}
@@ -1358,13 +1375,6 @@ export default styled(CalendarView)`
 		padding-right: 10px;
 		font-size: 12px;
 		color: #777777;
-	}
-
-	.rbc-month-row {
-		.rbc-day-bg.rbc-today {
-			border: 1px solid #E6007A;
-			background-color: #fff;
-		}
 	}
 
 	.rbc-today {

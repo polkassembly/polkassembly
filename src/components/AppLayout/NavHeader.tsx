@@ -462,10 +462,6 @@ export default styled(NavHeader)`
 			display: block !important;
 			margin-left: 4px !important;
 		}
-
-		.searchbar-container {
-			display: none !important;
-		}
 	}
 
 	@media (max-width: 380px) and (min-width: 320px) {
@@ -483,10 +479,6 @@ export default styled(NavHeader)`
 
 		.line-container {
 			display: block !important;
-		}
-
-		.searchbar-container {
-			display: none !important;
 		}
 	}
 

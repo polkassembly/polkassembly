@@ -93,7 +93,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 		}
 		if (delegatedData === null) {
 			(async () => {
-				const url = `api/v1/votes/delegationVoteCountAndPower?&postId=${referendumId}&decision=${decision || 'yes'}&type=${voteType}&voter=${voteData.voter}`;
+				const url = `api/v1/votes/delegationVoteCountAndPower?postId=${referendumId}&decision=${decision || 'yes'}&type=${voteType}&voter=${voteData.voter}`;
 				const { data, error } = await nextApiClientFetch<any>(url);
 				if (error) {
 					console.log('Error in fetching delegated Data');

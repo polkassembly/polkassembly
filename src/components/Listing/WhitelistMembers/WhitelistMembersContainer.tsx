@@ -106,7 +106,7 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 						if (optInfo.isSome) {
 							members.push({
 								accountId: accountId.toString(),
-								rank: Number(optInfo.unwrap().rank.toString())
+								rank: Number(optInfo.unwrapOr(null)?.rank.toString())
 							});
 						}
 					}

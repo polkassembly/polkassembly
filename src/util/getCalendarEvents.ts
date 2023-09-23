@@ -48,7 +48,7 @@ export async function fetchAuctionInfo(api: ApiPromise, network: string): Promis
 	const auctionInfo = (await api.query.auctions?.auctionInfo()) as Option<ITuple<[LeasePeriodOf, BlockNumber]>>;
 
 	if (auctionInfo && auctionInfo.isSome) {
-		const [leasePeriod, endBlock] = auctionInfo.unwrap();
+		const [leasePeriod, endBlock] = auctionInfo.unwrapOr([]);
 
 		const startBlockNumber = endBlock?.toJSON() - endingPeriod?.toJSON();
 		const endBlockNumber = endBlock?.toJSON() as number;
@@ -303,9 +303,9 @@ export async function fetchScheduled(api: ApiPromise, network: string): Promise<
 			const endTimestamp = +new Date() + blockTime * blocksLeft;
 
 			scheduledOptions
-				.map((scheduledOption) => scheduledOption.unwrapOr(null))
+				.map((scheduledOption) => scheduledOption.unwrapOr({} as any))
 				.filter((maybeId) => maybeId !== null)
-				.forEach(({ maybeId }) => {
+				.forEach(({ maybeId = null }) => {
 					if (!maybeId) return;
 					const idOrNull = maybeId.unwrapOr(null);
 					const id = idOrNull ? (idOrNull.isAscii ? idOrNull.toUtf8() : idOrNull.toHex()) : null;

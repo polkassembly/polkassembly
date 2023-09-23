@@ -9,7 +9,9 @@ import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
 import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
 import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
-import { Spin } from 'antd';
+import CloseIcon from '~assets/icons/close.svg';
+import { Modal, Spin } from 'antd';
+import Curves from '../../Referenda/Curves';
 
 interface IProgress {
 	approval: number;
@@ -27,11 +29,14 @@ interface IThresholdGraph {
 	curvesLoading: boolean;
 	curvesError: string;
 	setData: React.Dispatch<any>;
+	thresholdOpen: boolean;
+	setThresholdOpen: any;
 	forGovSidebar?: boolean;
 }
 
 const ThresholdGraph: FC<IThresholdGraph> = (props) => {
-	const { data, progress, curvesError, curvesLoading, setData, forGovSidebar } = props;
+	const { data, progress, curvesError, curvesLoading, setData, thresholdOpen, setThresholdOpen, forGovSidebar } = props;
+
 	const toggleData = (index: number) => {
 		setData((prev: any) => {
 			if (prev.datasets && Array.isArray(prev.datasets) && prev.datasets.length > index) {
@@ -259,6 +264,26 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 					</section>
 				)}
 			</Spin>
+			<Modal
+				onCancel={() => {
+					setThresholdOpen(false);
+				}}
+				open={thresholdOpen}
+				footer={[]}
+				className='md:min-w-[700px]'
+				closeIcon={<CloseIcon />}
+				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue'>Threshold Curves</h2>}
+			>
+				<div className='mt-5'>
+					<Curves
+						curvesError={curvesError}
+						curvesLoading={curvesLoading}
+						data={data}
+						progress={progress}
+						setData={setData}
+					/>
+				</div>
+			</Modal>
 		</>
 	);
 };

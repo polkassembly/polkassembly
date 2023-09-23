@@ -223,10 +223,26 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				console.error('API call failed:', error);
 				setError(error || 'No data returned from the saving comment query');
 				setComments((prev) => {
-					const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
-					const payload = Object.assign(prev, {});
-					payload[key] = prev[key].map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
-					return payload;
+					const comments: any = Object.assign({}, prev);
+					for (const key of Object.keys(comments)) {
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev?.[key]?.map((comment: IComment) => {
+								const newComment = comment;
+								if (comment.id === commentId) {
+									newComment.isError = true;
+									flag = true;
+								}
+								return {
+									...newComment
+								};
+							});
+						}
+						if (flag) {
+							break;
+						}
+					}
+					return comments;
 				});
 				queueNotification({
 					header: 'Failed!',

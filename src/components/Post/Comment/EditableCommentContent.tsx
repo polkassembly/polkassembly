@@ -243,11 +243,33 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 		} else {
 			setComments((prev) => {
-				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
-				const comment = Object.assign(prev, {});
-				comment[key] = comment[key].map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
-				return comment;
+				const comments: any = Object.assign({}, prev);
+				for (const key of Object.keys(comments)) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev?.[key]?.map((comment: IComment) => {
+							const newComment = comment;
+							if (comment.id === commentId) {
+								newComment.isError = false;
+								flag = true;
+							}
+							return {
+								...newComment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
+				}
+				return comments;
 			});
+			// setComments((prev) => {
+			// const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+			// const comment = Object.assign(prev, {});
+			// comment[key] = comment[key].map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
+			// return comment;
+			// });
 		}
 	};
 

@@ -6,8 +6,6 @@ import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
 // import firebaseAdmin from '~src/services/firebaseInit';
-import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
-import authServiceInstance from '~src/auth/auth';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
 import { VerificationStatus } from '~src/types';
@@ -54,13 +52,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
-
-	const token = getTokenFromReq(req);
-
-	const user = await authServiceInstance.GetUser(token);
-	const userId = user?.id;
-
-	if (!token || !userId) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const numPage = Number(page);
 	if (isNaN(numPage) || numPage <= 0) {

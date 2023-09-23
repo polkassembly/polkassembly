@@ -89,7 +89,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex items-center justify-center '>
+					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary '>
 						<TownHall />
 						<div className='ml-2 '> TownHall </div>
 					</span>
@@ -106,7 +106,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex items-center justify-center'>
+					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary'>
 						<PolkaSafe />
 						<span className='ml-2'>Polkasafe</span>
 					</span>
@@ -123,7 +123,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
-					<IconProfile className='text-2xl' />
+					<IconProfile className='userdropdown-icon text-2xl' />
 					<span>View Profile</span>
 				</Link>
 			)
@@ -135,7 +135,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
-					<IconSettings className='text-2xl' />
+					<IconSettings className='userdropdown-icon text-2xl' />
 					<span>Settings</span>
 				</Link>
 			)
@@ -148,7 +148,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 					onClick={handleLogout}
 					href='/'
 				>
-					<IconLogout className='text-2xl' />
+					<IconLogout className='userdropdown-icon text-2xl' />
 					<span>Logout</span>
 				</Link>
 			)
@@ -190,7 +190,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 			<nav className='flex h-[60px] max-h-[60px] w-full items-center justify-between'>
 				<div className='flex items-center'>
 					<Link
-						className='flex'
+						className='logo-size flex'
 						href={'/'}
 					>
 						<PaLogo
@@ -413,9 +413,13 @@ export default styled(NavHeader)`
 		display: none !important;
 	}
 
+	.userdropdown-icon {
+		transform: scale(0.9);
+	}
 	.text-container {
 		font-size: 16px !important;
-		font-weight: 600;
+		font-style: normal;
+		font-weight: 600 !important;
 	}
 
 	@media (max-width: 1023px) and (min-width: 468px) {
@@ -430,6 +434,11 @@ export default styled(NavHeader)`
 	}
 
 	@media (max-width: 468px) and (min-width: 380px) {
+		.logo-size {
+			transform: scale(0.9) !important;
+			margin-left: -12px !important;
+		}
+
 		.type-container {
 			margin-left: 5px !important;
 		}
@@ -444,7 +453,8 @@ export default styled(NavHeader)`
 
 		.text-container {
 			font-size: 12px !important;
-			font-weight: 600;
+			font-style: normal;
+			font-weight: 600 !important;
 			margin-left: -2px !important;
 		}
 

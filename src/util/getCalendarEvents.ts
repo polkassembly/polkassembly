@@ -303,8 +303,10 @@ export async function fetchScheduled(api: ApiPromise, network: string): Promise<
 			const endTimestamp = +new Date() + blockTime * blocksLeft;
 
 			scheduledOptions
-				.map((scheduledOption) => scheduledOption.unwrap())
+				.map((scheduledOption) => scheduledOption.unwrapOr(null))
+				.filter((maybeId) => maybeId !== null)
 				.forEach(({ maybeId }) => {
+					if (!maybeId) return;
 					const idOrNull = maybeId.unwrapOr(null);
 					const id = idOrNull ? (idOrNull.isAscii ? idOrNull.toUtf8() : idOrNull.toHex()) : null;
 

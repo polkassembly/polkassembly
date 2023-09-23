@@ -386,7 +386,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							)}
 							{id === userId ? (
 								<Button
-									className={'flex items-center border-none text-xs text-pink_primary shadow-none'}
+									className={'flex items-center border-none p-0 text-xs text-pink_primary shadow-none'}
 									onClick={deleteReply}
 								>
 									<DeleteOutlined />

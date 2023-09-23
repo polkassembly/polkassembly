@@ -203,11 +203,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					{/* showing vote from subsquid */}
 					{votesArr.length > 0 ? (
 						<div
-							className={
-								votesArr.length > 1
-									? 'ml-1 flex items-center justify-center hover:cursor-pointer max-[768px]:mb-[-10px]'
-									: 'ml-1 flex items-center justify-center max-[768px]:mb-[-10px]'
-							}
+							className={votesArr.length > 1 ? 'ml-1 flex items-center justify-center hover:cursor-pointer' : 'ml-1 flex items-center justify-center'}
 							onClick={() => {
 								if (votesArr.length > 1) setShowVotesModal(!showVotesModal);
 							}}

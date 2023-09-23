@@ -54,7 +54,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 	});
 
 	const subsquidData = result?.data;
-	console.log(subsquidData);
 	const voteCapital = subsquidData?.convictionVotes?.[0]?.delegatedVotes.map((cap: any) => cap?.balance?.value).reduce((a: string, b: string) => Number(a) + Number(b), 0);
 	return res.status(200).json({
 		count: subsquidData?.convictionDelegatedVotesConnection?.totalCount,

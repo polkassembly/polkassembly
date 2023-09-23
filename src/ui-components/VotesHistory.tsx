@@ -99,10 +99,6 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 		setDelegatorsLoading({ index: null, isLoading: true });
 	};
 
-	const onPaginationChange = (page: number) => {
-		setPage(page);
-	};
-
 	const handleSortingClick = (heading: string) => {
 		if (heading === 'Status') return;
 		if (heading === 'Vote') {
@@ -310,7 +306,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 						total={totalCount}
 						showSizeChanger={false}
 						hideOnSinglePage={true}
-						onChange={onPaginationChange}
+						onChange={(page: number) => setPage(page)}
 						responsive={true}
 					/>
 				</div>

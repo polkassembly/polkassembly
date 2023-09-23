@@ -86,7 +86,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 			label: (
 				<a  href="https://townhallgov.com/" target="_blank" rel="noreferrer" className='custom-link' >
 
-					<span className='flex justify-center items-center '>
+					<span className='flex text-bodyBlue text-sm hover:text-pink_primary font-medium'>
 						<TownHall />
 						<div className='ml-2 '> TownHall </div>
 					</span>
@@ -97,7 +97,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 			className:'logo-class',
 			key: 'Polkasafe',
 			label: (<a href="https://polkasafe.xyz/" target="_blank" rel="noreferrer" className='custom-link'>
-				<span className='flex justify-center items-center'>
+				<span className='flex text-bodyBlue text-sm hover:text-pink_primary font-medium'>
 					<PolkaSafe/>
 					<span className='ml-2'>Polkasafe</span>
 				</span>
@@ -109,22 +109,22 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
-			label: <Link className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
-				<IconProfile className='text-2xl' />
+			label: <Link className='text-bodyBlue text-sm hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+				<IconProfile className='text-2xl userdropdown-icon' />
 				<span>View Profile</span>
 			</Link>
 		},
 		{
 			key: 'settings',
-			label: <Link className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
-				<IconSettings className='text-2xl' />
+			label: <Link className='text-bodyBlue text-sm hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+				<IconSettings className='text-2xl userdropdown-icon' />
 				<span>Settings</span>
 			</Link>
 		},
 		{
 			key: 'logout',
-			label: <Link className='text-bodyBlue hover:text-pink_primary font-medium flex items-center gap-x-2'	onClick={handleLogout} href='/'>
-				<IconLogout className='text-2xl' />
+			label: <Link className='text-bodyBlue text-sm hover:text-pink_primary font-medium flex items-center gap-x-2'	onClick={handleLogout} href='/'>
+				<IconLogout className='text-2xl userdropdown-icon' />
 				<span>Logout</span>
 			</Link>
 		}
@@ -149,7 +149,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 			</span>
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={'/'}>
+					<Link className='flex logo-size' href={'/'}>
 						<PaLogo className='-ml-[2px] logo-container' sidedrawer={isMobile}/>
 					</Link>
 
@@ -358,6 +358,16 @@ navbar-user-dropdown {
 	display: none !important;
 }
 
+.userdropdown-icon {
+	transform: scale(0.9);
+}
+
+.text-container {
+	font-size: 16px !important;
+	font-style: normal;
+	font-weight: 600 !important;
+}
+
 @media (max-width: 1023px) and (min-width: 468px){
 	.text-container {
 		margin-left: -2px!important;
@@ -374,6 +384,11 @@ navbar-user-dropdown {
 		margin-left:5px !important;
 	}
 
+	.logo-size {
+		transform: scale(0.9) !important;
+		margin-left: -12px !important;
+	}
+
 	.logo-container {
 		margin-left: -8px !important;
 	}
@@ -383,6 +398,9 @@ navbar-user-dropdown {
 	}
 
 	.text-container {
+		font-size: 12px !important;
+		font-style: normal;
+		font-weight: 600 !important;
 		margin-left: -2px!important;
 	}
 
@@ -397,6 +415,11 @@ navbar-user-dropdown {
 }	
 
 @media (max-width: 380px) and (min-width: 320px){
+	.logo-size {
+		transform: scale(0.9) !important;
+		margin-left: -12px !important;
+	}
+
 	.logo-container {
 		margin-left: -15px !important;
 	}
@@ -406,6 +429,9 @@ navbar-user-dropdown {
 	}
 
 	.text-container {
+		font-size: 12px !important;
+		font-style: normal;
+		font-weight: 600 !important;
 		margin-left: -4px!important;
 	}
 

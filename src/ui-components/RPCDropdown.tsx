@@ -51,7 +51,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 			<Dropdown
 				trigger={['click']}
 				menu={{ defaultSelectedKeys: [(wsProvider? wsProvider: (network? chainProperties?.[network]?.rpcEndpoint: ''))], items: rpcEndpoints, onClick: handleEndpointChange, selectable: true }}
-				className={className}
+				className={`${className} text-bodyBlue text-sm hover:text-pink_primary font-medium `}
 				overlayClassName='navbar-dropdowns'
 			>
 				{

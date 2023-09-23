@@ -44,7 +44,7 @@ for (const key of Object.keys(network)) {
 				src={chainProperties[keyVal]?.logo ? chainProperties[keyVal].logo : chainLogo}
 				alt='Logo'
 			/>
-			<span className='capitalize'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
+			<span className='capitalize text-bodyBlue text-sm hover:text-pink_primary font-medium'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
 		</div>,
 		link
 	};

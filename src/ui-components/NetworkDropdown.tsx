@@ -103,6 +103,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			open={openFilter}
 			onOpenChange={() => setOpenFilter(!openFilter)}
 			placement={'bottomLeft'}
+			className='navbar-dropdowns'
 			trigger={[isSearch ? 'hover' : 'click']}
 			dropdownRender={() => {
 				return (
@@ -191,7 +192,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 						setSidedrawer(false);
 					}}
 				>
-					<div className='flex items-center gap-x-[6px] border-solid'>
+					<div className='flex items-center gap-x-[6px]'>
 						<Image
 							className='h-[20px] w-[20px] rounded-full'
 							src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}

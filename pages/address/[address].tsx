@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Select, Tabs } from 'antd';
+import { Segmented, Select, Tabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getUserIdWithAddress, getUserProfileWithUserId } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -20,6 +20,7 @@ import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import VotesHistory from '~src/ui-components/VotesHistory';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -105,7 +106,8 @@ const EmptyState = styled.div`
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className, error } = props;
 	const { setNetwork } = useNetworkContext();
-	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
+	const [selectedGov, setSelectedGov] = useState(EGovType.OPEN_GOV);
+	const [renderComponent, setRenderComponent] = useState<string>('Votes');
 
 	useEffect(() => {
 		setNetwork(network);
@@ -120,6 +122,14 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			</EmptyState>
 		);
 	}
+	const handleSelectGov = (type: EGovType) => {
+		if (type === EGovType.GOV1) {
+			setRenderComponent('Posts');
+		} else {
+			setRenderComponent('Votes');
+		}
+		setSelectedGov(type);
+	};
 	if (userPosts?.error || userProfile?.error) {
 		return <ErrorAlert errorMsg={userPosts?.error || userProfile?.error || ''} />;
 	}
@@ -159,14 +169,14 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				/>
 				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 md:flex'>
 					<div className='flex items-start justify-between'>
-						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue'>Activity</h2>
+						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue '>Activity</h2>
 						<Select
 							value={selectedGov}
 							style={{
 								width: 120
 							}}
 							onChange={(v) => {
-								setSelectedGov(v);
+								handleSelectGov(v);
 							}}
 							options={[
 								{
@@ -180,13 +190,27 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							]}
 						/>
 					</div>
-					<div className='fullHeight'>
-						<Tabs
-							className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
-							type='card'
-							items={tabItems as any}
-						/>
-					</div>
+					{selectedGov === EGovType.OPEN_GOV && (
+						<div className='mb-6'>
+							<Segmented
+								options={['Votes', 'Posts']}
+								onChange={(e) => setRenderComponent(e.toString())}
+							/>
+						</div>
+					)}
+					{renderComponent === 'Votes' && selectedGov === EGovType.OPEN_GOV ? (
+						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
+							<VotesHistory userAddresses={userProfile?.data?.addresses} />
+						</div>
+					) : (
+						<div className='fullHeight'>
+							<Tabs
+								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+								type='card'
+								items={tabItems as any}
+							/>
+						</div>
+					)}
 				</article>
 			</section>
 		</>

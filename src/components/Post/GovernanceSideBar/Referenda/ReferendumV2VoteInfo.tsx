@@ -198,7 +198,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 						closeIcon={<CloseIcon className="mt-2"/>}
 						title={
-							<label className={`${poppins.variable} ${poppins.className} text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></label>
+							<div className={`${poppins.variable} ${poppins.className} text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold dark:bg-black`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></div>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>

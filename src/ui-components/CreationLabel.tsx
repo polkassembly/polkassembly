@@ -117,7 +117,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	return (
 		<div className={`${className} flex w-[100%] justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
-				<div className={'flex w-full min-[320px]:w-auto min-[320px]:flex-row min-[320px]:items-center '}>
+				<div className={'ml-2 flex w-[66px] min-[320px]:w-auto min-[320px]:flex-row min-[320px]:items-center '}>
 					<div className={'flex items-center '}>
 						<NameLabel
 							defaultAddress={defaultAddress}
@@ -154,7 +154,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className='flex items-center text-lightBlue'>
+				<div className='-ml-[11px] flex items-center text-lightBlue'>
 					{(topic || text || created_at) && (
 						<>
 							&nbsp;
@@ -166,7 +166,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</>
 					)}
 					{created_at && (
-						<span className='mt-2 flex items-center pl-5 md:mt-0 md:pl-0'>
+						<span className='-ml-[6px] -mt-[1px] flex items-center md:mt-0 md:pl-0'>
 							<ClockCircleOutlined className='mx-1' />
 							{relativeCreatedAt}
 						</span>

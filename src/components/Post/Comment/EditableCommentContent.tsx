@@ -677,16 +677,16 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
 							</Dropdown>
 							{comment.isError && (
-								<div className='ml-[164px] flex text-xs text-lightBlue'>
-									<IconCaution className='icon-container -mr-2 mt-[3px] text-2xl' />
-									<span className='msg-container m-0 mt-[4px] p-0'>Comment not posted</span>
+								<div className='ml-auto flex text-xs text-lightBlue'>
+									<IconCaution className='icon-container relative top-[2px] text-2xl' />
+									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
 									<div
 										onClick={handleRetry}
-										className='retry-container m-0 ml-[6px] mt-0 flex cursor-pointer px-[8px]'
-										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}
+										className='retry-container relative flex w-[66px] cursor-pointer px-1'
+										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
 									>
-										<IconRetry className='mt-[4px] text-2xl' />
-										<span className='m-0 -ml-2 mt-[4px] p-0'>Retry</span>
+										<IconRetry className='relative top-[3px] text-2xl' />
+										<span className='relative top-[3px] m-0 p-0'>Retry</span>
 									</div>
 								</div>
 							)}
@@ -775,8 +775,8 @@ export default styled(EditableCommentContent)`
 		}
 		.retry-container {
 			position: relative !important;
-			top: -36px !important;
-			left: 106px !important;
+			top: -2px !important;
+			left: -2px !important;
 		}
 	}
 `;

@@ -7,10 +7,11 @@ import { TwitterTimelineEmbed } from 'react-twitter-embed';
 
 interface INewsProps {
 	twitter: string;
+	theme?: string;
 }
 
 const News: FC<INewsProps> = (props) => {
-	const { twitter } = props;
+	const { twitter, theme } = props;
 	let profile = 'polkadot';
 	if (twitter) {
 		profile = twitter.split('/')[3];
@@ -26,6 +27,7 @@ const News: FC<INewsProps> = (props) => {
 					options={ { height: 450 } }
 					noHeader={true}
 					noFooter={true}
+					theme={theme === 'dark' ? 'dark' : 'light'}
 				/>
 			</div>
 		</div>

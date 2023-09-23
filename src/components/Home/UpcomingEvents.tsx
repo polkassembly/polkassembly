@@ -21,11 +21,30 @@ interface Props{
 }
 
 const Calendar = styled(StyledCalendar)`
-	.ant-picker-calendar{
-		background: ${props => props.theme === 'dark' ? '#1E2A47' : '#fff'} !important;
+	.ant-picker-panel{
+		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
 	}
-	.ant-picker-calendar .ant-picker-panel{
-		background: ${props => props.theme === 'dark' ? '#1E2A47' : '#fff'} !important;
+	th {
+		color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
+	}
+	.ant-picker-cell {
+		color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
+	}
+	.ant-select-selector{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
+		background: ${props => props.theme === 'dark' ? '#000' : '#fff'} !important;
+	}
+	.ant-select-item {
+		color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
+		background: ${props => props.theme === 'dark' ? '#000' : '#fff'} !important;
+	}
+	.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
+		color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
+		background: ${props => props.theme === 'dark' ? '#000' : '#fff'} !important;
+	}
+	.ant-radio-button-wrapper{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
+		background: ${props => props.theme === 'dark' ? '#000' : '#fff'} !important;
 	}
 `;
 
@@ -370,9 +389,9 @@ const UpcomingEvents = ({ className }:Props) => {
 				renderItem={item => {
 					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-blue-light-high dark:text-blue-dark-high`}>
 						<a {...(item.url ? { href: item.url } : {})} target='_blank' rel='noreferrer' className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>
-							<div className='text-xs mb-1 flex items-center text-lightBlue'>
+							<div className='text-xs mb-1 flex items-center text-lightBlue dark:text-blue-dark-medium'>
 								{dayjs(item.end_time).format('MMM D, YYYY')}
-								<span className="h-[4px] w-[4px] bg-bodyBlue mx-2 rounded-full inline-block"></span>
+								<span className="h-[4px] w-[4px] bg-bodyBlue dark:bg-blue-dark-medium mx-2 rounded-full inline-block"></span>
 								{dayjs(item.end_time).format('h:mm a')}
 							</div>
 

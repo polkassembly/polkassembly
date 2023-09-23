@@ -20,6 +20,7 @@ import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
 import { EAddressOtherTextType } from './Address';
@@ -57,6 +58,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
+	const { resolvedTheme:theme } = useTheme();
 	const currentUser = useUserDetailsContext();
 	const { loginWallet, setUserDetailsContextState, loginAddress, addresses } = currentUser;
 	const [address, setAddress] = useState<string>('');
@@ -423,10 +425,10 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 
 	return <Modal
 		wrapClassName={className}
-		className = {`${poppins.className} ${poppins.variable} radius`}
+		className = {`${poppins.className} ${poppins.variable} radius ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 		open = {open}
 		title = {
-			<div className='text-center text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high'>
+			<div className='text-center text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
 				{showMultisig && <ArrowLeft
 					className='cursor-pointer absolute left-[24px] mt-1'
 					onClick={() => {
@@ -456,7 +458,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 					</span>
 				</div>
 				}
-				<h3 className='text-sm font-normal text-lightBlue text-center'>Select a wallet</h3>
+				<h3 className='text-sm font-normal text-lightBlue text-center dark:text-blue-dark-medium'>Select a wallet</h3>
 				<div className={`flex items-center justify-center gap-x-4 ${showMultisig ? 'mb-6':''}`}>
 					{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
 

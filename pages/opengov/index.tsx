@@ -174,7 +174,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 				</div>
 
 				<div className='w-full xl:w-[40%]'>
-					<News twitter={networkSocialsData?.data?.twitter || ''} />
+					<News theme={theme} twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
 

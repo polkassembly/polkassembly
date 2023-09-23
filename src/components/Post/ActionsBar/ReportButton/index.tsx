@@ -15,6 +15,7 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IComment } from '../../Comment/Comment';
 import { deleteContentByMod } from '~src/util/deleteContentByMod';
+import { useTheme } from 'next-themes';
 
 interface IReportButtonProps {
 	type: string;
@@ -42,6 +43,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const { resolvedTheme:theme } = useTheme();
 
 	const [form] = Form.useForm();
 
@@ -179,7 +181,8 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				{isDeleteModal ? <span className={`${className} break-keep`}>Delete</span> : <span className={`${className} break-keep`}>Report</span>}
 			</button>
 			<Modal
-				title={isDeleteModal ? 'Delete' : 'Report'}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+				title={isDeleteModal ? <div className='dark:bg-black dark:text-white'>Delete</div> : <div className='dark:bg-black dark:text-white'>Report</div>}
 				open={showModal}
 				onOk={
 					isDeleteModal ? handleDelete : handleReport
@@ -220,7 +223,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 					<Form.Item name='reason' label="Reason" rules={[{ required: true }]}>
 						<Select
-							popupClassName='z-[9999]'
+							popupClassName='z-[9999] dark:bg-black dark:text-white'
 							defaultValue={'It\'s suspicious or spam'}
 							options={reasons.map((reason) => {
 								return {
@@ -233,6 +236,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					<Form.Item
 						name="comments"
 						label="Comments (300 char max)"
+						className='dark:bg-black dark:text-white'
 					>
 						<Input.TextArea name="comments" showCount rows={4} maxLength={300} />
 					</Form.Item>

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { FC } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import { IconVoteHistory } from '~src/ui-components/CustomIcons';
 import ThresholdGraph from '../Modal/VoteData/ThresholdGraph';
@@ -11,14 +11,28 @@ import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
 import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
+import { Modal } from 'antd';
+import CloseIcon from '~assets/icons/close.svg';
+import Curves from './Curves';
+import Loader from '~src/ui-components/Loader';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
 	setOpen: (value: React.SetStateAction<boolean>) => void;
-	setThresholdOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	thresholdData?: any;
 }
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, setOpen, setThresholdOpen, thresholdData }) => {
+const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, setOpen, thresholdData }) => {
+	const [thresholdOpen, setThresholdOpen] = useState(false);
+	const [isCurvesRender, setIsCurvesRender] = useState(true);
+	useEffect(() => {
+		if (thresholdOpen && isCurvesRender) {
+			setTimeout(() => {
+				setIsCurvesRender(false);
+			}, 50);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [thresholdOpen]);
+
 	return (
 		<>
 			<GovSidebarCard className={className}>
@@ -51,7 +65,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, setOp
 								</button>
 								<ThresholdGraph
 									{...thresholdData}
-									setThresholdOpen={setThresholdOpen}
 									forGovSidebar={true}
 								/>
 							</div>
@@ -91,6 +104,34 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, setOp
 					)}
 				</div>
 			</GovSidebarCard>
+			<Modal
+				onCancel={() => {
+					setThresholdOpen(false);
+				}}
+				open={thresholdOpen}
+				footer={[]}
+				className='md:min-w-[700px]'
+				closeIcon={<CloseIcon />}
+				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue'>Threshold Curves</h2>}
+			>
+				<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>
+					{isCurvesRender ? (
+						<div className='flex min-h-[250px] w-full items-center justify-center md:min-h-[400px]'>
+							<Loader />
+						</div>
+					) : (
+						<Curves
+							curvesError={thresholdData.curvesError}
+							curvesLoading={thresholdData.curvesLoading}
+							data={thresholdData.data}
+							progress={thresholdData.progress}
+							setData={thresholdData.setData}
+							canVote={thresholdData.canVote}
+							status={thresholdData.status}
+						/>
+					)}
+				</div>
+			</Modal>
 		</>
 	);
 };

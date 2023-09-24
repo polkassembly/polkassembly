@@ -8,7 +8,7 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip, Skeleton } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -158,6 +158,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	});
 	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
+	const isRun = useRef(false);
 
 	const canVote =
 		Boolean(post.status) &&
@@ -378,8 +379,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			if (!api || !apiReady) {
 				return;
 			}
-			setCurvesLoading(true);
 			const getData = async () => {
+				if (isRun.current) {
+					return;
+				}
+				isRun.current = true;
+				setCurvesLoading(true);
 				const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 				if (tracks && Array.isArray(tracks)) {
 					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
@@ -404,6 +409,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						const currentSupportData: { x: number; y: number }[] = [];
 						const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
 
+						// TODO: only show curves if status is deciding
+						// const isDeciding = (statusHistory || [])?.find((v: any) => ['Deciding'].includes(v?.status || ''));
 						setTrackInfo(trackInfo);
 						for (let i = 0; i < decisionPeriodHrs; i++) {
 							labels.push(i);

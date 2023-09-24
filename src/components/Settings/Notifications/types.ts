@@ -27,6 +27,14 @@ export interface IReducerState {
 			value: string;
 		}[];
 	};
+	pipNotification: {
+		[index: string]: {
+			label: string;
+			triggerName: string;
+			triggerPreferencesName: string;
+			value: string;
+		}[];
+	};
 	openGov: {
 		[index: string]: {
 			label: string;

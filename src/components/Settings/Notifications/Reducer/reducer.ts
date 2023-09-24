@@ -14,6 +14,9 @@ import {
 	updateOpenGovAll,
 	updateOpenGovProposal,
 	updateOpenGovProposalAll,
+	updatePipAll,
+	updatePipProposal,
+	updatePipProposalAll,
 	updateSubscribedProposal
 } from './action';
 
@@ -55,6 +58,15 @@ export function reducer(state: IReducerState, action: { type: string; payload: a
 		}
 		case ACTIONS.OPEN_GOV_ALL_CHANGE: {
 			return updateOpenGovAll(action.payload, state);
+		}
+		case ACTIONS.PIP_PROPOSAL_SINGLE_CHANGE: {
+			return updatePipProposal(action.payload, state);
+		}
+		case ACTIONS.PIP_PROPOSAL_ALL_CHANGE: {
+			return updatePipProposalAll(action.payload, state);
+		}
+		case ACTIONS.PIP_ALL_CHANGE: {
+			return updatePipAll(action.payload, state);
 		}
 		default: {
 			return state;

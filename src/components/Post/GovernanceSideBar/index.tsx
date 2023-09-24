@@ -8,7 +8,7 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip, Skeleton } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -405,18 +405,18 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
 
 						setTrackInfo(trackInfo);
-						for (let i = 0; i < decisionPeriodHrs * 60; i++) {
+						for (let i = 0; i < decisionPeriodHrs; i++) {
 							labels.push(i);
 							if (supportCalc) {
 								supportData.push({
 									x: i,
-									y: supportCalc(i / (decisionPeriodHrs * 60)) * 100
+									y: supportCalc(i / decisionPeriodHrs) * 100
 								});
 							}
 							if (approvalCalc) {
 								approvalData.push({
 									x: i,
-									y: approvalCalc(i / (decisionPeriodHrs * 60)) * 100
+									y: approvalCalc(i / decisionPeriodHrs) * 100
 								});
 							}
 						}
@@ -432,20 +432,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							if (graph_points?.length > 0) {
 								const lastGraphPoint = graph_points[graph_points.length - 1];
 								const proposalCreatedAt = dayjs(created_at);
-								const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'minute');
-								if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+								const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'hour');
+								if (decisionPeriodMinutes > decisionPeriodHrs) {
 									labels = [];
 									approvalData = [];
 									supportData = [];
 								}
 								graph_points?.forEach((graph_point: any) => {
-									const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'minute');
+									const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'hour');
 									const new_graph_point = {
 										...graph_point,
 										hour
 									};
 
-									if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+									if (decisionPeriodMinutes > decisionPeriodHrs) {
 										labels.push(hour);
 										approvalData.push({
 											x: hour,
@@ -474,7 +474,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
 								for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
 									const approval = approvalData[i];
-									if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'minute')) > 0) {
+									if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'hour')) > 0) {
 										currentApprovalData.push({
 											...lastCurrentApproval,
 											x: approval.x
@@ -485,7 +485,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								const lastCurrentSupport = currentSupportData[currentSupportDataLength - 1];
 								for (let i = currentSupportDataLength; i < supportData.length; i++) {
 									const support = supportData[i];
-									if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'minute')) > 0) {
+									if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'hour')) > 0) {
 										currentSupportData.push({
 											...lastCurrentSupport,
 											x: support.x
@@ -601,7 +601,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			};
 			getData();
 		}
-	}, [api, apiReady, created_at, network, onchainId, proposalType, statusHistory, track_number]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady]);
 
 	useEffect(() => {
 		if (trackInfo) {
@@ -1152,7 +1153,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	);
 };
 
-export default styled(GovernanceSideBar)`
+export default styled(memo(GovernanceSideBar))`
 	.edit-icon-wrapper {
 		transition: all 0.5s;
 	}

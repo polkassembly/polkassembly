@@ -66,7 +66,6 @@ const getStatement = (ApprovalCondition: boolean, supportCondition: boolean) => 
 
 const Curves: FC<ICurvesProps> = (props) => {
 	const { data, progress, curvesError, curvesLoading, setData, canVote, status } = props;
-	console.log(props);
 	const toggleData = (index: number) => {
 		setData((prev: any) => {
 			if (prev.datasets && Array.isArray(prev.datasets) && prev.datasets.length > index) {

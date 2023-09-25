@@ -266,6 +266,7 @@ const CreateProposal = ({
 								address={proposerAddress}
 								iconSize={18}
 								displayInline
+								isTruncateUsername={false}
 							/>
 						</span>
 						<span className='flex'>
@@ -275,6 +276,7 @@ const CreateProposal = ({
 								address={beneficiaryAddress}
 								iconSize={18}
 								displayInline
+								isTruncateUsername={false}
 							/>
 						</span>
 						<span className='flex'>

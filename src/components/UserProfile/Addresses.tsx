@@ -39,12 +39,12 @@ const Addresses: FC<IAddressesProps> = (props) => {
 							return (
 								<Address
 									disableAddressClick={true}
+									addressClassName='text-white'
 									disableHeader={true}
 									iconSize={20}
 									ethIdenticonSize={28}
 									addressMaxLength={10}
 									key={address}
-									className='text-white'
 									address={address}
 								/>
 							);

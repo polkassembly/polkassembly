@@ -20,10 +20,9 @@ interface Props {
 	mainDisplay?: string;
 }
 const AddressWithHeader = ({ extensionName, isSubVisible, sub, t2, address, isTruncateUsername, usernameClassName, kiltName, identity, flags, mainDisplay }: Props) => {
-	console.log('here');
 	return (
 		<div className=''>
-			<div className='flex items-center gap-0.5'>
+			<div className='flex items-center'>
 				{kiltName ||
 					(identity && mainDisplay && (
 						<IdentityBadge
@@ -34,7 +33,7 @@ const AddressWithHeader = ({ extensionName, isSubVisible, sub, t2, address, isTr
 						/>
 					))}
 				<Space className={'header'}>
-					<span className={'flex flex-col gap-y-1 font-medium text-bodyBlue'}>
+					<span className={'flex flex-col font-semibold text-bodyBlue'}>
 						{t2 && <span className={`${usernameClassName} ${isTruncateUsername && 'w-[85px] truncate'}`}>{t2}</span>}
 						{!extensionName && sub && isSubVisible && <span className={`${usernameClassName} ${isTruncateUsername && 'w-[85px] truncate'}`}>{sub}</span>}
 					</span>

@@ -258,7 +258,7 @@ const Addres = (props: Props) => {
 						kiltName={kiltName}
 					/>
 				) : extensionName || mainDisplay ? (
-					<div className='ml-0.5 font-medium text-bodyBlue'>
+					<div className='ml-0.5 font-semibold text-bodyBlue'>
 						{!disableHeader && (
 							<AddressWithHeader
 								key={'disableHeader'}
@@ -275,10 +275,10 @@ const Addres = (props: Props) => {
 								isTruncateUsername={isTruncateUsername}
 							/>
 						)}
-						<div className={`ml-0.5 ${addressClassName} text-xs`}>{!showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}</div>
+						<div className={`${addressClassName} text-xs font-normal`}>{!showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}</div>
 					</div>
 				) : (
-					<div className={`${addressClassName} text-xs`}>{kiltName ? t1 : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}</div>
+					<div className={`${addressClassName} text-xs font-semibold`}>{kiltName ? t1 : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}</div>
 				)}
 			</Link>
 			{addressOtherTextType ? (

@@ -21,7 +21,7 @@ interface IInlineAddress {
 
 const InlineAddress = ({ mainDisplay, encodedAddress, t1, sub, isSubVisible, usernameClassName, isTruncateUsername, flags, identity, address, kiltName }: IInlineAddress) => {
 	return (
-		<div className='flex items-center gap-1'>
+		<div className='flex items-center '>
 			{kiltName ||
 				(identity && mainDisplay && (
 					<IdentityBadge
@@ -32,7 +32,7 @@ const InlineAddress = ({ mainDisplay, encodedAddress, t1, sub, isSubVisible, use
 					/>
 				))}
 
-			<div className={'flex items-center font-medium text-bodyBlue hover:underline'}>
+			<div className={'flex items-center font-semibold text-bodyBlue hover:underline'}>
 				<span
 					title={mainDisplay || encodedAddress}
 					className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'}`}

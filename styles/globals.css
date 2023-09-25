@@ -384,6 +384,14 @@ color: var(--lightBlue) !important;
   height: 60px !important;
 }
 
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
+
 .vector {
   position: relative;
   background-repeat: no-repeat;

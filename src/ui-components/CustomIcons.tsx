@@ -110,6 +110,7 @@ import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 import profileIcon from '~assets/icons/userDropdown/profile.svg';
 import settingsIcon from '~assets/icons/userDropdown/setting.svg';
 import logoutIcon from '~assets/icons/userDropdown/logout.svg';
+import VoteHistoryIcon from '~assets/icons/history.svg';
 import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 
 export const IconLogout = (props: Partial<CustomIconComponentProps>) => (
@@ -150,6 +151,13 @@ export const PolkassemblyIcon = (props: Partial<CustomIconComponentProps>) => (
 export const Dashboard = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={DashboardIcon}
+		{...props}
+	/>
+);
+
+export const IconVoteHistory = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={VoteHistoryIcon}
 		{...props}
 	/>
 );

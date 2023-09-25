@@ -378,7 +378,7 @@ const Address = ({
 	);
 };
 
-export default styled(Address)`
+export default React.memo(styled(Address)`
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -414,4 +414,4 @@ export default styled(Address)`
 		color: nav_blue;
 		line-height: inherit;
 	}
-`;
+`);

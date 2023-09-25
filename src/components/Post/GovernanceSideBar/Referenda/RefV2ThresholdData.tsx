@@ -16,12 +16,13 @@ import CloseIcon from '~assets/icons/close.svg';
 import Curves from './Curves';
 import Loader from '~src/ui-components/Loader';
 
-interface IReferendumV2VoteInfoProps {
+interface IRefV2ThresholdDataProps {
+	canVote: boolean;
 	className?: string;
 	setOpen: (value: React.SetStateAction<boolean>) => void;
 	thresholdData?: any;
 }
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, setOpen, thresholdData }) => {
+const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, thresholdData, canVote }) => {
 	const [thresholdOpen, setThresholdOpen] = useState(false);
 	const [isCurvesRender, setIsCurvesRender] = useState(true);
 	useEffect(() => {
@@ -126,7 +127,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, setOp
 							data={thresholdData.data}
 							progress={thresholdData.progress}
 							setData={thresholdData.setData}
-							canVote={thresholdData.canVote}
+							canVote={canVote}
 							status={thresholdData.status}
 						/>
 					)}
@@ -136,4 +137,4 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, setOp
 	);
 };
 
-export default React.memo(ReferendumV2VoteInfo);
+export default React.memo(RefV2ThresholdData);

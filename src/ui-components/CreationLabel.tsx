@@ -10,17 +10,17 @@ import { poppins } from 'pages/_app';
 
 import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
-
-import { AgainstIcon, SlightlyAgainstIcon, SlightlyForIcon, NeutralIcon, ForIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import dayjs from 'dayjs';
+import { getSentimentIcon, getSentimentTitle } from './CommentHistoryModal';
+import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
-import { EVoteDecisionType } from '~src/types';
+import { ESentiment, EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
-import dayjs from 'dayjs';
 
 const Styled = styled.div`
 	padding: 0;
@@ -97,22 +97,15 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
 
+	const getSentimentLabel = (sentiment: ESentiment) => {
+		return <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
+	};
+
 	const items: MenuProps['items'] = [
-		sentiment === 1
-			? { key: 1, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Completely Against</div> }
-			: null,
-		sentiment === 2
-			? { key: 2, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Slightly Against</div> }
-			: null,
-		sentiment === 3
-			? { key: 3, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Neutral</div> }
-			: null,
-		sentiment === 4
-			? { key: 4, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Slightly For</div> }
-			: null,
-		sentiment === 5
-			? { key: 5, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Completely For</div> }
-			: null
+		{
+			key: 1,
+			label: getSentimentLabel(sentiment as ESentiment) || null
+		}
 	];
 	return (
 		<div className={`${className} flex w-[100%] justify-between`}>
@@ -124,13 +117,13 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							username={username}
 							clickable={commentSource === 'polkassembly'}
 							truncateUsername={truncateUsername}
-							textClassName={'text-[12px] text-ellipsis overflow-hidden'}
+							textClassName={'text-xs text-ellipsis overflow-hidden'}
 						/>
 						{text}&nbsp;
 						{topic && (
 							<div className='flex sm:-mt-0.5'>
 								{' '}
-								<span className='mr-2 mt-1 text-lightBlue'>in</span>{' '}
+								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>{' '}
 								<TopicTag
 									topic={topic}
 									className={topic}
@@ -301,56 +294,14 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					</div>
 				) : null}
 
-				{sentiment === 1 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
-					>
-						<AgainstIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
-				{sentiment === 2 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-					>
-						<SlightlyAgainstIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
-				{sentiment === 3 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-					>
-						<NeutralIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
-				{sentiment === 4 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-					>
-						<SlightlyForIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
-				{sentiment === 5 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='mb-[-1px] mr-[-1px] mt-[-2px] flex items-center  justify-center text-[20px] text-white min-[320px]:mr-2'
-					>
-						<ForIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
+				<Dropdown
+					overlayClassName='sentiment-hover'
+					placement='topCenter'
+					menu={{ items }}
+					className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
+				>
+					<div>{getSentimentIcon(sentiment as ESentiment)}</div>
+				</Dropdown>
 				{commentSource === 'subsquare' && (
 					<Styled>
 						<HelperTooltip

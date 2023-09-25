@@ -48,7 +48,7 @@ import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 import { IconRetry } from '~src/ui-components/CustomIcons';
-import { IconCaution } from '~src/ui-components/CustomIcons';
+import { Caution } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
 
 interface IEditableCommentContentProps {
@@ -678,7 +678,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							</Dropdown>
 							{comment.isError && (
 								<div className='ml-auto flex text-xs text-lightBlue'>
-									<IconCaution className='icon-container relative top-[2px] text-2xl' />
+									<Caution className='icon-container relative top-[4px] text-2xl' />
 									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
 									<div
 										onClick={handleRetry}

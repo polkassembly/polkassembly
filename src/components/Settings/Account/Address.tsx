@@ -25,6 +25,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 interface Props {
 	open?: boolean;
 	dismissModal?: () => void;
+	theme?: string;
 }
 
 const WalletIconAndTitle: FC<{
@@ -41,7 +42,7 @@ const WalletIconAndTitle: FC<{
 	</div>;
 };
 
-const Address: FC<Props> = ({ dismissModal ,open }) => {
+const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 	const currentUser = useUserDetailsContext();
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
@@ -407,7 +408,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				</div>
 			}
 			open={open}
-			className={`mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className}`}
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className}`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{
@@ -439,7 +440,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 							<Button
 								key="cancel"
 								onClick={dismissModal}
-								className='bg-white dark:bg-section-dark-overlay text-pink_primary outline-none border border-pink_primary border-solid rounded-[4px] py-3 px-7 font-medium flex items-center justify-center tracking-wide text-sm'
+								className='bg-white dark:bg-transparent text-pink_primary outline-none border border-pink_primary border-solid rounded-[4px] py-3 px-7 font-medium flex items-center justify-center tracking-wide text-sm'
 							>
 								Cancel
 							</Button>

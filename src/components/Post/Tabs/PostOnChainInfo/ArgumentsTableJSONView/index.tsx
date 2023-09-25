@@ -8,6 +8,7 @@ import ReactJson from 'react-json-view';
 import Address from 'src/ui-components/Address';
 import styled from 'styled-components';
 import ArgumentsTable from './ArgumentsTable';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments }: Props) => {
+	const { resolvedTheme:theme } = useTheme();
 	if(postArguments) {
 		const tabItems = [
 			{
@@ -42,6 +44,7 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 			{
 				children: <div className="json-view">
 					<ReactJson
+						theme={theme === 'dark' ? 'monokai' : 'rjv-default'}
 						src={postArguments}
 						iconStyle='circle'
 						enableClipboard={false}
@@ -79,5 +82,12 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 export default styled(ArgumentsTableJSONView)`
 	.onchain-tabs .ant-tabs-tab{
 		background: transparent !important;
+	}
+	.ant-tabs-tab-btn{
+		color: ${props => props.theme=='dark' ? '#909090' : ''} !important;
+		font-weight: 500 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
+		white-space: nowrap;
 	}
 `;

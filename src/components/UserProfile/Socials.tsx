@@ -92,7 +92,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 };
 
 export default styled(Socials)`
-.ant-input-affix-wrapper >input.ant-input{
+input{
 	color:  ${props => props.theme ==='dark' ? 'white' : ''} !important;
 	background-color: ${props => props.theme ==='dark' ? 'black' : ''} !important;
  }

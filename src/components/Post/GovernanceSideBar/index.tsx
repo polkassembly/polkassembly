@@ -653,9 +653,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				spinning={isLastVoteLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-[#243A57]'>Last Vote:</p>
+				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
 
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-[#243A57]'>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -678,7 +678,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							) : decision == 'abstain' && (balance as any).abstain ? (
 								<p className='flex justify-center align-middle'>
 									<AbstainGray className='mb-[-8px] mr-1' />
-									<span className='font-medium capitalize  text-[#243A57]'>{'Abstain'}</span>
+									<span className='font-medium capitalize  text-bodyBlue'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -728,8 +728,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoLocalState: FC<ILastVote> = ({ balance, conviction, decision }) => {
 		return (
 			<div>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-[#243A57]'>Last Vote:</p>
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-[#243A57]'>
+				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -751,7 +751,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								</p>
 							) : decision === EVoteDecisionType.ABSTAIN ? (
 								<p className='flex justify-center align-middle'>
-									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-[#243A57]'>{'Abstain'}</span>
+									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -791,7 +791,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						>
 							<span title='Conviction'>
 								<ConvictionIcon className='mr-1' />
-								{conviction}x
+								{conviction || '0.1'}x
 							</span>
 						</Tooltip>
 					)}

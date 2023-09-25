@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { EReportType, NotificationStatus } from 'src/types';
+import { EReportType, ESentiment, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -48,6 +48,7 @@ import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { checkIsProposer } from '../utils/checkIsProposer';
+import { getSentimentTitle } from '~src/ui-components/CommentHistoryModal';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -449,23 +450,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			: null
 	];
 
-	const handleSentimentText = () => {
-		switch (sentiment) {
-			case 1:
-				return 'Completely Against';
-			case 2:
-				return 'Slightly Against';
-			case 3:
-				return 'Neutral';
-			case 4:
-				return 'Slightly For';
-			case 5:
-				return 'Completely For';
-			default:
-				return 'Neutral';
-		}
-	};
-
 	useEffect(() => {
 		canEditComment();
 	}, [canEditComment]);
@@ -498,9 +482,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}}
 							className='mb-0'
 						/>
-						<div className='background mb-[10px] mt-[-25px] h-[70px] rounded-e-md bg-gray-100 p-2'>
-							<div className='flex gap-[2px] text-[12px] text-[#334D6E]'>
-								Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5>
+						<div className='background mb-[10px] mt-[-10px] h-[70px] rounded-md bg-gray-100 p-2'>
+							<div className='flex gap-[2px] text-xs text-[#334D6E]'>
+								Sentiment:<h5 className='text-xs text-pink_primary'> {getSentimentTitle(sentiment as ESentiment)}</h5>
 							</div>
 							<div className='flex items-center text-transparent'>
 								<div className='flex items-center justify-between gap-[15px] border-solid'>

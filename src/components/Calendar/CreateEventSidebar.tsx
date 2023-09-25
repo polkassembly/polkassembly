@@ -134,14 +134,14 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 
 	return (
 		<SidebarRight className={className} open={open} closeSidebar={() => setSidebarCreateEvent(false)}>
-			<div className='dashboard-heading'>
+			<div className='dashboard-heading dark:text-white dark:font-medium'>
 				<h1>Create Event</h1>
 			</div>
 
 			<div className="create-event-form">
 				<Form>
 					<div>
-						<label className='input-label'>Event Title</label>
+						<label className='input-label dark:text-blue-dark-medium'>Event Title</label>
 						<Form.Item validateStatus={errorsFound.includes('eventTitle') ? 'error' : ''}>
 							<Input
 								type='text'
@@ -155,7 +155,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 					</div>
 
 					<div>
-						<label className='input-label'>Description</label>
+						<label className='input-label dark:text-blue-dark-medium'>Description</label>
 						<Form.Item validateStatus={errorsFound.includes('eventDescription') ? 'error' : ''}>
 							<Input
 								type='text'
@@ -168,23 +168,25 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						</Form.Item>
 					</div>
 
-					<label className='input-label mr-3'>Event Type</label>
+					<label className='input-label mr-3 dark:text-blue-dark-medium'>Event Type</label>
 					<Radio.Group onChange={onEventTypeRadioToggle} value={eventType} className='radio-input-group'>
 						<Radio
 							value='online'
 							checked={eventType === 'online'}
 							disabled={loading}
+							className='dark:text-blue-dark-medium'
 						>Online</Radio>
 						<Radio
 							value='offline'
 							checked={eventType === 'offline'}
 							disabled={loading}
+							className='dark:text-blue-dark-medium'
 						>Offline</Radio>
 					</Radio.Group>
 
 					<div className="d-flex date-input-row">
 						<div className='start-date-div'>
-							<label className='input-label'>Start Date</label>
+							<label className='input-label dark:text-blue-dark-medium'>Start Date</label>
 							<Form.Item validateStatus={errorsFound.includes('eventStartDateTime') ? 'error' : ''} >
 								<DatePicker
 									onChange={onEventStartDateChange}
@@ -197,7 +199,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						</div>
 
 						<div>
-							<label className='input-label'>End Date</label>
+							<label className='input-label dark:text-blue-dark-medium'>End Date</label>
 							<Form.Item validateStatus={errorsFound.includes('eventEndDateTime') ? 'error' : ''}>
 								<DatePicker
 									onChange={onEventEndDateChange}
@@ -208,6 +210,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 										const customDate = dayjs(eventStartDateTime).format('YYYY-MM-DD');
 										return current && current < dayjs(customDate, 'YYYY-MM-DD');
 									}}
+									className='dark:text-white'
 
 								/>
 
@@ -216,7 +219,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 					</div>
 
 					{eventType == 'online' ? <div>
-						<label className='input-label'>Joining Link</label>
+						<label className='input-label dark:text-blue-dark-medium'>Joining Link</label>
 						<Form.Item validateStatus={errorsFound.includes('eventJoiningLink') ? 'error' : ''}>
 							<Input
 								type='text'
@@ -229,7 +232,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 					</div>
 						:
 						<div>
-							<label className='input-label'>Location</label>
+							<label className='input-label dark:text-blue-dark-medium'>Location</label>
 							<Form.Item validateStatus={errorsFound.includes('eventLocation') ? 'error' : ''}>
 								<Input
 									type='text'
@@ -243,7 +246,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 					}
 
 					<div className="form-actions">
-						<Button onClick={closeCreateEventSidebar} disabled={loading} >Cancel</Button>
+						<Button className='dark:bg-transparent dark:text-white' onClick={closeCreateEventSidebar} disabled={loading} >Cancel</Button>
 						<Button className='bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300 ml-1' onClick={handleCreateEvent} loading={loading} >Create Event</Button>
 					</div>
 				</Form>

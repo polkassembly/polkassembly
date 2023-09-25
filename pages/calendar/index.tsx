@@ -49,6 +49,16 @@ const StyledCalendar = styled(Calendar)`
 		.rbc-month-row{
 			background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'} !important;
 		}
+		.rbc-header,
+		.rbc-day-bg {
+			background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'} !important;
+		}
+		.rbc-row-bg > .rbc-day-bg{
+		border-left: none !important;
+		}
+		.rbc-off-range > button{
+			color: ${props => props.theme === 'dark' ? '#9090990' : '#E8E8E8'} !important;
+		}
 	}
     .rbc-month-view{
 		background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'};
@@ -65,6 +75,35 @@ const StyledCalendar = styled(Calendar)`
 			background-color: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'} !important;
 		}
 	}
+	.rbc-date-cell {
+			text-align: center !important;
+
+			button {
+				font-size: 12px;
+				padding: 5px;
+				font-weight: 500 !important;
+				background: ${props => props.theme === 'dark' ? '#0D0D0D' : '#fff'};
+				border: ${props => props.theme === 'dark' ? 'none' : '1px solid #fff'} !important;
+				border-radius: 50%;
+				cursor: pointer;
+
+				&:hover {
+					background: #E8E8E8;
+					border: 1px solid #E8E8E8;
+				}
+			}
+
+			&.rbc-now {
+				button {
+					background-color: #E6007A;
+					color: #fff;
+					border: 1px solid #E6007A;
+					border-radius: 50%;
+					height:30px;
+					width:30px;
+				}
+			}
+		}
 `;
 
 const ALLOWED_ROLE = Role.EVENT_BOT;
@@ -517,6 +556,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 								<Spin spinning={categoriesLoading} indicator={<></>}>
 									<StyledCalendar
+										theme={theme}
 										className='events-calendar-mini dark:bg-section-dark-overlay'
 										date={miniCalSelectedDate}
 										onNavigate={setMiniCalSelectedDate}
@@ -921,48 +961,6 @@ export default styled(CalendarView)`
 				font-weight: 400 !important;
 				text-transform: uppercase;
 				color: #bbb;
-			}
-		}
-
-		.rbc-header,
-		.rbc-day-bg {
-			background: #fff;
-			border: none;
-		}
-
-		.rbc-date-cell {
-			text-align: center !important;
-
-			button {
-				font-size: 12px;
-				padding: 5px;
-				font-weight: 500 !important;
-				background: #fff;
-				border: 1px solid #fff;
-				border-radius: 50%;
-				cursor: pointer;
-
-				&:hover {
-					background: #E8E8E8;
-					border: 1px solid #E8E8E8;
-				}
-			}
-
-			&.rbc-off-range {
-				button {
-					color: #E8E8E8;
-				}
-			}
-
-			&.rbc-now {
-				button {
-					background-color: #E6007A;
-					color: #fff;
-					border: 1px solid #E6007A;
-					border-radius: 50%;
-					height:30px;
-					width:30px;
-				}
 			}
 		}
 

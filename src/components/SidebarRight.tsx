@@ -22,7 +22,7 @@ const SidebarRight = ({ className, children, open, width, closeSidebar } : Props
 			open={open}
 			onClose={closeSidebar}
 			placement='right'
-			className={className}
+			className={`${className} bg-white dark:bg-section-dark-overlay`}
 			size='large'
 			width={width}
 		>

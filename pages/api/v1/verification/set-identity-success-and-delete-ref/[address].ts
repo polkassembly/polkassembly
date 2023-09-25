@@ -4,7 +4,6 @@
 
 import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isValidNetwork } from '~src/api-utils';
 import messages from '~src/auth/utils/messages';
 import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
@@ -13,14 +12,12 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const firestore = firebaseAdmin.firestore();
 
-const handler: NextApiHandler<MessageType | string> = async (req, res) => {
-	const network = String(req.headers['x-network']);
+const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if (req.method !== 'POST') {
 		return res.status(400).json({ message: 'Invalid method in request body' });
 	}
-	const { userAddress } = req.body;
+	const { address: userAddress } = req.query;
 
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 	if (userAddress || typeof userAddress !== 'string') return res.status(400).json({ message: 'Invalid user address in request body' });
 
 	const token = getTokenFromReq(req);
@@ -39,6 +36,7 @@ const handler: NextApiHandler<MessageType | string> = async (req, res) => {
 		.collection('users')
 		.doc(String(addressDoc.data()?.user_id))
 		.get();
+
 	if (!userDoc.exists) {
 		return res.status(404).json({ message: `No user found with the address '${userAddress}'.` });
 	}
@@ -53,16 +51,13 @@ const handler: NextApiHandler<MessageType | string> = async (req, res) => {
 		onchain_identity_via_polkassembly: true
 	});
 
-	const emailVerificationDoc = await firestore.collection('email_verification_tokens').doc(String(userId)).get();
+	const emailVerificationDoc = firestore.collection('email_verification_tokens').doc(String(userId));
 
-	batch.delete(emailVerificationDoc.ref);
+	batch.delete(emailVerificationDoc);
 
-	const twitterVerificationDoc = await firestore.collection('twitter_verification_tokens').doc(String(userId)).get();
+	const twitterVerificationDoc = firestore.collection('twitter_verification_tokens').doc(String(userId));
 
-	if (!twitterVerificationDoc.exists || !emailVerificationDoc.exists || !userDoc.exists) {
-		res.status(400).json({ message: "We couldn't find any documents associated with your user ID" });
-	}
-	batch.delete(twitterVerificationDoc.ref);
+	batch.delete(twitterVerificationDoc);
 
 	await batch.commit();
 

@@ -274,7 +274,6 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	const handleProceedDisabled = () => {
 		let socialsCount = 0;
 		let verifiedCount = 0;
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		Object.entries(socials).forEach(([, value]) => {
 			if (value?.value) {
 				socialsCount += 1;

@@ -104,7 +104,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 
 			<div className='w-full flex flex-col sm:flex-row sm:items-center mt-3'>
 				<h1 className='text-blue-light-high dark:text-blue-dark-high font-semibold text-2xl leading-9 mx-2 flex-1 mb-2 flex'><DiamondIcon className='mr-2 justify-self-center'/>Treasury Proposals ({count})</h1>
-				{isCreationOfTreasuryProposalSupported(network) && <TreasuryProposalFormButton  />}
+				{isCreationOfTreasuryProposalSupported(network) && <TreasuryProposalFormButton themes={theme}  />}
 			</div>
 
 			{/* Intro and Create Post Button */}

@@ -31,6 +31,7 @@ import executeTx from '~src/util/executeTx';
 
 interface Props {
 	className?: string
+	themes?: string
 	// setTipModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -40,7 +41,8 @@ enum AvailableAccountsInput {
 }
 
 const TreasuryProposalFormButton = ({
-	className
+	className,
+	themes
 	// setTipModalOpen,
 } : Props) => {
 	const { network } = useNetworkContext();
@@ -308,12 +310,12 @@ const TreasuryProposalFormButton = ({
 				{!id ? triggerBtnLoginDisabled : triggerBtn}
 
 				<Modal
-					className={className}
+					className={`${className} ${themes === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 					onCancel={() => setModalOpen(false)}
 					centered
 					wrapClassName='p-5 before:h-0 md:p-10'
 					zIndex={1002}
-					title='Create Treasury Proposal'
+					title={<div className="dark:bg-black dark:text-white">Create Treasury Proposal</div>}
 					footer={[
 						<Button key='submit'  className='bg-pink_primary text-white' onClick={handleSignAndSubmit}>Sign &amp; Submit</Button>
 					]}
@@ -325,7 +327,7 @@ const TreasuryProposalFormButton = ({
 								<div>
 									{/* Submit with account */}
 									<div className=' mb-[1.5em]'>
-										<label className='mb-3 font-bold flex items-center text-sm text-sidebarBlue'>
+										<label className='mb-3 font-bold flex items-center text-sm text-sidebarBlue dark:text-blue-dark-medium'>
 													Submit with account
 											<HelperTooltip className='ml-2' text='This account will make the proposal and be responsible for the bond.' />
 										</label>
@@ -367,7 +369,7 @@ const TreasuryProposalFormButton = ({
 									{/* Beneficiary account */}
 									<>
 										<div  className='mb-[1.5em]'>
-											<label className=' mb-3 font-bold flex items-center text-sm text-sidebarBlue'>
+											<label className=' mb-3 font-bold flex items-center text-sm text-sidebarBlue dark:text-blue-dark-medium'>
 													Beneficiary Account
 												<HelperTooltip className='ml-2' text='The beneficiary will receive the full amount if the proposal passes.' />
 											</label>
@@ -397,7 +399,7 @@ const TreasuryProposalFormButton = ({
 												</Form.Item>
 											</div>
 
-											{!extensionNotAvailable && <div className=' flex justify-between mb-[1em]'>
+											{!extensionNotAvailable && <div className=' flex justify-between mb-[1em] dark:text-blue-dark-medium'>
 												<div onClick={() => handleDetect(AvailableAccountsInput.beneficiary)} className=' text-pink_primary cursor-pointer ml-[1.5em] mt-[0.25em]'>
 														or choose from available addresses
 													{showAvailableAccountsObj['beneficiary'] ? <UpOutlined className='ml-1 align-middle' /> : <DownOutlined className='ml-1 align-middle'/>}
@@ -411,6 +413,7 @@ const TreasuryProposalFormButton = ({
 									{/* Value */}
 									<div className='flex items-center mb-[1.5em]'>
 										<BalanceInput
+											theme={themes}
 											label={'Value'}
 											helpText={'The value is the amount that is being asked for and that will be allocated to the beneficiary if the proposal is approved.'}
 											placeholder={'0'}
@@ -423,7 +426,7 @@ const TreasuryProposalFormButton = ({
 									{
 										treasuryProposal.bondPercent?
 											<div className='mb-[1.5em]'>
-												<label className='mb-3 font-bold flex items-center text-sm text-sidebarBlue'>
+												<label className='mb-3 font-bold flex items-center text-sm text-sidebarBlue dark:text-blue-dark-medium'>
 													Proposal Bond
 													<HelperTooltip className='ml-2' text='Of the beneficiary amount, at least 5.00% would need to be put up as collateral. The maximum of this and the minimum bond will be used to secure the proposal, refundable if it passes.' />
 												</label>
@@ -440,7 +443,7 @@ const TreasuryProposalFormButton = ({
 									{
 										treasuryProposal.minBond?
 											<div className='mb-[1.5em]'>
-												<label className=' mb-3 font-bold flex items-center text-sm text-sidebarBlue'>
+												<label className=' mb-3 font-bold flex items-center text-sm text-sidebarBlue dark:text-blue-dark-medium'>
 												Minimum Bond
 													<HelperTooltip className='ml-2' text='The minimum amount that will be bonded.' />
 												</label>
@@ -453,7 +456,7 @@ const TreasuryProposalFormButton = ({
 											: null
 									}
 
-									<p><WarningFilled /> Be aware that once submitted the proposal will be put to a council vote. If the proposal is rejected due to a lack of info, invalid requirements or non-benefit to the network as a whole, the full bond posted (as describe above) will be lost.</p>
+									<p className='dark:text-blue-dark-medium'><WarningFilled /> Be aware that once submitted the proposal will be put to a council vote. If the proposal is rejected due to a lack of info, invalid requirements or non-benefit to the network as a whole, the full bond posted (as describe above) will be lost.</p>
 								</div>
 								<Divider className='my-[1.5em]' />
 
@@ -483,6 +486,13 @@ export default styled(TreasuryProposalFormButton)`
 	.hide-pointer{
 		pointer-events:none;
 	}
+	input{
+	color:  ${props => props.themes==='dark' ? 'white' : ''} !important;
+	background-color: ${props => props.themes==='dark' ? 'black' : ''} !important;
+ 	}
+ 	input::placeholder{
+	color:  ${props => props.themes==='dark' ? '#909090' : ''} !important;
+ 	}
 
 	/* Hides Increment Arrows in number input */
 	input::-webkit-outer-spin-button,

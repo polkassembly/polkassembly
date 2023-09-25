@@ -53,7 +53,7 @@ const TitleForm = ({ className, onChange, value = '' }:Props): JSX.Element => {
 	return (
 		<div className={className}>
 			<Form>
-				<label className='mb-3 font-bold flex items-center text-sm text-sidebarBlue'>Title</label>
+				<label className='mb-3 font-bold flex items-center text-sm text-sidebarBlue dark:text-blue-dark-medium'>Title</label>
 				<Form.Item name='title' validateStatus={validationStatus.validateStatus} help={validationStatus.errorMsg}  >
 					<Input
 						className='text-sm text-sidebarBlue'

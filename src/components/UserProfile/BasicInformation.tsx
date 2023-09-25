@@ -23,10 +23,12 @@ interface IBasicInformationProps {
     username: string;
     className?: string;
 	errorCheck?: string | undefined;
+	theme?: string;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
-	const { profile, loading, setProfile, setUsername, username, className , errorCheck } = props;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { profile, loading, setProfile, setUsername, username, className , errorCheck, theme } = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -236,6 +238,11 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 };
 
 export default styled(BasicInformation)`
-.ant-input:placeholder-shown {
-  // color: #7788a0 !important;
-}`;
+.ant-input{
+	color:  ${props => props.theme=='dark' ? 'white' : ''} !important;
+	background-color: ${props => props.theme=='dark' ? 'transparent' : ''} !important;
+ }
+ .ant-input::placeholder{
+	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
+ }
+`;

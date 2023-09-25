@@ -8,22 +8,23 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
-import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 const ChangeEmail = ({
 	open,
 	onConfirm,
 	onCancel,
-	email
+	email,
+	theme
 }: {
     open: boolean;
     onConfirm?: () => void;
     onCancel: () => void;
     email: string;
+	theme?: string;
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
-	const { resolvedTheme:theme } = useTheme();
 
 	const handleClick = async () => {
 		try {
@@ -144,4 +145,8 @@ const ChangeEmail = ({
 	);
 };
 
-export default ChangeEmail;
+export default styled(ChangeEmail)`
+	.ant-input::placeholder{
+		color: ${props => props.theme === 'dark' ? '#909090' : '#000'};
+	}
+`;

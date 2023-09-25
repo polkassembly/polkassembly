@@ -9,15 +9,18 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
 import * as validation from 'src/util/validation';
+import styled from 'styled-components';
 
 const ChangePassword = ({
 	open,
 	onConfirm,
-	onCancel
+	onCancel,
+	theme
 }: {
 	open: boolean;
 	onConfirm?: () => void;
 	onCancel: () => void;
+	theme?: string;
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
@@ -84,7 +87,7 @@ const ChangePassword = ({
 			}
 			open={open}
 			closable
-			className='min-w-[350px] md:min-w-[600px]'
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} min-w-[350px] md:min-w-[600px]`}
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
@@ -197,4 +200,8 @@ const ChangePassword = ({
 	);
 };
 
-export default ChangePassword;
+export default styled(ChangePassword)`
+	.ant-input::placeholder{
+		color: ${props => props.theme=='dark' ? '#909090' : '#576D8BCC'} !important;
+	}
+`;

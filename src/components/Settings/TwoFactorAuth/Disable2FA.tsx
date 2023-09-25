@@ -9,7 +9,6 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { LoadingOutlined } from '@ant-design/icons';
 import { TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useTheme } from 'next-themes';
 
 import { poppins } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
@@ -21,12 +20,11 @@ const Title = <div className='dark:bg-black'>
 	<Divider className='mt-2 mb-0' />
 </div>;
 
-const Disable2FA: FC<{className?: string}> = ({ className }) => {
+const Disable2FA: FC<{className?: string , theme?: string}> = ({ className, theme }) => {
 	const [error, setError] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const currentUser = useUserDetailsContext();
-	const { resolvedTheme:theme } = useTheme();
 
 	const handleSubmit = async () => {
 		// don't submit if loading or if user is already 2FA enabled

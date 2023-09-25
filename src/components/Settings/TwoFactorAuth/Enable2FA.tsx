@@ -9,7 +9,6 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { LoadingOutlined } from '@ant-design/icons';
 import { I2FAGenerateResponse, TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useTheme } from 'next-themes';
 import CopyIcon from '~assets/icons/content-copy.svg';
 
 import { poppins } from 'pages/_app';
@@ -27,7 +26,7 @@ const init2FARes: I2FAGenerateResponse = {
 	url: ''
 };
 
-const Enable2FA: FC<{className?: string}> = ({ className }) => {
+const Enable2FA: FC<{className?: string, theme?: string}> = ({ className, theme }) => {
 	const [error, setError] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -35,7 +34,6 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 	const currentUser = useUserDetailsContext();
 
 	const [form] = Form.useForm();
-	const { resolvedTheme:theme } = useTheme();
 
 	const handleSubmit = async (formData: any) => {
 		// don't submit if loading or if user is already 2FA enabled

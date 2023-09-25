@@ -75,13 +75,16 @@ const ProfileSettings = () => {
 					{!web3signup && <Row label='Password' data={username || ''} handleEdit={() => setShowModal(ModalType.PASSWORD)} />}
 				</div>
 				<ChangeUsername
+					theme={theme}
 					onCancel={() => setShowModal(null)}
 					username={username || ''}
 					open={showModal === ModalType.USERNAME} />
 				<ChangePassword
+					theme={theme}
 					onCancel={() => setShowModal(null)}
 					open={showModal === ModalType.PASSWORD} />
 				<ChangeEmail
+					theme={theme}
 					onCancel={() => setShowModal(null)}
 					email={email || ''}
 					open={showModal === ModalType.EMAIL} />

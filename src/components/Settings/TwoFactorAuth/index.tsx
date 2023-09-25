@@ -5,13 +5,15 @@ import React, { FC } from 'react';
 import { useUserDetailsContext } from '~src/context';
 import Enable2FA from './Enable2FA';
 import Disable2FA from './Disable2FA';
+import { useTheme } from 'next-themes';
 
 const TwoFactorAuth: FC<{className?: string}> = ({ className }) => {
 	const { is2FAEnabled } = useUserDetailsContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	return (
 		<section className={className}>
-			{ !is2FAEnabled ? <Enable2FA /> : <Disable2FA /> }
+			{ !is2FAEnabled ? <Enable2FA theme={theme} /> : <Disable2FA theme={theme} /> }
 		</section>
 	);
 };

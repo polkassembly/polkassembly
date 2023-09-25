@@ -8,16 +8,19 @@ import React, { FC } from 'react';
 import { ProfileDetails } from '~src/auth/types';
 import { socialLinks } from './Details';
 import { SocialIcon } from '~src/ui-components/SocialLinks';
+import styled from 'styled-components';
 
 interface ISocialsProps {
     loading: boolean;
     setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>
     profile: ProfileDetails;
 	errorCheck?: string | undefined;
+	theme?: string;
 }
 
 const Socials: FC<ISocialsProps> = (props) => {
-	const { loading, profile, setProfile , errorCheck } = props;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { loading, profile, setProfile , errorCheck, theme } = props;
 	return (
 		<div className='max-h-[552px] flex flex-col gap-y-4'>
 			{
@@ -88,4 +91,12 @@ const Socials: FC<ISocialsProps> = (props) => {
 	);
 };
 
-export default Socials;
+export default styled(Socials)`
+.ant-input-affix-wrapper >input.ant-input{
+	color:  ${props => props.theme ==='dark' ? 'white' : ''} !important;
+	background-color: ${props => props.theme ==='dark' ? 'black' : ''} !important;
+ }
+.ant-input::placeholder{
+	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
+ }
+`;

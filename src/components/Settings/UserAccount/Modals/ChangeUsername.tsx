@@ -10,23 +10,24 @@ import messages from 'src/util/messages';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { username as usernameValidation } from 'src/util/validation';
 import { useUserDetailsContext } from '~src/context';
-import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 const ChangeUsername = ({
 	open,
 	onConfirm,
 	onCancel,
-	username
+	username,
+	theme
 }: {
     open: boolean;
     onConfirm?: () => void;
     onCancel: () => void;
     username: string;
+	theme?: string;
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
 	const { setUserDetailsContextState } = useUserDetailsContext();
-	const { resolvedTheme:theme } = useTheme();
 	const handleClick = async () => {
 		try {
 			const values = await form.validateFields();
@@ -156,4 +157,8 @@ const ChangeUsername = ({
 	);
 };
 
-export default ChangeUsername;
+export default styled(ChangeUsername)`
+	input::placeholder{
+		color: ${props => props.theme=='dark' ? '#909090' : '#576D8BCC'} !important;
+	}
+`;

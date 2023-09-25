@@ -735,6 +735,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								style={{ maxWidth: 600 }}
 							>
 								<BalanceInput
+									theme={theme}
 									label={'Lock balance'}
 									helpText={'Amount of you are willing to lock for this vote.'}
 									placeholder={'Add balance'}
@@ -851,12 +852,9 @@ export default styled(VoteReferendum)`
 	position: absolute;
 	width: 100%;
 }
-.ant-modal .ant-modal-content{
-	background-color:  ${(props) => props.theme === 'dark'? '' : '' } !important;
-}
 
 .ant-segmented-item-label{
-	background-color: ${(props) => props.theme === 'dark'? '#0D0D0D' : '' } !important;
+	background: ${props => props.theme === 'dark'? '#0D0D0D' : '' } !important;
 }
 .vote-form-cont {
 	padding: 12px;
@@ -885,7 +883,7 @@ export default styled(VoteReferendum)`
 	background: transparent !important;
 }
 .dFWeFa .suffixColor .ant-input{
-	background: ${(props) => props.theme === 'dark'? 'transparent' : 'white' } !important;
+	background: ${(props) => props.theme === 'dark'? 'black' : 'white' } !important;
 	color: ${(props) => props.theme === 'dark'? 'white' : '#243A57' } !important
 }
 .vote-referendum .ant-input-number-in-from-item{

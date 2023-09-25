@@ -32,7 +32,9 @@ import {
 	TreasuryGroupIcon,
 	TechComProposalIcon,
 	DelegatedIcon,
-	ApplayoutIdentityIcon
+	ApplayoutIdentityIcon,
+	UpgradeCommitteePIPsIcon,
+	CommunityPIPsIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -320,7 +322,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
 					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
 			  ]
-			: []
+			: [],
+		PIPsItems:
+			chainProperties[network]?.subsquidUrl && network === 'polymesh'
+				? [
+						getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='mt-1.5 text-white' />),
+						getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='mt-1.5 text-white' />),
+						getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='mt-1.5 text-white' />)
+				  ]
+				: []
 	};
 
 	if (!isOpenGovSupported(network)) {
@@ -493,18 +503,19 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		govOverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5' />));
 	}
 
-	const gov2Items: MenuProps['items'] = isOpenGovSupported(network)
-		? [
-				...govOverviewItems,
-				// Tracks Heading
-				getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
-				...gov2TrackItems.mainItems,
-				getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
-				getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
-		  ]
-		: [...govOverviewItems];
+	let gov2Items: MenuProps['items'] =
+		isOpenGovSupported(network) && network !== 'polymesh'
+			? [
+					...govOverviewItems,
+					// Tracks Heading
+					getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
+					...gov2TrackItems.mainItems,
+					getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
+					getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
+			  ]
+			: [...govOverviewItems];
 
-	if (isFellowshipSupported(network)) {
+	if (isFellowshipSupported(network) && network !== 'polymesh') {
 		gov2Items.splice(
 			gov2Items.length - 1,
 			1,
@@ -512,13 +523,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network)) {
+	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && network !== 'polymesh') {
 		gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.treasuryItems]));
 	}
 
-	gov2Items.push(getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items]));
+	if (network !== AllNetworks.POLYMESH) {
+		gov2Items.push(getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items]));
+	}
 
-	const gov2CollapsedItems: MenuProps['items'] = [
+	let gov2CollapsedItems: MenuProps['items'] = [
 		...govOverviewItems,
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [...gov2TrackItems.governanceItems]),
@@ -526,7 +539,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		...items
 	];
 
-	if (isFellowshipSupported(network)) {
+	if (isFellowshipSupported(network) && network !== 'polymesh') {
 		gov2CollapsedItems.splice(
 			gov2CollapsedItems.length - 1,
 			1,
@@ -534,12 +547,20 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
+	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network) && network !== 'polymesh') {
 		if (network !== 'picasso') {
 			gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [...gov2TrackItems.treasuryItems]));
 		} else {
 			gov2CollapsedItems.splice(gov2CollapsedItems.length - 2, 1);
 		}
+	}
+
+	if (network === 'polymesh') {
+		gov2Items = gov2Items.concat(
+			getSiderMenuItem(<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
+			...gov1Items.PIPsItems
+		);
+		gov2CollapsedItems = gov2CollapsedItems.concat([...gov1Items.PIPsItems]);
 	}
 
 	const handleMenuClick = (menuItem: any) => {

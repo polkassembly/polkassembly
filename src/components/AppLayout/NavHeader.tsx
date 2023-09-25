@@ -177,8 +177,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 	return (
 		<Header
 			className={`${className} shadow-md ${
-				sidedrawer ? 'z-1' : 'z-[1000]'
-			} sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal`}
+				sidedrawer ? 'z-1' : 'z-[10000]'
+			} navbar-container sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal`}
 		>
 			<span
 				onClick={() => {
@@ -479,6 +479,10 @@ export default styled(NavHeader)`
 
 		.line-container {
 			display: block !important;
+		}
+
+		.logo-size {
+			margin-left: -16px !important;
 		}
 	}
 

@@ -117,7 +117,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	return (
 		<div className={`${className} flex w-[100%] justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
-				<div className={'ml-2 flex w-[66px] min-[320px]:w-auto min-[320px]:flex-row min-[320px]:items-center '}>
+				<div className={'flex w-[66px] min-[320px]:w-auto min-[320px]:flex-row min-[320px]:items-center '}>
 					<div className={'flex items-center '}>
 						<NameLabel
 							defaultAddress={defaultAddress}

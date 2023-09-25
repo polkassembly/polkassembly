@@ -19,7 +19,6 @@ import Address from './Address';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 import AyeIcon from '~assets/icons/aye-green-icon.svg';
 import NayIcon from '~assets/icons/profile-nay.svg';
-import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import VoterIcon from '~assets/icons/vote-small-icon.svg';
 import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
@@ -58,6 +57,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(userAddresses as CheckboxValueType[]);
 	const [checkAll, setCheckAll] = useState(true);
 	const [indeterminate, setIndeterminate] = useState(false);
+	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 
 	const onChange = (list: CheckboxValueType[]) => {
 		setCheckedAddressList(list);
@@ -92,6 +92,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 							address={address}
 							truncateUsername={false}
 							displayInline
+							disableAddressClick
 						/>
 					</div>
 				))}
@@ -164,20 +165,29 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 	};
 	return (
 		<>
-			<div className='pb-4'>
-				<Popover
-					content={content}
-					placement='bottom'
-				>
-					<Checkbox
-						indeterminate={indeterminate}
-						onChange={onCheckAllChange}
-						checked={checkAll}
+			{userAddresses.length > 1 && (
+				<div className='pb-4'>
+					<Popover
+						content={content}
+						placement='bottom'
+						open={addressDropdownExpand}
 					>
-						Select Addresses
-					</Checkbox>
-				</Popover>
-			</div>
+						<div className='flex w-[206px] items-center rounded-[4px] border-[1px] border-solid border-[#DCDFE3] px-3 py-2'>
+							<Checkbox
+								indeterminate={indeterminate}
+								onChange={onCheckAllChange}
+								checked={checkAll}
+								className='w-full'
+							>
+								Select Addresses
+							</Checkbox>
+							<span onClick={() => setAddressDropdownExpand(!addressDropdownExpand)}>
+								<DownArrowIcon className={`cursor-pointer ${addressDropdownExpand && 'pink-color rotate-180'}`} />
+							</span>
+						</div>
+					</Popover>
+				</div>
+			)}
 			<Spin
 				className={`${className} w-full`}
 				spinning={loading}
@@ -244,26 +254,14 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 														status={data?.proposal?.status}
 														className='truncate max-lg:w-[80px]'
 													/>
-													{data?.expand ? (
-														<span onClick={() => handleExpand(index)}>
-															<UpArrowIcon className='pink-color cursor-pointer' />
-														</span>
-													) : (
-														<span onClick={() => handleExpand(index)}>
-															<DownArrowIcon className='cursor-pointer' />
-														</span>
-													)}
+													<span onClick={() => handleExpand(index)}>
+														<DownArrowIcon className={`cursor-pointer ${data?.expand && 'pink-color rotate-180'}`} />
+													</span>
 												</span>
 												<div className='md:hidden'>
-													{data?.expand ? (
-														<span onClick={() => handleExpand(index)}>
-															<UpArrowIcon className='pink-color cursor-pointer' />
-														</span>
-													) : (
-														<span onClick={() => handleExpand(index)}>
-															<DownArrowIcon className='cursor-pointer' />
-														</span>
-													)}
+													<span onClick={() => handleExpand(index)}>
+														<DownArrowIcon className={`cursor-pointer ${data?.expand && 'pink-color rotate-180'}`} />
+													</span>
 												</div>
 											</div>
 											<div className='flex justify-between px-3 py-4 md:hidden'>
@@ -386,9 +384,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 						</div>
 					</div>
 				) : (
-					<div className='mt-16'>
-						<Empty />
-					</div>
+					<div className='mt-16'>{votesData && <Empty />}</div>
 				)}
 			</Spin>
 		</>

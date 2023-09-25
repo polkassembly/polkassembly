@@ -1022,6 +1022,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<div className={className}>
 														<ReferendumV2VoteInfo tally={tally} />
 														<RefV2ThresholdData
+															canVote={canVote}
 															setOpen={setOpen}
 															thresholdData={{
 																curvesError,

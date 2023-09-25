@@ -24,11 +24,12 @@ import SlightlyAgainstIcon from '~assets/overall-sentiment/pink-slightly-against
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
-import { ESentiments } from '~src/types';
+import { ESentiment, ESentiments } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
 import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
+import { getSentimentTitle } from '~src/ui-components/CommentHistoryModal';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -211,35 +212,35 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			iconInactive: <UnfilterAgainstIcon />,
 			percentage: sentimentsPercentage?.against,
 			sentiment: ESentiments.Against,
-			title: 'Completely Against'
+			title: getSentimentTitle(ESentiment.Against)
 		},
 		{
 			iconActive: <SlightlyAgainstIcon />,
 			iconInactive: <UnfilterSlightlyAgainstIcon />,
 			percentage: sentimentsPercentage?.slightlyAgainst,
 			sentiment: ESentiments.SlightlyAgainst,
-			title: 'Slightly Against'
+			title: getSentimentTitle(ESentiment.SlightlyAgainst)
 		},
 		{
 			iconActive: <NeutralIcon className='text-[20px] font-medium' />,
 			iconInactive: <UnfilterNeutralIcon />,
 			percentage: sentimentsPercentage?.neutral,
 			sentiment: ESentiments.Neutral,
-			title: 'Neutral'
+			title: getSentimentTitle(ESentiment.Neutral)
 		},
 		{
 			iconActive: <SlightlyForIcon />,
 			iconInactive: <UnfilterSlightlyForIcon />,
 			percentage: sentimentsPercentage?.slightlyFor,
 			sentiment: ESentiments.SlightlyFor,
-			title: 'Slightly For'
+			title: getSentimentTitle(ESentiment.SlightlyFor)
 		},
 		{
 			iconActive: <ForIcon />,
 			iconInactive: <UnfilterForIcon />,
 			percentage: sentimentsPercentage?.for,
 			sentiment: ESentiments.For,
-			title: 'Completely For'
+			title: getSentimentTitle(ESentiment.For)
 		}
 	];
 

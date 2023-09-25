@@ -163,6 +163,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					onSubmit={handleSubmitAuthCode}
 					error={error || ''}
 					loading={loading}
+					theme={theme}
 				/> :
 				<AuthForm
 					onSubmit={handleSubmitForm}

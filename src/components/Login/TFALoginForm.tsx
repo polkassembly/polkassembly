@@ -14,22 +14,25 @@ interface Props {
 	loading?: boolean;
 	onSubmit: (data: any) => void;
 	onBack: () => void;
+	theme?: string;
 }
 
-const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const TFALoginForm = ({ className, error, loading, onSubmit, onBack, theme }: Props) => {
+	console.log('theme', theme);
 	return (
 		<AuthForm
 			onSubmit={onSubmit}
 			className={`${className} flex flex-col gap-y-3`}
 		>
 			<div className="flex flex-col gap-y-1 px-5">
-				<h1 className='text-sidebarBlue'>Two Factor Authentication</h1>
-				<p className='text-sidebarBlue'>Please open the two-step verification app or extension and input the authentication code for your Polkassembly account.</p>
+				<h1 className='text-sidebarBlue dark:text-white'>Two Factor Authentication</h1>
+				<p className='text-sidebarBlue dark:text-blue-dark-medium'>Please open the two-step verification app or extension and input the authentication code for your Polkassembly account.</p>
 
 				{error && <FilteredError className='mt-2 mb-6' text={error} />}
 
 				<label
-					className="text-sm text-[#485F7D] "
+					className="text-sm text-[#485F7D] dark:text-blue-dark-medium"
 					htmlFor="authCode"
 				>
 							Authentication Code
@@ -70,7 +73,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 								disabled={loading}
 								htmlType="button"
 								size="small"
-								className="rounded-md outline-none border-none text-pink_primary"
+								className="rounded-md outline-none border-none text-pink_primary dark:bg-transparent dark:text-white dark:border-pink_primary"
 							>
 									Go back
 							</Button>
@@ -88,4 +91,12 @@ export default styled(TFALoginForm)`
 .ant-divider-inner-text{
 	padding: 0 0 !important;
 }
+
+.ant-input{
+	color:  ${props => props.theme=='dark' ? 'white' : ''} !important;
+	background-color: ${props => props.theme=='dark' ? 'black' : ''} !important;
+ }
+ .ant-input::placeholder{
+	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
+ }
 `;

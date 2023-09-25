@@ -121,7 +121,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 									<article className="py-[8px]">
 										<div className="flex items-center">
 											<div className="flex items-center">
-												<p className="text-xs text-sidebarBlue font-normal whitespace-nowrap mb-0 info-container">
+												<p className="text-xs text-sidebarBlue dark:text-blue-dark-medium font-normal whitespace-nowrap mb-0 info-container">
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
 												{type !== 'Discussions' && (
@@ -150,7 +150,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
 						<p className='flex flex-row gap-1 w-[250px] -mt-[40px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500', marginLeft: '-4px' }}>
 							{PostType===timeline.type ? displayIconUnactive  : displayIconActive}
-							<span className='bg-pink_primary rounded-2xl font-medium text-base text-white whitespace-nowrap min-w-[100px] px-5 h-[33px] flex items-center justify-center absolute -left-5 -top-5 shadow-lg shadow-grey_secondary border-.15 border-solid border-pink_primary transition-all ease-in-out  hover:bg-white dark:bg-section-dark-overlay hover:text-pink_primary'>{getStatus(type as string)}</span>
+							<span className='mt-2 text-base font-medium'>{getStatus(type as string)}</span>
 						</p>
 					</Link>
 					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
@@ -159,7 +159,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 								<p className='status-update -mt-[5px]'>
 									<StatusDiv status={timeline?.statuses[statuses.length - 1].status} />
 								</p>
-								<DownArrow onClick={toggleCollapse} className="mt-[12px]"/>
+								<DownArrow onClick={toggleCollapse} className="mt-[12px] dark:text-icon-dark-inactive"/>
 							</div>
 						) : (
 							<UpArrow onClick={toggleCollapse} className="mt-[7px]"/>

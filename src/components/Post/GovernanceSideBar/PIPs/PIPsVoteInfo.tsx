@@ -121,4 +121,4 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 		</div>
 	);
 };
-export default PIPsVoteInfo;
+export default React.memo(PIPsVoteInfo);

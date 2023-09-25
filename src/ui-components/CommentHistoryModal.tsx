@@ -4,14 +4,15 @@
 import React, { useEffect, useState } from 'react';
 import { Dropdown, MenuProps, Modal, Timeline, TimelineItemProps } from 'antd';
 import CloseIcon from '~assets/icons/close.svg';
-import { ICommentHistory } from '~src/types';
+import { ESentiment, ICommentHistory } from '~src/types';
 import styled from 'styled-components';
 import NameLabel from './NameLabel';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { AgainstIcon, ForIcon, NeutralIcon, SlightlyAgainstIcon, SlightlyForIcon } from './CustomIcons';
 import { poppins } from 'pages/_app';
 import UserAvatar from './UserAvatar';
-import { diffChars } from 'diff';
+// import { diffChars } from 'diff';
+import Markdown from './Markdown';
 
 interface Props {
 	className?: string;
@@ -26,31 +27,53 @@ interface IHistoryData extends ICommentHistory {
 	expanded?: boolean;
 }
 
+export const getSentimentTitle = (sentiment: ESentiment) => {
+	switch (sentiment) {
+		case ESentiment.Against:
+			return 'Completely Against';
+		case ESentiment.SlightlyAgainst:
+			return 'Slightly Against';
+		case ESentiment.Neutral:
+			return 'Neutral';
+		case ESentiment.SlightlyFor:
+			return 'Slightly For';
+		case ESentiment.For:
+			return 'Completely For';
+		default:
+			return null;
+	}
+};
+export const getSentimentIcon = (sentiment: ESentiment) => {
+	switch (sentiment) {
+		case ESentiment.Against:
+			return <AgainstIcon className='min-[320px]:items-start' />;
+		case ESentiment.SlightlyAgainst:
+			return <SlightlyAgainstIcon className='min-[320px]:items-start' />;
+		case ESentiment.Neutral:
+			return <NeutralIcon className='min-[320px]:items-start' />;
+		case ESentiment.SlightlyFor:
+			return <SlightlyForIcon className='min-[320px]:items-start' />;
+		case ESentiment.For:
+			return <ForIcon className='min-[320px]:items-start' />;
+		default:
+			return null;
+	}
+};
+
 const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
 	const [historyData, setHistoryData] = useState<IHistoryData[]>(history);
 
+	const getSentimentLabel = (sentiment: ESentiment) => {
+		return <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
+	};
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {
-		const difference = historyData[index + 1] ? diffChars(historyData[index + 1]?.content, item?.content) : [];
+		// const difference = historyData[index + 1] ? diffChars(historyData[index + 1]?.content, item?.content) : [];
 
 		const items: MenuProps['items'] = [
-			item?.sentiment === 1
-				? {
-						key: 1,
-						label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Completely Against</div>
-				  }
-				: null,
-			item?.sentiment === 2
-				? { key: 2, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Slightly Against</div> }
-				: null,
-			item?.sentiment === 3
-				? { key: 3, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Neutral</div> }
-				: null,
-			item?.sentiment === 4
-				? { key: 4, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Slightly For</div> }
-				: null,
-			item?.sentiment === 5
-				? { key: 5, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Completely For</div> }
-				: null
+			{
+				key: 1,
+				label: getSentimentLabel(item?.sentiment) || null
+			}
 		];
 
 		return {
@@ -62,6 +85,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 								defaultAddress={defaultAddress}
 								username={username}
 								textClassName='text-[#334D6E] text-xs'
+								truncateUsername={false}
 							/>
 							<div className='flex items-center'>
 								&nbsp;
@@ -71,81 +95,46 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 								</div>
 							</div>
 						</div>
-						{item?.sentiment === 1 && (
-							<Dropdown
-								overlayClassName='sentiment-hover'
-								placement='topCenter'
-								menu={{ items }}
-								className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
-							>
-								<AgainstIcon className='min-[320px]:items-start' />
-							</Dropdown>
-						)}
-						{item?.sentiment === 2 && (
-							<Dropdown
-								overlayClassName='sentiment-hover'
-								placement='topCenter'
-								menu={{ items }}
-								className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-							>
-								<SlightlyAgainstIcon className='min-[320px]:items-start' />
-							</Dropdown>
-						)}
-						{item?.sentiment === 3 && (
-							<Dropdown
-								overlayClassName='sentiment-hover'
-								placement='topCenter'
-								menu={{ items }}
-								className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-							>
-								<NeutralIcon className='min-[320px]:items-start' />
-							</Dropdown>
-						)}
-						{item?.sentiment === 4 && (
-							<Dropdown
-								overlayClassName='sentiment-hover'
-								placement='topCenter'
-								menu={{ items }}
-								className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-							>
-								<SlightlyForIcon className='min-[320px]:items-start' />
-							</Dropdown>
-						)}
-						{item?.sentiment === 5 && (
-							<Dropdown
-								overlayClassName='sentiment-hover'
-								placement='topCenter'
-								menu={{ items }}
-								className='mb-[-1px] mr-[-1px] mt-[-2px] flex items-center  justify-center text-[20px] text-white min-[320px]:mr-2'
-							>
-								<ForIcon className='min-[320px]:items-start' />
-							</Dropdown>
-						)}
+						<Dropdown
+							overlayClassName='sentiment-hover'
+							placement='topCenter'
+							menu={{ items }}
+							className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
+						>
+							{getSentimentIcon(item.sentiment as ESentiment)}
+							{/* <div>heloo</div> */}
+						</Dropdown>
 					</div>
 					<div
-						className={`mt-2 px-[2px] text-sm font-normal text-[#243A57] ${!item?.expanded && item?.content.length > 100 && 'truncate-content'} tracking-[0.01em] ${
+						className={`mt-2 px-[2px] text-sm font-normal text-bodyBlue ${!item?.expanded && item?.content.length > 100 && 'truncate-content'} tracking-[0.01em] ${
 							poppins.className
 						} ${poppins.variable} pr-2 leading-6`}
 					>
-						{historyData[index + 1] ? (
+						{/* {historyData[index + 1] ? (
 							<div>
-								{difference?.map((text, idx) => (
+								{historyData?.map((text, idx) => (
 									<span
 										key={idx}
-										className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}
+										// className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}
 									>
-										{text.value}
+										<Markdown
+											className={`text-sm ${!item?.expanded && item?.content.length > 100 && 'truncate-content'}`}
+											md={text.content}
+										/>
 									</span>
 								))}
 							</div>
-						) : (
-							item?.content
-						)}
+						) : ( */}
+						<Markdown
+							className={`text-sm ${!item?.expanded && item?.content.length > 100 && 'truncate-content'}`}
+							md={item.content}
+						/>
+						{/* )} */}
 					</div>
 					{item?.content.length > 100 && (
 						<span
 							onClick={() => handleExpand(index, !item?.expanded)}
-							className='mt-1 cursor-pointer text-xs font-medium text-[#E5007A]'
+							className='mt-1 cursor-pointer text-xs font-medium text-pink_primary'
 						>
 							{item?.expanded ? 'Show less' : 'Show more'}
 						</span>

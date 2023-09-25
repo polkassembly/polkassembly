@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
+import { useEffect, useState } from 'react';
 import { Button, Spin, Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
@@ -11,10 +11,10 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { ESocials, ILoading, NotificationStatus, VerificationStatus } from '~src/types';
 import { IVerificationResponse } from 'pages/api/v1/verification';
 import BN from 'bn.js';
-import { useEffect, useState } from 'react';
 import InprogressState from './InprogressState';
-import VerifiedTick from '~assets/icons/verified-tick.svg';
 import { useRouter } from 'next/router';
+import { useApiContext } from '~src/context';
+import VerifiedTick from '~assets/icons/verified-tick.svg';
 
 interface Props {
 	className?: string;
@@ -85,6 +85,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 };
 
 const SocialVerification = ({ className, socials, onCancel, startLoading, closeModal, changeStep, setSocials, address, identityHash, setOpenSuccessModal }: Props) => {
+	const { api, apiReady } = useApiContext();
 	const { email, twitter } = socials;
 	const [open, setOpen] = useState<boolean>(false);
 	const [status, setStatus] = useState({ email: '', twitter: '' });
@@ -273,7 +274,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 			await handleVerify(ESocials.EMAIL, true);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [api, apiReady]);
 
 	const handleProceedDisabled = () => {
 		let socialsCount = 0;
@@ -287,6 +288,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 				verifiedCount += 1;
 			}
 		});
+
 		return socialsCount !== verifiedCount;
 	};
 

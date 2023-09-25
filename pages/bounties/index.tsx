@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Pagination } from 'antd';
+import { Pagination as AntdPagination } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
@@ -20,6 +20,9 @@ import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import DollarIcon from '~assets/icons/dollar-icon.svg';
+
+import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -42,11 +45,27 @@ interface IBountiesProps {
 	network: string;
 }
 
+const Pagination = styled(AntdPagination)`
+	a{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#212121'} !important;
+	}
+	.ant-pagination-item-active {
+		background-color: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+	.anticon-right {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+	.anticon-left {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+`;
+
 const Bounties: FC<IBountiesProps> = (props) => {
 	const { data, error, network } = props;
 	const router = useRouter();
 
 	const { setNetwork } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -99,6 +118,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 						{
 							!!count && count > 0 && count > LISTING_LIMIT &&
 						<Pagination
+							theme={theme}
 							defaultCurrent={1}
 							pageSize={LISTING_LIMIT}
 							total={count}

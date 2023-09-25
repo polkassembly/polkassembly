@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Skeleton } from 'antd';
+import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC } from 'react';
@@ -20,6 +21,7 @@ interface ITrackListingProps {
 
 const TrackListing: FC<ITrackListingProps> = (props) => {
 	const { posts, trackName } = props;
+	const { resolvedTheme:theme } = useTheme();
 	return (
 		<>
 			<AboutTrackCard trackName={trackName}  />
@@ -27,6 +29,7 @@ const TrackListing: FC<ITrackListingProps> = (props) => {
 				className='mt-12'
 				posts={posts}
 				trackName={trackName}
+				theme={theme}
 			/>
 		</>
 	);

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Pagination } from 'antd';
+import { Pagination as AntdPagination } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC } from 'react';
 import { handlePaginationChange } from 'src/util/handlePaginationChange';
@@ -11,6 +11,9 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType } from '~src/global/proposalType';
 
 import OffChainPostsListing from './OffChainPostsListing';
+
+import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 const LIMIT = 10;
 
@@ -22,6 +25,21 @@ interface IOffChainPostsListingContainerProps {
 	proposalType: OffChainProposalType;
 }
 
+const Pagination = styled(AntdPagination)`
+	a{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#212121'} !important;
+	}
+	.ant-pagination-item-active {
+		background-color: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+	.anticon-right {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+	.anticon-left {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+`;
+
 const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = ({ posts, className, count, proposalType }) => {
 	const router = useRouter();
 	const onPaginationChange = (page:number) => {
@@ -32,6 +50,7 @@ const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = (
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
+	const { resolvedTheme:theme } = useTheme();
 
 	return (
 		<>
@@ -42,6 +61,7 @@ const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = (
 				{
 					!!count && count > 0 && count > LIMIT &&
 						<Pagination
+							theme={theme}
 							defaultCurrent={1}
 							pageSize={LIMIT}
 							total={count}

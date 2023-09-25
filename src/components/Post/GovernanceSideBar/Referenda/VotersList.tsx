@@ -4,7 +4,7 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined, SwapOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Dropdown, Pagination, PaginationProps, Segmented, Spin } from 'antd';
+import { Dropdown, Pagination as AntdPagination , PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
@@ -21,6 +21,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import classNames from 'classnames';
 import { IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
+import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 interface IVotersListProps {
 	className?: string;
@@ -30,12 +32,28 @@ interface IVotersListProps {
 	proposalType?: ProposalType;
 }
 
+const Pagination = styled(AntdPagination)`
+	a{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#212121'} !important;
+	}
+	.ant-pagination-item-active {
+		background-color: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+	.anticon-right {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+	.anticon-left {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+`;
+
 type DecisionType = 'yes' | 'no' | 'abstain';
 
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkContext();
 	const firstRef = useRef(true);
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	const { className, referendumId, voteType, pipsVoters, proposalType } = props;
 
@@ -331,6 +349,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 				<div className="flex justify-center pt-6 bg-white dark:bg-section-dark-overlay z-10">
 					<Pagination
+						theme={theme}
 						size="small"
 						defaultCurrent={1}
 						current={currentPage}

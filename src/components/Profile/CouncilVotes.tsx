@@ -3,12 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { DislikeFilled, LeftOutlined, LikeFilled, LoadingOutlined, RightOutlined } from '@ant-design/icons';
-import { Pagination, PaginationProps, Spin, Table } from 'antd';
+import { Pagination as AntdPagination, PaginationProps, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import Link from 'next/link';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import React, { FC, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { useNetworkContext } from '~src/context';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
@@ -16,11 +15,28 @@ import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~sr
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getBlockLink } from '~src/util/subscanCheck';
+import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 interface ICouncilVotesProps {
 	address: string;
 	className?: string
 }
+
+const Pagination = styled(AntdPagination)`
+	a{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#212121'} !important;
+	}
+	.ant-pagination-item-active {
+		background-color: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+	.anticon-right {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+	.anticon-left {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+`;
 
 const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const { className, address } = props;
@@ -30,6 +46,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const [votesHistory, setVotesHistory] = useState<IVoteHistory[]>([]);
 	const [count, setCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
+	const { resolvedTheme:theme } = useTheme();
 
 	const url = getBlockLink(network);
 
@@ -104,6 +121,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 							<Table dataSource={votesHistory} columns={columns} pagination={false} />
 							<div className='flex justify-end mt-6 bg-white dark:bg-section-dark-overlay z-10'>
 								<Pagination
+									theme={theme}
 									size="small"
 									defaultCurrent={1}
 									current={currentPage}

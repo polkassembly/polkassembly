@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { Pagination } from 'antd';
+import { Pagination as AntdPagination } from 'antd';
 import { useRouter } from 'next/router';
 import { Tabs } from 'antd';
 import { IReferendumV2PostsByStatus } from 'pages/root';
@@ -21,7 +21,23 @@ interface Props {
 	className?: string;
 	posts: IReferendumV2PostsByStatus;
 	trackName: string;
+	theme?: string;
 }
+
+const Pagination = styled(AntdPagination)`
+	a{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#212121'} !important;
+	}
+	.ant-pagination-item-active {
+		background-color: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+	.anticon-right {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+	.anticon-left {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+`;
 
 export enum CustomStatus {
 	Submitted = 'CustomStatusSubmitted',
@@ -30,7 +46,8 @@ export enum CustomStatus {
   Active = 'CustomStatusActive'
 }
 
-const TrackListingCard = ({ className, posts, trackName } : Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const TrackListingCard = ({ className, posts, trackName, theme } : Props) => {
 	const items = [
 		{
 			label: <CountBadgePill label='All' count={posts?.all?.data?.count || 0} />,
@@ -122,6 +139,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 			{
 				(posts?.all?.data?.count||0) > 10  && activeTab === 'All' || (posts?.submitted?.data?.count||0) > 10 && activeTab === 'Submitted' || (posts?.voting?.data?.count||0) > 10 && activeTab === 'Voting' || (posts?.closed?.data?.count||0) > 10 && activeTab === 'Closed' ?
 					<Pagination
+						theme={theme}
 						className='flex justify-end sm:mt-6 mt-4 mb-2'
 						defaultCurrent={1}
 						current={router.query.page ? parseInt(router.query.page as string, 10) : 1}
@@ -148,6 +166,18 @@ export default styled(TrackListingCard)`
 		right: 0;
 		margin-top: -9.5px;
 	}
+}
+
+.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab{
+	border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+  }
+.ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
+	border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
+  }
+.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab-active{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
+		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? '#909090' : ''} !important;
 }
 	@media only screen and (max-width: 640px){
 		.ant-tabs-nav{

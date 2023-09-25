@@ -1,9 +1,10 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider, Pagination } from 'antd';
+import { Divider, Pagination as AntdPagination } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 import { noTitle } from '~src/global/noTitle';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import { ClockCircleOutlined } from '@ant-design/icons';
@@ -31,7 +32,24 @@ interface Props {
   postsPage: number;
   totalPage: number;
 }
+
+const Pagination = styled(AntdPagination)`
+	a{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#212121'} !important;
+	}
+	.ant-pagination-item-active {
+		background-color: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+	.anticon-right {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+	.anticon-left {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+`;
+
 const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsPage, totalPage }: Props) => {
+	const { resolvedTheme:theme } = useTheme();
 
 	return postsData.length > 0 ? <>
 		<div className={ `${className} mt-4 -mx-6 h-[400px] ${postsData.length> 1 && 'overflow-y-scroll'}`}>
@@ -105,6 +123,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 		</div>
 		<div className='flex justify-center items-center py-4 px-4'>
 			<Pagination
+				theme={theme}
 				defaultCurrent={1}
 				current={postsPage}
 				pageSize={LISTING_LIMIT}

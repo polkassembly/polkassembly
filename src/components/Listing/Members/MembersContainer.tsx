@@ -60,7 +60,7 @@ const MembersContainer = ({ className } : { className?:string }) => {
 			<>
 				<div className={`${className} shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-md`}>
 					<div className='flex items-center justify-between'>
-						<h1 className='dashboard-heading'>Members</h1>
+						<h1 className='dashboard-heading dark:text-white'>Members</h1>
 					</div>
 
 					<MembersListing className='mt-6' data={members} prime={prime} />
@@ -68,7 +68,7 @@ const MembersContainer = ({ className } : { className?:string }) => {
 
 				<div className={`${className} shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-md`}>
 					<div className='flex items-center justify-between'>
-						<h1 className='dashboard-heading'>Runners up</h1>
+						<h1 className='dashboard-heading dark:text-white'>Runners up</h1>
 					</div>
 
 					<MembersListing className='mt-6' data={runnersUp} prime={prime} />

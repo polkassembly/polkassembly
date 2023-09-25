@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Pagination } from 'antd';
+import { Pagination as AntdPagination } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -23,6 +23,8 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { isCreationOfTreasuryProposalSupported } from '~src/util/isCreationOfTreasuryProposalSupported';
 import DiamondIcon from '~assets/icons/diamond-icon.svg';
 import FilteredTags from '~src/ui-components/filteredTags';
+import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -54,9 +56,25 @@ interface ITreasuryProps {
 	network: string;
 }
 
+const Pagination = styled(AntdPagination)`
+	a{
+		color: ${props => props.theme === 'dark' ? '#fff' : '#212121'} !important;
+	}
+	.ant-pagination-item-active {
+		background-color: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+	}
+	.anticon-right {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+	.anticon-left {
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
+`;
+
 const Treasury: FC<ITreasuryProps> = (props) => {
 	const { data, error } = props;
 	const { setNetwork } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -121,6 +139,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 						{
 							!!count && count > 0 && count > LISTING_LIMIT &&
 						<Pagination
+							theme={theme}
 							defaultCurrent={1}
 							pageSize={LISTING_LIMIT}
 							total={count}

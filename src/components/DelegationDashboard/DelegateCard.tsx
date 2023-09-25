@@ -142,7 +142,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center dark:text-blue-dark-medium'>Received Delegation</span>
 			</div>
 		</div>
-		<DelegateModal defaultTarget={delegate?.address} open={open} trackNum={trackNum} setOpen={setOpen} />
+		<DelegateModal theme={theme} defaultTarget={delegate?.address} open={open} trackNum={trackNum} setOpen={setOpen} />
 		<Modal
 			open={openReadMore}
 			onCancel={() => setOpenReadMore(false)}

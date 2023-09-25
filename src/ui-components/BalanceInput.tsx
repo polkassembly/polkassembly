@@ -33,9 +33,11 @@ interface Props{
 	tooltipMessage?: string;
 	setInputValue? : (pre: string)=> void;
 	onBlur?: () => void;
+	theme?: string;
 }
 
-const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue, onBlur }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue, onBlur, theme }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -111,9 +113,13 @@ export default styled(BalanceInput)`
   border-radius:0px 4px 4px 0px !important ;
 }
 .suffixColor .ant-input{
-	color:var(--bodyBlue) !important;
+  color: ${props => props.theme === 'dark' ? 'white' : '#243A57'} !important;
   border-radius: 4px 0px 0px 4px !important;
   height: 40px !important;
+  background-color: ${props => props.theme === 'dark' ? 'transparent' : '#F5F7FA'} !important;
+}
+.suffixColor .ant-input::placeholder{
+	  color: ${props => props.theme === 'dark' ? '#909090' : '#243A57'} !important;
 }
 .balance-input .ant-input-number-handler-up{
 	display:none !important;

@@ -140,7 +140,7 @@ const Delegate = ( { className, trackDetails, disabled , theme }: Props ) => {
 			</div> : <Skeleton className='mt-6'/>}
 
 		</div>}
-		<DelegateModal trackNum={trackDetails?.trackId} defaultTarget={address} open={open} setOpen={setOpen} />
+		<DelegateModal theme={theme} trackNum={trackDetails?.trackId} defaultTarget={address} open={open} setOpen={setOpen} />
 
 	</div>;
 };

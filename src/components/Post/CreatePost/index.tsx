@@ -139,7 +139,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 			<BackToListingView postCategory={proposalType === ProposalType.DISCUSSIONS? PostCategory.DISCUSSION: PostCategory.GRANT} />
 
 			<div className="flex flex-col mt-6 bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-				<h2 className="dashboard-heading mb-8">New Post</h2>
+				<h2 className="dashboard-heading mb-8 dark:text-white dark:font-medium">New Post</h2>
 				{error && <ErrorAlert errorMsg={error} className='mb-4' />}
 
 				<Form
@@ -152,7 +152,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 						{ required: "Please add the '${name}'" }
 					}
 				>
-					<label className='text-sidebarBlue font-normal text-sm mb-1 tracking-wide'>Title<span className='text-red-500 ml-1'>*</span></label>
+					<label className='text-sidebarBlue dark:text-blue-dark-medium font-normal text-sm mb-1 tracking-wide'>Title<span className='text-red-500 ml-1'>*</span></label>
 					<Form.Item name="title" rules={[{ required: true }]}>
 
 						<Input name='title' autoFocus placeholder='Enter Title' className='text-black' />
@@ -160,12 +160,12 @@ const CreatePost = ({ className, proposalType } : Props) => {
 					<ContentForm />
 					<div className="flex items-center">
 						<Switch size="small" onChange={checked => setHasPoll(checked)} />
-						<span className='ml-2 text-sidebarBlue text-sm'>Add poll to {proposalType === ProposalType.DISCUSSIONS? 'discussion': 'grant'}</span>
+						<span className='ml-2 text-sidebarBlue text-sm dark:text-blue-dark-medium'>Add poll to {proposalType === ProposalType.DISCUSSIONS? 'discussion': 'grant'}</span>
 					</div>
-					<h5 className='text-sm text-color mt-8 font-normal'>Select Governance version <span className='text-red-500'>*</span></h5>
+					<h5 className='text-sm text-color mt-8 font-normal dark:text-blue-dark-medium'>Select Governance version <span className='text-red-500'>*</span></h5>
 					<Radio.Group className='font-normal text-xs p-1' onChange={(e) => setGovType(e.target.value)} value={govType}>
-						<Radio className={`font-normal text-xs text-navBlue ${ govType === 'gov_1' && 'text-pink_primary' }`} value='gov_1' defaultChecked >Governance V1</Radio>
-						<Radio className={`font-normal text-xs text-navBlue ${ govType ==='open_gov' && 'text-pink_primary' }`} value='open_gov' defaultChecked={false}>Governance V2</Radio>
+						<Radio className={`font-normal text-xs text-navBlue dark:text-blue-dark-medium ${ govType === 'gov_1' && 'text-pink_primary' }`} value='gov_1' defaultChecked >Governance V1</Radio>
+						<Radio className={`font-normal text-xs text-navBlue dark:text-blue-dark-medium ${ govType ==='open_gov' && 'text-pink_primary' }`} value='open_gov' defaultChecked={false}>Governance V2</Radio>
 					</Radio.Group>
 					{
 						proposalType === ProposalType.DISCUSSIONS?
@@ -184,13 +184,13 @@ const CreatePost = ({ className, proposalType } : Props) => {
 									}
 								]}>
 								<>
-									<label className='text-sidebarBlue font-normal text-sm mb-1 tracking-wide'>Select Topic <span className='text-red-500 ml-1'>*</span></label>
+									<label className='text-sidebarBlue font-normal text-sm mb-1 dark:text-blue-dark-medium tracking-wide'>Select Topic <span className='text-red-500 ml-1'>*</span></label>
 									<TopicsRadio govType={govType} onTopicSelection={(id) => setTopicId(id)} topicId={topicId} />
 								</>
 							</Form.Item>
 							: null
 					}
-					<h5 className='text-sm text-color mt-8 font-normal'>Add Tags</h5>
+					<h5 className='text-sm text-color mt-8 font-normal dark:text-blue-dark-medium'>Add Tags</h5>
 					<AddTags tags={tags} setTags={setTags} />
 					<Form.Item>
 						<Button htmlType="submit" disabled={!currentUser.id || formDisabled || loading } className='mt-10 bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center justify-center rounded-md text-lg h-[50px] w-[215px]'>

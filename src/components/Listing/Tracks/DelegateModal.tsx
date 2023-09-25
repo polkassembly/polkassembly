@@ -37,7 +37,6 @@ import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
 import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import LockIcon from '~assets/icons/lock.svg';
-import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -48,12 +47,12 @@ interface Props {
   open?: boolean;
   setOpen?: (pre:boolean) => void;
   isMultisig?:boolean;
+  theme?: string;
 }
 
-const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props ) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig, theme }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
-	const { resolvedTheme:theme } = useTheme();
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsContext();
@@ -382,6 +381,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								</div>
 
 								<BalanceInput
+									theme={theme}
 									onBlur={getTxFee}
 									placeholder={'Enter balance'}
 									className='text-lightBlue text-sm font-normal dark:text-blue-dark-medium dark:bg-transparent'
@@ -523,5 +523,12 @@ export default styled(DelegateModal)`
   border-radius:8px !important;
   border:none !important;
   box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
+ }
+ .ant-input{
+	color:  ${props => props.theme=='dark' ? 'white' : ''} !important;
+	background-color: ${props => props.theme=='dark' ? 'transparent' : ''} !important;
+ }
+ .ant-input::placeholder{
+	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
  }
  `;

@@ -270,6 +270,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 
 		{rowData?.filter((row ) => row.delegatedTo !== address ).length > 0 && <UndelegateModal
+			theme={theme}
 			balance={new BN(rowData.filter((row ) => row.delegatedTo !== address )[0]?.balance)}
 			open={openUndelegateModal}
 			setOpen={setOpenUndelegateModal}
@@ -278,7 +279,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			conviction={rowData.filter((row ) => row.delegatedTo !== address )[0]?.lockPeriod}
 			isMultisig={isSelectedAddressMultisig}
 		/>}
-		<DelegateModal open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} isMultisig={isSelectedAddressMultisig}/>
+		<DelegateModal theme={theme} open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} isMultisig={isSelectedAddressMultisig}/>
 	</div>;
 };
 

@@ -141,7 +141,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 			<div className='px-6 py-6 border-[1px] flex justify-between max-sm:gap-2 max-sm:items-start max-sm:flex-col hover:border-pink_primary'>
 				<div className='flex flex-col '>
 					<h2 className='text-sm text-medium text-blue-light-high dark:text-blue-dark-high'>{mainTitle}</h2>
-					<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-[#485F7D] max-lg:flex-col max-lg:items-start max-lg:gap-2'>
+					<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-[#485F7D] dark:text-blue-dark-medium max-lg:flex-col max-lg:items-start max-lg:gap-2'>
 						{ <div className='flex items-center gap-1'>By:
 							<span>
 								<Address
@@ -152,14 +152,14 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							</span>
 						</div>}
 						<div className='flex justify-center items-center gap-2'>
-							<Divider type="vertical" style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}/>
+							<Divider type="vertical" className='max-sm:hidden mx-3 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 							{relativeCreatedAt && <>
 								<div className='flex items-center'>
-									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
+									<ClockCircleOutlined className='mr-1 dark:text-blue-dark-medium' /> {relativeCreatedAt}
 								</div>
 							</>}</div>
 						{proposal?.status !== 'Submitted' &&<div className='flex justify-center items-center gap-2'>
-							<Divider type="vertical" style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}/>
+							<Divider type="vertical" className='max-sm:hidden mx-3 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 							<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' :'text-blue-light-high dark:text-blue-dark-high'}`}>
 								<ClockCircleOutlined className='mr-1' />
 								{remainingTime}

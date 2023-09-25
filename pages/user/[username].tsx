@@ -21,6 +21,7 @@ import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import VotesHistory from '~src/ui-components/VotesHistory';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -34,6 +35,8 @@ interface IUserProfileProps {
 	network: string;
 	className?: string;
 }
+
+export const votesHistoryAvailableNetworks = [AllNetworks.POLKADOT, AllNetworks.KUSAMA];
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const req = context.req;
@@ -147,6 +150,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			)
 		};
 	});
+
 	return (
 		<>
 			<SEOHead
@@ -181,7 +185,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							]}
 						/>
 					</div>
-					{selectedGov === EGovType.OPEN_GOV && (
+					{selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) && (
 						<div className='mb-6'>
 							<Segmented
 								options={['Votes', 'Posts']}
@@ -189,9 +193,10 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							/>
 						</div>
 					)}
-					{renderComponent === 'Votes' && selectedGov === EGovType.OPEN_GOV ? (
+
+					{renderComponent === 'Votes' && selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
-							<VotesHistory userAddresses={userProfile?.data?.addresses} />
+							<VotesHistory userAddresses={userProfile?.data?.addresses || []} />
 						</div>
 					) : (
 						<div className='fullHeight'>

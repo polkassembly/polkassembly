@@ -21,6 +21,7 @@ import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import VotesHistory from '~src/ui-components/VotesHistory';
+import { votesHistoryAvailableNetworks } from 'pages/user/[username]';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -190,7 +191,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							]}
 						/>
 					</div>
-					{selectedGov === EGovType.OPEN_GOV && (
+					{selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) && (
 						<div className='mb-6'>
 							<Segmented
 								options={['Votes', 'Posts']}
@@ -198,7 +199,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							/>
 						</div>
 					)}
-					{renderComponent === 'Votes' && selectedGov === EGovType.OPEN_GOV ? (
+					{renderComponent === 'Votes' && selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
 							<VotesHistory userAddresses={userProfile?.data?.addresses} />
 						</div>

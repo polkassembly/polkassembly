@@ -235,16 +235,16 @@ const UserDropdown = ({
 						}
 					}}
 				>
-					<div className={`description ${addressClassName} user-details-container overflow-hidden text-xs text-bodyBlue`}>
-						<div className={`text-ellipsis ${isGood ? '' : 'w-[66px]'}`}>
+					<div className={`description ${addressClassName} user-details-container flex overflow-hidden text-xs text-bodyBlue`}>
+						<div className={`truncate text-ellipsis ${isGood ? '' : 'w-[66px]'}`}>
 							{displayUsername && displayUsername?.length > 7 && isGood && !isIdentityUnverified ? `${displayUsername?.slice(0, 7)}...` : displayUsername || ''}
-							{isGood && !isIdentityUnverified && (
-								<CheckCircleFilled
-									style={{ color: 'green' }}
-									className='relative top-[1px] ml-1 rounded-full border-none bg-transparent text-sm'
-								/>
-							)}
 						</div>
+						{isGood && !isIdentityUnverified && (
+							<CheckCircleFilled
+								style={{ color: 'green' }}
+								className='relative top-[1px] ml-1 rounded-full border-none bg-transparent text-sm'
+							/>
+						)}
 					</div>
 				</div>
 			)}
@@ -260,7 +260,7 @@ const UserDropdown = ({
 					<span className='text-xs text-lightBlue'>{otherTextType}</span>
 				</p>
 			) : null}
-			<div className='w-15 flex items-center justify-center'>
+			<div className='-ml-2 flex items-center justify-center'>
 				<svg
 					xmlns='http://www.w3.org/2000/svg'
 					width='30'

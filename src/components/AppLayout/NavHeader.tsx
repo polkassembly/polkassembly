@@ -464,7 +464,7 @@ export default styled(NavHeader)`
 		}
 	}
 
-	@media (max-width: 380px) and (min-width: 320px) {
+	@media (max-width: 380px) and (min-width: 319px) {
 		.logo-container {
 			margin-left: -15px !important;
 		}

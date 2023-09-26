@@ -35,10 +35,7 @@ const Footer = ({ className }: { className?: string }) => {
 								className='flex'
 								href='/'
 							>
-								<PaLogo
-									sidedrawer={true}
-									className='h-auto w-[180px]'
-								/>
+								<PaLogo className='h-auto w-[180px]' />
 							</Link>
 						</div>
 

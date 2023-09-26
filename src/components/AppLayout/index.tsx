@@ -34,7 +34,10 @@ import {
 	DelegatedIcon,
 	ApplayoutIdentityIcon,
 	UpgradeCommitteePIPsIcon,
-	CommunityPIPsIcon
+	CommunityPIPsIcon,
+	TreasuryProposalsIcon,
+	ChildBountiesIcon,
+	TipsIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -309,11 +312,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [],
-		democracyItems: chainProperties[network]?.subsquidUrl ? [getSiderMenuItem('Proposals', '/proposals', null), getSiderMenuItem('Referenda', '/referenda', null)] : [],
+		democracyItems: chainProperties[network]?.subsquidUrl
+			? [
+					getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
+					getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-white' />)
+			  ]
+			: [],
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />), getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)]
 			: [],
-		treasuryItems: chainProperties[network]?.subsquidUrl ? [getSiderMenuItem('Proposals', '/treasury-proposals', null), getSiderMenuItem('Tips', '/tips', null)] : [],
+		treasuryItems: chainProperties[network]?.subsquidUrl
+			? [
+					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
+					getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
+					getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
+					getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
+			  ]
+			: [],
 		techCommItems: chainProperties[network]?.subsquidUrl ? [getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -337,9 +352,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items.treasuryItems.push(getSiderMenuItem('Bounties', '/bounties'), getSiderMenuItem('Child Bounties', '/child_bounties'));
 	}
 
-	const handleLogout = async () => {
+	const handleLogout = async (username: string) => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
+		if (!router.query?.username) return;
+		if (router.query?.username.includes(username)) {
+			router.replace('/');
+		}
 	};
 
 	const handleIdentityButtonClick = () => {
@@ -461,39 +480,35 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		`${className} ${poppins.className} ${poppins.variable}`
 	);
 
-	const govOverviewItems = isOpenGovSupported(network)
-		? [
-				!isMobile
-					? getSiderMenuItem(
-							'',
-							'',
-							<div
-								className={`${className} ${
-									sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
-								} svgLogo logo-container logo-display-block flex h-[66px] items-center justify-center bg-transparent`}
-							>
-								<div>
-									<PaLogo
-										className={`${sidedrawer ? 'ml-2' : 'ml-0'}h-full`}
-										sidedrawer={sidedrawer}
-									/>
-									<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom -mx-4 my-2`}></div>
-								</div>
-							</div>
-					  )
-					: null,
-				getSiderMenuItem('Overview', '/', <OverviewIcon className='mt-1 text-white' />),
-				getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
-				getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
-				getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-white' />),
-				getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
-		  ]
-		: [
-				getSiderMenuItem('Overview', '/', <OverviewIcon className='mt-1 text-white' />),
-				getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
-				getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
-				getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-white' />)
-		  ];
+	const govOverviewItems = [
+		!isMobile
+			? getSiderMenuItem(
+					'',
+					'',
+					<div
+						className={`${className} ${
+							sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
+						} svgLogo logo-container logo-display-block flex h-[66px] items-center justify-center bg-transparent`}
+					>
+						<div>
+							<PaLogo
+								className={`${sidedrawer ? 'ml-2' : 'ml-0'}h-full`}
+								sidedrawer={sidedrawer}
+							/>
+							<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom -mx-4 my-2`}></div>
+						</div>
+					</div>
+			  )
+			: null,
+		getSiderMenuItem('Overview', '/', <OverviewIcon className='mt-1 text-white' />),
+		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
+		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
+	];
+
+	if (isOpenGovSupported(network)) {
+		govOverviewItems.splice(4, 0, getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-white' />));
+	}
 
 	if (isGrantsSupported(network)) {
 		govOverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
@@ -573,7 +588,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	let sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	if (typeof window !== 'undefined' && username && window.screen.width < 1024 && isOpenGovSupported(network)) {
-		sidebarItems = [userDropdown, ...sidebarItems];
+		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), userDropdown, ...sidebarItems];
 	}
 
 	return (
@@ -582,6 +597,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				sidedrawer={sidedrawer}
 				setSidedrawer={setSidedrawer}
 				previousRoute={previousRoute}
+				displayName={mainDisplay}
+				isVerified={isGood && !isIdentityUnverified}
 			/>
 			<Layout hasSider>
 				<Sider

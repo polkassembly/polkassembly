@@ -43,24 +43,29 @@ interface Props {
 	sidedrawer: boolean;
 	previousRoute?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
+	displayName?: string;
+	isVerified?: boolean;
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified }: Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
-	const { govType, username, setUserDetailsContextState } = useUserDetailsContext();
+	const { username, setUserDetailsContextState, isLoggedOut } = useUserDetailsContext();
 	const router = useRouter();
-	const { defaultAddress, web3signup } = currentUser;
+	const { web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
-	// const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-	const handleLogout = async () => {
+	const handleLogout = async (username: string) => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
+		if (!router.query?.username) return;
+		if (router.query?.username.includes(username)) {
+			router.replace('/');
+		}
 	};
 	const setGovTypeToContext = (govType: EGovType) => {
 		setUserDetailsContextState((prev: UserDetailsContextType) => {
@@ -145,7 +150,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 			label: (
 				<Link
 					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
-					onClick={handleLogout}
+					onClick={() => handleLogout(username || '')}
 					href='/'
 				>
 					<IconLogout className='userdropdown-icon text-2xl' />
@@ -177,7 +182,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 	return (
 		<Header
 			className={`${className} shadow-md ${
-				sidedrawer ? 'z-1' : 'z-[10000]'
+				sidedrawer ? 'z-1' : 'z-[1000]'
 			} navbar-container sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal`}
 		>
 			<span
@@ -201,8 +206,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 
 					<div className='type-container flex items-center'>
 						<span className='line-container ml-[16px] mr-[8px] h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
-						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-[#243A57] lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
-							{govType === EGovType.OPEN_GOV ? 'OpenGov' : 'Gov1'}
+						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
 				</div>
@@ -214,7 +219,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
 						{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
-						{!username ? (
+						{isLoggedOut() ? (
 							<div className='flex items-center lg:gap-x-2'>
 								<Button
 									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
@@ -232,7 +237,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 									<div className='border-1px-solid-#d7dce3 flex items-center justify-between gap-x-2 rounded-3xl bg-[#f6f7f9] px-3  '>
 										<Mail />
 										<div className='flex items-center justify-between gap-x-1'>
-											<span className='w-[85%] truncate normal-case'>{username || ''}</span>
+											<span className='w-[85%] truncate normal-case'>{displayName || username || ''}</span>
 											<Arrow />
 										</div>
 									</div>
@@ -240,7 +245,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer }: Props) => {
 									<div className={'flex items-center justify-between gap-x-2'}>
 										<UserDropdown
 											className='navbar-user-dropdown h-[32px] max-w-[160px]'
-											address={defaultAddress || ''}
+											displayName={displayName}
+											isVerified={isVerified}
 										/>
 									</div>
 								)}

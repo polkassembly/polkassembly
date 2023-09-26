@@ -10,7 +10,6 @@ interface IPaLogoProps {
 }
 const PaLogo: FC<IPaLogoProps> = (props) => {
 	const { className, sidedrawer } = props;
-	console.log(sidedrawer);
 	return sidedrawer ? (
 		<svg
 			width='149'

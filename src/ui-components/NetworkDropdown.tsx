@@ -36,7 +36,7 @@ for (const key of Object.keys(network)) {
 		: `https://${key === 'POLYMESHTEST' ? 'polymesh-test' : keyVal}.polkassembly.io`;
 
 	if (isOpenGovSupported(keyVal)) {
-		link = `${link}`;
+		link = `${link}/opengov`;
 	}
 	const optionObj: DropdownMenuItemType = {
 		key,
@@ -47,7 +47,7 @@ for (const key of Object.keys(network)) {
 					src={chainProperties[keyVal]?.logo ? chainProperties[keyVal].logo : chainLogo}
 					alt='Logo'
 				/>
-				<span className='text-sm font-medium capitalize text-bodyBlue hover:text-pink_primary'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
+				<span className='capitalize'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
 			</div>
 		),
 		link
@@ -103,11 +103,10 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			open={openFilter}
 			onOpenChange={() => setOpenFilter(!openFilter)}
 			placement={'bottomLeft'}
-			className='navbar-dropdowns'
 			trigger={[isSearch ? 'hover' : 'click']}
 			dropdownRender={() => {
 				return (
-					<Card className='mt-3 max-h-[52vh] max-w-[356px] overflow-y-auto'>
+					<Card className='max-h-[52vh] max-w-[356px] overflow-y-auto'>
 						<>
 							<div className='font-medium text-bodyBlue'>Polkadot &amp; Parachains</div>
 							<Row className='mt-2'>
@@ -192,7 +191,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 						setSidedrawer(false);
 					}}
 				>
-					<div className='flex items-center gap-x-[6px]'>
+					<div className='flex items-center gap-x-[6px] border-solid'>
 						<Image
 							className='h-[20px] w-[20px] rounded-full'
 							src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}

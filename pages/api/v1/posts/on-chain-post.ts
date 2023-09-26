@@ -392,7 +392,7 @@ export async function getComments(
 				? {
 						comment_reactions: getDefaultReactionObj(),
 						comment_source: 'polkassembly',
-						content: '[deleted]',
+						content: '[Deleted]',
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: [],
 						id: data.id,
@@ -431,7 +431,7 @@ export async function getComments(
 				  };
 
 			const replyIds: string[] = [];
-			const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted', '==', false).orderBy('created_at', 'asc').get();
+			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
 			repliesSnapshot.docs.forEach((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
@@ -450,9 +450,10 @@ export async function getComments(
 						}
 						comment.replies.push({
 							comment_id,
-							content,
+							content: data.isDeleted ? '[Deleted]' : content,
 							created_at: created_at?.toDate ? created_at.toDate() : created_at,
 							id: id,
+							isDeleted: data.isDeleted || false,
 							is_custom_username: false,
 							post_index: postIndex,
 							post_type: postType,

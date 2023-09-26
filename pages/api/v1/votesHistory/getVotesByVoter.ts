@@ -5,7 +5,6 @@
 import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
-// import firebaseAdmin from '~src/services/firebaseInit';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
 import { VerificationStatus } from '~src/types';
@@ -22,7 +21,6 @@ export interface IVerificationResponse {
 	message: VerificationStatus;
 }
 
-// const firestore = firebaseAdmin.firestore();
 interface Props {
 	page: number;
 	voterAddresses: string[];
@@ -51,7 +49,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const { voterAddresses, page = 1, orderBy = ['proposalIndex_DESC'] } = req.body as unknown as Props;
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+	if (network === 'undefined' || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	const numPage = Number(page);
 	if (isNaN(numPage) || numPage <= 0) {

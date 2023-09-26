@@ -40,6 +40,12 @@ const getOrderBy = (sortByPostIndex: boolean, sortByVotes: boolean) => {
 	return orderBy;
 };
 
+enum EFilteredBy {
+	VOTE = 'Vote',
+	PROPOSAL = 'Proposal',
+	STATUS = 'Status'
+}
+
 const VotesHistory = ({ className, userAddresses }: Props) => {
 	const { network } = useNetworkContext();
 	const headings = ['Proposal', 'Vote', 'Status'];
@@ -117,7 +123,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 
 	const handleDelegatesAndCapital = async (index: number) => {
 		const filteredVote = votesData?.filter((item, idx) => index === idx)?.[0];
-		if (!filteredVote?.delegatedVotes?.length || filteredVote.expand || (filteredVote?.delegatorsCount && filteredVote?.delegateCapital)) return;
+		if (!filteredVote?.delegatedVotes?.length || (filteredVote?.delegatorsCount && filteredVote?.delegateCapital)) return;
 		setDelegatorsLoading({ index, isLoading: true });
 
 		const { data, error } = await nextApiClientFetch<{ count: number; voteCapital: string }>(
@@ -139,9 +145,9 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 		setDelegatorsLoading({ index: null, isLoading: true });
 	};
 
-	const handleSortingClick = (heading: string) => {
-		if (heading === 'Status') return;
-		if (heading === 'Vote') {
+	const handleSortingClick = (heading: EFilteredBy) => {
+		if (heading === EFilteredBy.STATUS) return;
+		if (heading === EFilteredBy.VOTE) {
 			setSortByVotes(!sortByVotes);
 		} else {
 			setSortByPostIndex(!sortByPostIndex);
@@ -177,14 +183,18 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 						<div className='flex h-14 items-center justify-between gap-2 border-0 border-y-[1px] border-solid border-[#DCDFE3] bg-[#fbfbfc] px-3 max-md:hidden'>
 							{headings.map((heading, index) => (
 								<span
-									onClick={() => handleSortingClick(heading)}
+									onClick={() => handleSortingClick(heading as EFilteredBy)}
 									className={`flex items-center text-sm font-medium text-lightBlue ${index === 0 ? 'w-[50%] ' : index === 1 ? 'w-[30%]' : 'w-[20%] justify-end'} pr-10`}
 									key={index}
 								>
 									{heading}
 									{index !== 2 && (
 										<ExpandIcon
-											className={(heading === 'Vote' && !!sortByVotes) || (heading === 'Proposal' && !!sortByPostIndex) ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'}
+											className={
+												(heading === EFilteredBy.VOTE && !!sortByVotes) || (heading === EFilteredBy.PROPOSAL && !!sortByPostIndex)
+													? 'ml-1 rotate-180 cursor-pointer'
+													: 'ml-1 cursor-pointer'
+											}
 										/>
 									)}
 								</span>

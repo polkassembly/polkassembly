@@ -12,7 +12,6 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { noTitle } from '~src/global/noTitle';
 import Link from 'next/link';
 import Address from './Address';
@@ -55,28 +54,13 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 	const [sortByPostIndex, setSortByPostIndex] = useState<boolean>(false);
 	const [sortByVotes, setSortByVotes] = useState<boolean>(false);
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(userAddresses as CheckboxValueType[]);
-	const [checkAll, setCheckAll] = useState(true);
-	const [indeterminate, setIndeterminate] = useState(false);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
-
-	const onChange = (list: CheckboxValueType[]) => {
-		setCheckedAddressList(list);
-		setIndeterminate(!!list.length && list.length < checkedAddressList.length);
-		setCheckAll(list.length === checkedAddressList.length);
-	};
-
-	const onCheckAllChange = (e: CheckboxChangeEvent) => {
-		const list = e.target.checked ? userAddresses?.map((address: string) => address) : [];
-		setCheckedAddressList(list);
-		setIndeterminate(false);
-		setCheckAll(e.target.checked);
-	};
 
 	const content = (
 		<div className='flex flex-col'>
 			<Checkbox.Group
 				className='flex max-h-[200px] flex-col overflow-y-auto'
-				onChange={onChange}
+				onChange={(list) => setCheckedAddressList(list)}
 				value={checkedAddressList}
 			>
 				{userAddresses?.map((address, index) => (
@@ -172,16 +156,12 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 						placement='bottom'
 						open={addressDropdownExpand}
 					>
-						<div className='flex w-[206px] items-center rounded-[4px] border-[1px] border-solid border-[#DCDFE3] px-3 py-2'>
-							<Checkbox
-								indeterminate={indeterminate}
-								onChange={onCheckAllChange}
-								checked={checkAll}
-								className='w-full'
+						<div className=' flex w-[180px] items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium text-lightBlue'>
+							Select Addresses
+							<span
+								onClick={() => setAddressDropdownExpand(!addressDropdownExpand)}
+								className='flex items-center'
 							>
-								Select Addresses
-							</Checkbox>
-							<span onClick={() => setAddressDropdownExpand(!addressDropdownExpand)}>
 								<DownArrowIcon className={`cursor-pointer ${addressDropdownExpand && 'pink-color rotate-180'}`} />
 							</span>
 						</div>
@@ -217,7 +197,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 										className={`border-[#DCDFE3] text-sm text-bodyBlue max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid ${data?.expand && 'max-md:bg-[#fbfbfc]'}`}
 										key={index}
 									>
-										<div className={`border-0 ${!data?.expand && !loading && 'border-b-[1px] '} border-solid border-[#DCDFE3] text-sm text-bodyBlue max-md:border-none `}>
+										<div className={`border-0 ${!data?.expand && !loading && 'border-b-[1px]'} border-solid border-[#DCDFE3] text-sm text-bodyBlue max-md:border-none `}>
 											<div className='flex h-14 items-center justify-between gap-2 border-0 px-3 max-md:border-b-[1px] max-md:border-solid max-md:border-[#DCDFE3]'>
 												<Link
 													target='_blank'

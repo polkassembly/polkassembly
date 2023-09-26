@@ -421,6 +421,10 @@ const CreatePreimage = ({
 
 		const preimageRaw: any = await api?.query?.preimage?.preimageFor([preimageHash, length]);
 		const preimage = preimageRaw.unwrapOr(null);
+		if (!preimage) {
+			console.log('Error in unwraping preimage');
+			return;
+		}
 
 		const constructProposal = function (api: ApiPromise, bytes: Bytes): Proposal | undefined {
 			let proposal: Proposal | undefined;

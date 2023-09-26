@@ -229,7 +229,12 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 
 		(async () => {
 			try {
-				const identityHash = await api.query.identity.identityOf(encoded_addr).then((res) => res.unwrap().info.hash.toHex());
+				const identityHash = await api.query.identity.identityOf(encoded_addr).then((res) => res.unwrapOr(null)?.info.hash.toHex());
+				if (!identityHash) {
+					console.log('Error in unwrapping identity hash');
+					return;
+				}
+
 				setIdentityHash(identityHash || '');
 				handleLocalStorageSave({ identityHash });
 			} catch (err) {

@@ -9,9 +9,8 @@ import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
 import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
 import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
-import CloseIcon from '~assets/icons/close.svg';
-import { Modal, Spin } from 'antd';
-import Curves from '../../Referenda/Curves';
+import { Spin } from 'antd';
+import { convertGraphPoint, formatHoursAndDays } from '../../Referenda/Curves';
 
 interface IProgress {
 	approval: number;
@@ -29,14 +28,11 @@ interface IThresholdGraph {
 	curvesLoading: boolean;
 	curvesError: string;
 	setData: React.Dispatch<any>;
-	thresholdOpen: boolean;
-	setThresholdOpen: any;
 	forGovSidebar?: boolean;
 }
 
 const ThresholdGraph: FC<IThresholdGraph> = (props) => {
-	const { data, progress, curvesError, curvesLoading, setData, thresholdOpen, setThresholdOpen, forGovSidebar } = props;
-
+	const { data, progress, curvesError, curvesLoading, setData, forGovSidebar } = props;
 	const toggleData = (index: number) => {
 		setData((prev: any) => {
 			if (prev.datasets && Array.isArray(prev.datasets) && prev.datasets.length > index) {
@@ -95,32 +91,32 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 											callbacks: {
 												label(tooltipItem: any) {
 													const { dataIndex, parsed, dataset } = tooltipItem;
+													if (dataset.label === 'Support') {
+														const threshold = Number(parsed.y).toFixed(2);
+														const dataset = data.datasets.find((dataset) => dataset.label === 'Current Support');
 
-													// only display one item
-													if (['Approval', 'Current Approval'].includes(dataset.label)) {
-														return '';
+														const currSupport = dataset.data.find((d: any) => d.x > dataIndex);
+														return `Support: ${convertGraphPoint(currSupport?.y)} / ${threshold}%`;
+													} else if (dataset.label === 'Approval') {
+														const threshold = Number(parsed.y).toFixed(2);
+														const dataset = data.datasets.find((dataset) => dataset.label === 'Current Approval');
+
+														const currApproval = dataset.data.find((d: any) => d.x > dataIndex);
+														return `Approval: ${convertGraphPoint(currApproval?.y)} / ${threshold}%`;
 													}
 
-													if (dataset.label === 'Current Support') {
-														const currentApproval = data.datasets[2].data[dataIndex];
-														const currentSupport = data.datasets[3].data[dataIndex];
-														const currentApprovalValue = Number(typeof currentApproval === 'object' ? currentApproval.y : currentApproval).toFixed(2);
-														const currentSupportValue = Number(typeof currentSupport === 'object' ? currentSupport.y : currentSupport).toFixed(2);
-														return `Current Support: ${currentSupportValue}% Current Approval: ${currentApprovalValue}%`;
-													}
-
-													const hs = parsed.x;
-													const approval = data.datasets[0].data[dataIndex];
-													const support = data.datasets[1].data[dataIndex];
-													const approvalValue = Number(typeof approval === 'object' ? approval.y : approval).toFixed(2);
-													const supportValue = Number(typeof support === 'object' ? support.y : support).toFixed(2);
-
-													const result = `Time: ${(hs / 60).toFixed(0)}hs Support: ${supportValue}% Approval: ${approvalValue}%`;
-
-													return result;
+													return null;
 												},
-												title() {
-													return '';
+												title(values: any) {
+													const { label } = values[0];
+													const hours = Number(label);
+													const days = Math.floor(hours / 24);
+													const resultHours = hours - days * 24;
+													let result = `Time: ${formatHoursAndDays(hours, 'h')}`;
+													if (days > 0) {
+														result += ` (${formatHoursAndDays(days, 'day')} ${resultHours > 0 ? formatHoursAndDays(resultHours, 'h') : ''})`;
+													}
+													return result;
 												}
 											},
 											displayColors: false,
@@ -138,10 +134,10 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 											},
 											ticks: {
 												callback(v: any) {
-													return (v / (60 * 24)).toFixed(0);
+													return (v / 24).toFixed(0);
 												},
 												max: labelsLength,
-												stepSize: Math.round(labelsLength / (labelsLength / (60 * 24)))
+												stepSize: 24
 											} as any,
 											title: {
 												display: true,
@@ -264,26 +260,6 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 					</section>
 				)}
 			</Spin>
-			<Modal
-				onCancel={() => {
-					setThresholdOpen(false);
-				}}
-				open={thresholdOpen}
-				footer={[]}
-				className='md:min-w-[700px]'
-				closeIcon={<CloseIcon />}
-				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue'>Threshold Curves</h2>}
-			>
-				<div className='mt-5'>
-					<Curves
-						curvesError={curvesError}
-						curvesLoading={curvesLoading}
-						data={data}
-						progress={progress}
-						setData={setData}
-					/>
-				</div>
-			</Modal>
 		</>
 	);
 };

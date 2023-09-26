@@ -602,17 +602,21 @@ export async function getComments(
 			comment.proposer = userIdToUserMap[comment.user_id].proposer || comment.proposer;
 			comment.username = userIdToUserMap[comment.user_id].username || comment.username;
 			comment.is_custom_username = userIdToUserMap[comment.user_id].is_custom_username;
-			const voteHistoryParams = {
-				listingLimit: 1000,
-				network,
-				page: 1,
-				proposalIndex: postIndex,
-				proposalType: postType,
-				voterAddress: getEncodedAddress(comment.proposer, network) || comment.proposer
-			};
-			const { data = null } = await getVotesHistory(voteHistoryParams);
-			if (data && data.count > 0) {
-				comment.votes = data.votes;
+			if (postType !== ProposalType.DISCUSSIONS) {
+				const voteHistoryParams = {
+					listingLimit: 2,
+					network,
+					page: 1,
+					proposalIndex: postIndex,
+					proposalType: postType,
+					voterAddress: getEncodedAddress(comment.proposer, network) || comment.proposer
+				};
+				const { data = null } = await getVotesHistory(voteHistoryParams);
+				if (data && data.count > 0) {
+					comment.votes = data.votes;
+				}
+			} else {
+				comment.votes = [];
 			}
 			if (comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0) {
 				comment.replies = comment.replies.map((reply) => {

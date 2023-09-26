@@ -319,12 +319,12 @@ const UpcomingEvents = ({ className }: Props) => {
 
 	const getEventData = (value: Dayjs): any[] => {
 		const eventList: any[] = [];
+		const currentDate = new Date();
 		calendarEvents.forEach((eventObj) => {
-			if (dayjs(eventObj.end_time).format('L') === value.format('L')) {
+			if (dayjs(eventObj.end_time).format('L') === value.format('L') && new Date(eventObj.end_time) > currentDate) {
 				eventList.push(eventObj);
 			}
 		});
-
 		return eventList;
 	};
 

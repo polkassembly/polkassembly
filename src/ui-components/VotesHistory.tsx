@@ -40,7 +40,7 @@ const getOrderBy = (sortByPostIndex: boolean, sortByVotes: boolean) => {
 	return orderBy;
 };
 
-enum EFilteredBy {
+enum EHeading {
 	VOTE = 'Vote',
 	PROPOSAL = 'Proposal',
 	STATUS = 'Status'
@@ -48,7 +48,7 @@ enum EFilteredBy {
 
 const VotesHistory = ({ className, userAddresses }: Props) => {
 	const { network } = useNetworkContext();
-	const headings = ['Proposal', 'Vote', 'Status'];
+	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS];
 	const [votesData, setVotesData] = useState<IVotesData[] | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [totalCount, setTotalCount] = useState<number>(0);
@@ -145,9 +145,9 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 		setDelegatorsLoading({ index: null, isLoading: true });
 	};
 
-	const handleSortingClick = (heading: EFilteredBy) => {
-		if (heading === EFilteredBy.STATUS) return;
-		if (heading === EFilteredBy.VOTE) {
+	const handleSortingClick = (heading: EHeading) => {
+		if (heading === EHeading.STATUS) return;
+		if (heading === EHeading.VOTE) {
 			setSortByVotes(!sortByVotes);
 		} else {
 			setSortByPostIndex(!sortByPostIndex);
@@ -183,7 +183,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 						<div className='flex h-14 items-center justify-between gap-2 border-0 border-y-[1px] border-solid border-[#DCDFE3] bg-[#fbfbfc] px-3 max-md:hidden'>
 							{headings.map((heading, index) => (
 								<span
-									onClick={() => handleSortingClick(heading as EFilteredBy)}
+									onClick={() => handleSortingClick(heading as EHeading)}
 									className={`flex items-center text-sm font-medium text-lightBlue ${index === 0 ? 'w-[50%] ' : index === 1 ? 'w-[30%]' : 'w-[20%] justify-end'} pr-10`}
 									key={index}
 								>
@@ -191,7 +191,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 									{index !== 2 && (
 										<ExpandIcon
 											className={
-												(heading === EFilteredBy.VOTE && !!sortByVotes) || (heading === EFilteredBy.PROPOSAL && !!sortByPostIndex)
+												(heading === EHeading.VOTE && !!sortByVotes) || (heading === EHeading.PROPOSAL && !!sortByPostIndex)
 													? 'ml-1 rotate-180 cursor-pointer'
 													: 'ml-1 cursor-pointer'
 											}

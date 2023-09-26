@@ -198,7 +198,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 					{selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) && (
 						<div className='mb-6'>
 							<Segmented
-								options={['Votes', 'Posts']}
+								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
 								onChange={(e) => setProfileHistory(e as EProfileHistory)}
 							/>
 						</div>

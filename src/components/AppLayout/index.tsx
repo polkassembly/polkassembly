@@ -509,7 +509,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	const gov2Items: MenuProps['items'] = [
+	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		// Tracks Heading
 		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
@@ -517,10 +517,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
 	];
-
-	if (network !== AllNetworks.POLYMESH) {
-		gov2Items.push(getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items]));
-	}
 
 	const gov2CollapsedItems: MenuProps['items'] = [
 		...gov2OverviewItems,
@@ -590,6 +586,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			}
 		}
 	};
+	if (network !== AllNetworks.POLYMESH) {
+		gov2Items = [...gov2Items, getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items])];
+	}
 
 	const userDropdown = getUserDropDown(
 		handleIdentityButtonClick,

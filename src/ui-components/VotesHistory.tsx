@@ -347,7 +347,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 																		<span className='text-sm text-bodyBlue'>
 																			{data?.delegatedVotes?.length
 																				? `${formatedBalance(((data?.delegateCapital || delegateCapital).toString() || '0').toString(), unit, 2)} ${unit}`
-																				: '0'}
+																				: 0}
 																		</span>
 																	</div>
 																</div>

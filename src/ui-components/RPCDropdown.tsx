@@ -11,7 +11,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import { TRPCEndpoint } from '~src/types';
 import { ArrowDownIcon, SignalTowerIcon } from './CustomIcons';
 import Loader from './Loader';
-import styled from 'styled-components';
 
 interface IRPCDropdownProps {
 	className?: string;
@@ -56,8 +55,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 				onClick: handleEndpointChange,
 				selectable: true
 			}}
-			className={`${className}`}
-			overlayClassName={`${className} navbar-dropdowns text-sm font-medium text-bodyBlue hover:text-pink_primary`}
+			className={className}
 		>
 			{isSmallScreen ? (
 				<span className='flex h-10 items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-[18px]'>
@@ -80,9 +78,4 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	);
 };
 
-export default styled(RPCDropdown)`
-	.ant-dropdown-menu-item {
-		color: #243a57 !important;
-		font-weight: 500 !important;
-	}
-`;
+export default RPCDropdown;

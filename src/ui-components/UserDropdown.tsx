@@ -38,9 +38,9 @@ const UserDropdown = ({ className, displayName, isVerified }: Props): JSX.Elemen
 				className='flex h-[40px] w-[40px] items-center justify-center bg-transparent'
 				iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 			/>
-			<div className={`flex items-center gap-1 text-xs ${isVerified && 'w-[85%]'}`}>
+			<div className='flex w-[85%] items-center gap-1 text-xs'>
 				<span className={`normal-case ${isVerified && 'truncate'}`}>
-					{profileUsername && profileUsername?.length > 12 && !isVerified ? `${profileUsername?.slice(0, 12)}...` : profileUsername}
+					{profileUsername && profileUsername?.length > 11 && !isVerified ? `${profileUsername?.slice(0, 11)}...` : profileUsername}
 				</span>
 				{isVerified && (
 					<CheckCircleFilled

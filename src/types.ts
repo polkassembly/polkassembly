@@ -32,7 +32,6 @@ export interface UserDetailsContextType {
 	email_verified?: boolean | null;
 	addresses?: string[] | null;
 	allowed_roles?: string[] | null;
-	govType: EGovType;
 	defaultAddress?: string | null;
 	setUserDetailsContextState: Dispatch<SetStateAction<UserDetailsContextType>>;
 	web3signup?: boolean | null;

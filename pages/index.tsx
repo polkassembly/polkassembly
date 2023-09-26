@@ -324,10 +324,20 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					</div>
 				)}
 				<div className='mx-1 mt-8'>
-					{network !== AllNetworks.COLLECTIVES && !isOpenGovSupported(network) ? (
-						<LatestActivity latestPosts={latestPosts} />
+					{network !== AllNetworks.COLLECTIVES ? (
+						!isOpenGovSupported(network) ? (
+							<LatestActivity latestPosts={latestPosts} />
+						) : (
+							<Gov2LatestActivity gov2LatestPosts={latestPosts} />
+						)
 					) : (
-						<Gov2LatestActivity gov2LatestPosts={latestPosts} />
+						<Gov2LatestActivity
+							gov2LatestPosts={{
+								allGov2Posts: latestPosts.all,
+								discussionPosts: latestPosts.discussions,
+								...latestPosts
+							}}
+						/>
 					)}
 				</div>
 

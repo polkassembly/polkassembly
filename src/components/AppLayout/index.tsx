@@ -7,8 +7,9 @@ import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircl
 import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Skeleton } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { ReactNode, memo, useEffect, useState } from 'react';
+import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
@@ -27,46 +28,45 @@ import {
 	ParachainsIcon,
 	PreimagesIcon,
 	ReferendaIcon,
-	RootIcon,
 	StakingAdminIcon,
+	TipsIcon,
 	TreasuryGroupIcon,
-	TechComProposalIcon,
-	DelegatedIcon,
-	ApplayoutIdentityIcon,
-	UpgradeCommitteePIPsIcon,
-	CommunityPIPsIcon,
 	TreasuryProposalsIcon,
 	ChildBountiesIcon,
-	TipsIcon
+	TechComProposalIcon,
+	DelegatedIcon,
+	RootIcon,
+	UpgradeCommitteePIPsIcon,
+	CommunityPIPsIcon,
+	ApplayoutIdentityIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
-import Link from 'next/link';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
-import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
-
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { PostOrigin } from '~src/types';
+
 import Footer from './Footer';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import PaLogo from './PaLogo';
 import dynamic from 'next/dynamic';
+import { poppins } from 'pages/_app';
+
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
-import { poppins } from 'pages/_app';
+import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import PaLogo from './PaLogo';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
-
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -77,17 +77,11 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 		icon,
 		key,
 		label,
-		type: key === 'tracksHeading' ? 'group' : ''
+		type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 	} as MenuItem;
 }
 
 export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT];
-
-interface Props {
-	Component: NextComponentType<NextPageContext, any, any>;
-	pageProps: any;
-	className?: string;
-}
 
 const getUserDropDown = (
 	handleSetIdentityClick: any,
@@ -106,7 +100,7 @@ const getUserDropDown = (
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<UserOutlined />
@@ -118,7 +112,7 @@ const getUserDropDown = (
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<SettingOutlined />
@@ -131,7 +125,7 @@ const getUserDropDown = (
 			label: (
 				<Link
 					href='/'
-					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -174,7 +168,6 @@ const getUserDropDown = (
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => (
 		<Dropdown
-			className='user-menu-container'
 			menu={{ items: dropdownMenuItems }}
 			trigger={['click']}
 		>
@@ -203,13 +196,13 @@ const getUserDropDown = (
 		<AuthDropdown>
 			{img ? (
 				<Avatar
-					className='user-image -ml-2.5 mr-2'
+					className='-ml-2.5 mr-2'
 					size={40}
 					src={img}
 				/>
 			) : (
 				<Avatar
-					className='user-image -ml-2.5 mr-2'
+					className='-ml-2.5 mr-2'
 					size={40}
 					icon={<UserOutlined />}
 				/>
@@ -229,17 +222,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { setUserDetailsContextState, username, picture, loginAddress } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
-	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const router = useRouter();
-	const [open, setOpen] = useState<boolean>(false);
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
-
-	// const currentUser = useUserDetailsContext();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
-	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
-
-	// const { defaultAddress,web3signup } = currentUser;
-	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const [open, setOpen] = useState<boolean>(false);
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) || false;
+	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
+	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 
@@ -311,7 +300,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [api, apiReady, loginAddress]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
-		overviewItems: [],
+		overviewItems: [
+			!isMobile
+				? getSiderMenuItem(
+						'',
+						'',
+						<div
+							className={`${className} ${
+								sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
+							} svgLogo logo-container logo-display-block flex h-[66px] items-center justify-center bg-transparent`}
+						>
+							<div>
+								<PaLogo
+									className={`${sidedrawer ? 'ml-2' : 'ml-0'}h-full`}
+									sidedrawer={sidedrawer}
+								/>
+								<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom -mx-4 my-2`}></div>
+							</div>
+						</div>
+				  )
+				: null,
+			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
+			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
+			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-3 text-white' />)
+		],
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
@@ -347,45 +361,35 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				  ]
 				: []
 	};
-
-	if (!isOpenGovSupported(network)) {
-		gov1Items.treasuryItems.push(getSiderMenuItem('Bounties', '/bounties'), getSiderMenuItem('Child Bounties', '/child_bounties'));
+	if (isGrantsSupported(network)) {
+		gov1Items['overviewItems'].splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	const handleLogout = async (username: string) => {
-		logout(setUserDetailsContextState);
-		router.replace(router.asPath);
-		if (!router.query?.username) return;
-		if (router.query?.username.includes(username)) {
-			router.replace('/');
-		}
-	};
+	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
-	const handleIdentityButtonClick = () => {
-		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
-		} else {
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
-		}
-	};
-
-	let items: MenuProps['items'] = [...gov1Items.overviewItems];
-
-	if (chainProperties[network]?.subsquidUrl) {
+	if (chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
 		items = items.concat([
-			getSiderMenuItem('Democracy', 'gov1_democracy_group', <DemocracyProposalsIcon className='text-sidebarBlue' />, [...gov1Items.democracyItems]),
+			getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
 
-			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov1Items.treasuryItems]),
+			getSiderMenuItem('Treasury', 'treasury_group', null, [...gov1Items.treasuryItems]),
 
-			getSiderMenuItem('Council', 'gov1_democracy_group', <MotionsIcon className='text-sidebarBlue' />, [...gov1Items.councilItems]),
+			getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
 
-			getSiderMenuItem('Tech Committee...', 'gov1_democracy_group', <TechComProposalIcon className='text-sidebarBlue' />, [...gov1Items.techCommItems])
+			getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
 		]);
+	}
+
+	let collapsedItems: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
+
+	if (chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
+		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
+	}
+	if (network === 'polymesh') {
+		items = items.concat(
+			getSiderMenuItem(<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
+			...gov1Items.PIPsItems
+		);
+		collapsedItems = collapsedItems.concat([...gov1Items.PIPsItems]);
 	}
 
 	if (network === AllNetworks.COLLECTIVES) {
@@ -398,14 +402,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Alliance', 'alliance_group', null, [...gov1Items.allianceItems]),
 			getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)
 		];
+		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
 	} else if (network === AllNetworks.WESTENDCOLLECTIVES) {
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [...gov1Items.allianceItems])];
+		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems];
 	}
 
 	const gov2TrackItems: { [x: string]: ItemType[] } = {
 		mainItems: [],
 		governanceItems: [],
-		treasuryItems: [getSiderMenuItem('Bounties', '/bounties'), getSiderMenuItem('Child Bounties', '/child_bounties')],
+		treasuryItems: [],
 		fellowshipItems: [getSiderMenuItem('Members', '/members')]
 	};
 
@@ -468,19 +474,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	const userDropdown = getUserDropDown(
-		handleIdentityButtonClick,
-		isIdentityUnverified,
-		isGood,
-		handleLogout,
-		network,
-		picture,
-		username!,
-		mainDisplay!,
-		`${className} ${poppins.className} ${poppins.variable}`
-	);
-
-	const govOverviewItems = [
+	const gov2OverviewItems = [
 		!isMobile
 			? getSiderMenuItem(
 					'',
@@ -500,37 +494,45 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					</div>
 			  )
 			: null,
-		getSiderMenuItem('Overview', '/', <OverviewIcon className='mt-1 text-white' />),
+		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 text-white' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
+		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-white' />),
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
 	];
 
-	if (isOpenGovSupported(network)) {
-		govOverviewItems.splice(4, 0, getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-white' />));
-	}
-
-	if (isGrantsSupported(network)) {
-		govOverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
-	}
-
 	if (['kusama', 'polkadot'].includes(network)) {
-		govOverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5' />));
+		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5' />));
+	}
+	if (isGrantsSupported(network)) {
+		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	let gov2Items: MenuProps['items'] =
-		isOpenGovSupported(network) && network !== 'polymesh'
-			? [
-					...govOverviewItems,
-					// Tracks Heading
-					getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
-					...gov2TrackItems.mainItems,
-					getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
-					getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
-			  ]
-			: [...govOverviewItems];
+	const gov2Items: MenuProps['items'] = [
+		...gov2OverviewItems,
+		// Tracks Heading
+		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
+		...gov2TrackItems.mainItems,
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
+	];
 
-	if (isFellowshipSupported(network) && network !== 'polymesh') {
+	if (network !== AllNetworks.POLYMESH) {
+		gov2Items.push(getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items]));
+	}
+
+	const gov2CollapsedItems: MenuProps['items'] = [
+		...gov2OverviewItems,
+		...gov2TrackItems.mainItems,
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [...gov2TrackItems.governanceItems]),
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems])
+	];
+
+	if (network !== AllNetworks.POLYMESH) {
+		gov2CollapsedItems.push(...collapsedItems);
+	}
+	if (isFellowshipSupported(network)) {
 		gov2Items.splice(
 			gov2Items.length - 1,
 			1,
@@ -538,23 +540,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && network !== 'polymesh') {
-		gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.treasuryItems]));
+	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
+		if (network !== 'picasso') {
+			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.treasuryItems]));
+		} else {
+			gov2Items.splice(gov2Items.length - 2, 1);
+		}
 	}
 
-	if (network !== AllNetworks.POLYMESH) {
-		gov2Items.push(getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items]));
-	}
-
-	let gov2CollapsedItems: MenuProps['items'] = [
-		...govOverviewItems,
-		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [...gov2TrackItems.governanceItems]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems]),
-		...items
-	];
-
-	if (isFellowshipSupported(network) && network !== 'polymesh') {
+	if (isFellowshipSupported(network)) {
 		gov2CollapsedItems.splice(
 			gov2CollapsedItems.length - 1,
 			1,
@@ -562,7 +556,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network) && network !== 'polymesh') {
+	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
 		if (network !== 'picasso') {
 			gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [...gov2TrackItems.treasuryItems]));
 		} else {
@@ -570,25 +564,53 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	if (network === 'polymesh') {
-		gov2Items = gov2Items.concat(
-			getSiderMenuItem(<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
-			...gov1Items.PIPsItems
-		);
-		gov2CollapsedItems = gov2CollapsedItems.concat([...gov1Items.PIPsItems]);
-	}
-
 	const handleMenuClick = (menuItem: any) => {
-		if (['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
-		if (menuItem.key !== 'userdropwon') {
-			router.push(menuItem.key);
-			setSidedrawer(false);
+		if (['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
+		router.push(menuItem.key);
+		setSidedrawer(false);
+	};
+	const handleLogout = async (username: string) => {
+		logout(setUserDetailsContextState);
+		router.replace(router.asPath);
+		if (!router.query?.username) return;
+		if (router.query?.username.includes(username)) {
+			router.replace('/');
 		}
 	};
 
-	let sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
-	if (typeof window !== 'undefined' && username && window.screen.width < 1024 && isOpenGovSupported(network)) {
-		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), userDropdown, ...sidebarItems];
+	const handleIdentityButtonClick = () => {
+		const address = localStorage.getItem('identityAddress');
+		if (isMobile) {
+			setIdentityMobileModal(true);
+		} else {
+			if (address?.length) {
+				setOpen(!open);
+			} else {
+				setOpenAddressLinkedModal(true);
+			}
+		}
+	};
+
+	const userDropdown = getUserDropDown(
+		handleIdentityButtonClick,
+		isIdentityUnverified,
+		isGood,
+		handleLogout,
+		network,
+		picture,
+		username!,
+		mainDisplay!,
+		`${className} ${poppins.className} ${poppins.variable}`
+	);
+
+	let sidebarItems = !sidedrawer ? collapsedItems : items;
+
+	if (isOpenGovSupported(network)) {
+		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
+	}
+
+	if (username && isMobile) {
+		sidebarItems = [getSiderMenuItem('', '', <div className='h-[60px]' />), userDropdown, ...sidebarItems];
 	}
 
 	return (

@@ -5,7 +5,7 @@
 import { ParsedUrlQuery } from 'querystring';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 
-export const gov2Routes = ['gov-2', 'opengov', 'track', 'preimages', 'referenda', 'fellowship', 'member-referenda', 'delegation'];
+export const gov2Routes = ['gov-2', 'track', 'preimages', 'referenda', 'fellowship', 'member-referenda', 'delegation'];
 
 for (const trackName of Object.keys(networkTrackInfo.kusama)) {
 	gov2Routes.push(

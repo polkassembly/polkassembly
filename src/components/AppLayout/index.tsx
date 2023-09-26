@@ -734,10 +734,6 @@ export default styled(AppLayout)`
 		border-right: 1px solid #d2d8e0;
 	}
 
-	.logo-border li:nth-child(1):hover {
-		background: transparent !important;
-	}
-
 	#rc-menu-uuid-75314-4- {
 		border-bottom: 1px solid gray;
 	}

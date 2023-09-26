@@ -190,7 +190,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					setSidedrawer(!sidedrawer);
 				}}
 			>
-				<Dashboard className='mr-5 mt-1 text-2xl lg:hidden' />
+				<Dashboard className='dashboard-container mr-5 mt-1 text-2xl lg:hidden' />
 			</span>
 			<nav className='flex h-[60px] max-h-[60px] w-full items-center justify-between'>
 				<div className='flex items-center'>
@@ -480,6 +480,7 @@ export default styled(NavHeader)`
 		}
 
 		.text-container {
+			font-size: 12px !important;
 			margin-left: -4px !important;
 		}
 
@@ -488,7 +489,12 @@ export default styled(NavHeader)`
 		}
 
 		.logo-size {
-			margin-left: -16px !important;
+			transform: scale(0.9) !important;
+			margin-left: -25px !important;
+		}
+
+		.dashboard-container {
+			margin-left: -15px !important;
 		}
 	}
 `;

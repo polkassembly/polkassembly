@@ -347,7 +347,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					const comments: any = Object.assign({}, prev);
 					for (const key of keys) {
 						let flag = false;
-						const replyId = v4();
 						if (prev?.[key]) {
 							comments[key] = prev[key].map((comment) => {
 								if (comment.id === commentId) {

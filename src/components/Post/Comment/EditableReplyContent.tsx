@@ -12,6 +12,7 @@ import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import ReplyIcon from '~assets/icons/reply.svg';
+import { Caution } from '~src/ui-components/CustomIcons';
 
 import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
@@ -22,7 +23,6 @@ import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentRe
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { IconRetry } from '~src/ui-components/CustomIcons';
-import { IconCaution } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
 // import { v4 } from 'uuid';
 
@@ -106,9 +106,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		setError('');
 		global.window.localStorage.removeItem(editReplyKey(replyId));
 		form.setFieldValue('content', '');
-		const oldComments: any = Object.assign({}, comments);
+		let oldContent: any;
 		const keys = Object.keys(comments);
-		setComments((prev: any) => {
+		const getUpdatedComment = (prev: any) => {
 			const comments: any = Object.assign({}, prev);
 			for (const key of keys) {
 				let flag = false;
@@ -118,6 +118,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							if (comment?.replies && Array.isArray(comment.replies)) {
 								comment.replies = comment.replies.map((reply: any) => {
 									if (reply.id === replyId) {
+										oldContent = reply.content;
 										reply.content = newContent;
 										reply.updated_at = new Date();
 									}
@@ -138,8 +139,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				}
 			}
 			return comments;
-		});
-
+		};
+		setComments(getUpdatedComment(comments));
 		setIsEditing(false);
 
 		const { data, error: editReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editCommentReply', {
@@ -154,7 +155,36 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 
 		if (editReplyError || !data) {
 			console.error('Error saving reply: ', editReplyError);
-			setComments(oldComments);
+			setComments((prev: any) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of keys) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev[key].map((comment: any) => {
+							if (comment.id === commentId) {
+								if (comment?.replies && Array.isArray(comment.replies)) {
+									comment.replies = comment.replies.map((reply: any) => {
+										if (reply.id === replyId) {
+											reply.content = oldContent;
+										}
+										return {
+											...reply
+										};
+									});
+								}
+								flag = true;
+							}
+							return {
+								...comment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
+				}
+				return comments;
+			});
 			queueNotification({
 				header: 'Error!',
 				message: 'Failed to save reply',
@@ -194,6 +224,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 			});
 		}
 		if (data) {
+			setError('');
 			setComments((prev: any) => {
 				const comments: any = Object.assign({}, prev);
 				for (const key of Object.keys(comments)) {
@@ -348,8 +379,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 	};
 
 	const deleteReply = async () => {
+		let oldReplies: any;
 		const keys = Object.keys(comments);
-		const oldReplies = comments;
 		setComments((prev: any) => {
 			const comments: any = Object.assign({}, prev);
 			for (const key of keys) {
@@ -357,6 +388,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				if (prev?.[key]) {
 					comments[key] = prev[key].map((comment: any) => {
 						if (comment.id === commentId) {
+							oldReplies = comment.replies;
 							comment.replies =
 								comment?.replies?.map((reply: any) => {
 									return reply.id !== replyId ? reply : { ...reply, content: '[Deleted]', isDeleted: true };
@@ -374,6 +406,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 			}
 			return comments;
 		});
+		queueNotification({
+			header: 'Success!',
+			message: 'Your reply was deleted.',
+			status: NotificationStatus.SUCCESS
+		});
 		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
 			commentId,
 			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
@@ -383,18 +420,32 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		});
 
 		if (deleteReplyError || !data) {
-			setComments(oldReplies);
+			setComments((prev: any) => {
+				const comments: any = Object.assign({}, prev);
+				for (const key of keys) {
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev[key].map((comment: any) => {
+							if (comment.id === commentId) {
+								comment.replies = oldReplies;
+								flag = true;
+							}
+							return {
+								...comment
+							};
+						});
+					}
+					if (flag) {
+						break;
+					}
+				}
+				return comments;
+			});
 			console.error('Error deleting reply: ', deleteReplyError);
 			queueNotification({
 				header: 'Error!',
 				message: deleteReplyError || 'Error in deleting reply',
 				status: NotificationStatus.ERROR
-			});
-		} else {
-			queueNotification({
-				header: 'Success!',
-				message: 'Your reply was deleted.',
-				status: NotificationStatus.SUCCESS
 			});
 		}
 		setLoading(false);
@@ -509,16 +560,16 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								)
 							) : null}
 							{reply.isReplyError && (
-								<div className='-mt-[28px] ml-[325px] flex text-xs text-lightBlue'>
-									<IconCaution className='-mr-2 mt-[3px] text-2xl' />
-									<span className='m-0 mt-[4px] p-0'>Reply not posted</span>
+								<div className='ml-auto flex text-xs text-lightBlue'>
+									<Caution className='icon-container relative top-[4px] text-2xl' />
+									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
 									<div
 										onClick={handleRetry}
-										className='m-0 ml-[6px] mt-0 flex cursor-pointer px-[8px]'
-										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px', padding: '1px 8px !important' }}
+										className='retry-container relative flex w-[66px] cursor-pointer px-1'
+										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
 									>
-										<IconRetry className='mt-[4px] text-2xl' />
-										<span className='m-0 -ml-2 mt-[4px] p-0'>Retry</span>
+										<IconRetry className='relative top-[3px] text-2xl' />
+										<span className='relative top-[3px] m-0 p-0'>Retry</span>
 									</div>
 								</div>
 							)}

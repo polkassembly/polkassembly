@@ -3,25 +3,28 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ProposalType } from '~src/global/proposalType';
+import Tipper from '~assets/icons/small-tipper.svg';
+import Referendum from '~assets/icons/referendum-canceller.svg';
+import Fellowship from '~assets/icons/fellowship-admin.svg';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
 const technicalPips = [
 	{
 		label: 'New Technical Pips submitted',
-		triggerName: 'technicalPipsSubmitted',
-		triggerPreferencesName: 'technicalPipsSubmitted',
+		triggerName: 'pipSubmitted',
+		triggerPreferencesName: 'pipSubmitted',
 		value: 'New Technical Pips submitted'
 	},
 	{
 		label: 'Technical Pips opened',
-		triggerName: 'technicalPipsInVoting',
-		triggerPreferencesName: 'technicalPipsInVoting',
+		triggerName: 'pipInVoting',
+		triggerPreferencesName: 'pipInVoting',
 		value: 'Technical Pips opened'
 	},
 	{
 		label: 'Technical Pips closed / retracted',
-		triggerName: 'technicalPipsClosed',
-		triggerPreferencesName: 'technicalPipsClosed',
+		triggerName: 'pipClosed',
+		triggerPreferencesName: 'pipClosed',
 		value: 'Technical Pips closed / retracted'
 	}
 ];
@@ -29,20 +32,20 @@ const technicalPips = [
 const upgradePips = [
 	{
 		label: 'New Upgrade Pips submitted',
-		triggerName: 'upgradePipsSubmitted',
-		triggerPreferencesName: 'upgradePipsSubmitted',
+		triggerName: 'pipSubmitted',
+		triggerPreferencesName: 'pipSubmitted',
 		value: 'New Upgrade Pips submitted'
 	},
 	{
 		label: 'Upgrade Pips opened',
-		triggerName: 'upgradePipsInVoting',
-		triggerPreferencesName: 'upgradePipsInVoting',
+		triggerName: 'pipInVoting',
+		triggerPreferencesName: 'pipInVoting',
 		value: 'Upgrade Pips opened'
 	},
 	{
 		label: 'Upgrade Pips closed',
-		triggerName: 'upgradePipsClosed',
-		triggerPreferencesName: 'upgradePipsClosed',
+		triggerName: 'pipClosed',
+		triggerPreferencesName: 'pipClosed',
 		value: 'Upgrade Pips closed'
 	}
 ];
@@ -50,20 +53,20 @@ const upgradePips = [
 const communityPips = [
 	{
 		label: 'Community Pips submitted',
-		triggerName: 'communityPipsSubmitted',
-		triggerPreferencesName: 'communityPipsSubmitted',
+		triggerName: 'pipSubmitted',
+		triggerPreferencesName: 'pipSubmitted',
 		value: 'Community Pips submitted'
 	},
 	{
 		label: 'Community Pips opened',
-		triggerName: 'communityPipsInVoting',
-		triggerPreferencesName: 'communityPipsInVoting',
+		triggerName: 'pipInVoting',
+		triggerPreferencesName: 'pipInVoting',
 		value: 'Community Pips opened'
 	},
 	{
 		label: 'Community Pips closed',
-		triggerName: 'communityPipsClosed',
-		triggerPreferencesName: 'communityPipsClosed',
+		triggerName: 'pipClosed',
+		triggerPreferencesName: 'pipClosed',
 		value: 'Community Pips closed'
 	}
 ];
@@ -88,4 +91,30 @@ const titleMapper = (title: string) => {
 	}
 };
 
-export { pipNotification, titleMapper, technicalPips, upgradePips, communityPips };
+const postOriginMapper = (origin: string) => {
+	switch (origin) {
+		case ProposalType.TECHNICAL_PIPS: {
+			return 'Technical Pips';
+		}
+		case ProposalType.UPGRADE_PIPS: {
+			return 'Upgrade Pips';
+		}
+		case ProposalType.COMMUNITY_PIPS: {
+			return 'Community Pips';
+		}
+	}
+};
+export const iconMapper = (origin: string) => {
+	switch (origin) {
+		case ProposalType.TECHNICAL_PIPS: {
+			return Tipper;
+		}
+		case ProposalType.UPGRADE_PIPS: {
+			return Fellowship;
+		}
+		case ProposalType.COMMUNITY_PIPS: {
+			return Referendum;
+		}
+	}
+};
+export { pipNotification, titleMapper, technicalPips, upgradePips, communityPips, postOriginMapper };

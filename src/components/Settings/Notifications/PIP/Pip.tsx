@@ -7,25 +7,35 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import OverallPostsNotification from '~assets/icons/gov-icon.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
-import TipsIcon from '~assets/icons/tips.svg';
-import ReferendumsIcon from '~assets/icons/referndums.svg';
-import TreasuryProposalIcon from '~assets/icons/treasury-proposal.svg';
-import { titleMapper } from './utils';
-import { ProposalType } from '~src/global/proposalType';
+import { iconMapper, pipNotification, postOriginMapper, titleMapper } from './utils';
 import { ACTIONS } from '../Reducer/action';
+import { INotificationObject } from '../types';
 import { Collapse } from '../common-ui/Collapse';
+// import { ProposalType } from '~src/global/proposalType';
 
 const { Panel } = Collapse;
 type Props = {
-	onSetNotification: any;
-	userNotification: any;
-	dispatch: any;
+	onSetNotification: (obj: INotificationObject) => void;
+	userNotification: INotificationObject;
+	dispatch: React.Dispatch<any>;
 	options: any;
+};
+
+const getConsecutiveKeys = () => {
+	const keys = Object.keys(pipNotification);
+	const result = [];
+
+	for (let i = 0; i < keys.length; i += 2) {
+		result.push([keys?.[i], keys?.[i + 1] || []]);
+	}
+
+	return result;
 };
 
 export default function PipNotification({ onSetNotification, userNotification, dispatch, options }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
+	const pipTwoOptions = getConsecutiveKeys();
 
 	const handleAllClick = (checked: boolean) => {
 		dispatch({
@@ -40,18 +50,16 @@ export default function PipNotification({ onSetNotification, userNotification, d
 				if (!option?.triggerName) {
 					return;
 				}
-				let postTypes = notification?.[option.triggerName]?.post_types || [];
+				let pip_types = notification?.[option.triggerName]?.pip_types || [];
 				if (checked) {
-					if (!postTypes.includes(key)) postTypes.push(key);
+					if (!pip_types.includes(key)) pip_types.push(key);
 				} else {
-					postTypes = postTypes.filter((postType: string) => {
-						return postType !== key;
-					});
+					pip_types = pip_types.filter((pip: string) => pip !== key);
 				}
 				notification[option.triggerName] = {
-					enabled: postTypes.length > 0,
+					enabled: pip_types.length > 0,
 					name: option?.triggerPreferencesName,
-					post_types: postTypes
+					pip_types
 				};
 			});
 		});
@@ -64,7 +72,7 @@ export default function PipNotification({ onSetNotification, userNotification, d
 		setAll(allSelected);
 	}, [options]);
 
-	const handleCategoryAllClick = (checked: boolean, categoryOptions: any, title: string) => {
+	const handleCategoryAllClick = (checked: boolean, categoryOptions: any, title: any) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -77,18 +85,16 @@ export default function PipNotification({ onSetNotification, userNotification, d
 			if (!option?.triggerName) {
 				return;
 			}
-			let postTypes = notification?.[option.triggerName]?.post_types || [];
+			let pip_types = notification?.[option.triggerName]?.pip_types || [];
 			if (checked) {
-				if (!postTypes.includes(title)) postTypes.push(title);
+				if (!pip_types.includes(title)) pip_types.push(title);
 			} else {
-				postTypes = postTypes.filter((postType: string) => {
-					return postType !== title;
-				});
+				pip_types = pip_types.filter((pip: string) => pip !== title);
 			}
 			notification[option.triggerName] = {
-				enabled: postTypes.length > 0,
+				enabled: pip_types.length > 0,
 				name: option?.triggerPreferencesName,
-				post_types: postTypes
+				pip_types
 			};
 		});
 		onSetNotification(notification);
@@ -107,20 +113,19 @@ export default function PipNotification({ onSetNotification, userNotification, d
 		if (!option?.triggerName) {
 			return;
 		}
-		let postTypes = notification?.[option.triggerName]?.post_types || [];
+		let pip_types = notification?.[option.triggerName]?.pip_types || [];
 		if (checked) {
-			if (!postTypes.includes(title)) postTypes.push(title);
+			if (!pip_types.includes(title)) pip_types.push(title);
 		} else {
-			postTypes = postTypes.filter((postType: string) => postType !== title);
+			pip_types = pip_types.filter((pip: string) => pip !== title);
 		}
 		notification[option.triggerName] = {
-			enabled: postTypes.length > 0,
+			enabled: pip_types.length > 0,
 			name: option?.triggerPreferencesName,
-			post_types: postTypes
+			pip_types
 		};
 		onSetNotification(notification);
 	};
-
 	return (
 		<Collapse
 			size='large'
@@ -157,42 +162,38 @@ export default function PipNotification({ onSetNotification, userNotification, d
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<div className='flex flex-wrap'>
-						<GroupCheckbox
-							categoryOptions={options[ProposalType.TECHNICAL_PIPS]}
-							title='Technical Pips'
-							classname='md:basis-[50%]'
-							Icon={ReferendumsIcon}
-							onChange={handleChange}
-							handleCategoryAllClick={handleCategoryAllClick}
-						/>
-						<Divider
-							className='border-[2px] border-[#D2D8E0] md:hidden'
-							dashed
-						/>
-						<GroupCheckbox
-							categoryOptions={options[ProposalType.UPGRADE_PIPS]}
-							title='Upgrade Pips'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={TipsIcon}
-							onChange={handleChange}
-							handleCategoryAllClick={handleCategoryAllClick}
-						/>
-					</div>
-					<Divider
-						className='border-2 border-[#D2D8E0]'
-						dashed
-					/>
-					<div className='flex flex-wrap'>
-						<GroupCheckbox
-							categoryOptions={options[ProposalType.COMMUNITY_PIPS]}
-							title='Community Pips'
-							classname='md:basis-[50%]'
-							Icon={TreasuryProposalIcon}
-							onChange={handleChange}
-							handleCategoryAllClick={handleCategoryAllClick}
-						/>
-					</div>
+					{pipTwoOptions.map((category: any[], i: number) => (
+						<React.Fragment key={category.toString()}>
+							<div className='flex flex-wrap'>
+								{category.map((postType, i) => {
+									return (
+										<React.Fragment key={postType.toString()}>
+											<GroupCheckbox
+												categoryOptions={options[postType]}
+												title={postOriginMapper(postType)}
+												classname={i === category.length - 1 ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]' : 'md:basis-[50%]'}
+												Icon={iconMapper(postType)}
+												onChange={handleChange}
+												handleCategoryAllClick={handleCategoryAllClick}
+											/>
+											{i !== category.length - 1 && (
+												<Divider
+													className='border-[2px] border-[#D2D8E0] md:hidden'
+													dashed
+												/>
+											)}
+										</React.Fragment>
+									);
+								})}
+							</div>
+							{i !== pipTwoOptions.length - 1 && (
+								<Divider
+									className='border-2 border-[#D2D8E0]'
+									dashed
+								/>
+							)}
+						</React.Fragment>
+					))}
 				</div>
 			</Panel>
 		</Collapse>

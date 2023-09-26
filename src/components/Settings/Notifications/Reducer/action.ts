@@ -155,10 +155,10 @@ const updateAll = (payload: any, state: IReducerState) => {
 	}
 	const pipNotification: any = {};
 	for (const key in state.pipNotification) {
-		pipNotification[key] = state.pipNotification?.[key].map((category: any) => {
+		pipNotification[key] = state.pipNotification?.[key]?.map((category: any) => {
 			return {
 				...category,
-				selected: payload?.data?.[category.triggerName]?.post_types.includes(key) || false
+				selected: payload?.data?.[category.triggerName]?.pip_types?.includes(key) || false
 			};
 		});
 	}

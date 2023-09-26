@@ -15,6 +15,7 @@ export interface INotificationObject {
 		tracks?: Array<number> | undefined;
 		sub_triggers?: Array<string> | undefined;
 		mention_types?: Array<string> | EMentionType[];
+		pip_types?: Array<string> | undefined;
 	};
 }
 

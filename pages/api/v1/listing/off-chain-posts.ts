@@ -26,17 +26,17 @@ interface IGetOffChainPostsParams {
 	sortBy: string | string[];
 	listingLimit: string | string[] | number;
 	proposalType: OffChainProposalType | string | string[];
-  filterBy?:string[] ;
+	filterBy?: string[];
 }
 
-export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promise<IApiResponse<IPostsListingResponse>> {
+export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
 		const { network, listingLimit, page, proposalType, sortBy, filterBy } = params;
 		const strSortBy = String(sortBy);
 
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
-			throw apiErrorWithStatusCode( `Invalid listingLimit "${listingLimit}"`, 400);
+			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
 		}
 
 		const strProposalType = String(proposalType);
@@ -60,22 +60,26 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 		}
 
 		const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
-		const postsSnapshotArr = (filterBy && filterBy.length > 0)
-			? await offChainCollRef
-				.where('tags','array-contains-any',filterBy)
-				.orderBy(orderedField, order)
-				.limit(Number(listingLimit) || LISTING_LIMIT)
-				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
-				.get()
-			:await offChainCollRef
-				.orderBy(orderedField, order)
-				.limit(Number(listingLimit) || LISTING_LIMIT)
-				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
-				.get();
+		const postsSnapshotArr =
+			filterBy && filterBy.length > 0
+				? await offChainCollRef
+						.where('tags', 'array-contains-any', filterBy)
+						.where('isDeleted', '==', false)
+						.orderBy(orderedField, order)
+						.limit(Number(listingLimit) || LISTING_LIMIT)
+						.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
+						.get()
+				: await offChainCollRef
+						.where('isDeleted', '==', false)
+						.orderBy(orderedField, order)
+						.limit(Number(listingLimit) || LISTING_LIMIT)
+						.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
+						.get();
 
-		const count = (filterBy && filterBy.length > 0)
-			?(await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count
-			: (await offChainCollRef.count().get()).data().count;
+		const count =
+			filterBy && filterBy.length > 0
+				? (await offChainCollRef.where('tags', 'array-contains-any', filterBy).where('isDeleted', '==', false).count().get()).data().count
+				: (await offChainCollRef.where('isDeleted', '==', false).count().get()).data().count;
 
 		const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 			if (doc && doc.exists) {
@@ -90,27 +94,33 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						'👎': reactions['👎']?.count || 0
 					};
 
-					const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 
 					const created_at = docData.created_at;
 					const { topic, topic_id } = docData;
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
-						created_at: created_at?.toDate? created_at?.toDate(): created_at,
-						gov_type:docData?.gov_type ,
+						created_at: created_at?.toDate ? created_at?.toDate() : created_at,
+						gov_type: docData?.gov_type,
 						isSpam: docData?.isSpam || false,
+						isSpamReportInvalid: docData?.isSpamReportInvalid || false,
 						post_id: docData.id,
 						post_reactions,
 						proposer: getProposerAddressFromFirestorePostData(docData, network),
-						tags:docData?.tags || [],
-						title:  docData?.title || null,
-						topic: topic? topic: isTopicIdValid(topic_id)? {
-							id: topic_id,
-							name: getTopicNameFromTopicId(topic_id)
-						}: getTopicFromType(strProposalType as ProposalType),
+						spam_users_count:
+							docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
+						tags: docData?.tags || [],
+						title: docData?.title || null,
+						topic: topic
+							? topic
+							: isTopicIdValid(topic_id)
+							? {
+									id: topic_id,
+									name: getTopicNameFromTopicId(topic_id)
+							  }
+							: getTopicFromType(strProposalType as ProposalType),
 						user_id: docData?.user_id || 1,
 						username: docData?.username
-
 					};
 				}
 			}
@@ -143,9 +153,13 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 		if (newIds.length > 0) {
 			const newIdsLen = newIds.length;
 			let lastIndex = 0;
-			for (let i = 0; i < newIdsLen; i+=30) {
+			for (let i = 0; i < newIdsLen; i += 30) {
 				lastIndex = i;
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
+				const addressesQuery = await firestore_db
+					.collection('addresses')
+					.where('user_id', 'in', newIds.slice(i, newIdsLen > i + 30 ? i + 30 : newIdsLen))
+					.where('default', '==', true)
+					.get();
 				addressesQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -162,7 +176,11 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 				});
 			}
 			if (lastIndex <= newIdsLen) {
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
+				const addressesQuery = await firestore_db
+					.collection('addresses')
+					.where('user_id', 'in', newIds.slice(lastIndex, lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen))
+					.where('default', '==', true)
+					.get();
 				addressesQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -203,12 +221,12 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 
 // expects page, sortBy, proposalType and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | IApiErrorResponse> = async (req, res) => {
-	const { page = 1, proposalType = OffChainProposalType.DISCUSSIONS, sortBy = sortValues.COMMENTED, listingLimit = LISTING_LIMIT,filterBy } = req.query;
+	const { page = 1, proposalType = OffChainProposalType.DISCUSSIONS, sortBy = sortValues.COMMENTED, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getOffChainPosts({
-		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit,
 		network,
 		page,
@@ -216,11 +234,10 @@ const handler: NextApiHandler<IPostsListingResponse | IApiErrorResponse> = async
 		sortBy
 	});
 
-	if(error || !data) {
-
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
-		res.status(status).json(data);
+	if (error || !data) {
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+	} else {
+		return res.status(status).json(data);
 	}
 };
 

@@ -11,7 +11,7 @@ import util from 'util';
  * @example
  * pretty_console(data);
  * only use in server side code
-*/
+ */
 export default function console_pretty(data: any) {
 	console.log(util.inspect(data, false, null, true));
 }

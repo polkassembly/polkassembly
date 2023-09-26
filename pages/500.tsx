@@ -4,14 +4,29 @@
 
 import { Result } from 'antd';
 import Link from 'next/link';
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 
 const NotFound = () => {
+	const router = useRouter();
+
+	const [errorReason, setErrorReason] = useState<string>('');
+
+	useEffect(() => {
+		if (router.query.reason) {
+			setErrorReason(router.query.reason as string);
+		}
+	}, [router.query.reason]);
+
 	return (
 		<Result
-			title="Uh oh, something went wrong."
+			title='Uh oh, something went wrong.'
+			subTitle={errorReason}
 			extra={
-				<Link href='/' className='py-2 px-6 bg-pink_primary text-white border-white hover:bg-pink_secondary rounded-md text-lg h-[50px] w-[215px]'>
+				<Link
+					href='/'
+					className='h-[50px] w-[215px] rounded-md border-white bg-pink_primary px-6 py-2 text-lg text-white hover:bg-pink_secondary'
+				>
 					Go To Home
 				</Link>
 			}

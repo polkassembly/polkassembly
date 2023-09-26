@@ -40,16 +40,25 @@ const DiscussionPostClient: FC<IDiscussionPostClient> = ({ councilBoardSidebar =
 	if (loading) return <p>loading...</p>;
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (post) return (<div>
-		{!councilBoardSidebar &&  <BackToListingView postCategory={PostCategory.DISCUSSION} />}
+	if (post)
+		return (
+			<div>
+				{!councilBoardSidebar && <BackToListingView postCategory={PostCategory.DISCUSSION} />}
 
-		<div className='mt-6'>
-			<Post post={post} proposalType={ProposalType.DISCUSSIONS} />
+				<div className='mt-6'>
+					<Post
+						post={post}
+						proposalType={ProposalType.DISCUSSIONS}
+					/>
+				</div>
+			</div>
+		);
+
+	return (
+		<div className='mt-16'>
+			<LoadingState />
 		</div>
-	</div>);
-
-	return <div className='mt-16'><LoadingState /></div>;
-
+	);
 };
 
 export default DiscussionPostClient;

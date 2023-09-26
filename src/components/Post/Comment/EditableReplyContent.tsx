@@ -108,6 +108,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		form.setFieldValue('content', '');
 		let oldContent: any;
 		const keys = Object.keys(comments);
+
 		const getUpdatedComment = (prev: any) => {
 			const comments: any = Object.assign({}, prev);
 			for (const key of keys) {

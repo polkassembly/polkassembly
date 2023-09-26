@@ -376,7 +376,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							comments[key] = prev[key].map((comment) => {
 								if (comment.id === commentId) {
 									if (comment?.replies && Array.isArray(comment.replies)) {
-										console.log(comment.replies, replyId);
 										comment.replies = comment.replies.map((reply: any) => {
 											if (reply.id === replyId) {
 												reply.id = data.id;

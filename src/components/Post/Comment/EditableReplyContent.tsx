@@ -349,6 +349,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 
 	const deleteReply = async () => {
 		const keys = Object.keys(comments);
+		const oldReplies = comments;
 		setComments((prev: any) => {
 			const comments: any = Object.assign({}, prev);
 			for (const key of keys) {
@@ -357,8 +358,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 					comments[key] = prev[key].map((comment: any) => {
 						if (comment.id === commentId) {
 							comment.replies =
-								comment?.replies?.filter((reply: any) => {
-									return reply.id !== replyId;
+								comment?.replies?.map((reply: any) => {
+									return reply.id !== replyId ? reply : { ...reply, content: '[Deleted]', isDeleted: true };
 								}) || [];
 							flag = true;
 						}
@@ -382,6 +383,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		});
 
 		if (deleteReplyError || !data) {
+			setComments(oldReplies);
 			console.error('Error deleting reply: ', deleteReplyError);
 			queueNotification({
 				header: 'Error!',

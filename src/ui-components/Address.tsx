@@ -387,7 +387,6 @@ export default React.memo(styled(Address)`
 		display: inline-block;
 		color: nav_blue !important;
 	}
-
 	.identicon {
 		margin-right: 0.25rem;
 	}

@@ -18,7 +18,7 @@ import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import { useNetworkContext } from '~src/context';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
+// import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -44,14 +44,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	if ((isOpenGovSupported(network) && !req.headers.referer) || network === 'polkadot') {
-		return {
-			props: {},
-			redirect: {
-				destination: '/opengov'
-			}
-		};
-	}
 	const LATEST_POSTS_LIMIT = 8;
 
 	const networkSocialsData = await getNetworkSocials({ network });

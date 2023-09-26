@@ -40,7 +40,7 @@ for (const key of Object.keys(network)) {
 		key,
 		label: <div className='flex items-center my-2'>
 			<Image
-				className='w-5 h-5 mr-3 object-contain rounded-full'
+				className='w-5 h-5 mr-3 object-contain rounded-full dark:text-white'
 				src={chainProperties[keyVal]?.logo ? chainProperties[keyVal].logo : chainLogo}
 				alt='Logo'
 			/>
@@ -147,7 +147,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 		>
 			{isSearch ? <div className={`flex items-center justify-center text-xs dark:text-blue-dark-high cursor-pointer ${(openFilter || selectedNetworks.length > 0 ) && 'text-pink_primary' } max-sm:text-[10px]`}>
                              Network
-				<span className='text-[#96A4B6]'>
+				<span className='text-[#96A4B6] dark:text-icon-dark-inactive'>
 					{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1'/> :<DownOutlined className='ml-2.5 max-md:ml-1 mt-1'/>}
 				</span>
 			</div>
@@ -174,7 +174,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							<ArrowDownIcon />
 						</span>
 					</a>
-					: <a className='flex items-center justify-between text-blue-light-high dark:text-blue-dark-high hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]' onClick={e => {
+					: <a className='flex items-center justify-between text-blue-light-high dark:text-blue-dark-high hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px] dark:bg-black dark:border-[#3B444F]' onClick={e => {
 						e.preventDefault();
 						setSidedrawer(false);
 					}}

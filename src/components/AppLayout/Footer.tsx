@@ -15,6 +15,10 @@ import TwitterIconSm from '~assets/icons/twitter-icon-sm.svg';
 import DiscordIconSm from '~assets/icons/discord-icon-sm.svg';
 import TelegramIconSm from '~assets/icons/telegram-icon-sm.svg';
 import InternetIconSm from '~assets/icons/internet-icon-sm.svg';
+import DiscordDarkIcon from '~assets/icons/discord-dark.svg';
+import TelegramDarkIcon from '~assets/icons/telegram-dark.svg';
+import TwitterDarkIcon from '~assets/icons/twitter-dark.svg';
+import InternetDarkIcon from '~assets/icons/web-dark.svg';
 import AiBot from '../AiBot/AiBot';
 import { useState } from 'react';
 
@@ -44,19 +48,39 @@ const Footer = ({ className, theme } : { className?:string, theme?:string }) => 
 							<Space size={19} className='items-center '>
 
 								<a href={'https://twitter.com/polk_gov'} target='_blank' rel='noreferrer'>
-									<TwitterIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+									{
+										theme === 'dark' ?
+											<TwitterDarkIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+											:
+											<TwitterIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+									}
 								</a>
 
 								<a href={'https://discord.com/invite/CYmYWHgPha'} target='_blank' rel='noreferrer'>
-									<DiscordIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+									{
+										theme === 'dark' ?
+											<DiscordDarkIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+											:
+											<DiscordIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+									}
 								</a>
 
 								<a href={'https://t.me/+6WQDzi6RuIw3YzY1'} target='_blank' rel='noreferrer'>
-									<TelegramIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+									{
+										theme === 'dark' ?
+											<TelegramDarkIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+											:
+											<TelegramIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+									}
 								</a>
 
 								<a href={'https://polkassembly.io/'} target='_blank' rel='noreferrer'>
-									<InternetIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+									{
+										theme === 'dark' ?
+											<InternetDarkIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+											:
+											<InternetIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+									}
 								</a>
 
 							</Space>
@@ -67,21 +91,21 @@ const Footer = ({ className, theme } : { className?:string, theme?:string }) => 
 					{/* Terms Links */}
 					<div className="mt-8 md:mt-0 mx-auto md:mx-0 md:ml-auto flex flex-col md:flex-row justify-center md:justify-end">
 						<div className="md:ml-10 lg:ml-14 text-center sm:text-left">
-							<p className="text-lg font-bold text-blue-light-high dark:text-blue-dark-high mb-[-5px] max-[650px]:mt-[-15px] ">Help Center</p>
+							<p className="text-sm font-bold text-blue-light-high dark:text-blue-dark-medium mb-[-5px] max-[650px]:mt-[-15px] ">Help Center</p>
 
 							<nav aria-label="Footer About Nav" className="mt-4 md:mt-3">
-								<div className="space-y-2 text-sm text-lightBlue dark:text-blue-dark-medium font-normal">
+								<div className="space-y-2 text-sm text-lightBlue dark:text-blue-dark-high font-normal">
 
 									<div>
 										<a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer'>
 											Report an Issue
-											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-medium' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
 									</div>
 									<div className='max-[650px]:mb-[-5px]'>
 										<a href='https://feedback.polkassembly.io' target='_blank' rel='noreferrer'>
 											Feedback
-											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-medium' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
 									</div>
 									<div className='max-[650px]:hidden'>
@@ -92,15 +116,15 @@ const Footer = ({ className, theme } : { className?:string, theme?:string }) => 
 									<div>
 										<a href='https://github.com/polkassembly/polkassembly' target='_blank' rel='noreferrer'>
 											Github
-											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-medium' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
 									</div>
 								</div>
 							</nav>
 						</div>
 
-						<div className="mt-8 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-lightBlue dark:text-blue-dark-medium font-normal">
-							<p className="text-lg font-bold text-blue-light-high dark:text-blue-dark-high mb-[-5px] max-[650px]:mt-[-15px] ">Our Services</p>
+						<div className="mt-8 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-lightBlue dark:text-blue-dark-high font-normal">
+							<p className="text-sm font-bold text-blue-light-high dark:text-blue-dark-medium mb-[-5px] max-[650px]:mt-[-15px] ">Our Services</p>
 
 							<nav aria-label="Footer Services Nav" className="mt-4 md:mt-3">
 								<div className="space-y-2 text-sm">
@@ -108,7 +132,7 @@ const Footer = ({ className, theme } : { className?:string, theme?:string }) => 
 										<a href='https://docs.polkassembly.io/' target='_blank' rel='noreferrer'>
 										Docs
 										</a>
-										<RedirectIcon className='ml-3' />
+										<RedirectIcon className='ml-3 dark:text-white' />
 									</div>
 
 									<div className='max-[650px]:hidden'>
@@ -130,7 +154,7 @@ const Footer = ({ className, theme } : { className?:string, theme?:string }) => 
 
 				{/* Below divider */}
 				<Divider className='mb-0' />
-				<div className="mt-5 pb-3 text-sm text-lightBlue dark:text-blue-dark-medium font-medium">
+				<div className="mt-5 pb-3 text-sm text-lightBlue dark:text-blue-dark-high font-medium">
 					<div className="text-center sm:flex sm:justify-between sm:text-left">
 						<div className='flex max-[650px]:flex-col'>
 							<p className=" max-[650px]:mb-0 mr-1 ">

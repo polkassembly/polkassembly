@@ -93,7 +93,7 @@ const TrackerButton: FC<IDiscussionProps> = function ({ onchainId, proposalType 
 
 	return (
 		<Button
-			className={'flex items-center border-none px-1 text-pink_primary shadow-none md:px-2'}
+			className={'flex items-center border-none px-1 text-pink_primary shadow-none md:pl-2 md:pr-1'}
 			onClick={handleTrack}
 		>
 			{tracked ? <EyeInvisibleOutlined /> : <EyeOutlined />}

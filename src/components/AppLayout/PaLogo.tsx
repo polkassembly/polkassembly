@@ -9,7 +9,7 @@ interface IPaLogoProps {
 	style?: object;
 }
 const PaLogo: FC<IPaLogoProps> = (props) => {
-	const { className, sidedrawer } = props;
+	const { className, sidedrawer = true } = props;
 	return sidedrawer ? (
 		<svg
 			width='149'

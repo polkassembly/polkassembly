@@ -249,7 +249,7 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 		const StyledUnlinkButton: FC<{ withClickHandler?: boolean }> = ({ withClickHandler = false }) => {
 			return (
 				<Button
-					className={`font-medium text-sm m-0 p-0 outline-none border-none flex items-center justify-center text-red_primary ${!withClickHandler? 'opacity-50': ''}`}
+					className={`font-medium text-sm m-0 p-0 outline-none border-none flex items-center justify-center text-red_primary dark:bg-black ${!withClickHandler? 'opacity-50': ''}`}
 					disabled={withClickHandler ? false : true}
 					onClick={() => withClickHandler ? handleUnlink(address) : null}
 				>
@@ -268,7 +268,7 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 	const SetDefaultAddress: FC<{ address : string }> = ({ address }) => {
 		return currentUser.defaultAddress !== address
 			? <Button
-				className='font-medium text-sm m-0 p-0 text-grey_primary outline-none border-none flex items-center justify-center'
+				className='font-medium text-sm m-0 p-0 text-grey_primary outline-none border-none flex items-center dark:bg-black justify-center'
 				onClick={() => handleDefault(address)}
 			>
 				Set default
@@ -340,7 +340,7 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 
 		return (
 			<article className='flex flex-col gap-y-2'>
-				<label className='font-medium text-sm tracking-wide text-sidebarBlue'>{title}</label>
+				<label className='font-medium text-sm tracking-wide text-sidebarBlue dark:text-blue-dark-medium'>{title}</label>
 				<div className='flex flex-col'>
 					{
 						accountsObj && Object.entries(accountsObj).map(([key, value], index, arr) => {
@@ -372,7 +372,7 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 												: <>
 													<div className="col-span-1">
 														<Button
-															className='font-medium text-sm m-0 p-0 text-grey_primary outline-none border-none flex items-center justify-center'
+															className='font-medium text-sm m-0 p-0 text-grey_primary outline-none border-none flex items-center justify-center dark:bg-black dark:text-blue-dark-high'
 															onClick={() => handleLink(address, key as Wallet)}
 															icon={
 																<LinkOutlined />
@@ -400,11 +400,11 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high'>
-					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
+					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue dark:text-blue-dark-medium'>
 					Link Address
 					</span>
-					<Divider />
+					<Divider className='dark:bg-icon-dark-inactive' />
 				</div>
 			}
 			open={open}
@@ -453,7 +453,7 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 				{
 					fetchAccountsInfo?
 						<div className='max-w-[600px]'>
-							<p>
+							<p className='dark:text-blue-dark-medium'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
 							</p>
 						</div>
@@ -474,7 +474,7 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 							</section>
 				}
 				<div className='mr-[-24px] ml-[-24px]'>
-					<Divider className='my-4 mt-0' />
+					<Divider className='my-4 mt-0 dark:bg-icon-dark-inactive' />
 				</div>
 			</Spin>
 		</Modal>

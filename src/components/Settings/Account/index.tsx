@@ -92,6 +92,7 @@ const Account: FC<Props> = ({ className }) => {
 								subHeading='For participating in governance activities with your wallet address'
 								modal={
 									<Address
+										theme={theme}
 										open={isLinkAddress}
 										dismissModal={() => setIsLinkAddress(false)}
 									/>
@@ -108,6 +109,7 @@ const Account: FC<Props> = ({ className }) => {
 								subHeading='For participating in governance activities with your multisig'
 								modal={
 									<MultiSignatureAddress
+										theme={theme}
 										open={isMultiSigAddress}
 										dismissModal={() => setIsMultiSigAddress(false)}
 									/>
@@ -124,6 +126,7 @@ const Account: FC<Props> = ({ className }) => {
 								subHeading='For participating in governance activities with your proxy account'
 								modal={
 									<Proxy
+										theme={theme}
 										open={isLinkProxy}
 										dismissModal={() => setIsLinkProxy(false)}
 									/>

@@ -64,7 +64,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 		setError('');
 		setShowModal(false);
 	};
-	const Title = <span className='font-medium text-lg tracking-wide text-sidebarBlue'>Delete Account</span>;
+	const Title = <div className='font-medium text-lg tracking-wide text-sidebarBlue dark:bg-black dark:text-white'>Delete Account</div>;
 	const { Option } = Select;
 	return (
 		<Collapse
@@ -113,12 +113,12 @@ const Delete: FC<{className?: string}> = ({ className }) => {
                             Cancel
 							</Button>
 						]}
-						className={className}
+						className={`${className} ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
 					>
 						{error && <div className='mb-4'><FilteredError text={error}/></div>}
 						<article>
 							<label
-								className="text-sm text-sidebarBlue font-normal tracking-wide leading-6"
+								className="text-sm text-sidebarBlue dark:text-blue-dark-medium font-normal tracking-wide leading-6"
 								htmlFor="reason"
 							>
                             Why are you deleting your account?
@@ -139,7 +139,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 									}}
 									size='large'
 									placeholder='Select a reason'
-									className='rounded-md border-grey_border select-reason'
+									className='rounded-md border-grey_border select-reason dark:bg-black dark:text-white'
 								>
 									<Option value="I use another platform for my governance needs">
                                 I use another platform for my governance needs
@@ -171,7 +171,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 						</article>
 						<article className='mt-12'>
 							<label
-								className="text-sm text-sidebarBlue font-normal tracking-wide leading-6"
+								className="text-sm text-sidebarBlue dark:text-blue-dark-medium font-normal tracking-wide leading-6"
 								htmlFor="password"
 							>
                             To continue, re-enter your password

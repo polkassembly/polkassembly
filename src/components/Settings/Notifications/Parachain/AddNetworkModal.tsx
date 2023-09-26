@@ -193,9 +193,9 @@ const AddNetworkModal = ({
 														}
 														className={`items-center text-navBlue rounded-[34px] px-[12px] py-[8px] ${
 															selected
-																? 'border-solid border bg-[#FEF2F8] border-[#E5007A]'
+																? 'border-solid border bg-[#FEF2F8] dark:bg-[#29323c33] dark:border-[#3B444F] border-[#E5007A]'
 																: 'bg-white dark:bg-section-dark-overlay border-[#fff]'
-														} cursor-pointer hover:bg-[#FEF2F8] max-w-[200px] pb-[5px]`}
+														} cursor-pointer hover:bg-[#FEF2F8] dark:bg-[#29323c33] dark:border-[#3B444F] max-w-[200px] pb-[5px]`}
 													>
 														<Image
 															className='w-[20px] h-[20px] rounded-full -mt-[12px]'

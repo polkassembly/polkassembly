@@ -33,8 +33,8 @@ export default function NetworkTags({
 	return (
 		<Tag
 			onClick={onActionClick}
-			className={`flex items-center justify-between border-solid border rounded-[34px] border-[#E5007A] px-[24px] ${
-				selected ? 'bg-[#FEF2F8] py-[8px]' : 'bg-white dark:bg-section-dark-overlay py-[14px]'
+			className={`flex items-center justify-between border-solid border rounded-[34px] border-[#E5007A] dark:border-[#3B444F] px-[24px] ${
+				selected ? 'bg-[#FEF2F8] dark:bg-[#29323c33] py-[8px]' : 'bg-white dark:bg-section-dark-overlay py-[14px]'
 			} cursor-pointer`}
 		>
 			{icon ? (

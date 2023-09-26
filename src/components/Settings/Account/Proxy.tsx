@@ -24,9 +24,10 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 interface Props {
 	open?: boolean;
 	dismissModal?: () => void;
+	theme?: string;
 }
 
-const Proxy: FC<Props> = ({ dismissModal, open }) => {
+const Proxy: FC<Props> = ({ dismissModal, open, theme }) => {
 	const [form] = Form.useForm();
 
 	const { network } = useNetworkContext();
@@ -134,16 +135,16 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high'>
-					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
+					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue dark:text-blue-dark-medium'>
 					Link Proxy address
 					</span>
-					<Divider />
+					<Divider className='dark:bg-icon-dark-inactive'/>
 				</div>
 
 			}
 			open={open}
-			className='mb-8 md:min-w-[600px]'
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} mb-8 md:min-w-[600px]`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{
@@ -194,7 +195,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 								: <>
 									<section>
 										<label
-											className='flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6'
+											className='flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6 dark:text-blue-dark-medium'
 											htmlFor='proxiedAccount'
 										>
                                             Proxied Address
@@ -205,7 +206,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 										>
 											<Input
 												placeholder='Enter a valid proxy address'
-												className="rounded-md py-3 px-4 border-grey_border"
+												className="rounded-md py-3 px-4 border-grey_border dark:bg-black dark:text-blue-dark-high"
 												id="proxiedAccount"
 											/>
 										</Form.Item>

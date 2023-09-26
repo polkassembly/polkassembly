@@ -19,6 +19,7 @@ import HelperTooltip from 'src/ui-components/HelperTooltip';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
+import styled from 'styled-components';
 
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -27,11 +28,12 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 interface Props {
 	open?: boolean;
 	dismissModal?: () => void;
+	theme?: string;
 }
 
-const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
+const MultiSignatureAddress: FC<Props> = ({ open, dismissModal,theme }) => {
 	const { network } = useNetworkContext();
-
+	console.log('network',theme);
 	const [form] = Form.useForm();
 	const currentUser = useUserDetailsContext();
 	const [linkStarted, setLinkStarted] = useState(false);
@@ -255,13 +257,13 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high'>
-					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>Link Multisig address</span>
-					<Divider />
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
+					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue dark:text-blue-dark-high'>Link Multisig address</span>
+					<Divider className='dark:bg-icon-dark-inactive'/>
 				</div>
 			}
 			open={open}
-			className='mb-8 md:min-w-[600px]'
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} mb-8 md:min-w-[600px]`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{
@@ -303,7 +305,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			>
 				<section className='flex flex-col gap-y-4 w-full'>
 					<label
-						className="flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6"
+						className="flex items-center gap-x-3 text-sm text-sidebarBlue dark:text-blue-dark-medium font-normal tracking-wide leading-6"
 					>
 						Signatory Addresses
 						<HelperTooltip placement='right' text='The signatories (aka co-owners) have the ability to create transactions using the multisig and approve transactions sent by others. But, only once the threshold (set while creating a multisig account) is reached with approvals, the multisig transaction is enacted on-chain.' />
@@ -316,7 +318,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 									value={signatories[i]}
 									onChange={onSignatoriesAddressChange}
 									placeholder='Enter signatory addresses'
-									className="rounded-md py-3 px-4 border-grey_border"
+									className="rounded-md py-3 px-4 border-grey_border dark:bg-black dark:text-blue-dark-high"
 								/>
 								<button
 									type='button'
@@ -358,7 +360,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 				</section>
 				<section>
 					<label
-						className='flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6'
+						className='flex items-center gap-x-3 text-sm text-sidebarBlue dark:text-blue-dark-medium font-normal tracking-wide leading-6'
 						htmlFor='multisigAddress'
 					>
 						Multisig Address
@@ -378,14 +380,14 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 					>
 						<Input
 							placeholder='Enter a valid multisig address'
-							className="rounded-md py-3 px-4 border-grey_border"
+							className="rounded-md py-3 px-4 border-grey_border dark:bg-black dark:text-blue-dark-high"
 							id="multisigAddress"
 						/>
 					</Form.Item>
 				</section>
 				<section>
 					<label
-						className='flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6'
+						className='flex items-center gap-x-3 text-sm text-sidebarBlue dark:text-blue-dark-medium font-normal tracking-wide leading-6'
 						htmlFor='threshold'
 					>
 						Threshold
@@ -408,7 +410,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							min={1}
 							max={100}
 							placeholder='Enter threshold'
-							className="rounded-md py-2 px-3 border-grey_border w-full"
+							className="rounded-md py-2 px-3 border-grey_border w-full dark:bg-black dark:text-blue-dark-high"
 							id="threshold"
 						/>
 					</Form.Item>
@@ -429,4 +431,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 	);
 };
 
-export default MultiSignatureAddress;
+export default styled(MultiSignatureAddress)`
+input::placeholder{
+	color:  ${(props) => props.theme==='dark' ? '#909090' : ''} !important;
+ }
+`;

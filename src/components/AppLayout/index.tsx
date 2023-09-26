@@ -7,9 +7,8 @@ import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircl
 import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Skeleton } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { memo, ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, memo, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
@@ -28,46 +27,43 @@ import {
 	ParachainsIcon,
 	PreimagesIcon,
 	ReferendaIcon,
+	RootIcon,
 	StakingAdminIcon,
-	TipsIcon,
 	TreasuryGroupIcon,
-	TreasuryProposalsIcon,
-	ChildBountiesIcon,
 	TechComProposalIcon,
 	DelegatedIcon,
-	RootIcon,
+	ApplayoutIdentityIcon,
 	UpgradeCommitteePIPsIcon,
-	CommunityPIPsIcon,
-	ApplayoutIdentityIcon
+	CommunityPIPsIcon
 } from 'src/ui-components/CustomIcons';
-import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
+import Link from 'next/link';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
+
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { PostOrigin } from '~src/types';
-
 import Footer from './Footer';
-import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import PaLogo from './PaLogo';
 import dynamic from 'next/dynamic';
-import { poppins } from 'pages/_app';
-
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
-import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
+import { poppins } from 'pages/_app';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
+
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -78,11 +74,17 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 		icon,
 		key,
 		label,
-		type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
+		type: key === 'tracksHeading' ? 'group' : ''
 	} as MenuItem;
 }
 
 export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT];
+
+interface Props {
+	Component: NextComponentType<NextPageContext, any, any>;
+	pageProps: any;
+	className?: string;
+}
 
 const getUserDropDown = (
 	handleSetIdentityClick: any,
@@ -101,7 +103,7 @@ const getUserDropDown = (
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<UserOutlined />
@@ -113,7 +115,7 @@ const getUserDropDown = (
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<SettingOutlined />
@@ -126,7 +128,7 @@ const getUserDropDown = (
 			label: (
 				<Link
 					href='/'
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -169,6 +171,7 @@ const getUserDropDown = (
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => (
 		<Dropdown
+			className='user-menu-container'
 			menu={{ items: dropdownMenuItems }}
 			trigger={['click']}
 		>
@@ -197,13 +200,13 @@ const getUserDropDown = (
 		<AuthDropdown>
 			{img ? (
 				<Avatar
-					className='-ml-2.5 mr-2'
+					className='user-image -ml-2.5 mr-2'
 					size={40}
 					src={img}
 				/>
 			) : (
 				<Avatar
-					className='-ml-2.5 mr-2'
+					className='user-image -ml-2.5 mr-2'
 					size={40}
 					icon={<UserOutlined />}
 				/>
@@ -223,13 +226,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { setUserDetailsContextState, username, picture, loginAddress } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
-	const router = useRouter();
-	const [previousRoute, setPreviousRoute] = useState(router.asPath);
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
-	const [open, setOpen] = useState<boolean>(false);
-	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) || false;
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
-	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
+	const router = useRouter();
+	const [open, setOpen] = useState<boolean>(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+
+	// const currentUser = useUserDetailsContext();
+	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
+
+	// const { defaultAddress,web3signup } = currentUser;
+	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 
@@ -301,30 +308,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [api, apiReady, loginAddress]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
-		overviewItems: [
-			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
-			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
-			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-3 text-white' />)
-		],
-		democracyItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
-					getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-white' />)
-			  ]
-			: [],
+		overviewItems: [],
+		democracyItems: chainProperties[network]?.subsquidUrl ? [getSiderMenuItem('Proposals', '/proposals', null), getSiderMenuItem('Referenda', '/referenda', null)] : [],
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />), getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)]
 			: [],
-		treasuryItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
-					getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-					getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
-					getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
-			  ]
-			: [],
+		treasuryItems: chainProperties[network]?.subsquidUrl ? [getSiderMenuItem('Proposals', '/treasury-proposals', null), getSiderMenuItem('Tips', '/tips', null)] : [],
 		techCommItems: chainProperties[network]?.subsquidUrl ? [getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -343,49 +332,41 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				  ]
 				: []
 	};
-	if (isGrantsSupported(network)) {
-		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
+
+	if (!isOpenGovSupported(network)) {
+		gov1Items.treasuryItems.push(getSiderMenuItem('Bounties', '/bounties'), getSiderMenuItem('Child Bounties', '/child_bounties'));
 	}
 
-	if (isMobile) {
-		gov1Items.overviewItems = [
-			getSiderMenuItem(
-				<GovernanceSwitchButton
-					previousRoute={previousRoute}
-					className='flex lg:hidden'
-				/>,
-				'opengov',
-				''
-			),
-			...gov1Items.overviewItems
-		];
-	}
+	const handleLogout = async () => {
+		logout(setUserDetailsContextState);
+		router.replace(router.asPath);
+	};
+
+	const handleIdentityButtonClick = () => {
+		const address = localStorage.getItem('identityAddress');
+		if (isMobile) {
+			setIdentityMobileModal(true);
+		} else {
+			if (address?.length) {
+				setOpen(!open);
+			} else {
+				setOpenAddressLinkedModal(true);
+			}
+		}
+	};
 
 	let items: MenuProps['items'] = [...gov1Items.overviewItems];
 
-	if (chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
+	if (chainProperties[network]?.subsquidUrl) {
 		items = items.concat([
-			getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
+			getSiderMenuItem('Democracy', 'gov1_democracy_group', <DemocracyProposalsIcon className='text-sidebarBlue' />, [...gov1Items.democracyItems]),
 
-			getSiderMenuItem('Treasury', 'treasury_group', null, [...gov1Items.treasuryItems]),
+			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov1Items.treasuryItems]),
 
-			getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
+			getSiderMenuItem('Council', 'gov1_democracy_group', <MotionsIcon className='text-sidebarBlue' />, [...gov1Items.councilItems]),
 
-			getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
+			getSiderMenuItem('Tech Committee...', 'gov1_democracy_group', <TechComProposalIcon className='text-sidebarBlue' />, [...gov1Items.techCommItems])
 		]);
-	}
-
-	let collapsedItems: MenuProps['items'] = [...gov1Items.overviewItems];
-
-	if (chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
-		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
-	}
-	if (network === 'polymesh') {
-		items = items.concat(
-			getSiderMenuItem(<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
-			...gov1Items.PIPsItems
-		);
-		collapsedItems = collapsedItems.concat([...gov1Items.PIPsItems]);
 	}
 
 	if (network === AllNetworks.COLLECTIVES) {
@@ -398,16 +379,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Alliance', 'alliance_group', null, [...gov1Items.allianceItems]),
 			getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)
 		];
-		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
 	} else if (network === AllNetworks.WESTENDCOLLECTIVES) {
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [...gov1Items.allianceItems])];
-		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems];
 	}
 
 	const gov2TrackItems: { [x: string]: ItemType[] } = {
 		mainItems: [],
 		governanceItems: [],
-		treasuryItems: [],
+		treasuryItems: [getSiderMenuItem('Bounties', '/bounties'), getSiderMenuItem('Child Bounties', '/child_bounties')],
 		fellowshipItems: [getSiderMenuItem('Members', '/members')]
 	};
 
@@ -470,111 +449,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	let gov2OverviewItems = [
-		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 text-white' />),
-		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
-		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
-		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-white' />),
-		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
-	];
-
-	if (['kusama', 'polkadot'].includes(network)) {
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5' />));
-	}
-	if (isGrantsSupported(network)) {
-		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
-	}
-
-	if (typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
-		gov2OverviewItems = [
-			getSiderMenuItem(
-				<GovernanceSwitchButton
-					previousRoute={previousRoute}
-					className='flex lg:hidden'
-				/>,
-				'/',
-				''
-			),
-			...gov2OverviewItems
-		];
-	}
-
-	const gov2Items: MenuProps['items'] = [
-		...gov2OverviewItems,
-		// Tracks Heading
-		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
-		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
-	];
-
-	if (isFellowshipSupported(network)) {
-		gov2Items.splice(
-			gov2Items.length - 1,
-			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='mt-1 text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
-		);
-	}
-
-	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
-		if (network !== 'picasso') {
-			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.treasuryItems]));
-		} else {
-			gov2Items.splice(gov2Items.length - 2, 1);
-		}
-	}
-	const gov2CollapsedItems: MenuProps['items'] = [
-		...gov2OverviewItems,
-		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [...gov2TrackItems.governanceItems]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems])
-	];
-
-	if (isFellowshipSupported(network)) {
-		gov2CollapsedItems.splice(
-			gov2CollapsedItems.length - 1,
-			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems])
-		);
-	}
-
-	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
-		if (network !== 'picasso') {
-			gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [...gov2TrackItems.treasuryItems]));
-		} else {
-			gov2CollapsedItems.splice(gov2CollapsedItems.length - 2, 1);
-		}
-	}
-
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
-
-	const handleMenuClick = (menuItem: any) => {
-		if (['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
-		router.push(menuItem.key);
-		setSidedrawer(false);
-	};
-	const handleLogout = async (username: string) => {
-		logout(setUserDetailsContextState);
-		router.replace(router.asPath);
-		if (!router.query?.username) return;
-		if (router.query?.username.includes(username)) {
-			router.replace('/');
-		}
-	};
-	const handleIdentityButtonClick = () => {
-		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
-		} else {
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
-		}
-	};
-
 	const userDropdown = getUserDropDown(
 		handleIdentityButtonClick,
 		isIdentityUnverified,
@@ -587,13 +461,118 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		`${className} ${poppins.className} ${poppins.variable}`
 	);
 
-	let sidebarItems = !sidedrawer ? collapsedItems : items;
+	const govOverviewItems = isOpenGovSupported(network)
+		? [
+				!isMobile
+					? getSiderMenuItem(
+							'',
+							'',
+							<div
+								className={`${className} ${
+									sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
+								} svgLogo logo-container logo-display-block flex h-[66px] items-center justify-center bg-transparent`}
+							>
+								<div>
+									<PaLogo
+										className={`${sidedrawer ? 'ml-2' : 'ml-0'}h-full`}
+										sidedrawer={sidedrawer}
+									/>
+									<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom -mx-4 my-2`}></div>
+								</div>
+							</div>
+					  )
+					: null,
+				getSiderMenuItem('Overview', '/', <OverviewIcon className='mt-1 text-white' />),
+				getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
+				getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+				getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-white' />),
+				getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
+		  ]
+		: [
+				getSiderMenuItem('Overview', '/', <OverviewIcon className='mt-1 text-white' />),
+				getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
+				getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+				getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-white' />)
+		  ];
 
-	if (isGov2Route) {
-		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
+	if (isGrantsSupported(network)) {
+		govOverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if (username) {
+	if (['kusama', 'polkadot'].includes(network)) {
+		govOverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5' />));
+	}
+
+	let gov2Items: MenuProps['items'] =
+		isOpenGovSupported(network) && network !== 'polymesh'
+			? [
+					...govOverviewItems,
+					// Tracks Heading
+					getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
+					...gov2TrackItems.mainItems,
+					getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
+					getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
+			  ]
+			: [...govOverviewItems];
+
+	if (isFellowshipSupported(network) && network !== 'polymesh') {
+		gov2Items.splice(
+			gov2Items.length - 1,
+			1,
+			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='mt-1 text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
+		);
+	}
+
+	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && network !== 'polymesh') {
+		gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.treasuryItems]));
+	}
+
+	if (network !== AllNetworks.POLYMESH) {
+		gov2Items.push(getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items]));
+	}
+
+	let gov2CollapsedItems: MenuProps['items'] = [
+		...govOverviewItems,
+		...gov2TrackItems.mainItems,
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [...gov2TrackItems.governanceItems]),
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems]),
+		...items
+	];
+
+	if (isFellowshipSupported(network) && network !== 'polymesh') {
+		gov2CollapsedItems.splice(
+			gov2CollapsedItems.length - 1,
+			1,
+			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems])
+		);
+	}
+
+	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network) && network !== 'polymesh') {
+		if (network !== 'picasso') {
+			gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [...gov2TrackItems.treasuryItems]));
+		} else {
+			gov2CollapsedItems.splice(gov2CollapsedItems.length - 2, 1);
+		}
+	}
+
+	if (network === 'polymesh') {
+		gov2Items = gov2Items.concat(
+			getSiderMenuItem(<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
+			...gov1Items.PIPsItems
+		);
+		gov2CollapsedItems = gov2CollapsedItems.concat([...gov1Items.PIPsItems]);
+	}
+
+	const handleMenuClick = (menuItem: any) => {
+		if (['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
+		if (menuItem.key !== 'userdropwon') {
+			router.push(menuItem.key);
+			setSidedrawer(false);
+		}
+	};
+
+	let sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
+	if (typeof window !== 'undefined' && username && window.screen.width < 1024 && isOpenGovSupported(network)) {
 		sidebarItems = [userDropdown, ...sidebarItems];
 	}
 
@@ -611,7 +590,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'sidebar fixed bottom-0 left-0 z-40 hidden h-screen overflow-y-hidden bg-white lg:block'}
+					className={'sidebar fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white lg:block'}
 				>
 					<Menu
 						theme='light'
@@ -619,12 +598,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} mt-[60px]`}
+						className={`${username ? 'auth-sider-menu' : ''}`}
 					/>
 				</Sider>
 				<Drawer
 					placement='left'
 					closable={false}
+					className='menu-container'
 					onClose={() => setSidedrawer(false)}
 					open={sidedrawer}
 					getContainer={false}
@@ -632,8 +612,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						bottom: 0,
 						height: '100vh',
 						left: 0,
-						position: 'fixed',
-						top: '60px'
+						position: 'fixed'
 					}}
 				>
 					<Menu
@@ -647,7 +626,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
-				{['moonbeam', 'moonriver'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
+				{['moonbeam', 'moonriver'].includes(network) && ['/', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={'moonbeam'} />
@@ -706,6 +685,29 @@ const CustomContent = memo(function CustomContent({ Component, pageProps }: Prop
 });
 
 export default styled(AppLayout)`
+	.svgLogo svg {
+		height: 60%;
+	}
+
+	.border-bottom {
+		border-bottom: 1px solid #d2d8e0;
+	}
+	.border-right {
+		border-right: 1px solid #d2d8e0;
+	}
+
+	.logo-border li:nth-child(1):hover {
+		background: transparent !important;
+	}
+
+	#rc-menu-uuid-75314-4- {
+		border-bottom: 1px solid gray;
+	}
+
+	#rc-menu-uuid-44115-4- .logo-container {
+		height: 100px !important;
+	}
+
 	.ant-drawer .ant-drawer-mask {
 		position: fixed !important;
 	}
@@ -771,11 +773,6 @@ export default styled(AppLayout)`
 		list-style: none !important;
 	}
 
-	.auth-sider-menu > li:first-child {
-		margin-bottom: 25px;
-		margin-top: 15px;
-	}
-
 	.ant-empty-image {
 		display: flex;
 		justify-content: center;
@@ -800,5 +797,50 @@ export default styled(AppLayout)`
 
 	.ant-menu-sub {
 		background: #fff !important;
+	}
+
+	.ant-menu-item > .logo-container {
+		height: 100px;
+	}
+
+	.logo-container:hover {
+		background: #fff !important;
+	}
+
+	.menu-container {
+		top: 0px;
+	}
+
+	@media (max-width: 468px) and (min-width: 380px) {
+		.menu-container {
+			top: 62px !important;
+		}
+
+		.logo-display-block {
+			display: none !important;
+		}
+
+		.user-container {
+			display: flex !important;
+			width: 200px !important;
+			border: none !important;
+			background-color: #fff !important;
+		}
+
+		.logo-container {
+			display: flex !important;
+		}
+
+		.user-image {
+			font-size: 14px !important;
+		}
+
+		.user-info {
+			font-size: 14px !important;
+		}
+
+		.user-info-dropdown {
+			transform: scale(0.7);
+		}
 	}
 `;

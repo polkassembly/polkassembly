@@ -44,8 +44,6 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-[#485F7D] outline-none'>
 							<SearchOutlined />
 						</button>
-						<span className='rounded-full bg-[#407AFC] px-2 py-0.5 text-[10px] font-semibold text-white max-sm:hidden'>New</span>
-						<span className='-mt-3 text-[16px] text-[#407AFC] sm:hidden'>&#9679;</span>
 					</div>
 					<NewSearch
 						openModal={open}

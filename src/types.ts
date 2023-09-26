@@ -32,6 +32,7 @@ export interface UserDetailsContextType {
 	email_verified?: boolean | null;
 	addresses?: string[] | null;
 	allowed_roles?: string[] | null;
+	govType: EGovType;
 	defaultAddress?: string | null;
 	setUserDetailsContextState: Dispatch<SetStateAction<UserDetailsContextType>>;
 	web3signup?: boolean | null;
@@ -273,6 +274,11 @@ export interface NetworkSocials {
 	description: string;
 }
 
+export enum EGovType {
+	OPEN_GOV = 'open_gov',
+	GOV1 = 'gov1'
+}
+
 export interface NetworkEvent {
 	content: string;
 	end_time: Date;
@@ -370,6 +376,7 @@ export interface Post {
 	summary?: string;
 	createdOnPolkassembly?: boolean;
 }
+
 export interface IPostTag {
 	name: string;
 	last_used_at: Date;

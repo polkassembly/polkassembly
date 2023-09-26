@@ -62,14 +62,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	if (isOpenGovSupported(network) && !req.headers.referer) {
-		return {
-			props: {},
-			redirect: {
-				destination: '/opengov'
-			}
-		};
-	}
+	// if (isOpenGovSupported(network) && !req.headers.referer) {
+	// return {
+	// props: {},
+	// redirect: {
+	// destination: '/opengov'
+	// }
+	// };
+	// }
 
 	const networkSocialsData = await getNetworkSocials({ network });
 

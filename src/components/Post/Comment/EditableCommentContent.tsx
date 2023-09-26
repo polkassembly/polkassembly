@@ -6,9 +6,9 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { EReportType, ESentiment, NotificationStatus } from 'src/types';
+import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -46,9 +46,10 @@ import {
 import { poppins } from 'pages/_app';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { checkIsProposer } from '../utils/checkIsProposer';
-import { getSentimentTitle } from '~src/ui-components/CommentHistoryModal';
+
+import { IconRetry } from '~src/ui-components/CustomIcons';
+import { Caution } from '~src/ui-components/CustomIcons';
+import { v4 } from 'uuid';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -75,10 +76,9 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, is_custom_username, proposer } = props;
-	const { comments, setComments, setTimelines } = useCommentDataContext();
-
+	const { comments, setComments } = useCommentDataContext();
 	const { network } = useContext(NetworkContext);
-	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsContext();
+	const { id, username, picture, loginAddress } = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
 
 	const [replyForm] = Form.useForm();
@@ -99,9 +99,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [isReplying, setIsReplying] = useState(false);
-	const [isEditable, setIsEditable] = useState(false);
 
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
+
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
 		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
@@ -148,6 +148,40 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		await form.validateFields();
 		const newContent = form.getFieldValue('content');
 		if (!newContent) return;
+		setError('');
+		global.window.localStorage.removeItem(editCommentKey(commentId));
+		const keys = Object.keys(comments);
+		setComments((prev) => {
+			const comments: any = Object.assign({}, prev);
+			for (const key of keys) {
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev?.[key]?.map((comment: IComment) => {
+						const newComment = comment;
+						if (comment.id === commentId) {
+							(newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || [])]),
+								(newComment.content = newContent);
+							newComment.updated_at = new Date();
+							newComment.sentiment = sentiment || 0;
+							flag = true;
+						}
+						return {
+							...newComment
+						};
+					});
+				}
+				if (flag) {
+					break;
+				}
+			}
+			queueNotification({
+				header: 'Success!',
+				message: 'Your comment was edited.',
+				status: NotificationStatus.SUCCESS
+			});
+			return comments;
+		});
+		form.setFieldValue('content', currentContent.current);
 		if (currentContent.current !== newContent) {
 			currentContent.current = newContent;
 		}
@@ -171,27 +205,52 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				status: NotificationStatus.ERROR
 			});
 			console.error('Error saving comment ', editPostCommentError);
+			setComments((prev) => {
+				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+				const payload = Object.assign(prev, {});
+				payload[key] = prev[key].map((comment) => (comment.id === commentId ? { ...comment, isError: true } : comment));
+				return payload;
+			});
+		}
+		if (data) {
+			setComments((prev) => {
+				const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+				prev[key].map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
+				return prev;
+			});
 		}
 
-		if (data) {
-			setError('');
-			global.window.localStorage.removeItem(editCommentKey(commentId));
-			const keys = Object.keys(comments);
+		setLoading(false);
+	};
+
+	const handleRetry = async () => {
+		const { data, error: addCommentError } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addPostComment', {
+			commentId: commentId,
+			content: comment.content,
+			postId: props.postId,
+			postType: props.proposalType,
+			trackNumber: track_number,
+			userId: id
+		});
+
+		if (error || !data) {
+			setErrorReply('There was an error in saving your reply.');
+			console.error('Error saving reply: ', addCommentError);
+			queueNotification({
+				header: 'Error!',
+				message: 'There was an error in saving your reply.',
+				status: NotificationStatus.ERROR
+			});
+		} else {
 			setComments((prev) => {
 				const comments: any = Object.assign({}, prev);
-				for (const key of keys) {
+				for (const key of Object.keys(comments)) {
 					let flag = false;
 					if (prev?.[key]) {
 						comments[key] = prev?.[key]?.map((comment: IComment) => {
 							const newComment = comment;
 							if (comment.id === commentId) {
-								(newComment.history = [
-									{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 },
-									...(newComment?.history || [])
-								]),
-									(newComment.content = newContent);
-								newComment.updated_at = new Date();
-								newComment.sentiment = sentiment || 0;
+								newComment.isError = false;
 								flag = true;
 							}
 							return {
@@ -205,22 +264,63 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				}
 				return comments;
 			});
-			form.setFieldValue('content', currentContent.current);
-			queueNotification({
-				header: 'Success!',
-				message: 'Your comment was edited.',
-				status: NotificationStatus.SUCCESS
-			});
+			// setComments((prev) => {
+			// const key = `${postIndex}_${getSubsquidLikeProposalType(postType)}`;
+			// const comment = Object.assign(prev, {});
+			// comment[key] = comment[key].map((comment) => (comment.id === commentId ? { ...comment, isError: false } : comment));
+			// return comment;
+			// });
 		}
-
-		setLoading(false);
 	};
 
 	const handleReplySave = async () => {
 		await replyForm.validateFields();
 		const replyContent = replyForm.getFieldValue('content');
 		if (!replyContent) return;
-
+		setErrorReply('');
+		global.window.localStorage.removeItem(replyKey(commentId));
+		const keys = Object.keys(comments);
+		const replyId = v4();
+		const oldComment: any = Object.assign({}, comments);
+		setComments((prev) => {
+			const comments: any = Object.assign({}, prev);
+			for (const key of keys) {
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev[key].map((comment) => {
+						if (comment.id === commentId) {
+							if (comment?.replies && Array.isArray(comment.replies)) {
+								comment.replies.push({
+									content: replyContent,
+									created_at: new Date(),
+									id: replyId,
+									isReplyError: false,
+									proposer: loginAddress,
+									updated_at: new Date(),
+									user_id: id,
+									user_profile_img: picture || '',
+									username: username
+								});
+							}
+							flag = true;
+						}
+						return {
+							...comment
+						};
+					});
+				}
+				if (flag) {
+					break;
+				}
+			}
+			return comments;
+		});
+		replyForm.setFieldValue('content', '');
+		queueNotification({
+			header: 'Success!',
+			message: 'Your reply was added.',
+			status: NotificationStatus.SUCCESS
+		});
 		if (id) {
 			setIsReplying(false);
 
@@ -237,17 +337,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			if (addCommentError || !data) {
 				setErrorReply('There was an error in saving your reply.');
 				console.error('Error saving reply: ', addCommentError);
+				setComments(oldComment);
 				queueNotification({
 					header: 'Error!',
 					message: 'There was an error in saving your reply.',
 					status: NotificationStatus.ERROR
 				});
-			}
-
-			if (data) {
-				setErrorReply('');
-				global.window.localStorage.removeItem(replyKey(commentId));
-				const keys = Object.keys(comments);
 				setComments((prev) => {
 					const comments: any = Object.assign({}, prev);
 					for (const key of keys) {
@@ -256,15 +351,37 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							comments[key] = prev[key].map((comment) => {
 								if (comment.id === commentId) {
 									if (comment?.replies && Array.isArray(comment.replies)) {
-										comment.replies.push({
-											content: replyContent,
-											created_at: new Date(),
-											id: data.id,
-											proposer: loginAddress,
-											updated_at: new Date(),
-											user_id: id,
-											user_profile_img: picture || '',
-											username: username
+										comment.replies = comment.replies.map((reply) => (reply.id === replyId ? { ...reply, isReplyError: true } : reply));
+									}
+									flag = true;
+								}
+								return {
+									...comment
+								};
+							});
+						}
+						if (flag) {
+							break;
+						}
+					}
+					return comments;
+				});
+			} else {
+				setComments((prev) => {
+					const comments: any = Object.assign({}, prev);
+					for (const key of keys) {
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev[key].map((comment) => {
+								if (comment.id === commentId) {
+									if (comment?.replies && Array.isArray(comment.replies)) {
+										comment.replies = comment.replies.map((reply: any) => {
+											if (reply.id === replyId) {
+												reply.id = data.id;
+											}
+											return {
+												...reply
+											};
 										});
 									}
 									flag = true;
@@ -280,14 +397,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					}
 					return comments;
 				});
-				replyForm.setFieldValue('content', '');
-				queueNotification({
-					header: 'Success!',
-					message: 'Your reply was added.',
-					status: NotificationStatus.SUCCESS
-				});
 			}
-
 			setLoadingReply(false);
 		}
 	};
@@ -304,46 +414,32 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 	};
 
-	const removeCommentContent = () => {
+	const deleteComment = async () => {
+		const oldComments = comments;
 		const keys = Object.keys(comments);
 		setComments((prev) => {
 			const comments: any = Object.assign({}, prev);
 			for (const key of keys) {
 				if (prev?.[key]) {
-					comments[key] = prev[key].filter((comment) => comment.id !== commentId);
+					comments[key] = prev[key].map((comment) => (comment.id !== commentId ? comment : { ...comment, content: '[Deleted]', isDeleted: true }));
 				}
 			}
 			return comments;
 		});
-		setTimelines((prev) => {
-			return [
-				...prev.map((timeline) => {
-					if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
-						return {
-							...timeline,
-							commentsCount: timeline.commentsCount > 0 ? timeline.commentsCount - 1 : 0
-						};
-					}
-					return {
-						...timeline
-					};
-				})
-			];
-		});
 		queueNotification({
 			header: 'Success!',
-			message: 'The comment was deleted.',
+			message: 'Your comment was deleted.',
 			status: NotificationStatus.SUCCESS
 		});
-	};
-
-	const deleteComment = async () => {
 		const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
 			commentId,
 			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props.postId,
-			postType: comment.post_type || props.proposalType
+			postType: comment.post_type || props.proposalType,
+			trackNumber: track_number
 		});
+
 		if (deleteCommentError || !data) {
+			setComments(oldComments);
 			console.error('Error deleting comment: ', deleteCommentError);
 			queueNotification({
 				header: 'Error!',
@@ -351,30 +447,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				status: NotificationStatus.ERROR
 			});
 		}
-		if (data) {
-			removeCommentContent();
-		}
 	};
 
-	const canEditComment = useCallback(async () => {
-		if (id === userId) {
-			return setIsEditable(true);
-		}
-		if (!proposer) {
-			return setIsEditable(false);
-		}
-		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
-		if (!isProposer) {
-			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...(addresses || loginAddress)]);
-			if (isProposer) {
-				return setIsEditable(true);
-			}
-		}
-		return setIsEditable(false);
-	}, [addresses, id, loginAddress, proposer, userId]);
-
 	const items: MenuProps['items'] = [
-		isEditable
+		id === userId
 			? {
 					key: 1,
 					label: (
@@ -408,16 +484,16 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					key: 3,
 					label: (
 						<ReportButton
-							proposalType={(comment.post_type as any) || postType}
-							className={`flex items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+							proposalType={postType}
+							className={`ml-[-7px] mr-2 flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
 							type='comment'
 							commentId={commentId}
-							postId={(comment.post_index as any) || postIndex}
+							postId={postIndex}
 						/>
 					)
 			  }
 			: null,
-		isEditable
+		id === userId
 			? {
 					key: 4,
 					label: (
@@ -432,27 +508,25 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						</div>
 					)
 			  }
-			: allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network)
-			? {
-					key: 4,
-					label: (
-						<ReportButton
-							isDeleteModal={true}
-							proposalType={(comment.post_type as any) || postType}
-							className={`flex rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
-							type={EReportType.COMMENT}
-							onSuccess={removeCommentContent}
-							commentId={commentId}
-							postId={(comment.post_index as any) || postIndex}
-						/>
-					)
-			  }
 			: null
 	];
 
-	useEffect(() => {
-		canEditComment();
-	}, [canEditComment]);
+	const handleSentimentText = () => {
+		switch (sentiment) {
+			case 1:
+				return 'Completely Against';
+			case 2:
+				return 'Slightly Against';
+			case 3:
+				return 'Neutral';
+			case 4:
+				return 'Slightly For';
+			case 5:
+				return 'Completely For';
+			default:
+				return 'Neutral';
+		}
+	};
 
 	return (
 		<>
@@ -482,9 +556,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}}
 							className='mb-0'
 						/>
-						<div className='background mb-[10px] mt-[-10px] h-[70px] rounded-md bg-gray-100 p-2'>
-							<div className='flex gap-[2px] text-xs text-[#334D6E]'>
-								Sentiment:<h5 className='text-xs text-pink_primary'> {getSentimentTitle(sentiment as ESentiment)}</h5>
+						<div className='background mb-[10px] mt-[-25px] h-[70px] rounded-e-md bg-gray-100 p-2'>
+							<div className='flex gap-[2px] text-[12px] text-[#334D6E]'>
+								Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5>
 							</div>
 							<div className='flex items-center text-transparent'>
 								<div className='flex items-center justify-between gap-[15px] border-solid'>
@@ -586,6 +660,20 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							>
 								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
 							</Dropdown>
+							{comment.isError && (
+								<div className='ml-auto flex text-xs text-lightBlue'>
+									<Caution className='icon-container relative top-[4px] text-2xl' />
+									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
+									<div
+										onClick={handleRetry}
+										className='retry-container relative flex w-[66px] cursor-pointer px-1'
+										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+									>
+										<IconRetry className='relative top-[3px] text-2xl' />
+										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+									</div>
+								</div>
+							)}
 						</div>
 
 						{/* Add Reply Form*/}
@@ -660,5 +748,19 @@ export default styled(EditableCommentContent)`
 
 	code {
 		display: initial;
+	}
+
+	@media (min-width: 320px) and (max-width: 468px) {
+		.icon-container {
+			display: none;
+		}
+		.msg-container {
+			display: none;
+		}
+		.retry-container {
+			position: relative !important;
+			top: -2px !important;
+			left: -2px !important;
+		}
 	}
 `;

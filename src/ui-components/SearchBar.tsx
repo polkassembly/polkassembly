@@ -41,7 +41,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
 						onClick={() => setOpen(true)}
 					>
-						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-[#485F7D] outline-none'>
+						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none'>
 							<SearchOutlined />
 						</button>
 					</div>
@@ -66,7 +66,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 			) : (
 				<>
 					<button
-						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-[#485F7D] outline-none'
+						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none'
 						onClick={() => setOpen(true)}
 					>
 						<SearchOutlined />

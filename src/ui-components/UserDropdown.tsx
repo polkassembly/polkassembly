@@ -4,7 +4,6 @@
 
 import { CheckCircleFilled } from '@ant-design/icons';
 import React from 'react';
-import styled from 'styled-components';
 import { useUserDetailsContext } from '~src/context';
 import DownIcon from '~assets/icons/down-arrow.svg';
 import ImageComponent from '~src/components/ImageComponent';
@@ -54,62 +53,4 @@ const UserDropdown = ({ className, displayName, isVerified }: Props): JSX.Elemen
 	);
 };
 
-export default styled(UserDropdown)`
-	position: relative;
-	display: flex;
-	align-items: center;
-
-	.content {
-		display: inline-block;
-		color: nav_blue !important;
-	}
-
-	.identicon {
-		margin-right: 0.25rem;
-	}
-	.identicon svg {
-		width: 20px;
-		font-size: 15px;
-	}
-
-	.identityName {
-		filter: grayscale(100%);
-	}
-
-	.header {
-		color: black_text;
-		font-weight: 500;
-		margin-right: 0.4rem;
-	}
-
-	.description {
-		color: nav_blue;
-		margin-right: 0.4rem;
-	}
-
-	.display_inline {
-		display: inline-flex !important;
-	}
-
-	.sub {
-		color: nav_blue;
-		line-height: inherit;
-	}
-
-	@media (max-width: 468px) and (min-width: 380px) {
-		.user-details-container {
-			width: 100px !important;
-			font-size: 14px !important;
-		}
-
-		.user-image-container {
-			transform: scale(2);
-			margin-left: -32px !important;
-		}
-
-		.user-container {
-			display: flex !important;
-			margin-top: 30px !important;
-		}
-	}
-`;
+export default UserDropdown;

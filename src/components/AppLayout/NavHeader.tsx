@@ -491,9 +491,4 @@ export default styled(NavHeader)`
 			margin-left: -16px !important;
 		}
 	}
-
-	.user-profile.ant-dropdown-menu {
-		margin-top: 500px !important;
-		border: 1px solid black;
-	}
 `;

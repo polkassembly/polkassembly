@@ -22,6 +22,20 @@ export interface IProgress {
 	supportThreshold: number;
 }
 
+export function formatHoursAndDays(num: any, unit: 'day' | 'h') {
+	if (num === 1) {
+		return `${num}${unit}`;
+	}
+	return `${num}${unit}s`;
+}
+
+export function convertGraphPoint(value?: number) {
+	if (!value) {
+		return '--';
+	}
+
+	return `${Number(value).toFixed(2)}%`;
+}
 interface ICurvesProps {
 	data: {
 		datasets: any[];
@@ -31,6 +45,8 @@ interface ICurvesProps {
 	curvesLoading: boolean;
 	curvesError: string;
 	setData: React.Dispatch<any>;
+	canVote?: boolean;
+	status?: string;
 }
 
 const getStatement = (ApprovalCondition: boolean, supportCondition: boolean) => {
@@ -49,7 +65,7 @@ const getStatement = (ApprovalCondition: boolean, supportCondition: boolean) => 
 };
 
 const Curves: FC<ICurvesProps> = (props) => {
-	const { data, progress, curvesError, curvesLoading, setData } = props;
+	const { data, progress, curvesError, curvesLoading, setData, canVote, status } = props;
 	const toggleData = (index: number) => {
 		setData((prev: any) => {
 			if (prev.datasets && Array.isArray(prev.datasets) && prev.datasets.length > index) {
@@ -84,13 +100,24 @@ const Curves: FC<ICurvesProps> = (props) => {
 				<p className='text-center font-medium text-red-500'>{curvesError}</p>
 			) : (
 				<section>
-					{progress.approval >= progress.approvalThreshold && progress.support >= progress.supportThreshold ? (
+					{['Executed', 'Confirmed', 'Approved'].includes(status || '') || (progress.approval >= progress.approvalThreshold && progress.support >= progress.supportThreshold) ? (
 						<p className='row mb-2 flex items-center gap-1 text-sm font-medium'>
 							<span className='flex'>
 								<ChartIcon />
 							</span>
 							<p className='m-0'>
-								Proposal has <span className='text-aye_green'>passed</span> as both support and approval are above the threshold
+								Proposal{' '}
+								{canVote ? (
+									<span>
+										is <span className='text-aye_green'>passing</span>
+									</span>
+								) : (
+									<span>
+										has <span className='text-aye_green'>passed</span>
+									</span>
+								)}{' '}
+								{/* Currently removing because not sure about the condition */}
+								{/* as both support and approval are above the threshold */}
 							</p>
 						</p>
 					) : (
@@ -99,7 +126,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 								<ChartIcon />
 							</span>
 							<p className='m-0'>
-								Proposal has <span className='text-nay_red'>failed</span> as{' '}
+								Proposal <span className='text-nay_red'>{canVote ? 'is failing' : 'has failed'}</span> as{' '}
 								{getStatement(progress.approval >= progress.approvalThreshold, progress.support >= progress.supportThreshold)} the threshold
 							</p>
 						</p>
@@ -127,32 +154,32 @@ const Curves: FC<ICurvesProps> = (props) => {
 										callbacks: {
 											label(tooltipItem: any) {
 												const { dataIndex, parsed, dataset } = tooltipItem;
+												if (dataset.label === 'Support') {
+													const threshold = Number(parsed.y).toFixed(2);
+													const dataset = data.datasets.find((dataset) => dataset.label === 'Current Support');
 
-												// only display one item
-												if (['Approval', 'Current Approval'].includes(dataset.label)) {
-													return '';
+													const currSupport = dataset.data.find((d: any) => d.x > dataIndex);
+													return `Support: ${convertGraphPoint(currSupport?.y)} / ${threshold}%`;
+												} else if (dataset.label === 'Approval') {
+													const threshold = Number(parsed.y).toFixed(2);
+													const dataset = data.datasets.find((dataset) => dataset.label === 'Current Approval');
+
+													const currApproval = dataset.data.find((d: any) => d.x > dataIndex);
+													return `Approval: ${convertGraphPoint(currApproval?.y)} / ${threshold}%`;
 												}
 
-												if (dataset.label === 'Current Support') {
-													const currentApproval = data.datasets[2].data[dataIndex];
-													const currentSupport = data.datasets[3].data[dataIndex];
-													const currentApprovalValue = Number(typeof currentApproval === 'object' ? currentApproval.y : currentApproval).toFixed(2);
-													const currentSupportValue = Number(typeof currentSupport === 'object' ? currentSupport.y : currentSupport).toFixed(2);
-													return `Current Support: ${currentSupportValue}% Current Approval: ${currentApprovalValue}%`;
-												}
-
-												const hs = parsed.x;
-												const approval = data.datasets[0].data[dataIndex];
-												const support = data.datasets[1].data[dataIndex];
-												const approvalValue = Number(typeof approval === 'object' ? approval.y : approval).toFixed(2);
-												const supportValue = Number(typeof support === 'object' ? support.y : support).toFixed(2);
-
-												const result = `Time: ${(hs / 60).toFixed(0)}hs Support: ${supportValue}% Approval: ${approvalValue}%`;
-
-												return result;
+												return null;
 											},
-											title() {
-												return '';
+											title(values: any) {
+												const { label } = values[0];
+												const hours = Number(label);
+												const days = Math.floor(hours / 24);
+												const resultHours = hours - days * 24;
+												let result = `Time: ${formatHoursAndDays(hours, 'h')}`;
+												if (days > 0) {
+													result += ` (${formatHoursAndDays(days, 'day')} ${resultHours > 0 ? formatHoursAndDays(resultHours, 'h') : ''})`;
+												}
+												return result;
 											}
 										},
 										displayColors: false,
@@ -170,10 +197,10 @@ const Curves: FC<ICurvesProps> = (props) => {
 										},
 										ticks: {
 											callback(v: any) {
-												return (v / (60 * 24)).toFixed(0);
+												return (v / 24).toFixed(0);
 											},
 											max: labelsLength,
-											stepSize: Math.round(labelsLength / (labelsLength / (60 * 24)))
+											stepSize: 24
 										} as any,
 										title: {
 											display: true,

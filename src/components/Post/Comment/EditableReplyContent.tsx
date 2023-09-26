@@ -367,45 +367,49 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							md={content}
 						/>
 						<div className='flex flex-wrap items-center gap-x-3'>
-							{isEditable && (
-								<Button
-									className={'flex items-center border-none text-pink_primary shadow-none'}
-									disabled={loading}
-									onClick={toggleEdit}
-								>
-									{loading ? (
-										<span className='flex items-center text-xs'>
-											<LoadingOutlined className='mr-2' /> Editing
-										</span>
-									) : (
-										<span className='flex items-center text-xs'>
-											<FormOutlined className='mr-2' /> Edit
-										</span>
+							{!reply.isDeleted && (
+								<>
+									{isEditable && (
+										<Button
+											className={'flex items-center border-none text-pink_primary shadow-none'}
+											disabled={loading}
+											onClick={toggleEdit}
+										>
+											{loading ? (
+												<span className='flex items-center text-xs'>
+													<LoadingOutlined className='mr-2' /> Editing
+												</span>
+											) : (
+												<span className='flex items-center text-xs'>
+													<FormOutlined className='mr-2' /> Edit
+												</span>
+											)}
+										</Button>
 									)}
-								</Button>
-							)}
-							{id === userId ? (
-								<Button
-									className={'flex items-center border-none text-xs text-pink_primary shadow-none'}
-									onClick={deleteReply}
-								>
-									<DeleteOutlined />
-									Delete
-								</Button>
-							) : (
-								allowed_roles?.includes('moderator') &&
-								['polkadot', 'kusama'].includes(network) && (
-									<ReportButton
-										isDeleteModal={true}
-										proposalType={(reply.post_type as any) || postType}
-										className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
-										type={EReportType.REPLY}
-										onSuccess={removeReplyContent}
-										commentId={commentId}
-										replyId={replyId}
-										postId={(reply.post_index as any) || postIndex}
-									/>
-								)
+									{id === userId ? (
+										<Button
+											className={'flex items-center border-none p-0 text-xs text-pink_primary shadow-none'}
+											onClick={deleteReply}
+										>
+											<DeleteOutlined />
+											Delete
+										</Button>
+									) : (
+										allowed_roles?.includes('moderator') &&
+										['polkadot', 'kusama'].includes(network) && (
+											<ReportButton
+												isDeleteModal={true}
+												proposalType={(reply.post_type as any) || postType}
+												className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
+												type={EReportType.REPLY}
+												onSuccess={removeReplyContent}
+												commentId={commentId}
+												replyId={replyId}
+												postId={(reply.post_index as any) || postIndex}
+											/>
+										)
+									)}
+								</>
 							)}
 							{id && !isEditing && (
 								<ReportButton

@@ -392,7 +392,7 @@ export async function getComments(
 				? {
 						comment_reactions: getDefaultReactionObj(),
 						comment_source: 'polkassembly',
-						content: '[deleted]',
+						content: '[Deleted]',
 						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
 						history: [],
 						id: data.id,
@@ -431,7 +431,7 @@ export async function getComments(
 				  };
 
 			const replyIds: string[] = [];
-			const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted', '==', false).orderBy('created_at', 'asc').get();
+			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
 			repliesSnapshot.docs.forEach((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
@@ -450,9 +450,10 @@ export async function getComments(
 						}
 						comment.replies.push({
 							comment_id,
-							content,
+							content: data.isDeleted ? '[Deleted]' : content,
 							created_at: created_at?.toDate ? created_at.toDate() : created_at,
 							id: id,
+							isDeleted: data.isDeleted || false,
 							is_custom_username: false,
 							post_index: postIndex,
 							post_type: postType,
@@ -602,17 +603,21 @@ export async function getComments(
 			comment.proposer = userIdToUserMap[comment.user_id].proposer || comment.proposer;
 			comment.username = userIdToUserMap[comment.user_id].username || comment.username;
 			comment.is_custom_username = userIdToUserMap[comment.user_id].is_custom_username;
-			const voteHistoryParams = {
-				listingLimit: 1000,
-				network,
-				page: 1,
-				proposalIndex: postIndex,
-				proposalType: postType,
-				voterAddress: getEncodedAddress(comment.proposer, network) || comment.proposer
-			};
-			const { data = null } = await getVotesHistory(voteHistoryParams);
-			if (data && data.count > 0) {
-				comment.votes = data.votes;
+			if (postType !== ProposalType.DISCUSSIONS) {
+				const voteHistoryParams = {
+					listingLimit: 2,
+					network,
+					page: 1,
+					proposalIndex: postIndex,
+					proposalType: postType,
+					voterAddress: getEncodedAddress(comment.proposer, network) || comment.proposer
+				};
+				const { data = null } = await getVotesHistory(voteHistoryParams);
+				if (data && data.count > 0) {
+					comment.votes = data.votes;
+				}
+			} else {
+				comment.votes = [];
 			}
 			if (comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0) {
 				comment.replies = comment.replies.map((reply) => {

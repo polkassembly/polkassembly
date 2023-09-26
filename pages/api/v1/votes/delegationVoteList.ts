@@ -8,9 +8,10 @@ import { isValidNetwork } from '~src/api-utils';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { votesSortValues } from '~src/global/sortOptions';
-import { GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from '~src/queries';
+
 import { getOrderBy } from './utils/votesSorted';
 import { voteTypes } from '~src/global/proposalType';
+import { GET_NESTED_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from '~src/queries';
 
 export interface IVotesResponse {
 	count: number;
@@ -66,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 		voter_eq: voter
 	};
 
-	const votesQuery = GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID;
+	const votesQuery = GET_NESTED_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID;
 
 	const result = await fetchSubsquid({
 		network,

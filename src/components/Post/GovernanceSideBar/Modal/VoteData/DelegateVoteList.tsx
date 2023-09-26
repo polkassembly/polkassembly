@@ -99,7 +99,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 					<div className='overflow-x-auto md:overflow-visible'>
 						<div className='flex flex-col overflow-x-auto px-0 text-xs text-sidebarBlue'>
 							<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-								<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue`}>Voter</div>
+								<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue`}>Delegator</div>
 								<div
 									className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex items-center gap-1 text-lightBlue`}
 									onClick={() => {

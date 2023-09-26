@@ -42,20 +42,20 @@ export const votesSortOptions = [
 		label: 'Time Asc'
 	},
 	{
-		key: votesSortValues.BALANCE_ASC,
-		label: 'Balance Asc'
-	},
-	{
-		key: votesSortValues.CONVICTION_ASC,
-		label: 'Conviction Asc'
-	},
-	{
 		key: votesSortValues.TIME_DESC,
 		label: 'Time Desc'
 	},
 	{
+		key: votesSortValues.BALANCE_ASC,
+		label: 'Balance Asc'
+	},
+	{
 		key: votesSortValues.BALANCE_DESC,
 		label: 'Balance Desc'
+	},
+	{
+		key: votesSortValues.CONVICTION_ASC,
+		label: 'Conviction Asc'
 	},
 	{
 		key: votesSortValues.CONVICTION_DESC,

@@ -91,6 +91,9 @@ const generateSiteMap = (network: string, urls: string[]): string => {
 				<loc>https://${network}.${DOMAIN}/delegation</loc>
 			</url>
 			<url>
+				<loc>https://${network}.${DOMAIN}/opengov</loc>
+			</url>
+			<url>
 				<loc>https://${network}.${DOMAIN}/preimages</loc>
 			</url>
 			<url>

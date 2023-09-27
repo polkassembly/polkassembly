@@ -28,6 +28,7 @@ interface Props {
 	isMultisig?: boolean;
 	linkAddressTextDisabled?: boolean;
 	addressTextClassName?: string;
+	isTruncateUsername?: boolean;
 }
 
 const AddressDropdown = ({
@@ -41,7 +42,8 @@ const AddressDropdown = ({
 	setSwitchModalOpen,
 	isMultisig,
 	linkAddressTextDisabled = false,
-	addressTextClassName
+	addressTextClassName,
+	isTruncateUsername = true
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
@@ -83,6 +85,7 @@ const AddressDropdown = ({
 					extensionName={account.name}
 					address={account.address}
 					disableAddressClick
+					isTruncateUsername={isTruncateUsername}
 				/>
 			)
 		});
@@ -143,6 +146,7 @@ const AddressDropdown = ({
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
 					addressClassName='text-lightBlue'
 					disableAddressClick
+					isTruncateUsername={isTruncateUsername}
 				/>
 				<span className='mx-2 mb-1'>
 					<DownIcon />

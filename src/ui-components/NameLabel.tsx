@@ -17,21 +17,20 @@ interface Props {
 	truncateUsername?: boolean;
 }
 
-const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, usernameClassName, disableAddressClick = true, truncateUsername }: Props) => {
+const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, usernameClassName, disableAddressClick = false, truncateUsername }: Props) => {
 	const router = useRouter();
 	return (
 		<div className={`${className}`}>
 			{!defaultAddress ? (
 				<span
-					className={`username mr-1.5 font-semibold text-bodyBlue ${disableAddressClick ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+					className={`username mr-1.5 font-semibold text-bodyBlue ${!disableAddressClick ? 'cursor-pointer' : 'cursor-not-allowed'}`}
 					onClick={() => {
-						if (disableAddressClick) {
+						if (!disableAddressClick) {
 							router.push(`/user/${username}`);
 						}
 					}}
 				>
-					{' '}
-					{username}{' '}
+					{username}
 				</span>
 			) : (
 				<Address

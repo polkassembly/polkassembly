@@ -737,6 +737,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 						{accounts.length > 0 ? (
 							<AccountSelectionForm
+								isTruncateUsername={false}
 								title='Vote with Account'
 								accounts={accounts}
 								address={address}

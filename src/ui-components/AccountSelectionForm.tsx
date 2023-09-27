@@ -27,6 +27,7 @@ interface Props {
 	withoutInfo?: boolean;
 	linkAddressTextDisabled?: boolean;
 	addressTextClassName?: string;
+	isTruncateUsername?: boolean;
 }
 
 const AccountSelectionForm = ({
@@ -44,7 +45,8 @@ const AccountSelectionForm = ({
 	setSwitchModalOpen,
 	withoutInfo,
 	linkAddressTextDisabled = false,
-	addressTextClassName
+	addressTextClassName,
+	isTruncateUsername = true
 }: Props) => {
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
 	useEffect(() => {
@@ -77,6 +79,7 @@ const AccountSelectionForm = ({
 				isSwitchButton={isSwitchButton}
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}
+				isTruncateUsername={isTruncateUsername}
 			/>
 		</article>
 	);

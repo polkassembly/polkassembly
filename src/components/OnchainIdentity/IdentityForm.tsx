@@ -305,7 +305,6 @@ const IdentityForm = ({
 							address={address}
 							isTruncateUsername={false}
 							displayInline
-							disableAddressClick
 						/>
 						<Button
 							onClick={() => {

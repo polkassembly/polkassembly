@@ -254,7 +254,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 										isTruncateUsername={false}
 										address={defaultAddress}
 										iconSize={32}
-										disableAddressClick
 										addressClassName='text-[#7c899b] text-sm'
 										displayInline
 									/>
@@ -268,7 +267,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 										isTruncateUsername={false}
 										address={defaultTarget}
 										iconSize={32}
-										disableAddressClick
 										addressClassName='text-[#7c899b] text-sm'
 										displayInline
 									/>

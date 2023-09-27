@@ -80,7 +80,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 						/>
 						<Address
 							address={address}
-							truncateUsername={false}
+							isTruncateUsername={false}
 							displayInline
 							disableAddressClick
 						/>
@@ -288,9 +288,9 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 															Vote Details:
 															<Address
 																address={data?.voter}
-																identiconSize={18}
+																iconSize={18}
 																displayInline
-																truncateUsername={false}
+																isTruncateUsername={false}
 															/>
 														</label>
 														<div className='flex justify-between max-md:flex-col max-md:gap-2'>

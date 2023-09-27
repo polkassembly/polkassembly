@@ -85,7 +85,6 @@ const About: FC<IAboutProps> = (props) => {
 							addresses.slice(0, 5).map((address) => {
 								return (
 									<Address
-										disableAddressClick={true}
 										disableHeader={true}
 										iconSize={24}
 										ethIdenticonSize={30}

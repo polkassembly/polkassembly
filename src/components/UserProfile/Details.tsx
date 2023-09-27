@@ -191,7 +191,7 @@ const Details: FC<IDetailsProps> = (props) => {
 		};
 	}, [addresses, api, apiReady]);
 	const { nickname, display, legal } = onChainIdentity;
-	const newUsername = legal || display || nickname || username;
+	const newUsername = display || legal || nickname || username;
 	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 

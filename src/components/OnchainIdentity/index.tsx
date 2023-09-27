@@ -60,13 +60,13 @@ export interface IVerifiedFields {
 	alreadyVerified: boolean;
 	isIdentitySet: boolean;
 }
-interface Propos {
+interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	openAddressLinkedModal?: boolean;
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
 }
-const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Propos) => {
+const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
 	const { network } = useContext(NetworkContext);
 	const { id: userId } = useContext(UserDetailsContext);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);

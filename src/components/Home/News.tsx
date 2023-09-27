@@ -20,7 +20,7 @@ const News: FC<INewsProps> = (props) => {
 		<div className='bg-white dark:bg-section-dark-overlay drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]'>
 			<h2 className='text-blue-light-high dark:text-blue-dark-high text-xl font-medium leading-8 leading-8 mb-6'>News</h2>
 
-			<div>
+			<div className='dark:bg-section-dark-overlay'>
 				<TwitterTimelineEmbed
 					sourceType="profile"
 					screenName={profile}

@@ -14,12 +14,16 @@ import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { Tooltip } from 'antd';
 import getUsernameByAddress from '~src/util/getUsernameByAddress';
 import { noTitle } from '~src/global/noTitle';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function goToProfileByAddress(address: string) {
 	if (!address) return;
 	const username = await getUsernameByAddress(address);
-	if (!username) return;
-
+	const substrateAddress = getSubstrateAddress(address);
+	if (!username) {
+		window.open(`/address/${substrateAddress}`, '_blank');
+		return;
+	}
 	const routePath = `/user/${username}`;
 	window.open(routePath, '_blank');
 }

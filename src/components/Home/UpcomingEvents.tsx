@@ -25,7 +25,7 @@ const Calendar = styled(StyledCalendar)`
 		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
 	}
 	th {
-		color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
+		color: ${props => props.theme === 'dark' ? '#909090' : '#000'} !important;
 	}
 	.ant-picker-cell {
 		color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
@@ -361,7 +361,7 @@ const UpcomingEvents = ({ className }:Props) => {
 
 			return (
 				<Tooltip color='#E5007A' title={eventList}>
-					<div className='calenderDate'>
+					<div className='calenderDate dark:bg-[#FF0088]'>
 						{value.format('D')}
 					</div>
 				</Tooltip>
@@ -373,7 +373,7 @@ const UpcomingEvents = ({ className }:Props) => {
 		<Spin spinning={loading}>
 			<Calendar
 				theme={theme}
-				className='border border-solid border-gray-200 rounded-xl mb-4 dark:bg-section-dark-overlay'
+				className='border border-solid border-[#29323C] rounded-xl mb-4 dark:bg-section-dark-overlay'
 				fullscreen={false}
 				cellRender={dateCellRender}
 			/>
@@ -395,7 +395,7 @@ const UpcomingEvents = ({ className }:Props) => {
 								{dayjs(item.end_time).format('h:mm a')}
 							</div>
 
-							<div className="text-sm text-blue-light-high dark:text-blue-dark-high">
+							<div className="text-sm text-blue-light-high dark:text-blue-dark-high dark:font-normal">
 								{item.content}
 							</div>
 						</a>

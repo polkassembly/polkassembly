@@ -12,7 +12,7 @@ export const LoadingState = () => {
 	return (
 		<Result
 			icon={<LoadingOutlined className='text-pink_primary' />}
-			title={'Loading...'}
+			title={<div className='dark:text-white'>Loading...</div>}
 		/>
 	);
 };

@@ -55,7 +55,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 			>
 				{
 					isSmallScreen?
-						<span className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] h-10 px-[18px]'>
+						<span className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] h-10 px-[18px] dark:border-[#3B444F] dark:bg-[#29323C33]'>
 							<div className='flex items-center gap-x-[6px]'>
 								<SignalTowerIcon className='w-[20px] h-[20px] m-0 p-0' />
 								<span className='font-semibold text-xs leading-[18px] tracking-[0.02em]'>
@@ -66,7 +66,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 								<ArrowDownIcon />
 							</span>
 						</span>
-						: <span className='flex items-center justify-center border border-solid border-[#D2D8E0] rounded-[2px] md:rounded-[4px] cursor-pointer bg-[rgba(210,216,224,0.2)] p-1 md:p-[8.5px]'>
+						: <span className='flex items-center justify-center border border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:bg-[#29323C33] rounded-[2px] md:rounded-[4px] cursor-pointer bg-[rgba(210,216,224,0.2)] p-1 md:p-[8.5px]'>
 							<SignalTowerIcon className='text-xs md:text-sm m-0 p-0' />
 						</span>
 				}

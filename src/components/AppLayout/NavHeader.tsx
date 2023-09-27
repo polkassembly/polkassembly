@@ -55,7 +55,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute, theme 
 
 	return (
 		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white dark:bg-section-dark-overlay h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
-			<MenuOutlined className='lg:hidden mr-5' onClick={() => {
+			<MenuOutlined className='lg:hidden mr-5 dark:text-icon-dark-inactive' onClick={() => {
 				setSidedrawer(!sidedrawer);
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
@@ -99,7 +99,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute, theme 
 						}
 						{!username
 							&& <div className='flex items-center lg:gap-x-2'>
-								<Button className='w-[74px] h-[33px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
+								<Button className='w-[74px] h-[33px] dark:border-none bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
 							</div>
 						}
 					</Space>
@@ -119,7 +119,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute, theme 
 								}}
 								className='ml-auto outline-none bg-[rgba(210,216,224,0.2)] border border-solid border-[#D2D8E0] rounded-[4px] flex items-center justify-center h-8 w-8 md:hidden'
 							>
-								<CloseOutlined className='w-[15px] h-[15px]' />
+								<CloseOutlined className='w-[15px] h-[15px] dark:text-icon-dark-inactive' />
 								<div
 									className={`absolute w-screen bg-black bg-opacity-50 top-[60px] left-0 overflow-hidden h-[calc(100vh-60px)] ${(!sidedrawer && open)? 'block': 'hidden'}`}
 								>

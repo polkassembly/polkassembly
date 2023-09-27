@@ -145,6 +145,13 @@ const Address = (props: Props) => {
 			}
 		}
 	};
+	const handleRedirectLink = () => {
+		const substrateAddress = getSubstrateAddress(address);
+		if (!username) {
+			return `https://${network}.polkassembly.io/address/${substrateAddress}`;
+		}
+		return `https://${network}.polkassembly.io/user/${username}`;
+	};
 
 	const handleIdentityInfo = () => {
 		if (!api || !apiReady) return;
@@ -248,7 +255,7 @@ const Address = (props: Props) => {
 					/>
 				))}
 			<Link
-				href={`https://${network}.polkassembly.io/user/${username}`}
+				href={handleRedirectLink()}
 				target='_blank'
 				onClick={(e) => handleClick(e)}
 				className='flex items-center text-bodyBlue'

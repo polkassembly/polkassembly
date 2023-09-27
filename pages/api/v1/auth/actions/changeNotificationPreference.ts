@@ -15,24 +15,28 @@ async function handler(req: NextApiRequest, res: NextApiResponse<UpdatedDataResp
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { new_proposal, own_proposal, post_created, post_participated } = req.body;
 
-	if( new_proposal === undefined || own_proposal === undefined || post_created === undefined || post_participated === undefined ) {
+	if (new_proposal === undefined || own_proposal === undefined || post_created === undefined || post_participated === undefined) {
 		return res.status(400).json({ message: 'Missing parameters in body' });
 	}
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	try {
-		const notification_preferences = await authServiceInstance.ChangeNotificationPreference(token, {
-			new_proposal,
-			own_proposal,
-			post_created,
-			post_participated
-		}, network);
+		const notification_preferences = await authServiceInstance.ChangeNotificationPreference(
+			token,
+			{
+				new_proposal,
+				own_proposal,
+				post_created,
+				post_participated
+			},
+			network
+		);
 		return res.status(200).json({ message: messages.NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL, updated: notification_preferences });
 	} catch (error) {
 		return res.status(Number(error.name)).json({ message: error?.message });

@@ -18,14 +18,14 @@ import { FilterIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
 
 interface Props {
-  className?: string;
-  isSearch?: boolean;
-  setSelectedTags?: (pre: string[]) => void;
-  disabled?: boolean;
-  clearTags?: boolean;
+	className?: string;
+	isSearch?: boolean;
+	setSelectedTags?: (pre: string[]) => void;
+	disabled?: boolean;
+	clearTags?: boolean;
 }
 
-const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, clearTags }:Props) => {
+const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, clearTags }: Props) => {
 	const defaultTags = useGetFilterByFromUrl();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const [filteredTags, setFilteredTags] = useState<IPostTag[]>([]);
@@ -36,71 +36,67 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 	const router = useRouter();
 	const [displayTags, setDisplayTags] = useState<string[]>([]);
 
-	const getData= async() => {
-		const { data , error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
-		if(error) console.error('Error in getting all-tags', error);
-
-		else if(data ){
+	const getData = async () => {
+		const { data, error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
+		if (error) console.error('Error in getting all-tags', error);
+		else if (data) {
 			setAllTags(data);
 			setTrendingTags(data);
 		}
 	};
 
 	useEffect(() => {
-		if(! isSearch) return;
+		if (!isSearch) return;
 		clearTags && setTags([]);
-
-	},[clearTags, isSearch]);
+	}, [clearTags, isSearch]);
 
 	useEffect(() => {
 		allTags.length === 0 && getData();
 		!isSearch && setTags(defaultTags);
 		defaultTags.length > 0 && setDisplayTags(defaultTags);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[defaultTags]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [defaultTags]);
 
-	const handleFilterByClick = (key:string[]) => {
-		if(key.length>0){
+	const handleFilterByClick = (key: string[]) => {
+		if (key.length > 0) {
 			router.replace({
-				pathname:'',
+				pathname: '',
 				query: {
 					...router.query,
 					filterBy: encodeURIComponent(JSON.stringify(key))
 				}
 			});
-		}
-		else if(router.query.sortBy){
-			router.replace({ pathname:'',
+		} else if (router.query.sortBy) {
+			router.replace({
+				pathname: '',
 				query: {
 					sortBy: router.query.sortBy
 				}
 			});
-		}
-		else{
-			router.push({ pathname:'' });
+		} else {
+			router.push({ pathname: '' });
 		}
 	};
 
-	const handleExits= (value:string) => {
-		value= value.toLowerCase();
-		const isExits= tags.filter((tag) => tag === value);
+	const handleExits = (value: string) => {
+		value = value.toLowerCase();
+		const isExits = tags.filter((tag) => tag === value);
 
-		if ( isExits.length > 0 )return true;
+		if (isExits.length > 0) return true;
 
 		return false;
 	};
 
-	const handleSetTags=(tag: string) => {
-		if (tag && tags.indexOf( tag.toLowerCase() ) === -1 && tags.length<5){
+	const handleSetTags = (tag: string) => {
+		if (tag && tags.indexOf(tag.toLowerCase()) === -1 && tags.length < 5) {
 			setTags([...tags, tag.toLowerCase()]);
 			setSelectedTags && setSelectedTags([...tags, tag.toLowerCase()]);
 			!isSearch && handleFilterByClick([...tags, tag.toLowerCase()]);
 		}
 		return;
-
 	};
 
-	const handleRemoveTag= ( removedTag: string ) => {
+	const handleRemoveTag = (removedTag: string) => {
 		const newTags = tags.filter((tag) => tag !== removedTag);
 		setTags(newTags);
 		setSelectedTags && setSelectedTags(newTags);
@@ -110,50 +106,90 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 	useEffect(() => {
 		handleFilterResults(allTags, setFilteredTags, tags, searchInput);
 		handleFilterResults(trendingTags, setTrendingTags, tags, searchInput);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[searchInput, tags]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchInput, tags]);
 
 	useEffect(() => {
-		if(searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0){
+		if (searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0) {
 			setDisplayTags(trendingTags.slice(0, 5).map((tag) => tag?.name));
-		}else{
+		} else {
 			setDisplayTags([...tags, ...(filteredTags?.slice(0, 5).map((tag) => tag?.name) || filteredTags.map((tag) => tag?.name))]);
 		}
 	}, [filteredTags, searchInput.length, tags, trendingTags, allTags]);
 
-	const content = <div className='min-h-[150px] w-[180px] '>
-		{!isSearch ? <div className={`text-sidebarBlue cursor-auto flex text-sm justify-between font-medium mb-[-2px] mt-[-2px] tracking-wide ${poppins.variable} ${poppins.className}`}>
-      Tags
-			{!isSearch && <span className='text-pink_primary font-normal text-[10px] flex justify-center cursor-pointer' onClick={() => {setTags([]); !isSearch && handleFilterByClick([]);setSearchInput('');}}>
-			Clear Filters
-			</span>}
-		</div> : ''}
+	const content = (
+		<div className='min-h-[150px] w-[180px] '>
+			{!isSearch ? (
+				<div className={`mb-[-2px] mt-[-2px] flex cursor-auto justify-between text-sm font-medium tracking-wide text-sidebarBlue ${poppins.variable} ${poppins.className}`}>
+					Tags
+					{!isSearch && (
+						<span
+							className='flex cursor-pointer justify-center text-[10px] font-normal text-pink_primary'
+							onClick={() => {
+								setTags([]);
+								!isSearch && handleFilterByClick([]);
+								setSearchInput('');
+							}}
+						>
+							Clear Filters
+						</span>
+					)}
+				</div>
+			) : (
+				''
+			)}
 
-		<Input allowClear={{ clearIcon:<ClearIcon/> }} type='search' className='mt-[4px]' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} prefix={<SearchIcon/>} />
+			<Input
+				allowClear={{ clearIcon: <ClearIcon /> }}
+				type='search'
+				className='mt-[4px]'
+				value={searchInput}
+				onChange={(e) => setSearchInput(e.target.value)}
+				prefix={<SearchIcon />}
+			/>
 
-		{searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0
-			? <div className='flex-col'>
-				{isSearch && <div className={`text-[10px] text-[#243A57] font-normal mt-1 ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
+			{searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0 ? (
+				<div className='flex-col'>
+					{isSearch && <div className={`mt-1 text-[10px] font-normal text-[#243A57] ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
 
-				{ trendingTags.slice(0,5).map((tag, index) => <div key={index} onClick={() => handleSetTags(tag?.name)} className={`flex gap-2 text-xs items-center py-1 cursor-pointer ${poppins.className} ${poppins.variable}`}>
-					<TrendingIcon/>
-					<span className='text-xs text-[#667589] tracking-wide'>
-						{tag.name}
-					</span>
-				</div> )}
-			</div>
-			: <Checkbox.Group className={`flex flex-col mt-1.5 tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll  ${poppins.className} ${poppins.variable}`} value={tags}>
-				{displayTags.map((item, index) => <Checkbox onClick={() => handleExits(item) ? handleRemoveTag(item) : handleSetTags(item) }
-					className={`text-xs font-normal ml-0 ${tags.includes(item) ? 'text-[#243A57]' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'}`}
-					key={index} value={item}>
-					<div className='mt-[2px]'>{item}</div>
-				</Checkbox>)}
-			</Checkbox.Group>}
-		{filteredTags.length === 0 && searchInput.length > 0 ? <div className='h-[100%] flex items-center justify-center flex-col gap-2 mt-2'><NoTagsFoundIcon/><span className={`text-[10px] text-navBlue tracking-wide ${poppins.className} ${poppins.variable} `}>No tag found.</span></div> : null }
-	</div>;
+					{trendingTags.slice(0, 5).map((tag, index) => (
+						<div
+							key={index}
+							onClick={() => handleSetTags(tag?.name)}
+							className={`flex cursor-pointer items-center gap-2 py-1 text-xs ${poppins.className} ${poppins.variable}`}
+						>
+							<TrendingIcon />
+							<span className='text-xs tracking-wide text-[#667589]'>{tag.name}</span>
+						</div>
+					))}
+				</div>
+			) : (
+				<Checkbox.Group
+					className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-auto tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
+					value={tags}
+				>
+					{displayTags.map((item, index) => (
+						<Checkbox
+							onClick={() => (handleExits(item) ? handleRemoveTag(item) : handleSetTags(item))}
+							className={`ml-0 text-xs font-normal ${tags.includes(item) ? 'text-[#243A57]' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'}`}
+							key={index}
+							value={item}
+						>
+							<div className='mt-[2px]'>{item}</div>
+						</Checkbox>
+					))}
+				</Checkbox.Group>
+			)}
+			{filteredTags.length === 0 && searchInput.length > 0 ? (
+				<div className='mt-2 flex h-[100%] flex-col items-center justify-center gap-2'>
+					<NoTagsFoundIcon />
+					<span className={`text-[10px] tracking-wide text-navBlue ${poppins.className} ${poppins.variable} `}>No tag found.</span>
+				</div>
+			) : null}
+		</div>
+	);
 
 	return (
-
 		<Popover
 			content={content}
 			open={!disabled && openFilter}
@@ -162,17 +198,26 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 			placement='bottom'
 			arrow={isSearch}
 		>
-
-			{!isSearch ? <div className={'text-base tracking-wide font-normal flex items-center text-pink_primary mt-[3.5px] cursor-pointer'}>
-				<span> Filter</span>
-				<span className='text-lg ml-2'>
-					<FilterIcon/>
-				</span>
-			</div> : <div className={`flex items-center justify-center text-xs ${(openFilter) ? 'text-pink_primary':'text-[#667589]'} ${disabled ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'} max-sm:text-[10px]`}>
-          Tags
-				<span className='text-[#96A4B6] font-semibold'>{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md:ml-1'/>}</span>
-			</div> }
-
-		</Popover> );
+			{!isSearch ? (
+				<div className={'mt-[3.5px] flex cursor-pointer items-center text-base font-normal tracking-wide text-pink_primary'}>
+					<span> Filter</span>
+					<span className='ml-2 text-lg'>
+						<FilterIcon />
+					</span>
+				</div>
+			) : (
+				<div
+					className={`flex items-center justify-center text-xs ${openFilter ? 'text-pink_primary' : 'text-[#667589]'} ${
+						disabled ? 'cursor-not-allowed text-[#B5BFCC]' : 'cursor-pointer'
+					} max-sm:text-[10px]`}
+				>
+					Tags
+					<span className='font-semibold text-[#96A4B6]'>
+						{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1' /> : <DownOutlined className='ml-2.5 mt-1 max-md:ml-1' />}
+					</span>
+				</div>
+			)}
+		</Popover>
+	);
 };
 export default FilterByTags;

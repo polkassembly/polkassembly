@@ -31,7 +31,8 @@ function usePostDataContext() {
 	return useContext(PostDataContext);
 }
 
-function useCommentDataContext(){
-	return  useContext(CommentsDataContext);
+function useCommentDataContext() {
+	return useContext(CommentsDataContext);
 }
+
 export { useModalContext, useUserDetailsContext, useApiContext, useNetworkContext, usePostDataContext, useCommentDataContext };

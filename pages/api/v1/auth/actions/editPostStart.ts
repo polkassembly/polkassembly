@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessag
 
 	const { address } = body;
 
-	if(!body || !address) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!body || !address) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const signMessage = await authServiceInstance.EditPostStart(address);
 

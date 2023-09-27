@@ -10,20 +10,39 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
-	loading: () => <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-		<Skeleton.Input active />
-		<Skeleton.Input className='mt-8' active />
-		<Skeleton className='mt-8' active />
-		<Skeleton.Input className='mt-8' active />
-		<Skeleton.Button className='mt-8' active />
-	</div> ,
+	loading: () => (
+		<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
+			<Skeleton.Input active />
+			<Skeleton.Input
+				className='mt-8'
+				active
+			/>
+			<Skeleton
+				className='mt-8'
+				active
+			/>
+			<Skeleton.Input
+				className='mt-8'
+				active
+			/>
+			<Skeleton.Button
+				className='mt-8'
+				active
+			/>
+		</div>
+	),
 	ssr: false
 });
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 
@@ -32,13 +51,18 @@ const Create = ({ network }: { network: string }) => {
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return <>
-		<SEOHead title={'Create Post'} network={network}/>
-		<CreatePost proposalType={ProposalType.DISCUSSIONS} />
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={'Create Post'}
+				network={network}
+			/>
+			<CreatePost proposalType={ProposalType.DISCUSSIONS} />
+		</>
+	);
 };
 
 export default Create;

@@ -11,7 +11,7 @@ export const subscanApiHeaders = {
 };
 
 export const subsquidApiHeaders = {
-	'Accept': 'application/json, multipart/mixed',
+	Accept: 'application/json, multipart/mixed',
 	'Sec-Fetch-Dest': 'empty',
 	'Sec-Fetch-Mode': 'cors',
 	'Sec-Fetch-Site': 'same-origin',

@@ -587,7 +587,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	if (network !== AllNetworks.POLYMESH) {
-		gov2Items = [...gov2Items, getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items])];
+		gov2Items = gov2Items.concat(items);
 	}
 
 	const userDropdown = getUserDropDown(

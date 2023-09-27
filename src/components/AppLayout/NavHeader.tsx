@@ -6,7 +6,7 @@
 import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Dropdown, Modal, Skeleton, Space } from 'antd';
+import { Button, Divider, Dropdown, Skeleton, Space } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -34,9 +34,6 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import CloseIcon from '~assets/icons/close-icon.svg';
-import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
-import { poppins } from 'pages/_app';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -66,7 +63,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
-	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 
 	const handleLogout = async (username: string) => {
@@ -96,7 +92,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const handleIdentityButtonClick = () => {
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
-			setIdentityMobileModal(true);
+			return;
 		} else {
 			if (address?.length) {
 				setOpen(!open);
@@ -402,7 +398,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					isModal={true}
 				/>
 			</nav>
-			{onchainIdentitySupportedNetwork.includes(network) && (
+			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<OnChainIdentity
 					open={open}
 					setOpen={setOpen}
@@ -410,19 +406,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 				/>
 			)}
-			<Modal
-				open={identityMobileModal}
-				footer={false}
-				closeIcon={<CloseIcon />}
-				onCancel={() => setIdentityMobileModal(false)}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
-				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
-			>
-				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					<DelegationDashboardEmptyState />
-					<span>Please use your desktop computer to verify on chain identity</span>
-				</div>
-			</Modal>
 		</Header>
 	);
 };

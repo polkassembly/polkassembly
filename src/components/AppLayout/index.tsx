@@ -664,7 +664,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
-				{['moonbeam', 'moonriver'].includes(network) && ['/', '/gov-2'].includes(router.asPath) ? (
+				{['moonbeam', 'moonriver'].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={'moonbeam'} />

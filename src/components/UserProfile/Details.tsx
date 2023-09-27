@@ -23,6 +23,7 @@ import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import OnChainIdentity from './OnChainIdentity';
 import SocialLink from '~src/ui-components/SocialLinks';
+import { EGovType } from '~src/types';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -297,12 +298,23 @@ const Details: FC<IDetailsProps> = (props) => {
 							label: 'About'
 						},
 						{
-							children: <GovTab posts={userPosts.gov1} />,
+							children: (
+								<GovTab
+									posts={userPosts.gov1}
+									govType={EGovType.GOV1}
+								/>
+							),
 							key: 'gov1',
 							label: 'Gov 1'
 						},
 						{
-							children: <GovTab posts={userPosts.open_gov} />,
+							children: (
+								<GovTab
+									posts={userPosts.open_gov}
+									govType={EGovType.OPEN_GOV}
+									userAddresses={userProfile.data?.addresses || []}
+								/>
+							),
 							key: 'open_gov',
 							label: 'OpenGov'
 						}

@@ -22,7 +22,7 @@ interface Props {
 	isVerified?: boolean;
 }
 
-const UserDropdown = ({ className, displayName, isVerified }: Props): JSX.Element => {
+const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX.Element => {
 	const { username, picture } = useUserDetailsContext();
 	const profileUsername = displayName || username || '';
 
@@ -53,4 +53,4 @@ const UserDropdown = ({ className, displayName, isVerified }: Props): JSX.Elemen
 	);
 };
 
-export default UserDropdown;
+export default UserProfileDropdown;

@@ -28,7 +28,7 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { logout } from '~src/services/auth.service';
 import { EGovType } from '~src/global/proposalType';
-import UserDropdown from '../../ui-components/UserDropdown';
+import UserProfileDropdown from '../../ui-components/UserProfileDropdown';
 import { UserDetailsContextType } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
@@ -294,7 +294,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									</div>
 								) : (
 									<div className={'flex items-center justify-between gap-x-2'}>
-										<UserDropdown
+										<UserProfileDropdown
 											className='navbar-user-dropdown h-[32px] max-w-[165px]'
 											displayName={displayName}
 											isVerified={isVerified}

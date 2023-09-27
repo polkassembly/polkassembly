@@ -19,7 +19,6 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import { useNetworkContext } from '~src/context';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-// import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';

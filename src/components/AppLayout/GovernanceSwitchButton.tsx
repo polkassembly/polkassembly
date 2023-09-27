@@ -23,8 +23,7 @@ const GovernanceSwitchButton = ({ className }: Props) => {
 			>
 				<p className='m-0 text-[10px] font-normal leading-[15px] tracking-[0.02em] text-sidebarBlue'>Switch to</p>
 				<p className='m-0 ml-[6px] mr-[11px] font-poppins text-xs font-semibold leading-[18px] tracking-[0.02em] text-sidebarBlue'>
-					{' '}
-					{isOpenGovSupported(network) ? 'OpenGov' : 'Governance V1'}{' '}
+					{isOpenGovSupported(network) ? 'OpenGov' : 'Governance V1'}
 				</p>
 				<p className='m-0 flex items-center justify-center text-base text-navBlue'>
 					<SyncIcon />

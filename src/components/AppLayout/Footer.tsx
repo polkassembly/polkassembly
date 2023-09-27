@@ -19,6 +19,10 @@ import DiscordDarkIcon from '~assets/icons/discord-dark.svg';
 import TelegramDarkIcon from '~assets/icons/telegram-dark.svg';
 import TwitterDarkIcon from '~assets/icons/twitter-dark.svg';
 import InternetDarkIcon from '~assets/icons/web-dark.svg';
+import TwitterIconDarkSm from '~assets/icons/twitter-dark-mobile.svg';
+import DiscordIconDarkSm from '~assets/icons/discord-dark-mobile.svg';
+import TelegramIconDarkSm from '~assets/icons/telegram-dark-mobile.svg';
+import InternetIconDarkSm from '~assets/icons/web-dark-mobile.svg';
 import AiBot from '../AiBot/AiBot';
 import { useState } from 'react';
 
@@ -28,8 +32,8 @@ const Footer = ({ className, theme } : { className?:string, theme?:string }) => 
 	const [floatButtonOpen , setFloatButtonOpen] = useState(false);
 
 	return (
-		<footer aria-label="Site Footer" className={`${className} bg-white dark:bg-section-dark-overlay max-[650px]:rounded-[14px] `}>
-			<div className="mx-auto max-w-screen-xl px-4 pt-8  sm:px-6 lg:pl-8 lg:pr-2">
+		<footer aria-label="Site Footer" className={`${className} bg-white max-[650px]:rounded-[14px] dark:bg-section-dark-overlay`}>
+			<div className="mx-auto max-w-screen-xl px-4 pt-8  sm:px-6 lg:pl-8 lg:pr-2 dark:bg-section-dark-overlay">
 				<div className="flex flex-col md:flex-row ">
 					{/* Logo and Network Link */}
 					<div>
@@ -175,25 +179,45 @@ const Footer = ({ className, theme } : { className?:string, theme?:string }) => 
 						<Space size={19} className='items-center '>
 
 							<a href={'https://twitter.com/polk_gov'} target='_blank' rel='noreferrer'>
-								<TwitterIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								{
+									theme === 'dark' ?
+										<TwitterIconDarkSm className='text-sm md:text-lg md:mr-1' />
+										:
+										<TwitterIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								}
 							</a>
 
 							<a href={'https://discord.com/invite/CYmYWHgPha'} target='_blank' rel='noreferrer'>
-								<DiscordIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								{
+									theme === 'dark' ?
+										<DiscordIconDarkSm className='text-sm md:text-lg md:mr-1' />
+										:
+										<DiscordIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								}
 							</a>
 
 							<a href={'https://t.me/+6WQDzi6RuIw3YzY1'} target='_blank' rel='noreferrer'>
-								<TelegramIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								{
+									theme === 'dark' ?
+										<TelegramIconDarkSm className='text-sm md:text-lg md:mr-1' />
+										:
+										<TelegramIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								}
 							</a>
 
 							<a href={'https://polkassembly.io/'} target='_blank' rel='noreferrer'>
-								<InternetIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								{
+									theme === 'dark' ?
+										<InternetIconDarkSm className='text-sm md:text-lg md:mr-1' />
+										:
+										<InternetIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								}
 							</a>
 
 						</Space>
 					</div>
 
-					<div className='flex flex-col justify-center mt-2 text-[10px] text-[#96A4B6] font-normal leading-[15px]'>
+					<div className='flex flex-col justify-center mt-2 text-[10px] text-[#96A4B6] dark:text-blue-dark-medium font-normal leading-[15px]'>
 						<div className='flex justify-center'>
 							<Link href='/terms-and-conditions'>
 											Terms and Conditions

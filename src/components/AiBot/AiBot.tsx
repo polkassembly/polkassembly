@@ -187,7 +187,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					style={{ bottom: '85px', position: 'fixed', right: '20px', zIndex: '999' }}
 					header={
 						<div className='flex justify-between font-semibold text-xl text-lightBlue h-[38px]'>
-							<p className='mt-2 h-[25px]'>
+							<p className='mt-2 h-[25px] dark:text-blue-dark-medium'>
 							Menu
 							</p>
 							<CloseIcon className='mt-4 cursor-pointer' onClick={() =>

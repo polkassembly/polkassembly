@@ -89,7 +89,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 					</div>
 				)}
 			</div>
-			{(profileHistory === EProfileHistory.POSTS || EGovType.GOV1 === govType) && (
+			{(profileHistory === EProfileHistory.POSTS || EGovType.GOV1 === govType || !votesHistoryAvailableNetworks.includes(network)) && (
 				<>
 					<Select
 						suffixIcon={<ArrowDownIcon className='text-[#90A0B7]' />}
@@ -139,7 +139,9 @@ const GovTab: FC<IGovTabProps> = (props) => {
 					</div>
 				</>
 			)}
-			{govType === EGovType.OPEN_GOV && profileHistory === EProfileHistory.VOTES && <VotesHistory userAddresses={userAddresses || []} />}
+			{govType === EGovType.OPEN_GOV && profileHistory === EProfileHistory.VOTES && votesHistoryAvailableNetworks.includes(network) && (
+				<VotesHistory userAddresses={userAddresses || []} />
+			)}
 		</div>
 	);
 };

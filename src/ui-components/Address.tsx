@@ -131,6 +131,9 @@ const Address = ({
 			try {
 				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
 				if (error || !data || !data.username) {
+					if (isOnclick) {
+						window.open(`https://${network}.polkassembly.io/address/${substrateAddress}`, '_blank');
+					}
 					return;
 				}
 				setUsername(data.username);

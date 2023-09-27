@@ -4,33 +4,33 @@
 
 import { GetServerSideProps } from 'next';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useEffect } from 'react';
+import React, { FC, memo, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
 import BackToListingView from 'src/ui-components/BackToListingView';
-import { ErrorState, LoadingState,PostEmptyState } from 'src/ui-components/UIStates';
-import { useState } from 'react';
+import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
-import { useRouter } from 'next/router';
-import { checkIsOnChain } from '~src/util/checkIsOnChain';
-import EmptyIcon from '~assets/icons/empty-state-image.svg';
-import { useApiContext } from '~src/context';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 const proposalType = ProposalType.OPEN_GOV;
-export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
-	const { data, error ,status } = await getOnChainPost({
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
 		proposalType
 	});
-	return { props: { error, network, post:data, status } };
+	return { props: { error, network, post: data, status } };
 };
 
 interface IReferendaPostProps {
@@ -41,56 +41,50 @@ interface IReferendaPostProps {
 }
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
-	const { post, error, network , status } = props;
+	const { post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
-	const router = useRouter();
-	const { id } = router.query;
-	const [isUnfinalized,setIsUnFinalized] = useState(false);
-	const { api, apiReady } = useApiContext();
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	useEffect(() => {
-
-		if(!api || !apiReady || !error || !status || !id || status !== 404 ){
-			return;
-		}
-		(async() => {
-			setIsUnFinalized( Boolean(await checkIsOnChain(String(id),proposalType, api)));
-		})();
-
-	}, [api, apiReady, error, status,id]);
-
-	if(isUnfinalized){
-		return <PostEmptyState image={<EmptyIcon/>} description={<div className='p-5'><b className='text-xl my-4'>Waiting for Block Confirmation</b><p>Usually its done within a few seconds</p></div>} imageStyle={ { height:300  } }/>;
-	}
 
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (post) {
 		let trackName = '';
 		for (const key of Object.keys(networkTrackInfo[props.network])) {
-			if(networkTrackInfo[props.network][key].trackId == post.track_number && !('fellowshipOrigin' in networkTrackInfo[props.network][key])) {
+			if (networkTrackInfo[props.network][key].trackId == post.track_number && !('fellowshipOrigin' in networkTrackInfo[props.network][key])) {
 				trackName = key;
 			}
 		}
 
-		return <>
-			<SEOHead title={post.title || `${noTitle} - Referenda V2`} desc={post.content} network={network}/>
+		return (
+			<>
+				<SEOHead
+					title={post.title || `${noTitle} - Referenda V2`}
+					desc={post.content}
+					network={network}
+				/>
 
-			{trackName && <BackToListingView trackName={trackName} />}
+				{trackName && <BackToListingView trackName={trackName} />}
 
-			<div className='mt-6'>
-				<Post post={post} trackName={trackName === 'Root' ? 'root' : trackName} proposalType={proposalType} />
-			</div>
-		</>;
+				<div className='mt-6'>
+					<Post
+						post={post}
+						trackName={trackName === 'Root' ? 'root' : trackName}
+						proposalType={proposalType}
+					/>
+				</div>
+			</>
+		);
 	}
 
-	return <div className='mt-16'><LoadingState /></div>;
-
+	return (
+		<div className='mt-16'>
+			<LoadingState />
+		</div>
+	);
 };
 
-export default ReferendaPost;
+export default memo(ReferendaPost);

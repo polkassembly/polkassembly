@@ -22,7 +22,7 @@ export async function getNetworkDocRef(req: NextApiRequest, firestore: firebaseA
 		throw new Error(`The network of the name "${networkName}" is invalid.`);
 	}
 
-	if (!(Object.values(AllNetworks).includes(networkName))) {
+	if (!Object.values(AllNetworks).includes(networkName)) {
 		throw new Error(`The network of the name "${networkName}" does not exist.`);
 	}
 	const networkNameDocRef = firestore.collection('networks').doc(networkName);
@@ -54,9 +54,13 @@ export function isCustomOpenGovStatusValid(trackStatus: string) {
 }
 
 export function isTrackNoValid(trackNo: number, network: string) {
-	return !isNaN(trackNo) && networkTrackInfo?.[network] && Object.entries(networkTrackInfo?.[network]).find(([, value]) => {
-		return value && value.trackId === trackNo;
-	});
+	return (
+		!isNaN(trackNo) &&
+		networkTrackInfo?.[network] &&
+		Object.entries(networkTrackInfo?.[network]).find(([, value]) => {
+			return value && value.trackId === trackNo;
+		})
+	);
 }
 
 export async function isPostIdOrHashValid(postIdOrHash: string | string[] | 0, proposalType: string | string[]) {
@@ -79,9 +83,12 @@ export async function isProposerAddressValid(proposerAddress: string | string[] 
 	return String(proposerAddress);
 }
 
-export function getCount(snapshotArr: FirebaseFirestore.AggregateQuerySnapshot<{
-    count: FirebaseFirestore.AggregateField<number>;
-}>[], i: number) {
+export function getCount(
+	snapshotArr: FirebaseFirestore.AggregateQuerySnapshot<{
+		count: FirebaseFirestore.AggregateField<number>;
+	}>[],
+	i: number
+) {
 	let count = 0;
 	if (snapshotArr.length > i) {
 		count = snapshotArr[i].data()?.count || 0;
@@ -103,22 +110,19 @@ export function getNetworkFromReqHeaders(headers: IncomingHttpHeaders) {
 		network = headers.host.split('.')[0];
 	}
 
-	if(!Object.values(AllNetworks).includes(network)) {
-		if(network == 'test'){
+	if (!Object.values(AllNetworks).includes(network)) {
+		if (network == 'test') {
 			network = 'kusama';
-		}
-		else if(network == 'test-polkadot'){
+		} else if (network == 'test-polkadot') {
 			network = 'polkadot';
-		}
-		else if(network == 'moonriver-test'){
+		} else if (network == 'moonriver-test') {
 			network = 'moonriver';
-		}
-		else{
+		} else {
 			network = process.env.NEXT_PUBLIC_APP_ENV === 'development' ? defaultNetwork : network;
 		}
 	}
 
-	if(!network){
+	if (!network) {
 		network = 'kusama';
 	}
 

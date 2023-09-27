@@ -18,11 +18,15 @@ export const client = new Redis(process.env.REDIS_URL);
  * @returns values string
  */
 
-export const redisGet = (key: string): Promise<string | null> => new Promise((resolve, reject) => {
-	client.get(key).then((value) => {
-		resolve(value);
-	}).catch(err => reject(err));
-});
+export const redisGet = (key: string): Promise<string | null> =>
+	new Promise((resolve, reject) => {
+		client
+			.get(key)
+			.then((value) => {
+				resolve(value);
+			})
+			.catch((err) => reject(err));
+	});
 
 /**
  * set key-value in redis
@@ -30,11 +34,15 @@ export const redisGet = (key: string): Promise<string | null> => new Promise((re
  * @param key string
  * @param value string
  */
-export const redisSet = (key: string, value: string): Promise<string | null> => new Promise((resolve, reject) => {
-	client.set(key, value).then(reply => {
-		resolve(reply);
-	}).catch(err => reject(err));
-});
+export const redisSet = (key: string, value: string): Promise<string | null> =>
+	new Promise((resolve, reject) => {
+		client
+			.set(key, value)
+			.then((reply) => {
+				resolve(reply);
+			})
+			.catch((err) => reject(err));
+	});
 
 /**
  * set key-value in redis with ttl(expiry in seconds)
@@ -43,22 +51,30 @@ export const redisSet = (key: string, value: string): Promise<string | null> => 
  * @param ttl number in seconds
  * @param value string
  */
-export const redisSetex = (key: string, ttl: number, value: string): Promise<string> => new Promise((resolve, reject) => {
-	client.set(key, value, 'EX', ttl).then(reply => {
-		resolve(reply);
-	}).catch(err => reject(err));
-});
+export const redisSetex = (key: string, ttl: number, value: string): Promise<string> =>
+	new Promise((resolve, reject) => {
+		client
+			.set(key, value, 'EX', ttl)
+			.then((reply) => {
+				resolve(reply);
+			})
+			.catch((err) => reject(err));
+	});
 
 /**
  * delete key from redis
  *
  * @param key string
  */
-export const redisDel = (key: string): Promise<number> => new Promise((resolve, reject) => {
-	client.del(key).then(reply => {
-		resolve(reply);
-	}).catch(err => reject(err));
-});
+export const redisDel = (key: string): Promise<number> =>
+	new Promise((resolve, reject) => {
+		client
+			.del(key)
+			.then((reply) => {
+				resolve(reply);
+			})
+			.catch((err) => reject(err));
+	});
 
 export async function deleteKeys(pattern: string) {
 	const stream = client.scanStream({

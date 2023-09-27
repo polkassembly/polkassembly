@@ -9,13 +9,13 @@ import React, { FC, useState } from 'react';
 import TrackListingCard from 'src/components/Listing/FellowshipReferendum/TrackListingCard';
 
 const AboutTrackCard = dynamic(() => import('~src/components/Listing/FellowshipReferendum/AboutTrackCard'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 interface ITrackListingProps {
-	posts: IFellowshipReferendumPostsByTrackName|undefined;
-    fellowshipReferendumPostOrigins: string[];
+	posts: IFellowshipReferendumPostsByTrackName | undefined;
+	fellowshipReferendumPostOrigins: string[];
 }
 
 const TrackListing: FC<ITrackListingProps> = (props) => {

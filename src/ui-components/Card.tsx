@@ -9,10 +9,8 @@ interface Props {
 	children: ReactNode;
 }
 
-const Card = ({ className, children }:Props ) => {
-	return (
-		<div className={`${className} bg-white py-[2rem] px-[2rem] md:px-[3rem] drop-shadow-md rounded-md mb-[1rem] text-sm`}>{children}</div>
-	);
+const Card = ({ className, children }: Props) => {
+	return <div className={`${className} mb-[1rem] rounded-md bg-white px-[2rem] py-[2rem] text-sm drop-shadow-md md:px-[3rem]`}>{children}</div>;
 };
 
 export default Card;

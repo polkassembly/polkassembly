@@ -35,7 +35,6 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	reactions,
 	setReactions,
 	reactionsDisabled,
-	setReactionsDisabled,
 	setLikeModalOpen,
 	setDislikeModalOpen,
 	importedReactions = false
@@ -81,7 +80,22 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			}
 			return;
 		} else {
-			setReactionsDisabled(true);
+			const newReactions = { ...reactions };
+			if (reacted) {
+				newReactions[reaction as IReaction].count--;
+				newReactions[reaction as IReaction].usernames = newReactions[reaction as IReaction].usernames?.filter((name) => name !== username);
+			} else {
+				newReactions[reaction as IReaction].count++;
+				newReactions[reaction as IReaction].usernames?.push(username || '');
+
+				Object.keys(newReactions).forEach((key) => {
+					if (key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
+						newReactions[key as IReaction].count--;
+						newReactions[key as IReaction].usernames = newReactions[key as IReaction].usernames?.filter((name) => name !== username);
+					}
+				});
+			}
+			setReactions(newReactions);
 			const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
 			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
 				commentId: commentId || null,
@@ -95,28 +109,6 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			if (error || !data) {
 				console.error('Error while reacting', error);
 			}
-
-			if (data) {
-				const newReactions = { ...reactions };
-				if (reacted) {
-					newReactions[reaction as IReaction].count--;
-					newReactions[reaction as IReaction].usernames = newReactions[reaction as IReaction].usernames?.filter((name) => name !== username);
-				} else {
-					newReactions[reaction as IReaction].count++;
-					newReactions[reaction as IReaction].usernames?.push(username || '');
-
-					//remove username from other reactions
-					Object.keys(newReactions).forEach((key) => {
-						if (key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
-							newReactions[key as IReaction].count--;
-							newReactions[key as IReaction].usernames = newReactions[key as IReaction].usernames?.filter((name) => name !== username);
-						}
-					});
-				}
-				setReactions(newReactions);
-			}
-
-			setReactionsDisabled(false);
 		}
 	};
 

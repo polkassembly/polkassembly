@@ -1615,3 +1615,105 @@ query ConvictionDelegatedVotesCountAndBalance(
     }
 }
 `;
+
+export const GET_PROFILE_CONVICTION_VOTES_FROM_VOTER_ADDRESS = `
+query ConvictionVotesListigByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!], $limit: Int = 10, $offset: Int = 0, $orderBy:[ConvictionVoteOrderByInput!] = [proposalIndex_DESC]) {
+  convictionVotes(where: {type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true}, limit: $limit, offset: $offset, orderBy:$orderBy ) {
+    type
+    voter
+        lockPeriod
+  
+    decision
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    proposal {
+      description
+      createdAt
+      index
+      proposer
+      status
+    }
+    removedAtBlock
+    proposalIndex
+    totalVotingPower
+    selfVotingPower
+    delegatedVotingPower
+    delegatedVotes {
+      balance {
+        ... on StandardVoteBalance {
+          value
+        }
+        ... on SplitVoteBalance {
+          aye
+          nay
+          abstain
+        }
+      }
+      createdAt
+      id
+      decision
+      delegatedTo{
+        voter
+      }
+      voter
+    }
+  }
+  convictionVotesConnection(where: {type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true}, orderBy: proposalIndex_DESC) {
+    totalCount
+  }
+  }
+`;
+
+export const GET_PROFILE_DELEGATED_VOTES_FROM_VOTER_ADDRESS = `
+query DelegatedVotesListigByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!], $limit: Int = 20, $offset: Int = 0) {
+  convictionDelegatedVotes(where: {type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true, delegatedTo: {removedAtBlock_isNull: true}}, limit: $limit, offset: $offset, orderBy: proposalIndex_DESC) {
+    balance {
+      ... on SplitVoteBalance {
+        aye
+        nay
+      }
+      ... on StandardVoteBalance {
+        value
+      }
+    }
+    lockPeriod
+    createdAt
+    delegatedTo {
+      balance {
+        ... on StandardVoteBalance {
+          value
+        }
+        ... on SplitVoteBalance {
+          aye
+          nay
+        }
+      }
+      proposal {
+        index
+        description
+        status
+        proposer
+        createdAt
+      }
+      voter
+      selfVotingPower
+      totalVotingPower
+      delegatedVotingPower
+      lockPeriod
+    }
+    decision
+    voter
+  }
+  convictionDelegatedVotesConnection(where:{type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true}, orderBy: proposalIndex_DESC) {
+    totalCount
+  }
+}
+`;

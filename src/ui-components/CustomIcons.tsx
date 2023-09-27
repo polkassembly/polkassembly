@@ -6,6 +6,8 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 
+import CautionIcon from '~assets/icons/Caution 2.svg';
+import RetryIcon from '~assets/icons/Refresh.svg';
 import OpenAiSVG from '~assets/icons/openai.svg';
 import AiStarSVG from '~assets/icons/ai-star.svg';
 import SummaryModalCloseSVG from '~assets/icons/summary-modal-close.svg';
@@ -107,7 +109,28 @@ import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
 import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 
+export const Caution = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CautionIcon}
+		{...props}
+	/>
+);
+
+export const IconRetry = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={RetryIcon}
+		{...props}
+	/>
+);
+
 export const IconVoteHistory = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={VoteHistoryIcon}
+		{...props}
+	/>
+);
+
+export const IconCaution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={VoteHistoryIcon}
 		{...props}

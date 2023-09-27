@@ -43,7 +43,6 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	ssr: false
 });
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
-	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
 

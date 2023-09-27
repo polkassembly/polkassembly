@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Skeleton } from 'antd';
+import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -64,7 +64,6 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
-	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
 const { Content, Sider } = Layout;

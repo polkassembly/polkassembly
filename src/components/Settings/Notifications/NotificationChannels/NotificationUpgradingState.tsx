@@ -17,7 +17,7 @@ const NotificationUpgradingState = () => {
 				</a>
 			</h3>
 			<div className='w-[200px]'>
-				<PaLogo />
+				<PaLogo sidedrawer={false} />
 			</div>
 		</div>
 	);

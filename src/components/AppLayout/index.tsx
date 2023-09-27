@@ -224,10 +224,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) || false;
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');

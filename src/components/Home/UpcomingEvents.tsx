@@ -71,8 +71,7 @@ const UpcomingEvents = ({ className }: Props) => {
 				switch (index) {
 					case 0:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								const type = eventObj?.type?.replace(/([A-Z])/g, ' $1');
 								const title = type.charAt(0).toUpperCase() + type.slice(1);
 
@@ -99,8 +98,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 1:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `Council Motion ${String(eventObj?.data?.hash)?.substring(0, 10)}...`,
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -119,8 +117,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 2:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `Election of new council candidates period ${eventObj?.data?.electionRound}`,
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -139,8 +136,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 3:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: eventObj?.data?.id ? `Execute named scheduled task ${String(eventObj?.data?.id)?.substring(0, 10)}...` : 'Execute anonymous scheduled task',
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -159,8 +155,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 4:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `Start of next spend period ${eventObj?.data?.spendingPeriod}`,
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -179,8 +174,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 5:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `Democracy Dispatch ${eventObj?.data?.index}`,
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -199,8 +193,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 6:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `Start of next referendum voting period ${eventObj?.data?.launchPeriod}`,
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -219,8 +212,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 7:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `Acceptance of new members and bids ${eventObj?.data?.rotateRound}`,
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -239,8 +231,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 8:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `Start of next membership challenge period ${eventObj?.data?.challengePeriod}`,
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -259,8 +250,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 9:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `End of the current parachain auction ${eventObj?.data?.leasePeriod}`,
 									end_time: dayjs(eventObj.endDate).toDate(),
@@ -279,8 +269,7 @@ const UpcomingEvents = ({ className }: Props) => {
 
 					case 10:
 						eventSettled.value.forEach((eventObj, i) => {
-							const eventDate = dayjs(eventObj.endDate);
-							if (eventDate.isAfter(currDate)) {
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
 								eventsArr.push({
 									content: `Start of the next parachain lease period  ${eventObj?.data?.leasePeriod}`,
 									end_time: dayjs(eventObj.endDate).toDate(),

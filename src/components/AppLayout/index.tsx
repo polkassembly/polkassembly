@@ -103,6 +103,8 @@ const getUserDropDown = (
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
 					href={`/user/${username}`}
+					target='_blank'
+					rel='noreferrer'
 				>
 					<UserOutlined />
 					<span>View Profile</span>

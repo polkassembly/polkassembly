@@ -12,7 +12,6 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { IPostsRowData } from './PostsTable';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { Tooltip } from 'antd';
-import Router from 'next/router';
 import getUsernameByAddress from '~src/util/getUsernameByAddress';
 import { noTitle } from '~src/global/noTitle';
 
@@ -21,7 +20,8 @@ async function goToProfileByAddress(address: string) {
 	const username = await getUsernameByAddress(address);
 	if (!username) return;
 
-	Router.push(`/user/${username}`);
+	const routePath = `/user/${username}`;
+	window.open(routePath, '_blank');
 }
 
 const Index: any = {
@@ -59,7 +59,8 @@ const Creator: any = {
 			onClick: async (e: any) => {
 				e.stopPropagation();
 				if (record.username) {
-					Router.push(`/user/${record.username}`);
+					const routePath = `/user/${record.username}`;
+					window.open(routePath, '_blank');
 				} else {
 					await goToProfileByAddress(record.proposer || '');
 				}
@@ -170,7 +171,8 @@ const allColumns: ColumnsType<IPostsRowData> = [
 				onClick: async (e) => {
 					e.stopPropagation();
 					if (record.username) {
-						Router.push(`/user/${record.username}`);
+						const routePath = `/user/${record.username}`;
+						window.open(routePath, '_blank');
 					} else {
 						await goToProfileByAddress(record.proposer || '');
 					}

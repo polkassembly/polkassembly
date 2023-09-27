@@ -41,11 +41,9 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
 						onClick={() => setOpen(true)}
 					>
-						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-[#485F7D] outline-none'>
+						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none'>
 							<SearchOutlined />
 						</button>
-						<span className='rounded-full bg-[#407AFC] px-2 py-0.5 text-[10px] font-semibold text-white max-sm:hidden'>New</span>
-						<span className='-mt-3 text-[16px] text-[#407AFC] sm:hidden'>&#9679;</span>
 					</div>
 					<NewSearch
 						openModal={open}
@@ -68,7 +66,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 			) : (
 				<>
 					<button
-						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-[#485F7D] outline-none'
+						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none'
 						onClick={() => setOpen(true)}
 					>
 						<SearchOutlined />

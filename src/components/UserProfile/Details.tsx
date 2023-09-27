@@ -23,7 +23,7 @@ import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import OnChainIdentity from './OnChainIdentity';
 import SocialLink from '~src/ui-components/SocialLinks';
-import { EGovType } from '~src/global/proposalType';
+import { EGovType } from '~src/types';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -191,7 +191,7 @@ const Details: FC<IDetailsProps> = (props) => {
 		};
 	}, [addresses, api, apiReady]);
 	const { nickname, display, legal } = onChainIdentity;
-	const newUsername = legal || display || nickname || username;
+	const newUsername = display || legal || nickname || username;
 	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 

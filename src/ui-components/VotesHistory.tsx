@@ -276,7 +276,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 												</div>
 												<StatusTag
 													status={data?.proposal?.status}
-													className='truncate max-xs:w-[60px]'
+													className='truncate max-sm:w-[90px] max-xs:w-[70px]'
 												/>
 											</div>
 										</div>

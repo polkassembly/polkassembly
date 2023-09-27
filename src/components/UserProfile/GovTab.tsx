@@ -9,6 +9,9 @@ import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import PostTab from '../User/PostTab';
 import { EGovType } from '~src/global/proposalType';
 import VotesHistory from '~src/ui-components/VotesHistory';
+import { EProfileHistory, votesHistoryAvailableNetworks } from 'pages/user/[username]';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useNetworkContext } from '~src/context';
 
 export const getLabel = (str: string) => {
 	const newStr = str.split('_').join(' ');
@@ -69,19 +72,24 @@ interface IGovTabProps {
 
 const GovTab: FC<IGovTabProps> = (props) => {
 	const { posts, className, govType, userAddresses } = props;
+	const { network } = useNetworkContext();
 	const [selectedPostsType, setSelectedPostsType] = useState('discussions');
 	const [selectedPost, setSelectedPost] = useState('posts');
-	const [renderComponent, setRenderComponent] = useState<string>('Votes');
+	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(isOpenGovSupported(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
 
 	return (
 		<div className={className}>
 			<div className='mb-6'>
-				<Segmented
-					options={['Votes', 'Posts']}
-					onChange={(e) => setRenderComponent(e.toString())}
-				/>
+				{govType === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) && (
+					<div className='mb-6'>
+						<Segmented
+							options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
+							onChange={(e) => setProfileHistory(e as EProfileHistory)}
+						/>
+					</div>
+				)}
 			</div>
-			{renderComponent === 'Posts' && govType === EGovType.OPEN_GOV && (
+			{(profileHistory === EProfileHistory.POSTS || EGovType.GOV1 === govType) && (
 				<>
 					<Select
 						suffixIcon={<ArrowDownIcon className='text-[#90A0B7]' />}
@@ -131,7 +139,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 					</div>
 				</>
 			)}
-			{govType === EGovType.OPEN_GOV && renderComponent === 'Votes' && <VotesHistory userAddresses={userAddresses || []} />}
+			{govType === EGovType.OPEN_GOV && profileHistory === EProfileHistory.VOTES && <VotesHistory userAddresses={userAddresses || []} />}
 		</div>
 	);
 };

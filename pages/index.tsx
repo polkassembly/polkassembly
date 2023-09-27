@@ -9,7 +9,7 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { FC, useEffect, useState } from 'react';
 import SEOHead from 'src/global/SEOHead';
-import { redisGet, redisSet } from '~src/auth/redis';
+
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import AboutNetwork from '~src/components/Home/AboutNetwork';
 import LatestActivity from '~src/components/Home/LatestActivity';
@@ -20,7 +20,7 @@ import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
-import { EGovType, IApiResponse, NetworkSocials } from '~src/types';
+import { IApiResponse, NetworkSocials } from '~src/types';
 
 import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
@@ -56,186 +56,125 @@ interface IHomeProps {
 	network: string;
 }
 
-interface Props {
-	networkSocialsData?: IApiResponse<NetworkSocials>;
-	latestPosts: Object;
-	network: string;
-	error: string;
-}
-
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	// if (isOpenGovSupported(network) && !req.headers.referer) {
-	// return {
-	// props: {},
-	// redirect: {
-	// destination: '/opengov'
-	// }
-	// };
-	// }
+	if (isOpenGovSupported(network) && !req.headers.referer) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/opengov'
+			}
+		};
+	}
 
 	const networkSocialsData = await getNetworkSocials({ network });
-	if (isOpenGovSupported(network)) {
-		if (process.env.IS_CACHING_ALLOWED == '1') {
-			const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
-			if (redisData) {
-				const props = JSON.parse(redisData);
-				if (!props.error) {
-					return { props };
-				}
-			}
-		}
-		const fetches = {
-			allGov2Posts: getLatestActivityAllPosts({
-				govType: EGovType.OPEN_GOV,
-				listingLimit: LATEST_POSTS_LIMIT,
-				network
-			}),
-			discussionPosts: getLatestActivityOffChainPosts({
+
+	let fetches = {
+		all: getLatestActivityAllPosts({
+			listingLimit: LATEST_POSTS_LIMIT,
+			network
+		}),
+		discussions: getLatestActivityOffChainPosts({
+			listingLimit: LATEST_POSTS_LIMIT,
+			network,
+			proposalType: OffChainProposalType.DISCUSSIONS
+		})
+	};
+
+	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
+		const onChainFetches = {
+			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
-				proposalType: OffChainProposalType.DISCUSSIONS
+				proposalType: ProposalType.BOUNTIES
+			}),
+			council_motions: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.COUNCIL_MOTIONS
+			}),
+			democracy_proposals: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.DEMOCRACY_PROPOSALS
+			}),
+			referendums: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.REFERENDUMS
+			}),
+			tips: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.TIPS
+			}),
+			treasury_proposals: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.TREASURY_PROPOSALS
 			})
 		};
 
+		fetches = { ...fetches, ...onChainFetches };
+	}
+
+	if (chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH) {
+		const onChainFetches = {
+			community_pips: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.COMMUNITY_PIPS
+			}),
+			technical_pips: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.TECHNICAL_PIPS
+			}),
+			upgrade_pips: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.UPGRADE_PIPS
+			})
+		};
+
+		fetches = { ...fetches, ...onChainFetches };
+	}
+
+	if (isGrantsSupported(network)) {
+		(fetches as any)['grants'] = getLatestActivityOffChainPosts({
+			listingLimit: LATEST_POSTS_LIMIT,
+			network,
+			proposalType: OffChainProposalType.GRANTS
+		});
+	}
+
+	if (network === 'collectives') {
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
 			fetches[trackName as keyof typeof fetches] = getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
-				proposalType: networkTrackInfo[network][trackName]?.fellowshipOrigin ? ProposalType.FELLOWSHIP_REFERENDUMS : ProposalType.OPEN_GOV,
+				proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
 				trackNo: networkTrackInfo[network][trackName].trackId
 			});
 		}
-
-		const responseArr = await Promise.all(Object.values(fetches));
-
-		const gov2LatestPosts = {
-			allGov2Posts: responseArr[Object.keys(fetches).indexOf('allGov2Posts')],
-			discussionPosts: responseArr[Object.keys(fetches).indexOf('discussionPosts')]
-		};
-
-		for (const trackName of Object.keys(networkTrackInfo[network])) {
-			(gov2LatestPosts as any)[trackName as keyof typeof gov2LatestPosts] = responseArr[Object.keys(fetches).indexOf(trackName as keyof typeof fetches)];
-		}
-		const props: Props = {
-			error: '',
-			latestPosts: gov2LatestPosts,
-			network,
-			networkSocialsData
-		};
-
-		if (process.env.IS_CACHING_ALLOWED == '1') {
-			await redisSet(`${network}_latestActivity_OpenGov`, JSON.stringify(props));
-		}
-
-		return { props };
-	} else {
-		let fetches = {
-			all: getLatestActivityAllPosts({
-				listingLimit: LATEST_POSTS_LIMIT,
-				network
-			}),
-			discussions: getLatestActivityOffChainPosts({
-				listingLimit: LATEST_POSTS_LIMIT,
-				network,
-				proposalType: OffChainProposalType.DISCUSSIONS
-			})
-		};
-
-		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
-			const onChainFetches = {
-				bounties: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.BOUNTIES
-				}),
-				council_motions: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.COUNCIL_MOTIONS
-				}),
-				democracy_proposals: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.DEMOCRACY_PROPOSALS
-				}),
-				referendums: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.REFERENDUMS
-				}),
-				tips: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.TIPS
-				}),
-				treasury_proposals: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.TREASURY_PROPOSALS
-				})
-			};
-
-			fetches = { ...fetches, ...onChainFetches };
-		}
-
-		if (chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH) {
-			const onChainFetches = {
-				community_pips: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.COMMUNITY_PIPS
-				}),
-				technical_pips: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.TECHNICAL_PIPS
-				}),
-				upgrade_pips: getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.UPGRADE_PIPS
-				})
-			};
-
-			fetches = { ...fetches, ...onChainFetches };
-		}
-
-		if (isGrantsSupported(network)) {
-			(fetches as any)['grants'] = getLatestActivityOffChainPosts({
-				listingLimit: LATEST_POSTS_LIMIT,
-				network,
-				proposalType: OffChainProposalType.GRANTS
-			});
-		}
-
-		if (network === 'collectives') {
-			for (const trackName of Object.keys(networkTrackInfo[network])) {
-				fetches[trackName as keyof typeof fetches] = getLatestActivityOnChainPosts({
-					listingLimit: LATEST_POSTS_LIMIT,
-					network,
-					proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
-					trackNo: networkTrackInfo[network][trackName].trackId
-				});
-			}
-		}
-
-		const responseArr = await Promise.all(Object.values(fetches));
-		const props: IHomeProps = {
-			latestPosts: {},
-			network,
-			networkSocialsData
-		};
-
-		Object.keys(fetches).forEach((key, index) => {
-			props.latestPosts[key as keyof typeof fetches] = responseArr[index];
-		});
-		return { props };
 	}
+
+	const responseArr = await Promise.all(Object.values(fetches));
+	const props: IHomeProps = {
+		latestPosts: {},
+		network,
+		networkSocialsData
+	};
+
+	Object.keys(fetches).forEach((key, index) => {
+		props.latestPosts[key as keyof typeof fetches] = responseArr[index];
+	});
+
+	return { props };
 };
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
@@ -325,11 +264,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				)}
 				<div className='mx-1 mt-8'>
 					{network !== AllNetworks.COLLECTIVES ? (
-						!isOpenGovSupported(network) ? (
-							<LatestActivity latestPosts={latestPosts} />
-						) : (
-							<Gov2LatestActivity gov2LatestPosts={latestPosts} />
-						)
+						<LatestActivity latestPosts={latestPosts} />
 					) : (
 						<Gov2LatestActivity
 							gov2LatestPosts={{

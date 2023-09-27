@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Dropdown, Skeleton, Space } from 'antd';
+import { Button, Divider, Dropdown, Modal, Skeleton, Space } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -32,9 +32,18 @@ import UserDropdown from '../../ui-components/UserDropdown';
 import { UserDetailsContextType } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
+import { onchainIdentitySupportedNetwork } from '.';
+import IdentityCaution from '~assets/icons/identity-caution.svg';
+import CloseIcon from '~assets/icons/close-icon.svg';
+import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
+import { poppins } from 'pages/_app';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
+	ssr: false
+});
+const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
 
@@ -58,6 +67,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
+	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 
 	const handleLogout = async (username: string) => {
 		logout(setUserDetailsContextState);
@@ -82,6 +93,19 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
+	const handleIdentityButtonClick = () => {
+		const address = localStorage.getItem('identityAddress');
+		if (isMobile) {
+			setIdentityMobileModal(true);
+		} else {
+			if (address?.length) {
+				setOpen(!open);
+			} else {
+				setOpenAddressLinkedModal(true);
+			}
+		}
+	};
 
 	const menudropDownItems: ItemType[] = [
 		{
@@ -159,6 +183,34 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			)
 		}
 	];
+
+	if (onchainIdentitySupportedNetwork.includes(network)) {
+		dropdownMenuItems.splice(1, 0, {
+			key: 'set on-chain identity',
+			label: (
+				<Link
+					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary ${className}`}
+					href={''}
+					onClick={(e) => {
+						e.stopPropagation();
+						e.preventDefault();
+						handleIdentityButtonClick();
+					}}
+				>
+					<span className='text-2xl'>
+						<ApplayoutIdentityIcon />
+					</span>
+					<span>Set on-chain identity</span>
+					{!isVerified && (
+						<span className='flex items-center'>
+							<IdentityCaution />
+						</span>
+					)}
+				</Link>
+			)
+		});
+	}
+
 	const AuthDropdown = ({ children }: { children: ReactNode }) => (
 		<Dropdown
 			menu={{ items: dropdownMenuItems }}
@@ -190,7 +242,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					setSidedrawer(!sidedrawer);
 				}}
 			>
-				<Dashboard className='mr-5 mt-1 text-2xl lg:hidden' />
+				<Dashboard className='dashboard-container mr-5 mt-1 text-2xl lg:hidden' />
 			</span>
 			<nav className='flex h-[60px] max-h-[60px] w-full items-center justify-between'>
 				<div className='flex items-center'>
@@ -244,7 +296,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								) : (
 									<div className={'flex items-center justify-between gap-x-2'}>
 										<UserDropdown
-											className='navbar-user-dropdown h-[32px] max-w-[160px]'
+											className='navbar-user-dropdown h-[32px] max-w-[165px]'
 											displayName={displayName}
 											isVerified={isVerified}
 										/>
@@ -284,14 +336,14 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									<div className='flex flex-col'>
 										<SearchBar />
 										<div>
-											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-[#485F7D]'>Network</p>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Network</p>
 											<NetworkDropdown
 												setSidedrawer={() => {}}
 												isSmallScreen={true}
 											/>
 										</div>
 										<div className='mt-6'>
-											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-[#485F7D]'>Node</p>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Node</p>
 											<RPCDropdown isSmallScreen={true} />
 										</div>
 										<div className={`${username ? 'hidden' : 'block'}`}>
@@ -302,7 +354,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/signup');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
+													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
 												>
 													Sign Up
 												</button>
@@ -311,7 +363,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/login');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-4 py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
 												>
 													Log In
 												</button>
@@ -351,6 +403,27 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					isModal={true}
 				/>
 			</nav>
+			{onchainIdentitySupportedNetwork.includes(network) && (
+				<OnChainIdentity
+					open={open}
+					setOpen={setOpen}
+					openAddressLinkedModal={openAddressLinkedModal}
+					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+				/>
+			)}
+			<Modal
+				open={identityMobileModal}
+				footer={false}
+				closeIcon={<CloseIcon />}
+				onCancel={() => setIdentityMobileModal(false)}
+				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
+			>
+				<div className='flex flex-col items-center gap-6 py-4 text-center'>
+					<DelegationDashboardEmptyState />
+					<span>Please use your desktop computer to verify on chain identity</span>
+				</div>
+			</Modal>
 		</Header>
 	);
 };
@@ -480,6 +553,7 @@ export default styled(NavHeader)`
 		}
 
 		.text-container {
+			font-size: 12px !important;
 			margin-left: -4px !important;
 		}
 
@@ -488,7 +562,12 @@ export default styled(NavHeader)`
 		}
 
 		.logo-size {
-			margin-left: -16px !important;
+			transform: scale(0.9) !important;
+			margin-left: -25px !important;
+		}
+
+		.dashboard-container {
+			margin-left: -15px !important;
 		}
 	}
 `;

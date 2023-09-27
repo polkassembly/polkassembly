@@ -34,8 +34,8 @@ const UserDropdown = ({ className, displayName, isVerified }: Props): JSX.Elemen
 			<ImageComponent
 				src={picture}
 				alt='User Picture'
-				className='flex h-[40px] w-[40px] items-center justify-center bg-transparent'
-				iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
+				className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
+				iconClassName='flex items-center justify-center text-[#FCE5F2] text-lg w-full h-full rounded-full'
 			/>
 			<div className='flex w-[88%] items-center gap-1 text-xs'>
 				<span className={`normal-case ${isVerified && 'truncate'}`}>

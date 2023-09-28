@@ -329,7 +329,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									className='bg-white p-4'
 								>
 									<div className='flex flex-col'>
-										<SearchBar />
 										<div>
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Network</p>
 											<NetworkDropdown

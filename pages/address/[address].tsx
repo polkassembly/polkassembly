@@ -20,6 +20,7 @@ import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getOnChainUserPosts } from 'pages/api/v1/listing/get-on-chain-user-post';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -52,20 +53,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	}
 
 	const { data, error } = await getUserIdWithAddress(address.toString());
-	if (error || !data || isNaN(Number(data))) {
-		return {
-			props: {
-				error: error,
+	const userProfile = data || !error ? await getUserProfileWithUserId(Number(data)) : null;
+	const userPosts = !userProfile
+		? await getOnChainUserPosts({
+				addresses: address || [],
 				network
-			}
-		};
-	}
-	const userProfile = await getUserProfileWithUserId(Number(data));
-	const userPosts = await getUserPosts({
-		addresses: userProfile?.data?.addresses || [],
-		network,
-		userId: userProfile?.data?.user_id
-	});
+		  })
+		: await getUserPosts({
+				addresses: userProfile?.data?.addresses || [],
+				network,
+				userId: userProfile?.data?.user_id
+		  });
+
 	const props: IUserProfileProps = {
 		network,
 		userPosts: {
@@ -83,7 +82,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				user_id: data,
 				username: ''
 			},
-			error: userProfile.error
+			error: error
 		}
 	};
 	return {

@@ -90,7 +90,7 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 				index_eq: Number(proposalIndex),
 				type_eq: getSubsquidProposalType(proposalType as any)
 			};
-			if (proposalType === ProposalType.REFERENDUM_V2) {
+			if (proposalType === ProposalType.REFERENDUM_V2 || proposalType === ProposalType.REFERENDUMS) {
 				query = CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX;
 			} else {
 				if (network === 'moonbeam') {

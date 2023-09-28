@@ -14,6 +14,7 @@ import TagsIcon from '~assets/icons/tags-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import TopicTag from '~src/ui-components/TopicTag';
+import { useTheme } from 'next-themes';
 
 export interface IDiscussionProps {
 	created_at: Date
@@ -38,16 +39,17 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
+	const { resolvedTheme:theme } = useTheme();
 
 	return (
 		<>
-			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 min-h-[120px] sm:flex xs:hidden ${className}`}>
-				<span className='font-medium text-center flex-none sm:w-[120px] text-blue-light-high dark:text-blue-dark-high sm:mt-2'>#{post_id}</span>
+			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 min-h-[120px] sm:flex xs:hidden dark:border-[#1F2125] dark:border-[1px] ${className}`}>
+				<span className='font-medium text-center flex-none sm:w-[120px] text-blue-light-high dark:text-blue-dark-high dark:font-normal sm:mt-2'>#{post_id}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-[6px]">
 					<OnchainCreationLabel address={address} topic={topic} username={username} />
 					<div className="hidden sm:mt-2 sm:mb-1 sm:flex sm:justify-between sm:items-start sm:flex-row">
 						<div className='mt-3 lg:mt-1'>
-							<h1 className='text-blue-light-high dark:text-blue-dark-high font-medium text-sm flex'>
+							<h1 className='text-blue-light-high dark:text-blue-dark-high font-medium text-sm flex dark:font-normal'>
 								{title}
 								{
 									spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
@@ -61,7 +63,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</h1>
 						</div>
 					</div>
-					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
+					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center dark:font-normal">
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
@@ -98,7 +100,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								topic?
 									<div className='flex items-center sm:-mt-1'>
 										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
-										<TopicTag className='sm:mt-0 sm:mx-2' topic={topic} />
+										<TopicTag theme={theme} className='sm:mt-0 sm:mx-2' topic={topic} />
 									</div>
 									: null
 							}
@@ -109,12 +111,12 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					open= {tagsModal}
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
-					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 				><div className='flex'>
-						<h2 className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2'>
+						<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
 							<TagsIcon className='mr-2' />
 							Tags
-						</h2>
+						</div>
 					</div>
 					<div className='w-full h-[1px] bg-[#D2D8E0]' />
 					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
@@ -125,15 +127,15 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 				</Modal>
 			</div>
 
-			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 xs:p-2 md:p-4 min-h-[150px] h-auto xs:flex sm:hidden ${className}`}>
+			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 xs:p-2 md:p-4 min-h-[150px] h-auto xs:flex sm:hidden ${className} dark:border-[#1F2125] dark:border-[1px]`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
 					{
 						topic &&
 							<div className='flex justify-start'>
-								<TopicTag className='xs:my-0.5 xs:mx-2' topic={topic} />
+								<TopicTag theme={theme} className='xs:my-0.5 xs:mx-2' topic={topic} />
 							</div>
 					}
-					<div className='max-xs-hidden m-2.5 text-blue-light-high dark:text-blue-dark-high font-medium text-sm'>
+					<div className='max-xs-hidden m-2.5 text-blue-light-high dark:text-blue-dark-high font-medium dark:font-normal text-sm'>
 						#{post_id} {title}
 						<div className='flex justify-between items-center'>
 							{
@@ -185,8 +187,8 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					open= {tagsModal}
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
-					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
-				><div className='flex'>
+					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+				><div className='flex dark:bg-black'>
 						<TagsIcon className='mr-2 mt-1.5' />
 						<h2 className='text-lg tracking-wide font-semibold text-blue-light-high dark:text-blue-dark-high mb-2'>Tags</h2>
 					</div>

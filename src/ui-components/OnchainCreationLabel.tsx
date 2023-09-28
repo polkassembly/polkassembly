@@ -32,7 +32,13 @@ const OnchainCreationLabel = ({ address, username, truncateUsername }: Props) =>
 							/>
 						) : (
 							<span className='max-w-[150px] overflow-hidden text-ellipsis font-semibold text-bodyBlue'>
-								<Link href={`/user/${username}`}>{username}</Link>
+								<Link
+									href={`/user/${username}`}
+									target='_blank'
+									rel='noreferrer'
+								>
+									{username}
+								</Link>
 							</span>
 						)}
 					</>

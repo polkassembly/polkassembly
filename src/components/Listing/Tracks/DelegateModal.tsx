@@ -308,7 +308,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const content = (
 		<div className='flex flex-col'>
 			<Checkbox.Group
-				className='flex max-h-[200px] flex-col overflow-y-auto'
+				className='flex h-[200px] flex-col overflow-y-scroll'
 				onChange={onChange}
 				value={checkedList}
 			>

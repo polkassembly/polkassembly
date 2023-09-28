@@ -28,6 +28,7 @@ import DownArrow from '~assets/icons/down-icon.svg';
 import UpArrow from '~assets/icons/up-arrow.svg';
 import styled from 'styled-components';
 import StatusTag from '~src/ui-components/StatusTag';
+import { useTheme } from 'next-themes';
 
 interface BlockStatus {
 	block: number;
@@ -51,6 +52,7 @@ function sortfunc(a: BlockStatus, b: BlockStatus) {
 
 const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
+	const { resolvedTheme:theme } = useTheme();
 	const { timeline, className } = props;
 	const { postData: { postType } } = usePostDataContext();
 	const PostType = postType.replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase()).replace(/s$/, '');
@@ -104,7 +106,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const StatusDiv = ({ status } : { status: string }) => {
 		return (
 			<div className='text-white my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center status-tag'>
-				<StatusTag className="text-ellipsis overflow-hidden text-white max-w-[86px] md:max-w-full" colorInverted={false} status={status} type={type} />
+				<StatusTag theme={theme} className="text-ellipsis overflow-hidden text-white max-w-[86px] md:max-w-full" colorInverted={false} status={status} type={type} />
 			</div>
 		);
 	};

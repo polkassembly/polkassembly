@@ -89,7 +89,7 @@ const Listing: FC<IListingProps> = (props) => {
 						{
 							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
 								<GovernanceCard
-									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC] dark:bg-black'} ${poppins.variable} ${poppins.className}`}
+									className={`${(index+1)%2!==0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'dark:bg-section-dark-overlay'} ${poppins.variable} ${poppins.className}`}
 									cid={cid}
 									postReactionCount={post_reactions}
 									address={proposer || curator}

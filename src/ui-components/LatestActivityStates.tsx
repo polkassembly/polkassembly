@@ -13,6 +13,7 @@ import Address from './Address';
 import StatusTag from './StatusTag';
 import { ErrorState, LoadingState, PostEmptyState } from './UIStates';
 import { poppins } from 'pages/_app';
+import { useTheme } from 'next-themes';
 
 const LatestActivityWrapper = ({ children }: {children: ReactNode}) => (
 	<div className="h-[500px] flex items-center justify-center overflow-y-auto">
@@ -78,6 +79,7 @@ interface IGov2PopulatedLatestActivityCardProps {
 }
 
 export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> = ({ tableData, onClick }) => {
+	const { resolvedTheme:theme } = useTheme();
 	return (
 		<div>
 			{
@@ -109,7 +111,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						{
 							rowData.status !== '-' &&
 								<div className='flex items-center justify-between my-2 mx-2'>
-									<StatusTag className='my-1.5' status={rowData.status} />
+									<StatusTag theme={theme} className='my-1.5' status={rowData.status} />
 								</div>
 						}
 					</div>
@@ -120,6 +122,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 };
 
 export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCardProps> = ({ tableData, onClick }) => {
+	const { resolvedTheme:theme } = useTheme();
 	return (
 		<div>
 			{
@@ -152,7 +155,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						{
 							rowData.status !== '-' &&
 								<div className='flex items-center justify-between my-2 mx-2'>
-									<StatusTag className='my-1.5' status={rowData.status} />
+									<StatusTag theme={theme} className='my-1.5' status={rowData.status} />
 								</div>
 						}
 					</div>

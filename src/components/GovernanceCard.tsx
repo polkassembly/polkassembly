@@ -197,7 +197,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-2.5">
 					<div className="flex justify-between items-center">
 						<div className="flex flex-grow">
-							<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue dark:text-blue-dark-high'>#{isTip? tip_index: onchainId}</span>
+							<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue dark:text-blue-dark-high dark:font-normal'>#{isTip? tip_index: onchainId}</span>
 							<OnchainCreationLabel address={address || polkadotProposer} username={username} />
 						</div>
 						<div className="flex justify-end items-center">
@@ -215,9 +215,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							requestedAmount &&
 							<div className='flex justify-center items-center'>
 								{requestedAmount > 100 ?
-									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium sm:mr-[2.63rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue dark:text-blue-dark-high dark:font-normal text-sm font-medium sm:mr-[2.63rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
-									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium sm:mr-[2.65rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue dark:text-blue-dark-high dark:font-normal text-sm font-medium sm:mr-[2.65rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 								}
 							</div>
 						}
@@ -226,17 +226,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<LikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
-								<span className='text-lightBlue dark:text-icon-dark-inactive'>{getFormattedLike(postReactionCount['👍'])}</span>
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-0.5'>
-								<DislikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
-								<span className='text-lightBlue dark:text-icon-dark-inactive'>{getFormattedLike(postReactionCount['👎'])}</span>
+								<DislikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 							{
 								isCommentsVisible?
 									<>
-										<div className='xs:hidden text-lightBlue dark:text-icon-dark-inactive sm:flex items-center'>
-											<CommentsIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' /> {commentsCount}
+										<div className='xs:hidden text-lightBlue dark:text-blue-dark-medium sm:flex items-center'>
+											<CommentsIcon className='mr-1 text-lightBlue dark:text-blue-dark-medium' /> {commentsCount}
 										</div>
 									</>
 									: null
@@ -252,21 +252,21 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</span>}
 							</>}
 
-							<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-icon-dark-inactive' />
+							<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 							{
 								cid ?
 									<>
 										<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
-										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-icon-dark-inactive' />
+										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 									</> : null
 							}
 							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue dark:text-icon-dark-inactive items-center sm:mt-0'>
-									<ClockCircleOutlined className='mr-1 dark:border-icon-dark-inactive' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
+								<div className='flex text-lightBlue dark:text-blue-dark-medium items-center sm:mt-0'>
+									<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
 								</div>
 							</>}
 							{(decision && (decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed) && <>
-								<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive' />
+								<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-[#90A0B7] dark:border-blue-dark-medium' />
 								<Tooltip overlayClassName='max-w-none' title={<div className={`p-1.5 ${poppins.className} ${poppins.variable} whitespace-nowrap flex items-center text-xs`}>{ `Deciding ends in ${remainingTime} ${(decidingBlock !== 0) ? `#${decidingBlock}` :''}`}</div>} color='#575255'>
 									<div className='min-w-[30px] mt-2'>
 										<Progress strokeWidth={5} percent={decision.periodPercent || 0} strokeColor='#407AFC' trailColor='#D4E0FC'/>
@@ -274,15 +274,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</Tooltip>
 							</>}
 							{(votesData?.data || tally) && <>
-								<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive' />
-								<VotesProgressInListing index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>
+								<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-[#90A0B7] dark:border-blue-dark-medium' />
+								<VotesProgressInListing theme={theme} index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>
 							</>
 							}
 							{
 								topic?
 									<div className='flex items-center sm:-mt-1'>
-										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-icon-dark-inactive' />
-										<TopicTag className='sm:mt-0 sm:mx-1' topic={topic} />
+										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
+										<TopicTag className='sm:mt-0 sm:mx-1' theme={theme} topic={topic} />
 									</div>
 									: null
 							}
@@ -290,8 +290,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 						{!!end && !!currentBlock &&
 							<div className="flex text-lightBlue dark:icon-dark-inactive items-center">
-								<Divider className='hidden lg:inline-block border-l-1 border-lightBlue dark:border-icon-dark-inactive' type="vertical" />
-								<ClockCircleOutlined className='mr-1 dark:border-icon-dark-inactive' />
+								<Divider className='hidden lg:inline-block border-l-1 border-lightBlue dark:border-blue-dark-medium' type="vertical" />
+								<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' />
 								{
 									end > currentBlock
 										? <span><BlockCountdown endBlock={end}/> remaining</span>
@@ -309,16 +309,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						{
 							topic &&
 							<div>
-								<TopicTag className='xs:mx-1' topic={topic} />
+								<TopicTag theme={theme} className='xs:mx-1' topic={topic} />
 							</div>
 						}
 						{
 							requestedAmount &&
 							<div className='xs:mr-5 sm:m-0'>
 								{requestedAmount > 100 ?
-									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium dark:font-normal'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
-									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium dark:font-normal'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
 								}
 							</div>
 						}
@@ -334,11 +334,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className='max-xs-hidden my-3 mx-1 text-blue-light-high dark:text-blue-dark-high font-medium text-sm'>
+					<div className='max-xs-hidden my-3 mx-1 text-blue-light-high dark:text-blue-dark-high font-medium text-sm dark:font-normal'>
 						#{isTip? tip_index: onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
+					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3 dark:font-normal">
 						<div className="sm:hidden xs:flex xs:justify-start items-center h-[30px] flex-shrink-0">
 							<OnchainCreationLabel address={address} truncateUsername username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
@@ -356,7 +356,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{ (votesData?.data || tally) && (network !== 'polymesh') && <div className='flex items-center'>
 								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div>
-									<VotesProgressInListing index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>
+									<VotesProgressInListing theme={theme} index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>
 								</div>
 							</div>}
 						</div>
@@ -384,12 +384,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 				footer={false}
 				closeIcon={<CloseIcon/>}
-				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 				title={<>
-					<label className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2'>
+					<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
 						<TagsIcon className='mr-2' />
 							Tags
-					</label>
+					</div>
 					<Divider type="horizontal" style={{ borderLeft: '2px solid #D2D8E0' }} />
 				</>}
 			>

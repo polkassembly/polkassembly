@@ -73,6 +73,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 									</div>
 									{childBounty.status && (
 										<StatusTag
+											theme={theme}
 											className='statusTag m-auto'
 											status={childBounty.status}
 										/>

@@ -13,6 +13,7 @@ interface Props{
 	status: string | undefined;
 	colorInverted?: boolean;
 	type?: string;
+	theme?: string;
 }
 
 const StatusTag = ({ className, content, status, colorInverted, type }: Props) => {
@@ -35,9 +36,10 @@ const StatusTag = ({ className, content, status, colorInverted, type }: Props) =
 	);
 };
 
-export default styled(StatusTag).attrs(( { status }: Props) => ({
+export default styled(StatusTag).attrs(( { status, theme }: Props) => ({
 	className: status,
-	content: status
+	content: status,
+	theme
 }))`
 	
 	max-width: min-content;
@@ -55,8 +57,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${bountyStatus.EXTENDED},
 	&.${tipStatus.CLOSING} {
 		color: #fff;
-		border:2px solid #FF6700;
-		background: #FF6700;
+		border:${props => props.theme==='dark' ? '2px solid #D05704' : '2px solid #FF6700'} !important;
+		background: ${props => props.theme==='dark' ? '#D05704' : '#FF6700'} !important;
 
 		&.inverted {
 			color: #CA5CDD;
@@ -75,8 +77,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${tipStatus.OPENED},
 	&.${childBountyStatus.ADDED} {
 		color: #fff;
-		border:2px solid #407AFC;
-		background: #407AFC;
+		border:${props => props.theme==='dark' ? '2px solid #3866CE' : '2px solid #407AFC'} !important;
+		background: ${props => props.theme==='dark' ? '#3866CE' : '#407AFC'} !important;
 
 		&.inverted {
 			color: #6495ED;
@@ -97,8 +99,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${childBountyStatus.CANCELED},
 	&.${gov2ReferendumStatus.CONFIRM_ABORTED} {
 		color: #fff;
-		border:2px solid #FF0000 !important;
-		background: #FF0000 !important;
+		border:${props => props.theme==='dark' ? '2px solid #BD2020' : '2px solid #FF0000 '} !important;
+		background: ${props => props.theme==='dark' ? '#BD2020' : '#FF0000 '} !important;
 
 		&.inverted {
 			color: #FF0000 ;
@@ -127,8 +129,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${bountyStatus.AWARDED},
 	&.${announcementStatus.Announced} {
 		color: #fff;
-		border:2px solid #5BC044;
-		background: #5BC044;
+		border:${props => props.theme==='dark' ? '2px solid #478F37' : '2px solid #5BC044'} !important;
+		background: ${props => props.theme==='dark' ? '#478F37' : '#5BC044'} !important;
 
 		&.inverted {
 			color: #5BC044;

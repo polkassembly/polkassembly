@@ -18,6 +18,7 @@ import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
+import { useTheme } from 'next-themes';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => <div className="flex gap-x-6"><Skeleton.Avatar active /><Skeleton.Input active /></div> ,
@@ -30,6 +31,7 @@ interface IPostHeadingProps {
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router= useRouter();
 	const { className } = props;
+	const { resolvedTheme:theme } = useTheme();
 	const { postData: {
 		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid, history, content, summary, identityId
 	} } = usePostDataContext();
@@ -74,7 +76,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	return (
 		<div className={className} >
 			<div className="flex justify-between items-center">
-				{status && <StatusTag className='mb-3' status={status}/>}
+				{status && <StatusTag theme={theme} className='mb-3' status={status}/>}
 				{ requestedAmt && <h5 className='text-sm text-blue-light-high dark:text-blue-dark-high font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
 			</div>
 			<h2 className='text-lg text-blue-light-high dark:text-blue-dark-high font-medium mb-3 leading-7'>

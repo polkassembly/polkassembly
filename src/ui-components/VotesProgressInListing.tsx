@@ -24,16 +24,17 @@ interface Props{
   proposalType?: ProposalType | string;
   index:number;
   votesData: any;
+  theme?: string;
 }
 
-const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType, votesData }:Props) => {
+const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType, votesData, theme }:Props) => {
 	const { network } = useNetworkContext();
 	const  { api, apiReady } = useApiContext();
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO ,
 		nays: ZERO
 	});
-
+	const trailColor = theme === 'dark' ? 'transparent' : (((index % 2) === 0) ? '#fbfbfc' : 'white');
 	const [loading, setLoading] = useState<boolean>(true);
 	const [tallyAyeNayVotes, setTallyAyeNayVotes] = useState({
 		ayes: 0,
@@ -198,12 +199,12 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 					<span>Nay = {usingTallyForAyeNayVotes ? nays  : formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isNayNaN ? 50 : nayPercent).toFixed(2)}%) </span>
 				</div>}>
 					<div>
-						<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
+						<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={trailColor} />
 					</div>
 				</Tooltip>
 			</div>
 			<div className='sm:hidden'>
-				<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
+				<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={trailColor} />
 			</div>
 		</>
 	;

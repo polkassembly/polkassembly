@@ -8,10 +8,12 @@ import styled from 'styled-components';
 
 interface Props{
 	className?: string,
-	topic: string
+	topic: string,
+	theme?: string
 }
 
-const TopicTag = ({ className, topic }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const TopicTag = ({ className, topic,theme }: Props) => {
 
 	return (
 		<Tag className={`${className} ${topic} text-xs py-1 px-3`}>{topic}</Tag>
@@ -31,23 +33,23 @@ export default styled(TopicTag)`
 	}
 
 	&.Democracy {
-		background-color: #EEF8FF !important;
-		color: #093874;
+		background-color: ${props => props.theme === 'dark'? '#1C2945':'#EEF8FF'} !important;
+		color: ${props => props.theme === 'dark'? '#96AAD6':'#093874'} !important; 
 	}
 	&.Council {
-		background-color: #FFEDF2 !important;
-		color: #CD1F59;
+		background-color: ${props => props.theme === 'dark'? '#0B353C':'#FFEDF2'} !important;  
+		color: ${props => props.theme === 'dark'? '#93C9D1':'#CD1F59'}; 
 	}
 	&.Treasury {
-		background-color: #FFF4EB !important;
-		color: #AC6A30;
+		background-color: ${props => props.theme === 'dark'? '#302234':'#FFF4EB'} !important; 
+		color: ${props => props.theme === 'dark'? '#CCAED4':'#AC6A30'} !important; 
 	}
 	&.Technical, &.Tech {
 		background-color: #FEF7DD !important;
 		color: #75610E;
 	}
 	&.General {
-		background-color: #FDF5F0 !important;
-		color: #EF884A;
+		background-color: ${props => props.theme === 'dark'? '#380E0E':'#FDF5F0'} !important;
+		color: ${props => props.theme === 'dark'? '#DB8383':'#EF884A'} !important;
 	}
 `;

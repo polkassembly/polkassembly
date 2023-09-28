@@ -1704,11 +1704,9 @@ query DelegatedVotesListigByVoter($type_eq: VoteType = ReferendumV2, $voter_in: 
         createdAt
       }
       voter
-      selfVotingPower
-      totalVotingPower
-      delegatedVotingPower
       lockPeriod
     }
+    votingPower
     decision
     voter
   }

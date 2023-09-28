@@ -21,7 +21,7 @@ import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import VotesHistory from '~src/ui-components/VotesHistory';
-import { EProfileHistory, votesHistoryAvailableNetworks } from 'pages/user/[username]';
+import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getOnChainUserPosts } from 'pages/api/v1/listing/get-on-chain-user-post';
 
@@ -107,7 +107,6 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	const [selectedGov, setSelectedGov] = useState(EGovType.OPEN_GOV);
 	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(isOpenGovSupported(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
 
-	console.log(userPosts, 'posts');
 	useEffect(() => {
 		setNetwork(network);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,17 +191,22 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							/>
 						)}
 					</div>
-					{selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) && (
+					{!votesHistoryUnavailableNetworks.includes(network) && (
 						<div className='mb-6'>
 							<Segmented
 								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
 								onChange={(e) => setProfileHistory(e as EProfileHistory)}
+								value={profileHistory}
 							/>
 						</div>
 					)}
-					{profileHistory === EProfileHistory.VOTES && selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) ? (
+
+					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
-							<VotesHistory userAddresses={userProfile?.data?.addresses} />
+							<VotesHistory
+								userAddresses={userProfile?.data?.addresses || []}
+								govType={selectedGov}
+							/>
 						</div>
 					) : (
 						<div className='fullHeight'>
@@ -231,5 +235,20 @@ export default styled(UserProfile)`
 	}
 	.fullHeight .ant-tabs-tabpane {
 		height: 100% !important;
+	}
+	.ant-select-selector {
+		height: 40px !important;
+		border-radius: 4px !important;
+		padding: 4px 12px !important;
+	}
+	.ant-segmented {
+		padding: 4px;
+		font-weight: 500 !important;
+		color: #464f60 !important;
+	}
+	.ant-segmented-item-selected {
+		text: 14px;
+		font-weight: 600 !important;
+		color: var(--pink_primary) !important;
 	}
 `;

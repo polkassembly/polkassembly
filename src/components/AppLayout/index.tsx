@@ -525,9 +525,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems])
 	];
 
-	if (network !== AllNetworks.POLYMESH) {
-		gov2CollapsedItems.push(...collapsedItems);
-	}
 	if (isFellowshipSupported(network)) {
 		gov2Items.splice(
 			gov2Items.length - 1,
@@ -587,7 +584,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	if (network !== AllNetworks.POLYMESH) {
-		gov2Items = gov2Items.concat(items);
+		gov2Items = [...gov2Items, getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items])];
 	}
 
 	const userDropdown = getUserDropDown(

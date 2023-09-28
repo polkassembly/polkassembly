@@ -626,7 +626,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (username && isMobile) {
-		sidebarItems = [getSiderMenuItem('', '', <div className='h-[60px]' />), userDropdown, ...sidebarItems];
+		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), userDropdown, ...sidebarItems];
 	}
 
 	return (

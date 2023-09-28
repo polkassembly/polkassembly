@@ -8,22 +8,15 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
 
 type Props = {
-    icon: any;
-    title: string;
-    open: boolean;
-    getVerifyToken:  (channel: CHANNEL) => Promise<any>;
-    generatedToken?: string;
-    onClose: () => void;
+	icon: any;
+	title: string;
+	open: boolean;
+	getVerifyToken: (channel: CHANNEL) => Promise<any>;
+	generatedToken?: string;
+	onClose: () => void;
 };
 
-const SlackInfoModal = ({
-	icon,
-	title,
-	open,
-	getVerifyToken,
-	generatedToken = '',
-	onClose
-}: Props) => {
+const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = '', onClose }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
 
@@ -42,7 +35,7 @@ const SlackInfoModal = ({
 	return (
 		<Modal
 			title={
-				<h3 className='flex items-center gap-3 mb-5'>
+				<h3 className='mb-5 flex items-center gap-3'>
 					{icon} {title}
 				</h3>
 			}
@@ -54,37 +47,32 @@ const SlackInfoModal = ({
 			<div className=''>
 				<ol>
 					<li className='list-inside leading-[40px]'>
-                        Click this invite link <br />
-						<span className='p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
+						Click this invite link <br />
+						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
 							<a
 								href='https://premiurly.slack.com/apps/A059VBVGL59-polkassembly-bot'
 								target='_blank'
 								rel='noreferrer'
 							>
-                                https://premiurly.slack.com/apps/A059VBVGL59-polkassembly-bot
+								https://premiurly.slack.com/apps/A059VBVGL59-polkassembly-bot
 							</a>
 						</span>
 					</li>
 					<li className='list-inside leading-[40px]'>
-                        Send this command to the chat with the bot:
+						Send this command to the chat with the bot:
 						<br />
 						<span
-							onClick={() =>
-								handleCopyClicked(
-									'/add <username> <verificationToken>'
-								)
-							}
-							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+							onClick={() => handleCopyClicked('/add <username> <verificationToken>')}
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
-							<CopyIcon className='relative top-[6px]' />{' '}
-							{'<username>'} {'<verificationToken>'}
+							<CopyIcon className='relative top-[6px]' /> {'<username>'} {'<verificationToken>'}
 						</span>
 						<Button
 							loading={loading}
 							onClick={handleGenerateToken}
-							className='bg-pink_primary text-white font-normal'
+							className='bg-pink_primary font-normal text-white'
 						>
-                            Generate Token
+							Generate Token
 						</Button>
 						<br />
 						{token && (
@@ -92,10 +80,9 @@ const SlackInfoModal = ({
 								<span>Verification Token: </span>
 								<span
 									onClick={() => handleCopyClicked(token)}
-									className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+									className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 								>
-									<CopyIcon className='relative top-[6px]' />{' '}
-									{token}
+									<CopyIcon className='relative top-[6px]' /> {token}
 								</span>
 							</>
 						)}

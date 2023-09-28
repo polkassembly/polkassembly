@@ -21,10 +21,10 @@ const converter = new showdown.Converter({
 });
 
 interface ITextEditorProps {
-    className?: string;
-    height?: number | string;
-    value?: string;
-    onChange: (value: string) => void;
+	className?: string;
+	height?: number | string;
+	value?: string;
+	onChange: (value: string) => void;
 	isDisabled?: boolean;
 	name: string;
 	autofocus?: boolean;
@@ -82,19 +82,23 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
-		if (!value ||
-			!(value.startsWith('<p><a href="../user/') || value.startsWith('<p><a href="../address/')) ||
-			!value.endsWith('</a>&nbsp;</p>')
-		) return;
+		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
+			return;
 
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
 
 	return (
-		<>
-			{loading &&  (
-				<Skeleton.Input block={true} active={true} style={{ height: '300px' }} />
+		<div className='relative'>
+			{loading && (
+				<div className='absolute inset-0'>
+					<Skeleton.Input
+						block={true}
+						active={true}
+						style={{ height: `${height || 300}px` }}
+					/>
+				</div>
 			)}
 			<Modal
 				open={isModalVisible}
@@ -111,9 +115,12 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					}}
 				/>
 			</Modal>
-			<div style={{
-				minHeight: `${height || 300}px`
-			}} className={classNames('flex-1 w-full', className, { 'invisible' : loading })}>
+			<div
+				style={{
+					minHeight: `${height || 300}px`
+				}}
+				className={classNames('w-full flex-1', className, { invisible: loading })}
+			>
 				<div className={`${loading && 'invisible'}`}>
 					<Editor
 						onPaste={(e) => {
@@ -130,13 +137,23 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						ref={ref}
 						disabled={isDisabled}
 						onEditorChange={(content) => {
+							const allowedTags = ['ul', 'li', 'img', 'table'];
+							const regex = new RegExp(`<(?!\\/?(${allowedTags.join('|')})\\b)[^>]+>|&nbsp;|\\n`, 'gi');
+							const cleanContent = content.replace(regex, '');
+
+							const textContent = ref.current?.editor?.getContent({ format: 'text' }).trim();
+
+							if (!textContent && !cleanContent) {
+								onChange('');
+								return;
+							}
 							onChange(content);
 						}}
 						apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
 						cloudChannel='5-stable'
 						onInit={() => setLoading(false)}
-						onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach(elem => elem.classList?.add('focused'))}
-						onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach(elem => elem.classList?.remove('focused'))}
+						onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.add('focused'))}
+						onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.remove('focused'))}
 						init={{
 							block_unsupported_drop: false,
 							branding: false,
@@ -150,7 +167,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
 
 								xhr.upload.onprogress = (e) => {
-									progress(Number((e.loaded / e.total * 100).toPrecision(2)));
+									progress(Number(((e.loaded / e.total) * 100).toPrecision(2)));
 								};
 
 								xhr.onload = () => {
@@ -184,9 +201,21 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							paste_data_images: true,
 							placeholder: 'Please type here...',
 							plugins: [
-								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-								'searchreplace', 'visualblocks', 'fullscreen',
-								'insertdatetime', 'media', 'table', 'textpattern', 'emoticons'
+								'advlist',
+								'autolink',
+								'lists',
+								'link',
+								'image',
+								'charmap',
+								'preview',
+								'searchreplace',
+								'visualblocks',
+								'fullscreen',
+								'insertdatetime',
+								'media',
+								'table',
+								'textpattern',
+								'emoticons'
 							],
 							setup: (editor) => {
 								editor.on('init', () => {
@@ -200,21 +229,24 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									fetch: (pattern: string) => {
 										// eslint-disable-next-line no-async-promise-executor
 										return new Promise(async (resolve) => {
-											const queries = [{
-												indexName: 'polkassembly_users',
-												query: pattern,
-												params: {
-													hitsPerPage: 6,
-													restrictSearchableAttributes: ['username']
+											const queries = [
+												{
+													indexName: 'polkassembly_users',
+													query: pattern,
+													params: {
+														hitsPerPage: 6,
+														restrictSearchableAttributes: ['username']
+													}
+												},
+												{
+													indexName: 'polkassembly_addresses',
+													query: pattern,
+													params: {
+														hitsPerPage: 4,
+														restrictSearchableAttributes: ['address']
+													}
 												}
-											}, {
-												indexName: 'polkassembly_addresses',
-												query: pattern,
-												params: {
-													hitsPerPage: 4,
-													restrictSearchableAttributes: ['address']
-												}
-											}];
+											];
 
 											const hits = await algolia_client.search(queries, { strategy: 'none' });
 
@@ -223,7 +255,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 
 											const usernameResults = (usernameHits || [])?.map((user: any) => ({
 												type: 'cardmenuitem',
-												value: `<a target="_blank" href="/user/${user.username}">@${user.username}</a>`,
+												value: `<a target="_blank" rel="noreferrer" href="/user/${user.username}">@${user.username}</a>`,
 												label: user.username,
 												items: [
 													{
@@ -273,10 +305,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								editor.ui.registry.addIcon('custom-icon', gifSVGData);
 								editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 							},
-							toolbar: 'undo redo preview | ' +
-								'bold italic backcolor | ' +
-								'bullist numlist table customButton | ' +
-								'removeformat link image emoticons',
+							toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image emoticons',
 							xss_sanitization: true,
 							textpattern_patterns: [
 								{ start: '*', end: '*', format: 'italic' },
@@ -304,8 +333,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					/>
 				</div>
 			</div>
-		</>
-
+		</div>
 	);
 };
 

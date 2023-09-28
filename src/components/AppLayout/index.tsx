@@ -667,7 +667,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						bottom: 0,
 						height: '100vh',
 						left: 0,
-						position: 'fixed'
+						position: 'fixed',
+						zIndex: '1005'
 					}}
 				>
 					<Menu

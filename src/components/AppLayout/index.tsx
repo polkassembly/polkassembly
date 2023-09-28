@@ -38,7 +38,8 @@ import {
 	RootIcon,
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
-	ApplayoutIdentityIcon
+	ApplayoutIdentityIcon,
+	ArchivedIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -338,8 +339,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
-					getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-					getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
 					getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 			  ]
 			: [],
@@ -371,7 +370,24 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		items = items.concat([
 			getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
 
-			getSiderMenuItem('Treasury', 'treasury_group', null, [...gov1Items.treasuryItems]),
+			getSiderMenuItem(
+				'Treasury',
+				'treasury_group',
+				null,
+				isOpenGovSupported(network)
+					? !['moonbeam', 'moonbase', 'moonriver'].includes(network)
+						? [...gov1Items.treasuryItems]
+						: [
+								...gov1Items.treasuryItems,
+								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
+								getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+						  ]
+					: [
+							...gov1Items.treasuryItems,
+							getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
+							getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+					  ]
+			),
 
 			getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
 
@@ -535,7 +551,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
 		if (network !== 'picasso') {
-			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.treasuryItems]));
+			let items = [...gov2TrackItems.treasuryItems];
+			if (isOpenGovSupported(network)) {
+				items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
+			}
+			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...items]));
 		} else {
 			gov2Items.splice(gov2Items.length - 2, 1);
 		}
@@ -584,7 +604,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	if (network !== AllNetworks.POLYMESH) {
-		gov2Items = [...gov2Items, getSiderMenuItem(<span className='ml-2 text-base font-medium  text-lightBlue hover:text-navBlue'>Gov1</span>, 'tracksHeading', null, [...items])];
+		gov2Items = [...gov2Items, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='text-lightBlue' />, [...items])];
 	}
 
 	const userDropdown = getUserDropDown(
@@ -602,7 +622,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
 	if (isOpenGovSupported(network)) {
-		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
+		sidebarItems = !sidedrawer ? [...gov2CollapsedItems, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='text-lightBlue' />, [...items])] : gov2Items;
 	}
 
 	if (username && isMobile) {

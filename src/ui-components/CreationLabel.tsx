@@ -109,20 +109,20 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 	return (
 		<div className={`${className} flex w-[100%] justify-between`}>
-			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
-				<div className={'flex w-full items-center min-[320px]:w-auto min-[320px]:flex-row'}>
-					<div className={'flex items-center '}>
+			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+				<div className={'flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
+					<div className={'flex flex-shrink-0 items-center'}>
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
 							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
-							usernameClassName='text-xs text-ellipsis overflow-hidden'
+							usernameClassName='text-xs text-ellipsis overflow-hidden mr-1'
 						/>
 						{text}&nbsp;
 						{topic && (
-							<div className='ml-1 flex items-center sm:-mt-0.5'>
-								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>{' '}
+							<div className=' flex items-center sm:-mt-0.5'>
+								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>
 								<TopicTag
 									topic={topic}
 									className={topic}
@@ -146,12 +146,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className='-ml-[11px] flex items-center text-lightBlue'>
+				<div className='flex flex-shrink-0 items-center text-lightBlue'>
 					{(topic || text || created_at) && (
 						<>
 							&nbsp;
 							<Divider
-								className={`ml-1 md:inline-block ${!isRow ? 'hidden' : 'inline-block'}`}
+								className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} max-sm:hidden`}
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>

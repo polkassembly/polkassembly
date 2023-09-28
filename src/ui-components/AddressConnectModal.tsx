@@ -708,6 +708,7 @@ const AddressConnectModal = ({
 									/>
 								) : (
 									<AccountSelectionForm
+										isTruncateUsername={false}
 										title={accountSelectionFormTitle}
 										accounts={accounts}
 										address={address}

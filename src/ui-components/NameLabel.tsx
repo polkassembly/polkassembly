@@ -40,7 +40,7 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 					usernameClassName={usernameClassName}
 					disableIdenticon={disableIdenticon}
 					disableAddressClick={disableAddressClick}
-					isTruncateUsername={truncateUsername}
+					isTruncateUsername={truncateUsername || false}
 					isSubVisible={false}
 				/>
 			)}

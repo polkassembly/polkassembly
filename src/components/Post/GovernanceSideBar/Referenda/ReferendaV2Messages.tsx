@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal, Progress } from 'antd';
+import { Modal, Progress, Space } from 'antd';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
@@ -15,6 +15,7 @@ import { IProgress } from './Curves';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -69,6 +70,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const awardedStatusBlock = getStatusBlock(timeline || [], ['TreasuryProposal'], 'Awarded');
 	const isTreasuryProposalPresent = checkProposalPresent(timeline || [], 'TreasuryProposal');
+
+	const confirmationAttempts: number =
+		timeline?.filter((timelineObj) => timelineObj.type === 'ReferendumV2')?.[0]?.statuses?.filter((statusObj: any) => statusObj.status === 'ConfirmStarted')?.length || 0;
 
 	const Button: FC<IButtonProps> = (props) => {
 		const { children, className } = props;
@@ -218,6 +222,21 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							</span>
 						</>
 					</p>
+					{Boolean(confirmationAttempts) && (
+						<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
+							<>
+								<span className='text-bodyblue text-sm font-normal text-bodyBlue'>Confirmation Attempts</span>
+
+								<Space>
+									<span className='text-xs text-lightBlue'>{confirmationAttempts}</span>
+									<HelperTooltip
+										placement='topLeft'
+										text='Number of times proposal entered confirmation period as both support & approval were greater than threshold'
+									/>
+								</Space>
+							</>
+						</p>
+					)}
 				</GovSidebarCard>
 			)}
 			{isProposalPassed ? (

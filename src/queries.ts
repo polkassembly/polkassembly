@@ -1640,6 +1640,10 @@ query ConvictionVotesListigByVoter($type_eq: VoteType = ReferendumV2, $voter_in:
       index
       proposer
       status
+      statusHistory{
+        id
+        status
+      }
     }
     removedAtBlock
     proposalIndex
@@ -1700,6 +1704,10 @@ query DelegatedVotesListigByVoter($type_eq: VoteType = ReferendumV2, $voter_in: 
         index
         description
         status
+        statusHistory{
+          id
+          status
+        }
         proposer
         createdAt
       }

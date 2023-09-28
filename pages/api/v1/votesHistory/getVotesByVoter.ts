@@ -43,8 +43,24 @@ export interface IProfileVoteHistoryRespose {
 		proposer: string;
 		status: string;
 		title?: string;
+		statusHistory?: string[];
 	};
 }
+
+const getIsSwapStatus = (statusHistory: string[]) => {
+	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
+	if (index >= 0) {
+		const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
+		if (decidingIndex >= 0) {
+			const obj = statusHistory[index];
+			statusHistory.splice(index, 1);
+			statusHistory.splice(decidingIndex, 0, obj);
+			return true;
+		}
+	}
+	return false;
+};
+
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const { voterAddresses, page = 1, orderBy = ['proposalIndex_DESC'] } = req.body as unknown as Props;
 
@@ -111,7 +127,16 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		voteData = [
 			...voteData,
 			...(delegatedVotes['data']?.convictionDelegatedVotes.map((vote: any) => {
-				const { createdAt, index: id, proposer, status } = vote.delegatedTo.proposal;
+				const { createdAt, index: id, proposer, statusHistory } = vote.delegatedTo.proposal;
+				let status = vote?.proposal?.status;
+
+				const isSwap: boolean = getIsSwapStatus(statusHistory);
+
+				if (isSwap) {
+					if (status === 'DecisionDepositPlaced') {
+						status = 'Deciding';
+					}
+				}
 
 				return {
 					balance: vote?.balance?.value || '0',
@@ -158,7 +183,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			return prev;
 		}, [] as IProfileVoteHistoryRespose[]);
 	}
-
 	return res.status(200).json({ data: votesResults, totalCount: convictionVotesTotalCount || 0 + delegatesVotesTotalCount || 0 });
 };
 

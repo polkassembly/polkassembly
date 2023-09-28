@@ -72,7 +72,7 @@ export const TitleBio: FC<ITitleBioProps> = (props) => {
 			{bio && (
 				<>
 					<p
-						className={`mt-[10px] text-center text-sm font-normal leading-[22px] text-white ${bioClassName}`}
+						className={`mt-[10px] w-[296px] break-words text-center text-sm font-normal leading-[22px] text-white ${bioClassName}`}
 						title={bio}
 					>
 						{showFullBio ? bio : displayedBio}

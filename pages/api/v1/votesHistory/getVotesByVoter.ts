@@ -111,7 +111,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					balance: vote?.balance?.value || '0',
 					decision: vote?.decision || null,
 					delegatedVotes: vote?.delegatedVotes || [],
-					delegatedVotingPower: vote?.delegatedTo.delegatedVotingPower,
+					delegatedVotingPower: 0,
 					isDelegatedVote: true,
 					lockPeriod: Number(vote?.lockPeriod) || 0,
 					proposal: {
@@ -120,8 +120,8 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 						proposer,
 						status
 					},
-					selfVotingPower: vote?.delegatedTo.selfVotingPower,
-					totalVotingPower: vote?.delegatedTo.totalVotingPower,
+					selfVotingPower: vote?.votingPower,
+					totalVotingPower: 0,
 					voter: vote?.voter
 				};
 			}) || [])

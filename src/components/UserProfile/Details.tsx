@@ -44,6 +44,20 @@ interface ITitleBioProps {
 
 export const TitleBio: FC<ITitleBioProps> = (props) => {
 	const { title, bio, titleClassName, bioClassName } = props;
+	const [showFullBio, setShowFullBio] = useState(false);
+
+	const toggleBio = () => {
+		setShowFullBio(!showFullBio);
+	};
+
+	const truncateBio = (text: string | undefined, limit: number) => {
+		if (!text) return '';
+		const words = text.split(' ');
+		return words.slice(0, limit).join(' ') + (words.length > limit ? ' ...' : '');
+	};
+
+	const displayedBio = showFullBio ? bio : truncateBio(bio, 15);
+
 	return (
 		<>
 			{title ? (
@@ -55,12 +69,22 @@ export const TitleBio: FC<ITitleBioProps> = (props) => {
 				</p>
 			) : null}
 			{bio ? (
-				<p
-					className={`mt-[10px] text-sm font-normal leading-[22px] text-white ${bioClassName}`}
-					title={bio}
-				>
-					{bio}
-				</p>
+				<>
+					<p
+						className={`mt-[10px] text-center text-sm font-normal leading-[22px] text-white ${bioClassName}`}
+						title={bio}
+					>
+						{displayedBio}
+					</p>
+					{bio.length > 15 && (
+						<span
+							className='read-more-button cursor-pointer text-xs text-white underline'
+							onClick={toggleBio}
+						>
+							{showFullBio ? 'See Less' : 'See More'}
+						</span>
+					)}
+				</>
 			) : null}
 		</>
 	);

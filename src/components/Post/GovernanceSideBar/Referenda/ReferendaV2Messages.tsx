@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal, Progress, Space } from 'antd';
+import { Modal, Progress } from 'antd';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ import { IProgress } from './Curves';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import HelperTooltip from '~src/ui-components/HelperTooltip';
+import ConfirmationAttemptsRow from '~src/ui-components/ConfirmationAttemptsRow';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -64,15 +64,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const [open, setOpen] = useState(false);
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
-	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status);
+	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed', 'ExecutionFailed'].includes(status);
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const confirmStartedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'ConfirmStarted');
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const awardedStatusBlock = getStatusBlock(timeline || [], ['TreasuryProposal'], 'Awarded');
 	const isTreasuryProposalPresent = checkProposalPresent(timeline || [], 'TreasuryProposal');
-
-	const confirmationAttempts: number =
-		timeline?.filter((timelineObj) => timelineObj.type === 'ReferendumV2')?.[0]?.statuses?.filter((statusObj: any) => statusObj.status === 'ConfirmStarted')?.length || 0;
 
 	const Button: FC<IButtonProps> = (props) => {
 		const { children, className } = props;
@@ -125,6 +122,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
+
 	const periodStartAt = (period: string, periodPercent: number) => {
 		let startTime = Math.round((parseInt(period) * periodPercent) / 100);
 		if (startTime < 0) {
@@ -172,6 +170,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							</span>
 						</>
 					</p>
+					<ConfirmationAttemptsRow timeline={timeline || []} />
 				</GovSidebarCard>
 			)}
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
@@ -222,21 +221,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							</span>
 						</>
 					</p>
-					{Boolean(confirmationAttempts) && (
-						<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-							<>
-								<span className='text-bodyblue text-sm font-normal text-bodyBlue'>Confirmation Attempts</span>
-
-								<Space>
-									<span className='text-xs text-lightBlue'>{confirmationAttempts}</span>
-									<HelperTooltip
-										placement='topLeft'
-										text='Number of times proposal entered confirmation period as both support & approval were greater than threshold'
-									/>
-								</Space>
-							</>
-						</p>
-					)}
+					<ConfirmationAttemptsRow timeline={timeline || []} />
 				</GovSidebarCard>
 			)}
 			{isProposalPassed ? (
@@ -290,8 +275,25 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									</p>
 								</>
 							)}
+							<ConfirmationAttemptsRow timeline={timeline || []} />
 						</GovSidebarCard>
-					) : null}
+					) : (
+						<GovSidebarCard>
+							<div className='flex items-center justify-between'>
+								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>Proposal Passed</h3>
+								<div className='w-13 flex h-[33px] gap-1'>
+									<p
+										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+										style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
+									>
+										<Button className='-ml-[3px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>3</Button>
+										<span className='ml-[4px] pt-[3px]'>of 3</span>
+									</p>
+								</div>
+							</div>
+							<ConfirmationAttemptsRow timeline={timeline || []} />
+						</GovSidebarCard>
+					)}
 				</>
 			) : (
 				isProposalFailed && (
@@ -310,9 +312,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								timeline={timeline}
 							/>
 						</div>
+						<ConfirmationAttemptsRow timeline={timeline || []} />
 					</GovSidebarCard>
 				)
 			)}
+
 			<Modal
 				open={open}
 				title={
@@ -438,8 +442,10 @@ const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[
 			#{block?.block && block?.block}
 		</a>
 	);
+
 	const isSupportLess = Number(progress.support) < Number(progress.supportThreshold);
 	const isApprovalLess = Number(progress.approval) < Number(progress.approvalThreshold);
+
 	return (
 		<>
 			{status === 'Cancelled' ? (

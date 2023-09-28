@@ -62,7 +62,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import MoneyIcon from '~assets/icons/money-icon-gray.svg';
 import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
-import CloseIcon from '~assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { ApiPromise } from '@polkadot/api';
@@ -734,7 +734,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white dark:bg-section-dark-overlay shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
 						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>
-							<CloseIcon/>
+							<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>
 						</div>
 						<div className='flex items-center flex-col justify-center gap-6'>
 							<GraphicIcon/>
@@ -950,7 +950,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															open={thresholdOpen}
 															footer={[]}
 															className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} md:min-w-[700px]`}
-															closeIcon={<CloseIcon />}
+															closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
 															title={
 																<h2 className='text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold dark:bg-section-dark-overlay'>Threshold Curves</h2>
 															}

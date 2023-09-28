@@ -19,7 +19,7 @@ import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useUserDetailsContext } from '~src/context';
-import CloseIcon from '~assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
@@ -294,7 +294,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			}
 			<Modal
 				maskClosable={false}
-				closeIcon={<CloseIcon/>}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}` }
 				wrapClassName={className}
 				title={
@@ -342,8 +342,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										name='dashboardAddress'
 										defaultAddress={delegationDashboardAddress}
 										onChange={() => setLoading(false)}
-										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium'}
-										className='text-bodyBlue dark:text-blue-dark-medium text-sm font-normal -mt-6'
+										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-high dark:border-[#3B444F] border-[1px]'}
+										className='text-bodyBlue dark:text-blue-dark-high text-sm font-normal -mt-6'
 										disabled
 										size='large'
 										identiconSize={30}
@@ -355,7 +355,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									defaultAddress={defaultTarget}
 									label={'Beneficiary Address'}
 									placeholder='Add beneficiary address'
-									className='text-lightBlue text-sm font-normal dark:text-blue-dark-medium dark:bg-transparent'
+									className='text-lightBlue text-sm font-normal dark:text-blue-dark-medium dark:bg-transparent dark:placeholder-white'
 									onChange={(address) => {
 										setTarget(address);
 										handleSubstrateAddressChangeAlert(address);
@@ -363,7 +363,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									helpText='The amount requested in the proposal will be received in this address.'
 									size='large'
 									identiconSize={30}
-									inputClassName={' font-normal text-sm h-[40px]'}
+									inputClassName={'font-normal text-sm h-[40px] dark:border-[#3B444F] border-[1px] dark:focus:border-[#91054F] dark:placeholder-white dark:bg-transparent'}
 									skipFormatCheck={true}
 								/>
 								{target ? (!(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) || isTargetAddressSame) && <span className='text-sm text-[#ff4d4f]'>{isTargetAddressSame ? 'You can not delegate to the same address. Please provide a different target address' : 'Invalid address' }</span> : null}
@@ -389,7 +389,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									onAccountBalanceChange={handleOnBalanceChange}
 									onChange={(balance) => setBnBalance(balance)}
 									size='middle'
-									inputClassName='text-[#7c899b] text-sm dark:text-blue-dark-medium dark:bg-transparent'
+									inputClassName='text-[#7c899b] text-sm dark:text-blue-dark-medium dark:bg-transparent dark:border-[#3B444F] border-[1px] dark:focus:border-[#91054F]'
 								/>
 								<div className='mb-2 border-solid border-white mt-4 dark:border-none'>
 									<label  className='text-lightBlue flex items-center text-sm dark:text-blue-dark-medium'>
@@ -523,12 +523,5 @@ export default styled(DelegateModal)`
   border-radius:8px !important;
   border:none !important;
   box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
- }
- .ant-input{
-	color:  ${props => props.theme=='dark' ? 'white' : ''} !important;
-	background-color: ${props => props.theme=='dark' ? 'transparent' : ''} !important;
- }
- .ant-input::placeholder{
-	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
  }
  `;

@@ -9,7 +9,7 @@ import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Trac
 import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
 import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
-import CloseIcon from 'public/assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IProgress } from './Curves';
 import { IPeriod } from '~src/types';
@@ -142,17 +142,17 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<div className="flex w-13 h-[33px] gap-1">
 								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
 									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">1</Button>
-									<span className="ml-[4px] pt-[3px]">of 3</span>
+									<span className="ml-[4px] pt-[3px] dark:text-icon-dark-inactive">of 3</span>
 								</p>
 							</div>
 						</div>
 						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<>
 								<span className='text-bodyBlue text-sm text-bodyblue dark:text-blue-dark-high font-normal'>Prepare Period</span>
-								<span className='text-lightBlue text-xs'>{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}</span>
+								<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}</span>
 							</>
 						</p>
 					</GovSidebarCard>
@@ -166,24 +166,24 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<div className="flex w-13 h-[33px] gap-1">
 								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
 									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] mr-[2px] -ml-[3px] text-white">2</Button>
-									<span className="ml-[4px] pt-[3px]">of 3</span>
+									<span className="ml-[4px] pt-[3px] dark:text-icon-dark-inactive">of 3</span>
 								</p>
 							</div>
 						</div>
 						<div className='mt-[30px]'>
-							<Progress className='m-0 p-0 flex items-center rounded-lg' showInfo={false} percent={decision.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center rounded-lg' showInfo={false} percent={decision.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<span className='text-bodyBlue text-sm font-normal text-bodyblue dark:text-blue-dark-high'>Decision Period</span>
-							<span className='text-lightBlue text-xs'>{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}</span>
+							<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}</span>
 						</p>
 						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={confirm.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={confirm.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<>
 								<span className='text-bodyBlue text-sm text-bodyblue dark:text-blue-dark-high font-normal'>Confirmation Period</span>
-								<span className='text-lightBlue text-xs'>{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}</span>
+								<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}</span>
 							</>
 						</p>
 					</GovSidebarCard>
@@ -198,29 +198,29 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									<div className='flex items-center justify-between'>
 										<h3 className='m-0 mr-[69px] whitespace-nowrap text-bodyBlue dark:text-blue-dark-high font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
 										<div className="flex w-13 h-[33px] gap-1">
-											<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
+											<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue dark:bg-[#222] bg-[#d2d8e030]" style={{ borderRadius: '15px' }}>
 												<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">3</Button>
-												<span className="ml-[4px] pt-[3px]">of 3</span>
+												<span className="ml-[4px] pt-[3px] dark:text-icon-dark-inactive">of 3</span>
 											</p>
 										</div>
 									</div>
 									<div className='mt-[20px]'>
-										<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+										<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
 									</div>
 									<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 										<span className='text-bodyBlue text-sm text-bodyblue dark:text-blue-dark-high font-normal'>Enactment Period</span>
-										<span className='text-lightBlue text-xs'>{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}</span>
+										<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}</span>
 									</p>
 									{
 										isDisbursalPeriodCardVisible && (
 											<>
 												<div className='mt-[20px]'>
-													<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+													<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
 												</div>
 												<p className='p-0 m-0 flex items-center justify-between mt-2 leading-[22px]'>
 													<>
 														<span className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>Funds Disbursal Period</span>
-														<span className='text-lightBlue text-xs'>{spend.period}</span>
+														<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>{spend.period}</span>
 													</>
 												</p>
 											</>
@@ -246,7 +246,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				open={open}
 				title={<div className='flex items-center justify-between gap-x-5 py-3 px-2 dark:bg-black'>
 					<h3 className='text-blue-light-high dark:text-blue-dark-high dark:bg-transparent font-medium text-xl leading-[24px] tracking-[0.0015em] m-0 p-0'>Status</h3>
-					<button onClick={() => setOpen(false)} className='border-none outline-none cursor-pointer bg-transparent flex items-center justify-center'><CloseIcon /></button>
+					<button onClick={() => setOpen(false)} className='border-none outline-none cursor-pointer bg-transparent flex items-center justify-center'><CloseIcon className='text-lightBlue dark:text-blue-dark-medium' /></button>
 				</div>}
 				onCancel={() => setOpen(false)}
 				closable={false}

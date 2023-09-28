@@ -8,7 +8,6 @@ import React, { FC } from 'react';
 import { ProfileDetails } from '~src/auth/types';
 import { socialLinks } from './Details';
 import { SocialIcon } from '~src/ui-components/SocialLinks';
-import styled from 'styled-components';
 
 interface ISocialsProps {
     loading: boolean;
@@ -38,7 +37,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 								</span>
 							</label>
 							<Input
-								className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] h-10'
+								className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] h-10 dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm -mt-2 dark:border-[#3B444F] border-[1px]'
 								size='large'
 								type='url'
 								prefix={<LinkOutlined className='text-[rgba(72,95,125,0.2)] mr-1.5 text-base' />}
@@ -91,12 +90,4 @@ const Socials: FC<ISocialsProps> = (props) => {
 	);
 };
 
-export default styled(Socials)`
-input{
-	color:  ${props => props.theme ==='dark' ? 'white' : ''} !important;
-	background-color: ${props => props.theme ==='dark' ? 'black' : ''} !important;
- }
-.ant-input::placeholder{
-	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
- }
-`;
+export default Socials;

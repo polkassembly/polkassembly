@@ -22,6 +22,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
 import { trackEvent } from 'analytics';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => <div className="flex flex-col mt-6 bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
@@ -150,10 +151,15 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	return (
 		<Container className={`bg-white dark:bg-section-dark-overlay shadow-md rounded-md flex flex-col ${className} `}>
 			<div className='flex items-center justify-start px-8 pt-4 pb-2'>
-				<LoginLogo className='mr-3' />
+				{
+					theme === 'dark' ?
+						<LoginLogoDark className='mr-3' />
+						:
+						<LoginLogo className='mr-3' />
+				}
 				<span className="text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high">Login</span>
 			</div>
-			<Divider style={{ background: '#D2D8E0', flexGrow: 1 }} className='mt-1 px-0' />
+			<Divider className='mt-1 px-0 bg-[#D2D8E0] dark:bg-[#90909060]' />
 			{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-blue-light-high dark:text-blue-dark-high changeColor' />}
 
 			{walletError && <Alert message={walletError} type="error" />}
@@ -171,7 +177,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 				>
 					<div className="flex flex-col gap-y-1">
 						<label
-							className="text-base text-lightBlue dark:text-blue-dark-high"
+							className="text-base text-lightBlue dark:text-blue-dark-medium"
 							htmlFor="username"
 						>
 							Enter Username or Email
@@ -197,14 +203,14 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<Input
 								disabled={loading}
 								placeholder="Type here"
-								className="rounded-md py-3 px-4 dark:bg-transparent dark:text-blue-dark-high"
+								className="rounded-md py-3 px-4 dark:bg-transparent dark:text-blue-dark-high dark:border-[#3B444F] border-[1px] dark:focus:border-[#91054F]"
 								id="username" />
 						</Form.Item>
 					</div>
 
 					<div className="flex flex-col gap-y-1 -mt-4">
 						<label
-							className="text-base text-lightBlue dark:text-blue-dark-high"
+							className="text-base text-lightBlue dark:text-blue-dark-medium"
 							htmlFor="password"
 						>
 							Enter Password
@@ -216,10 +222,10 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<Input.Password
 								disabled={loading}
 								placeholder="Type here"
-								className="rounded-md py-3 px-4 dark:bg-black dark:text-blue-dark-high"
+								className="rounded-md py-3 px-4 dark:bg-black dark:text-blue-dark-high dark:border-[#3B444F] border-[1px] dark:focus:border-[#91054F]"
 								id="password" />
 						</Form.Item>
-						<div className="text-right text-pink_primary mt-[-20px]">
+						<div className="text-right text-pink_primary dark:text-blue-dark-helper mt-[-20px]">
 							<div className='cursor-pointer' onClick={() => {isModal && setLoginOpen && setLoginOpen(false); router.push('/request-reset-password');}}>Forgot Password?</div>
 						</div>
 					</div>
@@ -241,9 +247,9 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 					{error && <FilteredError text={error} />}
 
-					<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-semibold'>
-						<label className='text-md text-blue-light-high dark:text-blue-dark-high'>Don&apos;t have an account?</label>
-						<div onClick={handleClick} className='text-md text-pink_primary cursor-pointer'> Sign Up </div>
+					<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-semibold dark:font-medium'>
+						<label className='text-md text-blue-light-high dark:text-[#6C6C6C]'>Don&apos;t have an account?</label>
+						<div onClick={handleClick} className='text-md text-pink_primary cursor-pointer dark:text-blue-dark-helper'> Sign Up </div>
 					</div>
 				</AuthForm>}
 		</Container>
@@ -256,6 +262,6 @@ export default styled(Web2Login)`
 	background-color: ${props => props.theme=='dark' ? 'transparent' : ''} !important;
  }
  .ant-input::placeholder{
-	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
+	color:  ${props => props.theme=='dark' ? 'white' : ''} !important;
  }
 `;

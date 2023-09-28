@@ -6,7 +6,6 @@ import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Alert, Button, Divider, Input, Skeleton, Tag } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
-import styled from 'styled-components';
 import { ProfileDetails } from '~src/auth/types';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 
@@ -23,12 +22,11 @@ interface IBasicInformationProps {
     username: string;
     className?: string;
 	errorCheck?: string | undefined;
-	theme?: string;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { profile, loading, setProfile, setUsername, username, className , errorCheck, theme } = props;
+	const { profile, loading, setProfile, setUsername, username, className , errorCheck } = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -92,7 +90,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					</p>
 					<Input
 						placeholder='Profile Picture URL'
-						className='rounded-[4px] border border-solid h-10 border-[#d2d8e0] text-[#7788a0] text-sm -mt-2'
+						className='rounded-[4px] border border-solid h-10 border-[#d2d8e0] text-[#7788a0] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm -mt-2 dark:border-[#3B444F] border-[1px]'
 						size='large'
 						type='url'
 						onChange={(e) => setProfile((prev) => {
@@ -109,7 +107,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			<div className='flex gap-x-6'>
 				<div className='hidden md:block max-w-[103px] w-full'></div>
 				<div className='flex-1'>
-					<Divider className='my-6' style={{ borderColor: '#d2d8e0' }}/>
+					<Divider className='my-6 border-[#d2d8e0] dark:border-[#90909070]'/>
 					<article>
 						<label
 							className='text-sm cursor-pointer font-medium text-[#485F7D] dark:text-blue-dark-medium'
@@ -128,13 +126,13 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								};
 							})}
 							disabled={loading}
-							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px]"
+							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-[#3B444F] border-[1px]"
 						/>
 					</article>
 					<article className='text-sm cursor-pointer mt-4 text-[#485F7D] dark:text-blue-dark-medium' >
 						<label className='text-sm text-[#485F7D] font-medium mb-0 dark:text-blue-dark-medium'>Username</label>
 						<Input
-							className='rounded-[4px] border border-solid border-[#d2d8e0] text-[#7788a0] h-10 text-sm px-[14px] py-1'
+							className='rounded-[4px] border border-solid border-[#d2d8e0] text-[#7788a0] h-10 text-sm px-[14px] py-1 dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-[#3B444F] border-[1px]'
 							placeholder='eg. John'
 							size='large'
 							type='text'
@@ -161,7 +159,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								};
 							})}
 							disabled={loading}
-							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] px-[14px] py-[10px]"
+							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] px-[14px] py-[10px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-[#3B444F] border-[1px]"
 						/>
 					</article>
 					<article className='mt-4'>
@@ -171,7 +169,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						>
 							Badges
 						</label>
-						<HelperTooltip className='ml-1 cursor-pointer text-xs font-normal text-[#485F7D] m-0 mb-1 leading-[18px]' text='Badges indicate individual successes, abilities, skills and/or interests' />
+						<HelperTooltip className='ml-1 cursor-pointer text-xs font-normal text-[#485F7D] dark:text-blue-dark-medium m-0 mb-1 leading-[18px]' text='Badges indicate individual successes, abilities, skills and/or interests' />
 						<div className='flex gap-x-2 items-center'>
 							<Input
 								id='badges'
@@ -179,7 +177,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								placeholder='eg. Council Member, Voter, etc.'
 								onChange={(e) => setNewBadge(e.target.value)}
 								onKeyPress={(e: any) => handleNewBadgeKeyPress(e)}
-								className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px] mt-[2px]"
+								className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px] mt-[2px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-[#3B444F] border-[1px]"
 								disabled={loading}
 							/>
 							<Button
@@ -237,12 +235,4 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 	);
 };
 
-export default styled(BasicInformation)`
-.ant-input{
-	color:  ${props => props.theme=='dark' ? 'white' : ''} !important;
-	background-color: ${props => props.theme=='dark' ? 'transparent' : ''} !important;
- }
- .ant-input::placeholder{
-	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
- }
-`;
+export default BasicInformation;

@@ -15,7 +15,7 @@ import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, ThresholdGraphIcon, VoteAmountIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
-import CloseIcon from 'public/assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
 import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
@@ -196,7 +196,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</div>
 						]}
 						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
-						closeIcon={<CloseIcon className="mt-2"/>}
+						closeIcon={<CloseIcon className="mt-2 text-lightBlue dark:text-blue-dark-medium"/>}
 						title={
 							<div className={`${poppins.variable} ${poppins.className} text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold dark:bg-black`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></div>
 						}

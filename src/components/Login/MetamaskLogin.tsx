@@ -34,6 +34,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import addEthereumChain from '~src/util/addEthereumChain';
 import TFALoginForm from './TFALoginForm';
+import { useTheme } from 'next-themes';
+import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 
 interface Props {
   chosenWallet: Wallet;
@@ -48,6 +50,7 @@ interface Props {
 interface IWalletIconProps {
   which: Wallet;
   className?: string;
+  theme?: string;
 }
 
 const initAuthResponse: IAuthResponse = {
@@ -57,7 +60,7 @@ const initAuthResponse: IAuthResponse = {
 	user_id: 0
 };
 
-export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
+export const WalletIcon: FC<IWalletIconProps> = ({ which, className, theme }) => {
 	switch (which) {
 	case Wallet.POLKADOT:
 		return <PolkadotJSIcon className={`h-8 w-8 ${className}`} />;
@@ -74,7 +77,11 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 	case Wallet.METAMASK:
 		return <MetamaskIcon className={`h-8 w-8 ${className}`} />;
 	case Wallet.POLKASAFE:
-		return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
+		if (theme === 'dark') {
+			return <PolkaSafeDarkIcon className={`h-8 w-6 ${className}`} />;
+		} else {
+			return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
+		}
 	default:
 		return null;
 	}
@@ -91,6 +98,7 @@ const MetamaskLogin: FC<Props> = ({
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
 	const { network } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -375,7 +383,7 @@ const MetamaskLogin: FC<Props> = ({
 				<span>Login</span>
 				<p className='flex gap-x-2 items-center justify-center'>
 					<span className='mt-2'>
-						<WalletIcon which={chosenWallet} />
+						<WalletIcon theme={theme} which={chosenWallet} />
 					</span>
 					<span className='text-navBlue text-lg sm:text-xl'>
 						{
@@ -387,7 +395,7 @@ const MetamaskLogin: FC<Props> = ({
 			{
 				fetchAccounts ?
 					<div className='flex flex-col justify-center items-center'>
-						<p className='text-base'>
+						<p className='text-base dark:font-normal'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
 						</p>
 						<Button

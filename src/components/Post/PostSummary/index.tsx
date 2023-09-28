@@ -34,11 +34,11 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				onClick={() => setOpen(true)}
 				className='flex items-center gap-x-1 justify-center cursor-pointer text-lightBlue bg-white dark:bg-section-dark-overlay text-xs leading-[18px] p-[1.5px] font-medium outline-none ai-btn-border'
 			>
-				<p className='bg-white dark:bg-section-dark-overlay m-0 flex items-center justify-center px-2 py-1 rounded-[5px]'>
-					<span className='flex items-center justify-center text-lightBlue text-lg'>
+				<p className='bg-white dark:bg-section-dark-overlay dark:text-white m-0 flex items-center justify-center px-2 py-1 rounded-[5px]'>
+					<span className='flex items-center justify-center text-lightBlue dark:text-white dark:font-normal text-lg'>
 						<AiStarIcon />
 					</span>
-					<span className='text-xs font-medium leading-[18px] tracking-[0.048px]'>
+					<span className='text-xs font-medium leading-[18px] dark:font-normal tracking-[0.048px]'>
 						AI Summary
 					</span>
 				</p>

@@ -201,7 +201,7 @@ const Enable2FA: FC<{className?: string, theme?: string}> = ({ className, theme 
 										}
 									]}
 								>
-									<Input placeholder='Auth Code' name='authCode' className='w-[60%] text-black dark:bg-transparent dark:text-white' />
+									<Input placeholder='Auth Code' name='authCode' className='w-[60%] text-black dark:bg-transparent dark:text-white dark:placeholder-white dark:border-none' />
 								</Form.Item>
 							</div>
 						</section>

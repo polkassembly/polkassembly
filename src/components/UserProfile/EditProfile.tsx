@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CloseOutlined } from '@ant-design/icons';
-import { Button, Divider, Modal, Tabs } from 'antd';
+import { Button, Divider, Modal, Tabs as AntdTabs } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
@@ -21,6 +21,7 @@ import { useUserDetailsContext } from '~src/context';
 import { poppins } from 'pages/_app';
 import validator from 'validator';
 import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 interface IEditProfileModalProps {
     id?: number | null;
@@ -39,6 +40,23 @@ const getDefaultProfile: () => ProfileDetails = () => {
 		title: ''
 	};
 };
+
+const Tabs = styled(AntdTabs)`
+.ant-tabs-tab-active > .ant-tabs-tab-btn{
+ 	color: ${props => props.theme === 'dark' ? '#FF60B5' : ''} !important;
+}
+.ant-tabs-tab{
+	border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+}
+.ant-tabs-nav::before{
+	border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
+}
+.ant-tabs-tab-active{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
+		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? '#909090' : ''} !important;
+}
+`;
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const { data, id, setProfileDetails, openModal, setOpenModal } = props;
@@ -212,7 +230,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					</h3>
 				}
 				closeIcon={
-					<CloseOutlined className='text-sm text-[#485F7D] dark:text-icon-dark-inactive' />
+					<CloseOutlined className='text-sm text-[#485F7D] dark:text-[#888888]' />
 				}
 				footer={
 					<div className='-mx-6 px-6 -mb-5 pb-4'>
@@ -258,13 +276,13 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				open={openModal ? openModal : open}
 			>
 				<Tabs
+					theme={theme}
 					type="card"
 					className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue dark:text-blue-dark-medium font-medium mt-4'
 					items={[
 						{
 							children: (
 								<BasicInformation
-									theme={theme}
 									loading= {loading}
 									profile= {profile}
 									setProfile= {setProfile}
@@ -279,7 +297,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						{
 							children: (
 								<Socials
-									theme={theme}
 									loading={loading}
 									profile={profile}
 									setProfile={setProfile}

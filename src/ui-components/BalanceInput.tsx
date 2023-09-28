@@ -117,9 +117,10 @@ export default styled(BalanceInput)`
   border-radius: 4px 0px 0px 4px !important;
   height: 40px !important;
   background-color: ${props => props.theme === 'dark' ? 'transparent' : '#F5F7FA'} !important;
+  border: ${props => props.theme === 'dark' ? '1px solid #3B444F' : ''} !important;
 }
 .suffixColor .ant-input::placeholder{
-	  color: ${props => props.theme === 'dark' ? '#909090' : '#243A57'} !important;
+	  color: ${props => props.theme === 'dark' ? 'white' : '#243A57'} !important;
 }
 .balance-input .ant-input-number-handler-up{
 	display:none !important;

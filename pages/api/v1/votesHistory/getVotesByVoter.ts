@@ -98,13 +98,18 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const delegatesVotesTotalCount = convictionVotes['data']?.convictionDelegatedVotesConnection?.totalCount;
 
 	let voteData: IProfileVoteHistoryRespose[] = convictionVotes['data'].convictionVotes?.map((vote: any) => {
-		const { createdAt, index: id, proposer } = vote.proposal;
+		const { createdAt, index: id, proposer, statusHistory } = vote.proposal;
 
 		let status = vote?.proposal.status;
 
-		if (status === 'DecisionDepositPlaced') {
-			status = 'Deciding';
+		const isSwap: boolean = getIsSwapStatus(statusHistory);
+
+		if (isSwap) {
+			if (status === 'DecisionDepositPlaced') {
+				status = 'Deciding';
+			}
 		}
+
 		return {
 			balance: vote?.balance?.value || '0',
 			decision: vote?.decision || null,

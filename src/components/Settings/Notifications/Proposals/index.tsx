@@ -17,15 +17,10 @@ type Props = {
 	onSetNotification: (obj: INotificationObject) => void;
 	dispatch: React.Dispatch<any>;
 	options: any;
-	userNotification: INotificationObject
+	userNotification: INotificationObject;
 };
 
-export default function Proposals({
-	onSetNotification,
-	dispatch,
-	options,
-	userNotification
-}: Props) {
+export default function Proposals({ onSetNotification, dispatch, options, userNotification }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
 	useEffect(() => {
@@ -42,14 +37,13 @@ export default function Proposals({
 		const notification = Object.assign({}, userNotification);
 		options.forEach((option: any) => {
 			const trigger = option.triggerPreferencesName;
-			if(trigger === 'newMention'){
+			if (trigger === 'newMention') {
 				notification[option.triggerName] = {
 					enabled: checked,
 					mention_types: [EMentionType.COMMENT, EMentionType.REPLY],
 					name: option?.triggerPreferencesName
 				};
-			}
-			else if (trigger === 'ownProposalCreated') {
+			} else if (trigger === 'ownProposalCreated') {
 				notification[option.triggerName] = {
 					enabled: checked,
 					name: option?.triggerPreferencesName
@@ -72,11 +66,7 @@ export default function Proposals({
 		setAll(checked);
 	};
 
-	const handleChange = (
-		categoryOptions: any,
-		checked: boolean,
-		value: string
-	) => {
+	const handleChange = (categoryOptions: any, checked: boolean, value: string) => {
 		dispatch({
 			payload: {
 				params: { categoryOptions, checked, value }
@@ -86,14 +76,13 @@ export default function Proposals({
 		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
 		const trigger = option.triggerPreferencesName;
-		if(trigger === 'newMention'){
+		if (trigger === 'newMention') {
 			notification[option.triggerName] = {
 				enabled: checked,
 				mention_types: [EMentionType.COMMENT, EMentionType.REPLY],
 				name: option?.triggerPreferencesName
 			};
-		}
-		else if (trigger === 'ownProposalCreated') {
+		} else if (trigger === 'ownProposalCreated') {
 			notification[option.triggerName] = {
 				enabled: checked,
 				name: option?.triggerPreferencesName
@@ -126,14 +115,12 @@ export default function Proposals({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<ChatActive />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
-							My Proposals
-						</h3>
+						<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>My Proposals</h3>
 						{!!active && (
 							<>
-								<span className='flex gap-[8px] items-center'>
+								<span className='flex items-center gap-[8px]'>
 									<Switch
 										size='small'
 										id='postParticipated'

@@ -13,12 +13,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IAuthResponse |
 
 	const { address, signature, wallet, multisig = null } = req.body;
 
-	if(!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const { isTFAEnabled = false, tfa_token = '', token = '', user_id } = await authServiceInstance.AddressLogin(address, signature, wallet, multisig);
-	if(!token && !isTFAEnabled) return res.status(401).json({ message: 'Something went wrong. Please try again.' });
+	if (!token && !isTFAEnabled) return res.status(401).json({ message: 'Something went wrong. Please try again.' });
 
-	if(isTFAEnabled) return res.status(200).json({ isTFAEnabled, tfa_token, user_id });
+	if (isTFAEnabled) return res.status(200).json({ isTFAEnabled, tfa_token, user_id });
 
 	return res.status(200).json({ isTFAEnabled, token });
 }

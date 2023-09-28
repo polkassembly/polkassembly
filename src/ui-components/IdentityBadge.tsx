@@ -17,30 +17,30 @@ import ShareScreenIcon from '~assets/icons/screen-share-icon.svg';
 import PgpIcon from '~assets/icons/pgp-icon.svg';
 
 interface Props {
-	className?: string,
-	address: string,
-	identity?: DeriveAccountRegistration | null,
-	flags?: DeriveAccountFlags,
-	web3Name?: string
+	className?: string;
+	address: string;
+	identity?: DeriveAccountRegistration | null;
+	flags?: DeriveAccountFlags;
+	web3Name?: string;
 }
 
 const StyledPopup = styled.div`
-font-size: sm;
-list-style: none;
-padding: 1rem;
+	font-size: sm;
+	list-style: none;
+	padding: 1rem;
 
-li {
-	margin-bottom: 0.3rem;
-}
+	li {
+		margin-bottom: 0.3rem;
+	}
 
-.desc {
-	font-weight: 500;
-	margin-right: 0.3rem;
-}
+	.desc {
+		font-weight: 500;
+		margin-right: 0.3rem;
+	}
 
-.judgments {
-	display: inline list-item;
-}
+	.judgments {
+		display: inline list-item;
+	}
 `;
 
 const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
@@ -49,86 +49,139 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
-	const CouncilEmoji = () => <span aria-label="council member" className='-mt-1' role="img">👑</span>;
-	const infoElem = <span className='flex items-center'>
-		{isGood ? <CheckCircleFilled style={ { color } } /> : <MinusCircleFilled style={ { color } } />}
-		<span className='w-1'></span>
-		{flags?.isCouncil && <CouncilEmoji/>}
-	</span>;
+	const CouncilEmoji = () => (
+		<span
+			aria-label='council member'
+			className='-mt-1'
+			role='img'
+		>
+			👑
+		</span>
+	);
+	const infoElem = (
+		<span className='flex items-center'>
+			{isGood ? <CheckCircleFilled style={{ color }} /> : <MinusCircleFilled style={{ color }} />}
+			<span className='w-1'></span>
+			{flags?.isCouncil && <CouncilEmoji />}
+		</span>
+	);
 
-	const displayJudgements = JSON.stringify(judgements?.map(([,jud]) => jud.toString()));
-	const popupContent =
-	<StyledPopup>
-		{identity?.legal &&
-		<li className='flex items-center'>
-			<span className='desc text-bodyBlue font-medium flex items-center text-sm'>
-				<LegalIcon className='mr-1.5'/>legal:
-			</span>
-			<span className='text-xs text-bodyBlue font-normal truncate pt-0.5'>{identity.legal}</span>
-		</li>
-		}
-		{identity?.email &&
-		<li className='flex items-center'>
-			<span className='desc text-bodyBlue font-medium flex items-center text-sm'>
-				<EmailIcon className='mr-2'/>Email:
-			</span>
-			<span className='text-xs text-bodyBlue font-normal truncate pt-0.5'>{identity.email}</span>
-		</li>
-		}
-		{(identity?.judgements?.length || 0) > 0 &&
-		<li className='flex items-center'>
-			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><JudgementIcon className='mr-1.5'/>Judgements:</span>
-			<span className='text-xs truncate text-bodyBlue'>{displayJudgements}</span>
-		</li>
-		}
-		{identity?.pgp &&
-		<li className='flex items-center'>
-			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><PgpIcon className='mr-1'/>pgp:</span>
-			<span className='text-xs text-bodyblue truncate font-normal'>{identity.pgp}</span>
-		</li>
-		}
-		{identity?.riot &&
-		<li className='flex items-center'>
-			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><RiotIcon className='mr-1.5' />riot: </span>
-			<span className='text-xs text-bodyBlue truncate font-normal'>{identity.riot}</span>
-		</li>
-		}
-		{identity?.twitter &&
-		<li className='flex items-center'>
-			<span className='desc text-bodyBlue font-medium flex text-sm'><TwitterIcon className='mr-1.5 mt-1'/>Twitter: </span>
-			<span className='text-xs font-normal truncate text-bodyBlue'>{identity.twitter}</span>
-		</li>
-		}
-		{identity?.web &&
-		<li className='flex items-center'>
-			<span className='desc text-bodyBlue font-medium flex text-sm'><WebIcon className='mr-1.5 mt-1 -ml-0.5' />Web: </span>
-			<span className='text-xs text-bodyBlue truncate font-normal pt-0.5'>{identity.web}</span>
-		</li>
-		}
-		{flags?.isCouncil &&
-		<li className='flex items-center'>
-			<span className='desc text-bodyBlue font-medium text-sm'><CouncilEmoji /> Council member </span>
-		</li>
-		}
-		{
-			<li className='flex items-center'>
-				<span className='desc'><a href={`https://polkaverse.com/accounts/${address}`} target='_blank' rel='noreferrer' className='flex text-pink-500 underline items-center'><ShareScreenIcon className='mr-2'/>Polkaverse Profile</a>
-				</span>
-			</li>
-		}
-		{web3Name &&
-		<li className='flex items-center'>
-			<span className='desc flex items-center'><a href={`https://w3n.id/${web3Name}`} target='_blank' rel='noreferrer' className='flex text-pink-500'><ShareScreenIcon className='mr-2'/>Web3 Name Profile</a>
-			</span>
-		</li>
-		}
-	</StyledPopup>;
+	const displayJudgements = JSON.stringify(judgements?.map(([, jud]) => jud.toString()));
+	const popupContent = (
+		<StyledPopup>
+			{identity?.legal && (
+				<li className='flex items-center'>
+					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
+						<LegalIcon className='mr-1.5' />
+						legal:
+					</span>
+					<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{identity.legal}</span>
+				</li>
+			)}
+			{identity?.email && (
+				<li className='flex items-center'>
+					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
+						<EmailIcon className='mr-2' />
+						Email:
+					</span>
+					<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{identity.email}</span>
+				</li>
+			)}
+			{(identity?.judgements?.length || 0) > 0 && (
+				<li className='flex items-center'>
+					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
+						<JudgementIcon className='mr-1.5' />
+						Judgements:
+					</span>
+					<span className='truncate text-xs text-bodyBlue'>{displayJudgements}</span>
+				</li>
+			)}
+			{identity?.pgp && (
+				<li className='flex items-center'>
+					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
+						<PgpIcon className='mr-1' />
+						pgp:
+					</span>
+					<span className='text-bodyblue truncate text-xs font-normal'>{identity.pgp}</span>
+				</li>
+			)}
+			{identity?.riot && (
+				<li className='flex items-center'>
+					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
+						<RiotIcon className='mr-1.5' />
+						riot:{' '}
+					</span>
+					<span className='truncate text-xs font-normal text-bodyBlue'>{identity.riot}</span>
+				</li>
+			)}
+			{identity?.twitter && (
+				<li className='flex items-center'>
+					<span className='desc flex text-sm font-medium text-bodyBlue'>
+						<TwitterIcon className='mr-1.5 mt-1' />
+						Twitter:{' '}
+					</span>
+					<span className='truncate text-xs font-normal text-bodyBlue'>{identity.twitter}</span>
+				</li>
+			)}
+			{identity?.web && (
+				<li className='flex items-center'>
+					<span className='desc flex text-sm font-medium text-bodyBlue'>
+						<WebIcon className='-ml-0.5 mr-1.5 mt-1' />
+						Web:{' '}
+					</span>
+					<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{identity.web}</span>
+				</li>
+			)}
+			{flags?.isCouncil && (
+				<li className='flex items-center'>
+					<span className='desc text-sm font-medium text-bodyBlue'>
+						<CouncilEmoji /> Council member{' '}
+					</span>
+				</li>
+			)}
+			{
+				<li className='flex items-center'>
+					<span className='desc'>
+						<a
+							href={`https://polkaverse.com/accounts/${address}`}
+							target='_blank'
+							rel='noreferrer'
+							className='flex items-center text-pink-500 underline'
+						>
+							<ShareScreenIcon className='mr-2' />
+							Polkaverse Profile
+						</a>
+					</span>
+				</li>
+			}
+			{web3Name && (
+				<li className='flex items-center'>
+					<span className='desc flex items-center'>
+						<a
+							href={`https://w3n.id/${web3Name}`}
+							target='_blank'
+							rel='noreferrer'
+							className='flex text-pink-500'
+						>
+							<ShareScreenIcon className='mr-2' />
+							Web3 Name Profile
+						</a>
+					</span>
+				</li>
+			)}
+		</StyledPopup>
+	);
 
-	return <div className={className}>
-		<Tooltip color='#fff' title={popupContent}>
-			{infoElem}
-		</Tooltip>
-	</div>;
+	return (
+		<div className={className}>
+			<Tooltip
+				color='#fff'
+				title={popupContent}
+			>
+				{infoElem}
+			</Tooltip>
+		</div>
+	);
 };
 
 export default styled(IdentityBadge)`

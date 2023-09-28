@@ -7,7 +7,7 @@ import getNetwork from './getNetwork';
 
 import messages from './messages';
 
-async function nextApiClientFetch<T>(url: string, data?: {[key: string]: any}, method?: 'GET' | 'POST') : Promise<{ data?: T, error?: string }> {
+async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any }, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
 	const network = getNetwork();
 
 	const currentURL = new URL(window.location.href);
@@ -16,7 +16,7 @@ async function nextApiClientFetch<T>(url: string, data?: {[key: string]: any}, m
 	const response = await fetch(`${window.location.origin}/${url}`, {
 		body: JSON.stringify(data),
 		headers: {
-			'Authorization': 'Bearer ' + token,
+			Authorization: 'Bearer ' + token,
 			'Content-Type': 'application/json',
 			'x-network': network
 		},
@@ -25,9 +25,10 @@ async function nextApiClientFetch<T>(url: string, data?: {[key: string]: any}, m
 
 	const resJSON = await response.json();
 
-	if(response.status === 200) return {
-		data: resJSON as T
-	};
+	if (response.status === 200)
+		return {
+			data: resJSON as T
+		};
 
 	return {
 		error: resJSON.message || messages.API_FETCH_ERROR

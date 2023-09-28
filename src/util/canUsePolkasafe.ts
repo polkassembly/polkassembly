@@ -4,6 +4,6 @@
 import { network } from '~src/global/networkConstants';
 
 const SUPPORTED_POLKASAFE_NETWORK = [network.KUSAMA, network.POLKADOT, network.WESTEND, network.ASTAR];
-export const canUsePolkasafe = (network:string) => {
+export const canUsePolkasafe = (network: string) => {
 	return SUPPORTED_POLKASAFE_NETWORK.includes(network);
 };

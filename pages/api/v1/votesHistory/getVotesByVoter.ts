@@ -128,7 +128,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			...voteData,
 			...(delegatedVotes['data']?.convictionDelegatedVotes.map((vote: any) => {
 				const { createdAt, index: id, proposer, statusHistory } = vote.delegatedTo.proposal;
-				let status = vote?.proposal?.status;
+				let status = vote?.delegatedTo?.proposal?.status;
 
 				const isSwap: boolean = getIsSwapStatus(statusHistory);
 

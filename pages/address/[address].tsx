@@ -11,7 +11,7 @@ import { useNetworkContext } from 'src/context';
 import styled from 'styled-components';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { ProfileDetailsResponse } from '~src/auth/types';
+// import { ProfileDetailsResponse } from '~src/auth/types';
 import PostsTab from '~src/components/User/PostsTab';
 import Details from '~src/components/UserProfile/Details';
 import { EGovType } from '~src/global/proposalType';
@@ -23,16 +23,14 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import VotesHistory from '~src/ui-components/VotesHistory';
 import { EProfileHistory, votesHistoryAvailableNetworks } from 'pages/user/[username]';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { getOnChainUserPosts } from 'pages/api/v1/listing/get-on-chain-user-post';
 
 interface IUserProfileProps {
 	userPosts: {
 		data: IUserPostsListingResponse;
 		error: string | null;
 	};
-	userProfile: {
-		data: ProfileDetailsResponse;
-		error: string | null;
-	};
+	userProfile: any;
 	network: string;
 	error?: string;
 	className?: string;
@@ -55,38 +53,36 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	}
 
 	const { data, error } = await getUserIdWithAddress(address.toString());
-	if (error || !data || isNaN(Number(data))) {
-		return {
-			props: {
-				error: error,
+	const userProfile = data || !error ? await getUserProfileWithUserId(Number(data)) : null;
+	const userPosts = !userProfile
+		? await getOnChainUserPosts({
+				addresses: [address] || [],
 				network
-			}
-		};
-	}
-	const userProfile = await getUserProfileWithUserId(Number(data));
-	const userPosts = await getUserPosts({
-		addresses: userProfile?.data?.addresses || [],
-		network,
-		userId: userProfile?.data?.user_id
-	});
+		  })
+		: await getUserPosts({
+				addresses: userProfile?.data?.addresses || [],
+				network,
+				userId: userProfile?.data?.user_id
+		  });
+
 	const props: IUserProfileProps = {
 		network,
 		userPosts: {
 			data: userPosts.data || getDefaultUserPosts(),
 			error: userPosts.error
 		},
-		userProfile: {
-			data: userProfile.data || {
-				addresses: [],
+		userProfile: userProfile || {
+			data: {
+				addresses: [address],
 				badges: [],
 				bio: '',
 				image: '',
 				social_links: [],
 				title: '',
-				user_id: data,
+				user_id: null,
 				username: ''
 			},
-			error: userProfile.error
+			error: ''
 		}
 	};
 	return {
@@ -111,6 +107,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	const [selectedGov, setSelectedGov] = useState(EGovType.OPEN_GOV);
 	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(isOpenGovSupported(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
 
+	console.log(userPosts, 'posts');
 	useEffect(() => {
 		setNetwork(network);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -168,7 +165,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 md:bg-white md:pb-0 md:shadow-md ${className}`}>
 				<Details
 					userPosts={userPosts.data}
-					userProfile={userProfile}
+					userProfile={userProfile || null}
 				/>
 				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 md:flex'>
 					<div className='flex items-start justify-between'>

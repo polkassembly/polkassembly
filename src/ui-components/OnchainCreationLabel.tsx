@@ -9,40 +9,41 @@ import Link from 'next/link';
 //import TopicTag from './TopicTag';
 
 interface Props {
-	address: string
-	topic?: string
+	address: string;
+	topic?: string;
 	username?: string;
-	truncateUsername?:boolean;
+	truncateUsername?: boolean;
 }
 
-const OnchainCreationLabel = ({ address, username, truncateUsername }:Props ) => {
+const OnchainCreationLabel = ({ address, username, truncateUsername }: Props) => {
 	return (
-		<div className='flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-[#485F7D] w-full min-[340px]:w-auto'>
+		<div className='flex w-full justify-between text-xs text-[#485F7D] min-[340px]:w-auto min-[340px]:flex-row min-[340px]:items-center'>
 			<div className='flex items-center'>
-				{
-					username || address?
-						<>
-							{
-								address?
-									<Address
-										address={address}
-										className='address '
-										displayInline={true}
-										truncateUsername={truncateUsername}
-										isSubVisible={false}
-										textClassName='text-bodyBlue font-semibold'
-									/>
-									: <span
-										className='max-w-[150px] text-ellipsis overflow-hidden text-bodyBlue font-semibold'
-									>
-										<Link href={`/user/${username}`}>{username}</Link>
-									</span>
-							}
-						</>
-						: null
-				}
+				{username || address ? (
+					<>
+						{address ? (
+							<Address
+								address={address}
+								className='address '
+								displayInline={true}
+								truncateUsername={truncateUsername}
+								isSubVisible={false}
+								textClassName='text-bodyBlue font-semibold'
+							/>
+						) : (
+							<span className='max-w-[150px] overflow-hidden text-ellipsis font-semibold text-bodyBlue'>
+								<Link
+									href={`/user/${username}`}
+									target='_blank'
+									rel='noreferrer'
+								>
+									{username}
+								</Link>
+							</span>
+						)}
+					</>
+				) : null}
 			</div>
-
 		</div>
 	);
 };

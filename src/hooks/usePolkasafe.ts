@@ -8,15 +8,15 @@ import { Polkasafe } from 'polkasafe';
 import { APPNAME } from '~src/global/appName';
 import messages from '~src/util/messages';
 
-export default function usePolkasafe(address?:string)  {
+export default function usePolkasafe(address?: string) {
 	const client = new Polkasafe();
 	const { network } = useNetworkContext();
 	const connect = async () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		const wallet = localStorage.getItem('selectedWallet') || localStorage.getItem('loginWallet') || ''; // if user is not login only then
 		const selectedWallet = injectedWindow?.injectedWeb3?.[wallet];
-		const injected = selectedWallet && selectedWallet.enable && await selectedWallet.enable(APPNAME);
-		if(!injected){
+		const injected = selectedWallet && selectedWallet.enable && (await selectedWallet.enable(APPNAME));
+		if (!injected) {
 			throw new Error(messages.WALLET_NOT_FOUND);
 		}
 		const substrateAddress = getSubstrateAddress(address || '') || '';

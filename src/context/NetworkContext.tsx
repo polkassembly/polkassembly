@@ -14,16 +14,10 @@ export interface NetworkContextType {
 	setNetwork: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const NetworkContext: React.Context<NetworkContextType> = createContext(
-	{} as NetworkContextType
-);
+export const NetworkContext: React.Context<NetworkContextType> = createContext({} as NetworkContextType);
 
-export function NetworkContextProvider({ initialNetwork, children } : NetworkContextProviderProps): React.ReactElement {
+export function NetworkContextProvider({ initialNetwork, children }: NetworkContextProviderProps): React.ReactElement {
 	const [network, setNetwork] = useState(initialNetwork || '');
 
-	return (
-		<NetworkContext.Provider value={{ network, setNetwork }}>
-			{children}
-		</NetworkContext.Provider>
-	);
+	return <NetworkContext.Provider value={{ network, setNetwork }}>{children}</NetworkContext.Provider>;
 }

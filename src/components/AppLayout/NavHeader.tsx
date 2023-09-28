@@ -21,7 +21,7 @@ import TownHall from '~assets/icons/TownHall.svg';
 import Mail from '~assets/icons/mail.svg';
 import Arrow from '~assets/icons/arrow.svg';
 import PolkaSafe from '~assets/icons/PolkaSafe.svg';
-// import PaLogo from './PaLogo';
+import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -229,8 +229,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	return (
 		<Header
 			className={`${className} shadow-md ${
-				sidedrawer ? 'z-[500]' : 'z-[1000]'
-			} navbar-container sticky top-0 flex h-[60px] max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white leading-normal`}
+				sidedrawer ? 'z-1' : 'z-[1000]'
+			} navbar-container sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal`}
 		>
 			<span
 				onClick={() => {
@@ -239,153 +239,164 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			>
 				<Dashboard className='dashboard-container mr-5 mt-1 text-2xl lg:hidden' />
 			</span>
-			<nav className='flex h-[60px] max-h-[60px] w-full items-center justify-center'>
-				<div className='ml-[85px] flex w-full max-w-[79rem] items-center justify-between'>
-					<div className='flex items-center'>
-						<h2 className='text-container m-0 p-0 text-base text-bodyBlue lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+			<nav className='flex h-[60px] max-h-[60px] w-full items-center justify-between'>
+				<div className='flex items-center'>
+					<Link
+						className='logo-size flex'
+						href={'/'}
+					>
+						<PaLogo
+							className='logo-container -ml-[2px]'
+							sidedrawer={isMobile}
+						/>
+					</Link>
+
+					<div className='type-container flex items-center'>
+						<span className='line-container ml-[16px] mr-[8px] h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
+						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
+				</div>
 
-					<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
-						<SearchBar className='searchbar-container' />
+				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
+					<SearchBar className='searchbar-container' />
 
-						<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
-							<NetworkDropdown setSidedrawer={setSidedrawer} />
+					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
+						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
-							{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
-							{isLoggedOut() ? (
-								<div className='flex items-center lg:gap-x-2'>
-									<Button
-										className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
-										onClick={() => {
-											setSidedrawer(false);
-											setLoginOpen(true);
-										}}
-									>
-										Login
-									</Button>
-								</div>
-							) : (
-								<AuthDropdown>
-									{!web3signup ? (
-										<div className='border-1px-solid-#d7dce3 flex items-center justify-between gap-x-2 rounded-3xl bg-[#f6f7f9] px-3  '>
-											<Mail />
-											<div className='flex items-center justify-between gap-x-1'>
-												<span className='w-[85%] truncate normal-case'>{displayName || username || ''}</span>
-												<Arrow />
-											</div>
+						{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
+						{isLoggedOut() ? (
+							<div className='flex items-center lg:gap-x-2'>
+								<Button
+									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
+									onClick={() => {
+										setSidedrawer(false);
+										setLoginOpen(true);
+									}}
+								>
+									Login
+								</Button>
+							</div>
+						) : (
+							<AuthDropdown>
+								{!web3signup ? (
+									<div className='border-1px-solid-#d7dce3 flex items-center justify-between gap-x-2 rounded-3xl bg-[#f6f7f9] px-3  '>
+										<Mail />
+										<div className='flex items-center justify-between gap-x-1'>
+											<span className='w-[85%] truncate normal-case'>{displayName || username || ''}</span>
+											<Arrow />
 										</div>
-									) : (
-										<div className={'flex items-center justify-between gap-x-2'}>
-											<UserProfileDropdown
-												className='navbar-user-dropdown h-[32px] max-w-[165px]'
-												displayName={displayName}
-												isVerified={isVerified}
+									</div>
+								) : (
+									<div className={'flex items-center justify-between gap-x-2'}>
+										<UserProfileDropdown
+											className='navbar-user-dropdown h-[32px] max-w-[165px]'
+											displayName={displayName}
+											isVerified={isVerified}
+										/>
+									</div>
+								)}
+							</AuthDropdown>
+						)}
+						<div className='mr-0 lg:mr-10'>
+							<MenuDropdown>
+								<OptionMenu className='mt-[6px] text-2xl' />
+							</MenuDropdown>
+						</div>
+					</Space>
+					{open ? (
+						<button
+							onBlur={() => {
+								setTimeout(() => {
+									setOpen(false);
+								}, 100);
+							}}
+							onClick={() => {
+								if (!isClicked.current) {
+									setOpen(false);
+								}
+								isClicked.current = false;
+							}}
+							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none md:hidden'
+						>
+							<CloseOutlined className='h-[15px] w-[15px]' />
+							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
+								<div
+									onClick={() => {
+										isClicked.current = true;
+									}}
+									className='bg-white p-4'
+								>
+									<div className='flex flex-col'>
+										<SearchBar />
+										<div>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Network</p>
+											<NetworkDropdown
+												setSidedrawer={() => {}}
+												isSmallScreen={true}
 											/>
 										</div>
-									)}
-								</AuthDropdown>
-							)}
-							<div className='mr-0'>
-								<MenuDropdown>
-									<OptionMenu className='mt-[6px] text-2xl' />
-								</MenuDropdown>
-							</div>
-						</Space>
-						{open ? (
-							<button
-								onBlur={() => {
-									setTimeout(() => {
-										setOpen(false);
-									}, 100);
-								}}
-								onClick={() => {
-									if (!isClicked.current) {
-										setOpen(false);
-									}
-									isClicked.current = false;
-								}}
-								className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none md:hidden'
-							>
-								<CloseOutlined className='h-[15px] w-[15px]' />
-								<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
-									<div
-										onClick={() => {
-											isClicked.current = true;
-										}}
-										className='bg-white p-4'
-									>
-										<div className='flex flex-col'>
-											<SearchBar />
-											<div>
-												<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Network</p>
-												<NetworkDropdown
-													setSidedrawer={() => {}}
-													isSmallScreen={true}
-												/>
-											</div>
-											<div className='mt-6'>
-												<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Node</p>
-												<RPCDropdown isSmallScreen={true} />
-											</div>
-											<div className={`${username ? 'hidden' : 'block'}`}>
-												<Divider className='my-8' />
-												<div className='flex flex-col gap-y-4'>
-													<button
-														onClick={() => {
-															setOpen(false);
-															router.push('/signup');
-														}}
-														className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
-													>
-														Sign Up
-													</button>
-													<button
-														onClick={() => {
-															setOpen(false);
-															router.push('/login');
-														}}
-														className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
-													>
-														Log In
-													</button>
-												</div>
+										<div className='mt-6'>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Node</p>
+											<RPCDropdown isSmallScreen={true} />
+										</div>
+										<div className={`${username ? 'hidden' : 'block'}`}>
+											<Divider className='my-8' />
+											<div className='flex flex-col gap-y-4'>
+												<button
+													onClick={() => {
+														setOpen(false);
+														router.push('/signup');
+													}}
+													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
+												>
+													Sign Up
+												</button>
+												<button
+													onClick={() => {
+														setOpen(false);
+														router.push('/login');
+													}}
+													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+												>
+													Log In
+												</button>
 											</div>
 										</div>
 									</div>
 								</div>
-							</button>
-						) : (
-							<button
-								onClick={() => {
-									setSidedrawer(false);
-									setOpen(true);
-								}}
-								className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-[6px] outline-none md:hidden'
-							>
-								<Image
-									className='h-[20px] w-[20px] rounded-full'
-									src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
-									alt='Logo'
-								/>
-							</button>
-						)}
-					</div>
-
-					<SignupPopup
-						setLoginOpen={setLoginOpen}
-						modalOpen={openSignup}
-						setModalOpen={setSignupOpen}
-						isModal={true}
-					/>
-					<LoginPopup
-						setSignupOpen={setSignupOpen}
-						modalOpen={openLogin}
-						setModalOpen={setLoginOpen}
-						isModal={true}
-					/>
+							</div>
+						</button>
+					) : (
+						<button
+							onClick={() => {
+								setSidedrawer(false);
+								setOpen(true);
+							}}
+							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-[6px] outline-none md:hidden'
+						>
+							<Image
+								className='h-[20px] w-[20px] rounded-full'
+								src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
+								alt='Logo'
+							/>
+						</button>
+					)}
 				</div>
+
+				<SignupPopup
+					setLoginOpen={setLoginOpen}
+					modalOpen={openSignup}
+					setModalOpen={setSignupOpen}
+					isModal={true}
+				/>
+				<LoginPopup
+					setSignupOpen={setSignupOpen}
+					modalOpen={openLogin}
+					setModalOpen={setLoginOpen}
+					isModal={true}
+				/>
 			</nav>
 			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<OnChainIdentity

@@ -81,7 +81,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	const getData = async () => {
 		if (!address || !proposal?.post_id) return;

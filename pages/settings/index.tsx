@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Col, Tabs } from 'antd';
+import { Col, Tabs as AntdTabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
@@ -17,10 +17,31 @@ import BackToListingView from '~src/ui-components/BackToListingView';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
 import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
+import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	network: string
 }
+
+const Tabs = styled(AntdTabs)`
+	.ant-tabs-tab-active > .ant-tabs-tab-btn{
+ 	color: ${props => props.theme === 'dark' ? '#FF60B5' : ''} !important;
+	}
+	.ant-tabs-tab{
+	border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+	font-weight: ${props => props.theme=='dark' ? '400' : '500'} !important;
+	color: ${props => props.theme=='dark' ? '#FFFFFF' : ''} !important;
+	}
+	.ant-tabs-nav::before{
+	border-bottom: ${props => props.theme=='dark' ? '1px #29323C solid' : ''} !important;
+	}
+	.ant-tabs-tab-active{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
+		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
+	}
+`;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -30,6 +51,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Settings: FC<Props> = (props) => {
 	const { setNetwork, network } = useNetworkContext();
 	const router = useRouter();
+	const { resolvedTheme:theme } = useTheme();
 	const tab = router.query?.tab as string;
 	const { id } = useUserDetailsContext();
 	const [searchQuery, setSearchQuery] = useState<string>('');
@@ -79,6 +101,7 @@ const Settings: FC<Props> = (props) => {
 						Settings
 					</h3>
 					<Tabs
+						theme={theme}
 						className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue dark:text-blue-dark-medium font-medium'
 						type="card"
 						defaultActiveKey={tab || 'account'}

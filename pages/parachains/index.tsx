@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Col,Row,Tabs } from 'antd';
+import { Col,Row,Tabs as AntdTabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -20,6 +20,25 @@ interface Props {
   className?: string
 	network: string
 }
+
+const Tabs = styled(AntdTabs)`
+	.ant-tabs-tab-active > .ant-tabs-tab-btn{
+ 	color: ${props => props.theme === 'dark' ? '#FF60B5' : ''} !important;
+	}
+	.ant-tabs-tab{
+	border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+	font-weight: ${props => props.theme=='dark' ? '400' : '500'} !important;
+	color: ${props => props.theme=='dark' ? '#FFFFFF' : ''} !important;
+	}
+	.ant-tabs-nav::before{
+	border-bottom: ${props => props.theme=='dark' ? '1px #29323C solid' : ''} !important;
+	}
+	.ant-tabs-tab-active{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
+		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
+	}
+`;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -83,8 +102,9 @@ const Parachains = ({ className, network }: Props) => {
 				<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-2 lg:p-6 rounded-xxl h-[650px]`}>
 					<h2 className='text-blue-light-high dark:text-blue-dark-high text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0'>Projects</h2>
 					<Tabs
+						theme={theme}
 						type="card"
-						className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-blue-light-high dark:text-blue-dark-high font-medium'
+						className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-blue-light-high dark:text-blue-dark-high font-medium dark:font-normal'
 						items={tabItems}
 					/>
 				</div>

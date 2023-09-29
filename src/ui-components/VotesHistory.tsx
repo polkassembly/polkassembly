@@ -26,7 +26,7 @@ import EmailIcon from '~assets/icons/email_icon.svg';
 import { poppins } from 'pages/_app';
 import { EGovType } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
-import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { formatBalance } from '@polkadot/util';
 
 interface Props {
 	className?: string;
@@ -160,6 +160,16 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 		setSortByPostIndex(!sortByPostIndex);
 	};
 
+	useEffect(() => {
+		if (!network) return;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<>
 			{userAddresses.length > 1 && (
@@ -240,7 +250,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 														</span>
 													)}
 													<span className='flex w-[40.3%] flex-shrink-0 justify-end lg:w-[51%]'>
-														{parseBalance((data?.balance.toString() || '0').toString(), 0, true, network)}
+														{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
 													</span>
 													<span className='flex w-[20.3%] justify-end'>
 														{data?.lockPeriod ? data?.lockPeriod : 0.1}x{data.isDelegatedVote && '/d'}
@@ -274,7 +284,9 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 															Nay
 														</span>
 													)}
-													<span className='flex justify-end'>{parseBalance((data?.balance.toString() || '0').toString(), 0, true, network)}</span>
+													<span className='flex justify-end'>
+														{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
+													</span>
 													<span>
 														{data?.lockPeriod ? data?.lockPeriod : 0.1}x{data.isDelegatedVote && '/d'}
 													</span>
@@ -331,14 +343,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																			<VoterIcon /> Votes
 																		</span>
 																		<span className='text-sm text-bodyBlue'>
-																			{parseBalance(
-																				`${String(
-																					Number(formatedBalance((data?.balance.toString() || '0').toString(), unit, 2).replaceAll(',', '')) * Number(data?.lockPeriod || 0.1)
-																				)}`,
-																				0,
-																				true,
-																				network
-																			)}
+																			{Number(formatedBalance((data?.balance.toString() || '0').toString(), unit, 2).replaceAll(',', '')) * Number(data?.lockPeriod || 0.1)} {unit}
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
@@ -353,7 +358,9 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<CapitalIcon /> Capital
 																		</span>
-																		<span className='text-sm text-bodyBlue'>{parseBalance((data?.balance.toString() || '0').toString(), 0, true, network)}</span>
+																		<span className='text-sm text-bodyBlue'>
+																			{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
+																		</span>
 																	</div>
 																</div>
 															</div>
@@ -364,7 +371,9 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<VoterIcon /> Votes
 																		</span>
-																		<span className='text-sm text-bodyBlue'>{parseBalance((data?.delegatedVotingPower || '0').toString(), 0, true, network)}</span>
+																		<span className='text-sm text-bodyBlue'>
+																			{formatedBalance((data?.delegatedVotingPower || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
+																		</span>
 																	</div>
 																	<div className='flex justify-between'>
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
@@ -376,7 +385,9 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<CapitalIcon /> Capital
 																		</span>
-																		<span className='text-sm text-bodyBlue'>{parseBalance((data?.delegateCapital || '0').toString(), 0, true, network)}</span>
+																		<span className='text-sm text-bodyBlue'>
+																			{formatedBalance((data?.delegateCapital || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
+																		</span>
 																	</div>
 																</div>
 															</div>

@@ -144,23 +144,25 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const getReferendumV2VoteInfo = useCallback(async () => {
 		if (!api || !apiReady || !network) return;
-		const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
-		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
-		if (parsedReferendumInfo?.ongoing?.tally) {
-			setTallyData({
-				abstain:
-					typeof parsedReferendumInfo.ongoing.tally.abstain === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString()
-						: new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
-				ayes:
-					typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString()
-						: new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
-				nays:
-					typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString()
-						: new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
-			});
+		if (isReferendum2) {
+			const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
+			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
+			if (parsedReferendumInfo?.ongoing?.tally) {
+				setTallyData({
+					abstain:
+						typeof parsedReferendumInfo.ongoing.tally.abstain === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
+					ayes:
+						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
+					nays:
+						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
+				});
+			}
 		} else {
 			setTallyData({
 				abstain: new BN(tally?.abstain || 0, 'hex').toString(),
@@ -168,7 +170,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				nays: new BN(tally?.nays || 0, 'hex').toString()
 			});
 		}
-	}, [api, apiReady, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]);
+	}, [api, apiReady, isReferendum2, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]);
 
 	useEffect(() => {
 		setLoadingStatus({

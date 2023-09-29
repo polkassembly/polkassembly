@@ -45,6 +45,14 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
+		onCell: () => {
+			return {
+				onClick: async (e: any) => {
+					e.stopPropagation();
+					e.preventDefault();
+				}
+			};
+		},
 		render: (username, { proposer }) => (
 			<div className='truncate'>
 				<NameLabel

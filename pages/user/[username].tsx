@@ -111,7 +111,7 @@ export enum EProfileHistory {
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
 	const { setNetwork } = useNetworkContext();
-	const [selectedGov, setSelectedGov] = useState(EGovType.OPEN_GOV);
+	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(isOpenGovSupported(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
 
 	useEffect(() => {

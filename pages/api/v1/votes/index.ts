@@ -15,7 +15,9 @@ import {
 	GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX,
 	GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX,
 	GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
+	GET_VOTES_LISTING_BY_TYPE_AND_INDEX,
 	GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE,
+	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
 	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
 } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -80,13 +82,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 		type_eq: voteType
 	};
 
-	let votesQuery = ['moonbeam', 'moonbase', 'moonriver'].includes(network)
+	let votesQuery = ['moonbeam'].includes(network)
 		? GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
+		: ['moonriver', 'moonbeam'].includes(network)
+		? GET_VOTES_LISTING_BY_TYPE_AND_INDEX
 		: GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
 
 	if (address) {
-		votesQuery = ['moonbeam', 'moonbase', 'moonriver'].includes(network)
+		votesQuery = ['moonbeam'].includes(network)
 			? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
+			: ['moonriver', 'moonbeam'].includes(network)
+			? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX
 			: GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
 
 		variables['voter_eq'] = address;

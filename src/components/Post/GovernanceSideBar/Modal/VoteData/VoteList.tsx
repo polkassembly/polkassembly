@@ -245,9 +245,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</div>
 							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-									<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+									<div className={`w-[190px] text-sm font-medium text-lightBlue  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									<div
-										className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]' : ''}`}
+										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -260,7 +260,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
-											className={`${isReferendum2 ? 'w-[110px]' : 'w-[150px]'} flex cursor-pointer items-center gap-1 text-lightBlue`}
+											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue'}
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -272,30 +272,29 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />
 										</div>
 									) : null}
-									{isReferendum2 && (
-										<div className='flex w-[120px] items-center gap-1 text-lightBlue'>
-											<span
-												className='flex cursor-pointer'
-												onClick={() => {
-													handleSortByClick({
-														key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
-													});
-													setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
-												}}
+
+									<div className='flex w-[120px] items-center gap-1 text-lightBlue'>
+										<span
+											className='flex cursor-pointer'
+											onClick={() => {
+												handleSortByClick({
+													key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
+												});
+												setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
+											}}
+										>
+											Voting Power
+											<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
+										</span>
+										<span>
+											<Tooltip
+												color='#E5007A'
+												title='Vote Power for delegated votes is the self vote power + delegated vote power.'
 											>
-												Voting Power
-												<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
-											</span>
-											<span>
-												<Tooltip
-													color='#E5007A'
-													title='Vote Power for delegated votes is the self vote power + delegated vote power.'
-												>
-													<InfoCircleOutlined className='text-xs text-lightBlue' />
-												</Tooltip>
-											</span>
-										</div>
-									)}
+												<InfoCircleOutlined className='text-xs text-lightBlue' />
+											</Tooltip>
+										</span>
+									</div>
 								</div>
 								<div className='max-h-[360px]'>
 									{votesRes &&

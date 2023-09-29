@@ -94,12 +94,6 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 	const handleVoteHistoryData = async () => {
 		setVotesData(null);
 		setLoading(true);
-		console.log({
-			orderBy: getOrderBy(sortByPostIndex),
-			page,
-			type: govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum',
-			voterAddresses: checkedAddressList || []
-		});
 		const { data, error } = await nextApiClientFetch<{ data: IProfileVoteHistoryRespose[]; totalCount: number }>('api/v1/votesHistory/getVotesByVoter', {
 			orderBy: getOrderBy(sortByPostIndex),
 			page,
@@ -168,7 +162,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return (
 		<>

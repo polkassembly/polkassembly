@@ -26,7 +26,6 @@ import EmailIcon from '~assets/icons/email_icon.svg';
 import { poppins } from 'pages/_app';
 import { EGovType } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	className?: string;

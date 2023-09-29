@@ -22,8 +22,13 @@ import Available from '~assets/icons/available.svg';
 import CurrentPrice from '~assets/icons/currentprice.svg';
 import NextBurn from '~assets/icons/nextburn.svg';
 import SpendPeriod from '~assets/icons/spendperiod.svg';
+import AvailableDark from '~assets/icons/AvailableDark.svg';
+import CurrentPriceDark from '~assets/icons/CurrentPriceDark.svg';
+import NextBurnDark from '~assets/icons/NextBurnDark.svg';
+import SpendPeriodDark from '~assets/icons/SpendPeriodDark.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import { useTheme } from 'next-themes';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -35,6 +40,7 @@ interface ITreasuryOverviewProps{
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
 	const { network } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	const { api, apiReady } = useApiContext();
 
@@ -326,7 +332,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			<div className="sm:my-0 flex flex-1 bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 				<div className='lg:flex flex-col flex-1 gap-x-0 w-full'>
 					<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
-						<Available className='lg:hidden' />
+						{
+							theme === 'dark' ?
+								<AvailableDark className='lg:hidden' />
+								:
+								<Available className='lg:hidden' />
+						}
 					</div>
 					{
 						!available.isLoading ?
@@ -375,7 +386,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					}
 				</div>
 				<div>
-					<Available className='lg:block xs:hidden'/>
+					{
+						theme === 'dark' ?
+							<AvailableDark className='lg:block xs:hidden'/>
+							:
+							<Available className='lg:block xs:hidden'/>
+					}
 				</div>
 			</div>
 
@@ -384,7 +400,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				<div className="sm:my-0 flex flex-1 bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
-							<CurrentPrice className='lg:hidden' />
+							{
+								theme === 'dark' ?
+									<CurrentPriceDark className='lg:hidden' />
+									:
+									<CurrentPrice className='lg:hidden' />
+							}
 						</div>
 						{
 							!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
@@ -433,7 +454,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						}
 					</div>
 					<div>
-						<CurrentPrice className="xs:hidden lg:block"/>
+						{
+							theme === 'dark' ?
+								<CurrentPriceDark className="xs:hidden lg:block"/>
+								:
+								<CurrentPrice className="xs:hidden lg:block"/>
+						}
 					</div>
 				</div>
 			}
@@ -443,7 +469,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				<div className="sm:my-0 flex flex-1 bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
-							<NextBurn className='lg:hidden' />
+							{
+								theme === 'dark' ?
+									<NextBurnDark className='lg:hidden' />
+									:
+									<NextBurn className='lg:hidden' />
+							}
 						</div>
 						{
 							!nextBurn.isLoading?
@@ -487,7 +518,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						}
 					</div>
 					<div>
-						<NextBurn className="xs:hidden lg:block"/>
+						{
+							theme === 'dark' ?
+								<NextBurnDark className="xs:hidden lg:block"/>
+								:
+								<NextBurn className="xs:hidden lg:block"/>
+						}
 					</div>
 				</div>
 			}
@@ -498,7 +534,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				<div className="sm:my-0 flex flex-1 bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
-							<SpendPeriod className='lg:hidden' />
+							{
+								theme === 'dark' ?
+									<SpendPeriodDark className='lg:hidden' />
+									:
+									<SpendPeriod className='lg:hidden' />
+							}
 						</div>
 						{
 							!spendPeriod.isLoading?
@@ -548,7 +589,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										<div className='flex flex-col justify-center font-medium gap-y-3'>
 											<Divider className='m-0 p-0 bg-[#D2D8E0] dark:bg-[#3B444F]' />
 											<span className='flex items-center'>
-												<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} trailColor='#E1E6EB' strokeColor='#E5007A' size="small" />
+												<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} trailColor= {theme === 'dark'?'#1E262D': '#E1E6EB' } strokeColor='#E5007A' size="small" />
 											</span>
 										</div>
 									}
@@ -559,7 +600,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						}
 					</div>
 					<div>
-						<SpendPeriod className="xs:hidden lg:block mt-2"/>
+						{
+							theme === 'dark' ?
+								<SpendPeriodDark className="xs:hidden lg:block mt-2"/>
+								:
+								<SpendPeriod className="xs:hidden lg:block mt-2"/>
+						}
 					</div>
 				</div>
 				}

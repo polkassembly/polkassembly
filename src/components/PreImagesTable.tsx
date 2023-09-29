@@ -16,6 +16,7 @@ import styled from 'styled-components';
 
 import { useNetworkContext } from '~src/context';
 import { IPreimagesListing } from '~src/types';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -85,8 +86,8 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			key: 'proposedCall',
 			width: 265,
 			render: (proposedCall) => proposedCall && proposedCall.section && proposedCall.method && <div className='flex items-center'>
-				<code className='px-2 rounded-md'>{proposedCall.section}.{proposedCall.method}</code>
-				{proposedCall.args && <ProfileOutlined className='ml-2 p-1 text-base rounded-md hover:text-pink_primary cursor-pointer' onClick={() => setModalArgs(proposedCall.args)} />}
+				<code className='px-2 rounded-md dark:bg-slate-200'>{proposedCall.section}.{proposedCall.method}</code>
+				{proposedCall.args && <ProfileOutlined className='ml-2 p-1 text-base rounded-md hover:text-pink_primary cursor-pointer dark:text-white dark:font-normal dark:hover:text-blue-dark-helper' onClick={() => setModalArgs(proposedCall.args)} />}
 			</div>
 		},
 		{
@@ -128,16 +129,19 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 
 				<Modal
 					open={Boolean(modalArgs)}
-					title={'Arguments'}
+					title={<div className='dark:text-white dark:bg-section-dark-overlay'>Arguments</div>}
+					closeIcon={<CloseIcon className='dark:text-blue-dark-medium text-lightBlue' />}
 					onOk={() => setModalArgs(null)}
 					onCancel={() => setModalArgs(null)}
+					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 					footer={[
-						<Button key="back" onClick={() => setModalArgs(null)}> Close </Button>
+						<Button className='dark:bg-transparent dark:text-white' key="back" onClick={() => setModalArgs(null)}> Close </Button>
 					]}
 				>
 					{modalArgs &&
 					<div className='w-full max-h-[60vh] overflow-auto'>
 						<ReactJson
+							theme={theme === 'dark' ? 'monokai' : 'rjv-default'}
 							src={modalArgs}
 							iconStyle='circle'
 							enableClipboard={false}

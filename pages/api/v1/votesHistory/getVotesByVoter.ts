@@ -10,13 +10,12 @@ import { isValidNetwork } from '~src/api-utils';
 import { VerificationStatus } from '~src/types';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { network as AllNetworks } from '~src/global/networkConstants';
-import { GET_PROFILE_CONVICTION_VOTES_FROM_VOTER_ADDRESS, GET_PROFILE_DELEGATED_VOTES_FROM_VOTER_ADDRESS } from '~src/queries';
+import { GET_VOTE_HISTORY_IN_PROFILE } from '~src/queries';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { noTitle } from '~src/global/noTitle';
-
+import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
 export interface IVerificationResponse {
 	message: VerificationStatus;
 }
@@ -25,17 +24,16 @@ interface Props {
 	page: number;
 	voterAddresses: string[];
 	orderBy: string[];
+	type?: string;
 }
 
 export interface IProfileVoteHistoryRespose {
 	decision: 'yes' | 'no';
 	balance: string;
-	delegatedVotes: any[];
-	delegatedVotingPower: string;
-	selfVotingPower: string;
-	totalVotingPower: string;
 	lockPeriod: number | string;
 	isDelegatedVote: boolean;
+	delegatedVotingPower?: string;
+	delegatedTo?: string;
 	voter: string;
 	proposal: {
 		createdAt: Date;
@@ -43,10 +41,26 @@ export interface IProfileVoteHistoryRespose {
 		proposer: string;
 		status: string;
 		title?: string;
+		statusHistory?: string[];
 	};
 }
+
+const getIsSwapStatus = (statusHistory: string[]) => {
+	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
+	if (index >= 0) {
+		const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
+		if (decidingIndex >= 0) {
+			const obj = statusHistory[index];
+			statusHistory.splice(index, 1);
+			statusHistory.splice(decidingIndex, 0, obj);
+			return true;
+		}
+	}
+	return false;
+};
+
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
-	const { voterAddresses, page = 1, orderBy = ['proposalIndex_DESC'] } = req.body as unknown as Props;
+	const { voterAddresses, page = 1, orderBy = ['proposalIndex_DESC'], type } = req.body as unknown as Props;
 
 	const network = String(req.headers['x-network']);
 	if (network === 'undefined' || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
@@ -60,35 +74,41 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const postVariables: any = {
 		offset: LISTING_LIMIT * (numPage - 1),
 		orderBy,
+		type_eq: type,
 		voter_in: encodeAddresses
 	};
-	let convictionVoteQuery = '';
-	let delegatedVoteQuery = '';
-	if ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network)) {
-		convictionVoteQuery = GET_PROFILE_CONVICTION_VOTES_FROM_VOTER_ADDRESS;
-		delegatedVoteQuery = GET_PROFILE_DELEGATED_VOTES_FROM_VOTER_ADDRESS;
+	let query = '';
+	if (isSupportedNestedVoteNetwork(network)) {
+		query = GET_VOTE_HISTORY_IN_PROFILE;
 	}
-	const convictionVotes = await fetchSubsquid({
-		network,
-		query: convictionVoteQuery,
-		variables: postVariables
-	});
-	const delegatedVotes = await fetchSubsquid({
-		network,
-		query: delegatedVoteQuery,
-		variables: postVariables
-	});
-	const convictionVotesTotalCount = convictionVotes['data']?.convictionVotesConnection?.totalCount;
-	const delegatesVotesTotalCount = convictionVotes['data']?.convictionDelegatedVotesConnection?.totalCount;
 
-	let voteData: IProfileVoteHistoryRespose[] = convictionVotes['data'].convictionVotes?.map((vote: any) => {
-		const { createdAt, index: id, proposer, status } = vote.proposal;
+	const profileVotes = await fetchSubsquid({
+		network,
+		query,
+		variables: postVariables
+	});
+
+	const totalCount = profileVotes['data'].flattenedConvictionVotesConnection.totalCount || 0;
+
+	const voteData: IProfileVoteHistoryRespose[] = profileVotes['data'].flattenedConvictionVotes?.map((vote: any) => {
+		const { createdAt, index: id, proposer, statusHistory } = vote.proposal;
+
+		let status = vote?.proposal.status;
+
+		const isSwap: boolean = getIsSwapStatus(statusHistory);
+
+		if (isSwap) {
+			if (status === 'DecisionDepositPlaced') {
+				status = 'Deciding';
+			}
+		}
+
 		return {
-			balance: vote?.balance?.value || '0',
+			balance: vote?.balance?.value || vote?.balance?.abstain || '0',
 			decision: vote?.decision || null,
-			delegatedVotes: vote?.delegatedVotes || [],
-			delegatedVotingPower: vote?.delegatedVotingPower,
-			isDelegatedVote: false,
+			delegatedTo: vote?.delegatedTo || '',
+			delegatedVotingPower: !vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : 0,
+			isDelegatedVote: vote?.isDelegated,
 			lockPeriod: Number(vote?.lockPeriod) || 0,
 			proposal: {
 				createdAt,
@@ -96,37 +116,10 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				proposer,
 				status
 			},
-			selfVotingPower: vote?.selfVotingPower,
-			totalVotingPower: vote?.totalVotingPower,
 			voter: vote?.voter
 		};
 	});
-	if (delegatedVotes['data']?.convictionDelegatedVotes?.length) {
-		voteData = [
-			...voteData,
-			...(delegatedVotes['data']?.convictionDelegatedVotes.map((vote: any) => {
-				const { createdAt, index: id, proposer, status } = vote.delegatedTo.proposal;
 
-				return {
-					balance: vote?.balance?.value || '0',
-					decision: vote?.decision || null,
-					delegatedVotes: vote?.delegatedVotes || [],
-					delegatedVotingPower: vote?.delegatedTo.delegatedVotingPower,
-					isDelegatedVote: true,
-					lockPeriod: Number(vote?.lockPeriod) || 0,
-					proposal: {
-						createdAt,
-						id,
-						proposer,
-						status
-					},
-					selfVotingPower: vote?.delegatedTo.selfVotingPower,
-					totalVotingPower: vote?.delegatedTo.totalVotingPower,
-					voter: vote?.voter
-				};
-			}) || [])
-		];
-	}
 	let votesResults: IProfileVoteHistoryRespose[] = voteData;
 	if (voteData.length > 0) {
 		const votesPromise = voteData.map(async (vote) => {
@@ -152,8 +145,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			return prev;
 		}, [] as IProfileVoteHistoryRespose[]);
 	}
-
-	return res.status(200).json({ data: votesResults, totalCount: convictionVotesTotalCount || 0 + delegatesVotesTotalCount || 0 });
+	return res.status(200).json({ data: votesResults, totalCount });
 };
 
 export default withErrorHandling(handler);

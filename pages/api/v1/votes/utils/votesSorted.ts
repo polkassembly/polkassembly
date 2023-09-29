@@ -5,7 +5,7 @@
 import { votesSortValues } from '~src/global/sortOptions';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
-export const getOrderBy = (sortByValue: string, shouldSelectTotalVotingPower: boolean, isOpenGov: boolean) => {
+export const getOrderBy = (sortByValue: string, shouldSelectTotalVotingPower: boolean, nestedSupported: boolean) => {
 	switch (sortByValue) {
 		case votesSortValues.BALANCE_ASC:
 			return ['balance_value_ASC', 'id_ASC'];
@@ -22,6 +22,6 @@ export const getOrderBy = (sortByValue: string, shouldSelectTotalVotingPower: bo
 		case votesSortValues.TIME_ASC:
 			return ['timestamp_ASC', 'id_ASC'];
 		default:
-			return isOpenGov ? ['createdAtBlock_DESC', 'id_DESC'] : ['timestamp_DESC', 'id_DESC'];
+			return nestedSupported ? ['createdAtBlock_DESC', 'id_DESC'] : ['timestamp_DESC', 'id_DESC'];
 	}
 };

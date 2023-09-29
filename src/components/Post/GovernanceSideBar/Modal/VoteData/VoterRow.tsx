@@ -82,7 +82,7 @@ const getPercentage = (userVotes: string, totalVotes: string) => {
 	return percentage;
 };
 
-const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData, className, isReferendum2, setDelegationVoteModal, index, tally, referendumId, decision }) => {
+const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData, className, setDelegationVoteModal, index, tally, referendumId, decision, isReferendum2 }) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
 	const [delegatorLoading, setDelegatorLoading] = useState(true);
@@ -116,7 +116,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 				{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 					<a
 						href={`https://${network}.moonscan.io/tx/${voteData?.txnHash}`}
-						className={`overflow-ellipsis ${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
+						className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
 					>
 						<Address
 							isVoterAddress
@@ -129,7 +129,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 					</a>
 				) : (
 					<div
-						className={`overflow-ellipsis ${isReferendum2 ? 'w-[190px]' : 'w-[245px]'} ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
+						className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
 						onClick={(e) => e.stopPropagation()}
 					>
 						<Address
@@ -144,17 +144,17 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
-						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[120px]' : 'w-[150px]'} ${voteData?.decision === 'abstain' ? 'w-[160px]' : ''} text-bodyBlue`}>
+						<div className={`w-[120px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[160px]' : ''} text-bodyBlue`}>
 							{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{voteData?.decision !== 'abstain' && (
-							<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[105px]' : 'w-[135px]'} text-bodyBlue`}>
+							<div className={'w-[105px] overflow-ellipsis text-bodyBlue'}>
 								{`${voteData.lockPeriod === 0 ? '0.1' : voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}`}
 							</div>
 						)}
 					</>
 				) : (
-					<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[120px]' : 'w-[135px]'} text-bodyBlue`}>
+					<div className={'w-[120px] overflow-ellipsis text-bodyBlue'}>
 						{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 					</div>
 				)}
@@ -197,7 +197,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 								.format('MM/DD/YYYY, h:mm A')
 								.toString()}
 						</span>
-						{voteData?.decision !== 'abstain' && (
+						{voteData?.decision !== 'abstain' && isReferendum2 && (
 							<span className='flex items-center gap-1 text-xs font-medium text-lightBlue'>
 								<PowerIcon />
 								Voting Power:{' '}

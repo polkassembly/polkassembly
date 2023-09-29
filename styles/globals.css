@@ -488,3 +488,9 @@ color: var(--lightBlue) !important;
     z-index: 10000 !important;
   }
 }
+
+@media (max-width: 468px) and (min-width: 319px) {
+  .ant-menu-root > li:first-child {
+    height: 2px !important;
+  }
+}

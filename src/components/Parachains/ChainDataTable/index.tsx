@@ -42,9 +42,13 @@ interface ParachainRowData{
 
 const Table = styled(AntdTable)`
 	.ant-table-thead > tr > th {
-		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+		background: ${props => props.theme === 'dark' ? '#1C1D1F' : 'white'} !important;
 		color: ${props => props.theme === 'dark' ? 'white' : 'black'} !important;
 		font-weight: 500 !important;
+		border-bottom: ${props => props.theme === 'dark' ? '1px solid #90909060' : ''} !important;
+	}
+	.ant-table-thead > tr > th::before {
+		background: none !important;
 	}
 	.ant-table-tbody > tr {
 		background-color: ${props => props.theme === 'dark' ? '#0D0D0D' : 'white'} !important;
@@ -53,7 +57,8 @@ const Table = styled(AntdTable)`
 		background-color: none !important;
 	}
 	td{
-		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
+		background: ${props => props.theme === 'dark' ? '#0D0D0D' : 'white'} !important;
+		border-bottom: ${props => props.theme === 'dark' ? '1px solid #90909060' : ''} !important;
 	}
 `;
 

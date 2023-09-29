@@ -94,11 +94,17 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 	const handleVoteHistoryData = async () => {
 		setVotesData(null);
 		setLoading(true);
+		console.log({
+			orderBy: getOrderBy(sortByPostIndex),
+			page,
+			type: govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum',
+			voterAddresses: checkedAddressList || []
+		});
 		const { data, error } = await nextApiClientFetch<{ data: IProfileVoteHistoryRespose[]; totalCount: number }>('api/v1/votesHistory/getVotesByVoter', {
 			orderBy: getOrderBy(sortByPostIndex),
 			page,
 			type: govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum',
-			voterAddresses: checkedAddressList.map((address) => (address ? getEncodedAddress(String(address), network) : address)) || []
+			voterAddresses: checkedAddressList || []
 		});
 		if (data) {
 			setVotesData(data?.data);

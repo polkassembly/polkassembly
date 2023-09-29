@@ -12,21 +12,7 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { IPostsRowData } from './PostsTable';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { Tooltip } from 'antd';
-import getUsernameByAddress from '~src/util/getUsernameByAddress';
 import { noTitle } from '~src/global/noTitle';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
-
-async function goToProfileByAddress(address: string) {
-	if (!address) return;
-	const username = await getUsernameByAddress(address);
-	const substrateAddress = getSubstrateAddress(address);
-	if (!username) {
-		window.open(`/address/${substrateAddress}`, '_blank');
-		return;
-	}
-	const routePath = `/user/${username}`;
-	window.open(routePath, '_blank');
-}
 
 const Index: any = {
 	dataIndex: 'post_id',
@@ -58,19 +44,6 @@ const Description: any = {
 const Creator: any = {
 	dataIndex: 'username',
 	key: 'creator',
-	onCell: (record: any) => {
-		return {
-			onClick: async (e: any) => {
-				e.stopPropagation();
-				if (record.username) {
-					const routePath = `/user/${record.username}`;
-					window.open(routePath, '_blank');
-				} else {
-					await goToProfileByAddress(record.proposer || '');
-				}
-			}
-		};
-	},
 	render: (username: any, { proposer }: { proposer: any }) => (
 		<div className='truncate'>
 			<NameLabel
@@ -86,11 +59,11 @@ const Creator: any = {
 const Proposer: any = {
 	dataIndex: 'proposer',
 	key: 'creator',
-	onCell: (record: any) => {
+	onCell: () => {
 		return {
 			onClick: async (e: any) => {
 				e.stopPropagation();
-				await goToProfileByAddress(record.proposer || '');
+				e.preventDefault();
 			}
 		};
 	},
@@ -170,16 +143,11 @@ const allColumns: ColumnsType<IPostsRowData> = [
 	{
 		dataIndex: 'username',
 		key: 'postedBy',
-		onCell: (record) => {
+		onCell: () => {
 			return {
 				onClick: async (e) => {
 					e.stopPropagation();
-					if (record.username) {
-						const routePath = `/user/${record.username}`;
-						window.open(routePath, '_blank');
-					} else {
-						await goToProfileByAddress(record.proposer || '');
-					}
+					e.preventDefault();
 				}
 			};
 		},

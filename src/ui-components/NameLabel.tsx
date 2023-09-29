@@ -22,15 +22,16 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 			{!defaultAddress ? (
 				<span
 					className={`username mr-1.5 font-semibold text-bodyBlue ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-					onClick={() => {
+					onClick={(e) => {
 						if (clickable) {
+							e.stopPropagation();
+							e.preventDefault();
 							const routePath = `/user/${username}`;
 							window.open(routePath, '_blank');
 						}
 					}}
 				>
-					{' '}
-					{username}{' '}
+					{username}
 				</span>
 			) : (
 				<Address

@@ -118,7 +118,7 @@ const Address = ({
 	const encoded_addr = address ? getEncodedAddress(address, network) || '' : '';
 	const FEATURE_RELEASE_DATE = dayjs('2023-06-12').toDate(); // Date from which we are sending custom username flag on web3 sign up.
 
-	const fetchUsername = async (isOnclick: boolean) => {
+	const fetchUsername = async (isOnclick: boolean, e?: any) => {
 		if (isVoterAddress) {
 			return;
 		}
@@ -129,12 +129,16 @@ const Address = ({
 				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
 				if (error || !data || !data.username) {
 					if (isOnclick) {
+						e.preventDefault();
+						e.stopPropagation();
 						window.open(`https://${network}.polkassembly.io/address/${substrateAddress}`, '_blank');
 					}
 					return;
 				}
 				setUsername(data.username);
 				if (isOnclick) {
+					e.preventDefault();
+					e.stopPropagation();
 					const routePath = `/user/${data.username}`;
 					window.open(routePath, '_blank');
 					return;
@@ -259,12 +263,12 @@ const Address = ({
 			{!disableAddress && (
 				<div
 					className={`content ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-					onClick={async () => {
+					onClick={async (e) => {
 						if (!clickable) {
 							return;
 						}
 						if (!disableAddressClick) {
-							await fetchUsername(true);
+							await fetchUsername(true, e);
 						}
 					}}
 				>

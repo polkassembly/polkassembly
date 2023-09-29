@@ -10,12 +10,12 @@ import { isValidNetwork } from '~src/api-utils';
 import { VerificationStatus } from '~src/types';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { GET_VOTE_HISTORY_IN_PROFILE } from '~src/queries';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { noTitle } from '~src/global/noTitle';
+import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
 export interface IVerificationResponse {
 	message: VerificationStatus;
 }
@@ -78,7 +78,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		voter_in: encodeAddresses
 	};
 	let query = '';
-	if ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network)) {
+	if (isSupportedNestedVoteNetwork(network)) {
 		query = GET_VOTE_HISTORY_IN_PROFILE;
 	}
 

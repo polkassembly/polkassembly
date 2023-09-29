@@ -494,3 +494,9 @@ color: var(--lightBlue) !important;
     height: 2px !important;
   }
 }
+
+@media (max-width: 768px) and (min-width: 319px) {
+  .read-more-button {
+    display: none !important;
+  }
+}  

@@ -227,10 +227,11 @@ const Address = (props: Props) => {
 	const addressSuffix = extensionName || mainDisplay;
 
 	const handleClick = (event: any) => {
-		if (!disableAddressClick) return;
+		if (disableAddressClick) return;
 		event.stopPropagation();
 		event.preventDefault();
-		console.log(disableAddressClick, passedUsername);
+
+		window.open(handleRedirectLink(), '_blank');
 	};
 
 	return (

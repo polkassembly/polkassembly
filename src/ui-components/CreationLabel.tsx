@@ -121,7 +121,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						/>
 						{text}&nbsp;
 						{topic && (
-							<div className='flex sm:-mt-0.5'>
+							<div className='flex items-center sm:-mt-0.5'>
 								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>{' '}
 								<TopicTag
 									topic={topic}
@@ -139,7 +139,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									href={`https://ipfs.io/ipfs/${cid}`}
 									target='_blank'
 								>
-									{' '}
 									<PaperClipOutlined /> IPFS
 								</Link>
 							</>

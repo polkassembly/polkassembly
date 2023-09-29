@@ -81,7 +81,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts, theme }: { className?:
 		<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
 			<div className="flex justify-between items-center pr-4 pl-1">
 				<h2 className='text-blue-light-high dark:text-blue-dark-high text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-3.5 lg:mx-0'>Latest Activity</h2>
-				{currentTab !== 'all' && <Link className='text-blue-light-high dark:text-blue-dark-high font-medium hover:text-pink_primary px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
+				{currentTab !== 'all' && <Link className='text-blue-light-high dark:text-blue-dark-high font-medium hover:text-pink_primary px-2 rounded-lg dark:text-blue-dark-helper dark:font-normal' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
 				type="card"
@@ -168,9 +168,10 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab{
 		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+		font-weight: ${props => props.theme=='dark' ? '400' : '500'} !important;
 	}
 	.ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
-		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? '1px #29323C solid' : ''} !important;
 	}
 	.ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, .ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
 		background: none !important;

@@ -8,7 +8,7 @@ import { poppins } from 'pages/_app';
 import React, { FC, useContext, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
@@ -111,7 +111,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					open= {tagsModal}
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
-					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 				><div className='flex'>
 						<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
 							<TagsIcon className='mr-2' />
@@ -187,7 +187,8 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					open= {tagsModal}
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
-					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium' />}
 				><div className='flex dark:bg-black'>
 						<TagsIcon className='mr-2 mt-1.5' />
 						<h2 className='text-lg tracking-wide font-semibold text-blue-light-high dark:text-blue-dark-high mb-2'>Tags</h2>

@@ -38,6 +38,9 @@ const Pagination = styled(AntdPagination)`
 	.anticon-left {
 		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
 	}
+	.ant-pagination-item-ellipsis{
+		color: ${props => props.theme === 'dark' ? 'white' : ''} !important;
+	}
 `;
 
 const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = ({ posts, className, count, proposalType }) => {

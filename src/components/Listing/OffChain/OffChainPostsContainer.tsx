@@ -56,7 +56,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 				selectable: true
 			}}
 			trigger={['click']}>
-			<div className='dropdown-div text-pink_primary flex whitespace-pre items-center cursor-pointer hover:text-pink_primary py-1 px-2 rounded'>
+			<div className='dropdown-div text-pink_primary flex whitespace-pre items-center cursor-pointer hover:text-pink_primary py-1 px-2 rounded dark:text-blue-dark-helper'>
 				<span className='sm:mr-1 sm:mt-0.5 font-normal'>Sort By</span>
 				<SwapOutlined rotate={90} style={ { fontSize: '14px' , marginRight: '10px' } } />
 			</div>

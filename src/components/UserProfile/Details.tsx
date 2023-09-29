@@ -326,6 +326,7 @@ const Details: FC<IDetailsProps> = (props) => {
 								<GovTab
 									posts={userPosts.gov1}
 									govType={EGovType.GOV1}
+									userAddresses={userProfile.data?.addresses || []}
 								/>
 							),
 							key: 'gov1',

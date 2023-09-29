@@ -9,7 +9,7 @@ import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import PostTab from '../User/PostTab';
 import { EGovType } from '~src/global/proposalType';
 import VotesHistory from '~src/ui-components/VotesHistory';
-import { EProfileHistory, votesHistoryAvailableNetworks } from 'pages/user/[username]';
+import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkContext } from '~src/context';
 
@@ -80,7 +80,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 	return (
 		<div className={className}>
 			<div className='mb-6'>
-				{govType === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) && (
+				{!votesHistoryUnavailableNetworks.includes(network) && (
 					<div className='mb-6'>
 						<Segmented
 							options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
@@ -89,7 +89,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 					</div>
 				)}
 			</div>
-			{(profileHistory === EProfileHistory.POSTS || EGovType.GOV1 === govType || !votesHistoryAvailableNetworks.includes(network)) && (
+			{(profileHistory === EProfileHistory.POSTS || votesHistoryUnavailableNetworks.includes(network)) && (
 				<>
 					<Select
 						suffixIcon={<ArrowDownIcon className='text-[#90A0B7]' />}
@@ -139,8 +139,11 @@ const GovTab: FC<IGovTabProps> = (props) => {
 					</div>
 				</>
 			)}
-			{govType === EGovType.OPEN_GOV && profileHistory === EProfileHistory.VOTES && votesHistoryAvailableNetworks.includes(network) && (
-				<VotesHistory userAddresses={userAddresses || []} />
+			{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) && (
+				<VotesHistory
+					govType={govType}
+					userAddresses={userAddresses || []}
+				/>
 			)}
 		</div>
 	);

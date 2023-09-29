@@ -37,7 +37,14 @@ interface IUserProfileProps {
 	className?: string;
 }
 
-export const votesHistoryAvailableNetworks = [AllNetworks.POLKADOT, AllNetworks.KUSAMA];
+export const votesHistoryUnavailableNetworks = [
+	AllNetworks.MOONBASE,
+	AllNetworks.MOONRIVER,
+	AllNetworks.POLYMESH,
+	AllNetworks.COLLECTIVES,
+	AllNetworks.WESTENDCOLLECTIVES,
+	AllNetworks.MOONBEAM
+];
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const req = context.req;
@@ -113,11 +120,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	}, []);
 
 	const handleSelectGov = (type: EGovType) => {
-		if (type === EGovType.GOV1) {
-			setProfileHistory(EProfileHistory.POSTS);
-		} else {
-			setProfileHistory(EProfileHistory.VOTES);
-		}
+		setProfileHistory(EProfileHistory.VOTES);
 		setSelectedGov(type);
 	};
 
@@ -192,18 +195,22 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							/>
 						)}
 					</div>
-					{selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) && (
+					{!votesHistoryUnavailableNetworks.includes(network) && (
 						<div className='mb-6'>
 							<Segmented
 								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
 								onChange={(e) => setProfileHistory(e as EProfileHistory)}
+								value={profileHistory}
 							/>
 						</div>
 					)}
 
-					{profileHistory === EProfileHistory.VOTES && selectedGov === EGovType.OPEN_GOV && votesHistoryAvailableNetworks.includes(network) ? (
+					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
-							<VotesHistory userAddresses={userProfile?.data?.addresses || []} />
+							<VotesHistory
+								userAddresses={userProfile?.data?.addresses || []}
+								govType={selectedGov}
+							/>
 						</div>
 					) : (
 						<div className='fullHeight'>

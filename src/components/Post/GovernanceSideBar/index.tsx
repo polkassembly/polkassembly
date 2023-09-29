@@ -15,7 +15,7 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { ProposalType, VoteType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
+import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
@@ -1048,7 +1048,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								)}
 								{(onchainId || onchainId === 0) && (
 									<>
-										{getVotingTypeFromProposalType(proposalType) === VoteType.REFERENDUM_V2 && isSupportedNestedVoteNetwork(network) ? (
+										{isSupportedNestedVoteNetwork(network) ? (
 											<VoteDataModal
 												onchainId={onchainId}
 												open={open}

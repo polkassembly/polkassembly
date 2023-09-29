@@ -99,9 +99,9 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 					<div className='overflow-x-auto md:overflow-visible'>
 						<div className='flex flex-col overflow-x-auto px-0 text-xs text-sidebarBlue'>
 							<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-								<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue`}>Delegator</div>
+								<div className={'w-[190px] text-sm font-medium text-lightBlue'}>Delegator</div>
 								<div
-									className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex items-center gap-1 text-lightBlue`}
+									className={'flex w-[110px] items-center gap-1 text-lightBlue'}
 									onClick={() => {
 										handleSortByClick({
 											key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -114,7 +114,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 								</div>
 								{network !== AllNetworks.COLLECTIVES ? (
 									<div
-										className={`${isReferendum2 ? 'w-[110px]' : 'w-[150px]'} flex items-center gap-1 text-lightBlue`}
+										className={'flex w-[110px] items-center gap-1 text-lightBlue'}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -126,20 +126,19 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 										<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />
 									</div>
 								) : null}
-								{isReferendum2 && (
-									<div
-										className='flex w-[110px] items-center gap-1 text-lightBlue'
-										onClick={() => {
-											handleSortByClick({
-												key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
-											});
-											setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
-										}}
-									>
-										Voting Power
-										<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
-									</div>
-								)}
+
+								<div
+									className='flex w-[110px] items-center gap-1 whitespace-nowrap text-lightBlue'
+									onClick={() => {
+										handleSortByClick({
+											key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
+										});
+										setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
+									}}
+								>
+									Voting Power
+									<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
+								</div>
 							</div>
 
 							{votesRes && decision && !!votesRes?.votes?.length ? (

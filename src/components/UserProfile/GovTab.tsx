@@ -10,7 +10,6 @@ import PostTab from '../User/PostTab';
 import { EGovType } from '~src/global/proposalType';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkContext } from '~src/context';
 
 export const getLabel = (str: string) => {
@@ -75,7 +74,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 	const { network } = useNetworkContext();
 	const [selectedPostsType, setSelectedPostsType] = useState('discussions');
 	const [selectedPost, setSelectedPost] = useState('posts');
-	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(isOpenGovSupported(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
+	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(!votesHistoryUnavailableNetworks.includes(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
 
 	return (
 		<div className={className}>
@@ -89,7 +88,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 					</div>
 				)}
 			</div>
-			{(profileHistory === EProfileHistory.POSTS || votesHistoryUnavailableNetworks.includes(network)) && (
+			{profileHistory === EProfileHistory.POSTS && (
 				<>
 					<Select
 						suffixIcon={<ArrowDownIcon className='text-[#90A0B7]' />}

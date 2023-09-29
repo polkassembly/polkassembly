@@ -26,7 +26,6 @@ import EmailIcon from '~assets/icons/email_icon.svg';
 import { poppins } from 'pages/_app';
 import { EGovType } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	className?: string;
@@ -94,11 +93,17 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 	const handleVoteHistoryData = async () => {
 		setVotesData(null);
 		setLoading(true);
+		console.log({
+			orderBy: getOrderBy(sortByPostIndex),
+			page,
+			type: govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum',
+			voterAddresses: checkedAddressList || []
+		});
 		const { data, error } = await nextApiClientFetch<{ data: IProfileVoteHistoryRespose[]; totalCount: number }>('api/v1/votesHistory/getVotesByVoter', {
 			orderBy: getOrderBy(sortByPostIndex),
 			page,
 			type: govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum',
-			voterAddresses: checkedAddressList.map((address) => (address ? getEncodedAddress(String(address), network) : address)) || []
+			voterAddresses: checkedAddressList || []
 		});
 		if (data) {
 			setVotesData(data?.data);

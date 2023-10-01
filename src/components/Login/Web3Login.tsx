@@ -24,6 +24,7 @@ import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -45,6 +46,7 @@ interface Props {
   onWalletUpdate?: () => void;
   withPolkasafe?: boolean;
   setChosenWallet: any;
+  theme?: string;
 }
 
 const initAuthResponse: IAuthResponse = {
@@ -63,7 +65,8 @@ const Web3Login: FC<Props> = ({
 	setSignupOpen,
 	withPolkasafe,
 	setChosenWallet,
-	onWalletUpdate
+	onWalletUpdate,
+	theme
 }) => {
 	const { network } = useNetworkContext();
 
@@ -387,17 +390,22 @@ const Web3Login: FC<Props> = ({
 	return (
 		<>
 			<div className='flex items-center dark:bg-section-dark-overlay'>
-				<LoginLogo className='ml-6 mr-2' />
+				{
+					theme === 'dark' ?
+						<LoginLogoDark className='ml-6 mr-2' />
+						:
+						<LoginLogo className='ml-6 mr-2' />
+				}
 				<h3 className="text-xl font-semibold text-blue-light-high dark:text-blue-dark-high mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
 			</div>
-			<hr className='text-[#D2D8E0] dark:text-[#90909060]' />
+			<hr className='bg-[#D2D8E0] dark:bg-[#90909060]' />
 			<article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-3">
 				<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-2">
 					{!withPolkasafe &&<p className='flex gap-x-2 items-center justify-start p-0 m-0'>
 						<span className='mt-2'>
 							<WalletIcon which={chosenWallet} />
 						</span>
-						<span className='text-blue-light-high dark:text-blue-dark-high text-lg sm:text-xl'>
+						<span className='text-blue-light-high dark:text-blue-dark-high text-lg sm:text-xl dark:font-medium'>
 							{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 						</span>
 					</p>}
@@ -413,7 +421,7 @@ const Web3Login: FC<Props> = ({
 				</h3>
 				{fetchAccounts ?
 					<div className='flex flex-col justify-center items-center'>
-						<p className='text-base text-blue-light-high dark:text-blue-dark-high dark:font-normal'>
+						<p className='text-base text-blue-light-high dark:text-blue-dark-high dark:font-light'>
 							{withPolkasafe ? 'To fetch your Multisig details, please select a wallet extension' :'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 						</p>
 						<div className='flex'>

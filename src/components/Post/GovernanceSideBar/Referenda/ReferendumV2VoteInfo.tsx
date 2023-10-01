@@ -184,7 +184,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						}}
 						open={voteCalculationModalOpen}
 						footer={[
-							<div key='ok' className='mt-4 -mx-6' style={{ borderTop: '1.5px solid #E1E6EB' }}>
+							<div key='ok' className='mt-4 -mx-6 dark:border-t-1 border-[#90909060]' style={{ borderTop: '1.5px solid #E1E6EB' }}>
 								<div className='flex items-center justify-end mt-5 px-6'>
 									<Button
 										className='border-none rounded-[4px] bg-pink_primary text-white font-medium text-sm flex w-[134px] h-[40px] py-1 px-4 flex-col justify-center items-center gap-10 flex-shrink-0'
@@ -195,15 +195,15 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</div>
 						]}
-						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 						closeIcon={<CloseIcon className="mt-2 text-lightBlue dark:text-blue-dark-medium"/>}
 						title={
-							<div className={`${poppins.variable} ${poppins.className} text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold dark:bg-black`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></div>
+							<div className={`${poppins.variable} ${poppins.className} text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold dark:bg-black dark:font-medium`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold dark:font-medium'>How are votes calculated</span></div>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>
-							<div className='mt-3 -mx-6' style={{ borderTop: '1px solid #E1E6EB' }}>
-								<p className='text-blue-light-high dark:text-blue-dark-high font-normal text-sm leading-[18px] m-0 p-0 mt-5 px-6'>
+							<div className='mt-3 -mx-6 dark:border-t-1 border-[#90909060]' style={{ borderTop: '1px solid #E1E6EB' }}>
+								<p className='text-blue-light-high dark:text-blue-dark-high font-normal text-sm leading-[18px] m-0 p-0 mt-5 px-6 dark:font-normal'>
 									Votes are calculated by multiplying the votes casted by a user with the conviction period.
 								</p>
 							</div>

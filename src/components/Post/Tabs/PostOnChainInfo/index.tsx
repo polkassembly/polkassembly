@@ -132,21 +132,21 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 				<OnchainInfoWrapper theme={theme}>
 					<h5 className='mb-5 font-bold text-base'>Metadata</h5>
 					<ul className='list-none flex flex-col gap-y-2'>
-						{submitted_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='col-span-2 text-lightBlue dark:text-blue-dark-medium font-medium'>Submitted</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+						{submitted_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='col-span-2 text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium'>Submitted</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 								{formatBnBalance(String(submitted_amount), { numberAfterComma: 2, withUnit: true }, network)}
 							</div>
 						</li>}
-						{origin && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Origin</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+						{origin && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Origin</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 								{origin.split(/(?=[A-Z])/).join(' ')}
 							</div>
 						</li>}
-						{enactment_after_block && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Enactment After</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+						{enactment_after_block && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Enactment After</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 								{String(enactment_after_block).length < 8 ? enactment_after_block :
 									<div>
 										<span>{formattedBlockToTime(Number(enactment_after_block))}</span>
@@ -156,8 +156,8 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							</div>
 						</li>}
 						{enactment_at_block && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Enactment At</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Enactment At</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 								{String(enactment_at_block).length < 8 ? enactment_at_block :
 									<div>
 										<span>{formattedBlockToTime(Number(enactment_at_block))}</span>
@@ -166,9 +166,9 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								}
 							</div>
 						</li>}
-						{deciding && deciding.since && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Deciding Since</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+						{deciding && deciding.since && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Deciding Since</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 								{`${deciding.since}`.length < 8 ? deciding.since :
 									<div>
 										<span>{formattedBlockToTime(Number(deciding.since))}</span>
@@ -177,9 +177,9 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								}
 							</div>
 						</li>}
-						{deciding && deciding.confirming && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Confirm Started</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+						{deciding && deciding.confirming && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Confirm Started</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 								{`${deciding.confirming}`.length < 8 ? deciding.confirming :
 									<div>
 										<span>{formattedBlockToTime(Number(deciding.confirming))}</span>
@@ -188,23 +188,23 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								}
 							</div>
 						</li>}
-						{decision_deposit_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Decision Deposit</h6>
+						{decision_deposit_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Decision Deposit</h6>
 							<div className='text-blue-light-high dark:text-blue-dark-high col-span-4 md:col-span-6 overflow-hidden'>
 								{formatBnBalance(String(decision_deposit_amount), { numberAfterComma: 2, withUnit: true }, network)}
 							</div>
 						</li>}
-						{submission_deposit_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Submission Deposit</h6>
+						{submission_deposit_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Submission Deposit</h6>
 							<div className='text-blue-light-high dark:text-blue-dark-high col-span-4 md:col-span-6 overflow-hidden'>
 								{formatBnBalance(String(submission_deposit_amount), { numberAfterComma: 2, withUnit: true }, network)}
 							</div>
 						</li>}
-						{ended_at_block && ended_at && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b pb-1.5'>
+						{ended_at_block && ended_at && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b pb-1.5'>
 							{status === tipStatus.CLOSING
 								?
 								<>
-									<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 pt-1.5'>Closing</h6>
+									<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 pt-1.5'>Closing</h6>
 									<div className='col-span-4 md:col-span-6 overflow-hidden'>
 										<BlockCountdown endBlock={ended_at_block}/>
 									</div>
@@ -212,160 +212,160 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								:  status === tipStatus.CLOSED
 									?
 									<>
-										<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 pt-1.5'>Closed</h6>
-										<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+										<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 pt-1.5'>Closed</h6>
+										<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 											{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}
 										</div>
 									</>
 									: <>
-										<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 pt-1.5'>Status</h6>
-										<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+										<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 pt-1.5'>Status</h6>
+										<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 											{status}
 										</div>
 									</>
 							}
 						</li>}
-						{deposit && network && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 text-base'>Deposit</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>{(typeof deposit === 'string'? parseInt(deposit): deposit) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
+						{deposit && network && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 text-base'>Deposit</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>{(typeof deposit === 'string'? parseInt(deposit): deposit) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 							</div>
 						</li>}
-						{method && method !== motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Method</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>{method}</div>
+						{method && method !== motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Method</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>{method}</div>
 						</li>}
-						{end && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
+						{end && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
 							{status === 'Started'
 								?
 								<>
-									<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>End</h6>
+									<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>End</h6>
 									<div className='col-span-4 md:col-span-6'>
 										<BlockCountdown className='text-blue-light-high dark:text-blue-dark-high' endBlock={end}/>
 									</div>
 								</>
 								:
 								<>
-									<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Ended</h6>
-									<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}</div>
+									<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Ended</h6>
+									<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}</div>
 								</>
 							}
 						</li>}
 						{(delay || delay === 0) &&
-						<li className="grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5">
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Delay</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'><BlocksToTime blocks={delay} /></div>
+						<li className="grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5">
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Delay</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'><BlocksToTime blocks={delay} /></div>
 						</li>
 						}
 						{vote_threshold &&
-						<li className="grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5">
+						<li className="grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5">
 							<h6
-								className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'
+								className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'
 							>
 								Vote threshold
 							</h6>
 							<div
-								className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'
+								className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'
 							>
 								{vote_threshold}
 							</div>
 						</li>
 						}
 						{
-							member_count && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 text-base'>Member count</h6>
-								<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+							member_count && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 text-base'>Member count</h6>
+								<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 									{member_count}
 								</div>
 							</li>
 						}
 						{
-							hash && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 flex items-center text-base'>Proposal Hash</h6>
-								<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+							hash && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 flex items-center text-base'>Proposal Hash</h6>
+								<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 									{hash}
 								</div>
 							</li>
 						}
-						{curator && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Curator</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6 overflow-hidden'>
+						{curator && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Curator</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6 overflow-hidden'>
 								<Address  displayInline={true} address={curator}/>
 							</div>
 						</li>}
-						{reward && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Reward</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+						{reward && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Reward</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 								{(typeof reward === 'string'? parseInt(reward): reward) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 							</div>
 						</li>}
-						{fee && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Fee</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+						{fee && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Fee</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 								{(typeof fee === 'string'? parseInt(fee): fee) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 							</div>
 						</li>}
-						{curator_deposit && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Curator Deposit</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+						{curator_deposit && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Curator Deposit</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 								{(typeof curator_deposit === 'string'? parseInt(curator_deposit): curator_deposit) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 							</div>
 						</li>}
-						{bond && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Bond</h6>
-							<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+						{bond && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Bond</h6>
+							<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 								{(typeof bond === 'string'? parseInt(bond): bond) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 							</div>
 						</li>}
-						{payee && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2'>Payee</h6>
+						{payee && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+							<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2'>Payee</h6>
 							<div className='col-span-4 md:col-span-6 overflow-hidden'>
 								<Address displayInline={true} address={payee}/>
 							</div>
 						</li>}
 						{
-							motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 text-base'>Motion&apos;s method</h6>
-								<div className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'text-blue-light-high dark:text-blue-dark-high font-medium'}`}>
+							motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 text-base'>Motion&apos;s method</h6>
+								<div className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'text-blue-light-high dark:text-blue-dark-high dark:font-normal'}`}>
 									{motion_method}
 								</div>
 							</li>
 						}
 						{
-							cid && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 text-base'>IPFS</h6>
-								<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+							cid && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 text-base'>IPFS</h6>
+								<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 									<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank">{`ipfs.io/ipfs/${cid}`}</Link>
 								</div>
 							</li>
 						}
 						{
-							cid && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 text-base'>CID</h6>
-								<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+							cid && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 text-base'>CID</h6>
+								<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 									{cid}
 								</div>
 							</li>
 						}
 						{
-							code && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 flex items-center text-base'>Code</h6>
-								<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+							code && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 flex items-center text-base'>Code</h6>
+								<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 									{code}
 								</div>
 							</li>
 						}
 						{
-							codec && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 flex items-center text-base'>Codec</h6>
-								<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+							codec && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 flex items-center text-base'>Codec</h6>
+								<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 									{codec}
 								</div>
 							</li>
 						}
 						{
-							version && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-2 flex items-center text-base'>Version</h6>
-								<div className='text-blue-light-high dark:text-blue-dark-high font-medium col-span-4 md:col-span-6'>
+							version && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b py-1.5'>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-2 flex items-center text-base'>Version</h6>
+								<div className='text-blue-light-high dark:text-blue-dark-high dark:font-normal col-span-4 md:col-span-6'>
 									{version}
 								</div>
 							</li>
@@ -374,7 +374,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 					{
 						description && network === 'polymesh'?
 							<div className='grid grid-cols-6 md:grid-cols-8 gap-x-5 mt-5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-6 md:col-span-2 text-base'>Description</h6>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-6 md:col-span-2 text-base'>Description</h6>
 								<p className='text-bodyBlue font-medium leading-6 col-span-6'>{description}</p>
 							</div>
 							: null
@@ -385,9 +385,9 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						<h5 className='font-bold text-base mb-3'>Call Arguments</h5>
 						{
 							proposal_arguments?.description?
-								<div className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b mt-5'>
-									<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-6 md:col-span-2 text-base'>Description</h6>
-									<p className='text-blue-light-high dark:text-blue-dark-high font-medium leading-6 col-span-6'>{proposal_arguments?.description}</p>
+								<div className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b mt-5'>
+									<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-6 md:col-span-2 text-base'>Description</h6>
+									<p className='text-blue-light-high dark:text-blue-dark-high dark:font-normal leading-6 col-span-6'>{proposal_arguments?.description}</p>
 								</div>
 								: null
 						}
@@ -417,8 +417,8 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 					{
 						description && network !== 'polymesh'?
 							<div className='grid grid-cols-6 md:grid-cols-8 gap-x-5 mt-5'>
-								<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-6 md:col-span-2 text-base'>Description</h6>
-								<p className='text-blue-light-high dark:text-blue-dark-high font-medium leading-6 col-span-6'>{description}</p>
+								<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-6 md:col-span-2 text-base'>Description</h6>
+								<p className='text-blue-light-high dark:text-blue-dark-high dark:font-normal leading-6 col-span-6'>{description}</p>
 							</div>
 							: null
 					}
@@ -454,23 +454,23 @@ const ProposalInfo: React.FC<IProposalInfoProps> = (props) => {
 		<>
 			{
 				proposed_call?.method !== method &&
-					<div className='grid grid-cols-6 md:grid-cols-8 border-0 border-[#e5e7eb] border-solid border-b gap-x-5'>
-						<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-6 md:col-span-2'>Method</h6>
-						<p className='text-blue-light-high dark:text-blue-dark-high font-medium leading-6 col-span-6'>{proposed_call.method}</p>
+					<div className='grid grid-cols-6 md:grid-cols-8 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b gap-x-5'>
+						<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-6 md:col-span-2'>Method</h6>
+						<p className='text-blue-light-high dark:text-blue-dark-high dark:font-normal leading-6 col-span-6'>{proposed_call.method}</p>
 					</div>
 			}
 			{
 				proposed_call?.section &&
-					<div className='grid grid-cols-6 md:grid-cols-8 border-0 border-[#e5e7eb] border-solid border-b gap-x-5'>
-						<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-6 md:col-span-2'>Section</h6>
-						<p className='text-blue-light-high dark:text-blue-dark-high font-medium leading-6 col-span-6'>{proposed_call.section}</p>
+					<div className='grid grid-cols-6 md:grid-cols-8 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b gap-x-5'>
+						<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-6 md:col-span-2'>Section</h6>
+						<p className='text-blue-light-high dark:text-blue-dark-high dark:font-normal leading-6 col-span-6'>{proposed_call.section}</p>
 					</div>
 			}
 			{
 				proposed_call?.description &&
-					<div className='grid grid-cols-6 md:grid-cols-8 border-0 border-[#e5e7eb] border-solid border-b gap-x-5'>
-						<h6 className='text-lightBlue dark:text-blue-dark-medium font-medium col-span-6 md:col-span-2'>Description</h6>
-						<p className='text-blue-light-high dark:text-blue-dark-high font-medium leading-6 col-span-6'>{proposed_call.description}</p>
+					<div className='grid grid-cols-6 md:grid-cols-8 border-0 border-[#e5e7eb] dark:border-[#5A5A5A] border-solid border-b gap-x-5'>
+						<h6 className='text-lightBlue dark:text-blue-dark-medium dark:font-normal font-medium col-span-6 md:col-span-2'>Description</h6>
+						<p className='text-blue-light-high dark:text-blue-dark-high dark:font-normal leading-6 col-span-6'>{proposed_call.description}</p>
 					</div>
 			}
 			{

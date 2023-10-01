@@ -28,7 +28,6 @@ import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
 import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
@@ -48,6 +47,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { useTheme } from 'next-themes';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -617,8 +617,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
-				closeIcon={<CloseCross/>}
+				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
 				wrapClassName={className}
 				title={
 					showMultisig ?

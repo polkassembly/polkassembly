@@ -62,7 +62,7 @@ const Account: FC<Props> = ({ className }) => {
 	return (
 		<Collapse
 			size='large'
-			className='bg-white dark:bg-section-dark-overlay'
+			className='bg-white dark:bg-section-dark-overlay dark:border-[#90909060]'
 			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -99,7 +99,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0 text-[#D2D8E0]' />
+						<Divider className='m-0 text-[#D2D8E0] dark:bg-[#90909060]' />
 						<section>
 							<AddressHeader
 								checked={isMultiSigAddress}
@@ -116,7 +116,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0 text-[#D2D8E0]' />
+						<Divider className='m-0 text-[#D2D8E0] dark:bg-[#90909060]' />
 						<section>
 							<AddressHeader
 								checked={isLinkProxy}

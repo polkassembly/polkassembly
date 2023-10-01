@@ -89,7 +89,7 @@ export default function SubscribedPosts({
 	return (
 		<Collapse
 			size='large'
-			className='bg-white dark:bg-section-dark-overlay'
+			className='bg-white dark:bg-section-dark-overlay dark:border-[#90909060]'
 			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {

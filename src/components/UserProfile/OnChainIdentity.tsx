@@ -36,7 +36,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 					<RightOutlined className='ml-auto text-[#D6DBE2] text-base' />
 				</button>
 				<Modal
-					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} min-w-[648px]`}
+					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} min-w-[648px]`}
 					title={
 						<h3 className='font-semibold text-xl text-[#1D2632] dark:bg-black dark:text-white'>
                             On-chain identity

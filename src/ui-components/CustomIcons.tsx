@@ -121,9 +121,29 @@ import TelegramIconSVG from '~assets/icons/telegram-notification.svg';
 import DiscordIconSVG from '~assets/icons/discord-notification.svg';
 import SlackSVG from '~assets/icons/slack.svg';
 import ElementSVG from '~assets/icons/element.svg';
+import CloseSVG from '~assets/icons/close.svg';
+import LearnMoreSVG from '~assets/icons/learn-more-icon.svg';
+import ChangeUserNameSVG from '~assets/icons/change-username.svg';
+import ChangeEmailSVG from '~assets/icons/change-email.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
+);
+
+export const CloseIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CloseSVG} {...props} />
+);
+
+export const ExportOutlined = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={LearnMoreSVG} {...props} />
+);
+
+export const ChangeUserIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ChangeUserNameSVG} {...props} />
+);
+
+export const ChangeEmailIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ChangeEmailSVG} {...props} />
 );
 
 export const OpenAiIcon = (props: Partial<CustomIconComponentProps>) => (

@@ -445,7 +445,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						</Form>
 						:
 						<>
-							<Markdown theme={theme} md={content} className='py-2 px-2 md:px-4 bg-comment_bg dark:bg-section-dark-container rounded-b-md text-sm' />
+							<Markdown theme={theme} md={content} className='py-2 px-2 md:px-4 bg-comment_bg dark:bg-[#141416] rounded-b-md text-sm' />
 
 							<div className='flex items-center flex-row bg-white dark:bg-section-dark-overlay flex-wrap gap-[1px]'>
 								<CommentReactionBar

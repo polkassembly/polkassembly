@@ -14,10 +14,9 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import CloseIcon from '~assets/icons/close.svg';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import { BN_HUNDRED } from '@polkadot/util';
-import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import userProfileBalances from '~src/util/userProfieBalances';
@@ -156,10 +155,10 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			open={closeConfirm}
 			onCancel={() => {setCloseConfirm(true); setOpenModal(false);}}
 			footer={false}
-			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			wrapClassName={className}
 			closable={false}
-			title={<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-black'>
+			title={<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-section-dark-overlay'>
         Exit Treasury Proposal Creation
 			</div>}>
 			<div className='px-6 mt-6'>
@@ -187,10 +186,10 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			maskClosable={false}
 			onCancel={() => {setCloseConfirm(true); setOpenModal(false);}}
 			footer={false}
-			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			wrapClassName={className}
-			closeIcon={<CloseIcon/>}
-			title={<div className='text-lg font-semibold flex text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-black'>
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+			title={<div className='text-lg font-semibold flex text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-section-dark-overlay'>
 				<CreateProposalIcon/>Create Treasury Proposal
 			</div>}
 		>

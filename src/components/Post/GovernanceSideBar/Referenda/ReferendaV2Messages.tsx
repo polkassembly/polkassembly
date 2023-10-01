@@ -142,7 +142,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<div className="flex w-13 h-[33px] gap-1">
 								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
 									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">1</Button>
-									<span className="ml-[4px] pt-[3px] dark:text-icon-dark-inactive">of 3</span>
+									<span className="ml-[4px] pt-[3px] dark:text-blue-dark-medium">of 3</span>
 								</p>
 							</div>
 						</div>
@@ -166,7 +166,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<div className="flex w-13 h-[33px] gap-1">
 								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
 									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] mr-[2px] -ml-[3px] text-white">2</Button>
-									<span className="ml-[4px] pt-[3px] dark:text-icon-dark-inactive">of 3</span>
+									<span className="ml-[4px] pt-[3px] dark:text-blue-dark-medium">of 3</span>
 								</p>
 							</div>
 						</div>
@@ -200,7 +200,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 										<div className="flex w-13 h-[33px] gap-1">
 											<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue dark:bg-[#222] bg-[#d2d8e030]" style={{ borderRadius: '15px' }}>
 												<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">3</Button>
-												<span className="ml-[4px] pt-[3px] dark:text-icon-dark-inactive">of 3</span>
+												<span className="ml-[4px] pt-[3px] dark:text-blue-dark-medium">of 3</span>
 											</p>
 										</div>
 									</div>
@@ -244,14 +244,14 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			}
 			<Modal
 				open={open}
-				title={<div className='flex items-center justify-between gap-x-5 py-3 px-2 dark:bg-black'>
+				title={<div className='flex items-center justify-between gap-x-5 py-3 px-2 dark:bg-section-dark-overlay'>
 					<h3 className='text-blue-light-high dark:text-blue-dark-high dark:bg-transparent font-medium text-xl leading-[24px] tracking-[0.0015em] m-0 p-0'>Status</h3>
 					<button onClick={() => setOpen(false)} className='border-none outline-none cursor-pointer bg-transparent flex items-center justify-center'><CloseIcon className='text-lightBlue dark:text-blue-dark-medium' /></button>
 				</div>}
 				onCancel={() => setOpen(false)}
 				closable={false}
 				footer={[]}
-				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			>
 				<section className='text-sidebarBlue mt-[24px] pl-[21px]'>
 					<article className='flex gap-x-[23px]'>

@@ -4,7 +4,7 @@
 
 import { Modal } from 'antd';
 import { useNetworkContext } from '~src/context';
-import CloseIcon from 'public/assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { poppins } from 'pages/_app';
 import Login from 'pages/login';
 import styled from 'styled-components';
@@ -30,7 +30,7 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 		wrapClassName={className}
 		className={`${poppins.variable} ${poppins.className} padding-0 `}
 		onCancel={() => setModalOpen && setModalOpen(false)}
-		closeIcon={<CloseIcon />}>
+		closeIcon={<CloseIcon className='text-lightBlued dark:text-blue-dark-medium' />}>
 		<Login network={network} isModal={isModal} setLoginOpen={setModalOpen} setSignupOpen={setSignupOpen} isDelegation={isDelegation} /></Modal>;
 };
 export default styled(LoginPopup)`

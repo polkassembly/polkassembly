@@ -87,7 +87,7 @@ const ChangePassword = ({
 			}
 			open={open}
 			closable
-			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} min-w-[350px] md:min-w-[600px]`}
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} min-w-[350px] md:min-w-[600px]`}
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}

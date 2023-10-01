@@ -400,15 +400,15 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
-					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue dark:text-blue-dark-medium'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay'>
+					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue dark:text-blue-dark-high'>
 					Link Address
 					</span>
 					<Divider className='dark:bg-icon-dark-inactive' />
 				</div>
 			}
 			open={open}
-			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className}`}
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className}`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{
@@ -453,7 +453,7 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 				{
 					fetchAccountsInfo?
 						<div className='max-w-[600px]'>
-							<p className='dark:text-blue-dark-medium'>
+							<p className='dark:text-blue-dark-high dark:font-light'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
 							</p>
 						</div>

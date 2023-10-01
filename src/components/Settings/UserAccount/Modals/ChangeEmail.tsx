@@ -3,12 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import { Button, Divider, Form, Input, Modal } from 'antd';
-import ChangeEmailIcon from '~assets/icons/change-email.svg';
+import { ChangeEmailIcon } from '~src/ui-components/CustomIcons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
 import styled from 'styled-components';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ChangeEmail = ({
 	open,
@@ -67,16 +68,16 @@ const ChangeEmail = ({
 	return (
 		<Modal
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay'>
 					<h3 className='ml-[24px] mb-0 flex items-center gap-2 text-base md:text-md'>
-						<ChangeEmailIcon /> Change your email
+						<ChangeEmailIcon className='text-lightBlue dark:text-white'/> Change your email
 					</h3>
-					<Divider />
+					<Divider className='dark:bg-[#90909060]' />
 				</div>
 			}
 			open={open}
-			closable
-			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} min-w-[350px] md:min-w-[600px]`}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} min-w-[350px] md:min-w-[600px]`}
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
@@ -93,7 +94,7 @@ const ChangeEmail = ({
 					>
 						<label className='dark:text-blue-dark-medium' htmlFor="old-email">Old Email</label>
 						<Input
-							className='p-2 text-sm leading-[21px] dark:text-blue-dark-medium'
+							className='p-2 text-sm leading-[21px] dark:text-blue-dark-high dark:border-[#3B444F] dark:border-[1px] dark:bg-[#90909060]'
 							value={email}
 							disabled
 						/>
@@ -113,7 +114,7 @@ const ChangeEmail = ({
 						>
 							<Input
 								disabled={loading}
-								className='p-2 text-sm leading-[21px] dark:bg-black dark:text-blue-dark-high'
+								className='p-2 text-sm leading-[21px] dark:bg-section-dark-overlay dark:text-white dark:text-blue-dark-high dark:border-[#3B444F] dark:placeholder-white dark:border-[1px] dark:focus:border-[#91054F] dark:hover:border-[#91054F]'
 								placeholder='Enter your email'
 							/>
 						</Form.Item>

@@ -425,7 +425,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 
 	return <Modal
 		wrapClassName={className}
-		className = {`${poppins.className} ${poppins.variable} radius ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+		className = {`${poppins.className} ${poppins.variable} radius ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 		open = {open}
 		title = {
 			<div className='text-center text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high dark:bg-black'>

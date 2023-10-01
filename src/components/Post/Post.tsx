@@ -528,7 +528,7 @@ export default styled(Post)`
 	border: ${props => props.theme=='dark' ? 'none' : ''} !important;
   }
   .ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
-	border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
+	border-bottom: ${props => props.theme=='dark' ? '1px #29323C solid' : ''} !important;
   }
   .ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab-active{
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;

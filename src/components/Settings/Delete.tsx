@@ -64,12 +64,12 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 		setError('');
 		setShowModal(false);
 	};
-	const Title = <div className='font-medium text-lg tracking-wide text-sidebarBlue dark:bg-black dark:text-white'>Delete Account</div>;
+	const Title = <div className='font-medium text-lg tracking-wide text-sidebarBlue dark:bg-section-dark-overlay dark:text-white'>Delete Account</div>;
 	const { Option } = Select;
 	return (
 		<Collapse
 			size='large'
-			className='bg-white dark:bg-section-dark-overlay'
+			className='bg-white dark:bg-section-dark-overlay dark:border-[#90909060]'
 			expandIconPosition='end'
 			theme={theme}
 			expandIcon={({ isActive }) => {
@@ -113,7 +113,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
                             Cancel
 							</Button>
 						]}
-						className={`${className} ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+						className={`${className} ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 					>
 						{error && <div className='mb-4'><FilteredError text={error}/></div>}
 						<article>

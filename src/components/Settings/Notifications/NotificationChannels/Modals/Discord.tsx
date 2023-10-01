@@ -4,7 +4,7 @@
 
 import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
-import { CopyIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
 import { CHANNEL } from '..';
 import { useUserDetailsContext } from '~src/context';
 
@@ -43,19 +43,19 @@ const DiscordInfoModal = ({
 	return (
 		<Modal
 			title={
-				<h3 className='flex items-center gap-3 mb-5 dark:bg-black dark:text-white'>
+				<h3 className='flex items-center gap-3 mb-5 dark:bg-section-dark-overlay dark:text-white'>
 					{icon} {title}
 				</h3>
 			}
 			open={open}
-			closable
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
 			onCancel={onClose}
 			footer={null}
-			className={`min-[550px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+			className={`min-[550px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 		>
 			<div className=''>
 				<ol>
-					<li className='list-inside leading-[40px] dark:text-blue-dark-medium'>
+					<li className='list-inside leading-[40px] dark:text-blue-dark-high'>
                         Click this invite link
 						<span className='p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
 							<a
@@ -67,7 +67,7 @@ const DiscordInfoModal = ({
 							</a>
 						</span>
 					</li>
-					<li className='list-inside leading-[40px] dark:text-blue-dark-medium'>
+					<li className='list-inside leading-[40px] dark:text-blue-dark-high'>
                         Send this command to the chat with the bot:
 						<br />
 						<span

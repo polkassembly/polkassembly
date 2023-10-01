@@ -384,7 +384,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 				footer={false}
 				closeIcon={<CloseIcon/>}
-				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 				title={<>
 					<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
 						<TagsIcon className='mr-2' />

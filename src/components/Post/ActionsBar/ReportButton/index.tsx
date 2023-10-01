@@ -181,7 +181,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				{isDeleteModal ? <span className={`${className} break-keep`}>Delete</span> : <span className={`${className} break-keep`}>Report</span>}
 			</button>
 			<Modal
-				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 				title={isDeleteModal ? <div className='dark:bg-black dark:text-white'>Delete</div> : <div className='dark:bg-black dark:text-white'>Report</div>}
 				open={showModal}
 				onOk={

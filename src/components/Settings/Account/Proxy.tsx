@@ -136,7 +136,7 @@ const Proxy: FC<Props> = ({ dismissModal, open, theme }) => {
 			closable={false}
 			title={
 				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
-					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue dark:text-blue-dark-medium'>
+					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue dark:text-blue-dark-high'>
 					Link Proxy address
 					</span>
 					<Divider className='dark:bg-icon-dark-inactive'/>
@@ -144,7 +144,7 @@ const Proxy: FC<Props> = ({ dismissModal, open, theme }) => {
 
 			}
 			open={open}
-			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} mb-8 md:min-w-[600px]`}
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} mb-8 md:min-w-[600px]`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{

@@ -25,11 +25,11 @@ import { WalletIcon } from '../Login/MetamaskLogin';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { formatBalance } from '@polkadot/util';
-import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import { gov2ReferendumStatus } from '~src/global/statuses';
 import { useTheme } from 'next-themes';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -232,11 +232,11 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		<Button onClick={() => setOpenModal(true)} className='bg-pink_primary text-sm font-medium text-white mt-4 rounded-[4px] h-[40px] w-full tracking-wide'>Pay Decision Deposit</Button>
 		<Modal
 			wrapClassName={className}
-			className = {`${poppins.className} ${poppins.variable} pay-decision-deposite ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+			className = {`${poppins.className} ${poppins.variable} pay-decision-deposite ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			open = {openModal}
-			closeIcon={<CloseIcon/>}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
 			onCancel={() => setOpenModal(false)}
-			title = {<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-black'>Pay Decision Deposit</div>}
+			title = {<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-section-dark-overlay'>Pay Decision Deposit</div>}
 			footer = {<div className='px-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] pt-4'>
 				<Button onClick={() => setOpenModal(false)} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider dark:bg-transparent'>Back</Button>
 				<Button onClick={handleSubmit} disabled={!accounts.length || availableBalance.lte(amount)} className={`text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider ${!accounts.length || availableBalance.lte(amount) && 'opacity-50'}`}>Continue</Button>

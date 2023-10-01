@@ -19,7 +19,7 @@ import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
-import CloseIcon from '~assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 
@@ -146,10 +146,10 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		<Modal
 			open={openReadMore}
 			onCancel={() => setOpenReadMore(false)}
-			className={`w-[725px] max-md:w-full modal ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+			className={`w-[725px] max-md:w-full modal ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			footer={false}
 			wrapClassName={className}
-			closeIcon={<CloseIcon/>}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium' />}
 		>
 			<div className={'pt-[20px]'}>
 				<div className='flex justify-between items-center pt-2 pl-8'>

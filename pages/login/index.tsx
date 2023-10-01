@@ -85,7 +85,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 		<>
 			<SEOHead title="Login" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-5'>
-				<Col className='w-full sm:max-w-[600px]'>
+				<Col className='w-full sm:max-w-[600px] dark:bg-section-dark-container'>
 					{displayWeb === 2 ? (
 						<Web2Login theme={theme} isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} setWithPolkasafe={setWithPolkasafe}/>
 					) : null}
@@ -98,6 +98,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 									: chosenWallet == Wallet.WALLETCONNECT ?
 										<WalletConnectLogin isModal={isModal} setLoginOpen={setLoginOpen} setDisplayWeb2={setDisplayWeb2} setPolkadotWallet={setPolkadotWallet} /> :
 										<Web3Login
+											theme={theme}
 											isModal={isModal} setLoginOpen={setLoginOpen}
 											setSignupOpen={setSignupOpen}
 											chosenWallet={chosenWallet}

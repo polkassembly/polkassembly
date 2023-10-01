@@ -274,7 +274,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				Boolean(allComments?.length) && timelines.length >= 1 &&
 				!loading &&
 				<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-					<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+					<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high dark:font-normal'>
 						{allComments.length || 0}
 						<span className='ml-1'>Comments</span>
 					</span>
@@ -293,7 +293,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary text-blue-light-high dark:text-blue-dark-high text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none': ''}`}
 								>
 									{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
-									<span className={'flex justify-center font-medium'}>{data.percentage}%</span>
+									<span className={'flex justify-center font-medium dark:text-[#ffffff99] dark:font-normal'}>{data.percentage}%</span>
 								</div>
 							</Tooltip>
 						))}

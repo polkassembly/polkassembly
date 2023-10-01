@@ -257,13 +257,13 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal,theme }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-black'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay'>
 					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue dark:text-blue-dark-high'>Link Multisig address</span>
-					<Divider className='dark:bg-icon-dark-inactive'/>
+					<Divider className='dark:bg-[#90909060]'/>
 				</div>
 			}
 			open={open}
-			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} mb-8 md:min-w-[600px]`}
+			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} mb-8 md:min-w-[600px]`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{
@@ -318,7 +318,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal,theme }) => {
 									value={signatories[i]}
 									onChange={onSignatoriesAddressChange}
 									placeholder='Enter signatory addresses'
-									className="rounded-md py-3 px-4 border-grey_border dark:bg-black dark:text-blue-dark-high"
+									className="rounded-md py-3 px-4 border-grey_border dark:bg-section-dark-overlay dark:text-white dark:text-blue-dark-high dark:border-[#3B444F] dark:placeholder-white dark:border-[1px] dark:focus:border-[#91054F] dark:hover:border-[#91054F]"
 								/>
 								<button
 									type='button'
@@ -335,7 +335,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal,theme }) => {
 						!extensionNotAvailable && <div className='flex items-center justify-between'>
 							<Button
 								onClick={handleDetect}
-								className='font-medium text-sm text-pink_primary p-0 m-0 outline-none border-none bg-transparent flex items-center'
+								className='font-medium text-sm text-pink_primary dark:text-blue-dark-helper p-0 m-0 outline-none border-none bg-transparent flex items-center'
 							>
 								<span>
 									Choose from available account
@@ -344,7 +344,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal,theme }) => {
 							</Button>
 							<Button
 								onClick={() => handleAddSignatories(true, '')}
-								className='font-medium text-sm text-pink_primary p-0 m-0 outline-none border-none bg-transparent flex items-center'
+								className='font-medium text-sm text-pink_primary p-0 m-0 outline-none border-none bg-transparent flex items-center dark:text-blue-dark-helper'
 							>
 								<PlusOutlined />
 								<span>
@@ -380,7 +380,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal,theme }) => {
 					>
 						<Input
 							placeholder='Enter a valid multisig address'
-							className="rounded-md py-3 px-4 border-grey_border dark:bg-black dark:text-blue-dark-high"
+							className="rounded-md py-3 px-4 border-grey_border dark:bg-section-dark-overlay dark:text-white dark:text-blue-dark-high dark:border-[#3B444F] dark:placeholder-white dark:border-[1px] dark:focus:border-[#91054F] dark:hover:border-[#91054F]"
 							id="multisigAddress"
 						/>
 					</Form.Item>
@@ -410,7 +410,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal,theme }) => {
 							min={1}
 							max={100}
 							placeholder='Enter threshold'
-							className="rounded-md py-2 px-3 border-grey_border w-full dark:bg-black dark:text-blue-dark-high"
+							className="rounded-md py-2 px-3 border-grey_border w-full dark:bg-section-dark-overlay dark:text-white dark:text-blue-dark-high dark:border-[#3B444F] dark:placeholder-white dark:border-[1px] dark:focus:border-[#91054F] dark:hover:border-[#91054F]"
 							id="threshold"
 						/>
 					</Form.Item>

@@ -91,7 +91,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		sentiment === 5 ? { key:5,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely For</div> }:null
 	];
 
-	return <div className={`${className} flex justify-between w-[100%] ${isRow? 'dark:bg-section-dark-container' : 'bg-none'}`} >
+	return <div className={`${className} flex justify-between w-[100%] ${isRow? 'dark:bg-[#141416]' : 'bg-none'}`} >
 		<div className={`text-xs flex ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
 				<div className={'flex items-center '}>
@@ -104,7 +104,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					/>
 					{text}&nbsp;
 					{topic &&
-			<div className='flex sm:-mt-0.5'> <span className='text-lightBlue dark:text-blue-dark-medium mr-2 mt-0.5'>in</span> <TopicTag topic={topic} className={topic} /></div>
+			<div className='flex sm:-mt-0.5'> <span className='text-lightBlue dark:text-blue-dark-medium mr-2 mt-0.5'>in</span> <TopicTag topic={topic} theme={theme} className={topic} /></div>
 					}
 					{cid ?
 						<>
@@ -191,7 +191,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`w-[400px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+								className={`w-[400px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 								closeIcon={<CloseCross/>}
 								wrapClassName={className}
 								title={

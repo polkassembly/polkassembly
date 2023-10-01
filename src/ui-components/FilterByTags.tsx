@@ -163,10 +163,10 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 			arrow={isSearch}
 		>
 
-			{!isSearch ? <div className={'text-base tracking-wide font-normal flex items-center text-pink_primary mt-[3.5px] cursor-pointer'}>
+			{!isSearch ? <div className={'text-base tracking-wide font-normal flex items-center text-pink_primary mt-[3.5px] cursor-pointer dark:text-blue-dark-helper'}>
 				<span> Filter</span>
 				<span className='text-lg ml-2'>
-					<FilterIcon/>
+					<FilterIcon className='text-pink_primary dark:text-blue-dark-helper'/>
 				</span>
 			</div> : <div className={`flex items-center justify-center text-xs ${(openFilter) ? 'text-pink_primary':'text-[#667589]'} ${disabled ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'} max-sm:text-[10px]`}>
           Tags

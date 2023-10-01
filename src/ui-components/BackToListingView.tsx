@@ -85,10 +85,10 @@ const BackToListingView = ({ postCategory, trackName } : Props) => {
 	const listingPageText = path.replace(/-|_/g, ' ');
 
 	return (
-		<Link className='text-sidebarBlue dark:text-blue-dark-medium hover:text-pink_primary inline-flex items-center' href={`/${path}`}>
+		<Link className='text-sidebarBlue dark:text-white hover:text-pink_primary inline-flex items-center' href={`/${path}`}>
 			<div className='flex items-center'>
 				<LeftOutlined className='text-xs mr-2' />
-				<span className='text-sm font-medium'>Back to <span className='capitalize'>{trackName ? trackName.split(/(?=[A-Z])/).join(' ') : listingPageText}</span></span>
+				<span className='text-sm font-normal'>Back to <span className='capitalize'>{trackName ? trackName.split(/(?=[A-Z])/).join(' ') : listingPageText}</span></span>
 			</div>
 		</Link>
 	);

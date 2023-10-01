@@ -28,6 +28,7 @@ import AddressComponent from '../../ui-components/Address';
 import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
 import executeTx from '~src/util/executeTx';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string
@@ -310,12 +311,13 @@ const TreasuryProposalFormButton = ({
 				{!id ? triggerBtnLoginDisabled : triggerBtn}
 
 				<Modal
-					className={`${className} ${themes === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}`}
+					className={`${className} ${themes === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 					onCancel={() => setModalOpen(false)}
 					centered
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium' />}
 					wrapClassName='p-5 before:h-0 md:p-10'
 					zIndex={1002}
-					title={<div className="dark:bg-black dark:text-white">Create Treasury Proposal</div>}
+					title={<div className="dark:bg-section-dark-overlay dark:text-white">Create Treasury Proposal</div>}
 					footer={[
 						<Button key='submit'  className='bg-pink_primary text-white' onClick={handleSignAndSubmit}>Sign &amp; Submit</Button>
 					]}

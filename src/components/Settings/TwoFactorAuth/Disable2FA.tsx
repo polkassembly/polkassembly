@@ -15,9 +15,9 @@ import { handleTokenChange } from '~src/services/auth.service';
 import { useUserDetailsContext } from '~src/context';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
 
-const Title = <div className='dark:bg-black'>
-	<span className='text-lg tracking-wide text-sidebarBlue font-bold dark:text-blue-dark-high'>Disable Two Factor Authentication</span>
-	<Divider className='mt-2 mb-0' />
+const Title = <div className='dark:bg-section-dark-overlay'>
+	<span className='text-lg tracking-wide text-sidebarBlue font-bold dark:text-blue-dark-high dark:text-blue-dark-high dark:font-medium'>Disable Two Factor Authentication</span>
+	<Divider className='mt-2 mb-0 dark:bg-[#90909060]' />
 </div>;
 
 const Disable2FA: FC<{className?: string , theme?: string}> = ({ className, theme }) => {
@@ -66,7 +66,7 @@ const Disable2FA: FC<{className?: string , theme?: string}> = ({ className, them
 	return (
 		<>
 			<Modal
-				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''} ${className} ${poppins.variable} ${poppins.className}`}
+				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${className} ${poppins.variable} ${poppins.className}`}
 				closable={false}
 				title={Title}
 				open={showModal}

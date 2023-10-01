@@ -13,7 +13,6 @@ import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 
-import CloseIcon from '~assets/icons/close.svg';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
@@ -29,6 +28,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -197,11 +197,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	return (
 		<>
 			<Modal
-				closeIcon={<CloseIcon />}
-				className={`${poppins.variable} ${poppins.className} padding w-[600px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-black' : ''}` }
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+				className={`${poppins.variable} ${poppins.className} padding w-[600px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}` }
 				wrapClassName={className}
 				title={
-					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high dark:bg-black text-[20px] font-semibold mb-6 '>
+					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay text-[20px] font-semibold mb-6 '>
 						<UndelegateProfileIcon className='mr-2'/>Undelegate
 					</div>
 				}

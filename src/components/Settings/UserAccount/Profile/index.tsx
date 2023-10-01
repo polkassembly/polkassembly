@@ -49,7 +49,7 @@ const ProfileSettings = () => {
 	return (
 		<Collapse
 			size='large'
-			className={'bg-white dark:bg-section-dark-overlay'}
+			className={'bg-white dark:bg-section-dark-overlay dark:border-[#90909060]'}
 			expandIconPosition='end'
 			theme={theme}
 			expandIcon={({ isActive }) => {

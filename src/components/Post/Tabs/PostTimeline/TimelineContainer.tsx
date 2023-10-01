@@ -22,7 +22,7 @@ import DemocracyProposalIconGrey from '~assets/sidebar/democracy-proposal-icon-u
 import DemocracyProposalIcon from '~assets/sidebar/democracy-proposal-icon-selected.svg';
 import ChildBountyIcon from '~assets/sidebar/treasury-child-bounties-icon-selected.svg';
 import ChildBountyIconGrey from '~assets/sidebar/treasury-child-bounties-icon-unselected.svg';
-import ExportOutlined from '~assets/icons/learn-more-icon.svg';
+import { ExportOutlined } from '~src/ui-components/CustomIcons';
 import { usePostDataContext } from '~src/context';
 import DownArrow from '~assets/icons/down-icon.svg';
 import UpArrow from '~assets/icons/up-arrow.svg';
@@ -57,7 +57,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const { postData: { postType } } = usePostDataContext();
 	const PostType = postType.replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase()).replace(/s$/, '');
 	let activeColor;
-	PostType === timeline.type ?  activeColor = '#485F7D' : activeColor = '#E5007A';
+	PostType === timeline.type ? theme==='dark' ? activeColor = '#485F7D' : '#595959' : theme === 'dark' ? activeColor = '#FF60B5' : activeColor = '#E5007A';
 	const { network } = useNetworkContext();
 	if (!timeline) return null;
 	const { statuses, type } = timeline;
@@ -118,17 +118,17 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
 						const blockDate = dayjs(timestamp);
 						return (
-							<div key={status} className={'border-t border-black-300'} style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}>
+							<div key={status} className={'border-t border-black-300 dark:border-[#5A5A5A]'} style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}>
 								<div className='content-container'>
 									<article className="py-[8px]">
 										<div className="flex items-center">
 											<div className="flex items-center">
-												<p className="text-xs text-sidebarBlue dark:text-blue-dark-medium font-normal whitespace-nowrap mb-0 info-container">
+												<p className="text-xs text-sidebarBlue dark:text-blue-dark-high font-normal whitespace-nowrap mb-0 info-container dark:font-light">
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
 												{type !== 'Discussions' && (
 													<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
-														<ExportOutlined className='-mb-[2px]' style={{ color: '#e5007a' }} />
+														<ExportOutlined className='-mb-[2px] text-[#e5007a] dark:text-[#FF60B5]' />
 													</a>
 												)}
 											</div>

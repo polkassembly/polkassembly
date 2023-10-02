@@ -444,7 +444,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			</Button>
 			<Modal
 				open={showModal}
-				zIndex={999}
+				zIndex={100}
 				onCancel={() => setShowModal(false)}
 				footer={false}
 				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable}`}

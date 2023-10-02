@@ -124,7 +124,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 				closable={false}
 				title={Title}
 				open={showModal}
-				zIndex={999}
+				zIndex={100}
 				footer={[
 					<Button
 						key='cancel'

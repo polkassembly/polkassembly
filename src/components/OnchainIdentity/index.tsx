@@ -363,7 +363,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				title={
 					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>Exit Verification</div>
 				}
-				zIndex={999}
+				zIndex={100}
 			>
 				<div className='mt-6'>
 					<span className='text-sm text-bodyBlue'>Your verification is pending. Are you sure you want to exit verification process? </span>
@@ -399,7 +399,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				maskClosable={false}
 				closeIcon={<CloseIcon />}
 				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
-				zIndex={999}
+				zIndex={100}
 				title={
 					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (

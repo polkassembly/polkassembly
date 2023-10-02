@@ -421,7 +421,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 	return (
 		<Modal
-			zIndex={999}
+			zIndex={100}
 			closable={false}
 			title={
 				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>

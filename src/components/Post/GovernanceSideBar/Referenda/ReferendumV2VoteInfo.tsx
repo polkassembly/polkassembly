@@ -166,7 +166,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						) : null}
 					</section>
 					<Modal
-						zIndex={999}
+						zIndex={100}
 						onCancel={() => {
 							setVoteCalculationModalOpen(false);
 						}}

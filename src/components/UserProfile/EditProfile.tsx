@@ -192,7 +192,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		<div>
 			<Modal
 				className={`h-full max-h-[774px] w-full max-w-[648px] ${poppins.variable} ${poppins.className}`}
-				zIndex={999}
+				zIndex={100}
 				onCancel={() => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);

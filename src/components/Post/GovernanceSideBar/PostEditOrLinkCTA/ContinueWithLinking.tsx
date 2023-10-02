@@ -162,7 +162,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 	};
 	return (
 		<Modal
-			zIndex={999}
+			zIndex={100}
 			open={linkingModalOpen}
 			onCancel={() => {
 				setLoading(false);

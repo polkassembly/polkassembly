@@ -344,7 +344,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				</Button>
 			)}
 			<Modal
-				zIndex={999}
+				zIndex={100}
 				maskClosable={false}
 				closeIcon={<CloseIcon />}
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full`}

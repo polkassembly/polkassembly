@@ -279,7 +279,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				title={<h2 className='text-lg font-medium leading-7 text-sidebarBlue'>{data ? 'Confirm Details of Post ID to Link' : 'Post ID to Link'}</h2>}
 				open={showModal}
 				onOk={handleSubmit}
-				zIndex={999}
+				zIndex={100}
 				confirmLoading={loading}
 				onCancel={() => {
 					setShowModal(false);

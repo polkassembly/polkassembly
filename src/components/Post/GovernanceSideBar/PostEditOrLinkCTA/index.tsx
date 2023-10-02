@@ -63,7 +63,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 			</div>
 			<Modal
 				open={open}
-				zIndex={999}
+				zIndex={100}
 				onCancel={() => setOpen(false)}
 				footer={[]}
 				className={`${poppins.className} ${poppins.variable}`}

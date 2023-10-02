@@ -75,7 +75,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						title='Search'
 						closable={false}
 						open={open}
-						zIndex={999}
+						zIndex={100}
 						onCancel={() => setOpen(false)}
 						footer={[]}
 						className={`${className} ${poppins.className} ${poppins.variable}`}

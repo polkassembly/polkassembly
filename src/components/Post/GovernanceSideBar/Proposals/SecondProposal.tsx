@@ -112,7 +112,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 			<Modal
 				title='Second Proposal'
 				open={showModal}
-				zIndex={999}
+				zIndex={100}
 				onCancel={() => setShowModal(false)}
 				footer={[
 					<Button

@@ -282,7 +282,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			<Modal
 				title='Second Proposal'
 				open={showModal}
-				zIndex={999}
+				zIndex={100}
 				onCancel={() => setShowModal(false)}
 				footer={[
 					<Button

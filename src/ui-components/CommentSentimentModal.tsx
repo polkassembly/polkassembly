@@ -46,7 +46,7 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 	return (
 		<Modal
 			open={openModal}
-			zIndex={999}
+			zIndex={100}
 			wrapClassName={`${className}  sentiment_${sentiment}`}
 			className={`${poppins.variable} ${poppins.className} padding center-aligned w-[433px] max-w-full shrink-0 justify-center max-sm:w-[100%]`}
 			onCancel={() => {

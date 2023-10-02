@@ -224,7 +224,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							) : null}
 							{/* { votesArr.length > 1 && <p title={`${votesArr.length-1}+ votes available`}  className='mb-[-1px] ml-1' >{votesArr.length-1}+</p>} */}
 							<Modal
-								zIndex={999}
+								zIndex={100}
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}

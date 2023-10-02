@@ -308,7 +308,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 			</button>
 
 			<Modal
-				zIndex={999}
+				zIndex={100}
 				title={
 					<div className='flex items-center'>
 						Delegate

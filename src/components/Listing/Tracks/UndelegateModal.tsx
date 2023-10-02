@@ -195,7 +195,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	return (
 		<>
 			<Modal
-				zIndex={999}
+				zIndex={100}
 				closeIcon={<CloseIcon />}
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] `}
 				wrapClassName={className}

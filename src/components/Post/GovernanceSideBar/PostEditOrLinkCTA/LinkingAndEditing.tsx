@@ -223,7 +223,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 	return (
 		<Modal
 			open={linkingAndEditingOpen}
-			zIndex={999}
+			zIndex={100}
 			onCancel={() => setLinkingAndEditingOpen(false)}
 			footer={[
 				<div

@@ -176,7 +176,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 
 			<Modal
 				open={modalOpen}
-				zIndex={999}
+				zIndex={100}
 				className={className}
 				title={'Set Deadline Date'}
 				centered

@@ -38,7 +38,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 					<RightOutlined className='ml-auto text-base text-[#D6DBE2]' />
 				</button>
 				<Modal
-					zIndex={999}
+					zIndex={100}
 					className='min-w-[648px]'
 					title={<h3 className='text-xl font-semibold text-[#1D2632]'>On-chain identity</h3>}
 					closeIcon={<CloseOutlined className='text-sm text-[#485F7D]' />}

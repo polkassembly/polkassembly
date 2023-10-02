@@ -153,7 +153,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				/>
 			)}
 			<Modal
-				zIndex={999}
+				zIndex={100}
 				maskClosable={false}
 				open={closeConfirm}
 				onCancel={() => {
@@ -209,7 +209,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			/>
 
 			<Modal
-				zIndex={999}
+				zIndex={100}
 				open={openModal}
 				maskClosable={false}
 				onCancel={() => {

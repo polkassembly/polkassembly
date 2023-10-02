@@ -76,7 +76,7 @@ const TreasuryProposalSuccessPopup = ({
 
 	return (
 		<Modal
-			zIndex={999}
+			zIndex={100}
 			open={open}
 			className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full`}
 			wrapClassName={className}

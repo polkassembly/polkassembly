@@ -37,7 +37,7 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 		<div>
 			<Modal
 				open={modalOpen}
-				zIndex={999}
+				zIndex={100}
 				className={`${poppins.variable} ${poppins.className} text w-[570px] max-w-full shrink-0 max-sm:w-[100%]`}
 				onCancel={() => setModalOpen(false)}
 				closeIcon={<CloseIcon />}

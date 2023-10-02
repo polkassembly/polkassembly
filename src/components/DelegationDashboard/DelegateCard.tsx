@@ -164,7 +164,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				setOpen={setOpen}
 			/>
 			<Modal
-				zIndex={999}
+				zIndex={100}
 				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
 				className='modal w-[725px] max-md:w-full'

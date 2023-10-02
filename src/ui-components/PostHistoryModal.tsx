@@ -165,7 +165,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 	return (
 		<Modal
 			open={open}
-			zIndex={999}
+			zIndex={100}
 			onCancel={() => setOpen(false)}
 			wrapClassName={className}
 			className={`closeIcon  shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full ${poppins.variable} ${poppins.className}`}

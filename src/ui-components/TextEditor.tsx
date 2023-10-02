@@ -105,7 +105,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 				onCancel={() => setIsModalVisible(false)}
 				title='Select Gif'
 				footer={null}
-				zIndex={999}
+				zIndex={100}
 			>
 				<Gif
 					onClick={(url, title) => {

@@ -33,7 +33,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 	};
 	return (
 		<Modal
-			zIndex={999}
+			zIndex={100}
 			title={
 				<h3 className='mb-5 flex items-center gap-3'>
 					{icon} {title}

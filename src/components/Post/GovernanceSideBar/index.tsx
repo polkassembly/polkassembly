@@ -1065,7 +1065,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											/>
 										) : (
 											<Modal
-												zIndex={999}
+												zIndex={100}
 												closeIcon={false}
 												onCancel={() => {
 													setOpen(false);

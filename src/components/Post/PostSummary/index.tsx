@@ -52,7 +52,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}
-				zIndex={999}
+				zIndex={100}
 				title={
 					<div className='m-0 flex items-start justify-between rounded-[14px] p-5 pb-4 md:items-center md:p-6 md:pb-4'>
 						<article className='flex flex-col gap-x-[6px] md:flex-row md:items-center'>

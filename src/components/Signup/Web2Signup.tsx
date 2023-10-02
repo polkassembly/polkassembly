@@ -347,7 +347,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				title={"You've got some mail"}
 				open={open}
 				closable={false}
-				zIndex={999}
+				zIndex={100}
 				footer={[
 					<div
 						className='flex w-full justify-center'

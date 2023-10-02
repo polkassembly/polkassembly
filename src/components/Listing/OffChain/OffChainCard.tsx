@@ -152,7 +152,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 				</div>
 				<Modal
 					open={tagsModal}
-					zIndex={999}
+					zIndex={100}
 					onCancel={(e) => {
 						e.stopPropagation();
 						e.preventDefault();
@@ -283,7 +283,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 				</div>
 				<Modal
 					open={tagsModal}
-					zIndex={999}
+					zIndex={100}
 					onCancel={(e) => {
 						e.stopPropagation();
 						e.preventDefault();

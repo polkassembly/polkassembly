@@ -56,7 +56,7 @@ const Addresses: FC<IAddressesProps> = (props) => {
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}
-					zIndex={999}
+					zIndex={100}
 				>
 					<div>
 						<p className='mt-4'>Accounts</p>

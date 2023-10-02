@@ -106,7 +106,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				</div>
 			</GovSidebarCard>
 			<Modal
-				zIndex={999}
+				zIndex={100}
 				onCancel={() => {
 					setThresholdOpen(false);
 				}}

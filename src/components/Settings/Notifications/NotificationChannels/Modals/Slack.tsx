@@ -43,7 +43,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 			closable
 			onCancel={onClose}
 			footer={null}
-			zIndex={999}
+			zIndex={100}
 		>
 			<div className=''>
 				<ol>

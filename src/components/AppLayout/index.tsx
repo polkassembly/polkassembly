@@ -170,6 +170,7 @@ const getUserDropDown = (
 		<Dropdown
 			menu={{ items: dropdownMenuItems }}
 			trigger={['click']}
+			className='profile-dropdown'
 		>
 			{children}
 		</Dropdown>
@@ -622,11 +623,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
 	if (isOpenGovSupported(network)) {
-		sidebarItems = !sidedrawer ? [...gov2CollapsedItems, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='text-lightBlue' />, [...items])] : gov2Items;
+		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
-	if (username && isMobile) {
-		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), userDropdown, ...sidebarItems];
+	if (isMobile) {
+		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
 
 	return (
@@ -716,6 +717,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 			<Footer />
 			<Modal
+				zIndex={100}
 				open={identityMobileModal}
 				footer={false}
 				closeIcon={<CloseIcon />}

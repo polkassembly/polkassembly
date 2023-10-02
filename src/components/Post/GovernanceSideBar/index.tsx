@@ -474,9 +474,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									return new_graph_point;
 								});
 
-								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
-								const currentSupport = currentSupportData[currentSupportData.length - 1];
-
 								const currentApprovalDataLength = currentApprovalData.length;
 								const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
 								for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
@@ -500,6 +497,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									}
 								}
 
+								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
+								const currentSupport = currentSupportData[currentSupportData.length - 1];
+
 								let newAPI: ApiPromise = api;
 								let approval: BigNumber | null = null;
 								let support: BigNumber | null = null;
@@ -515,25 +515,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										}
 									}
 									if (newAPI) {
-										const issuanceInfo = await newAPI.query.balances.totalIssuance();
+										const inactiveIssuance = await newAPI.query.balances.inactiveIssuance();
+										const totalIssuance = await newAPI.query.balances.totalIssuance();
+										const issuanceInfo = totalIssuance.sub(inactiveIssuance);
 										const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
-										const issuanceData = issuanceInfo.toJSON() as any;
 										const referendaInfoData = referendaInfo.toJSON() as any;
 										if (referendaInfoData?.ongoing?.tally) {
-											const ayes =
-												typeof referendaInfoData.ongoing.tally.ayes === 'string'
-													? new BigNumber(referendaInfoData.ongoing.tally.ayes.slice(2), 16)
-													: new BigNumber(referendaInfoData.ongoing.tally.ayes);
-											const nays =
-												typeof referendaInfoData.ongoing.tally.nays === 'string'
-													? new BigNumber(referendaInfoData.ongoing.tally.nays.slice(2), 16)
-													: new BigNumber(referendaInfoData.ongoing.tally.nays);
+											const ayesInfo = referendaInfoData.ongoing.tally.ayes;
+											const ayes = typeof ayesInfo === 'string' && ayesInfo.startsWith('0x') ? new BigNumber(ayesInfo.slice(2), 16) : new BigNumber(ayesInfo);
+											const naysInfo = referendaInfoData.ongoing.tally.nays;
+											const nays = typeof naysInfo === 'string' && naysInfo.startsWith('0x') ? new BigNumber(naysInfo.slice(2), 16) : new BigNumber(naysInfo);
+											const supportInfo = referendaInfoData.ongoing.tally.support;
 											const supportBigNumber =
-												typeof referendaInfoData.ongoing.tally.support === 'string'
-													? new BigNumber(referendaInfoData.ongoing.tally.support.slice(2), 16)
-													: new BigNumber(referendaInfoData.ongoing.tally.support);
-											const issuance = typeof issuanceData === 'string' ? new BigNumber(issuanceData.slice(2), 16) : new BigNumber(issuanceData);
-											support = supportBigNumber.div(issuance).multipliedBy(100);
+												typeof supportInfo === 'string' && supportInfo.startsWith('0x') ? new BigNumber(supportInfo.slice(2), 16) : new BigNumber(supportInfo);
+											support = supportBigNumber.div(issuanceInfo as any).multipliedBy(100);
 											approval = ayes.div(ayes.plus(nays)).multipliedBy(100);
 										}
 									}

@@ -78,6 +78,7 @@ export const redisDel = (key: string): Promise<number> =>
 
 export async function deleteKeys(pattern: string) {
 	const stream = client.scanStream({
+		count: 200,
 		match: pattern
 	});
 	stream.on('data', async (keys) => {

@@ -60,23 +60,24 @@ export const TitleBio: FC<ITitleBioProps> = (props) => {
 
 	return (
 		<>
-			{title ? (
+			{title && (
 				<p
 					className={`mt-[10px] text-sm font-normal leading-[22px] text-white ${titleClassName}`}
 					title={title}
 				>
 					{title}
 				</p>
-			) : null}
-			{bio ? (
+			)}
+
+			{bio && (
 				<>
 					<p
-						className={`mt-[10px] text-center text-sm font-normal leading-[22px] text-white ${bioClassName}`}
+						className={`mt-[10px] w-[296px] break-words text-center text-sm font-normal leading-[22px] text-white ${bioClassName}`}
 						title={bio}
 					>
-						{displayedBio}
+						{showFullBio ? bio : displayedBio}
 					</p>
-					{bio.length > 15 && (
+					{bio.split(' ').length > 15 && (
 						<span
 							className='read-more-button cursor-pointer text-xs text-white underline'
 							onClick={toggleBio}
@@ -85,7 +86,7 @@ export const TitleBio: FC<ITitleBioProps> = (props) => {
 						</span>
 					)}
 				</>
-			) : null}
+			)}
 		</>
 	);
 };

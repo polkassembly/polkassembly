@@ -112,7 +112,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			delegatedTo: vote?.delegatedTo || '',
 			delegatedVotingPower: !vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : 0,
 			isDelegatedVote: vote?.isDelegated,
-			lockPeriod: Number(vote?.lockPeriod) || 0,
+			lockPeriod: Number(vote?.lockPeriod) || 0.1,
 			proposal: {
 				createdAt,
 				id,

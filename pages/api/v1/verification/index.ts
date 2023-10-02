@@ -78,7 +78,6 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			const message = {
 				from: FROM.email,
 				html: `Hello ${user.username},
-				<br/>
 				<br>Click on the following link to complete email verification for your on chain identity: <a href="https://${network}.polkassembly.io/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a></br>
 				<br/>
 				<br>

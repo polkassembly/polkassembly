@@ -232,13 +232,19 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	};
 
 	const handleJudgement = async () => {
-		startLoading({ isLoading: true, message: 'Awaiting Judgement from Polkassembly' });
+		startLoading({ isLoading: true, message: '' });
 		const { data, error } = await nextApiClientFetch<IJudgementResponse>('api/v1/verification/judgement-call', {
 			identityHash,
 			userAddress: address
 		});
 
 		if (data) {
+			const { data: apiData, error: err } = await nextApiClientFetch('api/v1/verification/onchain-identity-via-polkassembly');
+			if (apiData) {
+				console.log('identity_via_polkassembly key set');
+			} else {
+				console.log(err);
+			}
 			localStorage.removeItem('identityForm');
 			localStorage.removeItem('identityAddress');
 			localStorage.removeItem('identityWallet');
@@ -247,7 +253,6 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 			startLoading({ isLoading: false, message: '' });
 			setOpenSuccessModal(true);
 			closeModal(true);
-
 			changeStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 			router.replace('/');
 		} else if (error) {
@@ -274,7 +279,8 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	const handleProceedDisabled = () => {
 		let socialsCount = 0;
 		let verifiedCount = 0;
-		Object?.values(socials).forEach((value) => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		Object.entries(socials).forEach(([key, value]) => {
 			if (value?.value) {
 				socialsCount += 1;
 			}

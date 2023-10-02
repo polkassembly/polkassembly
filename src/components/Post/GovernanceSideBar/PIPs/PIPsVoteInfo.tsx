@@ -75,27 +75,27 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 				className='vote-progress'
 				nayVotes={voteInfo?.naysAmount}
 			/>}
-		<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue -mt-4'>
+		<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-high -mt-4'>
 			<article className='flex items-center justify-between gap-x-2'>
 				<div className='flex items-center gap-x-1'>
-					<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+					<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 								Ayes:
 					</span>
 				</div>
 				<div
-					className='text-navBlue text-xs font-medium leading-[22px]'
+					className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 				>
 					{ [ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) ? tally?.ayes || 0 :formatUSDWithUnits(formatBnBalance(voteInfo?.ayesAmount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 				</div>
 			</article>
 			<article className='flex items-center justify-between gap-x-2'>
 				<div className='flex items-center gap-x-1'>
-					<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+					<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 					Nays:
 					</span>
 				</div>
 				<div
-					className='text-navBlue text-xs font-medium leading-[22px]'
+					className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 				>
 					{ [ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) ? tally?.nays || 0 : formatUSDWithUnits(formatBnBalance(voteInfo?.naysAmount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 				</div>
@@ -103,12 +103,12 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 			{
 				[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) &&  <article className='flex items-center justify-between gap-x-2'>
 					<div className='flex items-center gap-x-1'>
-						<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+						<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 					Total Seats
 						</span>
 					</div>
 					<div
-						className='text-navBlue text-xs font-medium leading-[22px]'
+						className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 					>
 						{tally?.totalSeats || 0}
 					</div>
@@ -117,8 +117,8 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 		</section>
 		<Divider style={{ border: '1px solid #e3e6eb' }} className='my-4'/>
 
-		<button onClick={() => setOpen(true)} className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px] -mt-1'>
-			<VotingHistoryIcon />
+		<button onClick={() => setOpen(true)} className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary dark:text-blue-dark-helper font-medium text-xs leading-[22px] -mt-1'>
+			<VotingHistoryIcon className='text-pink_primary dark:text-blue-dark-helper' />
 			<span>Voting History</span>
 		</button>
 	</div>;

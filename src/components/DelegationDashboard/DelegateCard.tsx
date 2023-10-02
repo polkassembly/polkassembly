@@ -119,7 +119,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			</Button>
 		</div>
 
-		<div className={'text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-medium pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1'}>
+		<div className={'text-sm tracking-[0.015em] text-[#576D8B] dark:text-white dark:font-light pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1'}>
 			<p className ='w-[80%] bio'>
 				{delegate?.bio ? delegate?.bio : 'No Bio'}
 			</p>

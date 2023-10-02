@@ -20,6 +20,7 @@ import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import { useApiContext } from '~src/context';
 import { useState } from 'react';
+import { useTheme } from 'next-themes';
 
 const proposalType = ProposalType.CHILD_BOUNTIES;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
@@ -42,6 +43,7 @@ interface IChildBountyPostProps {
 }
 const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 	const {  post, error, network , status } = props;
+	const { resolvedTheme:theme } = useTheme();
 
 	const { setNetwork } = useNetworkContext();
 	const router = useRouter();
@@ -77,7 +79,7 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 		<BackToListingView postCategory={PostCategory.CHILD_BOUNTY} />
 
 		<div className='mt-6'>
-			<Post post={post} proposalType={proposalType} />
+			<Post theme={theme} post={post} proposalType={proposalType} />
 		</div>
 	</>);
 

@@ -97,11 +97,11 @@ const Delegate = ( { className, trackDetails, disabled , theme }: Props ) => {
 			</h4>
 
 			<div className='flex gap-4 items-center'>
-				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full'>
+				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full dark:border-[#3B444F]'>
 
 					<Input disabled={disabled} placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none dark:bg-transparent dark:text-white'/>
 
-					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress || getEncodedAddress(address, network) === delegationDashboardAddress || disabled } className={`h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1 ${disabled && 'opacity-50'}`}>
+					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress || getEncodedAddress(address, network) === delegationDashboardAddress || disabled } className={`h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1 border-none ${disabled && 'opacity-50'}`}>
 						<DelegatesProfileIcon/>
 						<span className='text-white text-sm font-medium'>
               Delegate

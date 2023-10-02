@@ -459,8 +459,8 @@ const Post: FC<IPostProps> = (props) => {
 				{
 					proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
 						<Link href={`/bounty/${post.parent_bounty_index}`}>
-							<div className='bg-white dark:bg-section-dark-overlay dark:text-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
+							<div className='bg-white dark:bg-section-dark-overlay dark:text-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading dark:font-normal'>
+								This is a child bounty of <span className='text-pink_primary dark:text-blue-dark-helper'>Bounty #{post.parent_bounty_index}</span>
 							</div>
 						</Link>
 				}
@@ -535,5 +535,8 @@ export default styled(Post)`
 		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
 		border-bottom: ${props => props.theme=='dark' ? '#909090' : ''} !important;
  	}
+  .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+		color: ${props => props.theme=='dark' ? '#FF60B5' : '#e5007a'} !important;
+	}
 
 `;

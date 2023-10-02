@@ -297,6 +297,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						{
 							children: (
 								<Socials
+									theme={theme}
 									loading={loading}
 									profile={profile}
 									setProfile={setProfile}

@@ -104,6 +104,10 @@ export default React.memo(styled(Gov2LatestActivity)`
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 	}
 
+	.ant-table-wrapper .ant-table-container::after{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'none'} !important;
+	}
+
 	th.ant-table-cell {
 		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;

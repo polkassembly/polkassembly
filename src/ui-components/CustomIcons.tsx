@@ -125,9 +125,29 @@ import CloseSVG from '~assets/icons/close.svg';
 import LearnMoreSVG from '~assets/icons/learn-more-icon.svg';
 import ChangeUserNameSVG from '~assets/icons/change-username.svg';
 import ChangeEmailSVG from '~assets/icons/change-email.svg';
+import DelegateModalSVG from '~assets/icons/delegate-title.svg';
+import ReplySVG from '~assets/icons/reply.svg';
+import ThreeDotsSVG from '~assets/icons/three-dots.svg';
+import UnfilterAgainstSVG from '~assets/overall-sentiment/against.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
+);
+
+export const UnfilterAgainstIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={UnfilterAgainstSVG} {...props} />
+);
+
+export const ThreeDotsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ThreeDotsSVG} {...props} />
+);
+
+export const DelegateModalIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DelegateModalSVG} {...props} />
+);
+
+export const ReplyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ReplySVG} {...props} />
 );
 
 export const CloseIcon = (props: Partial<CustomIconComponentProps>) => (

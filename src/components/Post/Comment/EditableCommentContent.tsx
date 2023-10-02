@@ -25,12 +25,10 @@ import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 import ReportButton from '../ActionsBar/ReportButton';
 import { IComment } from './Comment';
 
-import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import DeleteIcon from '~assets/icons/delete.svg';
 import EditIcon from '~assets/icons/edit-i.svg';
 import CopyIcon from '~assets/icons/copy.svg';
-import ReplyIcon from '~assets/icons/reply.svg';
-import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon,AgainstUnfilledIcon,SlightlyAgainstUnfilledIcon,NeutralUnfilledIcon,SlightlyForUnfilledIcon,ForUnfilledIcon } from '~src/ui-components/CustomIcons';
+import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon,AgainstUnfilledIcon,SlightlyAgainstUnfilledIcon,NeutralUnfilledIcon,SlightlyForUnfilledIcon,ForUnfilledIcon, ReplyIcon, ThreeDotsIcon } from '~src/ui-components/CustomIcons';
 
 import { poppins } from 'pages/_app';
 import getOnChainUsername from '~src/util/getOnChainUsername';
@@ -457,13 +455,13 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								{
 									id && ( props.isSubsquareUser ?
 										(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-											<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
-												<ReplyIcon className='mr-1'/> Reply
+											<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent dark:text-blue-dark-helper ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
+												<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper'/> Reply
 											</Button>
 										</Tooltip>)
 										:
-										<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
-											<ReplyIcon className='mr-1'/> Reply
+										<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent dark:text-blue-dark-helper ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
+											<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper'/> Reply
 										</Button>
 									)
 								}
@@ -473,7 +471,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									placement='bottomRight'
 									menu={{ items }}
 								>
-									<ThreeDotsIcon className=' mt-[-1px] ml-[6px] hover:bg-pink-100 rounded-xl'/>
+									<ThreeDotsIcon className=' mt-[-1px] ml-[6px] hover:bg-pink-100 rounded-xl text-pink_primary dark:text-blue-dark-helper'/>
 								</Dropdown>
 							</div>
 

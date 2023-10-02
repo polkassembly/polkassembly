@@ -12,7 +12,7 @@ import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
-import ReplyIcon from '~assets/icons/reply.svg';
+import { ReplyIcon } from '~src/ui-components/CustomIcons';
 
 import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
@@ -372,15 +372,15 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{
 									id === userId ? <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>
 										:
-										allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && <ReportButton isDeleteModal={true} proposalType={reply.post_type as any || postType} className={`flex items-center shadow-none text-pink_primary text-xs leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} type={EReportType.REPLY} onSuccess={removeReplyContent} commentId={commentId} replyId={replyId} postId={reply.post_index as any || postIndex}/>
+										allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && <ReportButton isDeleteModal={true} proposalType={reply.post_type as any || postType} className={`flex items-center shadow-none text-pink_primary dark:text-blue-dark-helper text-xs leading-4 w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className}`} type={EReportType.REPLY} onSuccess={removeReplyContent} commentId={commentId} replyId={replyId} postId={reply.post_index as any || postIndex}/>
 								}
-								{id && !isEditing && <ReportButton className='text-xs text-pink_primary' proposalType={reply.post_type as any || postType} postId={reply.post_index as any || postIndex} commentId={commentId} type='reply' replyId={replyId} />}
+								{id && !isEditing && <ReportButton className='text-xs text-pink_primary dark:text-blue-dark-helper' proposalType={reply.post_type as any || postType} postId={reply.post_index as any || postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 
 								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent ${reply.reply_source ? 'disabled-reply' : ''}` }>
-										<ReplyIcon className='mr-1'/> Reply
+									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 dark:bg-transparent dark:text-blue-dark-helper ${reply.reply_source ? 'disabled-reply' : ''}` }>
+										<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper'/> Reply
 									</Button>
-								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs p-0 m-0 dark:bg-transparent'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
+								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs p-0 m-0 dark:bg-transparent dark:text-blue-dark-helper'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper'/>Reply</Button>)
 									: null
 								}
 							</div>

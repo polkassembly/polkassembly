@@ -290,7 +290,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							>
 								<div
 									onClick={() => getFilteredComments(data.sentiment)}
-									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary text-blue-light-high dark:text-blue-dark-high text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none': ''}`}
+									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] dark:hover:bg-[#33071E] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary text-blue-light-high dark:text-blue-dark-high text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none': ''}`}
 								>
 									{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
 									<span className={'flex justify-center font-medium dark:text-[#ffffff99] dark:font-normal'}>{data.percentage}%</span>

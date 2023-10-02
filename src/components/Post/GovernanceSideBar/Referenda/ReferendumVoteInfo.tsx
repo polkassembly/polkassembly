@@ -268,10 +268,10 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							className='vote-progress'
 							nayVotes={voteInfo?.nay_amount}
 						/>
-						<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue -mt-4'>
+						<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-high -mt-4'>
 							<article className='flex items-center justify-between gap-x-2'>
 								<div className='flex items-center gap-x-1'>
-									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+									<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 										Aye
 									</span>
 								</div>
@@ -283,7 +283,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							</article>
 							<article className='flex items-center text-lightBlue justify-between gap-x-2'>
 								<div className='flex items-center gap-x-1'>
-									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+									<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 										Nay
 									</span>
 								</div>
@@ -295,7 +295,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							</article>
 							<article className='flex items-center justify-between gap-x-2'>
 								<div className='flex items-center gap-x-1'>
-									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+									<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 										Turnout
 									</span>
 								</div>
@@ -309,7 +309,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								totalIssuance?
 									<article className='flex items-center justify-between gap-x-2'>
 										<div className='flex items-center gap-x-1'>
-											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+											<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 												Issuance
 											</span>
 										</div>
@@ -324,7 +324,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						</section>
 						<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
 							<button
-								className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
+								className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary dark:text-blue-dark-helper font-medium text-xs leading-[22px]'
 								onClick={() => {
 									setOpen(true);
 								}}
@@ -357,36 +357,36 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] -mt-4'>
 									<article className='flex items-center justify-between gap-x-2'>
 										<div className='flex items-center gap-x-1'>
-											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+											<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 														Aye
 											</span>
 										</div>
 										<div
-											className='text-navBlue text-xs font-medium leading-[22px]'
+											className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 										>
 											{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
 									</article>
 									<article className='flex items-center justify-between gap-x-2'>
 										<div className='flex items-center gap-x-1'>
-											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+											<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 														Nay
 											</span>
 										</div>
 										<div
-											className='text-navBlue text-xs font-medium leading-[22px]'
+											className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 										>
 											{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
 									</article>
 									<article className='flex items-center justify-between gap-x-2'>
 										<div className='flex items-center gap-x-1'>
-											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+											<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 												Turnout
 											</span>
 										</div>
 										<div
-											className='text-navBlue text-xs font-medium leading-[22px]'
+											className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 										>
 											{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
@@ -395,12 +395,12 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 										totalIssuance?
 											<article className='flex items-center justify-between gap-x-2'>
 												<div className='flex items-center gap-x-1'>
-													<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+													<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 																Issuance
 													</span>
 												</div>
 												<div
-													className='text-navBlue text-xs font-medium leading-[22px]'
+													className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 												>
 													{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 												</div>
@@ -410,12 +410,12 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								</section>
 								<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
 									<button
-										className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
+										className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary dark:text-blue-dark-helper font-medium text-xs leading-[22px]'
 										onClick={() => {
 											setOpen(true);
 										}}
 									>
-										<VotingHistoryIcon />
+										<VotingHistoryIcon className='text-pink_primary dark:text-blue-dark-helper' />
 										<span>Voting History</span>
 									</button>
 								</section>

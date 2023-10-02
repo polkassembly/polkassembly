@@ -22,6 +22,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
+import CastVoteIconDark from '~assets/icons/cast-vote-icon-dark.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
@@ -631,8 +632,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 						</div>
 						:
-						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-section-dark-overlay'>
-							<CastVoteIcon className='ml-6'/>
+						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-section-dark-overlay dark:border-[#3B444F]'>
+							{
+								theme === 'dark' ?
+									<CastVoteIconDark className='ml-6'/>
+									:
+									<CastVoteIcon className='ml-6'/>
+							}
 							<span className='text-bodyBlue dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 						</div>
 				}
@@ -700,6 +706,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 										/> :
 										<AccountSelectionForm
+											theme={theme}
 											title='Vote with Account'
 											accounts={accounts}
 											address={address}
@@ -707,7 +714,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
 											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
-											inputClassName='rounded-[4px] px-3 py-1'
+											inputClassName='rounded-[4px] px-3 py-1 dark:border-[#3B444F]'
 											withoutInfo={true}
 										/>
 									: walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? <Alert message='Please select a wallet.' showIcon type='info' />: null
@@ -717,7 +724,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<h3 className='inner-headings mt-[24px] mb-[2px] dark:text-blue-dark-medium'>Choose your vote</h3>
 							<Segmented
 								block
-								className={`${className} mb-6 border-solid border-[1px] bg-white dark:bg-section-dark-overlay border-[#D2D8E0] rounded-[4px] w-full`}
+								className={`${className} mb-6 border-solid border-[1px] bg-white dark:bg-section-dark-overlay border-[#D2D8E0] dark:border-[#3B444F] rounded-[4px] w-full`}
 								size="large"
 								value={vote}
 								onChange={(value) => {
@@ -745,7 +752,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 								<ConvictionSelect className={`${className}`} />
 
-								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0]'>
+								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-[#3B444F]'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] dark:bg-transparent mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}>Confirm</Button>
 								</div>
@@ -852,10 +859,6 @@ export default styled(VoteReferendum)`
 	position: absolute;
 	width: 100%;
 }
-
-.ant-segmented-item-label{
-	background: ${props => props.theme === 'dark'? '#0D0D0D' : '' } !important;
-}
 .vote-form-cont {
 	padding: 12px;
 }
@@ -912,6 +915,7 @@ export default styled(VoteReferendum)`
 .vote-referendum.ant-segmented-item-selected{
 	box-shadow: none !important;
 	padding-right:0px !important;
+	background-color: ${(props) => props.theme === 'dark'? '#0D0D0D' : 'white' } !important;
 }
 .vote-referendum .ant-segmented-item{
 	padding: 0px !important;

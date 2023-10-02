@@ -27,9 +27,11 @@ interface Props {
 	withoutInfo?: boolean;
 	linkAddressTextDisabled?: boolean;
 	addressTextClassName?: string;
+	theme?: string;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo, linkAddressTextDisabled=false, addressTextClassName }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo, linkAddressTextDisabled=false, addressTextClassName,theme }: Props) => {
 
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
 	useEffect(() => {
@@ -64,7 +66,6 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 };
 export default styled(AccountSelectionForm)`
 .ant-dropdown-trigger{
-	border: 1px solid #D2D8E0 !important;
+	border: 1px solid ${props => props.theme === 'dark' ? '#3B444F' : '#D2D8E0'} !important;
 }
-
 `;

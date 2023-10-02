@@ -9,6 +9,7 @@ import React, { FC } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 
 import { useNetworkContext } from '~src/context';
+import { useTheme } from 'next-themes';
 
 interface IVoteProgressProps {
 	ayeVotes?: BN;
@@ -61,6 +62,7 @@ export const VoteProgressLegacy = ({ ayeVotes, className, nayVotes, ayesNum, nay
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, ayesNum, naysNum, turnoutPercentage }) => {
 	const { network } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	const bnToIntBalance = function (bn: BN): number{
 		return  Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -72,11 +74,13 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 	const nayPercent = 100 - ayePercent;
 	const isAyeNaN = isNaN(ayePercent);
 	const isNayNaN = isNaN(nayPercent);
+	const ayeColor = theme === 'dark' ? '#64A057' : '#2ED47A';
+	const nayColor = theme === 'dark' ? '#BD2020' : '#E84865';
 	return (
 		<div className={`${className} flex justify-center items-end gap-x-2 relative -mt-7`}>
 			<div className='mb-10 flex flex-col justify-center'>
-				<span className='text-[#2ED47A] text-[20px] leading-6 font-semibold'>{isAyeNaN? 50: ayePercent.toFixed(1)}%</span>
-				<span className='text-[#485F7D] font-medium text-xs leading-[18px] tracking-[0.01em]'>Aye</span>
+				<span className='text-[#2ED47A] dark:text-[#64A057] text-[20px] leading-6 font-semibold'>{isAyeNaN? 50: ayePercent.toFixed(1)}%</span>
+				<span className='text-[#485F7D] dark:text-blue-dark-medium font-medium text-xs leading-[18px] tracking-[0.01em]'>Aye</span>
 			</div>
 			{/* {
 				turnoutPercentage?
@@ -97,14 +101,14 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 					rounded={true}
 					lineWidth={15}
 					data={[
-						{ color: '#6DE1A2', title: 'Aye', value: isAyeNaN? 50: ayePercent },
-						{ color: '#FF778F', title: 'Nay', value: isNayNaN? 50: nayPercent }
+						{ color: ayeColor, title: 'Aye', value: isAyeNaN? 50: ayePercent },
+						{ color: nayColor, title: 'Nay', value: isNayNaN? 50: nayPercent }
 					]}
 				/>
 			</>
 			<div className='mb-10 flex flex-col justify-center'>
-				<span className='text-[#E84865] text-[20px] leading-6 font-semibold'>{isNayNaN? 50: nayPercent.toFixed(1)}%</span>
-				<span className='text-[#485F7D] font-medium text-xs leading-[18px] tracking-[0.01em]'>Nay</span>
+				<span className='text-[#E84865] dark:text-[#BD2020] text-[20px] leading-6 font-semibold'>{isNayNaN? 50: nayPercent.toFixed(1)}%</span>
+				<span className='text-[#485F7D] dark:text-blue-dark-medium font-medium text-xs leading-[18px] tracking-[0.01em]'>Nay</span>
 			</div>
 		</div>
 	);

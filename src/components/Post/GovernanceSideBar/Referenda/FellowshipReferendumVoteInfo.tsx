@@ -26,39 +26,39 @@ const FellowshipReferendumVoteInfo: FC<IFellowshipReferendumVoteInfoProps> = (pr
 					className='vote-progress'
 					naysNum={Number(tally?.nays)}
 				/>
-				<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] -mt-4'>
+				<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] dark:text-blue-dark-high -mt-4'>
 					<article className='flex items-center justify-between gap-x-2'>
 						<div className='flex items-center gap-x-1'>
-							<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+							<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 								Ayes
 							</span>
 						</div>
 						<div
-							className='text-navBlue text-xs font-medium leading-[22px]'
+							className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 						>
 							{tally.ayes}
 						</div>
 					</article>
 					<article className='flex items-center justify-between gap-x-2'>
 						<div className='flex items-center gap-x-1'>
-							<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+							<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 								Bare Ayes
 							</span>
 						</div>
 						<div
-							className='text-navBlue text-xs font-medium leading-[22px]'
+							className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 						>
 							{tally.bareAyes}
 						</div>
 					</article>
 					<article className='flex items-center justify-between gap-x-2'>
 						<div className='flex items-center gap-x-1'>
-							<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+							<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 								Nays
 							</span>
 						</div>
 						<div
-							className='text-navBlue text-xs font-medium leading-[22px]'
+							className='text-navBlue text-xs font-medium leading-[22px] dark:text-blue-dark-medium'
 						>
 							{tally.nays}
 						</div>
@@ -66,12 +66,12 @@ const FellowshipReferendumVoteInfo: FC<IFellowshipReferendumVoteInfoProps> = (pr
 				</section>
 				<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
 					<button
-						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
+						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary dark:text-blue-dark-helper font-medium text-xs leading-[22px]'
 						onClick={() => {
 							setOpen(true);
 						}}
 					>
-						<VotingHistoryIcon />
+						<VotingHistoryIcon className='text-pink_primary dark:text-blue-dark-helper' />
 						<span>Voting History</span>
 					</button>
 				</section>

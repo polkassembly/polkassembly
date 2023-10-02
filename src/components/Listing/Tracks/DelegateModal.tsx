@@ -35,7 +35,7 @@ import usePolkasafe from '~src/hooks/usePolkasafe';
 
 import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
-import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
+import { DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import LockIcon from '~assets/icons/lock.svg';
 
 const ZERO_BN = new BN(0);
@@ -298,8 +298,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}` }
 				wrapClassName={className}
 				title={
-					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay text-[20px] font-semibold mb-6'>
-						<DelegateProfileGreyIcon className='mr-2'/>Delegate
+					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay text-[20px] font-semibold mb-6 dark:font-medium'>
+						<DelegateModalIcon className='mr-2 text-lightBlue dark:text-white'/>Delegate
 					</div>
 				}
 				open={open ? open : defaultOpen}

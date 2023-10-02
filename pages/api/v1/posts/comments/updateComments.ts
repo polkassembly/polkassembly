@@ -13,19 +13,19 @@ import messages from '~src/util/messages';
 export const updateComments = async (postId: string, network: string, postType: ProposalType, comments: any) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
-		for(const comment of comments){
+		for (const comment of comments) {
 			const commentRef = await postRef.collection('comments').doc(comment.id);
 			await commentRef.set({ ...comment });
 		}
 		return {
 			error: null,
-			message:'success',
+			message: 'success',
 			status: 200
 		};
 	} catch (error) {
 		return {
 			error: error.message || messages.API_FETCH_ERROR,
-			message:'failed',
+			message: 'failed',
 			status: Number(error.name) || 500
 		};
 	}
@@ -34,13 +34,13 @@ export const updateComments = async (postId: string, network: string, postType: 
 const handler: NextApiHandler<string | { error: MessageType | string }> = async (req, res) => {
 	const { postId = 0, postType, comments } = req.body;
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
 	const { message, error, status } = await updateComments(postId, network, postType, comments);
 
 	if (error || message === 'failed') {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	} else {
-		res.status(status).json(message);
+		return res.status(status).json(message);
 	}
 };
 

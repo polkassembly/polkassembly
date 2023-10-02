@@ -29,8 +29,11 @@ const ScrollToTopButton = () => {
 	}, []);
 
 	return (
-		<div className={`fixed bottom-8 right-24 cursor-pointer ${isVisible ? '' : 'hidden'}`} onClick={scrollToTop}>
-			<ScrollIcon/>
+		<div
+			className={`fixed bottom-8 right-24 cursor-pointer ${isVisible ? '' : 'hidden'}`}
+			onClick={scrollToTop}
+		>
+			<ScrollIcon />
 		</div>
 	);
 };

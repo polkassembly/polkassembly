@@ -24,9 +24,9 @@ interface IOffChainPostsListingContainerProps {
 
 const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = ({ posts, className, count, proposalType }) => {
 	const router = useRouter();
-	const onPaginationChange = (page:number) => {
+	const onPaginationChange = (page: number) => {
 		router.push({
-			query:{
+			query: {
 				page
 			}
 		});
@@ -36,21 +36,23 @@ const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = (
 	return (
 		<>
 			<div className={className}>
-				<OffChainPostsListing proposalType={proposalType} posts={posts} />
+				<OffChainPostsListing
+					proposalType={proposalType}
+					posts={posts}
+				/>
 			</div>
-			<div className='flex justify-end mt-6 pb-5'>
-				{
-					!!count && count > 0 && count > LIMIT &&
-						<Pagination
-							defaultCurrent={1}
-							pageSize={LIMIT}
-							total={count}
-							showSizeChanger={false}
-							hideOnSinglePage={true}
-							onChange={onPaginationChange}
-							responsive={true}
-						/>
-				}
+			<div className='mt-6 flex justify-end pb-5'>
+				{!!count && count > 0 && count > LIMIT && (
+					<Pagination
+						defaultCurrent={1}
+						pageSize={LIMIT}
+						total={count}
+						showSizeChanger={false}
+						hideOnSinglePage={true}
+						onChange={onPaginationChange}
+						responsive={true}
+					/>
+				)}
 			</div>
 		</>
 	);

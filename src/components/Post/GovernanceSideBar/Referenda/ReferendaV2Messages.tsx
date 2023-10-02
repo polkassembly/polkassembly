@@ -140,14 +140,14 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						<div className='flex items-center justify-between'>
 							<h3 className='m-0 mr-[69px] text-bodyBlue dark:text-blue-dark-high font-semibold text-xl whitespace-nowrap leading-6 tracking-[0.0015em]'>Prepare Period</h3>
 							<div className="flex w-13 h-[33px] gap-1">
-								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
+								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue dark:bg-[#222222]" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
 									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">1</Button>
 									<span className="ml-[4px] pt-[3px] dark:text-blue-dark-medium">of 3</span>
 								</p>
 							</div>
 						</div>
 						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
+							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor={theme=== 'dark' ? '#222222': '#FEF2F8'} size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<>
@@ -164,21 +164,21 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						<div className='flex items-center justify-between'>
 							<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-bodyBlue dark:text-blue-dark-high font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
 							<div className="flex w-13 h-[33px] gap-1">
-								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
+								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue dark:bg-[#222222]" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
 									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] mr-[2px] -ml-[3px] text-white">2</Button>
 									<span className="ml-[4px] pt-[3px] dark:text-blue-dark-medium">of 3</span>
 								</p>
 							</div>
 						</div>
 						<div className='mt-[30px]'>
-							<Progress className='m-0 p-0 flex items-center rounded-lg' showInfo={false} percent={decision.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
+							<Progress className='m-0 p-0 flex items-center rounded-lg' showInfo={false} percent={decision.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#222222': '#FEF2F8'} size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<span className='text-bodyBlue text-sm font-normal text-bodyblue dark:text-blue-dark-high'>Decision Period</span>
 							<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}</span>
 						</p>
 						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={confirm.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
+							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={confirm.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#222222': '#FEF2F8'} size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<>
@@ -205,7 +205,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 										</div>
 									</div>
 									<div className='mt-[20px]'>
-										<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
+										<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#222222': '#FEF2F8'} size="small" />
 									</div>
 									<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 										<span className='text-bodyBlue text-sm text-bodyblue dark:text-blue-dark-high font-normal'>Enactment Period</span>
@@ -215,7 +215,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 										isDisbursalPeriodCardVisible && (
 											<>
 												<div className='mt-[20px]'>
-													<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#202021': '#FEF2F8'} size="small" />
+													<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' trailColor={theme=== 'dark' ? '#222222': '#FEF2F8'} size="small" />
 												</div>
 												<p className='p-0 m-0 flex items-center justify-between mt-2 leading-[22px]'>
 													<>

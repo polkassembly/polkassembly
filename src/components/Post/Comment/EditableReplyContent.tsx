@@ -358,7 +358,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						</Form>
 						:
 						<>
-							<Markdown theme={theme} md={content} className='py-2 px-2 md:px-4 bg-[#EBF0F5] dark:bg-[#5A5A5A] rounded-b-md text-sm' />
+							<Markdown theme={theme} md={content} className='py-2 px-2 md:px-4 bg-[#EBF0F5] dark:bg-[#222222] rounded-b-md text-sm' />
 							<div className='flex items-center flex-wrap gap-x-3 dark:bg-transparent'>
 								{isEditable &&
 									<Button className={'text-pink_primary flex items-center border-none shadow-none'} disabled={loading} onClick={toggleEdit}>

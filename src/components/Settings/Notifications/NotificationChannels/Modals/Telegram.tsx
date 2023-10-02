@@ -50,7 +50,7 @@ const TelegramInfoModal = ({
 				</h3>
 			}
 			open={open}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			onCancel={onClose}
 			footer={null}
 			className = {`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}

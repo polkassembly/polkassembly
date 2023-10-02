@@ -213,7 +213,7 @@ const Enable2FA: FC<{className?: string, theme?: string}> = ({ className, theme 
 			<Button
 				onClick={handleModalOpen}
 				htmlType="submit"
-				className='w-full bg-[#F6F7F9] text-blue-light-high dark:bg-section-dark-container dark:text-blue-dark-high text-left h-full p-[16px] border-[#D2D8E0]'
+				className='w-full bg-[#F6F7F9] text-blue-light-high dark:bg-section-dark-container dark:text-blue-dark-high text-left h-full p-[16px] border-[#D2D8E0] dark:border-separatorDark'
 			>
 				<span className='flex align-center text-[16px] font-medium '>Enable Two Factor Authentication <KeyboardDownIcon/></span>
 				<span className='block text-[14px]'>Enhance account security with two factor authentication. Verify your identity with an extra step for added protection. </span>

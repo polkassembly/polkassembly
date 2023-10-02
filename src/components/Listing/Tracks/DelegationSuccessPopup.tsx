@@ -5,7 +5,7 @@
 import React, { useEffect } from 'react';
 import { Modal } from 'antd';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import CloseIcon from '~assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
@@ -42,9 +42,10 @@ interface Props{
   abstainVoteValue?:BN;
   isVote?:boolean;
   isMultisig?:boolean;
+  theme?:string;
 }
 
-const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,votedAt, ayeVoteValue, nayVoteValue, abstainVoteValue,isVote = false, isMultisig }: Props) => {
+const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,votedAt, ayeVoteValue, nayVoteValue, abstainVoteValue,isVote = false, isMultisig,theme }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
@@ -60,9 +61,9 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 	return <Modal
 		zIndex={100000}
 		open={open}
-		className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
+		className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
 		wrapClassName={className}
-		closeIcon={isDelegate ? <CloseIcon/> : <UndelegateCloseIcon/>}
+		closeIcon={isDelegate ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : <UndelegateCloseIcon/>}
 		onCancel={() => { !isVote && router.reload() ; setOpen(false); }}
 		centered
 		footer={false}

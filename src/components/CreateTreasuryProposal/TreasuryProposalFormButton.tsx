@@ -314,7 +314,7 @@ const TreasuryProposalFormButton = ({
 					className={`${className} ${themes === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 					onCancel={() => setModalOpen(false)}
 					centered
-					closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium' />}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName='p-5 before:h-0 md:p-10'
 					zIndex={1002}
 					title={<div className="dark:bg-section-dark-overlay dark:text-white">Create Treasury Proposal</div>}

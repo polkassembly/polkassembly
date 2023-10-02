@@ -29,10 +29,10 @@ import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
-import CloseIcon from '~assets/icons/close.svg';
 import checkGov2Route from '~src/util/checkGov2Route';
 import { ProposalType } from '~src/global/proposalType';
 import { useTheme } from 'next-themes';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
 	loading: () => <Skeleton.Button active />,
@@ -225,18 +225,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1 sm:mt-0 sm:ml-[120px]">
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
-								<LikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
-								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
+								<LikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
+								<span className='text-lightBlue dark:text-icon-dark-inactive'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-0.5'>
-								<DislikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
-								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
+								<DislikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
+								<span className='text-lightBlue dark:text-icon-dark-inactive'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 							{
 								isCommentsVisible?
 									<>
-										<div className='xs:hidden text-lightBlue dark:text-blue-dark-medium sm:flex items-center'>
-											<CommentsIcon className='mr-1 text-lightBlue dark:text-blue-dark-medium' /> {commentsCount}
+										<div className='xs:hidden text-lightBlue dark:text-icon-dark-inactive sm:flex items-center'>
+											<CommentsIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' /> {commentsCount}
 										</div>
 									</>
 									: null
@@ -244,7 +244,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{tags && tags.length > 0 && <>
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								{ tags?.slice(0,2).map((tag, index) =>
-									(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+									(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] font-medium text-[10px]' >
 										{tag}
 									</div>))}
 								{tags.length>2 && <span className='text-blue-light-high dark:text-blue-dark-high' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
@@ -261,7 +261,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</> : null
 							}
 							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue dark:text-blue-dark-medium items-center sm:mt-0'>
+								<div className='flex text-lightBlue dark:text-icon-dark-inactive items-center sm:mt-0'>
 									<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
 								</div>
 							</>}
@@ -343,7 +343,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<OnchainCreationLabel address={address} truncateUsername username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue dark:text-blue-dark-medium mt-0 items-center'>
+								<div className='flex text-lightBlue dark:text-icon-dark-inactive mt-0 items-center'>
 									<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' /> <span> {relativeCreatedAt}</span>
 								</div>
 							</>}
@@ -367,7 +367,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div className='flex gap-1'>
 									{ tags?.slice(0,2).map((tag, index) =>
-										(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+										(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] font-medium text-[10px]' >
 											{tag}
 										</div>))}
 									{tags.length>2 && <span className='text-blue-light-high dark:text-blue-dark-high' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
@@ -383,18 +383,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				open= {tagsModal}
 				onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 				footer={false}
-				closeIcon={<CloseIcon/>}
+				closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 				title={<>
 					<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
 						<TagsIcon className='mr-2' />
 							Tags
 					</div>
-					<Divider type="horizontal" style={{ borderLeft: '2px solid #D2D8E0' }} />
+					<Divider className='dark:border-l-1 dark:border-separatorDark' type="horizontal" style={{ borderLeft: '2px solid #D2D8E0' }} />
 				</>}
 			>
 				<div className='flex gap-2 flex-wrap mt-3' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-					(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-4 py-1 font-normal text-xs text-lightBlue' >
+					(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark px-4 py-1 font-normal text-xs text-lightBlue' >
 						{tag}
 					</div>))}
 				</>}

@@ -64,7 +64,7 @@ const FellowshipReferendumVoteInfo: FC<IFellowshipReferendumVoteInfoProps> = (pr
 						</div>
 					</article>
 				</section>
-				<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
+				<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] dark:border-separatorDark mt-[18px] pt-[18px] pb-[14px]'>
 					<button
 						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary dark:text-blue-dark-helper font-medium text-xs leading-[22px]'
 						onClick={() => {

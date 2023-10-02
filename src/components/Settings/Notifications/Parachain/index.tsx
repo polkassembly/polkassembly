@@ -133,7 +133,7 @@ export default function Parachain({
 						onActionClick={() => setOpenModal(true)}
 					/>
 				</Space>
-				<Divider className='border-[#D2D8E0] border-2' dashed />
+				<Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />
 				<div className='flex flex-col item-center gap-6'>
 					<Checkbox
 						value={false}

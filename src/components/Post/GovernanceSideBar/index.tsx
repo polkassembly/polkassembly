@@ -950,7 +950,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															open={thresholdOpen}
 															footer={[]}
 															className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} md:min-w-[700px]`}
-															closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+															closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 															title={
 																<h2 className='text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold dark:bg-section-dark-overlay'>Threshold Curves</h2>
 															}

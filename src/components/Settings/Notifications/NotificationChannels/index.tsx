@@ -129,7 +129,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						]?.enabled ||false}
 						handleEnableDisabled={handleEnableDisabled}
 					/>
-					<Divider className='border-[#D2D8E0] border-2 my-[30px]' dashed />
+					<Divider className='border-[#D2D8E0] dark:border-separatorDark border-2 my-[30px]' dashed />
 					{Bots.map((bot, i) => (
 						<div key={bot.title}>
 							<BotSetupCard
@@ -151,7 +151,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 							/>
 							{Bots.length - 1 > i && (
 								<Divider
-									className='border-[#D2D8E0] border-[2px] my-[30px]'
+									className='border-[#D2D8E0] dark:border-separatorDark dark:border-separatorDark border-[2px] my-[30px]'
 									dashed
 								/>
 							)}

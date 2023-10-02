@@ -619,11 +619,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				onCancel={() => setShowModal(false)}
 				footer={false}
 				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 				wrapClassName={className}
 				title={
 					showMultisig ?
-						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 '>
+						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] dark:border-separatorDark mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 '>
 							<ArrowLeft onClick={() => {setShowMultisig(false); setMultisig('');}} className='cursor-pointer absolute left-[24px] mt-1'/>
 							<div className='flex gap-[8px] items-center'>
 								<PolkasafeIcon className='ml-14'/>
@@ -632,7 +632,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 						</div>
 						:
-						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-section-dark-overlay dark:border-[#3B444F]'>
+						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] dark:border-separatorDark mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-section-dark-overlay dark:border-[#3B444F]'>
 							{
 								theme === 'dark' ?
 									<CastVoteIconDark className='ml-6'/>
@@ -667,7 +667,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
 									<WalletButton
-										className='text-sm text-bodyBlue dark:text-blue-dark-medium font-semibold !border-[#D2D8E0]'
+										className='text-sm text-bodyBlue dark:text-blue-dark-medium font-semibold border-[#D2D8E0] dark:border-separatorDark'
 										onClick={() => {
 											setShowMultisig(!showMultisig);
 										}}
@@ -724,7 +724,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<h3 className='inner-headings mt-[24px] mb-[2px] dark:text-blue-dark-medium'>Choose your vote</h3>
 							<Segmented
 								block
-								className={`${className} mb-6 border-solid border-[1px] bg-white dark:bg-section-dark-overlay border-[#D2D8E0] dark:border-[#3B444F] rounded-[4px] w-full`}
+								className={`${className} mb-6 border-solid border-[1px] bg-white dark:bg-section-dark-overlay border-[#D2D8E0] dark:border-separatorDark rounded-[4px] w-full`}
 								size="large"
 								value={vote}
 								onChange={(value) => {
@@ -747,12 +747,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									helpText={'Amount of you are willing to lock for this vote.'}
 									placeholder={'Add balance'}
 									onChange={onBalanceChange}
-									className='text-sm dark:text-blue-dark-high dark:bg-transparent font-medium border-[#D2D8E0]'
+									className='text-sm dark:text-blue-dark-high dark:bg-transparent font-medium border-[#D2D8E0] dark:border-separatorDark'
 								/>
 
 								<ConvictionSelect className={`${className}`} />
 
-								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-[#3B444F]'>
+								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] dark:bg-transparent mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}>Confirm</Button>
 								</div>
@@ -784,7 +784,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									formItemName={'nayVote'}
 								/>
 
-								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0]'>
+								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig)}>Confirm</Button>
 								</div>
@@ -823,7 +823,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									formItemName={'nayVote'}
 								/>
 
-								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0]'>
+								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig)}>Confirm</Button>
 								</div>

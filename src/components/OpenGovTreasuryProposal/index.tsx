@@ -158,12 +158,13 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			wrapClassName={className}
 			closable={false}
-			title={<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-section-dark-overlay'>
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
+			title={<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
         Exit Treasury Proposal Creation
 			</div>}>
 			<div className='px-6 mt-6'>
 				<span className='text-blue-light-high dark:text-blue-dark-high text-sm'>Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process? </span>
-				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
+				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark px-6 pt-4 gap-4'>
 					<Button onClick={handleClose} className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[145px] h-[38px] rounded-[4px] dark:bg-transparent'>Yes, Exit</Button>
 					<Button onClick={() => {setCloseConfirm(false); setOpenModal(true);}} className={'bg-pink_primary text-white font-medium tracking-[0.05em] text-sm h-[40px] rounded-[4px] w-[200px]'}>No, Continue Editing</Button>
 				</div>
@@ -188,8 +189,8 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			footer={false}
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			wrapClassName={className}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
-			title={<div className='text-lg font-semibold flex text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-section-dark-overlay'>
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
+			title={<div className='text-lg font-semibold flex text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
 				<CreateProposalIcon/>Create Treasury Proposal
 			</div>}
 		>

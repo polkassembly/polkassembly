@@ -53,8 +53,8 @@ const Tabs = styled(AntdTabs)`
 }
 .ant-tabs-tab-active{
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
-		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
-		border-bottom: ${props => props.theme=='dark' ? '#909090' : ''} !important;
+		border: ${props => props.theme=='dark' ? '1 px solid #4B4B4B' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? '#4B4B4B' : ''} !important;
 }
 `;
 
@@ -225,12 +225,12 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					setOpenModal && setOpenModal(false);
 				}}
 				title={
-					<h3 className='font-semibold text-xl text-[#1D2632] dark:text-white dark:bg-black'>
+					<h3 className='font-semibold text-xl text-[#1D2632] dark:text-white dark:bg-section-dark-overlay'>
 						Edit Profile
 					</h3>
 				}
 				closeIcon={
-					<CloseOutlined className='text-sm text-[#485F7D] dark:text-[#888888]' />
+					<CloseOutlined className='text-sm text-[#485F7D] dark:text-icon-dark-inactive' />
 				}
 				footer={
 					<div className='-mx-6 px-6 -mb-5 pb-4'>

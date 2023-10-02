@@ -99,7 +99,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0 text-[#D2D8E0] dark:bg-[#90909060]' />
+						<Divider className='m-0 text-[#D2D8E0] dark:text-separatorDark' />
 						<section>
 							<AddressHeader
 								checked={isMultiSigAddress}
@@ -116,7 +116,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0 text-[#D2D8E0] dark:bg-[#90909060]' />
+						<Divider className='m-0 text-[#D2D8E0] dark:text-separatorDark' />
 						<section>
 							<AddressHeader
 								checked={isLinkProxy}

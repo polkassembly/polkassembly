@@ -10,7 +10,7 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import TotalAmountBreakdown from './TotalAmountBreakdown';
-import CloseIcon from '~assets/icons/close-icon.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import OnChainIdentityIcon from '~assets/icons/onchain-identity.svg';
 import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
@@ -270,15 +270,16 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 				setIsExitModal(false);
 			}
 			}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			footer={false}
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals`}
 			closable={false}
-			title={<div className='text-lg font-semibold -mx-6 text-bodyBlue items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>
+			title={<div className='text-lg font-semibold -mx-6 text-bodyBlue items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:border-separatorDark'>
     Exit Verification
 			</div>}>
 			<div className='mt-6'>
 				<span className='text-bodyBlue text-sm'>Your verification is pending. Are you sure you want to exit verification process? </span>
-				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
+				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark px-6 pt-4 gap-4'>
 					<Button onClick={() => {
 						setIsExitModal(false);
 						setOpen(false);
@@ -296,12 +297,12 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 			open={open}
 			onCancel={handleCancel}
 			maskClosable={false}
-			closeIcon={<CloseIcon/>}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
 			title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>
 				{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? <span className='text-2xl'><SetIdentityIcon/></span> : <OnChainIdentityIcon/>}
 				<span className='text-bodyBlue'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
-				{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && <span className='text-xs font-semibold px-3 rounded-[4px] py-[6px] border-solid border-[1px] flex items-center bg-[#f6f7f9] border-[#D2D8E0] gap-2 text-bodyBlue'> <IdentityProgressIcon/>In Progress</span>}
+				{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && <span className='text-xs font-semibold px-3 rounded-[4px] py-[6px] border-solid border-[1px] flex items-center bg-[#f6f7f9] border-[#D2D8E0] dark:border-separatorDark gap-2 text-bodyBlue'> <IdentityProgressIcon/>In Progress</span>}
 			</span>
 			}
 		>

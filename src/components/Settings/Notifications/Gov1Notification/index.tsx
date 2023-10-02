@@ -190,19 +190,19 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[ProposalType.COUNCIL_MOTIONS]
 							}
 							title='Council Motion'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]'
 							Icon={TipsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
-					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={
@@ -214,19 +214,19 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[ProposalType.TREASURY_PROPOSALS]
 							}
 							title='Treasury Proposal'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
-					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.BOUNTIES]}
@@ -236,19 +236,19 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[ProposalType.CHILD_BOUNTIES]
 							}
 							title='Child Bounties'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
-					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.TIPS]}
@@ -258,13 +258,13 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[ProposalType.TECH_COMMITTEE_PROPOSALS]
 							}
 							title='Tech Committee'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]'
 							Icon={TechCommiteeIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}

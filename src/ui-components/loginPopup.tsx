@@ -30,7 +30,7 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 		wrapClassName={className}
 		className={`${poppins.variable} ${poppins.className} padding-0 `}
 		onCancel={() => setModalOpen && setModalOpen(false)}
-		closeIcon={<CloseIcon className='text-lightBlued dark:text-blue-dark-medium' />}>
+		closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}>
 		<Login network={network} isModal={isModal} setLoginOpen={setModalOpen} setSignupOpen={setSignupOpen} isDelegation={isDelegation} /></Modal>;
 };
 export default styled(LoginPopup)`

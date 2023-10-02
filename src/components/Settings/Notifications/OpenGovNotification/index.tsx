@@ -197,16 +197,16 @@ export default function OpenGovNotification({
 										<GroupCheckbox
 											categoryOptions={options[postType]}
 											title={postOriginMapper(postType)}
-											classname={i === (category.length - 1) ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]' : 'md:basis-[50%]'}
+											classname={i === (category.length - 1) ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]' : 'md:basis-[50%]'}
 											Icon={iconMapper(postType)}
 											onChange={handleChange}
 											handleCategoryAllClick={handleCategoryAllClick}
 										/>
-										{i !== (category.length - 1) && <Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />}
+										{i !== (category.length - 1) && <Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />}
 									</React.Fragment>);
 								})}
 							</div>
-							{i !== (openGovTwoOptions.length - 1) && <Divider className='border-[#D2D8E0] border-2' dashed />}
+							{i !== (openGovTwoOptions.length - 1) && <Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />}
 						</React.Fragment>
 					))}
 				</div>

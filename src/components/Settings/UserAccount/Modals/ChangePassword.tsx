@@ -10,6 +10,7 @@ import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
 import * as validation from 'src/util/validation';
 import styled from 'styled-components';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ChangePassword = ({
 	open,
@@ -91,6 +92,7 @@ const ChangePassword = ({
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className='flex gap-[10px] flex-wrap items-center'>
 				<Form

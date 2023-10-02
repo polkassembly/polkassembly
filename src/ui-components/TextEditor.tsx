@@ -301,7 +301,9 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								{ start: '--', replacement: '—' },
 								{ start: '-', replacement: '—' },
 								{ start: '(c)', replacement: '©' }
-							]
+							],
+							//add dark mode
+							skin: 'oxide-dark'
 						}}
 					/>
 				</div>

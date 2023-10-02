@@ -15,15 +15,24 @@ import Comments from './Comments';
 import RefendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import Image from 'next/image';
 import UnfilterAgainstIcon from '~assets/overall-sentiment/against.svg';
+import UnfilterAgainstDarkIcon from '~assets/overall-sentiment/totally-against-dark.svg';
 import UnfilterSlightlyAgainstIcon from '~assets/overall-sentiment/slightly-against.svg';
+import UnfilterSlightlyAgainstDarkIcon from '~assets/overall-sentiment/slightly-against-dark.svg';
 import UnfilterNeutralIcon from '~assets/overall-sentiment/neutral.svg';
+import UnfilterNeutralDarkIcon from '~assets/overall-sentiment/neutral-dark.svg';
 import UnfilterSlightlyForIcon from '~assets/overall-sentiment/slightly-for.svg';
+import UnfilterSlightlyForDarkIcon from '~assets/overall-sentiment/slightly-for-dark.svg';
 import UnfilterForIcon from '~assets/overall-sentiment/for.svg';
+import UnfilterForDarkIcon from '~assets/overall-sentiment/for-dark.svg';
 import AgainstIcon from '~assets/overall-sentiment/pink-against.svg';
 import SlightlyAgainstIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
+import SlightlyAgainstDarkIcon from '~assets/overall-sentiment/slightly-against-dark.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
+import NeutralDarkIcon from '~assets/overall-sentiment/neutral-icon-pink-dark.svg';
 import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
+import SlightlyForDarkIcon from '~assets/overall-sentiment/slightlyfor-icon-pink-dark.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
+import ForDarkIcon from '~assets/overall-sentiment/for-icon-pink-dark.svg';
 import { ESentiments } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
@@ -220,35 +229,35 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const sentimentsData = [
 		{
 			iconActive: <AgainstIcon />,
-			iconInactive: <UnfilterAgainstIcon />,
+			iconInactive: theme === 'dark' ? <UnfilterAgainstDarkIcon /> :<UnfilterAgainstIcon />,
 			percentage: sentimentsPercentage?.against,
 			sentiment: ESentiments.Against,
 			title: 'Completely Against'
 		},
 		{
-			iconActive: <SlightlyAgainstIcon />,
-			iconInactive: <UnfilterSlightlyAgainstIcon />,
+			iconActive: theme === 'dark' ? <SlightlyAgainstDarkIcon /> : <SlightlyAgainstIcon />,
+			iconInactive: theme === 'dark' ? <UnfilterSlightlyAgainstDarkIcon /> : <UnfilterSlightlyAgainstIcon />,
 			percentage: sentimentsPercentage?.slightlyAgainst,
 			sentiment: ESentiments.SlightlyAgainst,
 			title: 'Slightly Against'
 		},
 		{
-			iconActive: <NeutralIcon className='text-[20px] font-medium' />,
-			iconInactive: <UnfilterNeutralIcon />,
+			iconActive: theme === 'dark' ? <NeutralDarkIcon className='text-[20px] font-medium' /> : <NeutralIcon className='text-[20px] font-medium' />,
+			iconInactive: theme === 'dark' ? <UnfilterNeutralDarkIcon /> : <UnfilterNeutralIcon />,
 			percentage: sentimentsPercentage?.neutral,
 			sentiment: ESentiments.Neutral,
 			title: 'Neutral'
 		},
 		{
-			iconActive: <SlightlyForIcon />,
-			iconInactive: <UnfilterSlightlyForIcon />,
+			iconActive: theme === 'dark' ? <SlightlyForDarkIcon /> : <SlightlyForIcon />,
+			iconInactive: theme === 'dark' ? <UnfilterSlightlyForDarkIcon /> : <UnfilterSlightlyForIcon />,
 			percentage: sentimentsPercentage?.slightlyFor,
 			sentiment: ESentiments.SlightlyFor,
 			title: 'Slightly For'
 		},
 		{
-			iconActive: <ForIcon />,
-			iconInactive: <UnfilterForIcon />,
+			iconActive: theme === 'dark' ? <ForDarkIcon /> : <ForIcon />,
+			iconInactive: theme === 'dark' ? <UnfilterForDarkIcon /> : <UnfilterForIcon />,
 			percentage: sentimentsPercentage?.for,
 			sentiment: ESentiments.For,
 			title: 'Completely For'
@@ -290,7 +299,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							>
 								<div
 									onClick={() => getFilteredComments(data.sentiment)}
-									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] dark:hover:bg-[#33071E] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary text-blue-light-high dark:text-blue-dark-high text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none': ''}`}
+									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] dark:hover:bg-[#33071E] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary text-blue-light-high dark:text-blue-dark-high text-pink_primary dark:bg-[#5A1138]'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none': ''}`}
 								>
 									{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
 									<span className={'flex justify-center font-medium dark:text-[#ffffff99] dark:font-normal'}>{data.percentage}%</span>

@@ -26,7 +26,6 @@ import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -36,6 +35,7 @@ import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import executeTx from '~src/util/executeTx';
 import VoteInitiatedModal from '../Referenda/Modal/VoteSuccessModal';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -353,10 +353,10 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 				onCancel={() => setShowModal(false)}
 				footer={false}
 				className={`w-[500px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[605px] rounded-[6px] alignment-close vote-referendum `}
-				closeIcon={<CloseCross/>}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 				wrapClassName={className}
 				title={
-					<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2'>
+					<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] dark:border-separatorDark mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2'>
 						<CastVoteIcon className='ml-6'/>
 						<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 					</div>
@@ -407,7 +407,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 							<h3 className='inner-headings mt-[24px] mb-[2px]'>Choose your vote</h3>
 							<Segmented
 								block
-								className={`${className} mb-6 border-solid border-[1px] bg-white border-[#D2D8E0] rounded-[4px] w-full`}
+								className={`${className} mb-6 border-solid border-[1px] bg-white border-[#D2D8E0] dark:border-separatorDark rounded-[4px] w-full`}
 								size="large"
 								value={vote}
 								onChange={(value) => {
@@ -429,10 +429,10 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 									helpText={'Amount of you are willing to lock for this vote.'}
 									placeholder={'Add balance'}
 									onChange={onBalanceChange}
-									className='text-sm font-medium border-[#D2D8E0]'
+									className='text-sm font-medium border-[#D2D8E0] dark:border-separatorDark'
 								/>}
 
-								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-[#3B444F]'>
+								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance }>Confirm</Button>
 								</div>

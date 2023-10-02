@@ -117,7 +117,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute, theme 
 									}
 									isClicked.current = false;
 								}}
-								className='ml-auto outline-none bg-[rgba(210,216,224,0.2)] border border-solid border-[#D2D8E0] rounded-[4px] flex items-center justify-center h-8 w-8 md:hidden'
+								className='ml-auto outline-none bg-[rgba(210,216,224,0.2)] border border-solid border-[#D2D8E0] dark:border-separatorDark rounded-[4px] flex items-center justify-center h-8 w-8 md:hidden'
 							>
 								<CloseOutlined className='w-[15px] h-[15px] dark:text-icon-dark-inactive' />
 								<div
@@ -171,7 +171,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute, theme 
 									setSidedrawer(false);
 									setOpen(true);
 								}}
-								className='outline-none flex md:hidden items-center justify-center w-8 h-8 p-[6px] rounded-[4px] bg-[rgba(210,216,224,0.2)] border-solid border border-[#D2D8E0]'
+								className='outline-none flex md:hidden items-center justify-center w-8 h-8 p-[6px] rounded-[4px] bg-[rgba(210,216,224,0.2)] border-solid border border-[#D2D8E0] dark:border-separatorDark'
 							>
 								<Image
 									className='w-[20px] h-[20px] rounded-full'

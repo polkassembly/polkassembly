@@ -45,7 +45,7 @@ const Delegation = ( props : { network: string } ) => {
 			<div className='flex flex-col justify-center items-center mt-12'>
 				<DelegationDashboardEmptyState />
 				<p className='text-center text-blue-light-high dark:text-blue-dark-high text-base mt-6'>Please visit Delegation Dashboard from your Dekstop computer</p>
-				<button className='mt-5 px-3.5 py-1.5 rounded-full text-blue-light-high dark:text-blue-dark-high bg-transparent border border-[#D2D8E0] border-solid flex justify-center items-center' onClick={() => {handleCopylink();}}>Copy Page Link <CopyContentIcon className='ml-1'/></button>
+				<button className='mt-5 px-3.5 py-1.5 rounded-full text-blue-light-high dark:text-blue-dark-high bg-transparent border border-[#D2D8E0] dark:border-separatorDark dark:border-separatorDark border-solid flex justify-center items-center' onClick={() => {handleCopylink();}}>Copy Page Link <CopyContentIcon className='ml-1'/></button>
 			</div>
 		</div>
 	</>;

@@ -69,9 +69,9 @@ const ProfileSettings = () => {
 			>
 				<div className='flex flex-col gap-6 b-red'>
 					<Row label='Username' data={username || ''} handleEdit={() => setShowModal(ModalType.USERNAME)} />
-					<Divider className='m-0 text-[#D2D8E0]' />
+					<Divider className='m-0 text-[#D2D8E0] dark:text-separatorDark' />
 					<Row label='Email' data={email || ''} handleEdit={() => setShowModal(ModalType.EMAIL)} />
-					<Divider className='m-0 text-[#D2D8E0]' />
+					<Divider className='m-0 text-[#D2D8E0] dark:text-separatorDark' />
 					{!web3signup && <Row label='Password' data={username || ''} handleEdit={() => setShowModal(ModalType.PASSWORD)} />}
 				</div>
 				<ChangeUsername

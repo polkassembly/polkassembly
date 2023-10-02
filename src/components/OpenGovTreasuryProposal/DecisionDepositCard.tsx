@@ -234,10 +234,10 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 			wrapClassName={className}
 			className = {`${poppins.className} ${poppins.variable} pay-decision-deposite ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			open = {openModal}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			onCancel={() => setOpenModal(false)}
-			title = {<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:bg-section-dark-overlay'>Pay Decision Deposit</div>}
-			footer = {<div className='px-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] pt-4'>
+			title = {<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>Pay Decision Deposit</div>}
+			footer = {<div className='px-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark pt-4'>
 				<Button onClick={() => setOpenModal(false)} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider dark:bg-transparent'>Back</Button>
 				<Button onClick={handleSubmit} disabled={!accounts.length || availableBalance.lte(amount)} className={`text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider ${!accounts.length || availableBalance.lte(amount) && 'opacity-50'}`}>Continue</Button>
 			</div>}

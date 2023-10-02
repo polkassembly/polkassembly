@@ -118,7 +118,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 								auditData.filter((item) => (item.name.endsWith('.pdf') || item.name.endsWith('.png'))).map((item, index) => {
 									const date = formatDate(item.name.split(' - ')[1]);
 									return (
-										<article key={item.sha} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0]': ''}`}>
+										<article key={item.sha} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0] dark:border-separatorDark': ''}`}>
 											<p className="text-[#485F7D] m-0 text-sm leading-[18px] font-normal flex items-center gap-x-2">
 												<span>{item.name.split(' - ')[0]}</span>
 												{
@@ -154,7 +154,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 							<section>
 								{
 									videoData.map((item, index) => (
-										<article key={item.title} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0]': ''}`}>
+										<article key={item.title} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0] dark:border-separatorDark': ''}`}>
 											<p className="text-[#485F7D] m-0 text-sm leading-[18px] font-normal flex items-center gap-x-2">
 												<span>{item.name}</span> |
 												<ClockCircleOutlined />

@@ -91,7 +91,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 								</div>
 								{post?.tags && post?.tags.length > 0 && <div className='flex gap-1 items-center' >
 									{ post?.tags?.slice(0,2).map((tag: string, index: number) =>
-										(<div key={index} className='rounded-[50px] px-[14px] py-1 border-[#D2D8E0] bg-white dark:bg-section-dark-overlay border-solid border-[1px] font-medium text-lightBlue text-[10px]' >
+										(<div key={index} className='rounded-[50px] px-[14px] py-1 border-[#D2D8E0] dark:border-separatorDark bg-white dark:bg-section-dark-overlay border-solid border-[1px] font-medium text-lightBlue text-[10px]' >
 											{tag}
 										</div>))}
 									{post?.tags.length > 2 && <span className='text-[10px] font-medium text-blue-light-high dark:text-blue-dark-high px-2 py-1 bg-[#e7e9ee] rounded-[50px]'>+{post?.tags.length-2}</span> }

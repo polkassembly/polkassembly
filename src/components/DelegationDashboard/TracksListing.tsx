@@ -188,13 +188,13 @@ const DashboardTrackListing = ({ className , theme }: Props) => {
 	}, [status]);
 
 	return <div className={className} >
-		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] border-b-[1px] border-solid'} max-lg:px-4 dark:text-blue-dark-high`}>
+		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] dark:border-[#323232] dark:border-[] border-b-[1px] border-solid'} max-lg:px-4 dark:text-blue-dark-high`}>
       Tracks
 			<Radio.Group buttonStyle='solid' defaultValue={'all'} onChange={(e) => {setStatusValue(e.target.value); filterByStatus(e.target.value); }} value={status} className='flex max-md:flex-col ml-[24px] flex-shrink-0 '>
-				<Radio disabled={loading} className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.All === status && 'bg-[#FEF2F8] dark:bg-pink_primary rounded-[26px]'}`} value={ETrackDelegationStatus.All}>All ({allCount})</Radio>
-				<Radio disabled={loading}  className={`text-[rgba(36,58,87,0.7)] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Delegated === status && 'bg-[#FEF2F8] dark:bg-pink_primary rounded-[26px]'}`} value={ETrackDelegationStatus.Delegated}>Delegated ({delegatedCount})</Radio>
-				<Radio disabled={loading}  className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Undelegated === status && 'bg-[#FEF2F8] dark:bg-pink_primary rounded-[26px]'}`} value={ETrackDelegationStatus.Undelegated}>Undelegated ({undelegatedCount})</Radio>
-				<Radio disabled={loading}  className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Received_Delegation === status && 'bg-[#FEF2F8] dark:bg-pink_primary rounded-[26px]'}`} value={ETrackDelegationStatus.Received_Delegation}>Received delegation ({receivedDelegationCount})</Radio>
+				<Radio disabled={loading} className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.All === status && 'bg-[#FEF2F8] dark:bg-[#33071E] rounded-[26px]'}`} value={ETrackDelegationStatus.All}>All ({allCount})</Radio>
+				<Radio disabled={loading}  className={`text-[rgba(36,58,87,0.7)] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Delegated === status && 'bg-[#FEF2F8] dark:bg-[#33071E] rounded-[26px]'}`} value={ETrackDelegationStatus.Delegated}>Delegated ({delegatedCount})</Radio>
+				<Radio disabled={loading}  className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Undelegated === status && 'bg-[#FEF2F8] dark:bg-[#33071E] rounded-[26px]'}`} value={ETrackDelegationStatus.Undelegated}>Undelegated ({undelegatedCount})</Radio>
+				<Radio disabled={loading}  className={`text-[#243A57B2] dark:text-blue-dark-high text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Received_Delegation === status && 'bg-[#FEF2F8] dark:bg-[#33071E] rounded-[26px]'}`} value={ETrackDelegationStatus.Received_Delegation}>Received delegation ({receivedDelegationCount})</Radio>
 			</Radio.Group>
 		</div>
 		{showTable  && status && delegationDashboardAddress && <Table

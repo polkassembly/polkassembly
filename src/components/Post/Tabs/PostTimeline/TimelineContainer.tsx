@@ -118,7 +118,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
 						const blockDate = dayjs(timestamp);
 						return (
-							<div key={status} className={'border-t border-black-300 dark:border-[#5A5A5A]'} style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}>
+							<div key={status} className={'border-t border-black-300 dark:border-separatorDark'} style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}>
 								<div className='content-container'>
 									<article className="py-[8px]">
 										<div className="flex items-center">

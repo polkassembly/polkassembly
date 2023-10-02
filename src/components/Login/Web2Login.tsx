@@ -159,7 +159,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 				}
 				<span className="text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high">Login</span>
 			</div>
-			<Divider className='mt-1 px-0 bg-[#D2D8E0] dark:bg-[#90909060]' />
+			<Divider className='mt-1 px-0 bg-[#D2D8E0] dark:bg-separatorDark' />
 			{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-blue-light-high dark:text-blue-dark-high changeColor' />}
 
 			{walletError && <Alert message={walletError} type="error" />}

@@ -31,11 +31,11 @@ const Tabs = styled(AntdTabs)`
 	color: ${props => props.theme=='dark' ? '#FFFFFF' : ''} !important;
 	}
 	.ant-tabs-nav::before{
-	border-bottom: ${props => props.theme=='dark' ? '1px #29323C solid' : ''} !important;
+	border-bottom: ${props => props.theme=='dark' ? '1px #4B4B4B solid' : ''} !important;
 	}
 	.ant-tabs-tab-active{
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
-		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border: ${props => props.theme=='dark' ? '1px solid #4B4B4B' : ''} !important;
 		border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
 	}
 `;

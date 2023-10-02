@@ -6,6 +6,7 @@ import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 type Props = {
     icon: any;
@@ -50,6 +51,7 @@ const SlackInfoModal = ({
 			closable
 			onCancel={onClose}
 			footer={null}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 		>
 			<div className=''>
 				<ol>

@@ -153,7 +153,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			</div>
 				:
 				isSmallScreen?
-					<a className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] h-10 px-[18px]' onClick={e => {
+					<a className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] dark:border-separatorDark bg-[rgba(210,216,224,0.2)] h-10 px-[18px]' onClick={e => {
 						e.preventDefault();
 						setSidedrawer(false);
 					}}
@@ -174,7 +174,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							<ArrowDownIcon />
 						</span>
 					</a>
-					: <a className='flex items-center justify-between text-blue-light-high dark:text-blue-dark-high hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px] dark:bg-black dark:border-[#3B444F]' onClick={e => {
+					: <a className='flex items-center justify-between text-blue-light-high dark:text-blue-dark-high hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] dark:border-separatorDark lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px] dark:bg-black' onClick={e => {
 						e.preventDefault();
 						setSidedrawer(false);
 					}}

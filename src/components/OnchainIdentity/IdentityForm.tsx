@@ -215,7 +215,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			</div>
 			<div className='text-sm flex gap-2 w-full items-end '>
 
-				<div className='border-[1px] border-solid w-full border-[#D2D8E0] h-[40px] flex items-center rounded-[4px] px-2 bg-[#f5f5f5] justify-between'>
+				<div className='border-[1px] border-solid w-full border-[#D2D8E0] dark:border-separatorDark h-[40px] flex items-center rounded-[4px] px-2 bg-[#f5f5f5] justify-between'>
 					<Address address={address} truncateUsername={false} displayInline clickable={false} textClassName='text-bodyBlue'/>
 					<Button
 						onClick={() => {
@@ -278,7 +278,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 			</div>
 			<Divider/>
 			<div>
-				<label className='text-sm font-medium text-lightBlue'>Socials <HelperTooltip className='ml-1' text='Please add your social handles that require verification.'/></label>
+				<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Socials <HelperTooltip className='ml-1' text='Please add your social handles that require verification.'/></label>
 
 				{/* <div className='flex items-center mt-4'>
 					<span className='flex gap-2 w-[150px] items-center mb-6'>
@@ -300,8 +300,8 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 
 				<div className='flex items-center mt-1  '>
 					<span className='flex gap-2 items-center w-[150px] mb-6' >
-						<EmailIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
-						<span className='text-sm text-lightBlue'>Email<span className='text-[#FF3C5F] ml-1'>*</span></span>
+						<EmailIcon className='bg-[#edeff3] dark:bg-inactiveIconDark dark:text-blue-dark-medium rounded-full text-xl p-2.5 text-[#576D8B]'/>
+						<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Email<span className='text-[#FF3C5F] ml-1'>*</span></span>
 					</span>
 					<Form.Item name='email' className='w-full'  rules={[{
 						message: 'Invalid email address',
@@ -329,8 +329,8 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 
 				<div className='flex items-center mt-1'>
 					<span className='flex gap-2 items-center w-[150px] mb-6'>
-						<TwitterIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
-						<span className='text-sm text-lightBlue'>Twitter<span className='text-[#FF3C5F] ml-1'>*</span></span></span>
+						<TwitterIcon className='bg-[#edeff3] dark:bg-inactiveIconDark rounded-full text-xl p-2.5 text-[#576D8B] dark:text-blue-dark-medium'/>
+						<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Twitter<span className='text-[#FF3C5F] ml-1'>*</span></span></span>
 					<Form.Item name='twitter' className='w-full' rules={[{
 						message: 'Invalid twitter username',
 						validator(rule, value, callback) {
@@ -377,7 +377,7 @@ const IdentityForm = ({ className, form, address, txFee, name, socials, onChange
 		</Form>
 		<div className='flex gap-4 text-sm mt-6 items-center'>
 			<span className='text-lightBlue font-medium'>Min Deposit <HelperTooltip className='ml-1' text='Amount that needs held in an address for a verified account.'/></span>
-			<span className='text-bodyBlue font-medium bg-[#EDEFF3] py-1 px-3 rounded-2xl'>{formatedBalance(minDeposite.toString(), unit, 2)} {unit}</span>
+			<span className='text-bodyBlue font-medium bg-[#EDEFF3] dark:bg-inactiveIconDark py-1 px-3 rounded-2xl'>{formatedBalance(minDeposite.toString(), unit, 2)} {unit}</span>
 		</div>
 
 		{((!gasFee.eq(ZERO_BN)) || loading) && <Spin spinning={loading} tip='calculating gas fee'>

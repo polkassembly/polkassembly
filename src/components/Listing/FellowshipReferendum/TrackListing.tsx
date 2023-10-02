@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { IFellowshipReferendumPostsByTrackName } from 'pages/member-referenda';
 import React, { FC, useState } from 'react';
 import TrackListingCard from 'src/components/Listing/FellowshipReferendum/TrackListingCard';
+import { useTheme } from 'next-themes';
 
 const AboutTrackCard = dynamic(() => import('~src/components/Listing/FellowshipReferendum/AboutTrackCard'), {
 	loading: () => <Skeleton active /> ,
@@ -21,6 +22,7 @@ interface ITrackListingProps {
 const TrackListing: FC<ITrackListingProps> = (props) => {
 	const { posts, fellowshipReferendumPostOrigins } = props;
 	const [trackName, setTrackName] = useState('');
+	const { resolvedTheme:theme } = useTheme();
 	return (
 		<>
 			<AboutTrackCard
@@ -30,6 +32,7 @@ const TrackListing: FC<ITrackListingProps> = (props) => {
 			<TrackListingCard
 				className='mt-12'
 				posts={posts}
+				theme={theme}
 				setTrackName={setTrackName}
 				fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
 			/>

@@ -22,6 +22,7 @@ import Web3 from 'web3';
 import { NetworkContext } from '~src/context/NetworkContext';
 import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import { chainProperties } from '~src/global/networkConstants';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
 
@@ -313,6 +314,7 @@ const DelegateModalEthV2 = ({ trackNum } : { trackNum:number }) => {
 				open={showModal}
 				onOk={handleSubmit}
 				confirmLoading={loading}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => setShowModal(false)}
 				footer={[
 					<Button key="back" disabled={loading} onClick={() => setShowModal(false)}>

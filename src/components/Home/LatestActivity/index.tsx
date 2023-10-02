@@ -78,11 +78,17 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts, them
 
 export default styled(LatestActivity)`
 	th {
-		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
-		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
+		/* color: #485F7D !important; */
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
+		white-space: nowrap;
+		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
+	}
+
+	.ant-table-wrapper .ant-table-container::after{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'none'} !important;
 	}
 
 	th.ant-table-cell {
@@ -91,6 +97,7 @@ export default styled(LatestActivity)`
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
+		white-space: nowrap;
 	}
 
 	.ant-table-thead > tr > th {
@@ -102,17 +109,16 @@ export default styled(LatestActivity)`
 		white-space: nowrap;
 	}
 
-	.ant-table-row {
+	.ant-table-row{
 		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 	}
-
 	.ant-table-row:hover > td{
 		background-color: ${props => props.theme=='dark' ? '#595959' : ''} !important;
 	}
-	tr {
+	tr{
 		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-size: 14px !important;
@@ -123,7 +129,6 @@ export default styled(LatestActivity)`
 	.ant-table-wrapper .ant-table-cell-fix-left, .ant-table-wrapper .ant-table-cell-fix-right{
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
 	}
-
 	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
 		background-color: white;
 		border-top-color: white;
@@ -143,24 +148,28 @@ export default styled(LatestActivity)`
 		border-bottom: 1px solid #E1E6EB;
 	}
 	.ant-table-wrapper .ant-table-tbody >tr >th, .ant-table-wrapper .ant-table-tbody >tr >td{
-		border-bottom: ${props => props.theme=='dark' ? '1px solid #272C31' : '1px solid #E1E6EB'} !important;
+		border-bottom: ${props => props.theme=='dark' ? '1px solid #323232' : '1px solid #E1E6EB'} !important;
 	}
 	.ant-table-wrapper .ant-table-thead >tr>th, .ant-table-wrapper .ant-table-thead >tr>td{
-		border-bottom: ${props => props.theme=='dark' ? '1px solid #272C31' : '1px solid #E1E6EB'} !important;
+		border-bottom: ${props => props.theme=='dark' ? '1px solid #323232' : '1px solid #E1E6EB'} !important;
 	}
 	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab{
 		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+		font-weight: ${props => props.theme=='dark' ? '400' : '500'} !important;
 	}
 	.ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
-		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? '1px #4B4B4B solid' : ''} !important;
 	}
 	.ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, .ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
 		background: none !important;
 	}
 	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab-active{
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
-		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border: ${props => props.theme=='dark' ? '1 px solid #4B4B4B' : ''} !important;
 		border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
+	}
+	.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+		color: ${props => props.theme=='dark' ? '#FF60B5' : '#e5007a'} !important;
 	}
 
 `;

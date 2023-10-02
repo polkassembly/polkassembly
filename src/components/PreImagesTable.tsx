@@ -28,7 +28,7 @@ const Table = styled(AntdTable)`
 		background: ${props => props.theme === 'dark' ? '#1C1D1F' : 'white'} !important;
 		color: ${props => props.theme === 'dark' ? 'white' : 'black'} !important;
 		font-weight: 500 !important;
-		border-bottom: ${props => props.theme === 'dark' ? '1px solid #90909060' : ''} !important;
+		border-bottom: ${props => props.theme === 'dark' ? '1px solid #323232' : ''} !important;
 	}
 	.ant-table-thead > tr > th::before {
 		background: none !important;
@@ -41,7 +41,7 @@ const Table = styled(AntdTable)`
 	}
 	td{
 		background: ${props => props.theme === 'dark' ? '#0D0D0D' : 'white'} !important;
-		border-bottom: ${props => props.theme === 'dark' ? '1px solid #90909060' : ''} !important;
+		border-bottom: ${props => props.theme === 'dark' ? '1px solid #323232' : ''} !important;
 	}
 `;
 
@@ -130,7 +130,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 				<Modal
 					open={Boolean(modalArgs)}
 					title={<div className='dark:text-white dark:bg-section-dark-overlay'>Arguments</div>}
-					closeIcon={<CloseIcon className='dark:text-blue-dark-medium text-lightBlue' />}
+					closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 					onOk={() => setModalArgs(null)}
 					onCancel={() => setModalArgs(null)}
 					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}

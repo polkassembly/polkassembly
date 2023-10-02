@@ -15,13 +15,13 @@ import { IFellowshipReferendumPostsByTrackName } from 'pages/member-referenda';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
 import styled from 'styled-components';
-import { useTheme } from 'next-themes';
 
 interface ITrackListingCardProps {
 	className?: string;
 	posts: IFellowshipReferendumPostsByTrackName|undefined;
     setTrackName: React.Dispatch<React.SetStateAction<string>>;
     fellowshipReferendumPostOrigins: string[];
+	theme?: string;
 }
 
 const Pagination = styled(AntdPagination)`
@@ -40,8 +40,7 @@ const Pagination = styled(AntdPagination)`
 `;
 
 const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
-	const { posts, className, setTrackName, fellowshipReferendumPostOrigins } = props;
-	const { resolvedTheme:theme } = useTheme();
+	const { posts, className, setTrackName, fellowshipReferendumPostOrigins,theme } = props;
 	const items = [
 		{
 			children: <TrackListingAllTabContent
@@ -132,4 +131,23 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 	);
 };
 
-export default TrackListingCard;
+export default styled(TrackListingCard)`
+	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab{
+		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
+		font-weight: ${props => props.theme=='dark' ? '400' : '500'} !important;
+}
+.ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
+		border-bottom: ${props => props.theme=='dark' ? '1px #4B4B4B solid' : ''} !important;
+}
+.ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, .ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
+		background: none !important;
+}
+.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab-active{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
+		border: ${props => props.theme=='dark' ? '1 px solid #4B4B4B' : ''} !important;
+		border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
+}
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+		color: ${props => props.theme=='dark' ? '#FF60B5' : '#e5007a'} !important;
+}
+`;

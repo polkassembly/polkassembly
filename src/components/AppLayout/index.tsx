@@ -32,7 +32,7 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import CloseIcon from '~assets/icons/close-icon.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import { useTheme } from 'next-themes';
 
@@ -531,7 +531,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			<Modal
 				open={identityMobileModal}
 				footer={false}
-				closeIcon={<CloseIcon/>}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
 				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
 				title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>

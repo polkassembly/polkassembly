@@ -197,7 +197,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	return (
 		<>
 			<Modal
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}` }
 				wrapClassName={className}
 				title={
@@ -211,7 +211,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				confirmLoading={loading}
 				onCancel={() => setOpen(false)}
 				footer={
-					<div className='flex items-center justify-end -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-1'>
+					<div className='flex items-center justify-end -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark px-6 pt-4 gap-1'>
 
 						<Button key="back" disabled={loading} className='h-[40px] w-[134px] rounded-[4px] border-pink_primary text-pink_primary dark:bg-transparent' onClick={() => setOpen(false)}>
 										Cancel

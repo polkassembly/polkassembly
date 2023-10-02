@@ -720,7 +720,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				</div>}
 				{(showAlert && !isPreimage) && !txFee.eq(ZERO_BN) && <Alert type='info' className='mt-6 rounded-[4px] text-blue-light-high dark:text-blue-dark-high' showIcon description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
 					message={`${formatedBalance(String(baseDeposit.toString()), unit)} ${unit} Base deposit is required to create a preimage.`}/>}
-				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
+				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark px-6 pt-4 gap-4'>
 					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px]'>Back</Button>
 					<Button htmlType='submit'
 						className={`bg-pink_primary text-white font-medium text-center tracking-[0.05em] text-sm w-[165px] h-[40px] rounded-[4px] ${((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack && !txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && !loading) : (preimageHash?.length === 0 || invalidPreimageHash() )) && 'opacity-50' }`}

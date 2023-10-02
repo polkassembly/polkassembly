@@ -30,13 +30,13 @@ import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
 import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getConvictionVoteOptions } from './VoteReferendum';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -632,9 +632,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				onCancel={() => setShowModal(false)}
 				footer={false}
 				className={`w-[550px] max-md:w-full max-h-[675px] rounded-[6px] alignment-close ${poppins.className} ${poppins.variable}`}
-				closeIcon={<CloseCross/>}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={className}
-				title={<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.2px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
+				title={<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.2px] border-[#D2D8E0] bg-[#D2D8E0] dark:border-separatorDark mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
 					<CastVoteIcon className='mt-1'/>
 					<span className='text-blue-light-high dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 				</div>}
@@ -670,7 +670,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 						<h3 className='inner-headings mt-[24px] mb-[2px]'>Choose your vote</h3>
 						<Segmented
 							block
-							className={`${className}  mb-[24px] border-solid border-[1px] bg-white dark:bg-section-dark-overlay hover:bg-white dark:bg-section-dark-overlay border-[#D2D8E0] rounded-[4px] w-full py-0 px-0`}
+							className={`${className}  mb-[24px] border-solid border-[1px] bg-white hover:bg-white dark:bg-section-dark-overlay border-[#D2D8E0] dark:border-separatorDark rounded-[4px] w-full py-0 px-0`}
 							size="large"
 							value={vote}
 							onChange={(value) => {
@@ -706,7 +706,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 								<ConvictionSelect className={`${className}`} />
 
-								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
+								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0] dark:border-separatorDark'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 								</div>
@@ -741,7 +741,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 										formItemName={'nayVote'}
 									/>
 
-									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
+									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0] dark:border-separatorDark'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 									</div>
@@ -782,7 +782,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 										formItemName={'nayVote'}
 									/>
 
-									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
+									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0] dark:border-separatorDark'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 									</div>

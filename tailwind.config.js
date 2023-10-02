@@ -42,6 +42,8 @@ module.exports = {
 				aye_green: 'var(--aye_green)',
 				nay_red: 'var(--nay_red)',
 				comment_bg: 'var(--comment_bg)',
+				separatorDark: 'var(--separatorDark)',
+				inactiveIconDark: 'var(--inactiveIconDark)',
 				blue:{
 					light:{
 						disabled:'#96A4B6',
@@ -75,7 +77,7 @@ module.exports = {
 					},
 					dark:{
 						active:'#FF0088',
-						inactive:'#595959'
+						inactive:'#9E9E9E'
 					}
 				},
 				section:{

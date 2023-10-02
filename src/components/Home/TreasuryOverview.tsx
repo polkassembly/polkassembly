@@ -369,7 +369,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								{!['polymesh', 'polymesh-test'].includes(network) && <>
 									<div className='flex flex-col justify-center text-blue-light-high dark:text-blue-dark-high font-medium gap-y-3'>
 										<Divider
-											className='m-0 p-0 bg-[#D2D8E0] dark:bg-[#3B444F]' />
+											className='m-0 p-0 bg-[#D2D8E0] dark:bg-separatorDark' />
 										<span className='flex flex-col justify-center text-lightBlue dark:text-blue-dark-high text-xs font-medium'>
 											{
 												available.valueUSD
@@ -428,7 +428,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										</div>
 									</div>
 									<div className="flex flex-col justify-center overflow-hidden text-blue-light-high dark:text-blue-dark-high font-medium gap-y-3">
-										<Divider className='m-0 p-0 bg-[#D2D8E0] dark:bg-[#3B444F]' />
+										<Divider className='m-0 p-0 bg-[#D2D8E0] dark:bg-separatorDark' />
 										<div className='flex text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre items-center'>
 											{priceWeeklyChange.value === 'N/A' ? 'N/A' : priceWeeklyChange.value ?
 												<>
@@ -502,7 +502,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										</div>
 									</div>
 									<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
-										<Divider className='m-0 p-0 bg-[#D2D8E0] dark:bg-[#3B444F]' />
+										<Divider className='m-0 p-0 bg-[#D2D8E0] dark:bg-separatorDark' />
 										<span className='mr-2 text-lightBlue dark:text-blue-dark-high w-full text-xs font-medium'>
 											{
 												nextBurn.valueUSD
@@ -587,7 +587,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									</div>
 									{
 										<div className='flex flex-col justify-center font-medium gap-y-3'>
-											<Divider className='m-0 p-0 bg-[#D2D8E0] dark:bg-[#3B444F]' />
+											<Divider className='m-0 p-0 bg-[#D2D8E0] dark:bg-separatorDark' />
 											<span className='flex items-center'>
 												<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} trailColor= {theme === 'dark'?'#1E262D': '#E1E6EB' } strokeColor='#E5007A' size="small" />
 											</span>

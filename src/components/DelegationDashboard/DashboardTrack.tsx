@@ -204,7 +204,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 				{handleTrack(String(track))}
 			</span>
 		</div>
-		{status ? <div className='border-solid border-[1px] border-[#D2D8E0] rounded-[14px] py-6 px-9 shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white dark:bg-section-dark-overlay'>
+		{status ? <div className='border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark rounded-[14px] py-6 px-9 shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white dark:bg-section-dark-overlay'>
 			<div className='text-[24px] font-semibold tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high flex gap-3 items-center'>
 				{handleTracksIcon(handleTrack(String(track)), 28)}
 				<span>{handleTrack(String(track))}</span>
@@ -222,7 +222,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 					<div className='flex gap-2 flex-col' key={index}>
 						<span className='text-sm text-blue-light-high dark:text-blue-dark-high font-semibold ml-[1px]'>
 							{item === ETrackDelegationStatus.Received_Delegation ? 'Received Delegation(s)' : 'Delegated'}</span>
-						<div className='bg-white dark:bg-section-dark-overlay mt-0 border-[1px] border-solid rounded-md pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
+						<div className='bg-white dark:bg-section-dark-overlay mt-0 border-[1px] border-solid rounded-md pl-[3px] pr-[3px] border-[#D2D8E0] dark:border-separatorDark bg-transparent'>
 							<Table
 								className='column'
 								columns={GetTracksColumns(item, setOpenUndelegateModal)}

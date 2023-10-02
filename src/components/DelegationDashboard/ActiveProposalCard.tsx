@@ -137,7 +137,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	}, [network,votingData]);
 
 	return <Link href={`/referenda/${proposal?.post_id}`}>
-		<div className={'border-[#D2D8E0] border-solid border-[1px] rounded-t-[6px] hover:border-[#E5007A] rounded-[6px]'}>
+		<div className={'border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] rounded-t-[6px] hover:border-[#E5007A] rounded-[6px]'}>
 			<div className='px-6 py-6 border-[1px] flex justify-between max-sm:gap-2 max-sm:items-start max-sm:flex-col hover:border-pink_primary'>
 				<div className='flex flex-col '>
 					<h2 className='text-sm text-medium text-blue-light-high dark:text-blue-dark-high'>{mainTitle}</h2>

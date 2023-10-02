@@ -81,7 +81,7 @@ const ChangeUsername = ({
 				</div>
 			}
 			open={open}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} min-w-[350px] md:min-w-[600px]`}
 			onCancel={onCancel}
 			onOk={onConfirm}

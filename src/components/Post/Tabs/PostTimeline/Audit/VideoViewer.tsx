@@ -14,14 +14,14 @@ interface IVideoViewerProps {
 const VideoViewer: FC<IVideoViewerProps> = (props) => {
 	const { item, className } = props;
 	return (
-		<section className={`flex flex-col border border-solid border-[#D2D8E0] rounded-[6px] overflow-hidden ${className}`}>
+		<section className={`flex flex-col border border-solid border-[#D2D8E0] dark:border-separatorDark rounded-[6px] overflow-hidden ${className}`}>
 			<div>
 				<article
 					className='flex items-center justify-center pt-6 '
 				>
 					<ReactPlayer url={item.url} controls={true} />
 				</article>
-				<article className='px-4 py-[10px] bg-[rgba(210,216,224,0.2)] flex gap-x-2 items-center border-0 border-t border-solid border-t-[#D2D8E0]'>
+				<article className='px-4 py-[10px] bg-[rgba(210,216,224,0.2)] flex gap-x-2 items-center border-0 border-t border-solid border-t-[#D2D8E0] dark:border-t-separatorDark'>
 					<span className='flex items-center justify-center'>
 						<YouTubeIcon />
 					</span>

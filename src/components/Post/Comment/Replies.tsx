@@ -20,7 +20,7 @@ const Replies = ({ className, commentId, repliesArr }: Props) => {
 		<div className={className}>
 			{repliesArr.length > 0 ?
 				!showReplies ?
-					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>{repliesArr.length} replies <DownOutlined className='ml-1' /></div>
+					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center dark:text-blue-dark-medium' onClick={toggleShowReplies}>{repliesArr.length} replies <DownOutlined className='ml-1' /></div>
 					:
 					<div className='text-sidebarBlue dark:text-blue-dark-medium font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>Hide replies <UpOutlined className='ml-1' /></div>
 				: null

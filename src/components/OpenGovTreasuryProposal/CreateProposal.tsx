@@ -244,7 +244,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Gas fees</span><span className='text-blue-light-high dark:text-blue-dark-high font-medium'>{formatedBalance(String(txFee.toString()), unit)} {unit}</span></span>
 					<span className='flex justify-between text-sm text-lightBlue pr-[70px] font-semibold'><span className='w-[150px]'>Total</span><span className='text-blue-light-high dark:text-blue-dark-high'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
 				</div>}/>}
-			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
+			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark px-6 pt-4 gap-4'>
 				<Button
 					disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite) }
 					onClick={() => handleSubmitTreasuryProposal() } className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite) ) && 'opacity-50'}`}>

@@ -49,7 +49,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 		<div className='ml-2 text-lightBlue h-[70px] flex gap-5'>
 			<span className='text-sm w-[60px] py-1.5'>{title}</span>
 			<div className='w-full'>
-				<div className={`border-solid border-[1px]  flex items-center justify-between border-[#D2D8E0] h-[40px] rounded-[4px] pl-3 pr-2 tracking-wide ${verified ? 'bg-[#f6f7f9] text-[#8d99a9]' :'text-bodyBlue bg-white' }`}>
+				<div className={`border-solid border-[1px]  flex items-center justify-between border-[#D2D8E0] dark:border-separatorDark h-[40px] rounded-[4px] pl-3 pr-2 tracking-wide ${verified ? 'bg-[#f6f7f9] text-[#8d99a9]' :'text-bodyBlue bg-white' }`}>
 					<span>{value}</span>
 					{verified ? <span className='flex gap-2 items-center justify-center text-xs text-[#8d99a9]'><VerifiedTick/>Verified</span> :<Button
 						onClick={onVerify}
@@ -92,7 +92,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 					status={status?.email as VerificationStatus}
 					loading={fieldLoading.email}
 				/>,
-				dot: <EmailIcon className={` ${email?.verified ? 'bg-[#51D36E] text-white': 'bg-[#edeff3] text-[#576D8B]' } rounded-full text-xl p-2.5 '`}/>,
+				dot: <EmailIcon className={` ${email?.verified ? 'bg-[#51D36E] text-white': 'bg-[#edeff3] dark:bg-inactiveIconDark dark:text-blue-dark-medium text-[#576D8B]' } rounded-full text-xl p-2.5 '`}/>,
 				key: 1
 			});
 	}
@@ -109,7 +109,7 @@ const SocialVerification = ({ className, socials, onCancel, setLoading, closeMod
 					loading={fieldLoading.twitter}
 					fieldName={ESocials.TWITTER}
 				/>,
-				dot: <TwitterIcon className={` ${twitter?.verified ? 'bg-[#51D36E] text-white': 'bg-[#edeff3] text-[#576D8B]' } rounded-full text-xl p-2.5 '`}/>,
+				dot: <TwitterIcon className={` ${twitter?.verified ? 'bg-[#51D36E] text-white': 'bg-[#edeff3] dark:bg-inactiveIconDark dark:text-blue-dark-medium text-[#576D8B]' } rounded-full text-xl p-2.5 '`}/>,
 				key: 2
 			});
 	}
@@ -301,4 +301,4 @@ export default styled(SocialVerification)`
 }
 .ant-timeline .ant-timeline-item-content {
   inset-block-start: -12px;
-`;
+}`;

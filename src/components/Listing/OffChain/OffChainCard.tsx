@@ -67,23 +67,23 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
-								<LikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
-								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
+								<LikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
+								<span className='text-lightBlue dark:text-icon-dark-inactive'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
-								<DislikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
-								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
+								<DislikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
+								<span className='text-lightBlue dark:text-icon-dark-inactive'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 
 							<div className='xs:hidden sm:flex items-center'>
-								<CommentsIcon className='mr-1 text-lightBlue dark:text-blue-dark-medium' />
-								<span className=' text-lightBlue dark:text-blue-dark-medium'>{commentsCount}</span>
+								<CommentsIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' />
+								<span className=' text-lightBlue dark:text-icon-dark-inactive'>{commentsCount}</span>
 							</div>
 							<Divider type="vertical" className='border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 
 							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-								(<div key={index} style={{ fontSize: '10px' }} className='text-lightBlue dark:text-blue-dark-medium rounded-xl px-[14px] py-[4px] border-[#D2D8E0] dark:border-blue-dark-medium border-solid border-[1px] font-medium' >
+								(<div key={index} style={{ fontSize: '10px' }} className='text-lightBlue dark:text-blue-dark-medium rounded-xl px-[14px] py-[4px] border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] font-medium' >
 									{tag}
 								</div>))}
 							{tags.length>2 && <span className='text-blue-light-high dark:text-blue-dark-high' style={{ background:'#D2D8E050' , borderRadius:'20px', fontSize:'10px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
@@ -92,7 +92,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</>}
 							{tags && tags.length>0 && <Divider type="vertical" className='max-sm:hidden border-l-1 border-lightBlue dark:border-blue-dark-medium' />}
 							{relativeCreatedAt && <>
-								<div className='hidden text-lightBlue dark:text-blue-dark-medium sm:flex items-center'>
+								<div className='hidden text-lightBlue dark:text-icon-dark-inactive sm:flex items-center'>
 									<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' /> {relativeCreatedAt}
 								</div>
 							</>}
@@ -111,6 +111,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					open= {tagsModal}
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
+					closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 				><div className='flex'>
 						<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
@@ -118,9 +119,9 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							Tags
 						</div>
 					</div>
-					<div className='w-full h-[1px] bg-[#D2D8E0]' />
+					<div className='w-full h-[1px] bg-[#D2D8E0] dark:bg-separatorDark' />
 					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
+						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
 							{tag}
 						</div>))}
 					</>}</div>
@@ -164,7 +165,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							<OnchainCreationLabel address={address} username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 							{relativeCreatedAt && <>
-								<div className='xs:flex xs:text-lightBlue dark:text-blue-dark-medium xs:-mt-0.5 mt-0 lg:flex items-center text-sm'>
+								<div className='xs:flex xs:text-lightBlue dark:text-icon-dark-inactive xs:-mt-0.5 mt-0 lg:flex items-center text-sm'>
 									<ClockCircleOutlined className='mr-1 mt-0 dark:border-blue-dark-medium' /> {relativeCreatedAt}
 								</div>
 							</>}
@@ -173,10 +174,10 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						<div className='xs:flex justify-between items-center xs:mt-3.5 xs:gap-x-2'>
 							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden border-l-1 border-[#90A0B7] dark:border-blue-dark-medium' />}
 							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-								(<div key={index} style={{ fontSize:'10px' }} className='text-lightBlue dark:text-blue-dark-medium rounded-xl px-[14px] py-[4px] border-[#D2D8E0] dark:border-blue-dark-medium border-solid border-[1px] font-medium' >
+								(<div key={index} style={{ fontSize:'10px' }} className='text-lightBlue dark:text-icon-dark-inactive rounded-xl px-[14px] py-[4px] border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] font-medium' >
 									{tag}
 								</div>))}
-							{tags.length>2 && <span className='text-blue-light-high dark:text-blue-dark-medium' style={{ background:'#D2D8E050' , borderRadius:'20px', fontSize:'10px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+							{tags.length>2 && <span className='text-blue-light-high dark:text-icon-dark-inactive' style={{ background:'#D2D8E050' , borderRadius:'20px', fontSize:'10px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
 							</span>}
 							</>}
@@ -188,14 +189,14 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
 					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
-					closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium' />}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				><div className='flex dark:bg-black'>
 						<TagsIcon className='mr-2 mt-1.5' />
 						<h2 className='text-lg tracking-wide font-semibold text-blue-light-high dark:text-blue-dark-high mb-2'>Tags</h2>
 					</div>
-					<div className='w-full h-[1px] bg-[#D2D8E0]' />
+					<div className='w-full h-[1px] bg-[#D2D8E0] dark:bg-separatorDark' />
 					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
+						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark dark:border-separatorDark px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
 							{tag}
 						</div>))}
 					</>}</div>

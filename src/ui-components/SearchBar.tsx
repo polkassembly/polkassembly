@@ -11,6 +11,7 @@ import   NewSearch from 'src/components/Search';
 import { Modal } from 'antd';
 import { allowedNetwork } from '~src/components/Search';
 import { poppins } from 'pages/_app';
+import { CloseIcon } from './CustomIcons';
 
 interface ISearchBarProps {
 	className?: string;
@@ -59,6 +60,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						<Modal
 							title='Search'
 							closable={false}
+							closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 							open={open}
 							onCancel={() => setOpen(false)}
 							footer={[]}

@@ -31,7 +31,7 @@ import StartSearchIcon from '~assets/search/search-start.svg';
 import DownOutlined from '~assets/search/dropdown-down.svg';
 import HighlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import InputClearIcon from '~assets/icons/close-tags.svg';
-import CloseIcon from '~assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import LeftArrow from '~assets/icons/arrow-left.svg';
 import PaLogo from '../AppLayout/PaLogo';
 import { useTheme } from 'next-themes';
@@ -436,7 +436,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		onCancel={() => handleClearFilters(true)}
 		footer={false}
 		className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
-		closeIcon={<CloseIcon/>}
+		closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 			<Input

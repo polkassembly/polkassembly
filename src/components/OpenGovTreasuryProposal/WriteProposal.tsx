@@ -228,7 +228,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 						</Form.Item>}
 					</div>
 				</div>}
-				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4'>
+				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark px-6 pt-4'>
 					<Button htmlType='submit' className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm h-[40px] rounded-[4px] w-[155px] ${(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50' }`} disabled={!isDiscussionLinked ? !(title && content ) : !(discussionLink && title && content)}>Next</Button>
 				</div>
 			</Form>

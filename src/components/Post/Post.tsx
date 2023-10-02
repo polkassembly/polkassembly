@@ -528,11 +528,11 @@ export default styled(Post)`
 	border: ${props => props.theme=='dark' ? 'none' : ''} !important;
   }
   .ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
-	border-bottom: ${props => props.theme=='dark' ? '1px #29323C solid' : ''} !important;
+	border-bottom: ${props => props.theme=='dark' ? '1px #4b4b4b solid' : ''} !important;
   }
   .ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab-active{
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
-		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+		border: ${props => props.theme=='dark' ? '1px solid #4b4b4b' : ''} !important;
 		border-bottom: ${props => props.theme=='dark' ? '#909090' : ''} !important;
  	}
   .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{

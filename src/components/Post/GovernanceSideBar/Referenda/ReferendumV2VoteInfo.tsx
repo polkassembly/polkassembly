@@ -159,7 +159,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							: null
 					}
 				</section>
-				<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
+				<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] dark:border-separatorDark mt-[18px] pt-[18px] pb-[14px]'>
 					<button
 						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary dark:text-blue-dark-helper font-medium text-xs leading-[22px]'
 						onClick={() => {
@@ -196,7 +196,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</div>
 						]}
 						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
-						closeIcon={<CloseIcon className="mt-2 text-lightBlue dark:text-blue-dark-medium"/>}
+						closeIcon={<CloseIcon className="mt-2 text-lightBlue dark:text-icon-dark-inactive"/>}
 						title={
 							<div className={`${poppins.variable} ${poppins.className} text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold dark:bg-black dark:font-medium`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold dark:font-medium'>How are votes calculated</span></div>
 						}

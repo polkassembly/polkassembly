@@ -66,6 +66,6 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 };
 export default styled(AccountSelectionForm)`
 .ant-dropdown-trigger{
-	border: 1px solid ${props => props.theme === 'dark' ? '#3B444F' : '#D2D8E0'} !important;
+	border: 1px solid ${props => props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0'} !important;
 }
 `;

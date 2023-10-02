@@ -280,7 +280,7 @@ const Web3Signup: FC<Props> = ({
 		<><div className='flex items-center dark:bg-section-dark-overlay'>
 			<LoginLogo className='ml-6 mr-2' />
 			<h3 className="text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Sign Up'}</h3>
-		</div><hr className='text-[#D2D8E0] dark:bg-[#90909060]'/>
+		</div><hr className='text-[#D2D8E0] dark:text-separatorDark'/>
 		<article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col ">
 			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-1 justify-center">
 				{/* <span>Sign Up</span> */}

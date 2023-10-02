@@ -11,7 +11,11 @@ import { poppins } from 'pages/_app';
 import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 
-import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon, WarningMessageIcon, CloseIcon } from '~src/ui-components/CustomIcons';
+import SlightlyAgainstDarkIcon from '~assets/overall-sentiment/slightly-against-dark.svg';
+import NeutralDarkIcon from '~assets/overall-sentiment/neutral-icon-pink-dark.svg';
+import SlightlyForDarkIcon from '~assets/overall-sentiment/slightlyfor-icon-pink-dark.svg';
+import ForDarkIcon from '~assets/overall-sentiment/for-icon-pink-dark.svg';
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
@@ -19,7 +23,6 @@ import { EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
 import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
 
@@ -192,10 +195,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
 								className={`w-[400px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
-								closeIcon={<CloseCross/>}
+								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 								wrapClassName={className}
 								title={
-									<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-black'>
+									<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] dark:border-separatorDark mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-section-dark-overlay'>
 										<span className='text-bodyBlue font-semibold tracking-[0.0015em] ml-4 text-xl dark:text-white'>Votes</span>
 									</div>
 								}
@@ -272,10 +275,36 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			}
 
 			{sentiment===1 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center  min-[320px]:mr-2'><AgainstIcon className='min-[320px]:items-start' /></Dropdown>}
-			{sentiment===2 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'><SlightlyAgainstIcon  className='min-[320px]:items-start'/></Dropdown>}
-			{sentiment===3 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'><NeutralIcon  className='min-[320px]:items-start' /></Dropdown>}
-			{sentiment===4 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2' ><SlightlyForIcon  className='min-[320px]:items-start'/></Dropdown>}
-			{sentiment===5 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-[20px] mr-[-1px] mb-[-1px] mt-[-2px] text-white  flex justify-center items-center min-[320px]:mr-2'><ForIcon  className='min-[320px]:items-start'/></Dropdown>}
+			{sentiment===2 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'>{
+				theme === 'dark' ?
+					<SlightlyAgainstDarkIcon className='min-[320px]:items-start' />
+					:
+					<SlightlyAgainstIcon className='min-[320px]:items-start' />
+			}
+			</Dropdown>}
+			{sentiment===3 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'>
+				{
+					theme === 'dark' ?
+						<NeutralDarkIcon className='min-[320px]:items-start' />
+						:
+						<NeutralIcon  className='min-[320px]:items-start' />
+				}
+			</Dropdown>}
+			{sentiment===4 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2' >{
+				theme === 'dark' ?
+					<SlightlyForDarkIcon className='min-[320px]:items-start' />
+					:
+					<SlightlyForIcon className='min-[320px]:items-start' />
+			}
+			</Dropdown>}
+			{sentiment===5 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-[20px] mr-[-1px] mb-[-1px] mt-[-2px] text-white flex justify-center items-center min-[320px]:mr-2'>
+				{
+					theme === 'dark' ?
+						<ForDarkIcon className='min-[320px]:items-start' />
+						:
+						<ForIcon className='min-[320px]:items-start' />
+				}
+			</Dropdown>}
 			{commentSource=== 'subsquare' &&
 			<Styled>
 				<HelperTooltip text={<span>This comment is imported from <span className='dark-pink'>Subsqaure</span></span>} placement={'leftTop'} bgColor='#FCE5F2' />

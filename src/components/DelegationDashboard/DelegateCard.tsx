@@ -74,16 +74,16 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		setOpen(true);
 		setAddress(address);
 	};
-	return <div className={`border-solid border-[1px] border-[#D2D8E0] rounded-[6px]  ${delegate?.dataSource === 'nova' ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'} ${className}`}>
+	return <div className={`border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark rounded-[6px]  ${delegate?.dataSource === 'nova' ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'} ${className}`}>
 
-		{delegate?.dataSource === 'nova' && <div className='h-[36px] border-[#3C74E1] border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#e2eafb] dark:bg-blue-300 px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
+		{delegate?.dataSource === 'nova' && <div className='h-[36px] border-[#3C74E1] border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#e2eafb] dark:bg-[#141C2D] px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
 			<NovaWalletIcon/>
 			<span className='text-xs text-blue-light-high dark:text-blue-dark-high font-normal'>Nova Wallet Delegate</span>
 		</div>}
 
 		{
-			delegate?.dataSource === 'parity' && <div className='h-[36px] border-pink_primary border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#FCE5F2] dark:bg-pink_primary px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
-				<ParityTechIcon />
+			delegate?.dataSource === 'parity' && <div className='h-[36px] border-pink_primary border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#FCE5F2] dark:bg-[#33071E] px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
+				<ParityTechIcon className='text-pink_primary'/>
 				<span className='text-xs text-blue-light-high dark:text-blue-dark-high font-normal'>Polkadot Delegate</span>
 			</div>
 		}
@@ -98,12 +98,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
 							return (
 								<SocialLink
-									className='flex items-center justify-center text-xl text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-4'
+									className='flex items-center justify-center text-xl text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] dark:bg-inactiveIconDark rounded-[20px] h-[39px] w-[40px] mt-4'
 									key={index}
 									link={link}
 									disable={!link}
 									type={social}
-									iconClassName={`text-[20px] ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
+									iconClassName={`text-[20px] ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6] dark:text-[#424141]'}`}
 
 								/>
 							);
@@ -125,7 +125,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			</p>
 			{delegate?.bio.length > 100  && <span onClick={() => setOpenReadMore(true)} className='text-[#1B61FF] text-xs flex justify-center items-center mt-1 leading-3 cursor-pointer'>Read more</span>}
 		</div>
-		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
+		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] dark:border-separatorDark'>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high'>
 				<div className='flex gap-1 items-end justify-center'>
 					{formatedBalance(balance.toString(), unit, 2)}
@@ -133,7 +133,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>
 			</div>
-			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold'>
+			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] dark:border-separatorDark text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold'>
 				{delegate?.voted_proposals_count}
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal dark:text-blue-dark-medium'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>(Past 30 days)</span>
 			</div>
@@ -149,7 +149,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			className={`w-[725px] max-md:w-full modal ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			footer={false}
 			wrapClassName={className}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium' />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className={'pt-[20px]'}>
 				<div className='flex justify-between items-center pt-2 pl-8'>
@@ -162,12 +162,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 									const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
 									return (
 										<SocialLink
-											className='flex items-center justify-center text-xl text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-4'
+											className='flex items-center justify-center text-xl text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] dark:bg-inactiveIconDark rounded-[20px] h-[39px] w-[40px] mt-4'
 											key={index}
 											link={link}
 											disable={!link}
 											type={social}
-											iconClassName={`text-[20px] ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
+											iconClassName={`text-[20px] ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6] dark:text-[#424141]'}`}
 
 										/>
 									);
@@ -177,12 +177,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 				</div>
 
-				<div className={'text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-medium pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1 '}>
+				<div className={'text-sm tracking-[0.015em] text-[#576D8B] dark:text-blue-dark-high dark:font-light pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1 '}>
 					<p className ='w-[90%]'>
 						{delegate?.bio ? delegate?.bio : 'No Bio'}
 					</p>
 				</div>
-				<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
+				<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] dark:border-separatorDark'>
 					<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						<div className='flex gap-1 items-end justify-center'>
 							{formatedBalance(balance.toString(), unit, 2)}
@@ -190,7 +190,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						</div>
 						<div className='text-xs font-normal mt-[4px] text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>
 					</div>
-					<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold'>
+					<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] dark:border-separatorDark text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold'>
 						{delegate?.voted_proposals_count}
 						<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal dark:text-blue-dark-medium'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>(Past 30 days)</span>
 					</div>

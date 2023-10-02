@@ -106,7 +106,7 @@ const Disable2FA: FC<{className?: string , theme?: string}> = ({ className, them
 			<Button
 				onClick={() => setShowModal(true)}
 				htmlType="submit"
-				className='w-full bg-[#F6F7F9] dark:bg-section-dark-container text-blue-light-high dark:text-blue-dark-high text-left h-full p-[16px] border-[#D2D8E0]'
+				className='w-full bg-[#F6F7F9] dark:bg-section-dark-container text-blue-light-high dark:text-blue-dark-high text-left h-full p-[16px] border-[#D2D8E0] dark:border-separatorDark'
 			>
 				<span className='flex align-center text-[16px] font-medium dark:text-blue-dark-high'>Disable Two Factor Authentication <KeyboardDownIcon/></span>
 				<span className='block text-[14px] dark:text-blue-dark-high'>Disabling two-factor authentication may compromise the security of your account.</span>

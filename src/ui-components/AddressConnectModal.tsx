@@ -25,7 +25,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
 import { EAddressOtherTextType } from './Address';
 import ConnectAddressIcon from '~assets/icons/connect-address.svg';
-import CloseIcon from '~assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from './QueueNotification';
 import cleanError from '~src/util/cleanError';
@@ -447,7 +447,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		}
 		closable = {closable}
 		onCancel={() => setOpen(!closable)}
-		closeIcon={<CloseIcon/>}
+		closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>
 			<div className='flex flex-col'>
@@ -492,7 +492,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
 									<WalletButton
-										className='text-sm text-blue-light-high dark:text-blue-dark-high font-semibold border-[#D2D8E0]'
+										className='text-sm text-blue-light-high dark:text-blue-dark-high font-semibold border-[#D2D8E0] dark:border-separatorDark'
 										onClick={() => {
 											setShowMultisig(!showMultisig);
 										}}

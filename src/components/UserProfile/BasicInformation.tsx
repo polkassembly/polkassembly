@@ -90,7 +90,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					</p>
 					<Input
 						placeholder='Profile Picture URL'
-						className='rounded-[4px] border border-solid h-10 border-[#d2d8e0] text-[#7788a0] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm -mt-2 dark:border-[#3B444F] border-[1px]'
+						className='rounded-[4px] border border-solid h-10 border-[#D2D8E0] dark:border-separatorDark text-[#7788a0] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm -mt-2 dark:border-separatorDark border-[1px]'
 						size='large'
 						type='url'
 						onChange={(e) => setProfile((prev) => {
@@ -107,7 +107,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			<div className='flex gap-x-6'>
 				<div className='hidden md:block max-w-[103px] w-full'></div>
 				<div className='flex-1'>
-					<Divider className='my-6 border-[#d2d8e0] dark:border-[#90909070]'/>
+					<Divider className='my-6 border-[#D2D8E0] dark:border-separatorDark'/>
 					<article>
 						<label
 							className='text-sm cursor-pointer font-medium text-[#485F7D] dark:text-blue-dark-medium'
@@ -126,13 +126,13 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								};
 							})}
 							disabled={loading}
-							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-[#3B444F] border-[1px]"
+							className="border border-solid rounded-[4px] border-[#D2D8E0] text-[#7788a0] h-10 px-[14px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-separatorDark border-[1px]"
 						/>
 					</article>
 					<article className='text-sm cursor-pointer mt-4 text-[#485F7D] dark:text-blue-dark-medium' >
 						<label className='text-sm text-[#485F7D] font-medium mb-0 dark:text-blue-dark-medium'>Username</label>
 						<Input
-							className='rounded-[4px] border border-solid border-[#d2d8e0] text-[#7788a0] h-10 text-sm px-[14px] py-1 dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-[#3B444F] border-[1px]'
+							className='rounded-[4px] border border-solid border-[#D2D8E0] text-[#7788a0] h-10 text-sm px-[14px] py-1 dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-separatorDark border-[1px]'
 							placeholder='eg. John'
 							size='large'
 							type='text'
@@ -159,7 +159,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								};
 							})}
 							disabled={loading}
-							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] px-[14px] py-[10px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-[#3B444F] border-[1px]"
+							className="border border-solid rounded-[4px] border-[#D2D8E0] dark:border-separatorDark text-[#7788a0] px-[14px] py-[10px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm border-[1px]"
 						/>
 					</article>
 					<article className='mt-4'>
@@ -177,7 +177,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								placeholder='eg. Council Member, Voter, etc.'
 								onChange={(e) => setNewBadge(e.target.value)}
 								onKeyPress={(e: any) => handleNewBadgeKeyPress(e)}
-								className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px] mt-[2px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm dark:border-[#3B444F] border-[1px]"
+								className="border border-solid rounded-[4px] border-[#D2D8E0] dark:border-separatorDark text-[#7788a0] h-10 px-[14px] mt-[2px] dark:bg-transparent dark:text-white dark:placeholder-white dark:focus:border-[#91054F] text-sm border-[1px]"
 								disabled={loading}
 							/>
 							<Button

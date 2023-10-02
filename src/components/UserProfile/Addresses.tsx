@@ -48,7 +48,7 @@ const Addresses: FC<IAddressesProps> = (props) => {
 						<h3 className='font-semibold text-xl text-[#1D2632]'>Addresses</h3>
 					}
 					closeIcon={
-						<CloseOutlined className='text-[#485F7D] text-sm' />
+						<CloseOutlined className='text-[#485F7D] text-sm dark:text-icon-dark-inactive' />
 					}
 					onCancel={toggleOpen}
 					open={open}

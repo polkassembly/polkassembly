@@ -157,7 +157,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 					</span>
 				</div>
 			</div>
-			<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
+			<Divider type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
 			<div className='flex gap-4 py-2 justify-start max-md:gap-2'>
 				<div className='h-[71px] flex flex-col py-2 gap-1'>
 					<div className='text-2xl font-semibold text-white tracking-[0.0015em] gap-1'>
@@ -191,7 +191,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				withBalance={false}
 				className='text-[#788698] text-sm cursor-pointer'
 				onAccountChange={setAddress}
-				inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
+				inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] dark:border-separatorDarkbg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
 				isSwitchButton={true}
 				setSwitchModalOpen={setOpenModal}
 				withoutInfo={true}

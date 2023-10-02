@@ -294,12 +294,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			}
 			<Modal
 				maskClosable={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}` }
 				wrapClassName={className}
 				title={
 					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay text-[20px] font-semibold mb-6 dark:font-medium'>
-						<DelegateModalIcon className='mr-2 text-lightBlue dark:text-white'/>Delegate
+						<DelegateModalIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive'/>Delegate
 					</div>
 				}
 				open={open ? open : defaultOpen}
@@ -307,7 +307,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				confirmLoading={loading}
 				onCancel={handleCloseModal}
 				footer={
-					<div className='flex items-center justify-end -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-1'>
+					<div className='flex items-center justify-end -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark px-6 pt-4 gap-1'>
 						<Button key="back" disabled={loading} className='h-[40px] w-[134px] rounded-[4px] dark:bg-transparent dark:text-pink_primary dark:border-pink_primary' onClick={() => setOpen?.(false)}>
 										Cancel
 						</Button>
@@ -445,11 +445,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										</Popover>
 									</div>
 									{ <div className='flex flex-wrap gap-2 mt-0 mb-6 ' >
-										{checkedTrack && <div key={checkedTrack?.trackId} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
+										{checkedTrack && <div key={checkedTrack?.trackId} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] dark:border-separatorDark rounded-[20px] flex justify-center gap-2 items-center'>
 											{checkedTrack?.name}
 										</div>}
 										{checkedList.length> 0 && checkedList.filter((item) => item !== checkedTrack?.name).map((list, index) => (
-											<div key={index} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
+											<div key={index} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] dark:border-separatorDark rounded-[20px] flex justify-center gap-2 items-center'>
 												{list}
 												<span onClick={() => handleClose(String(list))} className='flex justify-center items-center'><CrossIcon/></span>
 											</div>
@@ -465,7 +465,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				</Spin>
 
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isMultisig={isMultisig} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} title={isMultisig? 'Delegation with Polkasafe initiated': ' Delegated'}/>
+			<DelegationSuccessPopup theme={theme} open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isMultisig={isMultisig} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} title={isMultisig? 'Delegation with Polkasafe initiated': ' Delegated'}/>
 		</>
 	);
 };

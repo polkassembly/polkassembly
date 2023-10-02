@@ -49,7 +49,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 				<div className='text-pink_primary text-sm flex justify-start cursor-pointer -mt-2' onClick={() => handleExpand(index, EExpandType.Expanded)}>
 					<span className='text-xs'>See Details</span></div>
 			</div>
-				: <div className={`py-3 px-3 bg-white dark:bg-section-dark-overlay rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expanded && 'active-timeline'}`}>
+				: <div className={`py-3 px-3 bg-white dark:bg-section-dark-overlay rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] dark:border-separatorDark ml-3 max-sm:w-full max-sm:ml-0 ${item?.expanded && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>

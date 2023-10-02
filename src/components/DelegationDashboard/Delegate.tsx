@@ -97,7 +97,7 @@ const Delegate = ( { className, trackDetails, disabled , theme }: Props ) => {
 			</h4>
 
 			<div className='flex gap-4 items-center'>
-				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full dark:border-[#3B444F]'>
+				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full dark:border-separatorDark'>
 
 					<Input disabled={disabled} placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none dark:bg-transparent dark:text-white'/>
 

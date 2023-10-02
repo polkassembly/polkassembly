@@ -13,7 +13,7 @@ import { UserDetailsContextType } from '../types';
  * @param token the token received from the authentication header
  */
 export const storeLocalStorageToken = (token: string) => {
-	if(typeof window !== 'undefined'){
+	if (typeof window !== 'undefined') {
 		localStorage.setItem('Authorization', token);
 	}
 };
@@ -22,8 +22,8 @@ export const storeLocalStorageToken = (token: string) => {
  * Get the the jwt from localstorage
  * if any. It might be expired
  */
-export const getLocalStorageToken = (): string|null => {
-	if(typeof window !== 'undefined'){
+export const getLocalStorageToken = (): string | null => {
+	if (typeof window !== 'undefined') {
 		return localStorage.getItem('Authorization') || null;
 	}
 
@@ -35,7 +35,7 @@ export const getLocalStorageToken = (): string|null => {
  * if any.
  */
 export const deleteLocalStorageToken = (): void => {
-	if(typeof window !== 'undefined'){
+	if (typeof window !== 'undefined') {
 		return localStorage.removeItem('Authorization');
 	}
 };
@@ -93,6 +93,9 @@ export const logout = (setUserDetailsContextState: UserDetailsContextType['setUs
 	localStorage.removeItem('delegationWallet');
 	localStorage.removeItem('loginWallet');
 	localStorage.removeItem('loginAddress');
+	localStorage.removeItem('identityWallet');
+	localStorage.removeItem('identityAddress');
+	localStorage.removeItem('identityForm');
 
 	setUserDetailsContextState((prevState) => {
 		return {
@@ -105,13 +108,12 @@ export const logout = (setUserDetailsContextState: UserDetailsContextType['setUs
 			id: null,
 			loginAddress: '',
 			loginWallet: null,
-			networkPreferences:{
-				channelPreferences:{},
-				triggerPreferences:{}
+			networkPreferences: {
+				channelPreferences: {},
+				triggerPreferences: {}
 			},
 			username: null,
 			web3signup: false
 		};
 	});
 };
-

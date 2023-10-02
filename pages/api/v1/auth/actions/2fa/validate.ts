@@ -22,11 +22,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	if (!userDoc.exists) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	const user = userDoc.data() as User;
-	if(!user.two_factor_auth?.enabled || !user.two_factor_auth?.base32_secret) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_NOT_INIT });
+	if (!user.two_factor_auth?.enabled || !user.two_factor_auth?.base32_secret) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_NOT_INIT });
 
 	const stored_tfa_token = await redisGet(get2FAKey(Number(user_id)));
-	if(!stored_tfa_token) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_TOKEN_EXPIRED });
-	if(stored_tfa_token !== tfa_token) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_INVALID_TOKEN });
+	if (!stored_tfa_token) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_TOKEN_EXPIRED });
+	if (stored_tfa_token !== tfa_token) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_INVALID_TOKEN });
 
 	const totp = new TOTP({
 		algorithm: 'SHA1',
@@ -37,8 +37,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		secret: user.two_factor_auth?.base32_secret
 	});
 
-	const isValidToken = totp.validate({ token: String(auth_code).replaceAll(/\s/g,''), window: 1 }) !== null;
-	if(!isValidToken) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_INVALID_AUTH_CODE });
+	const isValidToken = totp.validate({ token: String(auth_code).replaceAll(/\s/g, ''), window: 1 }) !== null;
+	if (!isValidToken) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_INVALID_AUTH_CODE });
 
 	const updatedJWT = await authServiceInstance.getSignedToken({
 		...user,
@@ -48,7 +48,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	await redisDel(get2FAKey(Number(user_id)));
 
 	return res.status(200).json({ token: updatedJWT });
-
 }
 
 export default withErrorHandling(handler);

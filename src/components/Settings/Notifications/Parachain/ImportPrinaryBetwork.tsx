@@ -13,10 +13,10 @@ const ImportPrimaryNetworkSettingModal = ({
 	onCancel,
 	primaryNetwork
 }: {
-    open: boolean;
-    onConfirm: () => void;
-    onCancel: () => void;
-    primaryNetwork: string;
+	open: boolean;
+	onConfirm: () => void;
+	onCancel: () => void;
+	primaryNetwork: string;
 }) => {
 	return (
 		<Modal
@@ -29,49 +29,39 @@ const ImportPrimaryNetworkSettingModal = ({
 				<Button
 					key='1'
 					onClick={onCancel}
-					className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+					className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
 				>
-                    Cancel
+					Cancel
 				</Button>,
 				<Button
 					onClick={onConfirm}
 					key='2'
-					className='h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+					className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
 				>
-                    Confirm
+					Confirm
 				</Button>
 			]}
 		>
-			<div className='flex gap-[10px] flex-wrap items-center mb-6'>
+			<div className='mb-6 flex flex-wrap items-center gap-[10px]'>
 				<Tag
 					className={
-						'items-center text-navBlue rounded-[34px] px-[12px] py-[8px] border-solid border bg-[#FEF2F8] border-[#E5007A] cursor-pointer hover:bg-[#FEF2F8] max-w-[200px] pb-[5px]'
+						'max-w-[200px] cursor-pointer items-center rounded-[34px] border border-solid border-[#E5007A] bg-[#FEF2F8] px-[12px] py-[8px] pb-[5px] text-navBlue hover:bg-[#FEF2F8]'
 					}
 				>
 					<Image
-						className='w-[20px] h-[20px] rounded-full -mt-[10px]'
+						className='-mt-[10px] h-[20px] w-[20px] rounded-full'
 						src={chainProperties[primaryNetwork].logo.src}
 						alt='Logo'
 					/>
-					<span
-						className={
-							'items-center justify-center ml-[10px] mr-[12px] font-medium text-[#243A57] text-sm leading-[18px] tracking-[0.02em]'
-						}
-					>
-						<span className='inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0'>
-							{primaryNetwork}
-						</span>
+					<span className={'ml-[10px] mr-[12px] items-center justify-center text-sm font-medium leading-[18px] tracking-[0.02em] text-[#243A57]'}>
+						<span className='m-0 inline-block max-w-[100px] overflow-hidden text-ellipsis capitalize'>{primaryNetwork}</span>
 					</span>
 				</Tag>
-				<p className='font-medium text-[#243A57] text-[16px] m-0'>
-                    is set as your Primary Network.
-				</p>
+				<p className='m-0 text-[16px] font-medium text-[#243A57]'>is set as your Primary Network.</p>
 			</div>
-			<p className='text-[16px] font-medium text-[#243A57]'>
-                Are you sure you want to import your primary network settings to all selected networks?
-			</p>
-			<div className='mr-[-24px] ml-[-24px]'>
-				<Divider className='my-4'/>
+			<p className='text-[16px] font-medium text-[#243A57]'>Are you sure you want to import your primary network settings to all selected networks?</p>
+			<div className='ml-[-24px] mr-[-24px]'>
+				<Divider className='my-4' />
 			</div>
 		</Modal>
 	);

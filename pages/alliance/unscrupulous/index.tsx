@@ -6,9 +6,14 @@ import React from 'react';
 import AllianceUnscrupulous from 'src/components/Listing/Members/AllianceUnscrupulous';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return {
 		props: {
 			network
@@ -16,16 +21,20 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	};
 };
 
-const Unscrupulous = ({ network }:{network:string}) => {
+const Unscrupulous = ({ network }: { network: string }) => {
 	return (
 		<>
-			<SEOHead title={'Alliance Unscrupulous'} network={network}/>
+			<SEOHead
+				title={'Alliance Unscrupulous'}
+				network={network}
+			/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>Alliance</h1>
 
 			{/* Intro and Create Post Button */}
-			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-					The Alliance Pallet provides a collective that curates a list of accounts and URLs, deemed by the voting members to be unscrupulous actors. The Alliance provides a set of ethics against bad behavior, and provides recognition and influence for those teams that contribute something back to the ecosystem.
+			<div className='flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md md:p-8 md:text-base'>
+					The Alliance Pallet provides a collective that curates a list of accounts and URLs, deemed by the voting members to be unscrupulous actors. The Alliance provides a set of
+					ethics against bad behavior, and provides recognition and influence for those teams that contribute something back to the ecosystem.
 				</p>
 			</div>
 			<AllianceUnscrupulous className='mt-8' />

@@ -20,10 +20,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { pollId, postId, userId, blockEnd, pollType, proposalType } = req.body;
-	if(!pollId || isNaN(postId) || !userId || !blockEnd) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!pollId || isNaN(postId) || !userId || !blockEnd) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type of the name "${proposalType}" does not exist.` });
@@ -32,10 +32,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if (!pollType || !isPollTypeValid(strPollType)) return res.status(400).json({ message: `The pollType "${pollType}" is invalid` });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const updated: any = {};
 	let block_end = 0;
@@ -57,14 +57,17 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	const pollDoc = await pollRef.get();
 
-	if(!pollDoc.exists) return res.status(404).json({ message: 'Poll not found' });
+	if (!pollDoc.exists) return res.status(404).json({ message: 'Poll not found' });
 
-	pollRef.update(updated).then(() => {
-		return res.status(200).json({ message: 'Poll edited.' });
-	}).catch((error) => {
-		console.error('Error editing poll : ', error);
-		return res.status(500).json({ message: 'Error in editing poll' });
-	});
+	pollRef
+		.update(updated)
+		.then(() => {
+			return res.status(200).json({ message: 'Poll edited.' });
+		})
+		.catch((error) => {
+			console.error('Error editing poll : ', error);
+			return res.status(500).json({ message: 'Error in editing poll' });
+		});
 };
 
 export default withErrorHandling(handler);

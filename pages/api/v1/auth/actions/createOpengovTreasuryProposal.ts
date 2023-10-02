@@ -17,20 +17,20 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { content, title, postId, userId, proposerAddress, tags, discussionId } = req.body;
-	if(!content || !title || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!content || !title || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	if(isNaN(Number(userId)) || isNaN(Number(postId)))  return res.status(400).json({ message: 'Invalid parameters in request body' });
+	if (isNaN(Number(userId)) || isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid parameters in request body' });
 
-	if(discussionId && isNaN(discussionId)) return res.status(400).json({ message: messages.INVALID_DISCUSSION_ID });
+	if (discussionId && isNaN(discussionId)) return res.status(400).json({ message: messages.INVALID_DISCUSSION_ID });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user || user.id != Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user || user.id != Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2).doc(String(postId));
 
@@ -46,12 +46,15 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		createdOnPolkassembly: true,
 		created_at: current_datetime,
 		id: postId,
+		isDeleted: false,
 		last_comment_at: current_datetime,
 		last_edited_at: current_datetime,
-		post_link: discussionId ? {
-			id: Number(discussionId),
-			type: ProposalType.DISCUSSIONS
-		} : null,
+		post_link: discussionId
+			? {
+					id: Number(discussionId),
+					type: ProposalType.DISCUSSIONS
+			  }
+			: null,
 		proposer_address: proposerAddress,
 		tags: tags,
 		title,
@@ -59,13 +62,16 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		user_id: user.id
 	};
 
-	await postDocRef.set(newPost).then(() => {
-		return res.status(200).json({ message: messages.TREASURY_PROPOSAL_CREATION_SUCCESS, post_id: postId });
-	}).catch((error) => {
-		// The document probably doesn't exist.
-		console.error('Error saving post: ', error);
-		return res.status(500).json({ message: messages.TREASURY_PROPOSAL_CREATION_ERROR });
-	});
+	await postDocRef
+		.set(newPost)
+		.then(() => {
+			return res.status(200).json({ message: messages.TREASURY_PROPOSAL_CREATION_SUCCESS, post_id: postId });
+		})
+		.catch((error) => {
+			// The document probably doesn't exist.
+			console.error('Error saving post: ', error);
+			return res.status(500).json({ message: messages.TREASURY_PROPOSAL_CREATION_ERROR });
+		});
 };
 
 export default withErrorHandling(handler);

@@ -492,6 +492,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 														address={address}
 														onAccountChange={onAccountChange}
 														linkAddressTextDisabled
+														className='border-red-100 border-solid'
 													/>
 												)}
 											</div>

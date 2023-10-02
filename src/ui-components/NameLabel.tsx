@@ -18,10 +18,13 @@ interface Props {
 
 const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, usernameClassName, disableAddressClick = false, truncateUsername }: Props) => {
 	return (
-		<div className={`${className}`}>
+		<div
+			className={`${className}`}
+			title={username}
+		>
 			{!defaultAddress ? (
 				<span
-					className={`username mr-1.5 font-semibold text-bodyBlue ${!disableAddressClick ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+					className={`username mr-1.5 font-semibold text-bodyBlue ${!disableAddressClick ? 'cursor-pointer hover:underline' : 'cursor-not-allowed'}`}
 					onClick={(e) => {
 						e.stopPropagation();
 						e.preventDefault();

@@ -227,9 +227,10 @@ const Address = (props: Props) => {
 	const addressSuffix = extensionName || mainDisplay;
 
 	const handleClick = (event: any) => {
-		if (disableAddressClick) return;
 		event.stopPropagation();
 		event.preventDefault();
+
+		if (disableAddressClick) return;
 
 		window.open(handleRedirectLink(), '_blank');
 	};
@@ -269,7 +270,7 @@ const Address = (props: Props) => {
 								/>
 							))}
 
-						<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick && 'hover:underline'}`}>
+						<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
 							<span
 								title={mainDisplay || encodedAddr}
 								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'}`}
@@ -282,7 +283,7 @@ const Address = (props: Props) => {
 				) : extensionName || mainDisplay ? (
 					<div className='ml-0.5 font-semibold text-bodyBlue'>
 						{!disableHeader && (
-							<div className=''>
+							<div>
 								<div className='flex items-center'>
 									{kiltName ||
 										(identity && mainDisplay && (
@@ -294,7 +295,7 @@ const Address = (props: Props) => {
 											/>
 										))}
 									<Space className={'header'}>
-										<span className={'flex flex-col font-semibold text-bodyBlue'}>
+										<span className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
 											{addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 											{!extensionName && sub && isSubVisible && (
 												<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
@@ -304,7 +305,9 @@ const Address = (props: Props) => {
 								</div>
 							</div>
 						)}
-						<div className={`${addressClassName} text-xs font-normal`}>{!showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}</div>
+						<div className={`${addressClassName} ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} text-xs font-normal`}>
+							{!showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+						</div>
 					</div>
 				) : (
 					<div className={`${addressClassName} text-xs font-semibold`}>

@@ -85,6 +85,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 	return (
 		<Modal
 			open={editModalOpen}
+			zIndex={999}
 			onCancel={() => setEditModalOpen(false)}
 			footer={[
 				<div

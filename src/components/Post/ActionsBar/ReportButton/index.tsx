@@ -174,12 +174,12 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				{isDeleteModal ? <span className={`${className} break-keep`}>Delete</span> : <span className={`${className} break-keep`}>Report</span>}
 			</button>
 			<Modal
+				zIndex={999}
 				title={isDeleteModal ? 'Delete' : 'Report'}
 				open={showModal}
 				onOk={isDeleteModal ? handleDelete : handleReport}
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
-				zIndex={1067}
 				footer={[
 					<Button
 						key='back'

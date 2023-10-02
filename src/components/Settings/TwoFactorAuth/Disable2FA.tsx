@@ -68,6 +68,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 		<>
 			<Modal
 				className={`${className} ${poppins.variable} ${poppins.className}`}
+				zIndex={999}
 				closable={false}
 				title={Title}
 				open={showModal}

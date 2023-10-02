@@ -350,7 +350,7 @@ const TreasuryProposalFormButton = ({
 				onCancel={() => setModalOpen(false)}
 				centered
 				wrapClassName='p-5 before:h-0 md:p-10'
-				zIndex={1002}
+				zIndex={999}
 				title='Create Treasury Proposal'
 				footer={[
 					<Button

@@ -73,6 +73,7 @@ const PdfViewer: FC<IPdfViewerProps> = (props) => {
 			</button>
 			<Modal
 				open={open}
+				zIndex={999}
 				onCancel={() => setOpen(false)}
 				footer={false}
 				className='w-full lg:max-w-[1024px]'

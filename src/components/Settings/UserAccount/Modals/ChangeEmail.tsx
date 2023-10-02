@@ -58,6 +58,7 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 					<Divider />
 				</div>
 			}
+			zIndex={999}
 			open={open}
 			closable
 			className='min-w-[350px] md:min-w-[600px]'

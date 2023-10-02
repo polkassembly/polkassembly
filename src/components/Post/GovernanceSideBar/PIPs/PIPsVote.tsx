@@ -371,6 +371,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					{lastVote === null || lastVote === undefined ? 'Cast Vote Now' : 'Cast Vote Again'}
 				</Button>
 				<Modal
+					zIndex={999}
 					open={showModal}
 					onCancel={() => setShowModal(false)}
 					footer={false}

@@ -44,6 +44,7 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 			closable
 			onCancel={onClose}
 			footer={null}
+			zIndex={999}
 		>
 			<div className=''>
 				<ol>

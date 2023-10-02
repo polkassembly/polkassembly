@@ -64,6 +64,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 				</div>
 			}
 			open={open}
+			zIndex={999}
 			closable
 			className='min-w-[350px] md:min-w-[600px]'
 			onCancel={onCancel}

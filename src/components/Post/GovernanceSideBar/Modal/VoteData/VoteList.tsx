@@ -388,6 +388,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			</Spin>
 			{delegationVoteModal.isOpen && delegationVoteModal.voter && decision && (
 				<Modal
+					zIndex={999}
 					title={
 						<div className='ml-[-24px] mr-[-24px] text-[18px]'>
 							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>

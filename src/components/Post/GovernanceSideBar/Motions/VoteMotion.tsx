@@ -212,6 +212,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			</Button>
 
 			<Modal
+				zIndex={999}
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={null}

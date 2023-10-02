@@ -88,6 +88,7 @@ const VoteInitiatedModal = ({
 	return (
 		<Modal
 			open={open}
+			zIndex={999}
 			className={`${poppins.variable} ${poppins.className} delegate w-[604px]`}
 			wrapClassName={className}
 			closeIcon={<CloseIcon onClick={() => setPosted(true)} />}

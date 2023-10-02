@@ -37,11 +37,11 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 		<div>
 			<Modal
 				open={modalOpen}
+				zIndex={999}
 				className={`${poppins.variable} ${poppins.className} text w-[570px] max-w-full shrink-0 max-sm:w-[100%]`}
 				onCancel={() => setModalOpen(false)}
 				closeIcon={<CloseIcon />}
 				centered
-				zIndex={1002}
 				wrapClassName={className}
 				footer={
 					<div className='center-aligned mt-[32px] flex flex-col items-center justify-center gap-4 pb-8'>

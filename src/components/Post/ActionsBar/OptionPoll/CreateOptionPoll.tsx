@@ -149,6 +149,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 			</Button>
 
 			<Modal
+				zIndex={999}
 				title='Create Poll'
 				open={showModal}
 				onOk={handleCreate}

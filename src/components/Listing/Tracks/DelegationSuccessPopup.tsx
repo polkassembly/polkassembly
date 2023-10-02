@@ -78,7 +78,7 @@ const DelegationSuccessPopup = ({
 
 	return (
 		<Modal
-			zIndex={100000}
+			zIndex={999}
 			open={open}
 			className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
 			wrapClassName={className}

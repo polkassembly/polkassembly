@@ -133,6 +133,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 	return (
 		<Modal
 			closable={false}
+			zIndex={999}
 			title={
 				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
 					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Proxy address</span>

@@ -534,6 +534,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			</div>
 			<Modal
 				open={tagsModal}
+				zIndex={999}
 				onCancel={(e) => {
 					e.stopPropagation();
 					e.preventDefault();

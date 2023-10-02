@@ -717,6 +717,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 			<Footer />
 			<Modal
+				zIndex={999}
 				open={identityMobileModal}
 				footer={false}
 				closeIcon={<CloseIcon />}

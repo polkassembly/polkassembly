@@ -485,6 +485,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			footer={false}
 			className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} `}
 			closeIcon={<CloseIcon />}
+			zIndex={999}
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input

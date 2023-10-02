@@ -436,6 +436,7 @@ const AddressConnectModal = ({
 
 	return (
 		<Modal
+			zIndex={999}
 			wrapClassName={className}
 			className={`${poppins.className} ${poppins.variable} radius`}
 			open={open}

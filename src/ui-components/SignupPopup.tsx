@@ -26,6 +26,7 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 			open={modalOpen}
 			footer={false}
 			closable={closable}
+			zIndex={999}
 			maskClosable={closable}
 			wrapClassName={className}
 			className={`${poppins.variable} ${poppins.className} padding-0 max-w-full  shrink-0`}

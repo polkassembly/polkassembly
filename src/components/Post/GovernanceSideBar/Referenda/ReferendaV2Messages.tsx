@@ -319,6 +319,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 
 			<Modal
 				open={open}
+				zIndex={999}
 				title={
 					<div className='flex items-center justify-between gap-x-5 px-2 py-3'>
 						<h3 className='m-0 p-0 text-xl font-medium leading-[24px] tracking-[0.0015em] text-bodyBlue'>Status</h3>

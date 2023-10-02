@@ -75,6 +75,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 				</div>
 			}
 			open={open}
+			zIndex={999}
 			closable
 			className='min-w-[350px] md:min-w-[600px]'
 			onCancel={onCancel}

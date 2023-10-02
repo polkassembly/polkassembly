@@ -113,6 +113,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 				/>
 
 				<Modal
+					zIndex={999}
 					open={Boolean(modalArgs)}
 					title={'Arguments'}
 					onOk={() => setModalArgs(null)}

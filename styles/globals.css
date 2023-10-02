@@ -483,12 +483,6 @@ color: var(--lightBlue) !important;
 	margin-top: 14px !important;
 }
 
-@media (max-width: 1023px) and (min-width: 319px) {
-  .navbar-container {
-    z-index: 10000 !important;
-  }
-}
-
 @media (max-width: 468px) and (min-width: 319px) {
   .ant-menu-root > li:first-child {
     height: 2px !important;
@@ -500,3 +494,9 @@ color: var(--lightBlue) !important;
     display: none !important;
   }
 }  
+.ant-modal-root .ant-modal-mask{
+z-index: 1050 !important;
+}
+.ant-modal-root .ant-modal-wrap{
+  z-index: 1052 !important;
+}

@@ -35,7 +35,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const userData: any = addressDoc.data();
 	const userId = userData?.user_id;
 
-	if (userId < 0 || isNaN(userId)) return res.status(403).json({ message: `${messages.UNAUTHORISED}dsdsa` });
+	if (userId < 0 || isNaN(userId)) return res.status(403).json({ message: `${messages.UNAUTHORISED}` });
 
 	const batch = firestore_db.batch();
 

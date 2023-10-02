@@ -18,7 +18,8 @@ import { ACTIONS } from './Reducer/action';
 import { INotificationObject } from './types';
 import { networks } from './Parachain/utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-
+import { network as AllNetworks } from '~src/global/networkConstants';
+import PipNotification from './PIP/Pip';
 const getAllNetworks = (network: string) => {
 	for (const category of Object.keys(networks)) {
 		const chains = networks[category];
@@ -258,16 +259,27 @@ export default function Notifications({ network }: { network: string }) {
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
 			/>
-			<Gov1Notification
-				userNotification={networkPreferences.triggerPreferences[network]}
-				options={notificationPreferences.gov1Post}
-				dispatch={dispatch}
-				onSetNotification={handleCurrentNetworkNotifications}
-			/>
-			{Object.keys(networkTrackInfo).includes(network) && (
-				<OpenGovNotification
+			{network !== AllNetworks.POLYMESH ? (
+				<>
+					<Gov1Notification
+						userNotification={networkPreferences.triggerPreferences[network]}
+						options={notificationPreferences.gov1Post}
+						dispatch={dispatch}
+						onSetNotification={handleCurrentNetworkNotifications}
+					/>
+					{Object.keys(networkTrackInfo).includes(network) && (
+						<OpenGovNotification
+							userNotification={networkPreferences.triggerPreferences[network]}
+							options={notificationPreferences.openGov}
+							dispatch={dispatch}
+							onSetNotification={handleCurrentNetworkNotifications}
+						/>
+					)}
+				</>
+			) : (
+				<PipNotification
 					userNotification={networkPreferences.triggerPreferences[network]}
-					options={notificationPreferences.openGov}
+					options={notificationPreferences.pipNotification}
 					dispatch={dispatch}
 					onSetNotification={handleCurrentNetworkNotifications}
 				/>

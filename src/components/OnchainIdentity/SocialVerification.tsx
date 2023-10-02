@@ -274,7 +274,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	const handleProceedDisabled = () => {
 		let socialsCount = 0;
 		let verifiedCount = 0;
-		Object.entries(socials).forEach(([, value]) => {
+		Object?.values(socials).forEach((value) => {
 			if (value?.value) {
 				socialsCount += 1;
 			}

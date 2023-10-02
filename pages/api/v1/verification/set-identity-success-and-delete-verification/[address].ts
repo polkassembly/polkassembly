@@ -18,7 +18,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	}
 	const { address: userAddress } = req.query;
 
-	if (userAddress || typeof userAddress !== 'string') return res.status(400).json({ message: 'Invalid user address in request body' });
+	if (!userAddress || typeof userAddress !== 'string') return res.status(400).json({ message: 'Invalid user address in request body' });
 
 	const token = getTokenFromReq(req);
 	if (!token || token !== process.env.IDENTITY_JUDGEMENT_AUTH) return res.status(403).json({ message: messages.UNAUTHORISED });
@@ -41,9 +41,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		return res.status(404).json({ message: `No user found with the address '${userAddress}'.` });
 	}
 	const userData: any = userDoc.data();
-	const userId = userData.user_id;
+	const userId = userData?.user_id;
 
-	if (!userId) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (userId < 0 || isNaN(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const batch = firestore_db.batch();
 

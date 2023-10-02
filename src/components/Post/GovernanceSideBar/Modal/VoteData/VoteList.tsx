@@ -144,23 +144,25 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const getReferendumV2VoteInfo = useCallback(async () => {
 		if (!api || !apiReady || !network) return;
-		const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
-		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
-		if (parsedReferendumInfo?.ongoing?.tally) {
-			setTallyData({
-				abstain:
-					typeof parsedReferendumInfo.ongoing.tally.abstain === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString()
-						: new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
-				ayes:
-					typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString()
-						: new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
-				nays:
-					typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString()
-						: new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
-			});
+		if (isReferendum2) {
+			const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
+			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
+			if (parsedReferendumInfo?.ongoing?.tally) {
+				setTallyData({
+					abstain:
+						typeof parsedReferendumInfo.ongoing.tally.abstain === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
+					ayes:
+						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
+					nays:
+						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString()
+							: new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
+				});
+			}
 		} else {
 			setTallyData({
 				abstain: new BN(tally?.abstain || 0, 'hex').toString(),
@@ -168,7 +170,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				nays: new BN(tally?.nays || 0, 'hex').toString()
 			});
 		}
-	}, [api, apiReady, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]);
+	}, [api, apiReady, isReferendum2, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -245,9 +247,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</div>
 							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-									<div className={`${isReferendum2 ? 'w-[190px]' : 'w-[250px]'} text-sm font-medium text-lightBlue  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+									<div className={`w-[190px] text-sm font-medium text-lightBlue  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									<div
-										className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]' : ''}`}
+										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -260,7 +262,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
-											className={`${isReferendum2 ? 'w-[110px]' : 'w-[150px]'} flex cursor-pointer items-center gap-1 text-lightBlue`}
+											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue'}
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -272,30 +274,29 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />
 										</div>
 									) : null}
-									{isReferendum2 && (
-										<div className='flex w-[120px] items-center gap-1 text-lightBlue'>
-											<span
-												className='flex cursor-pointer'
-												onClick={() => {
-													handleSortByClick({
-														key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
-													});
-													setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
-												}}
+
+									<div className='flex w-[120px] items-center gap-1 text-lightBlue'>
+										<span
+											className='flex cursor-pointer'
+											onClick={() => {
+												handleSortByClick({
+													key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
+												});
+												setOrderBy((prev) => ({ ...sortedCheck, votingIsAsc: !prev.votingIsAsc }));
+											}}
+										>
+											Voting Power
+											<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
+										</span>
+										<span>
+											<Tooltip
+												color='#E5007A'
+												title='Vote Power for delegated votes is the self vote power + delegated vote power.'
 											>
-												Voting Power
-												<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
-											</span>
-											<span>
-												<Tooltip
-													color='#E5007A'
-													title='Vote Power for delegated votes is the self vote power + delegated vote power.'
-												>
-													<InfoCircleOutlined className='text-xs text-lightBlue' />
-												</Tooltip>
-											</span>
-										</div>
-									)}
+												<InfoCircleOutlined className='text-xs text-lightBlue' />
+											</Tooltip>
+										</span>
+									</div>
 								</div>
 								<div className='max-h-[360px]'>
 									{votesRes &&

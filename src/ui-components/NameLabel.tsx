@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import Address from './Address';
@@ -18,20 +17,21 @@ interface Props {
 }
 
 const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable = true, truncateUsername }: Props) => {
-	const router = useRouter();
 	return (
 		<div className={`${className}`}>
 			{!defaultAddress ? (
 				<span
 					className={`username mr-1.5 font-semibold text-bodyBlue ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-					onClick={() => {
+					onClick={(e) => {
 						if (clickable) {
-							router.push(`/user/${username}`);
+							e.stopPropagation();
+							e.preventDefault();
+							const routePath = `/user/${username}`;
+							window.open(routePath, '_blank');
 						}
 					}}
 				>
-					{' '}
-					{username}{' '}
+					{username}
 				</span>
 			) : (
 				<Address

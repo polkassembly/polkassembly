@@ -43,7 +43,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
-
 	if ((isOpenGovSupported(network) && !req.headers.referer) || network === 'polkadot') {
 		return {
 			props: {},
@@ -52,6 +51,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 			}
 		};
 	}
+
 	const LATEST_POSTS_LIMIT = 8;
 
 	const networkSocialsData = await getNetworkSocials({ network });

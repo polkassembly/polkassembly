@@ -153,18 +153,18 @@ const Curves: FC<ICurvesProps> = (props) => {
 									tooltip: {
 										callbacks: {
 											label(tooltipItem: any) {
-												const { dataIndex, parsed, dataset } = tooltipItem;
+												const { parsed, dataset } = tooltipItem;
 												if (dataset.label === 'Support') {
 													const threshold = Number(parsed.y).toFixed(2);
 													const dataset = data.datasets.find((dataset) => dataset.label === 'Current Support');
 
-													const currSupport = dataset.data.find((d: any) => d.x > dataIndex);
+													const currSupport = dataset.data.find((d: any) => d.x > parsed.x);
 													return `Support: ${convertGraphPoint(currSupport?.y)} / ${threshold}%`;
 												} else if (dataset.label === 'Approval') {
 													const threshold = Number(parsed.y).toFixed(2);
 													const dataset = data.datasets.find((dataset) => dataset.label === 'Current Approval');
 
-													const currApproval = dataset.data.find((d: any) => d.x > dataIndex);
+													const currApproval = dataset.data.find((d: any) => d.x > parsed.x);
 													return `Approval: ${convertGraphPoint(currApproval?.y)} / ${threshold}%`;
 												}
 

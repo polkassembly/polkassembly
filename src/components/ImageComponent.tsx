@@ -17,18 +17,16 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 	const { alt, className, src, iconClassName } = props;
 	const newSrc = src && src.trim() ? src.trim() : null;
 	return (
-		<>
-			<Avatar
-				className={className}
-				src={newSrc}
-				alt={alt}
-				icon={
-					<span className={iconClassName}>
-						<DefaultProfile />
-					</span>
-				}
-			/>
-		</>
+		<Avatar
+			className={className}
+			src={newSrc}
+			alt={alt}
+			icon={
+				<span className={iconClassName}>
+					<DefaultProfile />
+				</span>
+			}
+		/>
 	);
 };
 

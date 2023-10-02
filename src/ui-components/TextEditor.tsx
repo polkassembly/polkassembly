@@ -82,7 +82,8 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
-		if (!value || !(value.startsWith('<p><a href="../user/') || value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>')) return;
+		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
+			return;
 
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
@@ -254,7 +255,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 
 											const usernameResults = (usernameHits || [])?.map((user: any) => ({
 												type: 'cardmenuitem',
-												value: `<a target="_blank" href="/user/${user.username}">@${user.username}</a>`,
+												value: `<a target="_blank" rel="noreferrer" href="/user/${user.username}">@${user.username}</a>`,
 												label: user.username,
 												items: [
 													{

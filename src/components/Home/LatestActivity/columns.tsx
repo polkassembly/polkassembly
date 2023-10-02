@@ -12,17 +12,7 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { IPostsRowData } from './PostsTable';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { Tooltip } from 'antd';
-import Router from 'next/router';
-import getUsernameByAddress from '~src/util/getUsernameByAddress';
 import { noTitle } from '~src/global/noTitle';
-
-async function goToProfileByAddress(address: string) {
-	if (!address) return;
-	const username = await getUsernameByAddress(address);
-	if (!username) return;
-
-	Router.push(`/user/${username}`);
-}
 
 const Index: any = {
 	dataIndex: 'post_id',
@@ -54,18 +44,6 @@ const Description: any = {
 const Creator: any = {
 	dataIndex: 'username',
 	key: 'creator',
-	onCell: (record: any) => {
-		return {
-			onClick: async (e: any) => {
-				e.stopPropagation();
-				if (record.username) {
-					Router.push(`/user/${record.username}`);
-				} else {
-					await goToProfileByAddress(record.proposer || '');
-				}
-			}
-		};
-	},
 	render: (username: any, { proposer }: { proposer: any }) => (
 		<div className='truncate'>
 			<NameLabel
@@ -81,11 +59,11 @@ const Creator: any = {
 const Proposer: any = {
 	dataIndex: 'proposer',
 	key: 'creator',
-	onCell: (record: any) => {
+	onCell: () => {
 		return {
 			onClick: async (e: any) => {
 				e.stopPropagation();
-				await goToProfileByAddress(record.proposer || '');
+				e.preventDefault();
 			}
 		};
 	},
@@ -165,15 +143,11 @@ const allColumns: ColumnsType<IPostsRowData> = [
 	{
 		dataIndex: 'username',
 		key: 'postedBy',
-		onCell: (record) => {
+		onCell: () => {
 			return {
 				onClick: async (e) => {
 					e.stopPropagation();
-					if (record.username) {
-						Router.push(`/user/${record.username}`);
-					} else {
-						await goToProfileByAddress(record.proposer || '');
-					}
+					e.preventDefault();
 				}
 			};
 		},

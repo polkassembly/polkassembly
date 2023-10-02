@@ -60,13 +60,13 @@ export interface IVerifiedFields {
 	alreadyVerified: boolean;
 	isIdentitySet: boolean;
 }
-interface Propos {
+interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	openAddressLinkedModal?: boolean;
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
 }
-const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Propos) => {
+const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
 	const { network } = useContext(NetworkContext);
 	const { id: userId } = useContext(UserDetailsContext);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
@@ -205,7 +205,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		setLoading({ ...loading, isLoading: true });
 
 		(async () => {
-			const bondFee = api.consts.identity.fieldDeposit;
+			const bondFee = api?.consts?.identity?.fieldDeposit;
 
 			const registerarFee: any = await api.query.identity.registrars().then((e) => JSON.parse(e.toString()));
 			const bnRegisterarFee = new BN(registerarFee[registerarFee.length - 1].fee || ZERO_BN);

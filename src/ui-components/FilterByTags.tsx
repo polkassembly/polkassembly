@@ -165,7 +165,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 				</div>
 			) : (
 				<Checkbox.Group
-					className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-auto tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
+					className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
 					value={tags}
 				>
 					{displayTags.map((item, index) => (

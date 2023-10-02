@@ -123,7 +123,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						<div className='mr-[10px]'>{text}&nbsp;</div>
 						{topic && (
 							<div className='flex sm:-mt-0.5'>
-								{' '}
 								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>{' '}
 								<TopicTag
 									topic={topic}
@@ -148,7 +147,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className='-ml-[11px] flex items-center text-lightBlue'>
+				<div className='flex items-center text-lightBlue max-xs:ml-1'>
 					{(topic || text || created_at) && (
 						<>
 							&nbsp;

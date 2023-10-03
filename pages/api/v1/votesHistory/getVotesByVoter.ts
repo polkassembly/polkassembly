@@ -115,9 +115,11 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			lockPeriod: Number(vote?.lockPeriod) || 0.1,
 			proposal: {
 				createdAt,
+				description: '',
 				id,
 				proposer,
-				status
+				status,
+				title: ''
 			},
 			voter: vote?.voter
 		};

@@ -25,6 +25,7 @@ interface Props {
 	voterAddresses: string[];
 	orderBy: string[];
 	type?: string;
+	listingLimit?: number;
 }
 
 export interface IProfileVoteHistoryRespose {
@@ -41,6 +42,7 @@ export interface IProfileVoteHistoryRespose {
 		proposer: string;
 		status: string;
 		title?: string;
+		description?: string;
 		statusHistory?: string[];
 	};
 }
@@ -60,7 +62,7 @@ const getIsSwapStatus = (statusHistory: string[]) => {
 };
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
-	const { voterAddresses, page = 1, orderBy = ['proposalIndex_DESC'], type } = req.body as unknown as Props;
+	const { voterAddresses, page = 1, orderBy = ['proposalIndex_DESC'], type, listingLimit = LISTING_LIMIT } = req.body as unknown as Props;
 
 	const network = String(req.headers['x-network']);
 	if (network === 'undefined' || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
@@ -72,7 +74,8 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const encodeAddresses = [...voterAddresses]?.map((address: string) => (address ? getEncodedAddress(String(address), network) : address));
 
 	const postVariables: any = {
-		offset: LISTING_LIMIT * (numPage - 1),
+		limit: listingLimit,
+		offset: listingLimit * (numPage - 1),
 		orderBy,
 		type_eq: type,
 		voter_in: encodeAddresses
@@ -109,12 +112,14 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			delegatedTo: vote?.delegatedTo || '',
 			delegatedVotingPower: !vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : 0,
 			isDelegatedVote: vote?.isDelegated,
-			lockPeriod: Number(vote?.lockPeriod) || 0,
+			lockPeriod: Number(vote?.lockPeriod) || 0.1,
 			proposal: {
 				createdAt,
+				description: '',
 				id,
 				proposer,
-				status
+				status,
+				title: ''
 			},
 			voter: vote?.voter
 		};
@@ -130,6 +135,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					...vote,
 					proposal: {
 						...vote?.proposal,
+						description: postData?.description || '',
 						title: postData?.title || noTitle
 					}
 				};

@@ -544,9 +544,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			<Select
 				onChange={(key) => setConviction(Number(key))}
 				size='large'
-				className=''
 				defaultValue={conviction}
 				suffixIcon={<DownIcon />}
+				popupClassName='z-[1060]'
 			>
 				{convictionOpts}
 			</Select>

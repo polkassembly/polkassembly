@@ -383,6 +383,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className='rounded-[4px]'
 				defaultValue={conviction}
 				suffixIcon={<DownIcon />}
+				popupClassName='z-[1060]'
 			>
 				{convictionOpts}
 			</Select>

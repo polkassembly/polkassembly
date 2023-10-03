@@ -393,6 +393,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 										size='large'
 										className='w-full rounded-md p-1 text-sm text-sidebarBlue'
 										defaultValue={conviction}
+										popupClassName='z-[1060]'
 									>
 										{convictionOpts}
 									</Select>

@@ -6,8 +6,9 @@ import { Button, Modal, Slider } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
-import CloseIcon from 'public/assets/icons/sentiment-close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { ESentiment } from '~src/types';
+import { useTheme } from 'next-themes';
 
 interface Props{
   setIsComment: (pre: boolean)=>void;
@@ -38,10 +39,12 @@ const CommentSentimentModal=({ setIsComment, openModal, setModalOpen, setIsSenti
 		}
 	};
 
+	const { resolvedTheme:theme } = useTheme();
+
 	return (<Modal
 		open={openModal}
 		wrapClassName={`${className}  sentiment_${sentiment}`}
-		className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[433px] max-sm:w-[100%] padding justify-center center-aligned`}
+		className={`${poppins.variable} ${poppins.className} ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} max-w-full shrink-0 w-[433px] max-sm:w-[100%] padding justify-center center-aligned`}
 		onCancel={() => {
 			setModalOpen(false);
 			setIsComment(true);
@@ -55,9 +58,9 @@ const CommentSentimentModal=({ setIsComment, openModal, setModalOpen, setIsSenti
           Done<CheckOutlined />
 				</Button>
 			</div>]}
-		closeIcon={<CloseIcon/>}
+		closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 		zIndex={1002}
-	><div className='pl-5 pr-5 text-base font-medium justify-center center-aligned flex flex-col items-center text-[#334D6E]'>
+	><div className='pl-5 pr-5 text-base font-medium justify-center center-aligned flex flex-col items-center text-[#334D6E] dark:text-white dark:font-normal'>
 			<h5 className='text-center mt-3'>Thank you for commenting on the post.<br/>
          Move the slider to add your sentiment towards the discussion.</h5>
 			<Slider

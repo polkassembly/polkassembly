@@ -45,8 +45,8 @@ export default styled(TopicTag)`
 		color: ${props => props.theme === 'dark'? '#CCAED4':'#AC6A30'} !important; 
 	}
 	&.Technical, &.Tech {
-		background-color: #FEF7DD !important;
-		color: #75610E;
+		background-color: ${props => props.theme === 'dark'? '#302921' : '#FEF7DD'} !important; 
+		color: ${props => props.theme === 'dark'? '#BFA889' : '#75610E'} !important; 
 	}
 	&.General {
 		background-color: ${props => props.theme === 'dark'? '#380E0E':'#FDF5F0'} !important;

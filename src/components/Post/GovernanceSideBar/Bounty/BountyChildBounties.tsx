@@ -62,14 +62,14 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 	return (
 		<GovSidebarCard className='min-h-[200px]'>
 			<Spin indicator={<LoadingOutlined />} spinning={loading}>
-				<h4 className='dashboard-heading mb-6'>{bountiesRes?.child_bounties_count} Child Bounties</h4>
+				<h4 className='dashboard-heading mb-6 dark:text-white dark:font-medium'>{bountiesRes?.child_bounties_count} Child Bounties</h4>
 				{bountiesRes && bountiesRes.child_bounties_count > 0? bountiesRes?.child_bounties.map(childBounty => (
 					childBounty && (
 						<Link href={`/child_bounty/${childBounty.index}`} key={childBounty.index} className='mb-6'>
-							<div className='my-4 border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-2 md:p-4'>
+							<div className='my-4 border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-2 md:p-4 dark:border-separatorDark'>
 								<div className="flex justify-between gap-x-4">
 									<div className='w-[70%] break-words p-1'>
-										<h5 className='h-[60px] overflow-hidden p-0 text-sm m-auto'>{childBounty.description} || {`#${childBounty.index} Untitled`}</h5>
+										<h5 className='h-[60px] overflow-hidden p-0 text-sm m-auto dark:text-white dark:font-normal'>{childBounty.description} || {`#${childBounty.index} Untitled`}</h5>
 									</div>
 									{childBounty.status && (
 										<StatusTag

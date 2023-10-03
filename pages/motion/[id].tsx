@@ -20,6 +20,7 @@ import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import { useApiContext } from '~src/context';
 import { useState } from 'react';
+import { useTheme } from 'next-themes';
 
 const proposalType = ProposalType.COUNCIL_MOTIONS;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
@@ -47,6 +48,7 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized,setIsUnFinalized] = useState(false);
 	const { id } = router.query;
+	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -77,7 +79,7 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 		<BackToListingView postCategory={PostCategory.MOTION} />
 
 		<div className='mt-6'>
-			<Post post={post} proposalType={proposalType} />
+			<Post post={post} proposalType={proposalType} theme={theme} />
 		</div>
 	</>);
 

@@ -152,17 +152,17 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime } : Prop
 				<Button className='bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300 w-full h-[60px]' onClick={() => setModalOpen(true)}>Set Deadline Date</Button>
 				: (canEdit && isUpdate) ?
 					<div className='w-full h-[60px] bg-white dark:bg-section-dark-overlay rounded-md drop-shadow-md flex items-center justify-center transition:colors duration:500 edit-icon-wrapper'>
-						<div className='text-center text-sidebarBlue font-medium text-[18px]'>
+						<div className='text-center text-sidebarBlue dark:text-white font-medium text-[18px]'>
 							<>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
 						</div>
 						<EditOutlined className='edit-icon text-white text-lg' onClick={() => setModalOpen(true)} />
 					</div>
 					: (isUpdate) ? <div className='w-full h-[60px] bg-white dark:bg-section-dark-overlay rounded-md drop-shadow-md flex items-center justify-center transition:colors duration:500'>
-						<div className='text-center text-sidebarBlue font-medium text-[18px]'>
+						<div className='text-center text-sidebarBlue dark:text-white font-medium text-[18px]'>
 							<>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
 						</div>
 					</div> :
-						<div className='w-full h-[60px] bg-white dark:bg-section-dark-overlay rounded-md drop-shadow-md flex justify-center items-center text-sidebarBlue font-medium text-[18px]'>Deadline: Not Set</div> }
+						<div className='w-full h-[60px] bg-white dark:bg-section-dark-overlay rounded-md drop-shadow-md flex justify-center items-center text-sidebarBlue font-medium text-[18px] dark:text-white'>Deadline: Not Set</div> }
 
 			<Modal
 				open={modalOpen}

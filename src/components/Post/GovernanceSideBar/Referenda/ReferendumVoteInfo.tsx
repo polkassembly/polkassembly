@@ -276,19 +276,19 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 									</span>
 								</div>
 								<div
-									className='text-lightBlue text-xs font-medium leading-[22px]'
+									className='text-lightBlue dark:text-blue-dark-medium text-xs font-medium leading-[22px]'
 								>
 									{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
 							</article>
-							<article className='flex items-center text-lightBlue justify-between gap-x-2'>
+							<article className='flex items-center text-lightBlue dark:text-blue-dark-high justify-between gap-x-2'>
 								<div className='flex items-center gap-x-1'>
 									<span className='font-medium text-xs leading-[18px] tracking-[0.01em] dark:font-normal'>
 										Nay
 									</span>
 								</div>
 								<div
-									className='text-lightBlue text-xs font-medium leading-[22px]'
+									className='text-lightBlue dark:text-blue-dark-medium text-xs font-medium leading-[22px]'
 								>
 									{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
@@ -300,7 +300,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 									</span>
 								</div>
 								<div
-									className='text-lightBlue text-xs font-medium leading-[22px]'
+									className='text-lightBlue dark:text-blue-dark-medium text-xs font-medium leading-[22px]'
 								>
 									{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
@@ -314,7 +314,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 											</span>
 										</div>
 										<div
-											className='text-lightBlue text-xs font-medium leading-[22px]'
+											className='text-lightBlue dark:text-blue-dark-medium text-xs font-medium leading-[22px]'
 										>
 											{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>

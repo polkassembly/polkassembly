@@ -17,6 +17,7 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
+import { useTheme } from 'next-themes';
 
 const proposalType = ProposalType.REFERENDUMS;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
@@ -45,6 +46,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	const router = useRouter();
 	const { id } = router.query;
 	const [isUnfinalized,setIsUnFinalized] = useState(false);
+	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 
@@ -76,7 +78,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 		<BackToListingView postCategory={PostCategory.REFERENDA} />
 
 		<div className='mt-6'>
-			<Post post={post} proposalType={proposalType} />
+			<Post post={post} proposalType={proposalType} theme={theme} />
 		</div>
 	</>);
 

@@ -86,7 +86,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 		<>
 			{tippers?.length > 0 ?
 				<div className='flex flex-col gap-y-7'>
-					<h3 className='flex items-center gap-x-2 text-lg tracking-wide text-sidebarBlue font-medium'>Receiver of Final Tip<HelperTooltip className='text-sm' text='The final value of the tip is decided based on the median of all tips issued by the tippers' /></h3>
+					<h3 className='flex items-center gap-x-2 text-lg tracking-wide text-sidebarBlue font-medium dark:text-white dark:font-normal'>Receiver of Final Tip<HelperTooltip className='text-sm' text='The final value of the tip is decided based on the median of all tips issued by the tippers' /></h3>
 					<Row className='flex items-center justify-between'>
 						<Col>
 							<Address isSubVisible={false} address={receiver || ''} />
@@ -95,7 +95,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 							{formatBnBalance(median, { numberAfterComma: 2, withUnit: true }, network)}
 						</Col>
 					</Row>
-					<h3 className='flex items-center gap-x-2 text-lg tracking-wide text-sidebarBlue font-medium'>Tippers <HelperTooltip className='text-sm' text='Amount tipped by an individual/organization' /></h3>
+					<h3 className='flex items-center gap-x-2 text-lg tracking-wide text-sidebarBlue font-medium dark:text-white dark:font-normal'>Tippers <HelperTooltip className='text-sm' text='Amount tipped by an individual/organization' /></h3>
 					<div className='flex flex-col gap-y-5'>
 						{tippers.map((tip, i) => {
 							const { tipper, value } = tip;

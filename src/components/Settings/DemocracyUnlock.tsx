@@ -7,7 +7,7 @@ import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { LoadingStatusType, NotificationStatus } from 'src/types';
+import { EVoteDecisionType, LoadingStatusType, NotificationStatus } from 'src/types';
 import { Button, Divider, Form } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import Web3 from 'web3';
@@ -18,6 +18,7 @@ import formatBnBalance from '../../util/formatBnBalance';
 import getNetwork from '../../util/getNetwork';
 import { useApiContext, useNetworkContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
+import { getUnlockVotesDetails } from './ReferendaUnlock';
 
 const abi = require('../../moonbeamAbi.json');
 
@@ -34,6 +35,10 @@ interface Vote {
 	vote: boolean;
 	amount: BN;
 	conviction: number;
+	ayeBalance: BN;
+	nayBalance: BN;
+	abstainBalance: BN;
+	voteType: EVoteDecisionType | null;
 }
 
 const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
@@ -79,30 +84,10 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 		setVotes(
 			votingInfo.asDirect.votes.map((vote) => {
 				const refIndex = vote[0];
-
-				let conviction = 0;
-
-				if (vote[1].asStandard.vote.conviction.isLocked1x) {
-					conviction = 1;
-				} else if (vote[1].asStandard.vote.conviction.isLocked2x) {
-					conviction = 2;
-				} else if (vote[1].asStandard.vote.conviction.isLocked3x) {
-					conviction = 3;
-				} else if (vote[1].asStandard.vote.conviction.isLocked4x) {
-					conviction = 4;
-				} else if (vote[1].asStandard.vote.conviction.isLocked5x) {
-					conviction = 5;
-				} else if (vote[1].asStandard.vote.conviction.isLocked6x) {
-					conviction = 6;
-				} else {
-					conviction = 0;
-				}
-
+				const details = getUnlockVotesDetails(vote[1]);
 				return {
-					amount: vote[1].asStandard.balance,
-					conviction: conviction,
-					refIndex,
-					vote: vote[1].asStandard.vote.isAye
+					...details,
+					refIndex
 				};
 			})
 		);
@@ -358,12 +343,26 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 										<>
 											<li
 												key={vote.refIndex.toString()}
-												className='grid grid-cols-6 gap-x-5 py-1 md:grid-cols-8'
+												className='grid grid-cols-6 items-center gap-x-5 py-1 md:grid-cols-8'
 											>
 												<span className='col-span-2'>
 													<Link href={`/referendum/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
 												</span>
-												<span className='col-span-2'>{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}</span>
+												{vote.voteType === EVoteDecisionType.AYE || vote?.voteType === EVoteDecisionType.NAY ? (
+													<span className='col-span-2'>
+														{vote.voteType === EVoteDecisionType.AYE ? 'Aye' : 'Nay'}
+														{': '}
+														{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
+													</span>
+												) : (
+													<div className='col-span-2 flex flex-col'>
+														<span className='col-span-2'> Aye: {formatBnBalance(String(vote.ayeBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+														<span className='col-span-2'> Nay: {formatBnBalance(String(vote.nayBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+														{vote.voteType === EVoteDecisionType.ABSTAIN && (
+															<span className='col-span-2'> Abstain: {formatBnBalance(String(vote.abstainBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+														)}
+													</div>
+												)}
 												<span className='col-span-2'>{unlocksAt}</span>
 												<span className='col-span-2'>
 													{id === 0 ? (

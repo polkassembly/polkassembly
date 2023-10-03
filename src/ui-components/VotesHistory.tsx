@@ -81,7 +81,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 						/>
 						<Address
 							address={address}
-							truncateUsername={false}
+							isTruncateUsername={false}
 							displayInline
 							disableAddressClick
 						/>
@@ -300,9 +300,9 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 															{!data?.isDelegatedVote && (
 																<Address
 																	address={data?.voter}
-																	identiconSize={18}
+																	iconSize={18}
 																	displayInline
-																	truncateUsername={false}
+																	isTruncateUsername={false}
 																/>
 															)}
 														</div>
@@ -312,18 +312,18 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																	Delegator:
 																	<Address
 																		address={data?.voter}
-																		identiconSize={18}
+																		iconSize={18}
 																		displayInline
-																		truncateUsername={false}
+																		isTruncateUsername={false}
 																	/>
 																</label>
 																<label className='flex items-center gap-2 font-medium'>
 																	Vote Casted by:
 																	<Address
-																		address={data?.delegatedTo}
-																		identiconSize={18}
+																		address={data?.delegatedTo || ''}
+																		iconSize={18}
 																		displayInline
-																		truncateUsername={false}
+																		isTruncateUsername={false}
 																	/>
 																</label>
 															</div>

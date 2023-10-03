@@ -39,12 +39,12 @@ const Addresses: FC<IAddressesProps> = (props) => {
 							return (
 								<Address
 									disableAddressClick={true}
+									addressClassName='text-white'
 									disableHeader={true}
-									identiconSize={20}
+									iconSize={20}
 									ethIdenticonSize={28}
-									shortenAddressLength={10}
+									addressMaxLength={10}
 									key={address}
-									className='text-white'
 									address={address}
 								/>
 							);
@@ -52,7 +52,7 @@ const Addresses: FC<IAddressesProps> = (props) => {
 				</div>
 				<Modal
 					title={<h3 className='text-xl font-semibold text-[#1D2632]'>Addresses</h3>}
-					closeIcon={<CloseOutlined className='text-sm text-[#485F7D]' />}
+					closeIcon={<CloseOutlined className='text-sm text-bodyBlue' />}
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}
@@ -65,11 +65,10 @@ const Addresses: FC<IAddressesProps> = (props) => {
 								addresses.slice(0, 5).map((address) => {
 									return (
 										<Address
-											identiconSize={28}
+											iconSize={28}
 											ethIdenticonSize={34}
 											key={address}
-											isShortenAddressLength={false}
-											className='text-sm text-[#1D2632]'
+											showFullAddress
 											address={address}
 										/>
 									);

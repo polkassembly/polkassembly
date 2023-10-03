@@ -25,20 +25,20 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 				>
 					<Address
 						isVoterAddress={true}
-						textClassName='w-[100px]'
+						usernameClassName='w-[100px]'
 						isSubVisible={false}
 						displayInline={true}
-						isShortenAddressLength={false}
+						showFullAddress
 						address={voteData?.voter}
 					/>
 				</a>
 			) : (
 				<div className='w-[200px] overflow-ellipsis text-bodyBlue'>
 					<Address
-						textClassName='w-[100px]'
+						usernameClassName='w-[100px]'
 						isSubVisible={false}
 						displayInline={true}
-						isShortenAddressLength={false}
+						showFullAddress
 						address={voteData?.voter}
 					/>
 				</div>

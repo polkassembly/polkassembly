@@ -158,7 +158,7 @@ const DelegationSuccessPopup = ({
 									<span className='font-medium'>
 										<Address
 											address={address}
-											truncateUsername={false}
+											isTruncateUsername={false}
 											className='address'
 											displayInline={true}
 										/>

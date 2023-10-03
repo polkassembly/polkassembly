@@ -538,3 +538,10 @@ export interface ILoading {
 	isLoading: boolean;
 	message: string;
 }
+export enum EAddressOtherTextType {
+	CONNECTED = 'Connected',
+	COUNCIL = 'Council',
+	COUNCIL_CONNECTED = 'Council (Connected)',
+	LINKED_ADDRESS = 'Linked',
+	UNLINKED_ADDRESS = 'Address not linked'
+}

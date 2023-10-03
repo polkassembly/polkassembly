@@ -110,19 +110,19 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 	return (
 		<div className={`${className} flex w-[100%] justify-between`}>
-			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
-				<div className={'flex w-[66px] min-[320px]:w-auto min-[320px]:flex-row min-[320px]:items-center '}>
-					<div className={'flex items-center '}>
+			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+				<div className={'flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
+					<div className={'flex flex-shrink-0 items-center'}>
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
-							clickable={commentSource === 'polkassembly'}
+							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
-							textClassName={'text-xs text-ellipsis overflow-hidden'}
+							usernameClassName='text-xs text-ellipsis overflow-hidden mr-1'
 						/>
 						<div className='mr-[10px]'>{text}&nbsp;</div>
 						{topic && (
-							<div className='flex sm:-mt-0.5'>
+							<div className='flex items-center sm:-mt-0.5'>
 								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>{' '}
 								<TopicTag
 									topic={topic}
@@ -140,7 +140,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									href={`https://ipfs.io/ipfs/${cid}`}
 									target='_blank'
 								>
-									{' '}
 									<PaperClipOutlined /> IPFS
 								</Link>
 							</>

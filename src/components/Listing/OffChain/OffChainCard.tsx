@@ -196,7 +196,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					</div>
 					<div className='w-full h-[1px] bg-[#D2D8E0] dark:bg-separatorDark' />
 					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark dark:border-separatorDark px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
+						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] dark:text-white dark:border-separatorDark px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
 							{tag}
 						</div>))}
 					</>}</div>

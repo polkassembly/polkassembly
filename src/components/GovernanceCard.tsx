@@ -244,7 +244,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{tags && tags.length > 0 && <>
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								{ tags?.slice(0,2).map((tag, index) =>
-									(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] font-medium text-[10px]' >
+									(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] font-medium text-[10px] dark:text-blue-dark-medium' >
 										{tag}
 									</div>))}
 								{tags.length>2 && <span className='text-blue-light-high dark:text-blue-dark-high' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
@@ -386,11 +386,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 				title={<>
-					<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
+					<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black dark:mb-0'>
 						<TagsIcon className='mr-2' />
 							Tags
 					</div>
-					<Divider className='dark:border-l-1 dark:border-separatorDark' type="horizontal" style={{ borderLeft: '2px solid #D2D8E0' }} />
+					<hr className='border-[#D2D8E0] dark:border-separatorDark' />
 				</>}
 			>
 				<div className='flex gap-2 flex-wrap mt-3' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>

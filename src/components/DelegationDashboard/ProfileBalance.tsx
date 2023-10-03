@@ -185,6 +185,7 @@ const ProfileBalances = ({ className, address }: Props) => {
 			<div className='-mt-6 mr-6 w-[275px]'>
 				{accounts.length > 0 && (
 					<AccountSelectionForm
+						linkAddressTextDisabled
 						addressTextClassName='text-white'
 						accounts={accounts}
 						address={delegationDashboardAddress}
@@ -195,6 +196,7 @@ const ProfileBalances = ({ className, address }: Props) => {
 						isSwitchButton={true}
 						setSwitchModalOpen={setOpenModal}
 						withoutInfo={true}
+						isTruncateUsername={false}
 					/>
 				)}
 			</div>

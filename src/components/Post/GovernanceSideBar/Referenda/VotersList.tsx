@@ -308,22 +308,20 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										className='w-[110px] max-w-[110px] overflow-ellipsis'
 									>
 										<Address
-											isVoterAddress={true}
-											textClassName='w-[75px]'
+											isVoterAddress
 											isSubVisible={false}
-											displayInline={true}
-											isShortenAddressLength={false}
+											displayInline
+											showFullAddress
 											address={voteData?.voter}
 										/>
 									</a>
 								) : (
 									<div className='w-[110px] max-w-[110px] overflow-ellipsis'>
 										<Address
-											isVoterAddress={true}
-											textClassName='w-[75px]'
+											isVoterAddress
 											isSubVisible={false}
-											displayInline={true}
-											isShortenAddressLength={false}
+											displayInline
+											showFullAddress
 											address={voteData?.voter}
 										/>
 									</div>

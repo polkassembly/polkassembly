@@ -737,6 +737,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 						{accounts.length > 0 ? (
 							<AccountSelectionForm
+								isTruncateUsername={false}
 								title='Vote with Account'
 								accounts={accounts}
 								address={address}
@@ -911,7 +912,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				</>
 			</Modal>
 			<DelegationSuccessPopup
-				title='Voted'
+				title='Voted Successfully'
 				vote={vote}
 				isVote={true}
 				balance={voteValues.totalVoteValue}

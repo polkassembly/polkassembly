@@ -7,7 +7,6 @@ import SuperSearchIcon from '~assets/icons/super-search.svg';
 import EmptyResultsIcon from '~assets/search/empty-search.svg';
 import { EFilterBy } from '.';
 import { useRouter } from 'next/router';
-import checkGov2Route from '~src/util/checkGov2Route';
 
 interface Props {
 	setIsSuperSearch: (pre: boolean) => void;
@@ -69,7 +68,7 @@ const SearchErrorsCard = ({
 				<span>See </span>
 				<span
 					onClick={() => {
-						router.push(checkGov2Route(router?.pathname) ? '/opengov' : '/');
+						router.push('/');
 						setOpenModal(false);
 					}}
 					className='mx-[2px] cursor-pointer border-[0px] border-b-[1px] border-solid leading-[-8px] text-pink_primary'

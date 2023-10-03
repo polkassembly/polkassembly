@@ -16,8 +16,8 @@ import BasicInformation from './BasicInformation';
 import Socials from './Socials';
 import messages from '~src/auth/utils/messages';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
-import { useRouter } from 'next/router';
 import { useUserDetailsContext } from '~src/context';
+import { useRouter } from 'next/router';
 import { poppins } from 'pages/_app';
 import validator from 'validator';
 
@@ -51,7 +51,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const userDetailsContext = useUserDetailsContext();
 	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
 	const router = useRouter();
-
 	const validateData = (image: string | undefined, social_links: ISocial[] | undefined) => {
 		// eslint-disable-next-line no-useless-escape
 		const regex = validator.isURL(image || '', { protocols: ['http', 'https'], require_protocol: true });

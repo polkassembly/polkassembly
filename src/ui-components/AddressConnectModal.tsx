@@ -5,7 +5,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Alert, Button, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
-import { NotificationStatus, Wallet } from '~src/types';
+import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
 import { useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
@@ -20,7 +20,6 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
-import { EAddressOtherTextType } from './Address';
 import ConnectAddressIcon from '~assets/icons/connect-address.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -629,6 +628,7 @@ const AddressConnectModal = ({
 									/>
 								) : (
 									<AccountSelectionForm
+										isTruncateUsername={false}
 										title={accountSelectionFormTitle}
 										accounts={accounts}
 										address={address}

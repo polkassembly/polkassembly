@@ -6,6 +6,8 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 
+import CautionIcon from '~assets/icons/Caution 2.svg';
+import RetrySVG from '~assets/icons/Refresh.svg';
 import OpenAiSVG from '~assets/icons/openai.svg';
 import AiStarSVG from '~assets/icons/ai-star.svg';
 import SummaryModalCloseSVG from '~assets/icons/summary-modal-close.svg';
@@ -102,12 +104,82 @@ import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
 import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
+import DashboardSVG from '~assets/icons/dashboard.svg';
+import PolkassemblyLogo from '~assets/icons/polkaIcon.svg';
+import optionsLogo from '~assets/icons/optionIcon.svg';
 import SetIdentitySVG from '~assets/icons/identity-icon.svg';
 import ApplayoutIdentitySVG from '~assets/icons/layout-identity.svg';
+import profileSVG from '~assets/icons/userDropdown/profile.svg';
+import settingsIcon from '~assets/icons/userDropdown/setting.svg';
+import logoutSVG from '~assets/icons/userDropdown/logout.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
 import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
+import ArchivedSVG from '~assets/icons/archived.svg';
+
+export const Caution = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CautionIcon}
+		{...props}
+	/>
+);
+
+export const IconLogout = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={logoutSVG}
+		{...props}
+	/>
+);
+
+export const IconSettings = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={settingsIcon}
+		{...props}
+	/>
+);
+
+export const IconProfile = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={profileSVG}
+		{...props}
+	/>
+);
+
+export const OptionMenu = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={optionsLogo}
+		{...props}
+	/>
+);
+
+export const PolkassemblyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={PolkassemblyLogo}
+		{...props}
+	/>
+);
+
+export const Dashboard = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DashboardSVG}
+		{...props}
+	/>
+);
+
+export const IconRetry = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={RetrySVG}
+		{...props}
+	/>
+);
 
 export const IconVoteHistory = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={VoteHistoryIcon}
+		{...props}
+	/>
+);
+
+export const IconCaution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={VoteHistoryIcon}
 		{...props}
@@ -765,6 +837,13 @@ export const AmountBreakdownModalIcon = (props: Partial<CustomIconComponentProps
 export const ApplayoutIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ApplayoutIdentitySVG}
+		{...props}
+	/>
+);
+
+export const ArchivedIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ArchivedSVG}
 		{...props}
 	/>
 );

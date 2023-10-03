@@ -60,7 +60,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							<NameLabel
 								defaultAddress={defaultAddress}
 								username={username}
-								textClassName='text-xs text-[#334D6E]'
+								usernameClassName='text-xs text-[#334D6E]'
 							/>
 						</div>
 						<div className='flex items-center'>
@@ -90,17 +90,17 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							title
 						)}
 					</div>
-					<div className={`mt-1 text-sm font-normal tracking-[0.01em] text-[#243A57] ${!item?.expandedContent && item?.content.length > 100 && 'truncate-content'} pr-2 leading-6`}>
+					<div className={`mt-1 text-sm font-normal tracking-[0.01em] text-bodyBlue ${!item?.expandedContent && item?.content.length > 100 && 'truncate-content'} pr-2 leading-6`}>
 						{/* {historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content} */}
 						<Markdown
-							className='text-sm'
+							className={`text-sm ${!item?.expandedContent && item?.content.length > 100 && 'truncate-content'}`}
 							md={item?.content}
 						/>
 					</div>
 					{item?.content.length > 100 && (
 						<span
 							onClick={() => handleExpand(index, EExpandType.ExpandedContent)}
-							className='mt-1 cursor-pointer text-xs font-medium text-[#E5007A]'
+							className='mt-1 cursor-pointer text-xs font-medium text-pink_primary'
 						>
 							{item?.expandedContent ? 'Show less' : 'Show more'}
 						</span>
@@ -182,13 +182,7 @@ export default styled(PostHistoryModal)`
 	.closeIcon .ant-modal-close-x {
 		margin-top: 4px;
 	}
-	.truncate-content {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		width: 100%;
-		overflow: hidden;
-	}
+
 	.post-history-timeline .ant-timeline .ant-timeline-item-tail {
 		border-inline-start: 2px solid rgba(5, 5, 5, 0) !important;
 		background-image: linear-gradient(rgba(144, 160, 183) 33%, rgba(255, 255, 255, 0) 0%) !important;
@@ -222,5 +216,12 @@ export default styled(PostHistoryModal)`
 	}
 	.post-history-timeline .ant-timeline .ant-timeline-item-head-custom {
 		inset-block-start: 8px !important;
+	}
+	.truncate-content {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		width: 100%;
+		overflow: hidden;
 	}
 `;

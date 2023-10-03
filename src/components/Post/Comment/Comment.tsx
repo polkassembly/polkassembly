@@ -22,6 +22,7 @@ export interface IComment {
 	content: string;
 	created_at: Date;
 	id: string;
+	isError: boolean;
 	updated_at: Date;
 	replies: any[];
 	comment_reactions: IReactions;
@@ -97,7 +98,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 			/>
 			<div className='w-full overflow-hidden'>
 				<CreationLabel
-					className='creation-label rounded-t-md bg-comment_bg px-0 py-2 pt-4 md:px-4'
+					className='creation-label mt-0 rounded-t-md bg-comment_bg px-0 py-2 pt-4 md:px-4'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
 					username={comment.username}

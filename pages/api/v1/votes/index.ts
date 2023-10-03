@@ -13,6 +13,8 @@ import {
 	GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX,
 	GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
 	GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX,
+	GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX,
+	GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
 	GET_VOTES_LISTING_BY_TYPE_AND_INDEX,
 	GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE,
 	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
@@ -20,6 +22,7 @@ import {
 } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getOrderBy } from './utils/votesSorted';
+import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
 
 export interface IVotesResponse {
 	yes: {
@@ -66,7 +69,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 	}
 
 	const strSortBy = String(sortBy);
-	const isOpenGov = voteType === VoteType.REFERENDUM_V2;
+	const nestedSupported = voteType === VoteType.REFERENDUM_V2 || (voteType === VoteType.REFERENDUM && isSupportedNestedVoteNetwork(network));
 
 	if (!isVotesSortOptionsValid(strSortBy)) {
 		return res.status(400).json({ error: `The sortBy "${sortBy}" is invalid.` });
@@ -75,28 +78,32 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 		index_eq: numPostId,
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
-		orderBy: getOrderBy(strSortBy, true, isOpenGov),
+		orderBy: getOrderBy(strSortBy, true, nestedSupported),
 		type_eq: voteType
 	};
 
-	// if ayes count,  votes (decision = 'ays', offset = 0 , limit 10)
-
-	// if nays count,
-
-	let votesQuery = ['moonbeam', 'cere'].includes(network) ? GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE : GET_VOTES_LISTING_BY_TYPE_AND_INDEX;
+	let votesQuery = ['moonbeam'].includes(network)
+		? GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
+		: ['moonriver', 'moonbeam'].includes(network)
+		? GET_VOTES_LISTING_BY_TYPE_AND_INDEX
+		: GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
 
 	if (address) {
-		votesQuery = ['moonbeam', 'cere'].includes(network)
+		votesQuery = ['moonbeam'].includes(network)
 			? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
-			: GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
+			: ['moonriver', 'moonbeam'].includes(network)
+			? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX
+			: GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
 
 		variables['voter_eq'] = address;
 	}
 
 	if (voteType === VoteType.REFERENDUM_V2) {
-		votesQuery = GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
+		votesQuery = isSupportedNestedVoteNetwork(network) ? GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX : GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
 		if (address) {
-			votesQuery = GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
+			votesQuery = isSupportedNestedVoteNetwork(network)
+				? GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX
+				: GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
 		}
 
 		if (['moonbase', 'moonriver', 'moonbeam'].includes(network)) {
@@ -141,9 +148,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 			const subsquidData = result.value?.data;
 			resObj[decision].votes = subsquidData?.votes;
 			resObj[decision].count = subsquidData?.votesConnection?.totalCount;
-			if (voteType === VoteType.REFERENDUM_V2) {
+			if ((voteType === VoteType.REFERENDUM_V2 || voteType === VoteType.REFERENDUM) && isSupportedNestedVoteNetwork(network)) {
 				resObj[decision].votes = subsquidData?.convictionVotes;
 				resObj[decision].count = subsquidData?.convictionVotesConnection?.totalCount;
+				return;
+			}
+			if (['moonbase', 'moonriver', 'moonbeam'].includes(network) && voteType == VoteType.REFERENDUM_V2) {
+				resObj[decision].votes = subsquidData?.convictionVotes;
+				resObj[decision].count = subsquidData?.convictionVotesConnection?.totalCount;
+				return;
 			}
 		}
 	});

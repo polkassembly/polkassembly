@@ -250,7 +250,9 @@ const SetOnChainIdentityButton = ({
 			}
 
 			if (identityOpt && identityOpt.isSome) {
-				const { info } = identityOpt.unwrap();
+				const { info } = identityOpt.unwrapOr({ info: null });
+				if (!info) return;
+
 				setData(info.display, null, setDisplayName);
 				setData(info.email, setHasEmail, setEmail);
 				setData(info.legal, setHasLegal, setLegalName);

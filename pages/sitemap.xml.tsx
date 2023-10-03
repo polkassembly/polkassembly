@@ -87,9 +87,9 @@ const generateSiteMap = (network: string, urls: string[]): string => {
 			${
 				GOV2[network]
 					? `
-			<url>
-				<loc>https://${network}.${DOMAIN}/opengov</loc>
-			</url>
+					<url>
+					<loc>https://${network}.${DOMAIN}/opengov</loc>
+				</url>
 			<url>
 				<loc>https://${network}.${DOMAIN}/delegation</loc>
 			</url>

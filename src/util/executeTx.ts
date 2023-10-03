@@ -34,9 +34,6 @@ const executeTx = async ({ api, apiReady, network, tx, address, params = {}, err
 		} else if (status.isInBlock) {
 			console.log('Transaction is in block');
 			setStatus?.('Transaction is in block');
-		} else if (status.isFinalized) {
-			console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
-			console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
 
 			for (const { event } of events) {
 				if (event.method === 'ExtrinsicSuccess') {
@@ -62,12 +59,15 @@ const executeTx = async ({ api, apiReady, network, tx, address, params = {}, err
 					}
 				}
 			}
+		} else if (status.isFinalized) {
+			console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
+			console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
 		}
-	}).catch((error: string) => {
+	}).catch((error: unknown) => {
 		console.log(':( transaction failed');
 		setStatus?.(':( transaction failed');
 		console.error('ERROR:', error);
-		onFailed(errorMessageFallback);
+		onFailed(error?.toString?.() || errorMessageFallback);
 	});
 };
 export default executeTx;

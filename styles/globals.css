@@ -30,6 +30,7 @@
   --red_secondary: #d94c3d;
   --aye_green: #2ed47a;
   --nay_red: #ff3c5f;
+  --ligth_red: #fff1f4;
   --comment_bg: #f9fafb;
   --font_default: "Poppins";
 }
@@ -353,15 +354,39 @@ color: var(--lightBlue) !important;
 	border-radius: 8px !important;
 }
 
-/* Track */
+.custom-link  {
+  font-family: '__Poppins_ed4ad5' !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 21px !important;
+  font-style: normal !important;
+  letter-spacing: 0.175px !important;
+  border-radius: 6px 6px 0px 0px;
+  background: linear-gradient(0deg,  0%, #FEF2F8 100%), #FFF;
+  
+}
+
+.logo-class:hover{
+  background-color: #FEF2F8 !important;
+}
+
+.logo-class:hover a{
+  color: #000 !important;
+}
+
+.ant-menu-root > li:first-child {
+  /* padding:50px !important; */
+  height: 60px !important;
+}
+
 ::-webkit-scrollbar-track {
   border-radius: 10px;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
 }
+
 .vector {
   position: relative;
   background-repeat: no-repeat;
@@ -452,4 +477,26 @@ color: var(--lightBlue) !important;
   color: #fff;
   padding: 12px 1rem;
   cursor: pointer;
+}
+
+.navbar-dropdowns .ant-dropdown-menu {
+	margin-top: 14px !important;
+}
+
+@media (max-width: 468px) and (min-width: 319px) {
+  .ant-menu-root > li:first-child {
+    height: 2px !important;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 319px) {
+  .read-more-button {
+    display: none !important;
+  }
+}  
+.ant-modal-root .ant-modal-mask{
+z-index: 1050 !important;
+}
+.ant-modal-root .ant-modal-wrap{
+  z-index: 1052 !important;
 }

@@ -1,12 +1,16 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Select } from 'antd';
+import { Segmented, Select } from 'antd';
 import { IUserPost } from 'pages/api/v1/listing/user-posts';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import PostTab from '../User/PostTab';
+import { EGovType } from '~src/global/proposalType';
+import VotesHistory from '~src/ui-components/VotesHistory';
+import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
+import { useNetworkContext } from '~src/context';
 
 export const getLabel = (str: string) => {
 	const newStr = str.split('_').join(' ');
@@ -15,6 +19,8 @@ export const getLabel = (str: string) => {
 
 interface IGovTabProps {
 	className?: string;
+	govType: EGovType;
+	userAddresses?: string[];
 	posts:
 		| {
 				discussions: {
@@ -64,57 +70,80 @@ interface IGovTabProps {
 }
 
 const GovTab: FC<IGovTabProps> = (props) => {
-	const { posts, className } = props;
+	const { posts, className, govType, userAddresses } = props;
+	const { network } = useNetworkContext();
 	const [selectedPostsType, setSelectedPostsType] = useState('discussions');
 	const [selectedPost, setSelectedPost] = useState('posts');
+	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(!votesHistoryUnavailableNetworks.includes(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
+
 	return (
 		<div className={className}>
-			<Select
-				suffixIcon={<ArrowDownIcon className='text-[#90A0B7]' />}
-				value={selectedPostsType}
-				className='select'
-				onChange={(v) => {
-					setSelectedPostsType(v);
-					const obj = (posts as any)?.[v];
-					if (obj && !Array.isArray(obj)) {
-						const objKeys = Object.keys(obj);
-						if (objKeys && objKeys.length > 0) {
-							setSelectedPost(objKeys[0]);
-						}
-					}
-				}}
-				options={Object.keys(posts).map((key) => ({
-					label: getLabel(key),
-					value: key
-				}))}
-			/>
-			<div className='scroll-hidden my-5 flex max-w-full items-center gap-x-2 overflow-x-auto'>
-				{(posts as any)?.[selectedPostsType] &&
-					!Array.isArray((posts as any)?.[selectedPostsType]) &&
-					Object.keys((posts as any)?.[selectedPostsType]).map((key) => {
-						return (
-							<button
-								key={key}
-								onClick={() => {
-									setSelectedPost(key);
-								}}
-								className={`flex items-center justify-center whitespace-nowrap rounded-[50px] border border-solid px-3 py-1 text-xs font-medium leading-[18px] outline-none ${
-									selectedPost === key ? 'border-pink_primary bg-pink_primary text-white' : 'border-[#90A0B7] bg-transparent text-[#90A0B7]'
-								}`}
-							>
-								{getLabel(key)}
-							</button>
-						);
-					})}
-			</div>
-			<div>
-				{(posts as any)?.[selectedPostsType] && Array.isArray((posts as any)?.[selectedPostsType]) ? (
-					<PostTab posts={(posts as any)?.[selectedPostsType]} />
-				) : (
-					(posts as any)?.[selectedPostsType]?.[selectedPost] &&
-					Array.isArray((posts as any)?.[selectedPostsType]?.[selectedPost]) && <PostTab posts={(posts as any)?.[selectedPostsType]?.[selectedPost]} />
+			<div className='mb-6'>
+				{!votesHistoryUnavailableNetworks.includes(network) && (
+					<div className='mb-6'>
+						<Segmented
+							options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
+							onChange={(e) => setProfileHistory(e as EProfileHistory)}
+						/>
+					</div>
 				)}
 			</div>
+			{profileHistory === EProfileHistory.POSTS && (
+				<>
+					<Select
+						suffixIcon={<ArrowDownIcon className='text-[#90A0B7]' />}
+						value={selectedPostsType}
+						className='select'
+						onChange={(v) => {
+							setSelectedPostsType(v);
+							const obj = (posts as any)?.[v];
+							if (obj && !Array.isArray(obj)) {
+								const objKeys = Object.keys(obj);
+								if (objKeys && objKeys.length > 0) {
+									setSelectedPost(objKeys[0]);
+								}
+							}
+						}}
+						options={Object.keys(posts).map((key) => ({
+							label: getLabel(key),
+							value: key
+						}))}
+					/>
+					<div className='scroll-hidden my-5 flex max-w-full items-center gap-x-2 overflow-x-auto'>
+						{(posts as any)?.[selectedPostsType] &&
+							!Array.isArray((posts as any)?.[selectedPostsType]) &&
+							Object.keys((posts as any)?.[selectedPostsType]).map((key) => {
+								return (
+									<button
+										key={key}
+										onClick={() => {
+											setSelectedPost(key);
+										}}
+										className={`flex items-center justify-center whitespace-nowrap rounded-[50px] border border-solid px-3 py-1 text-xs font-medium leading-[18px] outline-none ${
+											selectedPost === key ? 'border-pink_primary bg-pink_primary text-white' : 'border-[#90A0B7] bg-transparent text-[#90A0B7]'
+										}`}
+									>
+										{getLabel(key)}
+									</button>
+								);
+							})}
+					</div>
+					<div>
+						{(posts as any)?.[selectedPostsType] && Array.isArray((posts as any)?.[selectedPostsType]) ? (
+							<PostTab posts={(posts as any)?.[selectedPostsType]} />
+						) : (
+							(posts as any)?.[selectedPostsType]?.[selectedPost] &&
+							Array.isArray((posts as any)?.[selectedPostsType]?.[selectedPost]) && <PostTab posts={(posts as any)?.[selectedPostsType]?.[selectedPost]} />
+						)}
+					</div>
+				</>
+			)}
+			{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) && (
+				<VotesHistory
+					govType={govType}
+					userAddresses={userAddresses || []}
+				/>
+			)}
 		</div>
 	);
 };

@@ -368,6 +368,7 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 												/>
 											) : (
 												<AccountSelectionForm
+													isTruncateUsername={false}
 													title='Choose linked account'
 													accounts={accounts}
 													address={address}

@@ -225,7 +225,12 @@ const IdentityForm = ({
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
 		const onSuccess = async () => {
-			const identityHash = await api.query.identity.identityOf(address).then((res) => res.unwrap().info.hash.toHex());
+			const identityHash = await api.query.identity.identityOf(address).then((res) => res.unwrapOr(null)?.info.hash.toHex());
+			if (!identityHash) {
+				console.log('Error in unwraping identityHash');
+				return;
+			}
+
 			setIdentityHash(identityHash);
 			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
@@ -299,10 +304,8 @@ const IdentityForm = ({
 					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
 						<Address
 							address={address}
-							truncateUsername={false}
+							isTruncateUsername={false}
 							displayInline
-							clickable={false}
-							textClassName='text-bodyBlue'
 						/>
 						<Button
 							onClick={() => {

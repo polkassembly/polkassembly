@@ -421,6 +421,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 							<>
 								<div>
 									<AccountSelectionForm
+										isTruncateUsername={false}
 										title='Choose linked account'
 										accounts={accounts}
 										address={address}

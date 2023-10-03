@@ -185,7 +185,8 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 						<Address
 							address={addresses?.[0]?.to || ''}
 							displayInline
-							identiconSize={24}
+							iconSize={24}
+							isTruncateUsername={false}
 						/>
 					</div>
 				);
@@ -296,8 +297,9 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 					<div className='flex items-center justify-start gap-1 text-sm font-normal tracking-wide text-[#243A57] max-lg:flex-col'>
 						<Address
 							address={addresses?.[0].from || ''}
+							isTruncateUsername={false}
 							displayInline
-							identiconSize={24}
+							iconSize={24}
 						/>{' '}
 						<span className='text-xs font-medium tracking-[0.0015em] text-[#243A57]'>{addresses.length - 1 !== 0 && `+ ${addresses.length - 1} more`} </span>
 					</div>
@@ -345,8 +347,9 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 					<div className='flex items-center justify-start text-center text-sm font-normal text-[#243A57]'>
 						<Address
 							address={address || ''}
+							isTruncateUsername={false}
 							displayInline
-							identiconSize={24}
+							iconSize={24}
 						/>
 					</div>
 				),
@@ -403,8 +406,9 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 					<div className='flex items-center justify-start text-center text-sm font-normal text-[#243A57]'>
 						<Address
 							address={address || ''}
+							isTruncateUsername={false}
 							displayInline
-							identiconSize={24}
+							iconSize={24}
 						/>
 					</div>
 				),

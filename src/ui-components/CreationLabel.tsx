@@ -10,17 +10,17 @@ import { poppins } from 'pages/_app';
 
 import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
-
-import { AgainstIcon, SlightlyAgainstIcon, SlightlyForIcon, NeutralIcon, ForIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import dayjs from 'dayjs';
+import { getSentimentIcon, getSentimentTitle } from './CommentHistoryModal';
+import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
-import { EVoteDecisionType } from '~src/types';
+import { ESentiment, EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
-import dayjs from 'dayjs';
 
 const Styled = styled.div`
 	padding: 0;
@@ -97,39 +97,31 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
 
+	const getSentimentLabel = (sentiment: ESentiment) => {
+		return <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
+	};
+
 	const items: MenuProps['items'] = [
-		sentiment === 1
-			? { key: 1, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Completely Against</div> }
-			: null,
-		sentiment === 2
-			? { key: 2, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Slightly Against</div> }
-			: null,
-		sentiment === 3
-			? { key: 3, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Neutral</div> }
-			: null,
-		sentiment === 4
-			? { key: 4, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Slightly For</div> }
-			: null,
-		sentiment === 5
-			? { key: 5, label: <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>Completely For</div> }
-			: null
+		{
+			key: 1,
+			label: getSentimentLabel(sentiment as ESentiment) || null
+		}
 	];
 	return (
 		<div className={`${className} flex w-[100%] justify-between`}>
-			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
-				<div className={'flex w-full min-[320px]:w-auto min-[320px]:flex-row min-[320px]:items-center '}>
-					<div className={'flex items-center '}>
+			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+				<div className={'flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
+					<div className={'flex flex-shrink-0 items-center'}>
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
-							clickable={commentSource === 'polkassembly'}
+							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
-							textClassName={'text-[12px] text-ellipsis overflow-hidden'}
+							usernameClassName='text-xs text-ellipsis overflow-hidden mr-1'
 						/>
 						{text}&nbsp;
 						{topic && (
-							<div className='flex sm:-mt-0.5'>
-								{' '}
+							<div className='flex items-center sm:-mt-0.5'>
 								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>{' '}
 								<TopicTag
 									topic={topic}
@@ -147,30 +139,30 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									href={`https://ipfs.io/ipfs/${cid}`}
 									target='_blank'
 								>
-									{' '}
 									<PaperClipOutlined /> IPFS
 								</Link>
 							</>
 						) : null}
 					</div>
 				</div>
-				<div className='flex items-center text-lightBlue'>
+				<div className='flex items-center text-lightBlue max-xs:ml-1'>
 					{(topic || text || created_at) && (
 						<>
 							&nbsp;
 							<Divider
-								className={`ml-1 md:inline-block ${!isRow ? 'hidden' : 'inline-block'}`}
+								className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} max-sm:hidden`}
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 						</>
 					)}
 					{created_at && (
-						<span className='mt-2 flex items-center pl-5 md:mt-0 md:pl-0'>
+						<span className='-ml-[6px] -mt-[1px] flex items-center md:mt-0 md:pl-0'>
 							<ClockCircleOutlined className='mx-1' />
 							{relativeCreatedAt}
 						</span>
 					)}
+					{children}
 					{/* showing vote from local state */}
 					{vote && (
 						<div className='flex items-center justify-center'>
@@ -202,11 +194,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					{/* showing vote from subsquid */}
 					{votesArr.length > 0 ? (
 						<div
-							className={
-								votesArr.length > 1
-									? 'ml-1 flex items-center justify-center hover:cursor-pointer max-[768px]:mb-[-10px]'
-									: 'ml-1 flex items-center justify-center max-[768px]:mb-[-10px]'
-							}
+							className={votesArr.length > 1 ? 'ml-1 flex items-center justify-center hover:cursor-pointer' : 'ml-1 flex items-center justify-center'}
 							onClick={() => {
 								if (votesArr.length > 1) setShowVotesModal(!showVotesModal);
 							}}
@@ -289,9 +277,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							</Modal>
 						</div>
 					) : null}
-
-					{/* {created_at && <span className={`flex items-center md:pl-0 mr-1 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0'}`}><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>} */}
-					{children}
 				</div>
 			</div>
 
@@ -307,56 +292,14 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					</div>
 				) : null}
 
-				{sentiment === 1 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
-					>
-						<AgainstIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
-				{sentiment === 2 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-					>
-						<SlightlyAgainstIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
-				{sentiment === 3 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-					>
-						<NeutralIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
-				{sentiment === 4 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='flex items-center  justify-center text-lg text-white min-[320px]:mr-2'
-					>
-						<SlightlyForIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
-				{sentiment === 5 && (
-					<Dropdown
-						overlayClassName='sentiment-hover'
-						placement='topCenter'
-						menu={{ items }}
-						className='mb-[-1px] mr-[-1px] mt-[-2px] flex items-center  justify-center text-[20px] text-white min-[320px]:mr-2'
-					>
-						<ForIcon className='min-[320px]:items-start' />
-					</Dropdown>
-				)}
+				<Dropdown
+					overlayClassName='sentiment-hover'
+					placement='topCenter'
+					menu={{ items }}
+					className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
+				>
+					<div>{getSentimentIcon(sentiment as ESentiment)}</div>
+				</Dropdown>
 				{commentSource === 'subsquare' && (
 					<Styled>
 						<HelperTooltip

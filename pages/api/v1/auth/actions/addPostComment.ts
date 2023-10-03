@@ -22,8 +22,9 @@ export interface IAddPostCommentResponse {
 
 const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
-
 	const network = String(req.headers['x-network']);
+	// res.status(500).json({ message: 'Invalid' });
+	// return;
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { userId, content, postId, postType, sentiment, trackNumber = null } = req.body;

@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Skeleton } from 'antd';
+import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -38,9 +38,9 @@ import {
 	RootIcon,
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
-	ApplayoutIdentityIcon
+	ApplayoutIdentityIcon,
+	ArchivedIcon
 } from 'src/ui-components/CustomIcons';
-import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 
@@ -51,7 +51,6 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { PostOrigin } from '~src/types';
 
 import Footer from './Footer';
-import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
@@ -63,9 +62,9 @@ import IdentityCaution from '~assets/icons/identity-caution.svg';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import PaLogo from './PaLogo';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
-	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
 const { Content, Sider } = Layout;
@@ -171,6 +170,7 @@ const getUserDropDown = (
 		<Dropdown
 			menu={{ items: dropdownMenuItems }}
 			trigger={['click']}
+			className='profile-dropdown'
 		>
 			{children}
 		</Dropdown>
@@ -225,10 +225,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) || false;
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
@@ -302,6 +303,25 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [
+			!isMobile
+				? getSiderMenuItem(
+						'',
+						'',
+						<div
+							className={`${className} ${
+								sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
+							} svgLogo logo-container logo-display-block flex h-[66px] items-center justify-center bg-transparent`}
+						>
+							<div>
+								<PaLogo
+									className={`${sidedrawer ? 'ml-2' : 'ml-0'}h-full`}
+									sidedrawer={sidedrawer}
+								/>
+								<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom -mx-4 my-2`}></div>
+							</div>
+						</div>
+				  )
+				: null,
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
 			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -320,8 +340,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
-					getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-					getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
 					getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 			  ]
 			: [],
@@ -344,30 +362,33 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				: []
 	};
 	if (isGrantsSupported(network)) {
-		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
+		gov1Items['overviewItems'].splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if (isMobile) {
-		gov1Items.overviewItems = [
-			getSiderMenuItem(
-				<GovernanceSwitchButton
-					previousRoute={previousRoute}
-					className='flex lg:hidden'
-				/>,
-				'opengov',
-				''
-			),
-			...gov1Items.overviewItems
-		];
-	}
-
-	let items: MenuProps['items'] = [...gov1Items.overviewItems];
+	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
 	if (chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
 		items = items.concat([
 			getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
 
-			getSiderMenuItem('Treasury', 'treasury_group', null, [...gov1Items.treasuryItems]),
+			getSiderMenuItem(
+				'Treasury',
+				'treasury_group',
+				null,
+				isOpenGovSupported(network)
+					? !['moonbeam', 'moonbase', 'moonriver'].includes(network)
+						? [...gov1Items.treasuryItems]
+						: [
+								...gov1Items.treasuryItems,
+								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
+								getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+						  ]
+					: [
+							...gov1Items.treasuryItems,
+							getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
+							getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+					  ]
+			),
 
 			getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
 
@@ -375,7 +396,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	let collapsedItems: MenuProps['items'] = [...gov1Items.overviewItems];
+	let collapsedItems: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
 	if (chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
 		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
@@ -470,7 +491,26 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	let gov2OverviewItems = [
+	const gov2OverviewItems = [
+		!isMobile
+			? getSiderMenuItem(
+					'',
+					'',
+					<div
+						className={`${className} ${
+							sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
+						} svgLogo logo-container logo-display-block flex h-[66px] items-center justify-center bg-transparent`}
+					>
+						<div>
+							<PaLogo
+								className={`${sidedrawer ? 'ml-2' : 'ml-0'}h-full`}
+								sidedrawer={sidedrawer}
+							/>
+							<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom -mx-4 my-2`}></div>
+						</div>
+					</div>
+			  )
+			: null,
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 text-white' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-white' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -480,33 +520,26 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	];
 
 	if (['kusama', 'polkadot'].includes(network)) {
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5' />));
+		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5' />));
 	}
 	if (isGrantsSupported(network)) {
-		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
+		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if (typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
-		gov2OverviewItems = [
-			getSiderMenuItem(
-				<GovernanceSwitchButton
-					previousRoute={previousRoute}
-					className='flex lg:hidden'
-				/>,
-				'/',
-				''
-			),
-			...gov2OverviewItems
-		];
-	}
-
-	const gov2Items: MenuProps['items'] = [
+	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		// Tracks Heading
 		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
+	];
+
+	const gov2CollapsedItems: MenuProps['items'] = [
+		...gov2OverviewItems,
+		...gov2TrackItems.mainItems,
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [...gov2TrackItems.governanceItems]),
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems])
 	];
 
 	if (isFellowshipSupported(network)) {
@@ -519,17 +552,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
 		if (network !== 'picasso') {
-			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.treasuryItems]));
+			let items = [...gov2TrackItems.treasuryItems];
+			if (isOpenGovSupported(network)) {
+				items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
+			}
+			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...items]));
 		} else {
 			gov2Items.splice(gov2Items.length - 2, 1);
 		}
 	}
-	const gov2CollapsedItems: MenuProps['items'] = [
-		...gov2OverviewItems,
-		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [...gov2TrackItems.governanceItems]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-white' />, [...gov2TrackItems.fellowshipItems])
-	];
 
 	if (isFellowshipSupported(network)) {
 		gov2CollapsedItems.splice(
@@ -547,8 +578,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
-
 	const handleMenuClick = (menuItem: any) => {
 		if (['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
@@ -562,6 +591,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			router.replace('/');
 		}
 	};
+
 	const handleIdentityButtonClick = () => {
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
@@ -574,6 +604,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			}
 		}
 	};
+	if (network !== AllNetworks.POLYMESH) {
+		gov2Items = [...gov2Items, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='text-lightBlue' />, [...items])];
+	}
 
 	const userDropdown = getUserDropDown(
 		handleIdentityButtonClick,
@@ -589,12 +622,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
-	if (isGov2Route) {
+	if (isOpenGovSupported(network)) {
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
-	if (username) {
-		sidebarItems = [userDropdown, ...sidebarItems];
+	if (isMobile) {
+		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
 
 	return (
@@ -603,6 +636,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				sidedrawer={sidedrawer}
 				setSidedrawer={setSidedrawer}
 				previousRoute={previousRoute}
+				displayName={mainDisplay}
+				isVerified={isGood && !isIdentityUnverified}
 			/>
 			<Layout hasSider>
 				<Sider
@@ -611,7 +646,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'sidebar fixed bottom-0 left-0 z-40 hidden h-screen overflow-y-hidden bg-white lg:block'}
+					className={'sidebar fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white lg:block'}
 				>
 					<Menu
 						theme='light'
@@ -619,12 +654,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} mt-[60px]`}
+						className={`${username ? 'auth-sider-menu' : ''}`}
 					/>
 				</Sider>
 				<Drawer
 					placement='left'
 					closable={false}
+					className='menu-container'
 					onClose={() => setSidedrawer(false)}
 					open={sidedrawer}
 					getContainer={false}
@@ -633,7 +669,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						height: '100vh',
 						left: 0,
 						position: 'fixed',
-						top: '60px'
+						zIndex: '1005'
 					}}
 				>
 					<Menu
@@ -647,7 +683,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
-				{['moonbeam', 'moonriver'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
+				{['moonbeam', 'moonriver'].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={'moonbeam'} />
@@ -681,6 +717,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 			<Footer />
 			<Modal
+				zIndex={100}
 				open={identityMobileModal}
 				footer={false}
 				closeIcon={<CloseIcon />}
@@ -706,6 +743,25 @@ const CustomContent = memo(function CustomContent({ Component, pageProps }: Prop
 });
 
 export default styled(AppLayout)`
+	.svgLogo svg {
+		height: 60%;
+	}
+
+	.border-bottom {
+		border-bottom: 1px solid #d2d8e0;
+	}
+	.border-right {
+		border-right: 1px solid #d2d8e0;
+	}
+
+	#rc-menu-uuid-75314-4- {
+		border-bottom: 1px solid gray;
+	}
+
+	#rc-menu-uuid-44115-4- .logo-container {
+		height: 100px !important;
+	}
+
 	.ant-drawer .ant-drawer-mask {
 		position: fixed !important;
 	}
@@ -771,11 +827,6 @@ export default styled(AppLayout)`
 		list-style: none !important;
 	}
 
-	.auth-sider-menu > li:first-child {
-		margin-bottom: 25px;
-		margin-top: 15px;
-	}
-
 	.ant-empty-image {
 		display: flex;
 		justify-content: center;
@@ -800,5 +851,50 @@ export default styled(AppLayout)`
 
 	.ant-menu-sub {
 		background: #fff !important;
+	}
+
+	.ant-menu-item > .logo-container {
+		height: 100px;
+	}
+
+	.logo-container:hover {
+		background: #fff !important;
+	}
+
+	.menu-container {
+		top: 0px;
+	}
+
+	@media (max-width: 468px) and (min-width: 380px) {
+		.menu-container {
+			top: 62px !important;
+		}
+
+		.logo-display-block {
+			display: none !important;
+		}
+
+		.user-container {
+			display: flex !important;
+			width: 200px !important;
+			border: none !important;
+			background-color: #fff !important;
+		}
+
+		.logo-container {
+			display: flex !important;
+		}
+
+		.user-image {
+			font-size: 14px !important;
+		}
+
+		.user-info {
+			font-size: 14px !important;
+		}
+
+		.user-info-dropdown {
+			transform: scale(0.7);
+		}
 	}
 `;

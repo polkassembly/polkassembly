@@ -106,6 +106,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				title='Discussions'
 				network={network}
 			/>
+
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
 				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue'>
 					<DiscussionsIcon className='mt-2 xs:mr-3 sm:mr-2 sm:mt-1.5' />

@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import Address from './Address';
@@ -12,37 +11,41 @@ interface Props {
 	defaultAddress?: string | null;
 	username?: string;
 	disableIdenticon?: boolean;
-	textClassName?: string;
-	clickable?: boolean;
+	usernameClassName?: string;
+	disableAddressClick?: boolean;
 	truncateUsername?: boolean;
 }
 
-const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable = true, truncateUsername }: Props) => {
-	const router = useRouter();
+const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, usernameClassName, disableAddressClick = false, truncateUsername }: Props) => {
 	return (
-		<div className={`${className}`}>
+		<div
+			className={`${className}`}
+			title={username}
+		>
 			{!defaultAddress ? (
 				<span
-					className={`username mr-1.5 font-semibold text-bodyBlue ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-					onClick={() => {
-						if (clickable) {
-							router.push(`/user/${username}`);
+					className={`username mr-1.5 font-semibold text-bodyBlue ${!disableAddressClick ? 'cursor-pointer hover:underline' : 'cursor-not-allowed'}`}
+					onClick={(e) => {
+						e.stopPropagation();
+						e.preventDefault();
+						if (!disableAddressClick) {
+							const routePath = `/user/${username}`;
+							window.open(routePath, '_blank');
 						}
 					}}
 				>
-					{' '}
-					{username}{' '}
+					{username}
 				</span>
 			) : (
 				<Address
 					passedUsername={username}
 					address={defaultAddress}
 					className='text-sm'
-					textClassName={textClassName}
-					displayInline={true}
+					displayInline
+					usernameClassName={usernameClassName}
 					disableIdenticon={disableIdenticon}
-					clickable={clickable}
-					truncateUsername={truncateUsername}
+					disableAddressClick={disableAddressClick}
+					isTruncateUsername={truncateUsername || false}
 					isSubVisible={false}
 				/>
 			)}

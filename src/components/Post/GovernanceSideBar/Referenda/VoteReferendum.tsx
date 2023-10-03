@@ -753,6 +753,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									) : (
 										<AccountSelectionForm
 											title='Vote with Account'
+											isTruncateUsername={false}
 											accounts={accounts}
 											address={address}
 											withBalance

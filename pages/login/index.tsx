@@ -54,7 +54,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const currentUser = useUserDetailsContext();
+	const { id } = useUserDetailsContext();
 	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
@@ -80,11 +80,11 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 	};
 
 	useEffect(() => {
-		if (currentUser?.id && !isModal) {
+		if (id && !isModal) {
 			router.push('/');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentUser?.id, router]);
+	}, [id, router]);
 	return (
 		<>
 			<SEOHead

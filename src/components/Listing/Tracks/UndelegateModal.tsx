@@ -213,7 +213,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						<Button
 							key='back'
 							disabled={loading}
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary text-pink_primary'
+							className='h-10 w-[134px] rounded-[4px] border-pink_primary text-pink_primary'
 							onClick={() => setOpen(false)}
 						>
 							Cancel
@@ -221,7 +221,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						<Button
 							htmlType='submit'
 							key='submit'
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary'
+							className='h-10 w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary'
 							disabled={loading}
 							onClick={handleSubmit}
 						>
@@ -249,13 +249,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						>
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue'>Your Address</label>
-								<div className='h-[40px] cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b]'>
+								<div className='h-10 rounded-[6px] px-0 py-[px] text-[#7c899b]'>
 									<Address
-										truncateUsername={false}
-										textClassName='text-lightBlue font-medium'
+										isTruncateUsername={false}
 										address={defaultAddress}
-										identiconSize={32}
-										disableAddressClick
+										iconSize={32}
 										addressClassName='text-[#7c899b] text-sm'
 										displayInline
 									/>
@@ -264,13 +262,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue'>Delegated to</label>
-								<div className='h-[40px] cursor-not-allowed rounded-[6px] px-0 py-[px] text-bodyBlue'>
+								<div className='h-10 rounded-[6px] px-0 py-[px] text-bodyBlue'>
 									<Address
-										truncateUsername={false}
-										textClassName='text-lightBlue font-medium'
+										isTruncateUsername={false}
 										address={defaultTarget}
-										identiconSize={32}
-										disableAddressClick
+										iconSize={32}
 										addressClassName='text-[#7c899b] text-sm'
 										displayInline
 									/>
@@ -279,7 +275,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className='mt-4'>
 								<label className='mb-2 text-sm text-lightBlue'>Balance </label>
-								<div className='h-[40px] cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b]'>{`${formatedBalance(balance.toString(), unit)} ${unit}`}</div>
+								<div className='h-10 cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b]'>{`${formatedBalance(balance.toString(), unit)} ${unit}`}</div>
 							</div>
 
 							<div className='mb-[2px]  border-solid border-white'>

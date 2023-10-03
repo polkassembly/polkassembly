@@ -273,6 +273,11 @@ export interface NetworkSocials {
 	description: string;
 }
 
+export enum EGovType {
+	OPEN_GOV = 'open_gov',
+	GOV1 = 'gov1'
+}
+
 export interface NetworkEvent {
 	content: string;
 	end_time: Date;
@@ -370,6 +375,7 @@ export interface Post {
 	summary?: string;
 	createdOnPolkassembly?: boolean;
 }
+
 export interface IPostTag {
 	name: string;
 	last_used_at: Date;
@@ -531,4 +537,11 @@ export enum ESocials {
 export interface ILoading {
 	isLoading: boolean;
 	message: string;
+}
+export enum EAddressOtherTextType {
+	CONNECTED = 'Connected',
+	COUNCIL = 'Council',
+	COUNCIL_CONNECTED = 'Council (Connected)',
+	LINKED_ADDRESS = 'Linked',
+	UNLINKED_ADDRESS = 'Address not linked'
 }

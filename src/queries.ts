@@ -1302,7 +1302,104 @@ query AllianceAnnouncementByCidAndType($cid_eq: String) {
 }
 `;
 
+export const GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX = `
+query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
+  convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+  convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+    isDelegated
+  }
+}
+`;
+
+export const GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX = `
+query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
+  convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}) {
+    totalCount
+  }
+  convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+    isDelegated
+  }
+}
+`;
+
+export const GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX = `
+query ConvictionVotesWithTxnHashListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
+  convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+  convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+    isDelegated
+    txnHash
+  }
+}
+`;
+
 export const GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX = `
+query ConvictionVotesForAddressWithTxnHashListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "",) {
+  convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}) {
+    totalCount
+  }
+  convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+    isDelegated
+    txnHash
+  }
+}`;
+
+export const GET_NESTED_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX = `
 query ConvictionVotesForAddressWithTxnHashListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "",) {
   convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}) {
     totalCount
@@ -1325,7 +1422,7 @@ query ConvictionVotesForAddressWithTxnHashListingByTypeAndIndex($orderBy: [Convi
   }
 }`;
 
-export const GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX = `
+export const GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX = `
 query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
     convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
         totalCount
@@ -1371,7 +1468,7 @@ query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput
 }
 `;
 
-export const GET_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID = `
+export const GET_NESTED_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID = `
 query ConvictionVotesListingByTypeAndIndex(
   $index_eq: Int = 264,
   $type_eq: VoteType = ReferendumV2,
@@ -1421,6 +1518,7 @@ query ConvictionVotesListingByTypeAndIndex(
         decision_eq: $decision,
         proposalIndex_eq: $index_eq,
         removedAtBlock_isNull: true,
+        type_eq: $type_eq,
           delegatedTo:{
             voter_eq: $voter_eq,
             removedAtBlock_isNull: true
@@ -1431,7 +1529,7 @@ query ConvictionVotesListingByTypeAndIndex(
   }
 `;
 
-export const GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX = `
+export const GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX = `
 query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
   convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}) {
     totalCount
@@ -1454,7 +1552,7 @@ query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOr
 }
 `;
 
-export const GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX = `
+export const GET_NESTED_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX = `
 query ConvictionVotesWithTxnHashListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
   convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
     totalCount
@@ -1480,17 +1578,14 @@ query ConvictionVotesWithTxnHashListingByTypeAndIndex($orderBy: [ConvictionVoteO
 
 export const GET_DELEGATED_CONVICTION_VOTES_COUNT = `
 query ConvictionDelegatedVotesCountAndBalance(
-  $index_eq: Int = 253,
-  $decision: VoteDecision = yes,
-  $voter_eq: String = "HqRcfhH8VXMhuCk5JXe28WMgDDuW9MVDVNofe1nnTcefVZn") {
-    convictionVotes(orderBy: id_ASC,
-      where: {
-        decision_eq: $decision,
-        proposalIndex_eq: $index_eq,
-        removedAtBlock_isNull: true,
-        voter_eq: $voter_eq,
-      }) {
-    delegatedVotes {
+  $index_eq: Int = 109, 
+  $decision: VoteDecision = yes, 
+  $voter_eq: String = "", 
+  $type_eq: VoteType) {
+  convictionVotes(orderBy: id_ASC, where: {
+    decision_eq: $decision, proposalIndex_eq: $index_eq,
+    removedAtBlock_isNull: true, voter_eq: $voter_eq, type_eq: $type_eq}) {
+    delegatedVotes(where: {removedAtBlock_isNull: true}) {
       lockPeriod
       votingPower
       balance {
@@ -1504,17 +1599,72 @@ query ConvictionDelegatedVotesCountAndBalance(
       }
     }
   }
-    convictionDelegatedVotesConnection(orderBy: id_ASC,
-      where: {
-        decision_eq: $decision,
-        proposalIndex_eq: $index_eq,
-        removedAtBlock_isNull: true,
-          delegatedTo:{
-            voter_eq: $voter_eq,
-            removedAtBlock_isNull: true
-          }
-      }) {
-      totalCount
+  convictionDelegatedVotesConnection(orderBy: id_ASC, where: {
+    decision_eq: $decision, proposalIndex_eq: $index_eq, 
+    removedAtBlock_isNull: true, delegatedTo: {
+    voter_eq: $voter_eq, removedAtBlock_isNull: true, type_eq: $type_eq
+  }}) {
+    totalCount
+  }
+}
+`;
+
+export const GET_VOTE_HISTORY_IN_PROFILE = `
+query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!] , $limit: Int = 10, $offset: Int = 0, $orderBy: [FlattenedConvictionVotesOrderByInput!]) {
+  flattenedConvictionVotes(where: {type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true}, limit: $limit, offset: $offset, orderBy: $orderBy) {
+    type
+    voter
+    lockPeriod
+    decision
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
     }
+    proposal {
+      description
+      createdAt
+      index
+      proposer
+      status
+      statusHistory {
+        id
+        status
+      }
+    }
+    proposalIndex
+    delegatedTo
+    isDelegated
+    parentVote {
+      selfVotingPower
+      type
+      voter
+      lockPeriod
+      delegatedVotingPower
+      delegatedVotes(where: {removedAtBlock_isNull: true}) {
+        voter
+        balance {
+          ... on StandardVoteBalance {
+            value
+          }
+          ... on SplitVoteBalance {
+            aye
+            nay
+            abstain
+          }
+        }
+        lockPeriod
+        votingPower
+      }
+    }
+  }
+  flattenedConvictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true}) {
+    totalCount
+  }
 }
 `;

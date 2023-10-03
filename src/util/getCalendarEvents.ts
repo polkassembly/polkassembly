@@ -7,15 +7,7 @@ import { ApiPromise } from '@polkadot/api';
 import { chainProperties } from '~src/global/networkConstants';
 import type { Option, u32 } from '@polkadot/types';
 import type { ITuple } from '@polkadot/types/types';
-import {
-	BlockNumber,
-	EraIndex,
-	LeasePeriod,
-	LeasePeriodOf,
-	ReferendumStatus,
-	Scheduled,
-	UnappliedSlash
-} from '@polkadot/types/interfaces';
+import { BlockNumber, EraIndex, LeasePeriod, LeasePeriodOf, ReferendumStatus, Scheduled, UnappliedSlash } from '@polkadot/types/interfaces';
 import { QueryableModuleConsts } from '@polkadot/api/types';
 import type { DeriveCollectiveProposal } from '@polkadot/api-derive/types';
 import { PjsCalendarItem, PjsCalendarItemDuration } from '~src/types';
@@ -31,8 +23,8 @@ function generateCalendarItemDuration(network: string, blockNumber: number, dura
 		const endBlockNumber = modifiedBlockNumber + blocksLeft;
 		const timeSpent = blocksSpent * blockTime;
 		const timeLeft = blocksLeft * blockTime;
-		const startTimestamp = +(new Date()) - timeSpent;
-		const endTimestamp = +(new Date()) + timeLeft;
+		const startTimestamp = +new Date() - timeSpent;
+		const endTimestamp = +new Date() + timeLeft;
 
 		return {
 			startDate: new Date(startTimestamp),
@@ -53,15 +45,15 @@ export async function fetchAuctionInfo(api: ApiPromise, network: string): Promis
 	const blockTime = chainProperties[network].blockTime;
 	const endingPeriod = api.consts.auctions?.endingPeriod as u32;
 	const leasePeriodPerSlot = api.consts.auctions?.leasePeriodsPerSlot as BlockNumber;
-	const auctionInfo = await api.query.auctions?.auctionInfo() as Option<ITuple<[LeasePeriodOf, BlockNumber]>>;
+	const auctionInfo = (await api.query.auctions?.auctionInfo()) as Option<ITuple<[LeasePeriodOf, BlockNumber]>>;
 
 	if (auctionInfo && auctionInfo.isSome) {
-		const [leasePeriod, endBlock] = auctionInfo.unwrap();
+		const [leasePeriod, endBlock] = auctionInfo.unwrapOr([]);
 
 		const startBlockNumber = endBlock?.toJSON() - endingPeriod?.toJSON();
 		const endBlockNumber = endBlock?.toJSON() as number;
-		const startTimestamp = +(new Date()) + (blockTime * (startBlockNumber - blockNumber));
-		const endTimestamp = +(new Date()) + (blockTime * (endBlockNumber - blockNumber));
+		const startTimestamp = +new Date() + blockTime * (startBlockNumber - blockNumber);
+		const endTimestamp = +new Date() + blockTime * (endBlockNumber - blockNumber);
 
 		const auctionItem: PjsCalendarItem = {
 			network,
@@ -72,12 +64,11 @@ export async function fetchAuctionInfo(api: ApiPromise, network: string): Promis
 			endBlockNumber,
 			data: {
 				leasePeriod: leasePeriod?.toJSON() as number,
-				leasePeriodPerSlot: leasePeriodPerSlot?.toJSON() as number || 3
+				leasePeriodPerSlot: (leasePeriodPerSlot?.toJSON() as number) || 3
 			}
 		};
 
 		calendarItems.push(auctionItem);
-
 	}
 	return calendarItems;
 }
@@ -94,7 +85,7 @@ export async function fetchCouncilMotions(api: ApiPromise, network: string): Pro
 		councilMotions.forEach(({ hash, votes }) => {
 			if (votes) {
 				const endBlockNumber = votes.end?.toJSON() as number;
-				const endTimestamp = +(new Date()) + (blockTime * (endBlockNumber - blockNumber));
+				const endTimestamp = +new Date() + blockTime * (endBlockNumber - blockNumber);
 
 				const item: PjsCalendarItem = {
 					network,
@@ -126,7 +117,7 @@ export async function fetchDemocracyDispatches(api: ApiPromise, network: string)
 	if (dispatches) {
 		dispatches.forEach(({ at, index }) => {
 			const endBlockNumber = at?.toJSON() as unknown as number;
-			const endTimestamp = +(new Date()) + (blockTime * (endBlockNumber - blockNumber));
+			const endTimestamp = +new Date() + blockTime * (endBlockNumber - blockNumber);
 
 			const item: PjsCalendarItem = {
 				network,
@@ -158,11 +149,11 @@ export async function fetchReferendums(api: ApiPromise, network: string): Promis
 		referendums.forEach(({ index, status }) => {
 			const endBlock = (status as ReferendumStatus).end?.toJSON() as number;
 
-			const referendumEndTimestamp = +(new Date()) + (blockTime * (endBlock - blockNumber));
+			const referendumEndTimestamp = +new Date() + blockTime * (endBlock - blockNumber);
 			const enactEndBlock = endBlock + ((status as ReferendumStatus).delay?.toJSON() as number);
-			const enactEndTimestamp = +(new Date()) + (blockTime * (enactEndBlock - blockNumber));
+			const enactEndTimestamp = +new Date() + blockTime * (enactEndBlock - blockNumber);
 			const voteEndBlock = endBlock - 1;
-			const voteEndTimestamp = +(new Date()) + (blockTime * (voteEndBlock - blockNumber));
+			const voteEndTimestamp = +new Date() + blockTime * (voteEndBlock - blockNumber);
 
 			const enactItem: PjsCalendarItem = {
 				network,
@@ -221,7 +212,7 @@ export async function fetchStakingInfo(api: ApiPromise, network: string): Promis
 			const eraProgress = sessionInfo.eraProgress?.toJSON() as number;
 			const eraBlocksLeft = eraLength - eraProgress;
 			const eraEndBlockNumber = eraBlocksLeft + blockNumber;
-			const eraEndTimestamp = +(new Date()) + (blockTime * eraBlocksLeft);
+			const eraEndTimestamp = +new Date() + blockTime * eraBlocksLeft;
 
 			const eraItem: PjsCalendarItem = {
 				network,
@@ -238,7 +229,7 @@ export async function fetchStakingInfo(api: ApiPromise, network: string): Promis
 			const sessionProgress = sessionInfo.sessionProgress?.toJSON() as number;
 			const sessionBlocksLeft = sessionLength - sessionProgress;
 			const sessionEndBlockNumber = sessionBlocksLeft + blockNumber;
-			const sessionEndTimestamp = +(new Date()) + (blockTime * sessionBlocksLeft);
+			const sessionEndTimestamp = +new Date() + blockTime * sessionBlocksLeft;
 			const nextSessionIndex = (sessionInfo.currentIndex?.toJSON() as number) + 1;
 
 			const epochItem: PjsCalendarItem = {
@@ -257,11 +248,7 @@ export async function fetchStakingInfo(api: ApiPromise, network: string): Promis
 			let slashDuration: number | undefined;
 
 			try {
-				slashDeferDuration = (
-					await Promise.resolve(
-						api.consts.staking?.slashDeferDuration
-					) as u32
-				)?.toJSON() as number;
+				slashDeferDuration = ((await Promise.resolve(api.consts.staking?.slashDeferDuration)) as u32)?.toJSON() as number;
 
 				if (slashDeferDuration) {
 					slashDuration = slashDeferDuration * eraLength;
@@ -271,15 +258,15 @@ export async function fetchStakingInfo(api: ApiPromise, network: string): Promis
 			}
 
 			if (slashDuration !== undefined) {
-				const unappliedSlashes = await api.query.staking?.unappliedSlashes.entries() as [{ args: [EraIndex] }, UnappliedSlash[]][];
+				const unappliedSlashes = (await api.query.staking?.unappliedSlashes.entries()) as [{ args: [EraIndex] }, UnappliedSlash[]][];
 				if (unappliedSlashes) {
 					unappliedSlashes.forEach(([{ args }, values]) => {
 						if (values.length) {
 							const slashEraIndex = args[0]?.toJSON() as number;
-							const slashBlocksProgress = ((prevEra - slashEraIndex) * eraLength) + eraProgress;
+							const slashBlocksProgress = (prevEra - slashEraIndex) * eraLength + eraProgress;
 							const slashBlocksLeft = (slashDuration as number) - slashBlocksProgress;
 							const slashEndBlockNumber = slashBlocksLeft + blockNumber;
-							const slashEndTimestamp = +(new Date()) + (blockTime * slashBlocksLeft);
+							const slashEndTimestamp = +new Date() + blockTime * slashBlocksLeft;
 
 							const slashItem: PjsCalendarItem = {
 								network,
@@ -307,19 +294,21 @@ export async function fetchScheduled(api: ApiPromise, network: string): Promise<
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 	const blockTime = chainProperties[network].blockTime;
 
-	const scheduled = await api.query.scheduler?.agenda.entries() as [{ args: [BlockNumber] }, Option<Scheduled>[]][];
+	const scheduled = (await api.query.scheduler?.agenda.entries()) as [{ args: [BlockNumber] }, Option<Scheduled>[]][];
 
 	if (scheduled) {
 		scheduled.forEach(([key, scheduledOptions]) => {
 			const scheduledBlockNumber = key.args[0]?.toJSON() as number;
 			const blocksLeft = scheduledBlockNumber - blockNumber;
-			const endTimestamp = +(new Date()) + (blockTime * blocksLeft);
+			const endTimestamp = +new Date() + blockTime * blocksLeft;
 
 			scheduledOptions
-				.map((scheduledOption) => scheduledOption.unwrap())
-				.forEach(({ maybeId }) => {
+				.map((scheduledOption) => scheduledOption.unwrapOr({} as any))
+				.filter((maybeId) => maybeId !== null)
+				.forEach(({ maybeId = null }) => {
+					if (!maybeId) return;
 					const idOrNull = maybeId.unwrapOr(null);
-					const id = idOrNull ? idOrNull.isAscii ? idOrNull.toUtf8() : idOrNull.toHex() : null;
+					const id = idOrNull ? (idOrNull.isAscii ? idOrNull.toUtf8() : idOrNull.toHex()) : null;
 
 					const item: PjsCalendarItem = {
 						network,
@@ -343,11 +332,7 @@ export async function fetchCouncilElection(api: ApiPromise, network: string): Pr
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 
-	const responses = await Promise.allSettled([
-		api.consts.elections,
-		api.consts.phragmenElection,
-		api.consts.electionsPhragmen
-	]);
+	const responses = await Promise.allSettled([api.consts.elections, api.consts.phragmenElection, api.consts.electionsPhragmen]);
 	const response = responses.find((r) => r.status === 'fulfilled' && r.value) as PromiseFulfilledResult<QueryableModuleConsts>;
 	if (!response) {
 		return [];
@@ -358,13 +343,16 @@ export async function fetchCouncilElection(api: ApiPromise, network: string): Pr
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
-		const item: PjsCalendarItem = Object.assign({
-			network,
-			type: 'councilElection',
-			data: {
-				electionRound: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
-			}
-		}, itemDuration);
+		const item: PjsCalendarItem = Object.assign(
+			{
+				network,
+				type: 'councilElection',
+				data: {
+					electionRound: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
+				}
+			},
+			itemDuration
+		);
 
 		calendarItems.push(item);
 	}
@@ -381,13 +369,16 @@ export async function fetchDemocracyLaunch(api: ApiPromise, network: string): Pr
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
-		const item: PjsCalendarItem = Object.assign({
-			network,
-			type: 'democracyLaunch',
-			data: {
-				launchPeriod: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
-			}
-		}, itemDuration);
+		const item: PjsCalendarItem = Object.assign(
+			{
+				network,
+				type: 'democracyLaunch',
+				data: {
+					launchPeriod: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
+				}
+			},
+			itemDuration
+		);
 
 		calendarItems.push(item);
 	}
@@ -403,13 +394,16 @@ export async function fetchTreasurySpend(api: ApiPromise, network: string): Prom
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
-		const item: PjsCalendarItem = Object.assign({
-			network,
-			type: 'treasurySpend',
-			data: {
-				spendingPeriod: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
-			}
-		}, itemDuration);
+		const item: PjsCalendarItem = Object.assign(
+			{
+				network,
+				type: 'treasurySpend',
+				data: {
+					spendingPeriod: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
+				}
+			},
+			itemDuration
+		);
 
 		calendarItems.push(item);
 	}
@@ -422,17 +416,20 @@ export async function fetchSocietyRotate(api: ApiPromise, network: string): Prom
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 	const duration = api.consts.society?.rotationPeriod as u32;
-	if(!duration) return [];
+	if (!duration) return [];
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration) {
-		const item: PjsCalendarItem = Object.assign({
-			network,
-			type: 'societyRotate',
-			data: {
-				rotateRound: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
-			}
-		}, itemDuration);
+		const item: PjsCalendarItem = Object.assign(
+			{
+				network,
+				type: 'societyRotate',
+				data: {
+					rotateRound: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
+				}
+			},
+			itemDuration
+		);
 
 		calendarItems.push(item);
 	}
@@ -448,14 +445,16 @@ export async function fetchSocietyChallenge(api: ApiPromise, network: string): P
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
-
-		const item: PjsCalendarItem = Object.assign({
-			network,
-			type: 'societyChallenge',
-			data: {
-				challengePeriod: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
-			}
-		}, itemDuration);
+		const item: PjsCalendarItem = Object.assign(
+			{
+				network,
+				type: 'societyChallenge',
+				data: {
+					challengePeriod: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number))
+				}
+			},
+			itemDuration
+		);
 
 		calendarItems.push(item);
 	}
@@ -472,13 +471,16 @@ export async function fetchParachainLease(api: ApiPromise, network: string): Pro
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number, offset?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
-		const item: PjsCalendarItem = Object.assign({
-			network,
-			type: 'parachainLease',
-			data: {
-				leasePeriod: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number)) + 1
-			}
-		}, itemDuration);
+		const item: PjsCalendarItem = Object.assign(
+			{
+				network,
+				type: 'parachainLease',
+				data: {
+					leasePeriod: Math.floor((itemDuration.startBlockNumber as number) / (itemDuration.duration as number)) + 1
+				}
+			},
+			itemDuration
+		);
 
 		calendarItems.push(item);
 	}

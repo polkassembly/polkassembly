@@ -27,32 +27,50 @@ import executeTx from '~src/util/executeTx';
 
 const ZERO_BN = new BN(0);
 
-interface Props{
-  className?: string;
-  isPreimage: boolean;
-  proposerAddress: string;
-  fundingAmount: BN;
-  selectedTrack: string;
-  preimageHash: string;
-  preimageLength: number | null;
-  enactment: IEnactment;
-  beneficiaryAddress: string;
-  setOpenModal: (pre: boolean) => void;
-  setOpenSuccess: (pre: boolean) => void;
-  title: string;
-  content: string;
-  tags: string[];
-  postId: number;
-  setPostId: (pre: number) => void;
-  availableBalance: BN;
-  discussionLink: string | null;
+interface Props {
+	className?: string;
+	isPreimage: boolean;
+	proposerAddress: string;
+	fundingAmount: BN;
+	selectedTrack: string;
+	preimageHash: string;
+	preimageLength: number | null;
+	enactment: IEnactment;
+	beneficiaryAddress: string;
+	setOpenModal: (pre: boolean) => void;
+	setOpenSuccess: (pre: boolean) => void;
+	title: string;
+	content: string;
+	tags: string[];
+	postId: number;
+	setPostId: (pre: number) => void;
+	availableBalance: BN;
+	discussionLink: string | null;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
-	return splitedArr[splitedArr.length-1];
+	return splitedArr[splitedArr.length - 1];
 };
 
-const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess, title, content, tags, setPostId, availableBalance, discussionLink }: Props) => {
+const CreateProposal = ({
+	className,
+	isPreimage,
+	fundingAmount,
+	proposerAddress,
+	selectedTrack,
+	preimageHash,
+	preimageLength,
+	enactment,
+	beneficiaryAddress,
+	setOpenModal,
+	setOpenSuccess,
+	title,
+	content,
+	tags,
+	setPostId,
+	availableBalance,
+	discussionLink
+}: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -70,19 +88,18 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			type: 'success'
 		});
 	};
-	const copyLink = (address:string) => {
+	const copyLink = (address: string) => {
 		copyToClipboard(address);
 	};
 
 	useEffect(() => {
-
-		if(!network) return ;
+		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
 			unit
 		});
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -90,13 +107,17 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		const obj = localStorage.getItem('treasuryProposalData');
 		obj && localStorage.setItem('treasuryProposalData', JSON.stringify({ ...JSON.parse(obj), step: 2 }));
 
-		if(!proposerAddress || !api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN)) return;
-		if(selectedTrack.length === 0 ) return;
+		if (!proposerAddress || !api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN)) return;
+		if (selectedTrack.length === 0) return;
 		setLoading(true);
 
 		const origin: any = { Origins: selectedTrack };
 		setLoading(true);
-		const tx = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, len: String(preimageLength) } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
+		const tx = api.tx.referenda.submit(
+			origin,
+			{ Lookup: { hash: preimageHash, len: String(preimageLength) } },
+			enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
+		);
 		(async () => {
 			const info = await tx.paymentInfo(proposerAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
@@ -107,11 +128,11 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		setSubmissionDeposite(submissionDeposite);
 		setLoading(false);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
-	const handleSaveTreasuryProposal = async(postId: number) => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal',{
+	const handleSaveTreasuryProposal = async (postId: number) => {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
 			content,
 			discussionId: discussionId || null,
 			postId,
@@ -121,7 +142,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			userId
 		});
 
-		if(data && !isNaN(Number(data?.post_id)) && data.post_id !== undefined){
+		if (data && !isNaN(Number(data?.post_id)) && data.post_id !== undefined) {
 			setPostId(data?.post_id);
 			setOpenSuccess(true);
 			console.log(postId, 'postId');
@@ -129,8 +150,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			localStorage.removeItem('treasuryProposalProposerWallet');
 			localStorage.removeItem('treasuryProposalData');
 			setOpenModal(false);
-		}
-		else if(apiError || !data?.post_id) {
+		} else if (apiError || !data?.post_id) {
 			queueNotification({
 				header: 'Error',
 				message: apiError,
@@ -141,16 +161,14 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		setLoading(false);
 	};
 
-	const handleSubmitTreasuryProposal = async() => {
-		if(!api || !apiReady) return;
-		const post_id =  Number(await api.query.referenda.referendumCount());
+	const handleSubmitTreasuryProposal = async () => {
+		if (!api || !apiReady) return;
+		const post_id = Number(await api.query.referenda.referendumCount());
 		const origin: any = { Origins: selectedTrack };
 		const proposerWallet = localStorage.getItem('treasuryProposalProposerWallet') || '';
 
 		const injectedWindow = window as Window & InjectedWindow;
-		const wallet = isWeb3Injected
-			? injectedWindow?.injectedWeb3?.[String(proposerWallet)]
-			: null;
+		const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[String(proposerWallet)] : null;
 
 		if (!wallet) {
 			return;
@@ -163,10 +181,16 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 				const timeoutId = setTimeout(() => {
 					reject(new Error('Wallet Timeout'));
 				}, 60000); // wait 60 sec
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
+				if (wallet && wallet.enable) {
+					wallet
+						.enable(APPNAME)
+						.then((value) => {
+							clearTimeout(timeoutId);
+							resolve(value);
+						})
+						.catch((error) => {
+							reject(error);
+						});
 				}
 			});
 		} catch (err) {
@@ -179,14 +203,18 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 		setLoading(true);
 		try {
-			const proposal = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, len: String(preimageLength) } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
+			const proposal = api.tx.referenda.submit(
+				origin,
+				{ Lookup: { hash: preimageHash, len: String(preimageLength) } },
+				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
+			);
 
-			const onSuccess = async() => {
+			const onSuccess = async () => {
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);
 			};
 
-			const onFailed = async() => {
+			const onFailed = async () => {
 				queueNotification({
 					header: 'Failed!',
 					message: 'Transaction failed!',
@@ -197,8 +225,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			};
 			setLoading(true);
 			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
-		}
-		catch(error){
+		} catch (error) {
 			setLoading(false);
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
@@ -210,55 +237,160 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		}
 	};
 
-	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
-		<div className={`create-proposal ${className}`}>
-			{ (submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
-			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-4 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
-			<div className='mt-4 text-sm font-normal text-lightBlue'>
-				<div className='mt-4 flex flex-col gap-2'>
-					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={proposerAddress} identiconSize={18} displayInline disableAddressClick/></span>
-					<span className='flex'><span className='w-[150px]'>Beneficiary Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={beneficiaryAddress} identiconSize={18} displayInline disableAddressClick/></span>
-					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary ml-1'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
-					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
-					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>
-						<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
-						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(preimageHash) ;success('Preimage hash copied to clipboard');}}>
-							{contextHolder}
-							<CopyIcon/>
+	return (
+		<Spin
+			spinning={loading}
+			indicator={<LoadingOutlined />}
+		>
+			<div className={`create-proposal ${className}`}>
+				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
+					<Alert
+						type='error'
+						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+						showIcon
+						message='Insufficient available balance.'
+					/>
+				)}
+				<Alert
+					message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`}
+					className={`mt-4 rounded-[4px] text-sm text-bodyBlue ${poppins.variable} ${poppins.className}`}
+					type='success'
+					showIcon
+				/>
+				<div className='mt-4 text-sm font-normal text-lightBlue'>
+					<div className='mt-4 flex flex-col gap-2'>
+						<span className='flex'>
+							<span className='w-[150px]'>Proposer Address:</span>
+							<Address
+								addressClassName='text-bodyBlue'
+								address={proposerAddress}
+								iconSize={18}
+								displayInline
+								isTruncateUsername={false}
+							/>
 						</span>
-					</span>
-					<span className='flex'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
-					<span className='flex items-center'>
-						<span className='w-[150px]'>Preimage Link:</span>
-						<a target='_blank' rel='noreferrer' href={`/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
-						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/preimages/${preimageHash}`) ;success('Preimage link copied to clipboard.');}}>
-							{contextHolder}
-							<CopyIcon/>
+						<span className='flex'>
+							<span className='w-[150px]'>Beneficiary Address:</span>
+							<Address
+								addressClassName='text-bodyBlue'
+								address={beneficiaryAddress}
+								iconSize={18}
+								displayInline
+								isTruncateUsername={false}
+							/>
 						</span>
-					</span>
+						<span className='flex'>
+							<span className='w-[150px]'>Track:</span>
+							<span className='font-medium text-bodyBlue'>
+								{selectedTrack} <span className='ml-1 text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span>
+							</span>
+						</span>
+						<span className='flex'>
+							<span className='w-[150px]'>Funding Amount:</span>
+							<span className='font-medium text-bodyBlue'>
+								{formatedBalance(fundingAmount.toString(), unit)} {unit}
+							</span>
+						</span>
+						<span className='flex items-center'>
+							<span className='w-[150px]'>Preimage Hash:</span>
+							<span className='font-medium  text-bodyBlue'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
+							<span
+								className='flex cursor-pointer items-center'
+								onClick={(e) => {
+									e.preventDefault();
+									copyLink(preimageHash);
+									success('Preimage hash copied to clipboard');
+								}}
+							>
+								{contextHolder}
+								<CopyIcon />
+							</span>
+						</span>
+						<span className='flex'>
+							<span className='w-[150px]'>Preimage Length:</span>
+							<span className='font-medium text-bodyBlue'>{preimageLength}</span>
+						</span>
+						<span className='flex items-center'>
+							<span className='w-[150px]'>Preimage Link:</span>
+							<a
+								target='_blank'
+								rel='noreferrer'
+								href={`/preimages/${preimageHash}`}
+								className='font-medium text-bodyBlue'
+							>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0, 5)}...`}</a>
+							<span
+								className='flex cursor-pointer items-center'
+								onClick={(e) => {
+									e.preventDefault();
+									copyLink(`https://${network}.polkassembly.io/preimages/${preimageHash}`);
+									success('Preimage link copied to clipboard.');
+								}}
+							>
+								{contextHolder}
+								<CopyIcon />
+							</span>
+						</span>
+					</div>
+				</div>
+				{showAlert && (
+					<Alert
+						className='mt-6 rounded-[4px] text-bodyBlue'
+						showIcon
+						type='info'
+						message={
+							<span className='text-sm text-bodyBlue'>
+								An amount of{' '}
+								<span className='font-semibold'>
+									{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
+								</span>{' '}
+								will be required to submit proposal.
+							</span>
+						}
+						description={
+							<div className='mt-[10px] flex flex-col gap-1'>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue'>
+									<span className='w-[150px]'>Deposit amount</span>
+									<span className='font-medium text-bodyBlue'>
+										{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}
+									</span>
+								</span>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue'>
+									<span className='w-[150px]'>Gas fees</span>
+									<span className='font-medium text-bodyBlue'>
+										{formatedBalance(String(txFee.toString()), unit)} {unit}
+									</span>
+								</span>
+								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue'>
+									<span className='w-[150px]'>Total</span>
+									<span className='text-bodyBlue'>
+										{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
+									</span>
+								</span>
+							</div>
+						}
+					/>
+				)}
+				<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
+					<Button
+						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
+						onClick={() => handleSubmitTreasuryProposal()}
+						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white ${
+							(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'
+						}`}
+					>
+						Create Proposal
+					</Button>
 				</div>
 			</div>
-			{showAlert && <Alert className='mt-6 text-bodyBlue rounded-[4px]' showIcon type='info' message={<span className='text-sm text-bodyBlue'>An amount of <span className='font-semibold'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span> will be required to submit proposal.</span>}
-				description={<div className='mt-[10px] flex flex-col gap-1'>
-					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Deposit amount</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}</span></span>
-					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Gas fees</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(txFee.toString()), unit)} {unit}</span></span>
-					<span className='flex justify-between text-sm text-lightBlue pr-[70px] font-semibold'><span className='w-[150px]'>Total</span><span className='text-bodyBlue'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
-				</div>}/>}
-			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
-				<Button
-					disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite) }
-					onClick={() => handleSubmitTreasuryProposal() } className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite) ) && 'opacity-50'}`}>
-                    Create Proposal
-				</Button>
-			</div>
-		</div>
-	</Spin>;
+		</Spin>
+	);
 };
 export default styled(CreateProposal)`
-.ant-alert-with-description{
-	padding-block: 15px !important;
-}
-.ant-alert-with-description .ant-alert-icon{
-  font-size: 18px !important;
-  margin-top: 4px;
-}`;
+	.ant-alert-with-description {
+		padding-block: 15px !important;
+	}
+	.ant-alert-with-description .ant-alert-icon {
+		font-size: 18px !important;
+		margin-top: 4px;
+	}
+`;

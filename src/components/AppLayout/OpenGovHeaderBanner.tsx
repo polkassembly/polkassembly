@@ -28,13 +28,14 @@ interface IOpenGovHeaderBannerProps {
 const OpenGovHeaderBanner: FC<IOpenGovHeaderBannerProps> = (props) => {
 	const { network } = props;
 	return (
-		<section
-			className='opengov_banner rounded-b-[20px] flex flex-col items-center justify-center gap-x-2 py-[10px] px-4 md:py-6 md:px-9 lg:flex-row lg:ml-[80px]'
-		>
-			<h2
-				className='m-0 p-0 text-white flex items-center gap-x-2 font-medium font-poppins text-sm md:text-[24px] leading-[21px] md:leading-[36px]'
-			>
-				<Image alt='party image' src='/assets/confetti.png' width={30} height={30} />
+		<section className='opengov_banner flex flex-col items-center justify-center gap-x-2 rounded-b-[20px] px-4 py-[10px] md:px-9 md:py-6 lg:ml-[80px] lg:flex-row'>
+			<h2 className='m-0 flex items-center gap-x-2 p-0 font-poppins text-sm font-medium leading-[21px] text-white md:text-[24px] md:leading-[36px]'>
+				<Image
+					alt='party image'
+					src='/assets/confetti.png'
+					width={30}
+					height={30}
+				/>
 				<span>OpenGov is now LIVE on {network?.charAt(0).toUpperCase() + network?.slice(1)}</span>
 			</h2>
 		</section>

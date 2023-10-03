@@ -33,7 +33,7 @@ const NotificationSettings = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		nextApiClientFetch<NotificationSettings>( 'api/v1/auth/data/notificationPreference')
+		nextApiClientFetch<NotificationSettings>('api/v1/auth/data/notificationPreference')
 			.then((res) => {
 				if (res.error) {
 					setError(res.error);
@@ -44,14 +44,14 @@ const NotificationSettings = () => {
 			})
 			.catch((err) => {
 				setLoading(false);
-				setError(typeof err === 'string'? err: err?.message);
+				setError(typeof err === 'string' ? err : err?.message);
 			});
 	}, []);
 
 	const updatePreference = async () => {
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<UpdatedDataResponseType<NotificationSettings>>( 'api/v1/auth/actions/changeNotificationPreference', {
+		const { data, error } = await nextApiClientFetch<UpdatedDataResponseType<NotificationSettings>>('api/v1/auth/actions/changeNotificationPreference', {
 			new_proposal: newProposal,
 			own_proposal: ownProposal,
 			post_created: postCreated,
@@ -83,23 +83,20 @@ const NotificationSettings = () => {
 		setLoading(false);
 	};
 	return (
-		<Form onFinish={() => updatePreference()} className='w-full bg-white shadow-md p-8 rounded-md flex flex-col gap-y-8'>
+		<Form
+			onFinish={() => updatePreference()}
+			className='flex w-full flex-col gap-y-8 rounded-md bg-white p-8 shadow-md'
+		>
 			<header>
-				<h3
-					className='font-medium text-lg tracking-wide text-sidebarBlue'
-				>
-						Notification Settings
-				</h3>
-				<h5
-					className='font-normal text-sm text-navBlue mt-2'
-				>
-						Update your notification settings. You will be receiving your notifications on <span className='text-sidebarBlue'>{currentUser?.email}</span>
+				<h3 className='text-lg font-medium tracking-wide text-sidebarBlue'>Notification Settings</h3>
+				<h5 className='mt-2 text-sm font-normal text-navBlue'>
+					Update your notification settings. You will be receiving your notifications on <span className='text-sidebarBlue'>{currentUser?.email}</span>
 				</h5>
 			</header>
-			{error && <FilteredError text={error}/>}
+			{error && <FilteredError text={error} />}
 			<article className='flex items-center gap-x-2'>
 				<label
-					className='text-sm text-sidebarBlue font-normal cursor-pointer'
+					className='cursor-pointer text-sm font-normal text-sidebarBlue'
 					htmlFor='postParticipated'
 				>
 					Subscribe to post you participate in
@@ -117,7 +114,7 @@ const NotificationSettings = () => {
 			</article>
 			<article className='flex items-center gap-x-2'>
 				<label
-					className='text-sm text-sidebarBlue font-normal cursor-pointer'
+					className='cursor-pointer text-sm font-normal text-sidebarBlue'
 					htmlFor='postCreated'
 				>
 					Subscribe to post you created
@@ -135,7 +132,7 @@ const NotificationSettings = () => {
 			</article>
 			<article className='flex items-center gap-x-2'>
 				<label
-					className='text-sm text-sidebarBlue font-normal cursor-pointer'
+					className='cursor-pointer text-sm font-normal text-sidebarBlue'
 					htmlFor='newProposal'
 				>
 					Notified for new proposal in council/motion/referendum
@@ -153,7 +150,7 @@ const NotificationSettings = () => {
 			</article>
 			<article className='flex items-center gap-x-2'>
 				<label
-					className='text-sm text-sidebarBlue font-normal cursor-pointer'
+					className='cursor-pointer text-sm font-normal text-sidebarBlue'
 					htmlFor='ownProposal'
 				>
 					Notified for your own proposals
@@ -175,7 +172,9 @@ const NotificationSettings = () => {
 					disabled={!changed}
 					size='large'
 					htmlType='submit'
-					className={`rounded-lg font-semibold text-lg leading-7 text-white py-3 outline-none border-none px-14 flex items-center justify-center ${changed?'bg-pink_primary':'bg-icon_grey'}`}
+					className={`flex items-center justify-center rounded-lg border-none px-14 py-3 text-lg font-semibold leading-7 text-white outline-none ${
+						changed ? 'bg-pink_primary' : 'bg-icon_grey'
+					}`}
 				>
 					Save
 				</Button>

@@ -63,11 +63,10 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 				Other Proposals by{' '}
 				<span className='ml-2'>
 					<Address
-						className='text-navBlue'
 						address={proposerAddress}
 						displayInline={false}
-						identiconSize={20}
-						shortenAddressLength={6}
+						iconSize={20}
+						addressMaxLength={6}
 					/>
 				</span>
 			</h4>

@@ -119,11 +119,11 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 						className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
 					>
 						<Address
-							isVoterAddress={true}
-							textClassName='w-[250px]'
+							isVoterAddress
+							usernameClassName='w-[250px]'
 							isSubVisible={false}
-							displayInline={true}
-							isShortenAddressLength={false}
+							displayInline
+							showFullAddress
 							address={voteData?.voter}
 						/>
 					</a>
@@ -133,10 +133,10 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 						onClick={(e) => e.stopPropagation()}
 					>
 						<Address
-							textClassName='overflow-ellipsis w-[250px] '
+							usernameClassName='overflow-ellipsis w-[250px] '
 							isSubVisible={false}
-							displayInline={true}
-							isShortenAddressLength={false}
+							displayInline
+							showFullAddress
 							address={voteData?.voter}
 						/>
 					</div>

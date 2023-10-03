@@ -84,7 +84,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							<NameLabel
 								defaultAddress={defaultAddress}
 								username={username}
-								textClassName='text-[#334D6E] text-xs'
+								usernameClassName='text-[#334D6E] text-xs'
 								truncateUsername={false}
 							/>
 							<div className='flex items-center'>

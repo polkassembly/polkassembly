@@ -87,9 +87,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 							<Address
 								address={address}
 								displayInline
-								className='text-sm text-bodyBlue'
-								truncateUsername={false}
-								identiconSize={34}
+								isTruncateUsername={false}
 							/>
 							<span
 								className='ml-2 flex cursor-pointer items-center'

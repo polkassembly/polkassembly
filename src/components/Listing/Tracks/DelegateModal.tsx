@@ -604,7 +604,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				balance={bnBalance}
 				trackNum={trackNum}
 				conviction={conviction}
-				title={isMultisig ? 'Delegation with Polkasafe initiated' : ' Delegated'}
+				title={isMultisig ? 'Delegation with Polkasafe initiated' : ' Delegated Successfully'}
 			/>
 		</>
 	);

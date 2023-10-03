@@ -105,22 +105,19 @@ const TreasuryProposalSuccessPopup = ({
 							<span className='flex'>
 								<span className='w-[172px]'>Proposer Address:</span>
 								<Address
-									disableAddressClick
 									addressClassName='text-bodyBlue font-semibold text-sm'
 									address={proposerAddress}
-									truncateUsername={false}
-									identiconSize={18}
+									isTruncateUsername={false}
+									iconSize={18}
 								/>
 							</span>
 							<span className='flex'>
 								<span className='w-[172px]'>Beneficiary Address:</span>
 								<Address
-									disableAddressClick
-									textClassName='text-bodyBlue font-medium text-sm'
 									displayInline
 									address={beneficiaryAddress}
-									truncateUsername={false}
-									identiconSize={18}
+									isTruncateUsername={false}
+									iconSize={18}
 								/>
 							</span>
 

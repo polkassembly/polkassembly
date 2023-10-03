@@ -13,7 +13,6 @@ export enum EFormType {
 	SPLIT_FORM = 'split-form',
 	ABSTAIN_FORM = 'abstain-form'
 }
-const ZERO_BN = new BN(0);
 interface Props {
 	convictionClassName?: string;
 	formName: EFormType;
@@ -64,7 +63,6 @@ const VotingForm = ({
 			name={formName}
 			onFinish={handleSubmit}
 			style={{ maxWidth: 600 }}
-			initialValues={{ abstainVote: ZERO_BN, ayeVote: ZERO_BN, balance: ZERO_BN, nayVote: ZERO_BN }}
 		>
 			{[EFormType.ABSTAIN_FORM].includes(formName) && (
 				<BalanceInput

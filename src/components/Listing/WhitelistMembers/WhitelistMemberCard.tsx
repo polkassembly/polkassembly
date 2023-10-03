@@ -24,7 +24,7 @@ const WhitelistMemberCard = ({ className, member }: Props) => {
 
 				<Address
 					address={member.accountId}
-					shortenAddressLength={7}
+					addressMaxLength={7}
 				/>
 			</div>
 		</div>

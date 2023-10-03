@@ -56,10 +56,9 @@ const columns: ColumnsType<IPostsRowData> = [
 		render: (username, { proposer }) => (
 			<div className='truncate'>
 				<NameLabel
-					textClassName='max-w-[9vw] 2xl:max-w-[12vw] text-bodyBlue font-semibold'
+					usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] font-semibold'
 					defaultAddress={proposer}
 					username={username}
-					disableIdenticon={false}
 				/>
 			</div>
 		),

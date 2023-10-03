@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckCircleFilled,DownOutlined, UpOutlined } from '@ant-design/icons';
+import { CheckCircleFilled, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import Identicon from '@polkadot/react-identicon';
@@ -32,7 +32,7 @@ import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
 
 interface Props {
-	className?: string
+	className?: string;
 	// setTipModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -53,44 +53,52 @@ interface ValueState {
 const WHITESPACE = [' ', '\t'];
 
 const DEPOSIT: Record<string, number> = {
-	'kusama': 33.3333,
-	'moonbeam': 12.5800,
-	'moonriver': 1.0258,
-	'polkadot': 20.2580
+	kusama: 33.3333,
+	moonbeam: 12.58,
+	moonriver: 1.0258,
+	polkadot: 20.258
 };
 
 function setHasVal(val: string, setActive: null | ((isActive: boolean) => void)): void {
-	if (val){
+	if (val) {
 		setActive && setActive(true);
-	}
-	else{
+	} else {
 		setActive && setActive(false);
 	}
 }
 
-function setData (data: Data, setActive: null | ((isActive: boolean) => void), setVal: (val: string) => void): void {
+function setData(data: Data, setActive: null | ((isActive: boolean) => void), setVal: (val: string) => void): void {
 	if (data.asRaw.length != 0) {
 		setActive && setActive(true);
 		setVal(u8aToString(data.asRaw.toU8a(true)));
 	}
 }
 
-function checkValue (hasValue: boolean, value: string | null | undefined, minLength: number, includes: string[], excludes: string[], starting: string[], notStarting: string[] = WHITESPACE, notEnding: string[] = WHITESPACE): boolean {
-	return !hasValue || (
-		!!value &&
-		(value.length >= minLength) &&
-		includes.reduce((hasIncludes: boolean, check) => hasIncludes && value.includes(check), true) &&
-		(!starting.length || starting.some((check) => value.startsWith(check))) &&
-		!excludes.some((check) => value.includes(check)) &&
-		!notStarting.some((check) => value.startsWith(check)) &&
-		!notEnding.some((check) => value.endsWith(check))
+function checkValue(
+	hasValue: boolean,
+	value: string | null | undefined,
+	minLength: number,
+	includes: string[],
+	excludes: string[],
+	starting: string[],
+	notStarting: string[] = WHITESPACE,
+	notEnding: string[] = WHITESPACE
+): boolean {
+	return (
+		!hasValue ||
+		(!!value &&
+			value.length >= minLength &&
+			includes.reduce((hasIncludes: boolean, check) => hasIncludes && value.includes(check), true) &&
+			(!starting.length || starting.some((check) => value.startsWith(check))) &&
+			!excludes.some((check) => value.includes(check)) &&
+			!notStarting.some((check) => value.startsWith(check)) &&
+			!notEnding.some((check) => value.endsWith(check)))
 	);
 }
 
 const SetOnChainIdentityButton = ({
-	className
-	// setTipModalOpen,
-} : Props) => {
+	className // setTipModalOpen,
+}: Props) => {
 	const { id } = useContext(UserDetailsContext);
 	const { network } = useContext(NetworkContext);
 
@@ -113,25 +121,25 @@ const SetOnChainIdentityButton = ({
 	const [hasWeb, setHasWeb] = useState(false);
 	const { api, apiReady } = useContext(ApiContext);
 	const [extensionNotAvailable, setExtensionNotAvailable] = useState(false);
-	const [showAvailableAccountsObj, setShowAvailableAccountsObj] = useState<{ [key: string]: boolean}>({
-		'submitWithAccount': false
+	const [showAvailableAccountsObj, setShowAvailableAccountsObj] = useState<{ [key: string]: boolean }>({
+		submitWithAccount: false
 	});
 	const [submitWithAccount, setSubmitWithAccount] = useState<string>('');
 
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
+	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 
 	const [, setErrorsFound] = useState<string[]>([]);
 	const isFormValid = () => {
 		const errorsFound: string[] = [];
 
-		if(!displayName) {
+		if (!displayName) {
 			errorsFound.push('displayName');
 		}
 
-		if(errorsFound.length > 0){
+		if (errorsFound.length > 0) {
 			setErrorsFound(errorsFound);
 			return false;
-		}else{
+		} else {
 			setErrorsFound([]);
 		}
 
@@ -150,14 +158,14 @@ const SetOnChainIdentityButton = ({
 		const allAccounts = await web3Accounts();
 		setAvailableAccounts(allAccounts);
 
-		const availableAccountsObj : { [key: string]: boolean } = {
-			'submitWithAccount': false
+		const availableAccountsObj: { [key: string]: boolean } = {
+			submitWithAccount: false
 		};
 
 		switch (updateForInput) {
-		case AvailableAccountsInput.submitWithAccount:
-			availableAccountsObj.submitWithAccount = !showAvailableAccountsObj['submitWithAccount'];
-			break;
+			case AvailableAccountsInput.submitWithAccount:
+				availableAccountsObj.submitWithAccount = !showAvailableAccountsObj['submitWithAccount'];
+				break;
 		}
 
 		setShowAvailableAccountsObj(availableAccountsObj);
@@ -165,21 +173,21 @@ const SetOnChainIdentityButton = ({
 
 	const isSelected = (updateForInput: AvailableAccountsInput, address: string) => {
 		switch (updateForInput) {
-		case AvailableAccountsInput.submitWithAccount:
-			return submitWithAccount === address;
+			case AvailableAccountsInput.submitWithAccount:
+				return submitWithAccount === address;
 		}
 	};
 
 	const handleSelectAvailableAccount = (updateForInput: AvailableAccountsInput, address: string) => {
 		switch (updateForInput) {
-		case AvailableAccountsInput.submitWithAccount:
-			setSubmitWithAccount(address);
-			break;
+			case AvailableAccountsInput.submitWithAccount:
+				setSubmitWithAccount(address);
+				break;
 		}
 
 		// Close dropdown on select
-		const availableAccountsObj : { [key: string]: boolean } = {
-			'submitWithAccount': false
+		const availableAccountsObj: { [key: string]: boolean } = {
+			submitWithAccount: false
 		};
 		setShowAvailableAccountsObj(availableAccountsObj);
 	};
@@ -191,16 +199,31 @@ const SetOnChainIdentityButton = ({
 	const getAvailableAccounts = (updateForInput: AvailableAccountsInput) => {
 		return (
 			<div className=' w-full pl-[1.5em] pr-[1em]'>
-				{availableAccounts.map(account => {
+				{availableAccounts.map((account) => {
 					const address = getEncodedAddress(account.address, network);
 
-					return address &&
-							<div key={address} onClick={() => handleSelectAvailableAccount(updateForInput, address)} className=' mb-[10px] flex justify-between items-center cursor-pointer'>
+					return (
+						address && (
+							<div
+								key={address}
+								onClick={() => handleSelectAvailableAccount(updateForInput, address)}
+								className=' mb-[10px] flex cursor-pointer items-center justify-between'
+							>
 								<div className='item'>
-									<AddressComponent className='item' address={address} extensionName={account.meta.name} />
+									<AddressComponent
+										className='item'
+										address={address}
+										extensionName={account.meta.name}
+									/>
 								</div>
-								{isSelected(updateForInput, address) ? <CheckCircleFilled style={{ color:'green' }} />: <div style={{ border:'1px solid grey', borderRadius:'50%', height:'1em', width:'1em' }}></div>}
-							</div>;
+								{isSelected(updateForInput, address) ? (
+									<CheckCircleFilled style={{ color: 'green' }} />
+								) : (
+									<div style={{ border: '1px solid grey', borderRadius: '50%', height: '1em', width: '1em' }}></div>
+								)}
+							</div>
+						)
+					);
 				})}
 			</div>
 		);
@@ -220,18 +243,16 @@ const SetOnChainIdentityButton = ({
 		setValidAddress(validAddress);
 
 		if (validAddress) {
-
-			try{
-				api.query.identity.identityOf(submitWithAccount, (data: any) =>
-					setidentityOpt(data)
-				);
-			}catch(e){
+			try {
+				api.query.identity.identityOf(submitWithAccount, (data: any) => setidentityOpt(data));
+			} catch (e) {
 				setidentityOpt(undefined);
 			}
 
 			if (identityOpt && identityOpt.isSome) {
+				const { info } = identityOpt.unwrapOr({ info: null });
+				if (!info) return;
 
-				const { info } = identityOpt.unwrap();
 				setData(info.display, null, setDisplayName);
 				setData(info.email, setHasEmail, setEmail);
 				setData(info.legal, setHasLegal, setLegalName);
@@ -246,8 +267,7 @@ const SetOnChainIdentityButton = ({
 						return false;
 					}
 				});
-			}
-			else{
+			} else {
 				setDisplayName('');
 				setHasEmail(false);
 				setEmail('');
@@ -260,8 +280,7 @@ const SetOnChainIdentityButton = ({
 				setHasWeb(false);
 				setWebsite('');
 			}
-		}
-		else {
+		} else {
 			setDisplayName('');
 			setHasEmail(false);
 			setEmail('');
@@ -309,7 +328,7 @@ const SetOnChainIdentityButton = ({
 	}, [hasEmail, hasLegal, hasRiot, hasTwitter, hasWeb, displayName, email, legalName, riotName, twitter, website]);
 
 	const handleSignAndSubmit = async () => {
-		if(!isFormValid()) return;
+		if (!isFormValid()) return;
 
 		if (!api) {
 			return;
@@ -345,202 +364,282 @@ const SetOnChainIdentityButton = ({
 		};
 
 		await executeTx({
-			address: submitWithAccount, api, errorMessageFallback: 'Transaction failed.', network, onFailed, onSuccess, tx: identity
+			address: submitWithAccount,
+			api,
+			errorMessageFallback: 'Transaction failed.',
+			network,
+			onFailed,
+			onSuccess,
+			tx: identity
 		});
 	};
-	const triggerBtn = <div><Button disabled={!id} className='h-[40px] md:h-[69px] bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300' onClick={() => setModalOpen(true)}> Set On-Chain Identity</Button></div>;
-	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to set on-chain identity'> <Button type='primary' disabled={true} className='w-full h-[40px] md:h-[69px] rounded-md' > Set On-Chain Identity</Button></Tooltip>;
-
-	return (
-		loadingStatus.isLoading
-			? <Card className={'LoaderWrapper'}>
-				<Loader text={loadingStatus.message}/>
-			</Card>:
-			<>
-				{!id ? triggerBtnLoginDisabled : triggerBtn}
-
-				<Modal
-					className={className}
-					title={'Set On-Chain Identity'}
-					open={modalOpen}
-					centered
-					footer={[<Button key='close' onClick={() => setModalOpen(false)}>Close</Button>, <Button key='submit' disabled={!okAll} className='submitBtn' onClick={ handleSignAndSubmit }>Set Identity</Button>]}
-					onCancel={() => setModalOpen(false)}
-				>
-					<div>
-						<div className='modal-desc'>
-							<Form className='identity-form'>
-								{/* Select account */}
-								<div className=' mb-[1.5em]'>
-									<div className=' flex justify-between mb-[0.5em] px-[0.5em]'>
-										<label className='font-bold text-sidebarBlue' >
-												Submit with account
-											<HelperTooltip className='ml-1 align-middle' text='Set identity for account' />
-										</label>
-
-									</div>
-
-									<div className='accountInputDiv flex items-center'>
-										{
-											submitWithAccount.startsWith('0x') ?
-												<EthIdenticon size={26} address={submitWithAccount} />
-												:
-												<Identicon
-													className='z-10 absolute left-8'
-													value={submitWithAccount}
-													size={26}
-													theme={'polkadot'}
-												/>
-										}
-										<Form.Item className=' mb-0 w-full' validateStatus={!validAddress ? 'error' : ''} >
-											<Input
-												value={submitWithAccount}
-												className={`${submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'}`}
-												onChange={ (e) => onSubmitWithAccountChange(e.target.value)}
-												placeholder='Account Address'
-											/>
-										</Form.Item>
-									</div>
-
-									{!extensionNotAvailable && <div className=' flex justify-between mb-[1em]'>
-										<div onClick={() => handleDetect(AvailableAccountsInput.submitWithAccount)} className=' text-pink_primary cursor-pointer ml-[1.5em] mt-[0.25em]'>
-													or choose from available addresses
-											{showAvailableAccountsObj['submitWithAccount'] ? <UpOutlined className='ml-1 align-middle' /> : <DownOutlined className='ml-1 align-middle'/>}
-										</div>
-									</div>}
-									{extensionNotAvailable && <div className="error">Please install polkadot.js extension</div>}
-									{showAvailableAccountsObj['submitWithAccount'] && availableAccounts.length > 0 && getAvailableAccounts(AvailableAccountsInput.submitWithAccount)}
-								</div>
-								{/* Display Name */}
-								<div className=' mb-[1.5em]'>
-									<div className=' flex justify-between mb-[0.5em] px-[0.5em]'>
-										<label className='font-bold text-sidebarBlue'>Display Name</label>
-									</div>
-									<Form.Item name='Name' rules={[{ required:true }]} className=' mb-0' validateStatus={!okDisplay ? 'error' : ''} >
-										<Input
-											className='px-[0.5em]'
-											value={displayName}
-											placeholder='My On-Chain Name'
-											onChange={ (e) => setDisplayName(e.target.value)}
-										// error={!okDisplay}
-										/>
-									</Form.Item>
-								</div>
-
-								{/* Legal Name */}
-								<div className=' mb-[1.5em]'>
-									<div className=' flex justify-between mb-[0.5em] px-[0.5em]'>
-										<label className='font-bold text-sidebarBlue'>Legal Name</label>
-										<span>*Optional</span>
-									</div>
-									<Form.Item name='Legal name' className=' mb-0' validateStatus={!okLegal ? 'error' : ''}>
-
-										<Input
-											className='px-[0.5em]'
-											placeholder='Full Legal Name'
-											value={legalName}
-											onChange={ (e) => setLegalName(e.target.value)}
-										/>
-									</Form.Item>
-								</div>
-
-								{/* Email */}
-								<div className=' mb-[1.5em]'>
-									<div className=' flex justify-between mb-[0.5em] px-[0.5em]'>
-										<label className='font-bold text-sidebarBlue'>Email</label>
-										<span>*Optional</span>
-									</div>
-									<Form.Item name='Email' className=' mb-0' validateStatus={!okEmail ? 'error' : ''}>
-
-										<Input
-											className='px-[0.5em]'
-											value={email}
-											placeholder='somebody@example.com'
-											onChange={ (e) => setEmail(e.target.value.toLowerCase())}
-										/>
-									</Form.Item>
-								</div>
-
-								{/* Website */}
-								<div className=' mb-[1.5em]'>
-									<div className=' flex justify-between mb-[0.5em] px-[0.5em]'>
-										<label className='font-bold text-sidebarBlue'>Website</label>
-										<span>*Optional</span>
-									</div>
-									<Form.Item name='Website' className=' mb-0' validateStatus={!okWeb ? 'error' : ''} >
-
-										<Input
-											className='px-[0.5em]'
-											value={website}
-											placeholder='https://example.com'
-											onChange={ (e) => setWebsite(e.target.value)}
-										// error={!okWeb}
-										/>
-									</Form.Item>
-								</div>
-
-								{/* Twitter */}
-								<div className=' mb-[1.5em]'>
-									<div className=' flex justify-between mb-[0.5em] px-[0.5em]'>
-										<label className='font-bold text-sidebarBlue'>Twitter</label>
-										<span>*Optional</span>
-									</div>
-									<Form.Item name='Twitter' className=' mb-0' validateStatus={!okTwitter ? 'error' : ''} >
-										<Input
-											className='px-[0.5em]'
-											value={twitter}
-											placeholder='@YourTwitterName'
-											onChange={ (e) => setTwitter(e.target.value)}
-										/>
-
-									</Form.Item>
-								</div>
-
-								{/* Riot Name */}
-								<div className=' mb-[1.5em]'>
-									<div className=' flex justify-between mb-[0.5em] px-[0.5em]'>
-										<label className='font-bold text-sidebarBlue'>Riot Name</label>
-										<span>*Optional</span>
-									</div>
-									<Form.Item name='Riot' className=' mb-0' validateStatus={!okRiot ? 'error' : ''} >
-										<Input
-											className='px-[0.5em]'
-											value={riotName}
-											placeholder='@yourname:matrix.org'
-											onChange={ (e) => setRiotName(e.target.value)}
-										/>
-
-									</Form.Item>
-								</div>
-
-								{/* Total Deposit */}
-								<div className=' mb-[1.5em]'>
-									<div className=' flex justify-between mb-[0.5em] px-[0.5em]'>
-										<label className='font-bold text-sidebarBlue'>Total Deposit</label>
-									</div>
-
-									<div className="balance-input flex items-center">
-										<Form.Item  className='flex-1 mb-0' name='Deposit' rules={[{ required:true }]}>
-											<Input
-												type='number'
-												placeholder={'0'}
-												className='px-[0.5em]'
-												// onChange={onBalanceChange}
-												value={DEPOSIT[network]}
-											/>
-										</Form.Item>
-										<span className='ml-1'>
-											{chainProperties[network]?.tokenSymbol}
-										</span>
-									</div>
-								</div>
-							</Form>
-						</div>
-					</div>
-				</Modal>
-			</>
+	const triggerBtn = (
+		<div>
+			<Button
+				disabled={!id}
+				className='h-[40px] rounded-md bg-pink_primary text-white  transition-colors duration-300 hover:bg-pink_secondary md:h-[69px]'
+				onClick={() => setModalOpen(true)}
+			>
+				{' '}
+				Set On-Chain Identity
+			</Button>
+		</div>
+	);
+	const triggerBtnLoginDisabled = (
+		<Tooltip
+			color='#E5007A'
+			title='Please signup/login to set on-chain identity'
+		>
+			{' '}
+			<Button
+				type='primary'
+				disabled={true}
+				className='h-[40px] w-full rounded-md md:h-[69px]'
+			>
+				{' '}
+				Set On-Chain Identity
+			</Button>
+		</Tooltip>
 	);
 
+	return loadingStatus.isLoading ? (
+		<Card className={'LoaderWrapper'}>
+			<Loader text={loadingStatus.message} />
+		</Card>
+	) : (
+		<>
+			{!id ? triggerBtnLoginDisabled : triggerBtn}
+
+			<Modal
+				className={className}
+				title={'Set On-Chain Identity'}
+				open={modalOpen}
+				centered
+				footer={[
+					<Button
+						key='close'
+						onClick={() => setModalOpen(false)}
+					>
+						Close
+					</Button>,
+					<Button
+						key='submit'
+						disabled={!okAll}
+						className='submitBtn'
+						onClick={handleSignAndSubmit}
+					>
+						Set Identity
+					</Button>
+				]}
+				onCancel={() => setModalOpen(false)}
+			>
+				<div>
+					<div className='modal-desc'>
+						<Form className='identity-form'>
+							{/* Select account */}
+							<div className=' mb-[1.5em]'>
+								<div className=' mb-[0.5em] flex justify-between px-[0.5em]'>
+									<label className='font-bold text-sidebarBlue'>
+										Submit with account
+										<HelperTooltip
+											className='ml-1 align-middle'
+											text='Set identity for account'
+										/>
+									</label>
+								</div>
+
+								<div className='accountInputDiv flex items-center'>
+									{submitWithAccount.startsWith('0x') ? (
+										<EthIdenticon
+											size={26}
+											address={submitWithAccount}
+										/>
+									) : (
+										<Identicon
+											className='absolute left-8 z-10'
+											value={submitWithAccount}
+											size={26}
+											theme={'polkadot'}
+										/>
+									)}
+									<Form.Item
+										className=' mb-0 w-full'
+										validateStatus={!validAddress ? 'error' : ''}
+									>
+										<Input
+											value={submitWithAccount}
+											className={`${submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'}`}
+											onChange={(e) => onSubmitWithAccountChange(e.target.value)}
+											placeholder='Account Address'
+										/>
+									</Form.Item>
+								</div>
+
+								{!extensionNotAvailable && (
+									<div className=' mb-[1em] flex justify-between'>
+										<div
+											onClick={() => handleDetect(AvailableAccountsInput.submitWithAccount)}
+											className=' ml-[1.5em] mt-[0.25em] cursor-pointer text-pink_primary'
+										>
+											or choose from available addresses
+											{showAvailableAccountsObj['submitWithAccount'] ? <UpOutlined className='ml-1 align-middle' /> : <DownOutlined className='ml-1 align-middle' />}
+										</div>
+									</div>
+								)}
+								{extensionNotAvailable && <div className='error'>Please install polkadot.js extension</div>}
+								{showAvailableAccountsObj['submitWithAccount'] && availableAccounts.length > 0 && getAvailableAccounts(AvailableAccountsInput.submitWithAccount)}
+							</div>
+							{/* Display Name */}
+							<div className=' mb-[1.5em]'>
+								<div className=' mb-[0.5em] flex justify-between px-[0.5em]'>
+									<label className='font-bold text-sidebarBlue'>Display Name</label>
+								</div>
+								<Form.Item
+									name='Name'
+									rules={[{ required: true }]}
+									className=' mb-0'
+									validateStatus={!okDisplay ? 'error' : ''}
+								>
+									<Input
+										className='px-[0.5em]'
+										value={displayName}
+										placeholder='My On-Chain Name'
+										onChange={(e) => setDisplayName(e.target.value)}
+										// error={!okDisplay}
+									/>
+								</Form.Item>
+							</div>
+
+							{/* Legal Name */}
+							<div className=' mb-[1.5em]'>
+								<div className=' mb-[0.5em] flex justify-between px-[0.5em]'>
+									<label className='font-bold text-sidebarBlue'>Legal Name</label>
+									<span>*Optional</span>
+								</div>
+								<Form.Item
+									name='Legal name'
+									className=' mb-0'
+									validateStatus={!okLegal ? 'error' : ''}
+								>
+									<Input
+										className='px-[0.5em]'
+										placeholder='Full Legal Name'
+										value={legalName}
+										onChange={(e) => setLegalName(e.target.value)}
+									/>
+								</Form.Item>
+							</div>
+
+							{/* Email */}
+							<div className=' mb-[1.5em]'>
+								<div className=' mb-[0.5em] flex justify-between px-[0.5em]'>
+									<label className='font-bold text-sidebarBlue'>Email</label>
+									<span>*Optional</span>
+								</div>
+								<Form.Item
+									name='Email'
+									className=' mb-0'
+									validateStatus={!okEmail ? 'error' : ''}
+								>
+									<Input
+										className='px-[0.5em]'
+										value={email}
+										placeholder='somebody@example.com'
+										onChange={(e) => setEmail(e.target.value.toLowerCase())}
+									/>
+								</Form.Item>
+							</div>
+
+							{/* Website */}
+							<div className=' mb-[1.5em]'>
+								<div className=' mb-[0.5em] flex justify-between px-[0.5em]'>
+									<label className='font-bold text-sidebarBlue'>Website</label>
+									<span>*Optional</span>
+								</div>
+								<Form.Item
+									name='Website'
+									className=' mb-0'
+									validateStatus={!okWeb ? 'error' : ''}
+								>
+									<Input
+										className='px-[0.5em]'
+										value={website}
+										placeholder='https://example.com'
+										onChange={(e) => setWebsite(e.target.value)}
+										// error={!okWeb}
+									/>
+								</Form.Item>
+							</div>
+
+							{/* Twitter */}
+							<div className=' mb-[1.5em]'>
+								<div className=' mb-[0.5em] flex justify-between px-[0.5em]'>
+									<label className='font-bold text-sidebarBlue'>Twitter</label>
+									<span>*Optional</span>
+								</div>
+								<Form.Item
+									name='Twitter'
+									className=' mb-0'
+									validateStatus={!okTwitter ? 'error' : ''}
+								>
+									<Input
+										className='px-[0.5em]'
+										value={twitter}
+										placeholder='@YourTwitterName'
+										onChange={(e) => setTwitter(e.target.value)}
+									/>
+								</Form.Item>
+							</div>
+
+							{/* Riot Name */}
+							<div className=' mb-[1.5em]'>
+								<div className=' mb-[0.5em] flex justify-between px-[0.5em]'>
+									<label className='font-bold text-sidebarBlue'>Riot Name</label>
+									<span>*Optional</span>
+								</div>
+								<Form.Item
+									name='Riot'
+									className=' mb-0'
+									validateStatus={!okRiot ? 'error' : ''}
+								>
+									<Input
+										className='px-[0.5em]'
+										value={riotName}
+										placeholder='@yourname:matrix.org'
+										onChange={(e) => setRiotName(e.target.value)}
+									/>
+								</Form.Item>
+							</div>
+
+							{/* Total Deposit */}
+							<div className=' mb-[1.5em]'>
+								<div className=' mb-[0.5em] flex justify-between px-[0.5em]'>
+									<label className='font-bold text-sidebarBlue'>Total Deposit</label>
+								</div>
+
+								<div className='balance-input flex items-center'>
+									<Form.Item
+										className='mb-0 flex-1'
+										name='Deposit'
+										rules={[{ required: true }]}
+									>
+										<Input
+											type='number'
+											placeholder={'0'}
+											className='px-[0.5em]'
+											// onChange={onBalanceChange}
+											value={DEPOSIT[network]}
+										/>
+									</Form.Item>
+									<span className='ml-1'>{chainProperties[network]?.tokenSymbol}</span>
+								</div>
+							</div>
+						</Form>
+					</div>
+				</div>
+			</Modal>
+		</>
+	);
 };
 
 export default styled(SetOnChainIdentityButton)`
@@ -550,10 +649,10 @@ export default styled(SetOnChainIdentityButton)`
 		-webkit-appearance: none;
 		margin: 0;
 	}
-	input[type=number] {
+	input[type='number'] {
 		-moz-appearance: textfield;
 	}
-	.submitBtn{
+	.submitBtn {
 		background-color: pink_primary;
 		color: #fff;
 	}

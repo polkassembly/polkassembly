@@ -59,49 +59,7 @@ const Styled = styled.div`
 		color: #e5007a;
 		text-decoration: underline;
 	}
-
-	@media (max-width: 468px) and (min-width: 319px) {
-		.ant-menu-root > li:first-child {
-			height: 2px !important;
-		}
-
-		.ant-modal-body {
-			width: 338px;
-			margin-left: -12px;
-		}
-
-		.amount-container {
-			left: 58px !important;
-		}
-
-		.conviction-container {
-			left: 68px !important;
-		}
-
-		.amount-value {
-			left: 33px !important;
-		}
-
-		.conviction-value {
-			left: 20px !important;
-		}
-
-		.power-value {
-			left: 20px !important;
-		}
-
-		.abstain-amount-value {
-			left: -2px !important;
-		}
-
-		.abstain-conviction-value {
-			left: -14px !important;
-		}
-
-		.abstain-power-value {
-			left: -15px !important;
-		}
-	}
+}
 `;
 
 interface ICreationLabelProps {
@@ -381,7 +339,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							) : null}
 							{/* { votesArr.length > 1 && <p title={`${votesArr.length-1}+ votes available`}  className='mb-[-1px] ml-1' >{votesArr.length-1}+</p>} */}
 							<Modal
-								open={true}
+								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
 								className={`w-[560px] ${poppins.variable} ${poppins.className} modal-container max-h-[675px] rounded-[6px] max-md:w-full`}
@@ -408,7 +366,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									<div>
 										{votesArr.length > 1 && (
 											<div className='vote-history-container'>
-												<div className='-mt-1 mb-2 border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
+												<div className='mb-2 border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
 												<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue'>Vote History</p>
 											</div>
 										)}

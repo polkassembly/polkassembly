@@ -16,6 +16,7 @@ import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
 import { FilterIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
   className?: string;
@@ -35,6 +36,7 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 	const [trendingTags, setTrendingTags] = useState<IPostTag[]>([]);
 	const router = useRouter();
 	const [displayTags, setDisplayTags] = useState<string[]>([]);
+	const { resolvedTheme:theme } = useTheme();
 
 	const getData= async() => {
 		const { data , error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
@@ -157,7 +159,7 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 		<Popover
 			content={content}
 			open={!disabled && openFilter}
-			className={className}
+			className={`${className} ${theme === 'dark' ? '[&>.ant-popover-content]:bg-black': ''}`}
 			onOpenChange={() => !disabled && setOpenFilter(!openFilter)}
 			placement='bottom'
 			arrow={isSearch}

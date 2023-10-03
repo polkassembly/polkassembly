@@ -336,7 +336,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											}
 										</div>
 										:
-										<div key={timeline.id} className='flex flex-col ml-5 cursor-default text-lightBlue sticky top-10'>
+										<div key={timeline.id} className='flex flex-col ml-5 cursor-default text-lightBlue sticky top-10 dark:text-blue-dark-medium'>
 											<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 											<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
 											<div className='text-xs'>({timeline.commentsCount})</div>

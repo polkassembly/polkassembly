@@ -154,7 +154,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 	return <>
 		<Spin spinning={loading} indicator={<LoadingOutlined/>}>
 			<div className='my-8 flex flex-col write-proposal'>
-				<label className='text-lightBlue text-sm'>Have you initiated a discussion post for your proposal already? </label>
+				<label className='text-lightBlue text-sm dark:text-blue-dark-high dark:font-normal'>Have you initiated a discussion post for your proposal already? </label>
 				<Radio.Group disabled={loading} onChange={(e) => handleIsDiscussionLinkedChange(e.target.value)} size='small' className='mt-1.5' value={isDiscussionLinked}>
 					<Radio value={true} className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>Yes</Radio>
 					<Radio value={false} className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>No</Radio>

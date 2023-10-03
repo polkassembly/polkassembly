@@ -393,7 +393,7 @@ const TreasuryProposalFormButton = ({
 													{errorsFound.includes('beneficiaryAccount') && <span className='text-red-800'>Please select an address</span>}
 													<Input
 														value={beneficiaryAccount}
-														className={`${beneficiaryAccount === '' ? 'px-[0.5em]' : 'pl-10'}`}
+														className={`${beneficiaryAccount === '' ? 'px-[0.5em]' : 'pl-10'} dark:border-separatorDark`}
 														onChange={ (e) => setBeneficiaryAccount(e.target.value)}
 														placeholder='Account Address'
 													/>
@@ -493,7 +493,7 @@ export default styled(TreasuryProposalFormButton)`
 	background-color: ${props => props.themes==='dark' ? 'black' : ''} !important;
  	}
  	input::placeholder{
-	color:  ${props => props.themes==='dark' ? '#909090' : ''} !important;
+	color:  ${props => props.themes==='dark' ? 'white' : ''} !important;
  	}
 
 	/* Hides Increment Arrows in number input */

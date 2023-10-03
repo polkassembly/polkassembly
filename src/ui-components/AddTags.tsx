@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { InputRef, MenuProps, Tag ,Dropdown, Input } from 'antd';
+import { InputRef, MenuProps, Tag , Input } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { IPostTag } from '~src/types';
 import { PlusOutlined } from '@ant-design/icons';
@@ -10,6 +10,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
+import { Dropdown } from './CustomDropdown';
 
 interface Props{
   tags: string[];
@@ -17,9 +18,10 @@ interface Props{
   className?: string;
   disabled?: boolean;
   onChange?: (pre: any) => void;
+  theme?: string;
 }
 
-const AddTags=({ tags, setTags, className, disabled, onChange }:Props) => {
+const AddTags=({ tags, setTags, className, disabled, onChange, theme }:Props) => {
 
 	const [ inputVisible, setInputVisible ] = useState(false);
 	const [ inputValue, setInputValue ] = useState('');
@@ -103,8 +105,9 @@ const AddTags=({ tags, setTags, className, disabled, onChange }:Props) => {
 		...filteredTags.slice(0,5).map((tag,index) => {return  { key: index+2, label:<div className={`text-xs text-[#90A0B7]  ${poppins.className} ${poppins.className} tracking-wide`} onClick={() => {selectedTag.current = tag?.name; handleInputConfirm(); } }>{tag?.name}</div> }; })];
 
 	return <div className={className}>
-		<div className={`border-solid border-gray-300 min-h-[40px] p-[10px] flex rounded border justify-between items-center text-[#90A0B7] max-lg:h-auto ${disabled && 'bg-[#F5F5F5] cursor-not-allowed'}`}>
+		<div className={`border-solid border-gray-300 min-h-[40px] p-[10px] flex rounded border justify-between items-center text-[#90A0B7] max-lg:h-auto dark:border-separatorDark ${disabled && 'bg-[#F5F5F5] cursor-not-allowed'}`}>
 			<Dropdown
+				theme={theme}
 				disabled={tags.length === 5 || disabled}
 				overlayClassName='ml-[-10px] min-w-[104px] rounded create-post' menu={{ items }} placement="topLeft">
 				<div className={'flex'}>
@@ -119,9 +122,9 @@ const AddTags=({ tags, setTags, className, disabled, onChange }:Props) => {
 							value={inputValue}
 							onChange={handleInputChange}
 							onPressEnter={handleInputConfirm}
-							className={`text-[#90A0B7]  rounded-xl bg-white dark:bg-section-dark-overlay text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center ${charLimitReached && 'border-red-500'}`}
+							className={`text-[#90A0B7] dark:text-white rounded-xl bg-white dark:bg-section-dark-overlay text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center ${charLimitReached && 'border-red-500'}`}
 						/>  :
-						(tags.length <5 && !disabled) && <Tag onClick={showInput} className='rounded-xl bg-white dark:bg-section-dark-overlay border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center' >
+						(tags.length <5 && !disabled) && <Tag onClick={showInput} className='rounded-xl bg-white dark:bg-section-dark-overlay border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center dark:text-blue-dark-helper' >
 							<PlusOutlined className='mr-1'/>
           Add new tag
 						</Tag>}

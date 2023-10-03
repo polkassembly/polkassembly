@@ -289,7 +289,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 
 						{!!end && !!currentBlock &&
-							<div className="flex text-lightBlue dark:icon-dark-inactive items-center">
+							<div className="flex text-lightBlue dark:text-icon-dark-inactive items-center">
 								<Divider className='hidden lg:inline-block border-l-1 border-lightBlue dark:border-blue-dark-medium' type="vertical" />
 								<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' />
 								{
@@ -367,10 +367,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div className='flex gap-1'>
 									{ tags?.slice(0,2).map((tag, index) =>
-										(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] font-medium text-[10px]' >
+										(<div key={index} className='text-lightBlue dark:text-white rounded-xl px-[14px] py-1 border-[#D2D8E0] dark:border-separatorDark border-solid border-[1px] font-medium text-[10px]' >
 											{tag}
 										</div>))}
-									{tags.length>2 && <span className='text-blue-light-high dark:text-blue-dark-high' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+									{tags.length>2 && <span className='text-blue-light-high dark:white' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
 									</span>}</div>
 							</div>}
@@ -394,7 +394,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				</>}
 			>
 				<div className='flex gap-2 flex-wrap mt-3' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-					(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark px-4 py-1 font-normal text-xs text-lightBlue' >
+					(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark px-4 py-1 font-normal text-xs text-lightBlue dark:text-blue-dark-medium' >
 						{tag}
 					</div>))}
 				</>}

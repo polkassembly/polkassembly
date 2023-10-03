@@ -14,6 +14,7 @@ interface Props {
     topicId: number;
     onTopicSelection: (id: number)=> void;
     govType?: 'gov_1' | 'open_gov';
+	theme?: string;
 }
 
 export const topicToOptionText = (topic: string) => {
@@ -38,7 +39,8 @@ const topicIdToTopictext = (topicId : number) => {
 	return topicToOptionText(text);
 };
 
-const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const TopicsRadio = ({ className, onTopicSelection, govType, topicId, theme }: Props) => {
 
 	const [ topicOptions, setTopicOptions] = useState<string[]>([]);
 
@@ -60,19 +62,23 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 
 	return (
 		<div className={`${className} overflow-x-auto`}>
-			<Segmented className='text-navBlue borderRadius flex gap-4 rounded-xl bg-white dark:bg-section-dark-overlay text-xs' options={topicOptions} onChange={onTopicChange} value={topicIdToTopictext(topicId)}/>
+			<Segmented className='text-navBlue borderRadius dark:text-white flex gap-4 rounded-xl bg-white dark:bg-section-dark-overlay text-xs' options={topicOptions} onChange={onTopicChange} value={topicIdToTopictext(topicId)}/>
 		</div>
 	);
 };
 
 export default styled(TopicsRadio)`
 .borderRadius .ant-segmented-item{
- background:#EBEEF2 ;
+  background:${props => props.theme === 'dark'? '#222': '#EBEEF2'} !important;
   border-radius:16px;
+}
+.borderRadius .ant-segmented-item:hover{
+  background: ${props => props.theme === 'dark'? '#33071E': ''} !important;
+  color: ${props => props.theme === 'dark'? '#fff': ''} !important;
 }
 .borderRadius .ant-segmented-item-selected{
 border-radius:16px;
-background:#E5007A ;
+background:${props => props.theme === 'dark'? '#5A1138':'#E5007A'} !important;
 
 }
 .borderRadius .ant-segmented-item-selected .ant-segmented-item-label{

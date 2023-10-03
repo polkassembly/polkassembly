@@ -21,6 +21,7 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TopicsRadio from './TopicsRadio';
 import AddTags from '~src/ui-components/AddTags';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -30,6 +31,7 @@ interface Props {
 const CreatePost = ({ className, proposalType } : Props) => {
 	const router = useRouter();
 	const currentUser = useContext(UserDetailsContext);
+	const { resolvedTheme:theme } = useTheme();
 
 	const [form] = Form.useForm();
 	const pollEndBlock = usePollEndBlock();
@@ -155,7 +157,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 					<label className='text-sidebarBlue dark:text-blue-dark-medium font-normal text-sm mb-1 tracking-wide'>Title<span className='text-red-500 ml-1'>*</span></label>
 					<Form.Item name="title" rules={[{ required: true }]}>
 
-						<Input name='title' autoFocus placeholder='Enter Title' className='text-black' />
+						<Input name='title' autoFocus placeholder='Enter Title' className='text-black dark:text-white dark:bg-transparent dark:border-separatorDark dark:placeholder-white' />
 					</Form.Item>
 					<ContentForm />
 					<div className="flex items-center">
@@ -185,13 +187,13 @@ const CreatePost = ({ className, proposalType } : Props) => {
 								]}>
 								<>
 									<label className='text-sidebarBlue font-normal text-sm mb-1 dark:text-blue-dark-medium tracking-wide'>Select Topic <span className='text-red-500 ml-1'>*</span></label>
-									<TopicsRadio govType={govType} onTopicSelection={(id) => setTopicId(id)} topicId={topicId} />
+									<TopicsRadio theme={theme} govType={govType} onTopicSelection={(id) => setTopicId(id)} topicId={topicId} />
 								</>
 							</Form.Item>
 							: null
 					}
 					<h5 className='text-sm text-color mt-8 font-normal dark:text-blue-dark-medium'>Add Tags</h5>
-					<AddTags tags={tags} setTags={setTags} />
+					<AddTags theme={theme} tags={tags} setTags={setTags} />
 					<Form.Item>
 						<Button htmlType="submit" disabled={!currentUser.id || formDisabled || loading } className='mt-10 bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center justify-center rounded-md text-lg h-[50px] w-[215px]'>
 							Create Post

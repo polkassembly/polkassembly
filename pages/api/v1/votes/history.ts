@@ -46,7 +46,7 @@ export interface IVoteHistory {
 	removedAtBlock?: null | number;
 	removedAt?: null | string;
 	voter?: string;
-	delegatedVotes?: Array<any>
+	delegatedVotes?: Array<any>;
 }
 
 export interface IVotesHistoryResponse {
@@ -126,11 +126,11 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 			votes.forEach((vote) => {
 				if (vote) {
 					const currentVote = {
-						proposalType: vote?.proposal?.type,
 						isDelegated: vote?.delegatedVotes.length > 0 || false,
+						proposalType: vote?.proposal?.type,
 						...vote
-					} as IVoteHistory
-					delete currentVote.delegatedVotes
+					} as IVoteHistory;
+					delete currentVote.delegatedVotes;
 					res.votes.push(currentVote);
 				}
 			});

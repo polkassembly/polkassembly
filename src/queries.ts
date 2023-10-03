@@ -904,8 +904,6 @@ query ConvictionVotingHistoryByVoterAddressAndProposalTypeAndProposalIndex($offs
     createdAtBlock
     decision
     lockPeriod
-    removedAtBlock
-    removedAt
     voter
   }
   convictionVotesConnection(where: {voter_eq: $voter_eq, proposal: {type_eq: $type_eq, index_eq: $index_eq}}, orderBy: createdAt_DESC) {

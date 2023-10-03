@@ -117,7 +117,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							username={username}
 							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
-							usernameClassName='text-xs text-ellipsis overflow-hidden mr-1'
+							usernameClassName='text-xs text-ellipsis overflow-hidden'
 						/>
 						{text}&nbsp;
 						{topic && (
@@ -157,7 +157,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</>
 					)}
 					{created_at && (
-						<span className='-ml-[6px] -mt-[1px] flex items-center md:mt-0 md:pl-0'>
+						<span className='-mt-[1px] flex items-center md:mt-0 md:pl-0'>
 							<ClockCircleOutlined className='mx-1' />
 							{relativeCreatedAt}
 						</span>
@@ -200,7 +200,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							}}
 						>
 							<Divider
-								className='mb-[-1px] ml-1 hidden md:inline-block'
+								className='mb-[-1px] ml-2 mr-3 hidden md:inline-block'
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>

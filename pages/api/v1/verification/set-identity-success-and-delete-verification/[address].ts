@@ -22,7 +22,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	const token = getTokenFromReq(req);
 	if (!token || token !== process.env.IDENTITY_JUDGEMENT_AUTH) return res.status(403).json({ message: messages.UNAUTHORISED });
-
 	const substrateAddress = getSubstrateAddress(String(userAddress));
 	if (!substrateAddress) {
 		return res.status(500).json({ message: 'Invalid substrate address' });
@@ -32,22 +31,14 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		return res.status(404).json({ message: `No user found with the address '${userAddress}'.` });
 	}
 
-	const userDoc = await firestore_db
-		.collection('users')
-		.doc(String(addressDoc.data()?.user_id))
-		.get();
-
-	if (!userDoc.exists) {
-		return res.status(404).json({ message: `No user found with the address '${userAddress}'.` });
-	}
-	const userData: any = userDoc.data();
-	const userId = userData?.user_id;
+	const addressData: any = addressDoc.data();
+	const userId = addressData?.user_id;
 
 	if (userId < 0 || isNaN(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const batch = firestore_db.batch();
 
-	batch.update(userDoc.ref, {
+	batch.update(addressDoc.ref, {
 		onchain_identity_via_polkassembly: true
 	});
 

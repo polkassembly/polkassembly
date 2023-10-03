@@ -156,6 +156,29 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			label: getSentimentLabel(sentiment as ESentiment) || null
 		}
 	];
+
+	// const Timeline = (vote:any) => {
+	// 	return (
+	// 		{network !== AllNetworks.COLLECTIVES ? (
+	// 			<>
+	// 				<div className={'amount-value relative left-[93px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+	// 					{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+	// 				</div>
+	// 				{vote?.decision !== 'abstain' && (
+	// 					<div className={'conviction-value relative left-[132px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
+	// 						vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod
+	// 					}x`}</div>
+	// 				)}
+	// 			</>
+	// 		) : (
+	// 			<div className={'relative left-[220px] overflow-ellipsis text-bodyBlue'}>
+	// 				{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+	// 			</div>
+	// 		)}
+	// 		<div className='power-value relative left-[191px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+	// 	)
+	// };
+
 	return (
 		<div className={`${className} flex w-[100%] justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
@@ -285,125 +308,21 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									</div>
 								}
 							>
-								<div className='modal-container relative flex text-sm font-semibold text-bodyBlue'>
-									<p className='m-0 p-0'>Vote</p>
-									<p className='amount-container relative left-[122px] m-0 p-0'>Amount</p>
-									<p className='conviction-container relative left-[186px] m-0 p-0'>Conviction</p>
-									<p className='m-0 ml-auto p-0'>Voting Power</p>
-								</div>
-								<div className='my-2 border-0 border-b-[1px]  border-solid border-[#D2D8E0]'></div>
-								{votesArr.length > 0 &&
-									votesArr.slice(0, 1).map((vote: any, idx: any) => {
-										const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
-										const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
-										const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
-										// balance can be undefined
-										console.log(votesArr.length);
-										const balanceMatch = balance ? balance.match(/[\d.]+/) : null;
-										const power = conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0);
-										return (
-											<div
-												key={idx}
-												className='mb-2 flex items-center'
-											>
-												{vote.decision == 'yes' ? (
-													<div className='mb-[-1px] justify-between '>
-														<div className='flex'>
-															<LikeFilled className='relative -top-[4px] text-[green]' /> <span className='relative -top-[2px] font-medium capitalize text-[green]'>Aye</span>
-															{network !== AllNetworks.COLLECTIVES ? (
-																<>
-																	<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
-																		{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-																	</div>
-																	{vote?.decision !== 'abstain' && (
-																		<div className={'conviction-value relative left-[136px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
-																			vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod
-																		}x`}</div>
-																	)}
-																</>
-															) : (
-																<div className={'relative left-[220px] overflow-ellipsis text-bodyBlue'}>
-																	{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-																</div>
-															)}
-															<div className='power-value relative left-[195px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
-														</div>
-													</div>
-												) : vote.decision == 'no' ? (
-													<div className='w-[90%] justify-between'>
-														<div className='mb-[-1px] flex'>
-															<DislikeFilled className='relative -top-[4px] text-[red]' />{' '}
-															<span className='relative -top-[2px] mb-[5px] font-medium capitalize text-[red]'>Nay</span>
-															{network !== AllNetworks.COLLECTIVES ? (
-																<>
-																	<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
-																		{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-																	</div>
-																	{vote?.decision !== 'abstain' && (
-																		<div className={'conviction-value relative left-[136px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
-																			vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod
-																		}x`}</div>
-																	)}
-																</>
-															) : (
-																<div className={'relative left-[220px] overflow-ellipsis text-bodyBlue'}>
-																	{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-																</div>
-															)}
-															<div className='power-value relative left-[195px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
-														</div>
-													</div>
-												) : vote.decision == 'abstain' && !(vote.balance as any).abstain ? (
-													<div className='mb-[-1px] flex w-[90%] justify-between '>
-														<div className='mb-[-1px]  flex'>
-															<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Split</span>
-															{network !== AllNetworks.COLLECTIVES ? (
-																<>
-																	<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
-																		{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-																	</div>
-																	<div className={'conviction-value relative left-[136px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
-																</>
-															) : (
-																<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
-																	{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-																</div>
-															)}
-															<div className='power-value relative left-[195px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
-														</div>
-													</div>
-												) : vote.decision == 'abstain' && (vote.balance as any).abstain ? (
-													<div className=' align-center mb-[1px] flex w-[90%] justify-between'>
-														<div className='flex justify-center align-middle'>
-															<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue'>Abstain</span>
-															{network !== AllNetworks.COLLECTIVES ? (
-																<>
-																	<div className={'abstain-amount-value relative left-[62px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
-																		{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-																	</div>
-																	<div className={'abstain-conviction-value relative left-[102px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
-																</>
-															) : (
-																<div className={'abstain-amount-value relative left-[103px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
-																	{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-																</div>
-															)}
-															<div className='abstain-power-value relative left-[159px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
-														</div>
-													</div>
-												) : null}
-											</div>
-										);
-									})}
-								<div>
-									<div className='mb-2 mt-1 border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
-									<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue'>Vote History</p>
+								<div className='modal-content'>
+									<div className='modal-container relative flex text-sm font-semibold text-bodyBlue'>
+										<p className='m-0 p-0'>Vote</p>
+										<p className='amount-container relative left-[122px] m-0 p-0'>Amount</p>
+										<p className='conviction-container relative left-[186px] m-0 p-0'>Conviction</p>
+										<p className='m-0 ml-auto p-0'>Voting Power</p>
+									</div>
+									<div className='my-2 border-0 border-b-[1px]  border-solid border-[#D2D8E0]'></div>
 									{votesArr.length > 0 &&
-										votesArr.slice(1, 3).map((vote: any, idx: any) => {
+										votesArr.slice(0, 1).map((vote: any, idx: any) => {
 											const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
 											const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
 											const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
 											// balance can be undefined
+											console.log(votesArr.length);
 											const balanceMatch = balance ? balance.match(/[\d.]+/) : null;
 											const power = conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0);
 											return (
@@ -414,14 +333,15 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 													{vote.decision == 'yes' ? (
 														<div className='mb-[-1px] justify-between '>
 															<div className='flex'>
-																<LikeFilled className='relative -top-[4px] text-[green]' /> <span className='relative -top-[2px] font-medium capitalize text-[green]'>Aye</span>
+																<LikeFilled className='relative -top-[4px] text-[green]' />{' '}
+																<span className='relative -top-[2px] ml-1 font-medium capitalize text-[green]'>Aye</span>
 																{network !== AllNetworks.COLLECTIVES ? (
 																	<>
-																		<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																		<div className={'amount-value relative left-[93px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 																			{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 																		</div>
 																		{vote?.decision !== 'abstain' && (
-																			<div className={'conviction-value relative left-[136px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
+																			<div className={'conviction-value relative left-[132px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
 																				vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod
 																			}x`}</div>
 																		)}
@@ -431,21 +351,21 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 																		{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 																	</div>
 																)}
-																<div className='power-value relative left-[195px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+																<div className='power-value relative left-[191px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
 															</div>
 														</div>
 													) : vote.decision == 'no' ? (
 														<div className='w-[90%] justify-between'>
 															<div className='mb-[-1px] flex'>
 																<DislikeFilled className='relative -top-[4px] text-[red]' />{' '}
-																<span className='relative -top-[2px] mb-[5px] font-medium capitalize text-[red]'>Nay</span>
+																<span className='relative -top-[2px] mb-[5px] ml-1 font-medium capitalize text-[red]'>Nay</span>
 																{network !== AllNetworks.COLLECTIVES ? (
 																	<>
-																		<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																		<div className={'amount-value relative left-[93px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 																			{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 																		</div>
 																		{vote?.decision !== 'abstain' && (
-																			<div className={'conviction-value relative left-[136px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
+																			<div className={'conviction-value relative left-[132px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
 																				vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod
 																			}x`}</div>
 																		)}
@@ -455,58 +375,168 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 																		{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 																	</div>
 																)}
-																<div className='power-value relative left-[195px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+																<div className='power-value relative left-[191px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
 															</div>
 														</div>
 													) : vote.decision == 'abstain' && !(vote.balance as any).abstain ? (
 														<div className='mb-[-1px] flex w-[90%] justify-between '>
 															<div className='mb-[-1px]  flex'>
-																<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Split</span>
+																<SplitYellow className='mr-1' /> <span className='ml-1 font-medium capitalize text-[#FECA7E]'>Split</span>
 																{network !== AllNetworks.COLLECTIVES ? (
 																	<>
-																		<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																		<div className={'amount-value relative left-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 																			{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 																		</div>
-																		<div className={'conviction-value relative left-[136px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
+																		<div className={'conviction-value relative left-[98px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
 																	</>
 																) : (
 																	<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 																		{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 																	</div>
 																)}
-																<div className='power-value relative left-[195px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+																<div className='power-value relative left-[156px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
 															</div>
 														</div>
 													) : vote.decision == 'abstain' && (vote.balance as any).abstain ? (
 														<div className=' align-center mb-[1px] flex w-[90%] justify-between'>
 															<div className='flex justify-center align-middle'>
-																<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue'>Abstain</span>
+																<AbstainGray className='mr-1' /> <span className='ml-1 font-medium capitalize text-bodyBlue'>Abstain</span>
 																{network !== AllNetworks.COLLECTIVES ? (
 																	<>
-																		<div className={'abstain-amount-value relative left-[62px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																		<div className={'abstain-amount-value relative left-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 																			{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 																		</div>
-																		<div className={'abstain-conviction-value relative left-[102px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
+																		<div className={'abstain-conviction-value relative left-[98px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
 																	</>
 																) : (
 																	<div className={'abstain-amount-value relative left-[103px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 																		{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 																	</div>
 																)}
-																<div className='abstain-power-value relative left-[159px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+																<div className='abstain-power-value relative left-[156px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
 															</div>
 														</div>
 													) : null}
 												</div>
 											);
 										})}
+									<div>
+										{votesArr.length > 1 && (
+											<div>
+												<div className='-mt-1 mb-2 border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
+												<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue'>Vote History</p>
+											</div>
+										)}
+										{votesArr.length > 1 &&
+											votesArr.slice(1).map((vote: any, idx: any) => {
+												const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
+												const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
+												const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
+												// balance can be undefined
+												const balanceMatch = balance ? balance.match(/[\d.]+/) : null;
+												const power = conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0);
+												return (
+													<div
+														key={idx}
+														className='mb-2 flex items-center'
+													>
+														{vote.decision == 'yes' ? (
+															<div className='mb-[-1px] justify-between '>
+																<div className='flex'>
+																	<LikeFilled className='relative -top-[4px] text-[green]' />{' '}
+																	<span className='relative -top-[2px] ml-1 font-medium capitalize text-[green]'>Aye</span>
+																	{network !== AllNetworks.COLLECTIVES ? (
+																		<>
+																			<div className={'amount-value relative left-[93px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																				{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+																			</div>
+																			{vote?.decision !== 'abstain' && (
+																				<div className={'conviction-value relative left-[132px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
+																					vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod
+																				}x`}</div>
+																			)}
+																		</>
+																	) : (
+																		<div className={'relative left-[220px] overflow-ellipsis text-bodyBlue'}>
+																			{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+																		</div>
+																	)}
+																	<div className='power-value relative left-[191px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+																</div>
+															</div>
+														) : vote.decision == 'no' ? (
+															<div className='w-[90%] justify-between'>
+																<div className='mb-[-1px] flex'>
+																	<DislikeFilled className='relative -top-[4px] text-[red]' />{' '}
+																	<span className='relative -top-[2px] mb-[5px] ml-1 font-medium capitalize text-[red]'>Nay</span>
+																	{network !== AllNetworks.COLLECTIVES ? (
+																		<>
+																			<div className={'amount-value relative left-[93px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																				{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+																			</div>
+																			{vote?.decision !== 'abstain' && (
+																				<div className={'conviction-value relative left-[132px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${
+																					vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod
+																				}x`}</div>
+																			)}
+																		</>
+																	) : (
+																		<div className={'relative left-[220px] overflow-ellipsis text-bodyBlue'}>
+																			{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+																		</div>
+																	)}
+																	<div className='power-value relative left-[191px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+																</div>
+															</div>
+														) : vote.decision == 'abstain' && !(vote.balance as any).abstain ? (
+															<div className='mb-[-1px] flex w-[90%] justify-between '>
+																<div className='mb-[-1px]  flex'>
+																	<SplitYellow className='mr-1' /> <span className='ml-1 font-medium capitalize text-[#FECA7E]'>Split</span>
+																	{network !== AllNetworks.COLLECTIVES ? (
+																		<>
+																			<div className={'amount-value relative left-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																				{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+																			</div>
+																			<div className={'conviction-value relative left-[98px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
+																		</>
+																	) : (
+																		<div className={'amount-value relative left-[97px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																			{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+																		</div>
+																	)}
+																	<div className='power-value relative left-[156px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+																</div>
+															</div>
+														) : vote.decision == 'abstain' && (vote.balance as any).abstain ? (
+															<div className=' align-center mb-[1px] flex w-[90%] justify-between'>
+																<div className='flex justify-center align-middle'>
+																	<AbstainGray className='mr-1' /> <span className='ml-1 font-medium capitalize text-bodyBlue'>Abstain</span>
+																	{network !== AllNetworks.COLLECTIVES ? (
+																		<>
+																			<div className={'abstain-amount-value relative left-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																				{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+																			</div>
+																			<div className={'abstain-conviction-value relative left-[98px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
+																		</>
+																	) : (
+																		<div className={'abstain-amount-value relative left-[103px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+																			{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+																		</div>
+																	)}
+																	<div className='abstain-power-value relative left-[156px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+																</div>
+															</div>
+														) : null}
+													</div>
+												);
+											})}
+									</div>
 								</div>
 							</Modal>
 						</div>
 					) : null}
 				</div>
 			</div>
-
 			<div className='flex'>
 				{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
 					<div className='mr-2 flex items-center'>

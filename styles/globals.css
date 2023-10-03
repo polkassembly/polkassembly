@@ -500,3 +500,25 @@ z-index: 1050 !important;
 .ant-modal-root .ant-modal-wrap{
   z-index: 1052 !important;
 }
+
+@media (max-width: 594px) and (min-width: 319px){
+  /* .ant-modal-content {
+    overflow-x: auto;
+  }
+  
+  .ant-modal .ant-modal-close {
+    margin-right: -70px !important;
+  }
+  
+  .ant-modal-body {
+    width: 516px;
+  }
+  
+  .ant-modal-header {
+    width: 516px;
+  } */
+  .modal-content{
+    overflow-x: auto;
+    width:560px !important;
+  }
+}

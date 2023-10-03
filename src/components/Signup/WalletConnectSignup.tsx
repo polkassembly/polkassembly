@@ -271,6 +271,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 					<>
 						<div>
 							<AccountSelectionForm
+								isTruncateUsername={false}
 								title='Choose linked account'
 								accounts={accounts}
 								address={address}

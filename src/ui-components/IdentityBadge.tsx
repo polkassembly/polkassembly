@@ -43,10 +43,37 @@ const StyledPopup = styled.div`
 	}
 `;
 
+const getIdentityIcons = (key: string) => {
+	switch (key) {
+		case 'Legal':
+			return <LegalIcon className='mr-1.5' />;
+		case 'Email':
+			return <EmailIcon className='mr-2' />;
+		case 'Judgements':
+			return <JudgementIcon className='mr-1.5' />;
+		case 'Pgp':
+			return <PgpIcon className='mr-1' />;
+		case 'Riot':
+			return <RiotIcon className='mr-1.5' />;
+		case 'Twitter':
+			return <TwitterIcon className='mr-1.5 mt-1' />;
+		case 'Web':
+			return <WebIcon />;
+	}
+};
 const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const identityArr = [
+		{ key: 'Email', value: identity?.email },
+		{ key: 'Judgements', value: identity?.judgements || [] },
+		{ key: 'Legal', value: identity?.legal },
+		{ key: 'Pgp', value: identity?.pgp },
+		{ key: 'Riot', value: identity?.riot },
+		{ key: 'Twitter', value: identity?.twitter },
+		{ key: 'Web', value: identity?.web }
+	];
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const CouncilEmoji = () => (
@@ -69,69 +96,25 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	const displayJudgements = JSON.stringify(judgements?.map(([, jud]) => jud.toString()));
 	const popupContent = (
 		<StyledPopup>
-			{identity?.legal && (
-				<li className='flex items-center'>
-					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
-						<LegalIcon className='mr-1.5' />
-						legal:
-					</span>
-					<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{identity.legal}</span>
-				</li>
-			)}
-			{identity?.email && (
-				<li className='flex items-center'>
-					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
-						<EmailIcon className='mr-2' />
-						Email:
-					</span>
-					<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{identity.email}</span>
-				</li>
-			)}
-			{(identity?.judgements?.length || 0) > 0 && (
-				<li className='flex items-center'>
-					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
-						<JudgementIcon className='mr-1.5' />
-						Judgements:
-					</span>
-					<span className='truncate text-xs text-bodyBlue'>{displayJudgements}</span>
-				</li>
-			)}
-			{identity?.pgp && (
-				<li className='flex items-center'>
-					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
-						<PgpIcon className='mr-1' />
-						pgp:
-					</span>
-					<span className='text-bodyblue truncate text-xs font-normal'>{identity.pgp}</span>
-				</li>
-			)}
-			{identity?.riot && (
-				<li className='flex items-center'>
-					<span className='desc flex items-center text-sm font-medium text-bodyBlue'>
-						<RiotIcon className='mr-1.5' />
-						riot:{' '}
-					</span>
-					<span className='truncate text-xs font-normal text-bodyBlue'>{identity.riot}</span>
-				</li>
-			)}
-			{identity?.twitter && (
-				<li className='flex items-center'>
-					<span className='desc flex text-sm font-medium text-bodyBlue'>
-						<TwitterIcon className='mr-1.5 mt-1' />
-						Twitter:{' '}
-					</span>
-					<span className='truncate text-xs font-normal text-bodyBlue'>{identity.twitter}</span>
-				</li>
-			)}
-			{identity?.web && (
-				<li className='flex items-center'>
-					<span className='desc flex text-sm font-medium text-bodyBlue'>
-						<WebIcon className='-ml-0.5 mr-1.5 mt-1' />
-						Web:{' '}
-					</span>
-					<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{identity.web}</span>
-				</li>
-			)}
+			{identityArr.map((item, index) => {
+				{
+					return (
+						(item?.key === 'Judgements' ? !!identity?.judgements?.length : !!item?.value) && (
+							<li
+								className='flex items-center'
+								key={index}
+							>
+								<span className='desc flex items-center text-sm font-medium capitalize text-bodyBlue'>
+									{getIdentityIcons(item?.key)}
+									{item?.key}:
+								</span>
+								<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}</span>
+							</li>
+						)
+					);
+				}
+			})}
+
 			{flags?.isCouncil && (
 				<li className='flex items-center'>
 					<span className='desc text-sm font-medium text-bodyBlue'>

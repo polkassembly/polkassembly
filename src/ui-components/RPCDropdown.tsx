@@ -4,13 +4,14 @@
 
 /* eslint-disable no-tabs */
 import { MenuProps } from 'antd';
-import { Dropdown } from 'antd';
+import { Dropdown } from '~src/ui-components/CustomDropdown';
 import React, { FC, useEffect, useState } from 'react';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import { TRPCEndpoint } from '~src/types';
 import { ArrowDownIcon, SignalTowerIcon } from './CustomIcons';
 import Loader from './Loader';
+import { useTheme } from 'next-themes';
 
 interface IRPCDropdownProps {
 	className?: string
@@ -36,6 +37,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	const { isApiLoading, setWsProvider, wsProvider } = useApiContext();
 	const { network } = useNetworkContext();
 	const [rpcEndpoints, setRPCEndpoints] = useState<TRPCEndpoint[]>([]);
+	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 		setRPCEndpoints(chainProperties[network].rpcEndpoints);
@@ -49,13 +51,14 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	return (
 		!isApiLoading ?
 			<Dropdown
+				theme={theme}
 				trigger={['click']}
 				menu={{ defaultSelectedKeys: [(wsProvider? wsProvider: (network? chainProperties?.[network]?.rpcEndpoint: ''))], items: rpcEndpoints, onClick: handleEndpointChange, selectable: true }}
 				className={`${className} 'dark:bg-section-dark-overlay dark:text-white'}`}
 			>
 				{
 					isSmallScreen?
-						<span className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid dark:border-separatorDark bg-[rgba(210,216,224,0.2)] h-10 px-[18px] dark:border-[#3B444F] dark:bg-[#29323C33]'>
+						<span className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid dark:border-separatorDark bg-[rgba(210,216,224,0.2)] h-10 px-[18px] dark:border-separatorDark dark:bg-[#29323C33]'>
 							<div className='flex items-center gap-x-[6px]'>
 								<SignalTowerIcon className='w-[20px] h-[20px] m-0 p-0' />
 								<span className='font-semibold text-xs leading-[18px] tracking-[0.02em]'>

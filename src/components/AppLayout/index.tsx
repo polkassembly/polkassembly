@@ -4,7 +4,8 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu as AntdMenu, MenuProps, Modal, Skeleton } from 'antd';
+import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal, Skeleton } from 'antd';
+import { Dropdown } from '~src/ui-components/CustomDropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -83,21 +84,21 @@ const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
-			label: <Link className='text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+			label: <Link className='text-lightBlue dark:text-icon-dark-inactive hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
 				<UserOutlined />
 				<span>View Profile</span>
 			</Link>
 		},
 		{
 			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+			label: <Link className='text-navBlue dark:text-icon-dark-inactive hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
 				<SettingOutlined />
 				<span>Settings</span>
 			</Link>
 		},
 		{
 			key: 'logout',
-			label: <Link href='/' className='text-lightBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
+			label: <Link href='/' className='text-lightBlue dark:text-icon-dark-inactive hover:text-pink_primary font-medium flex items-center gap-x-2'
 				onClick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
@@ -125,11 +126,14 @@ const getUserDropDown = (handleSetIdentityClick: any, handleLogout: any, network
 		});
 	}
 
-	const AuthDropdown = ({ children }: {children: ReactNode}) => (
-		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
-			{children}
-		</Dropdown>
-	);
+	const AuthDropdown = ({ children }: {children: ReactNode}) => {
+		const { resolvedTheme:theme }= useTheme();
+		return(
+			<Dropdown theme={theme} menu={{ items: dropdownMenuItems }} trigger={['click']}>
+				{children}
+			</Dropdown>
+		);
+	};
 
 	return getSiderMenuItem(
 		<AuthDropdown>

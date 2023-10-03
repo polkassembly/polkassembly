@@ -4,8 +4,9 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined, SwapOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Dropdown, Pagination as AntdPagination , PaginationProps, Segmented, Spin } from 'antd';
+import { Pagination as AntdPagination , PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
+import { Dropdown } from '~src/ui-components/CustomDropdown';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
 import Address from 'src/ui-components/Address';
@@ -237,6 +238,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	};
 	const sortByDropdown = (
 		<Dropdown
+			theme={theme}
 			menu={{
 				defaultSelectedKeys: [votesSortValues.TIME],
 				items: [...(network === AllNetworks.POLYMESH ? votesSortOptions.slice(1,2): votesSortOptions )],

@@ -5,6 +5,7 @@
 import { Form } from 'antd';
 import React, { useState } from 'react';
 import TextEditor from '~src/ui-components/TextEditor';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string
@@ -41,6 +42,7 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 		errorMsg: null,
 		validateStatus: 'success'
 	});
+	const { resolvedTheme:theme } = useTheme();
 
 	const onChangeWrapper = (content:string) => {
 		const validationStatus = validateContent(content);
@@ -61,6 +63,7 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 					height={height}
 					onChange={onChangeWrapper}
 					autofocus={autofocus}
+					theme={theme}
 				/>
 			</Form.Item>
 		</div>

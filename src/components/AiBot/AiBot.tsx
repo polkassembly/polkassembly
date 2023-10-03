@@ -19,6 +19,7 @@ import CloseWhite from '~assets/icons/close-cross-thinner.svg';
 import FabButton from '~assets/icons/fab-icon.svg';
 import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
+import { useTheme } from 'next-themes';
 
 const  OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'),{
 	loading: () => <Skeleton.Button className='w-[100%]' active />,
@@ -44,6 +45,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const { id } = useContext(UserDetailsContext);
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkContext();
+	const { resolvedTheme:theme } = useTheme();
 
 	// useEffect(() => {
 	// if (!isAIChatBotOpen) return;
@@ -121,7 +123,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	if(treasuryProposalCreationAllowedNetwork.includes(network.toUpperCase())){
 		data.splice(0, 0, {
-			component: <OpenGovTreasuryProposal/>
+			component: <OpenGovTreasuryProposal theme={theme}/>
 		});
 	}
 

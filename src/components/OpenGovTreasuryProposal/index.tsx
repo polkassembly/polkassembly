@@ -5,7 +5,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
-import { useTheme } from 'next-themes';
 import { Button, Form, Modal, Steps } from 'antd';
 import WriteProposal from './WriteProposal';
 import CreatePreimage from './CreatePreimage';
@@ -24,6 +23,7 @@ import { useApiContext, useNetworkContext } from '~src/context';
 
 interface Props{
   className?: string;
+  theme?: string;
 }
 
 export interface ISteps{
@@ -55,10 +55,9 @@ export interface IPreimage{
 	storageFee:BN;
 }
 const ZERO_BN = new BN(0);
-const OpenGovTreasuryProposal = ({ className }: Props) => {
+const OpenGovTreasuryProposal = ({ className, theme }: Props) => {
 
 	const { api, apiReady } = useApiContext();
-	const { resolvedTheme:theme } = useTheme();
 	const { network } = useNetworkContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
@@ -310,7 +309,7 @@ export default styled(OpenGovTreasuryProposal)`
 }
 .opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
 .opengov-proposals .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title{
-	color: var(--bodyBlue) !important;
+	color: ${props => props.theme === 'dark' ? 'white' : '#243A57'} !important;
 }
 .opengov-proposals .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title{
 	color: #96A4B6 !important;
@@ -336,10 +335,7 @@ export default styled(OpenGovTreasuryProposal)`
 .opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-icon >.ant-steps-icon {
 	color:white !important;
 }
-.ant-input{
-   color:var(--bodyBlue) !important;
-   font-weight: 400;
-}
+
 input::placeholder {
 	color:#7c899b;
 	font-weight: 400 !important;

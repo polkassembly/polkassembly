@@ -565,7 +565,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`${className} create-preimage`}>
 			<div className='my-8 flex flex-col'>
-				<label className='text-lightBlue text-sm'>Do you have an existing preimage? </label>
+				<label className='text-lightBlue text-sm dark:text-blue-dark-high'>Do you have an existing preimage? </label>
 				<Radio.Group onChange={(e) => {
 					setIsPreimage(e.target.value);
 					onChangeLocalStorageSet({ isPreimage: e.target.value }, e.target.value, preimageCreated, preimageLinked, true);
@@ -584,19 +584,19 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				}>
 				{isPreimage && <>
 					<div className='mt-6 preimage'>
-						<label className='text-lightBlue text-sm'>Preimage Hash <span>
+						<label className='text-lightBlue text-sm dark:text-blue-dark-medium'>Preimage Hash <span>
 							<HelperTooltip text='A unique hash is generate for your preimage and it is used to populate proposal details.' className='ml-1'/>
 						</span>
 						</label>
 						<Form.Item name='preimage_hash'>
-							<Input name='preimage_hash' className='h-[40px] rounded-[4px]' value={preimageHash} onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}/>
+							<Input name='preimage_hash' className='h-[40px] rounded-[4px] text-bodyBlue dark:text-blue-dark-high dark:border-separatorDark dark:bg-transparent' value={preimageHash} onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}/>
 						</Form.Item>
 						{invalidPreimageHash () && !loading && <span className='text-[#ff4d4f] text-sm'>Invalid Preimage hash</span>}
 					</div>
 					<div className='mt-6'>
-						<label className='text-lightBlue text-sm'>Preimage Length</label>
+						<label className='text-lightBlue text-sm dark:text-blue-dark-medium'>Preimage Length</label>
 						<Form.Item name='preimage_length'>
-							<Input name='preimage_length' className='h-[40px] rounded-[4px]' onChange={(e) => {
+							<Input name='preimage_length' className='h-[40px] rounded-[4px] dark:bg-transparent dark:border-separatorDark dark:text-white dark:placeholder-white' onChange={(e) => {
 								setPreimageLength(Number(e.target.value));
 								onChangeLocalStorageSet({ preimageLength: e.target.value }, isPreimage);
 							}}
@@ -618,7 +618,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							defaultAddress={proposerAddress}
 							onChange={() => setLoading(false)}
 							inputClassName={' font-normal text-sm h-[40px]'}
-							className='text-lightBlue text-sm font-normal -mt-6'
+							className='text-lightBlue text-sm dark:text-blue-dark-medium font-normal -mt-6'
 							disabled
 							size='large'
 							identiconSize={30}
@@ -629,7 +629,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						defaultAddress={beneficiaryAddress}
 						label={'Beneficiary Address'}
 						placeholder='Add beneficiary address'
-						className='text-lightBlue text-sm font-normal'
+						className='text-lightBlue text-sm dark:text-blue-dark-medium font-normal'
 						onChange={(address) => handleBeneficiaryAddresschange(address)}
 						helpText='The amount requested in the proposal will be received in this address.'
 						size='large'
@@ -643,14 +643,14 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 					{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 					<div  className='mt-6 -mb-6'>
-						<div className='flex justify-between items-center text-lightBlue text-sm mb-[2px]'>
+						<div className='flex justify-between items-center text-lightBlue text-sm dark:text-blue-dark-medium mb-[2px]'>
 							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
 							<span className='text-xs text-blue-light-high dark:text-blue-dark-high'>Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
 						</div>
 						<BalanceInput onBlur={getPreimageTxFee} address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>
 					<div className='mt-6'>
-						<label className='text-lightBlue text-sm'>Select Track <span><HelperTooltip text='Track selection is done based on the amount requested.' className='ml-1'/></span></label>
+						<label className='text-lightBlue dark:text-blue-dark-medium text-sm'>Select Track <span><HelperTooltip text='Track selection is done based on the amount requested.' className='ml-1'/></span></label>
 						<SelectTracks tracksArr={trackArr} onTrackChange={(track) => {
 							setSelectedTrack(track);
 							setIsAutoSelectTrack(false);
@@ -666,7 +666,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					<DownArrow className='down-icon'/>
 				</div>}
 				{openAdvanced && <div className='mt-3 flex flex-col preimage'>
-					<label className='text-lightBlue text-sm'>Enactment <span><HelperTooltip text='A custom delay can be set for enactment of approved proposals.' className='ml-1'/></span></label>
+					<label className='text-lightBlue text-sm dark:text-blue-dark-medium'>Enactment <span><HelperTooltip text='A custom delay can be set for enactment of approved proposals.' className='ml-1'/></span></label>
 					<Radio.Group
 						className='mt-1 flex flex-col gap-2 enactment'
 						value={enactment.key}
@@ -711,7 +711,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 												}
 											} }
 									]}>
-									<Input name='after_blocks' className='w-[100px] rounded-[4px]' onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}/>
+									<Input name='after_blocks' className='w-[100px] rounded-[4px] dark:bg-transparent dark:text-white dark:placeholder-white dark:border-separatorDark' onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}/>
 								</Form.Item>}
 								</span>
 							</div>
@@ -721,7 +721,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				{(showAlert && !isPreimage) && !txFee.eq(ZERO_BN) && <Alert type='info' className='mt-6 rounded-[4px] text-blue-light-high dark:text-blue-dark-high' showIcon description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
 					message={`${formatedBalance(String(baseDeposit.toString()), unit)} ${unit} Base deposit is required to create a preimage.`}/>}
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] dark:border-separatorDark px-6 pt-4 gap-4'>
-					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px]'>Back</Button>
+					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px] dark:bg-transparent'>Back</Button>
 					<Button htmlType='submit'
 						className={`bg-pink_primary text-white font-medium text-center tracking-[0.05em] text-sm w-[165px] h-[40px] rounded-[4px] ${((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack && !txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && !loading) : (preimageHash?.length === 0 || invalidPreimageHash() )) && 'opacity-50' }`}
 						disabled={((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack && !txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && !loading) : (preimageHash?.length === 0 || invalidPreimageHash() ))}>

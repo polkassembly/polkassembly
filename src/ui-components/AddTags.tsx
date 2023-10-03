@@ -105,7 +105,7 @@ const AddTags=({ tags, setTags, className, disabled, onChange, theme }:Props) =>
 		...filteredTags.slice(0,5).map((tag,index) => {return  { key: index+2, label:<div className={`text-xs text-[#90A0B7]  ${poppins.className} ${poppins.className} tracking-wide`} onClick={() => {selectedTag.current = tag?.name; handleInputConfirm(); } }>{tag?.name}</div> }; })];
 
 	return <div className={className}>
-		<div className={`border-solid border-gray-300 min-h-[40px] p-[10px] flex rounded border justify-between items-center text-[#90A0B7] max-lg:h-auto dark:border-separatorDark ${disabled && 'bg-[#F5F5F5] cursor-not-allowed'}`}>
+		<div className={`border-solid border-gray-300 min-h-[40px] p-[10px] dark:border-separatorDark flex rounded border justify-between items-center text-[#90A0B7] max-lg:h-auto dark:border-separatorDark ${disabled && 'bg-[#F5F5F5] cursor-not-allowed dark:bg-[#222]'}`}>
 			<Dropdown
 				theme={theme}
 				disabled={tags.length === 5 || disabled}

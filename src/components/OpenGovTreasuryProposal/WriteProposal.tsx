@@ -169,7 +169,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 					{ required: "Please add the '${name}'" }
 				}>
 				{isDiscussionLinked && <>
-					<label className='text-lightBlue text-sm mb-1.5'>Link Discussion Post</label>
+					<label className='text-lightBlue text-sm mb-1.5 dark:text-blue-dark-medium'>Link Discussion Post</label>
 					<Form.Item name='discussion_link' rules = {[{
 						message: `Please add a valid discussion link for ${network} Network`,
 						validator(rule, value, callback) {
@@ -183,7 +183,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 						<Input name='discussion_link'
 							value={discussionLink}
 							onChange={(e) => handleChangeDiscussionLink(e.target.value, Boolean(isDiscussionLinked))}
-							className='rounded-[4px] h-[40px]' placeholder='https://'/>
+							className='rounded-[4px] h-[40px] dark:text-white dark:placeholder-white dark:bg-transparent dark:border-separatorDark' placeholder='https://'/>
 					</Form.Item>
 				</>}
 				{ isDiscussionLinked === false && <Alert type='info' className='icon-alert' showIcon message={
@@ -194,12 +194,12 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 						</a>
 					</span>}/>}
 
-				{isDiscussionLinked !== null &&  (isDiscussionLinked ? (discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound) : true) && <div className='mt-6 text-sm font-normal text-lightBlue'>
+				{isDiscussionLinked !== null &&  (isDiscussionLinked ? (discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound) : true) && <div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<label className='font-medium'>Write a proposal :</label>
 					<div className='mt-4'>
 						<label className='mb-0.5'>Title <span className='text-nay_red'>*</span></label>
 						<Form.Item name='title'>
-							<Input name='title' className='h-[40px] rounded-[4px]'
+							<Input name='title' className='h-[40px] rounded-[4px] text-bodyBlue dark:text-white dark:bg-transparent dark:placeholder-white dark:border-separatorDark'
 								onChange={(e) => {
 									setTitle(e.target.value);
 									onChangeLocalStorageSet({ title: e.target.value }, Boolean(isDiscussionLinked));
@@ -216,7 +216,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 					</div>
 					<div className='mt-6'>
 						<label className='mb-0.5'>Description <span className='text-nay_red'>*</span></label>
-						{isDiscussionLinked ? <Markdown imgHidden className='post-content border-solid bg-[#f5f5f5] border-[#dddddd] border-[1px] py-2 px-3 rounded-[4px] ' md={`${content?.slice(0, 300)}...` || content} /> : <Form.Item name='content'>
+						{isDiscussionLinked ? <Markdown imgHidden className='post-content border-solid bg-[#f5f5f5] dark:bg-[#222] dark:border-separatorDark border-[#dddddd] border-[1px] py-2 px-3 rounded-[4px] ' md={`${content?.slice(0, 300)}...` || content} /> : <Form.Item name='content'>
 							<ContentForm
 								value={content}
 								height={250}

@@ -214,7 +214,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		<div className={`create-proposal ${className}`}>
 			{ (submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-blue-light-high dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
 			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-blue-light-high dark:text-blue-dark-high text-sm rounded-[4px] mt-4 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
-			<div className='mt-4 text-sm font-normal text-lightBlue'>
+			<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-high dark:font-normal'>
 				<div className='mt-4 flex flex-col gap-2'>
 					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-blue-light-high dark:text-blue-dark-high' address={proposerAddress} identiconSize={18} displayInline disableAddressClick/></span>
 					<span className='flex'><span className='w-[150px]'>Beneficiary Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-blue-light-high dark:text-blue-dark-high' address={beneficiaryAddress} identiconSize={18} displayInline disableAddressClick/></span>

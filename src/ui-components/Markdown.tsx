@@ -119,7 +119,7 @@ export default styled(Markdown)`
 		}
 
 		pre {
-			background-color: grey_light;
+			background-color: ${props => props.theme === 'dark'? '#2c2f32' : '#ebf0f5'} !important;
 			overflow: auto;
 			border-radius: 0.3rem;
 		}
@@ -135,7 +135,8 @@ export default styled(Markdown)`
 
 			padding-left: 4px;
 			padding-right: 4px;
-			background-color: #fbfbfd;
+			background-color: ${props => props.theme === 'dark' ? '#222' : '#fbfbfd'} !important;
+			color: ${props => props.theme === 'dark' ? '#fff' : '#000'} !important;
 		}
 	}
 

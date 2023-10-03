@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import Gif from './Gif';
 import { algolia_client } from '~src/components/Search';
 import MarkdownEditor from './MarkdownEditor';
+import { SwapOutlined } from '@ant-design/icons';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -91,12 +92,26 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		ref.current?.editor?.focus();
 	}, [value]);
 
+	function handleEditorChange() {
+		// if it's being changed to md editor
+		if (!mdEditor) {
+			const mdContent = converter.makeMarkdown(value || '');
+			onChange(mdContent);
+		} else {
+			const htmlContent = converter.makeHtml(value || '');
+			onChange(htmlContent);
+		}
+
+		setMdEditor(!mdEditor);
+	}
+
 	return (
 		<>
 			{mdEditor ? (
 				<MarkdownEditor
 					onChange={onChange}
 					value={value || ''}
+					height={Number(height) || 300}
 				/>
 			) : (
 				<div className='relative'>
@@ -348,10 +363,14 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 			)}
 
 			<Button
-				className='ml-auto mt-4'
-				onClick={() => setMdEditor(!mdEditor)}
+				className='ml-auto mt-1'
+				size='small'
+				type='text'
+				onClick={() => handleEditorChange()}
 			>
-				Switch Editor
+				<small>
+					<SwapOutlined /> Switch To {!mdEditor ? 'Markdown Editor' : 'Fancy Pants Editor'}
+				</small>
 			</Button>
 		</>
 	);

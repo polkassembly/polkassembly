@@ -9,7 +9,6 @@ import styled from 'styled-components';
 import Markdown from './Markdown';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsContext } from '~src/context';
-import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -176,6 +175,7 @@ interface Props {
 function MarkdownEditor(props: Props): React.ReactElement {
 	const { id, username } = useUserDetailsContext();
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
+
 	const loadSuggestions = async (text: string) => {
 		return new Promise<Suggestion[]>((accept) => {
 			const savedUsers = global.window.localStorage.getItem('users');
@@ -290,10 +290,6 @@ function MarkdownEditor(props: Props): React.ReactElement {
 				}}
 				onChange={onChange}
 				value={input}
-			/>
-			<HelperTooltip
-				className='ml-2'
-				text='Attach images by dragging & dropping, selecting or pasting them.'
 			/>
 		</StyledTextArea>
 	);

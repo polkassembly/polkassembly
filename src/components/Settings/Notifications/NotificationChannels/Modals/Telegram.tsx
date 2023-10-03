@@ -49,6 +49,7 @@ const TelegramInfoModal = ({
 					{icon} {title}
 				</h3>
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={open}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			onCancel={onClose}

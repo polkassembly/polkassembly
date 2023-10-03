@@ -316,6 +316,7 @@ const DelegateModalEthV2 = ({ trackNum } : { trackNum:number }) => {
 				confirmLoading={loading}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => setShowModal(false)}
+				wrapClassName='dark:bg-modalOverlayDark'
 				footer={[
 					<Button key="back" disabled={loading} onClick={() => setShowModal(false)}>
             Cancel

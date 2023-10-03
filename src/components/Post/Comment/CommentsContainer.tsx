@@ -272,7 +272,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					<PostCommentForm className='mb-8' setCurrentState={handleCurrentCommentAndTimeline}/>
 				}
 			</>
-				: <div className="mt-4 mb-8 bg-[#E6F4FF] rounded-[6px] shadow-md h-12 flex justify-center items-center gap-3">
+				: <div className="mt-4 mb-8 bg-[#E6F4FF] dark:bg-[#141C2D] rounded-[6px] shadow-md h-12 flex justify-center items-center gap-3">
 					<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
 					<div className="text-sm font-medium text-blue-light-high dark:text-blue-dark-high">
 						Please <span className="cursor-pointer text-pink_primary" onClick={() => { setOpenLoginModal(true); }}>Log In</span> to comment

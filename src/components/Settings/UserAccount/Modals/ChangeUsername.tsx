@@ -86,6 +86,7 @@ const ChangeUsername = ({
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
+			wrapClassName='dark:bg-modalOverlayDark'
 		>
 			<div className='flex gap-[10px] flex-wrap items-center'>
 				<Form

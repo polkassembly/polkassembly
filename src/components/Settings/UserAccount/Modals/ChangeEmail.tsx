@@ -75,6 +75,7 @@ const ChangeEmail = ({
 					<Divider className='dark:bg-[#90909060]' />
 				</div>
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={open}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} min-w-[350px] md:min-w-[600px]`}

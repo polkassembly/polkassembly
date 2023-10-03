@@ -36,6 +36,7 @@ const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, children,t
 		onCancel={onCancel}
 		onOk={onConfirm}
 		footer={footer || null}
+		wrapClassName='dark:bg-modalOverlayDark'
 		>
 			{children}
 		</StyledModal>

@@ -137,6 +137,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					footer={[
 						<Button className='dark:bg-transparent dark:text-white' key="back" onClick={() => setModalArgs(null)}> Close </Button>
 					]}
+					wrapClassName='dark:bg-modalOverlayDark'
 				>
 					{modalArgs &&
 					<div className='w-full max-h-[60vh] overflow-auto'>

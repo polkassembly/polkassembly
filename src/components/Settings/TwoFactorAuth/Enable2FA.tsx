@@ -118,6 +118,7 @@ const Enable2FA: FC<{className?: string, theme?: string}> = ({ className, theme 
 				closable={false}
 				title={Title}
 				open={showModal}
+				wrapClassName='dark:bg-modalOverlayDark'
 				footer={[
 					<Button
 						key="cancel"

@@ -407,6 +407,7 @@ const Address: FC<Props> = ({ dismissModal ,open, theme }) => {
 					<Divider className='dark:bg-icon-dark-inactive' />
 				</div>
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={open}
 			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className}`}
 			footer={

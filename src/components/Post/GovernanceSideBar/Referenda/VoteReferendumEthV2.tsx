@@ -633,7 +633,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				footer={false}
 				className={`w-[550px] max-md:w-full max-h-[675px] rounded-[6px] alignment-close ${poppins.className} ${poppins.variable}`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				wrapClassName={className}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.2px] border-[#D2D8E0] bg-[#D2D8E0] dark:border-separatorDark mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
 					<CastVoteIcon className='mt-1'/>
 					<span className='text-blue-light-high dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>

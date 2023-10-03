@@ -262,6 +262,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal,theme }) => {
 					<Divider className='dark:bg-[#90909060]'/>
 				</div>
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={open}
 			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} mb-8 md:min-w-[600px]`}
 			footer={

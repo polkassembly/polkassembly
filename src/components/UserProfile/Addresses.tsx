@@ -53,6 +53,7 @@ const Addresses: FC<IAddressesProps> = (props) => {
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}
+					wrapClassName='dark:bg-modalOverlayDark'
 				>
 					<div>
 						<p className='mt-4'>Accounts</p>

@@ -542,6 +542,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					On-chain identity
 				</span>
 				}
+				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex items-center text-center flex-col gap-6 py-4'>
 					<DelegationDashboardEmptyState/>

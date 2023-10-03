@@ -93,6 +93,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 						closable={false}
 						title={Title}
 						open={showModal}
+						wrapClassName='dark:bg-modalOverlayDark'
 						footer={[
 							<Button
 								htmlType='submit'

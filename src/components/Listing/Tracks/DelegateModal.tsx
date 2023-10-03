@@ -296,7 +296,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				maskClosable={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}` }
-				wrapClassName={className}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay text-[20px] font-semibold mb-6 dark:font-medium'>
 						<DelegateModalIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive'/>Delegate

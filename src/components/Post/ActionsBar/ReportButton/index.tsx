@@ -187,6 +187,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				onOk={
 					isDeleteModal ? handleDelete : handleReport
 				}
+				wrapClassName='dark:bg-modalOverlayDark'
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
 				zIndex={1067}

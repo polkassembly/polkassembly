@@ -62,7 +62,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 		zIndex={100000}
 		open={open}
 		className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
-		wrapClassName={className}
+		wrapClassName={`${className} dark:bg-modalOverlayDark`}
 		closeIcon={isDelegate ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : <UndelegateCloseIcon/>}
 		onCancel={() => { !isVote && router.reload() ; setOpen(false); }}
 		centered

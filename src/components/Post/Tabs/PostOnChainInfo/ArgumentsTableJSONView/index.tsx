@@ -25,10 +25,10 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 					<table cellSpacing={0} cellPadding={0}>
 						<thead>
 							<tr>
-								<th className='direct-data data-0'>
+								<th className='direct-data data-0 dark:bg-[#222] dark:text-white'>
 									Name
 								</th>
-								<th className='direct-data data-2'>
+								<th className='direct-data data-2 dark:bg-[#222] dark:text-white'>
 									Value
 								</th>
 							</tr>

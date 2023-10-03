@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Button, Dropdown, Tag } from 'antd';
+import { Button, Tag } from 'antd';
+import { Dropdown } from 'src/ui-components/CustomDropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
@@ -10,6 +11,7 @@ import Address, { EAddressOtherTextType } from 'src/ui-components/Address';
 import { useUserDetailsContext } from '~src/context';
 import DownIcon from '~assets/icons/down-icon.svg';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useTheme } from 'next-themes';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -54,6 +56,7 @@ const AddressDropdown = ({
 	const { setUserDetailsContextState, loginAddress, addresses } = useUserDetailsContext();
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
+	const { resolvedTheme:theme } = useTheme();
 
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
 		if(linkAddressTextDisabled) return;
@@ -108,12 +111,13 @@ const AddressDropdown = ({
 	});
 	return (
 		<Dropdown
+			theme={theme}
 			trigger={['click']}
 			className={className}
 			disabled={isDisabled}
 			menu={{
 				items: addressItems,
-				onClick: (e) => {
+				onClick: (e:any) => {
 					if(e.key !== '1'){
 						setSelectedAddress(e.key);
 						onAccountChange(e.key);

@@ -48,6 +48,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}
+					wrapClassName='dark:bg-modalOverlayDark'
 				>
 					<div className='mt-6'>
 						{addresses && addresses.length > 0 ? <>

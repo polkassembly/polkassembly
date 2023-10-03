@@ -48,7 +48,7 @@ export default styled(OnchainInfoWrapper)`
 			width: 100%;
 		}
 		&.with-table {
-			background-color: #fff;
+			background-color: ${props => props.theme ==='dark'? 'red' : '#fff'} !important;
 			.arguments-col {
 				margin-top: 16px;
 				margin-bottom: 20px;
@@ -94,7 +94,7 @@ export default styled(OnchainInfoWrapper)`
 		width: 100%;
 		max-width: 100%;
 		overflow-x: auto;
-		background: #FFF !important;
+		background: ${props => props.theme ==='dark'? 'red' : '#fff'} !important;
 		border-bottom: 1px solid rgb(238,238,238);
 	}
 

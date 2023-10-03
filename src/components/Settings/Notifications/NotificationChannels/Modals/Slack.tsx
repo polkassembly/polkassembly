@@ -47,6 +47,7 @@ const SlackInfoModal = ({
 					{icon} {title}
 				</h3>
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={open}
 			closable
 			onCancel={onClose}

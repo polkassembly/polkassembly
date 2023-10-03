@@ -113,6 +113,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					footer={false}
 					closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+					wrapClassName='dark:bg-modalOverlayDark'
 				><div className='flex'>
 						<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
 							<TagsIcon className='mr-2' />
@@ -190,6 +191,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					footer={false}
 					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+					wrapClassName='dark:bg-modalOverlayDark'
 				><div className='flex dark:bg-black'>
 						<TagsIcon className='mr-2 mt-1.5' />
 						<h2 className='text-lg tracking-wide font-semibold text-blue-light-high dark:text-blue-dark-high mb-2'>Tags</h2>

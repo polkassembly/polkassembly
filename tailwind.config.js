@@ -44,6 +44,7 @@ module.exports = {
 				comment_bg: 'var(--comment_bg)',
 				separatorDark: 'var(--separatorDark)',
 				inactiveIconDark: 'var(--inactiveIconDark)',
+				modalOverlayDark: 'var(--modalOverlayDark)',
 				blue:{
 					light:{
 						disabled:'#96A4B6',

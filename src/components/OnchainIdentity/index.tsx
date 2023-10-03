@@ -270,6 +270,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 				setIsExitModal(false);
 			}
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			footer={false}
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals`}
@@ -297,6 +298,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal:addressModal, s
 			open={open}
 			onCancel={handleCancel}
 			maskClosable={false}
+			wrapClassName='dark:bg-modalOverlayDark'
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
 			title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'>

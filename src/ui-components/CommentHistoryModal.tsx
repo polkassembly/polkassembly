@@ -96,7 +96,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 	return <Modal
 		open={open}
 		onCancel={() => setOpen(false)}
-		wrapClassName={className}
+		wrapClassName={`${className} dark:bg-modalOverlayDark`}
 		className={`closeIcon ${poppins.variable} ${poppins.className} w-[600px] shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] max-sm:w-full`}
 		footer={false}
 		closeIcon={<CloseIcon/>}

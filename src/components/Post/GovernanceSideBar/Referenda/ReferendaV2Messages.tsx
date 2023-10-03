@@ -252,6 +252,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				closable={false}
 				footer={[]}
 				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
+				wrapClassName='dark:bg-[#E8E8E826]'
 			>
 				<section className='text-sidebarBlue mt-[24px] pl-[21px]'>
 					<article className='flex gap-x-[23px]'>

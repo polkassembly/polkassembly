@@ -169,7 +169,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						<>
 							<div className="flex flex-col gap-y-1">
 								<label
-									className="text-base text-[#485F7D] dark:text-blue-dark-high"
+									className="text-base text-[#485F7D] dark:text-blue-dark-medium"
 									htmlFor="first_password"
 								>
 									Set Password
@@ -192,14 +192,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 											setFirstPassword(e.target.value);
 										}}
 										placeholder='Password'
-										className="rounded-md py-2 px-4 dark:text-blue-dark-high dark:bg-transparent"
+										className="rounded-md py-2 px-4 dark:text-blue-dark-high dark:bg-transparent dark:border-separatorDark"
 										id="first_password"
 									/>
 								</Form.Item>
 							</div>
 							<div className="flex flex-col gap-y-1 -mt-6">
 								<label
-									className="text-base text-[#485F7D] dark:text-blue-dark-high"
+									className="text-base text-[#485F7D] dark:text-blue-dark-high dark:border-separatorDark"
 									htmlFor="second_password"
 								>
 									Re-enter Password
@@ -221,7 +221,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input.Password
 										placeholder='Password'
-										className="rounded-md py-2 px-4 dark:text-blue-dark-high dark:bg-transparent"
+										className="rounded-md py-2 px-4 dark:text-blue-dark-high dark:bg-transparent dark:border-separatorDark"
 										id="second_password"
 									/>
 								</Form.Item>
@@ -230,7 +230,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						: <>
 							<div className="flex flex-col gap-y-1">
 								<label
-									className="text-base text-[#485F7D] dark:text-blue-dark-high tracking-wide"
+									className="text-base text-[#485F7D] dark:text-blue-dark-medium tracking-wide"
 									htmlFor="username"
 								>
 									Username
@@ -258,7 +258,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder="John"
-										className="rounded-md py-2 px-4 dark:text-blue-dark-high"
+										className="rounded-md py-2 px-4 dark:text-blue-dark-high dark:border-separatorDark"
 										id="username"
 									/>
 								</Form.Item>
@@ -266,7 +266,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							<div className="flex flex-col gap-y-1 -mt-6">
 								<label
 									htmlFor="email"
-									className="text-base text-[#485F7D] dark:text-blue-dark-high tracking-wide"
+									className="text-base text-[#485F7D] dark:text-blue-dark-medium tracking-wide"
 								>
 									Email
 								</label>
@@ -283,7 +283,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder="email@example.com"
-										className="rounded-md py-2 px-4 dark:text-blue-dark-high"
+										className="rounded-md py-2 px-4 dark:text-blue-dark-high dark:border-separatorDark"
 										id="email"
 									/>
 								</Form.Item>
@@ -315,6 +315,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				</div>
 			</AuthForm>
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				className='rounded-md'
 				centered={true}
 				title={'You\'ve got some mail'}

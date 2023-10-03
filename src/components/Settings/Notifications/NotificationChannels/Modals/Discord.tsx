@@ -51,6 +51,7 @@ const DiscordInfoModal = ({
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			onCancel={onClose}
 			footer={null}
+			wrapClassName='dark:bg-modalOverlayDark'
 			className={`min-[550px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 		>
 			<div className=''>

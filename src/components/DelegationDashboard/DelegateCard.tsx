@@ -148,7 +148,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			onCancel={() => setOpenReadMore(false)}
 			className={`w-[725px] max-md:w-full modal ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			footer={false}
-			wrapClassName={className}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className={'pt-[20px]'}>

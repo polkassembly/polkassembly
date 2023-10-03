@@ -49,6 +49,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}
+				wrapClassName='dark:bg-modalOverlayDark'
 				title={<div className='p-5 dark:bg-section-dark-overlay pb-4 md:p-6 md:pb-4 m-0 flex items-start md:items-center justify-between rounded-[14px] dark:rounded-none'>
 					<article className='flex flex-col md:items-center gap-x-[6px] md:flex-row'>
 						<h3 className='m-0 p-0 flex items-center gap-x-2'>

@@ -620,7 +620,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				footer={false}
 				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
-				wrapClassName={className}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					showMultisig ?
 						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] dark:border-separatorDark mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 '>

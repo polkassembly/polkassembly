@@ -155,7 +155,7 @@ const OpenGovTreasuryProposal = ({ className, theme }: Props) => {
 			onCancel={() => {setCloseConfirm(true); setOpenModal(false);}}
 			footer={false}
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
-			wrapClassName={className}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closable={false}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			title={<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
@@ -187,7 +187,7 @@ const OpenGovTreasuryProposal = ({ className, theme }: Props) => {
 			onCancel={() => {setCloseConfirm(true); setOpenModal(false);}}
 			footer={false}
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
-			wrapClassName={className}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			title={<div className='text-lg font-semibold flex text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
 				<CreateProposalIcon/>Create Treasury Proposal

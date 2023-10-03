@@ -70,6 +70,7 @@ const Disable2FA: FC<{className?: string , theme?: string}> = ({ className, them
 				closable={false}
 				title={Title}
 				open={showModal}
+				wrapClassName='dark:bg-modalOverlayDark'
 				footer={[
 					<Button
 						htmlType='submit'

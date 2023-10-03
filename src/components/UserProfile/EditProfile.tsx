@@ -274,6 +274,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				}
 				zIndex={1002}
 				open={openModal ? openModal : open}
+				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<Tabs
 					theme={theme}

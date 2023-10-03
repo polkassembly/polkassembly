@@ -65,6 +65,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 							onCancel={() => setOpen(false)}
 							footer={[]}
 							className={`${className} ${poppins.className} ${poppins.variable}`}
+							wrapClassName='dark:bg-modalOverlayDark'
 						>
 							<div className='client'>
 								<ClientOnly>

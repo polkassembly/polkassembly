@@ -86,6 +86,7 @@ const ChangePassword = ({
 					<Divider />
 				</div>
 			}
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={open}
 			closable
 			className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} min-w-[350px] md:min-w-[600px]`}

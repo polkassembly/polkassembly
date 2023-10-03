@@ -41,14 +41,14 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
 			centered
 			zIndex={1002}
-			wrapClassName={className}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			footer={
 				<div className="justify-center center-aligned flex flex-col items-center gap-4 pb-8 mt-[32px]">
 					<Button
 						className='bg-pink_primary hover:bg-pink_secondary text-white h-[40px] border-pink_primary hover:border-pink_primary flex items-center justify-center p-5 w-[60%] text-sm font-medium rounded leading-5'
 						onClick={() => handleClick('login')} >Login</Button>
 					<Button
-						className='hover:bg-pink_secondary text-pink_primary h-[40px] border-pink_primary hover:border-pink_primary hover:text-white rounded flex items-center justify-center p-5 w-[60%] -ml-0 text-sm leading-5 font-medium'
+						className='hover:bg-pink_secondary text-pink_primary h-[40px] border-pink_primary hover:border-pink_primary hover:text-white rounded flex items-center justify-center p-5 w-[60%] -ml-0 text-sm leading-5 font-medium dark:bg-transparent'
 						onClick={() => handleClick('signup')}>Signup</Button>
 				</div>}>
 			<div className="flex flex-col items-center p-1"><Image width={280} height={221}  src={`${image}`} alt=""/>

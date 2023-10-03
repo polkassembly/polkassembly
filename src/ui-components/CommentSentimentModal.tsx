@@ -43,7 +43,7 @@ const CommentSentimentModal=({ setIsComment, openModal, setModalOpen, setIsSenti
 
 	return (<Modal
 		open={openModal}
-		wrapClassName={`${className}  sentiment_${sentiment}`}
+		wrapClassName={`${className} dark:bg-modalOverlayDark sentiment_${sentiment}`}
 		className={`${poppins.variable} ${poppins.className} ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} max-w-full shrink-0 w-[433px] max-sm:w-[100%] padding justify-center center-aligned`}
 		onCancel={() => {
 			setModalOpen(false);

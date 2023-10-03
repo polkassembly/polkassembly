@@ -315,7 +315,7 @@ const TreasuryProposalFormButton = ({
 					onCancel={() => setModalOpen(false)}
 					centered
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-					wrapClassName='p-5 before:h-0 md:p-10'
+					wrapClassName='p-5 before:h-0 md:p-10 dark:bg-modalOverlayDark'
 					zIndex={1002}
 					title={<div className="dark:bg-section-dark-overlay dark:text-white">Create Treasury Proposal</div>}
 					footer={[

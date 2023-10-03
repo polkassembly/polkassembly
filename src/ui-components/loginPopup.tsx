@@ -27,7 +27,7 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 		closable={closable}
 		maskClosable={closable}
 		zIndex={1008}
-		wrapClassName={className}
+		wrapClassName={`${className} dark:bg-modalOverlayDark`}
 		className={`${poppins.variable} ${poppins.className} padding-0 `}
 		onCancel={() => setModalOpen && setModalOpen(false)}
 		closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}>

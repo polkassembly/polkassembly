@@ -196,7 +196,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								footer={false}
 								className={`w-[400px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] ${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}
-								wrapClassName={className}
+								wrapClassName={`${className} dark:bg-modalOverlayDark`}
 								title={
 									<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] dark:border-separatorDark mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 dark:bg-section-dark-overlay'>
 										<span className='text-bodyBlue font-semibold tracking-[0.0015em] ml-4 text-xl dark:text-white'>Votes</span>

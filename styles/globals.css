@@ -501,24 +501,20 @@ z-index: 1050 !important;
   z-index: 1052 !important;
 }
 
-@media (max-width: 594px) and (min-width: 319px){
-  /* .ant-modal-content {
-    overflow-x: auto;
+@media (max-width: 767px) {
+  .modal-content {
+    overflow-x: auto; 
   }
-  
-  .ant-modal .ant-modal-close {
-    margin-right: -70px !important;
+  .modal-container{
+    width:515px !important;
   }
-  
-  .ant-modal-body {
-    width: 516px;
+  .vote-history-container {
+    width: 515px !important;
   }
-  
-  .ant-modal-header {
-    width: 516px;
-  } */
-  .modal-content{
-    overflow-x: auto;
-    width:560px !important;
+  .modal-inner-content {
+    width:515px !important;
+  }
+  .border-container{
+    width: 515px !important;
   }
 }

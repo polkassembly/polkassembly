@@ -347,7 +347,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 							/>
 							<Form.Item>
 								<div className='flex items-center justify-end'>
-									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center'>
+									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center dark:bg-transparent dark:text-white'>
 										<CloseOutlined /> Cancel
 									</Button>
 									<Button htmlType="submit" className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
@@ -406,7 +406,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 											/>
 											<Form.Item>
 												<div className='flex items-center justify-end '>
-													<Button htmlType="button" onClick={() => handleReplyCancel()} className='mr-2 flex items-center'>
+													<Button htmlType="button" onClick={() => handleReplyCancel()} className='mr-2 flex items-center dark:bg-transparent dark:text-white'>
 														<CloseOutlined /> Cancel
 													</Button>
 													<Button loading={loading} onClick={() => handleReplySave()} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>

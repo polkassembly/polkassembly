@@ -122,7 +122,7 @@ const AddTags=({ tags, setTags, className, disabled, onChange, theme }:Props) =>
 							value={inputValue}
 							onChange={handleInputChange}
 							onPressEnter={handleInputConfirm}
-							className={`text-[#90A0B7] dark:text-white rounded-xl bg-white dark:bg-section-dark-overlay text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center ${charLimitReached && 'border-red-500'}`}
+							className={`text-[#90A0B7] dark:text-white rounded-xl bg-white dark:bg-section-dark-overlay text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center dark:text-white ${charLimitReached && 'border-red-500'}`}
 						/>  :
 						(tags.length <5 && !disabled) && <Tag onClick={showInput} className='rounded-xl bg-white dark:bg-section-dark-overlay border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center dark:text-blue-dark-helper' >
 							<PlusOutlined className='mr-1'/>

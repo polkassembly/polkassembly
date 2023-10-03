@@ -431,7 +431,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon className='text-[20px]' />:<ForUnfilledIcon  />} </div>
 									</div>
 									<div className='flex w-[100%] items-center justify-end '>
-										<Button htmlType="button" onClick={handleCancel}  className='mr-2 flex items-center h-[26px]'>
+										<Button htmlType="button" onClick={handleCancel}  className='mr-2 flex items-center dark:bg-transparent dark:text-white h-[26px]'>
 											<CloseOutlined />
 										</Button>
 										<Button htmlType='submit'  className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center h-[26px]'>
@@ -499,7 +499,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									/>
 									<Form.Item>
 										<div className='flex items-center justify-end'>
-											<Button htmlType="button" disabled={ loadingReply } onClick={handleReplyCancel} className='mr-2 flex items-center'>
+											<Button htmlType="button" disabled={ loadingReply } onClick={handleReplyCancel} className='mr-2 flex items-center dark:text-white dark:bg-transparent'>
 												<CloseOutlined /> Cancel
 											</Button>
 											<Button htmlType="submit" disabled={ loadingReply } className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>

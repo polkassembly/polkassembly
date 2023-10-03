@@ -117,7 +117,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 				<Form.Item>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center justify-end'>
-							<Button htmlType="button" loading={loading} onClick={toggleEdit} className='mr-2 flex items-center'>
+							<Button htmlType="button" loading={loading} onClick={toggleEdit} className='mr-2 flex items-center dark:bg-transparent dark:text-white'>
 								<CloseOutlined /> Cancel
 							</Button>
 							<Button htmlType="submit" loading={loading} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>

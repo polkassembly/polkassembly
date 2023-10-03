@@ -186,7 +186,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE
 				: proposalType === ProposalType.ANNOUNCEMENT
 				? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
-				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS
+				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && network === 'collectives'
 				? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
 				: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 

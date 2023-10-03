@@ -27,6 +27,8 @@ interface Props {
 	proposalType: ProposalType;
 }
 
+const postFormKey = `form:post:${ProposalType.DISCUSSIONS}`;
+
 const CreatePost = ({ className, proposalType }: Props) => {
 	const router = useRouter();
 	const currentUser = useContext(UserDetailsContext);
@@ -134,6 +136,27 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		}
 	};
 
+	const savePostFormCacheValue = (key: string, value: string) => {
+		const cacheObj = JSON.parse(localStorage.getItem(postFormKey) || '{}');
+		cacheObj[key] = value;
+		localStorage.setItem(postFormKey, JSON.stringify(cacheObj));
+	};
+
+	useEffect(() => {
+		const cacheObj = JSON.parse(localStorage.getItem(postFormKey) || '{}');
+
+		form.setFieldsValue({
+			content: cacheObj.content || '',
+			title: cacheObj.title || ''
+		});
+
+		setHasPoll(cacheObj.hasPoll === 'true');
+		setGovType(cacheObj.govType || 'gov_1');
+		setTopicId(Number(cacheObj.topicId) || 2);
+		setTags(JSON.parse(cacheObj.tags || '[]'));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<div className={className}>
 			<BackToListingView postCategory={proposalType === ProposalType.DISCUSSIONS ? PostCategory.DISCUSSION : PostCategory.GRANT} />
@@ -163,17 +186,22 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						rules={[{ required: true }]}
 					>
 						<Input
+							onChange={(e) => savePostFormCacheValue('title', e.target.value)}
 							name='title'
 							autoFocus
 							placeholder='Enter Title'
 							className='text-black'
 						/>
 					</Form.Item>
-					<ContentForm />
+					<ContentForm onChange={(v) => savePostFormCacheValue('content', v)} />
 					<div className='flex items-center'>
 						<Switch
 							size='small'
-							onChange={(checked) => setHasPoll(checked)}
+							checked={hasPoll}
+							onChange={(checked) => {
+								savePostFormCacheValue('hasPoll', String(checked));
+								setHasPoll(checked);
+							}}
 						/>
 						<span className='ml-2 text-sm text-sidebarBlue'>Add poll to {proposalType === ProposalType.DISCUSSIONS ? 'discussion' : 'grant'}</span>
 					</div>
@@ -182,7 +210,10 @@ const CreatePost = ({ className, proposalType }: Props) => {
 					</h5>
 					<Radio.Group
 						className='p-1 text-xs font-normal'
-						onChange={(e) => setGovType(e.target.value)}
+						onChange={(e) => {
+							setGovType(e.target.value);
+							savePostFormCacheValue('govType', e.target.value);
+						}}
 						value={govType}
 					>
 						<Radio
@@ -200,7 +231,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							Governance V2
 						</Radio>
 					</Radio.Group>
-					{proposalType === ProposalType.DISCUSSIONS ? (
+					{proposalType === ProposalType.DISCUSSIONS && (
 						<Form.Item
 							className='mt-8'
 							name='topic'
@@ -223,16 +254,20 @@ const CreatePost = ({ className, proposalType }: Props) => {
 								</label>
 								<TopicsRadio
 									govType={govType}
-									onTopicSelection={(id) => setTopicId(id)}
+									onTopicSelection={(id) => {
+										setTopicId(id);
+										savePostFormCacheValue('topicId', String(id));
+									}}
 									topicId={topicId}
 								/>
 							</>
 						</Form.Item>
-					) : null}
+					)}
 					<h5 className='text-color mt-8 text-sm font-normal'>Add Tags</h5>
 					<AddTags
 						tags={tags}
 						setTags={setTags}
+						onChange={(arr) => savePostFormCacheValue('tags', JSON.stringify(arr))}
 					/>
 					<Form.Item>
 						<Button

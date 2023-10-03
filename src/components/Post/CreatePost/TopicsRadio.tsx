@@ -43,7 +43,10 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 
 	useEffect(() => {
 		if (govType === 'gov_1') {
-			onTopicSelection(2);
+			if (![post_topic.COUNCIL, post_topic.DEMOCRACY, post_topic.GENERAL, post_topic.TECHNICAL_COMMITTEE, post_topic.TREASURY].includes(topicId)) {
+				onTopicSelection(2);
+			}
+
 			setTopicOptions([
 				topicToOptionText('COUNCIL'),
 				topicToOptionText('DEMOCRACY'),
@@ -52,7 +55,10 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 				topicToOptionText('TREASURY')
 			]);
 		} else if (govType === 'open_gov') {
-			onTopicSelection(8);
+			if (![post_topic.AUCTION_ADMIN, post_topic.FELLOWSHIP, post_topic.GOVERNANCE, post_topic.ROOT, post_topic.STAKING_ADMIN, post_topic.TREASURY].includes(topicId)) {
+				onTopicSelection(8);
+			}
+
 			setTopicOptions([
 				topicToOptionText('AUCTION_ADMIN'),
 				topicToOptionText('FELLOWSHIP'),

@@ -518,3 +518,7 @@ z-index: 1050 !important;
     width: 515px !important;
   }
 }
+
+.comment-usernames-container {
+  background: #f9fafb !important;
+}

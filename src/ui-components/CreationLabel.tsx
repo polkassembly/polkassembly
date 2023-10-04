@@ -162,6 +162,28 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			</>
 		);
 	};
+	const SplitDetailsComponent = ({ network, vote, power }: any) => {
+		return (
+			<>
+				{network !== AllNetworks.COLLECTIVES ? (
+					<>
+						<div className={'amount-value ml-[86px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+							{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+						</div>
+						{vote?.decision === 'abstain' && <div className={'conviction-value ml-10 mr-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}> - </div>}
+					</>
+				) : (
+					<>
+						<div className={'amount-value ml-[92px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+							{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+						</div>
+						{vote?.decision !== 'abstain' && <div className={'conviction-value ml-10 mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}> - </div>}
+					</>
+				)}
+				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+			</>
+		);
+	};
 
 	const renderVoteContent = (vote: any, network: any, idx: number) => {
 		const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
@@ -199,8 +221,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				) : vote.decision == 'abstain' && !(vote.balance as any).abstain ? (
 					<div className='mb-[-1px] flex w-[90%] justify-between '>
 						<div className='mb-[-1px]  flex'>
-							<SplitYellow className='mr-1' /> <span className='ml-1 font-medium capitalize text-[#FECA7E]'>Split</span>
-							<AbstainDetailsComponent
+							<SplitYellow className='mr-1 mt-[2px]' /> <span className='ml-1 font-medium capitalize text-[#FECA7E]'>Split</span>
+							<SplitDetailsComponent
 								network={network}
 								vote={vote}
 								power={power}
@@ -224,7 +246,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	};
 
 	return (
-		<div className={`${className} flex w-[100%] justify-between`}>
+		<div className={`${className} comment-usernames-container flex w-[100%] justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
 				<div className={'flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex flex-shrink-0 items-center'}>
@@ -352,13 +374,13 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								}
 							>
 								<div className='modal-content'>
-									<div className='modal-container flex text-sm font-semibold text-bodyBlue'>
+									<div className='mt-3 flex text-sm font-semibold text-bodyBlue'>
 										<p className='m-0 p-0'>Vote</p>
 										<p className='amount-container m-0 ml-[124px] p-0'>Amount</p>
 										<p className='conviction-container relative m-0 ml-[64px] p-0'>Conviction</p>
 										<p className='m-0 ml-auto p-0'>Voting Power</p>
 									</div>
-									<div className='border-container my-2 border-0 border-b-[1px]  border-solid border-[#D2D8E0]'></div>
+									<div className='border-container my-3 -ml-6 w-[560px]  border-0 border-b-[1px] border-solid border-[#D2D8E0]'></div>
 									{votesArr.length > 0 &&
 										votesArr.slice(0, 1).map((vote: any, idx: any) => {
 											return renderVoteContent(vote, network, idx);
@@ -366,7 +388,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									<div>
 										{votesArr.length > 1 && (
 											<div className='vote-history-container'>
-												<div className='mb-2 border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
+												<div className='-ml-6 mb-2 w-[560px] border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
 												<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue'>Vote History</p>
 											</div>
 										)}
@@ -377,48 +399,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									</div>
 								</div>
 							</Modal>
-							{/* <Modal
-								title={
-									<div className='ml-[-24px] mr-[-24px] text-[18px]'>
-										<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>
-											<span className='text-xl font-semibold text-bodyBlue'>Votes</span>
-										</h3>
-										<Divider className='my-2 mb-5 text-[#D2D8E0]' />
-									</div>
-								}
-								open={true}
-								closable
-								closeIcon={<CloseCross />}
-								className={'sm:w-[600px]'}
-								onCancel={() => setShowVotesModal(false)}
-								footer={null}
-							>
-								<div>
-									<div className='relative flex text-sm font-semibold text-bodyBlue'>
-										<p className='m-0 p-0'>Vote</p>
-										<p className='relative left-[122px] m-0 p-0'>Amount</p>
-										<p className='relative left-[186px] m-0 p-0'>Conviction</p>
-										<p className='m-0 ml-auto p-0'>Voting Power</p>
-									</div>
-									<div className='my-2 border-0 border-b-[1px]  border-solid border-[#D2D8E0]'></div>
-									{votesArr.length > 0 &&
-										votesArr.slice(0, 1).map((vote: any, idx: any) => {
-											return renderVoteContent(vote, network, idx);
-										})}
-									<div>
-										{votesArr.length > 1 && (
-											<div>
-												<div className='-mt-1 mb-2 border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
-												<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue'>Vote History</p>
-											</div>
-										)}
-										{votesArr.length > 1 &&
-											votesArr.slice(1).map((vote: any, idx: any) => {
-												return renderVoteContent(vote, network, idx);
-											})}
-									</div>
-								</div>
-							</Modal> */}
 						</div>
 					) : null}
 				</div>

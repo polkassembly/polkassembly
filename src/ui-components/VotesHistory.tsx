@@ -131,8 +131,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 		setDelegatorsLoading({ index, isLoading: true });
 
 		const { data, error } = await nextApiClientFetch<{ count: number; voteCapital: string }>(
-			`api/v1/votes/delegationVoteCountAndPower?postId=${filteredVote?.proposal?.id}&decision=${filteredVote?.decision || 'yes'}&type=${
-				govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum'
+			`api/v1/votes/delegationVoteCountAndPower?postId=${filteredVote?.proposal?.id}&decision=${filteredVote?.decision || 'yes'}&type=${govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum'
 			}&voter=${filteredVote?.voter}`
 		);
 		if (data) {
@@ -191,13 +190,12 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 			>
 				{votesData && votesData?.length > 0 && !loading ? (
 					<div className={`flex min-w-[100%] flex-shrink-0 flex-col overflow-x-auto overflow-y-hidden ${className}`}>
-						<div className='flex h-14 items-center justify-between gap-2 border-0 border-y-[1px] border-solid border-[#DCDFE3] bg-[#fbfbfc] px-3 max-md:hidden'>
+						<div className='flex h-14 items-center justify-between gap-2 border-0 border-y-[1px] dark:border-separatorDark dark:bg-section-dark-overlay border-solid border-[#DCDFE3] bg-[#fbfbfc] px-3 max-md:hidden'>
 							{headings.map((heading, index) => (
 								<span
 									onClick={() => handleSortingClick(heading as EHeading)}
-									className={`flex items-center text-sm font-medium text-lightBlue ${
-										heading === EHeading.PROPOSAL ? 'w-[45%] ' : heading === EHeading.VOTE ? 'w-[35%]' : 'w-[20%] justify-end'
-									} pr-10`}
+									className={`flex items-center text-sm font-medium text-lightBlue dark:text-icon-dark-inactive ${heading === EHeading.PROPOSAL ? 'w-[45%] ' : heading === EHeading.VOTE ? 'w-[35%]' : 'w-[20%] justify-end'
+										} pr-10`}
 									key={index}
 								>
 									{heading}
@@ -211,10 +209,10 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 							{votesData &&
 								votesData?.map((data, index) => (
 									<div
-										className={`border-[#DCDFE3] text-sm text-bodyBlue max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid ${data?.expand && 'max-md:bg-[#fbfbfc]'}`}
+										className={`border-[#DCDFE3] dark:border-separatorDark dark:bg-section-dark-overlay text-sm text-bodyBlue max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid ${data?.expand && 'max-md:bg-[#fbfbfc]'}`}
 										key={index}
 									>
-										<div className={`border-0 ${!data?.expand && !loading && 'border-b-[1px]'} border-solid border-[#DCDFE3] text-sm text-bodyBlue max-md:border-none `}>
+										<div className={`border-0 ${!data?.expand && !loading && 'border-b-[1px]'} border-solid border-[#DCDFE3] dark:border-separatorDark text-sm text-bodyBlue max-md:border-none `}>
 											<div className='flex h-14 items-center justify-between gap-2 border-0 px-3 max-md:border-b-[1px] max-md:border-solid max-md:border-[#DCDFE3]'>
 												<Link
 													target='_blank'
@@ -223,11 +221,11 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 												>
 													<span className='flex w-[60px] items-center gap-1 '>
 														{`#${data?.proposal?.id}`}
-														<span className='text-[9px] text-bodyBlue'>&#9679;</span>
+														<span className='text-[9px] text-bodyBlue dark:text-white'>&#9679;</span>
 													</span>
 													<span className='w-[100%] truncate hover:underline '>{data?.proposal?.title || noTitle}</span>
 												</Link>
-												<div className='flex w-[35%] justify-between max-md:hidden'>
+												<div className='flex w-[35%] justify-between max-md:hidden dark:text-white'>
 													{data?.decision === 'yes' ? (
 														<span className='flex w-[50px] flex-shrink-0 items-center justify-start text-[#2ED47A]'>
 															<AyeIcon className='mr-1' />
@@ -243,7 +241,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 															<MinusCircleFilled className='mr-1' /> Abstain
 														</span>
 													)}
-													<span className='flex w-[40.3%] flex-shrink-0 justify-end lg:w-[51%]'>
+													<span className='flex w-[40.3%] flex-shrink-0 justify-end lg:w-[51%] dark:text-white'>
 														{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
 													</span>
 													<span className='flex w-[20.3%] justify-end'>
@@ -293,7 +291,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 										</div>
 										{data?.expand && (
 											<Spin spinning={delegatorsLoading.isLoading && delegatorsLoading?.index === index}>
-												<div className='border-0 border-t-[1px] border-dashed border-[#DCDFE3] bg-[#fbfbfc] px-3 py-4 text-sm text-lightBlue max-md:bg-transparent'>
+												<div className='border-0 border-t-[1px] border-dashed border-[#DCDFE3] bg-[#fbfbfc] dark:border-separatorDark dark:background-[#222] px-3 py-4 text-sm text-lightBlue max-md:bg-transparent'>
 													<div className='flex flex-col gap-4'>
 														<div className=' flex items-center gap-2 max-md:flex-col max-md:items-start'>
 															<label className='flex items-center gap-2 font-medium'>Vote Details:</label>
@@ -329,54 +327,54 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 															</div>
 														)}
 														<div className='flex justify-between max-md:flex-col max-md:gap-2'>
-															<div className='w-[50%] border-0 border-r-[1px] border-dashed border-[#DCDFE3] max-md:w-[100%] max-md:border-0 max-md:border-b-[1px] max-md:pb-2'>
-																<label className='font-semibold'>Self Votes</label>
+															<div className='w-[50%] border-0 border-r-[1px] border-dashed border-[#DCDFE3] dark:border-separatorDark max-md:w-[100%] max-md:border-0 max-md:border-b-[1px] max-md:pb-2'>
+																<label className='font-semibold dark:text-white'>Self Votes</label>
 																<div className='mt-2 flex flex-col gap-2 pr-6 max-md:pr-0'>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<VoterIcon /> Votes
 																		</span>
-																		<span className='text-sm text-bodyBlue'>
+																		<span className='text-sm text-bodyBlue dark:text-white'>
 																			{Number(formatedBalance((data?.balance.toString() || '0').toString(), unit, 2).replaceAll(',', '')) * Number(data?.lockPeriod || 0.1)} {unit}
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<ConvictionIcon /> Conviction
 																		</span>
-																		<span className='text-sm text-bodyBlue'>
+																		<span className='text-sm text-bodyBlue dark:text-white'>
 																			{data?.lockPeriod || 0.1}x{data.isDelegatedVote && '/d'}
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<CapitalIcon /> Capital
 																		</span>
-																		<span className='text-sm text-bodyBlue'>
+																		<span className='text-sm text-bodyBlue dark:text-white'>
 																			{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
 																		</span>
 																	</div>
 																</div>
 															</div>
 															<div className='w-[50%] justify-start max-md:w-[100%] md:pl-6'>
-																<label className='font-semibold'>Delegation Votes</label>
+																<label className='font-semibold dark:text-white'>Delegation Votes</label>
 																<div className='mt-2 flex flex-col gap-2 lg:pr-4'>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<VoterIcon /> Votes
 																		</span>
-																		<span className='text-sm text-bodyBlue'>
+																		<span className='text-sm text-bodyBlue dark:text-white'>
 																			{formatedBalance((data?.delegatedVotingPower || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<EmailIcon /> Delegators
 																		</span>
-																		<span className='text-sm text-bodyBlue'>{data?.delegatorsCount || 0}</span>
+																		<span className='text-sm text-bodyBlue dark:text-icon-dark-inactive'>{data?.delegatorsCount || 0}</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<CapitalIcon /> Capital
 																		</span>
 																		<span className='text-sm text-bodyBlue'>

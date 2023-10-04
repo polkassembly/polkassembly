@@ -75,6 +75,7 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 											index={index}
 											proposalType={post?.type}
 											trackNumber={post?.track_no}
+											truncateUsername={false}
 										/>
 									</Link>
 								}

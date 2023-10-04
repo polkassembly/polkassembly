@@ -73,6 +73,7 @@ interface IGovernanceProps {
 	votesData?: any;
 	trackNumber?: number | null;
 	identityId?: string | null;
+	truncateUsername?: boolean;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -104,7 +105,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		index = 0,
 		proposalType,
 		votesData,
-		identityId = null
+		identityId = null,
+		truncateUsername = true
 	} = props;
 
 	const router = useRouter();
@@ -199,6 +201,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
 								username={username}
+								truncateUsername={truncateUsername}
 							/>
 						</div>
 						<div className='flex items-center justify-end'>

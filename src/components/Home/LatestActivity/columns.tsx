@@ -47,7 +47,7 @@ const Creator: any = {
 	render: (username: any, { proposer }: { proposer: any }) => (
 		<div className='truncate'>
 			<NameLabel
-				truncateUsername={false}
+				usernameMaxLength={15}
 				usernameClassName='max-w-[9vw] 2xl:max-w-[12vw]'
 				defaultAddress={proposer}
 				username={username}
@@ -71,8 +71,8 @@ const Proposer: any = {
 	render: (username: any, { proposer }: { proposer: any }) => (
 		<div className='truncate'>
 			<NameLabel
+				usernameMaxLength={15}
 				usernameClassName='max-w-[9vw] 2xl:max-w-[12vw]'
-				truncateUsername={false}
 				defaultAddress={proposer}
 				username={username}
 			/>
@@ -156,8 +156,9 @@ const allColumns: ColumnsType<IPostsRowData> = [
 		render: (username, { proposer }) => (
 			<div className='truncate'>
 				<NameLabel
-					truncateUsername={false}
-					usernameClassName='max-w-[9vw] 2xl:max-w-[12vw]'
+					usernameMaxLength={15}
+					usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] '
+					className='border-solid'
 					defaultAddress={proposer}
 					username={username}
 					disableIdenticon

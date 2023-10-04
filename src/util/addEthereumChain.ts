@@ -13,6 +13,7 @@ type TAddEthereumChainFn = (params: IAddEthereumChainParams) => Promise<void>;
 
 const addEthereumChain: TAddEthereumChainFn = async (params) => {
 	const { network, ethereum } = params;
+
 	const { chainId, rpcEndpoint, tokenSymbol, tokenDecimals } = chainProperties[network];
 	const metaMaskChainId = await ethereum.request({ method: 'eth_chainId' });
 	if (parseInt(metaMaskChainId, 16) !== chainId) {

@@ -522,3 +522,7 @@ z-index: 1050 !important;
 .comment-usernames-container {
   background: #f9fafb !important;
 }
+
+.reply-user-container {
+  background:#EBF0F5 !important;
+}

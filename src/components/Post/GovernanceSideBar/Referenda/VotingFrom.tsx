@@ -51,6 +51,7 @@ const VotingForm = ({
 				className=''
 				defaultValue={conviction}
 				suffixIcon={<DownIcon />}
+				popupClassName='z-[1060]'
 			>
 				{convictionOpts}
 			</Select>

@@ -212,10 +212,6 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via LuckyFriday',
 				key: 'wss://rpc-polkadot.luckyfriday.io'
-			},
-			{
-				label: 'light client (experimental)',
-				key: 'light://substrate-connect/polkadot'
 			}
 		]
 	},
@@ -263,10 +259,6 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via LuckyFriday',
 				key: 'wss://rpc-kusama.luckyfriday.io'
-			},
-			{
-				label: 'light client (experimental)',
-				key: 'light://substrate-connect/kusama'
 			}
 		]
 	},

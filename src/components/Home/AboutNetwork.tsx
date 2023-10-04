@@ -104,7 +104,11 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText }: { className
 		className={`${className} group flex min-w-[260px] max-w-[260px]`}
 	>
 		<div
-			style={{ backgroundImage: `url(${bgImage})` }}
+			style={{
+				backgroundImage: `url(${bgImage})`,
+				backgroundPosition: 'center center',
+				backgroundSize: 'cover'
+			}}
 			className='mr-3 flex h-[75px] min-w-[132px] items-center justify-center group-hover:text-pink_secondary'
 		>
 			{icon}
@@ -132,12 +136,12 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 			{showGov2Links && (
 				<div className='mt-10 flex justify-between overflow-x-auto pb-2 xl:w-[90%]'>
 					{gov2Link({
-						bgImage: '/assets/gov2-info-bg.png',
+						bgImage: '/assets/gavin-keynote.png',
 						className: 'mr-12 lg:mr-9',
 						icon: <PlayCircleFilled className='text-xl text-white' />,
-						link: 'https://www.youtube.com/watch?v=EF93ZM_P_Oc',
-						subText: '45:33 mins',
-						text: "Gavin's view on Gov2"
+						link: 'https://www.youtube.com/watch?v=FhC10CCw9Qg',
+						subText: '1:40 hours',
+						text: "Gavin's keynote @Decoded 2023"
 					})}
 
 					{gov2Link({
@@ -153,9 +157,9 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 						bgImage: '/assets/gov2-info-bg-3.png',
 						className: 'mr-12 lg:mr-0',
 						icon: <FileTextOutlined className='text-xl text-white' />,
-						link: 'https://wiki.polkadot.network/docs/learn-governance',
+						link: 'https://docs.polkassembly.io',
 						subText: 'Wiki',
-						text: 'Governance V1 Basics'
+						text: 'Polkassembly user guide'
 					})}
 				</div>
 			)}

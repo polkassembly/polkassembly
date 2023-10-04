@@ -525,7 +525,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							)}
 							{id && !isEditing && (
 								<ReportButton
-									className='text-xs'
+									className='text-xs text-pink_primary'
 									proposalType={postType}
 									postId={postIndex}
 									commentId={commentId}

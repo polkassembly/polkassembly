@@ -526,3 +526,7 @@ z-index: 1050 !important;
 .reply-user-container {
   background:#EBF0F5 !important;
 }
+
+.post-user-container {
+  background: #fff !important;
+}

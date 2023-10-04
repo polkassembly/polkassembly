@@ -499,9 +499,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				status: NotificationStatus.ERROR
 			});
 		}
-		if (data) {
-			removeReplyContent();
-		}
+		// if (data) {
+		// removeReplyContent();
+		// }
 		setLoading(false);
 	};
 

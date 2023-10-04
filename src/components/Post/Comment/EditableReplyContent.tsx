@@ -408,7 +408,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				if (prev?.[key]) {
 					comments[key] = prev[key].map((comment: any) => {
 						if (comment.id === commentId) {
-							comment.replies = comment?.replies?.filter((reply: any) => reply.id !== replyId) || [];
+							comment.replies =
+								comment?.replies?.map((reply: any) => {
+									return reply.id !== replyId ? reply : { ...reply, content: '[Deleted]', isDeleted: true };
+								}) || [];
 							flag = true;
 						}
 						return {
@@ -424,7 +427,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		});
 		queueNotification({
 			header: 'Success!',
-			message: 'The reply has been deleted.',
+			message: 'Your reply was deleted.',
 			status: NotificationStatus.SUCCESS
 		});
 	};

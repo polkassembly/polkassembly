@@ -417,7 +417,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			const comments: any = Object.assign({}, prev);
 			for (const key of keys) {
 				if (prev?.[key]) {
-					comments[key] = prev[key].filter((comment) => comment.id !== commentId);
+					comments[key] = prev[key].map((comment) => (comment.id !== commentId ? comment : { ...comment, content: '[Deleted]', isDeleted: true }));
 				}
 			}
 			return comments;

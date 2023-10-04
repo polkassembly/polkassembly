@@ -59,6 +59,8 @@ const columns: ColumnsType<IPostsRowData> = [
 					usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] font-semibold'
 					defaultAddress={proposer}
 					username={username}
+					usernameMaxLength={15}
+					truncateUsername={false}
 				/>
 			</div>
 		),

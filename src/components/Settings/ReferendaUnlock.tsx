@@ -495,7 +495,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 													className='grid grid-cols-6 items-center gap-x-5 py-1 md:grid-cols-8'
 												>
 													<span className='col-span-2'>
-														<Link href={`/referendum/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
+														<Link href={`/referenda/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
 													</span>
 													{vote.voteType === EVoteDecisionType.AYE || vote?.voteType === EVoteDecisionType.NAY ? (
 														<span className='col-span-2'>

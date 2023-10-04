@@ -311,7 +311,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							/>
 							{vote === EVoteDecisionType.AYE ? (
 								<p className='mb-[-1px]'>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted {vote}</span>
+									<LikeFilled className='text-[green]' /> <span className='ont-medium capitalize text-[green]'>Voted {vote}</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (
 								<div>
@@ -323,7 +323,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								</div>
 							) : vote === EVoteDecisionType.ABSTAIN ? (
 								<div className='align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue'>Voted {vote}</span>
+									<AbstainGray className='mr-1' /> <span className='ont-medium capitalize text-bodyBlue'>Voted {vote}</span>
 								</div>
 							) : null}
 						</div>
@@ -344,19 +344,19 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							/>
 							{votesArr[0].decision == 'yes' ? (
 								<p className='mb-[-1px]'>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted Aye</span>
+									<LikeFilled className='text-[green]' /> <span className='voted-icon font-medium capitalize text-[green]'>Voted Aye</span>
 								</p>
 							) : votesArr[0].decision == 'no' ? (
 								<div>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted Nay</span>
+									<DislikeFilled className='text-[red]' /> <span className='voted-icon mb-[5px] font-medium capitalize text-[red]'>Voted Nay</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
 								<div className='align-center mb-[-1px] flex justify-center'>
-									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Voted Split</span>
+									<SplitYellow className='mr-1' /> <span className='voted-icon font-medium capitalize text-[#FECA7E]'>Voted Split</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
 								<div className='align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mb-[-1px] mr-1' /> <span className='font-medium capitalize text-bodyBlue'>Voted Abstain</span>
+									<AbstainGray className='mb-[-1px] mr-1' /> <span className='voted-icon font-medium capitalize text-bodyBlue'>Voted Abstain</span>
 								</div>
 							) : null}
 							{/* { votesArr.length > 1 && <p title={`${votesArr.length-1}+ votes available`}  className='mb-[-1px] ml-1' >{votesArr.length-1}+</p>} */}
@@ -374,7 +374,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								}
 							>
 								<div className='modal-content'>
-									<div className='mt-3 flex text-sm font-semibold text-bodyBlue'>
+									<div className='modal-container mt-3 flex text-sm font-semibold text-bodyBlue'>
 										<p className='m-0 p-0'>Vote</p>
 										<p className='amount-container m-0 ml-[124px] p-0'>Amount</p>
 										<p className='conviction-container relative m-0 ml-[64px] p-0'>Conviction</p>

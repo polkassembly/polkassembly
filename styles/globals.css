@@ -514,9 +514,6 @@ z-index: 1050 !important;
   .modal-inner-content {
     width:515px !important;
   }
-  .border-container{
-    width: 515px !important;
-  }
 }
 
 .comment-usernames-container {
@@ -529,4 +526,11 @@ z-index: 1050 !important;
 
 .post-user-container {
   background: #fff !important;
+}
+
+@media (max-width: 391px) and (min-width: 319px) {
+  .voted-icon {
+    width:0 !important;
+    display: none !important;
+  }
 }

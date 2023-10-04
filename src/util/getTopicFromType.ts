@@ -38,7 +38,11 @@ export const topicIdToNameMap = {
 	8: 'Auction Admin',
 	9: 'Governance',
 	// eslint-disable-next-line sort-keys
-	10: 'Fellowship'
+	10: 'Fellowship',
+	11: 'Whitelist',
+	12: 'Technical PIPs',
+	13: 'Upgrade PIPs',
+	14: 'Community PIPs'
 };
 
 export const isTopicIdValid = (topicId: any) => {

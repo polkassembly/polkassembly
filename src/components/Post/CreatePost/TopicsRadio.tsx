@@ -46,10 +46,10 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 
 	useEffect(() => {
 		if (network === 'polymesh') {
-			if (![post_topic.GENERAL, post_topic.COMMUNITY_PIPS, post_topic.TECHNICAL_COMMITTEE, post_topic.UPGRADE_PIPS].includes(topicId)) {
+			if (![post_topic.GENERAL, post_topic.COMMUNITY_PIPS, post_topic.TECHNICAL_PIPS, post_topic.UPGRADE_PIPS].includes(topicId)) {
 				onTopicSelection(5);
 			}
-			setTopicOptions([topicToOptionText('COMMUNITY_PIPS'), topicToOptionText('TECHNICAL_COMMITTEE'), topicToOptionText('UPGRADE_PIPS'), topicToOptionText('GENERAL')]);
+			setTopicOptions([topicToOptionText('COMMUNITY_PIPS'), topicToOptionText('TECHNICAL_PIPS'), topicToOptionText('UPGRADE_PIPS'), topicToOptionText('GENERAL')]);
 		} else if (govType === EGovType.GOV1) {
 			if (![post_topic.COUNCIL, post_topic.DEMOCRACY, post_topic.GENERAL, post_topic.TECHNICAL_COMMITTEE, post_topic.TREASURY].includes(topicId)) {
 				onTopicSelection(2);
@@ -120,6 +120,6 @@ export default styled(TopicsRadio)`
 		padding: 2px 14px;
 	}
 	.borderRadius .ant-segmented-group {
-		gap: 12px !important;
+		gap: 8px !important;
 	}
 `;

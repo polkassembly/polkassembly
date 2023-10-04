@@ -13,7 +13,7 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, ThresholdGraphIcon, VoteAmountIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
+import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, VoteAmountIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
@@ -21,22 +21,21 @@ import { poppins } from 'pages/_app';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
-	referendumId: number;
 	tally?: any;
-	setOpen: (value: React.SetStateAction<boolean>) => void;
-	setThresholdOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, setOpen, setThresholdOpen }) => {
+const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally }) => {
 	const { network } = useNetworkContext();
-	const { postData: { status, postIndex } } = usePostDataContext();
+	const {
+		postData: { status, postIndex }
+	} = usePostDataContext();
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
 	const [activeIssuance, setActiveIssuance] = useState<BN | null>(null);
-	const[isLoading,setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO || 0,
@@ -45,15 +44,21 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	});
 
 	useEffect(() => {
-		if( !api || !apiReady) return;
+		if (!api || !apiReady) return;
 
 		(async () => {
-			const totalIssuance = await api.query.balances.totalIssuance();
-			const inactiveIssuance = await api.query.balances.inactiveIssuance();
-			setActiveIssuance(totalIssuance.sub(inactiveIssuance));
+			if (network === 'picasso') {
+				const totalIssuance = await api.query.openGovBalances.totalIssuance();
+				const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
+				setActiveIssuance((totalIssuance as any).sub(inactiveIssuance));
+			} else {
+				const totalIssuance = await api.query.balances.totalIssuance();
+				const inactiveIssuance = await api.query.balances.inactiveIssuance();
+				setActiveIssuance(totalIssuance.sub(inactiveIssuance));
+			}
 		})();
 
-		if(['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())){
+		if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
 			setTallyData({
 				ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
 				nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0),
@@ -68,9 +73,18 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 			if (parsedReferendumInfo?.ongoing?.tally) {
 				setTallyData({
-					ayes: typeof parsedReferendumInfo.ongoing.tally.ayes === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex') : new BN(parsedReferendumInfo.ongoing.tally.ayes),
-					nays: typeof parsedReferendumInfo.ongoing.tally.nays === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex') : new BN(parsedReferendumInfo.ongoing.tally.nays),
-					support: typeof parsedReferendumInfo.ongoing.tally.support === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex') : new BN(parsedReferendumInfo.ongoing.tally.support)
+					ayes:
+						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.ayes),
+					nays:
+						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.nays),
+					support:
+						typeof parsedReferendumInfo.ongoing.tally.support === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.support)
 				});
 			} else {
 				setTallyData({
@@ -81,111 +95,90 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			}
 		})();
 		setIsLoading(false);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, api, apiReady]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [status, api, apiReady, network]);
 
 	return (
-		<GovSidebarCard className={className}>
-			<div className='flex items-center justify-between relative z-50'>
-				<h6 className='text-bodyBlue font-medium text-xl leading-6 m-0 p-0'>Voting</h6>
-				<div className='flex items-center gap-x-2'>
-					{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag status={status} isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
-					<button onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center text-lg text-navBlue hover:text-pink_primary'>
-						<InfoCircleOutlined style={{ color: '#90A0B7' }} />
-					</button>
+		<>
+			<GovSidebarCard className={className}>
+				<div className='relative z-50 flex items-center justify-between'>
+					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue'>Summary</h6>
+					<div className='flex items-center gap-x-2'>
+						{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
+							<PassingInfoTag
+								status={status}
+								isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}
+							/>
+						)}
+						<button
+							onClick={() => setVoteCalculationModalOpen(true)}
+							className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
+						>
+							<InfoCircleOutlined style={{ color: '#90A0B7' }} />
+						</button>
+					</div>
 				</div>
-			</div>
-			<Spin spinning={ isLoading } indicator={<LoadingOutlined />}>
-				<div>
-					<VoteProgress
-						ayeVotes={tallyData.ayes}
-						className='vote-progress'
-						nayVotes={tallyData.nays}
-					/>
-				</div>
-				<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue -mt-4'>
-					<article className='flex items-center justify-between gap-x-2'>
-						<div className='flex items-center gap-x-1'>
-							<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-							Ayes
-							</span>
-						</div>
-						<div
-							className='text-navBlue text-xs font-medium leading-[22px]'
-						>
-							{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-						</div>
-					</article>
-					<article className='flex items-center justify-between gap-x-2'>
-						<div className='flex items-center gap-x-1'>
-							<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-							Nays
-							</span>
-						</div>
-						<div
-							className='text-navBlue text-xs font-medium leading-[22px]'
-						>
-							{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-						</div>
-					</article>
-					<article className='flex items-center justify-between gap-x-2'>
-						<div className='flex items-center gap-x-1'>
-							<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-							Support
-							</span>
-						</div>
-						<div
-							className='text-navBlue text-xs font-medium leading-[22px]'
-						>
-							{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-						</div>
-					</article>
-					{
-						activeIssuance?
+				<Spin
+					spinning={isLoading}
+					indicator={<LoadingOutlined />}
+				>
+					<div>
+						<VoteProgress
+							ayeVotes={tallyData.ayes}
+							className='vote-progress'
+							nayVotes={tallyData.nays}
+						/>
+					</div>
+					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue'>
+						<article className='flex items-center justify-between gap-x-2'>
+							<div className='flex items-center gap-x-1'>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Ayes</span>
+							</div>
+							<div className='text-xs font-medium leading-[22px] text-navBlue'>
+								{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+							</div>
+						</article>
+						<article className='flex items-center justify-between gap-x-2'>
+							<div className='flex items-center gap-x-1'>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nays</span>
+							</div>
+							<div className='text-xs font-medium leading-[22px] text-navBlue'>
+								{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+							</div>
+						</article>
+						<article className='flex items-center justify-between gap-x-2'>
+							<div className='flex items-center gap-x-1'>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Support</span>
+							</div>
+							<div className='text-xs font-medium leading-[22px] text-navBlue'>
+								{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+							</div>
+						</article>
+						{activeIssuance ? (
 							<article className='flex items-center justify-between gap-x-2'>
 								<div className='flex items-center gap-x-1'>
-									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-									Issuance
-									</span>
+									<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Issuance</span>
 								</div>
-								<div
-									className='text-navBlue text-xs font-medium leading-[22px]'
-								>
+								<div className='text-xs font-medium leading-[22px] text-navBlue'>
 									{formatUSDWithUnits(formatBnBalance(activeIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
 							</article>
-							: null
-					}
-				</section>
-				<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
-					<button
-						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
-						onClick={() => {
-							setOpen(true);
-						}}
-					>
-						<VotingHistoryIcon />
-						<span>Voting History</span>
-					</button>
-					<button
-						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
-						onClick={() => {
-							setThresholdOpen(true);
-						}}
-					>
-						<ThresholdGraphIcon />
-						<span>Threshold Data</span>
-					</button>
+						) : null}
+					</section>
 					<Modal
 						onCancel={() => {
 							setVoteCalculationModalOpen(false);
 						}}
 						open={voteCalculationModalOpen}
 						footer={[
-							<div key='ok' className='mt-4 -mx-6' style={{ borderTop: '1.5px solid #E1E6EB' }}>
-								<div className='flex items-center justify-end mt-5 px-6'>
+							<div
+								key='ok'
+								className='-mx-6 mt-4'
+								style={{ borderTop: '1.5px solid #E1E6EB' }}
+							>
+								<div className='mt-5 flex items-center justify-end px-6'>
 									<Button
-										className='border-none rounded-[4px] bg-pink_primary text-white font-medium text-sm flex w-[134px] h-[40px] py-1 px-4 flex-col justify-center items-center gap-10 flex-shrink-0'
+										className='flex h-[40px] w-[134px] flex-shrink-0 flex-col items-center justify-center gap-10 rounded-[4px] border-none bg-pink_primary px-4 py-1 text-sm font-medium text-white'
 										onClick={() => setVoteCalculationModalOpen(false)}
 									>
 										Got It
@@ -194,23 +187,29 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</div>
 						]}
 						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full`}
-						closeIcon={<CloseIcon className="mt-2"/>}
+						closeIcon={<CloseIcon className='mt-2' />}
 						title={
-							<label className={`${poppins.variable} ${poppins.className} text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></label>
+							<label className={`${poppins.variable} ${poppins.className} text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue`}>
+								<InfoCircleOutlined className='mr-2 h-6 w-6' />
+								<span className='font-semibold'>How are votes calculated</span>
+							</label>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>
-							<div className='mt-3 -mx-6' style={{ borderTop: '1px solid #E1E6EB' }}>
-								<p className='text-bodyBlue font-normal text-sm leading-[18px] m-0 p-0 mt-5 px-6'>
+							<div
+								className='-mx-6 mt-3'
+								style={{ borderTop: '1px solid #E1E6EB' }}
+							>
+								<p className='m-0 mt-5 p-0 px-6 text-sm font-normal leading-[18px] text-bodyBlue'>
 									Votes are calculated by multiplying the votes casted by a user with the conviction period.
 								</p>
 							</div>
 
-							<article className='flex items-center justify-between md:gap-x-2 my-2'>
+							<article className='my-2 flex items-center justify-between md:gap-x-2'>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<CastVoteIcon className='text-4xl' />
-									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 flex flex-col items-center'>
-										<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
+									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue'>
+										<span className='flex flex-col items-center gap-x-1 whitespace-nowrap md:flex-row'>
 											<span>User wants to</span>
 										</span>
 										<span>cast a vote</span>
@@ -221,17 +220,13 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<VoteAmountIcon className='text-4xl' />
-									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 hidden md:flex flex-col items-center'>
+									<p className='m-0 hidden flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue md:flex'>
 										<span className='whitespace-nowrap'>Chooses vote amount</span>
 										<span>and type (Aye/Nay)</span>
 									</p>
-									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 flex md:hidden flex-col items-center'>
-										<span className='whitespace-nowrap'>
-										Chooses vote
-										</span>
-										<span>
-										amount and
-										</span>
+									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue md:hidden'>
+										<span className='whitespace-nowrap'>Chooses vote</span>
+										<span>amount and</span>
 										<span className='whitespace-nowrap'>type (Aye/Nay)</span>
 									</p>
 								</div>
@@ -240,10 +235,17 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<ConvictionPeriodIcon className='text-4xl' />
-									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 flex flex-col items-center'>
-										<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
+									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue'>
+										<span className='flex flex-col items-center gap-x-1 whitespace-nowrap md:flex-row'>
 											<span>Sets a</span>
-											<a className='text-pink_primary underline' href="https://wiki.polkadot.network/docs/learn-opengov#voluntary-locking" target='_blank' rel="noreferrer">conviction</a>
+											<a
+												className='text-pink_primary underline'
+												href='https://wiki.polkadot.network/docs/learn-opengov#voluntary-locking'
+												target='_blank'
+												rel='noreferrer'
+											>
+												conviction
+											</a>
 										</span>
 										<span>period</span>
 									</p>
@@ -253,14 +255,12 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<LikeDislikeIcon className='text-4xl' />
-									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 hidden md:flex flex-col items-center'>
+									<p className='m-0 hidden flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue md:flex'>
 										<span className='whitespace-nowrap'>User casts their</span>
 										<span>vote</span>
 									</p>
-									<p className='m-0 p-0 text-xs font-normal text-sidebarBlue leading-4 flex md:hidden flex-col items-center'>
-										<span className='whitespace-nowrap'>
-										User
-										</span>
+									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-sidebarBlue md:hidden'>
+										<span className='whitespace-nowrap'>User</span>
 										<span>casts</span>
 										<span className='whitespace-nowrap'>their vote</span>
 									</p>
@@ -268,44 +268,52 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</article>
 							<div className='flex flex-col'>
 								<div style={{ borderTop: '1.5px dashed #D2D8E0' }}>
-									<p className='font-medium text-sm leading-[18px] text-bodyBlue m-0 p-0 mt-5'>Here,</p>
+									<p className='m-0 mt-5 p-0 text-sm font-medium leading-[18px] text-bodyBlue'>Here,</p>
 								</div>
-								<article className='flex justify-between items-start rounded-lg max-w-[400px] mt-[12px] p-3' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
+								<article
+									className='mt-[12px] flex max-w-[400px] items-start justify-between rounded-lg p-3'
+									style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}
+								>
 									<div className='flex flex-col items-center justify-center'>
-										<p className='mt-[2px] m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-3 font-semibold">Voter</p>
-											<div className="leading-6 flex items-center justify-start">
+										<p className='m-0 mt-[2px] flex flex-col p-0 text-sm font-normal text-bodyBlue'>
+											<p className='font-semibold leading-3'>Voter</p>
+											<div className='flex items-center justify-start leading-6'>
 												<DefaultProfile style={{ height: '20px', width: '20px' }} />
-												<p className="mt-2 text-xs ml-2 text-navBlue">DDUX..c..</p>
+												<p className='ml-2 mt-2 text-xs text-navBlue'>DDUX..c..</p>
 											</div>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-5 font-semibold">Amount</p>
-											<span className="leading-6 text-xs item-start text-navBlue">11.27 KSM</span>
+										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue'>
+											<p className='font-semibold leading-5'>Amount</p>
+											<span className='item-start text-xs leading-6 text-navBlue'>11.27 KSM</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-5 font-semibold">Conviction</p>
-											<span className="leading-6 text-xs text-navBlue">4x</span>
+										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue'>
+											<p className='font-semibold leading-5'>Conviction</p>
+											<span className='text-xs leading-6 text-navBlue'>4x</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-5 font-semibold">Vote</p>
-											<DislikeFilled className="leading-6 text-xl" style={{ color: '#F53C3C' }}/>
+										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue'>
+											<p className='font-semibold leading-5'>Vote</p>
+											<DislikeFilled
+												className='text-xl leading-6'
+												style={{ color: '#F53C3C' }}
+											/>
 										</p>
 									</div>
 								</article>
 							</div>
-							<p className='p-0 m-0 text-sidebarBlue font-normal text-sm leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.</p>
+							<p className='m-0 p-0 text-sm font-normal leading-[18px] text-sidebarBlue'>
+								The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.
+							</p>
 						</section>
 					</Modal>
-				</section>
-			</Spin>
-		</GovSidebarCard>
+				</Spin>
+			</GovSidebarCard>
+		</>
 	);
 };
 

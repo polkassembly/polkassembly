@@ -6,39 +6,38 @@ import BN from 'bn.js';
 import { chainProperties } from 'src/global/networkConstants';
 
 interface Options {
-	numberAfterComma?: number
-	withUnit?: boolean
-	withThousandDelimitor?: boolean
+	numberAfterComma?: number;
+	withUnit?: boolean;
+	withThousandDelimitor?: boolean;
 }
 
-export  default function formatBnBalance(value: BN | string, options: Options, network: string): string {
+export default function formatBnBalance(value: BN | string, options: Options, network: string): string {
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const valueString = value.toString();
 
 	let suffix = '';
 	let prefix = '';
 
-	if (valueString.length>tokenDecimals){
+	if (valueString.length > tokenDecimals) {
 		suffix = valueString.slice(-tokenDecimals);
-		prefix = valueString.slice(0, valueString.length-tokenDecimals);
-	}
-	else {
+		prefix = valueString.slice(0, valueString.length - tokenDecimals);
+	} else {
 		prefix = '0';
-		suffix = valueString.padStart(tokenDecimals-1, '0');
+		suffix = valueString.padStart(tokenDecimals - 1, '0');
 	}
 
 	let comma = '.';
 	const { numberAfterComma, withThousandDelimitor = true, withUnit } = options;
 	const numberAfterCommaLtZero = numberAfterComma && numberAfterComma < 0;
 
-	if (numberAfterCommaLtZero || numberAfterComma === 0){
+	if (numberAfterCommaLtZero || numberAfterComma === 0) {
 		comma = '';
 		suffix = '';
-	} else if (numberAfterComma && numberAfterComma > 0){
+	} else if (numberAfterComma && numberAfterComma > 0) {
 		suffix = suffix.slice(0, numberAfterComma);
 	}
 
-	if (withThousandDelimitor){
+	if (withThousandDelimitor) {
 		prefix = prefix.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	}
 

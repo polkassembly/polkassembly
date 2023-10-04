@@ -158,7 +158,6 @@ const allColumns: ColumnsType<IPostsRowData> = [
 				<NameLabel
 					usernameMaxLength={15}
 					usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] '
-					className='border-solid'
 					defaultAddress={proposer}
 					username={username}
 					disableIdenticon

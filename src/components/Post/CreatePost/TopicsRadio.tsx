@@ -6,14 +6,16 @@ import { Segmented } from 'antd';
 import { SegmentedValue } from 'antd/lib/segmented';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useNetworkContext } from '~src/context';
 
 import { post_topic } from '~src/global/post_topics';
+import { EGovType } from '~src/types';
 
 interface Props {
 	className?: string;
 	topicId: number;
 	onTopicSelection: (id: number) => void;
-	govType?: 'gov_1' | 'open_gov';
+	govType?: EGovType;
 }
 
 export const topicToOptionText = (topic: string) => {
@@ -39,10 +41,16 @@ const topicIdToTopictext = (topicId: number) => {
 };
 
 const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) => {
+	const { network } = useNetworkContext();
 	const [topicOptions, setTopicOptions] = useState<string[]>([]);
 
 	useEffect(() => {
-		if (govType === 'gov_1') {
+		if (network === 'polymesh') {
+			if (![post_topic.GENERAL, post_topic.COMMUNITY_PIPS, post_topic.TECHNICAL_COMMITTEE, post_topic.UPGRADE_PIPS].includes(topicId)) {
+				onTopicSelection(5);
+			}
+			setTopicOptions([topicToOptionText('COMMUNITY_PIPS'), topicToOptionText('TECHNICAL_COMMITTEE'), topicToOptionText('UPGRADE_PIPS'), topicToOptionText('GENERAL')]);
+		} else if (govType === EGovType.GOV1) {
 			if (![post_topic.COUNCIL, post_topic.DEMOCRACY, post_topic.GENERAL, post_topic.TECHNICAL_COMMITTEE, post_topic.TREASURY].includes(topicId)) {
 				onTopicSelection(2);
 			}
@@ -54,8 +62,12 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 				topicToOptionText('TECHNICAL_COMMITTEE'),
 				topicToOptionText('TREASURY')
 			]);
-		} else if (govType === 'open_gov') {
-			if (![post_topic.AUCTION_ADMIN, post_topic.FELLOWSHIP, post_topic.GOVERNANCE, post_topic.ROOT, post_topic.STAKING_ADMIN, post_topic.TREASURY].includes(topicId)) {
+		} else if (govType === EGovType.OPEN_GOV) {
+			if (
+				![post_topic.AUCTION_ADMIN, post_topic.FELLOWSHIP, post_topic.GOVERNANCE, post_topic.ROOT, post_topic.STAKING_ADMIN, post_topic.TREASURY, post_topic.WHITELIST].includes(
+					topicId
+				)
+			) {
 				onTopicSelection(8);
 			}
 

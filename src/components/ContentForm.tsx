@@ -8,10 +8,10 @@ import TextEditor from '~src/ui-components/TextEditor';
 import { useTheme } from 'next-themes';
 
 interface Props {
-	className?: string
-	height?: number
-	onChange?: (content: string) => void | string | null
-	value?: string
+	className?: string;
+	height?: number;
+	onChange?: (content: string) => void | string | null;
+	value?: string;
 	autofocus?: boolean;
 }
 
@@ -20,12 +20,10 @@ type ValidationStatus = Parameters<typeof Form.Item>[0]['validateStatus'];
 type ValidationResult = {
 	errorMsg: string | null;
 	validateStatus: ValidationStatus;
-}
+};
 
-const validateContent = (
-	content: string
-): ValidationResult => {
-	if(content) {
+const validateContent = (content: string): ValidationResult => {
+	if (content) {
 		return {
 			errorMsg: null,
 			validateStatus: 'success'
@@ -44,10 +42,10 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 	});
 	const { resolvedTheme:theme } = useTheme();
 
-	const onChangeWrapper = (content:string) => {
+	const onChangeWrapper = (content: string) => {
 		const validationStatus = validateContent(content);
 		setValidation(validationStatus);
-		if(onChange){
+		if (onChange) {
 			onChange(content);
 		}
 
@@ -56,7 +54,13 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 
 	return (
 		<div className={className}>
-			<Form.Item valuePropName='value' getValueFromEvent={onChangeWrapper} name='content' validateStatus={validationStatus.validateStatus} help={validationStatus.errorMsg}>
+			<Form.Item
+				valuePropName='value'
+				getValueFromEvent={onChangeWrapper}
+				name='content'
+				validateStatus={validationStatus.validateStatus}
+				help={validationStatus.errorMsg}
+			>
 				<TextEditor
 					name='content'
 					value={value}

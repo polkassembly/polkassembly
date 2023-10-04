@@ -13,23 +13,23 @@ import NoAuditReport from './NoAuditReport';
 import ImageViewer from './ImageViewer';
 
 export interface IDataType {
-  download_url: string;
-  url: string;
-  git_url: string;
-  html_url: string;
-  name: string;
-  sha: number;
-  size: number;
-  type: string;
-  _links: {
-    self: string;
-    git: string;
-    html: string;
-  };
+	download_url: string;
+	url: string;
+	git_url: string;
+	html_url: string;
+	name: string;
+	sha: number;
+	size: number;
+	type: string;
+	_links: {
+		self: string;
+		git: string;
+		html: string;
+	};
 }
 
 export interface IDataVideoType {
-	name:string;
+	name: string;
 	url: string;
 	title: string;
 	date: string;
@@ -47,20 +47,16 @@ function formatDate(dateStr: string): string {
 function getOrdinalSuffix(day: number): string {
 	const suffixes = ['th', 'st', 'nd', 'rd'];
 	const relevantDigits = day % 100;
-	const suffix =
-    suffixes[(relevantDigits - 20) % 10] ||
-    suffixes[relevantDigits] ||
-    suffixes[0];
+	const suffix = suffixes[(relevantDigits - 20) % 10] || suffixes[relevantDigits] || suffixes[0];
 
 	return suffix;
 }
-interface Props{
-  auditData: IDataType[];
-  videoData: IDataVideoType[];
+interface Props {
+	auditData: IDataType[];
+	videoData: IDataVideoType[];
 }
 
 const PostAudit = ({ auditData, videoData }: Props) => {
-
 	const [selectedType, setSelectedType] = useState<string>('reports');
 	const handleChange = (e: any) => {
 		setSelectedType(e.target.value);
@@ -69,21 +65,35 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 
 	useEffect(() => {
 		const pdfCount = auditData?.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length;
-		const selectedValue = pdfCount === 0 ? 'videos' : 'reports' ;
+		const selectedValue = pdfCount === 0 ? 'videos' : 'reports';
 		setSelectedType(selectedValue);
-	},[auditData,videoData]);
+	}, [auditData, videoData]);
 	return (
 		<div className='min-h-[400px]'>
 			{
 				<>
-					{
-						pdfCount || videoData.length?
-							<div
-								className='flex items-center gap-x-[11px] p-[15px] rounded-[6px] bg-[#E6F4FF] mt-3'
-							>
-								<span
-									className='flex items-center justify-center'
+					{pdfCount || videoData.length ? (
+						<div className='mt-3 flex items-center gap-x-[11px] rounded-[6px] bg-[#E6F4FF] p-[15px]'>
+							<span className='flex items-center justify-center'>
+								<CautionSVG />
+							</span>
+							<p className='m-0 text-sm font-normal leading-[21px] text-[#243A57]'>Reports provided here represent the auditor&apos;s views and are not endorsed by Polkassembly</p>
+						</div>
+					) : (
+						<NoAuditReport />
+					)}
+					<div className='mt-4'>
+						<Radio.Group
+							className='m-0 flex'
+							onChange={handleChange}
+							value={selectedType}
+						>
+							{pdfCount !== 0 && (
+								<Radio
+									value='reports'
+									className={`${selectedType === 'reports' ? 'bg-pink-50' : 'bg-transparent'} flex items-center rounded-full px-4 py-[7px]`}
 								>
+<<<<<<< HEAD
 									<CautionSVG />
 								</span>
 								<p className='m-0 font-normal text-sm leading-[21px] text-[#243A57]'>
@@ -110,45 +120,67 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 									<span className="text-blue-light-high dark:text-blue-dark-high pl-1"><span className='hidden md:inline-block'>Videos</span> {' '} ({videoData.length})</span>
 								</div>
 							</Radio>}
+=======
+									<div className='flex items-center'>
+										<PdfIcon className='bg-cover bg-center bg-no-repeat' />
+										<span className='pl-1 text-[#243A57]'>
+											<span className='hidden md:inline-block'>Reports</span> ({pdfCount})
+										</span>
+									</div>
+								</Radio>
+							)}
+							{videoData.length !== 0 && (
+								<Radio
+									value='videos'
+									className={`${selectedType === 'videos' ? 'bg-pink-50' : 'bg-transparent'} flex items-center rounded-full px-4 py-[7px]`}
+								>
+									<div className='flex items-center'>
+										<YouTubeIcon className='bg-cover bg-center bg-no-repeat' />
+										<span className='pl-1 text-[#243A57]'>
+											<span className='hidden md:inline-block'>Videos</span> ({videoData.length})
+										</span>
+									</div>
+								</Radio>
+							)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</Radio.Group>
 					</div>
 					{selectedType === 'reports' && pdfCount > 0 ? (
 						<section>
-							{ (
-								auditData.filter((item) => (item.name.endsWith('.pdf') || item.name.endsWith('.png'))).map((item, index) => {
+							{auditData
+								.filter((item) => item.name.endsWith('.pdf') || item.name.endsWith('.png'))
+								.map((item, index) => {
 									const date = formatDate(item.name.split(' - ')[1]);
 									return (
+<<<<<<< HEAD
 										<article key={item.sha} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0] dark:border-separatorDark': ''}`}>
 											<p className="text-[#485F7D] m-0 text-sm leading-[18px] font-normal flex items-center gap-x-2">
+=======
+										<article
+											key={item.sha}
+											className={`flex flex-col gap-y-6 py-[26px] ${index !== 0 ? 'border-0 border-t border-solid border-[#D2D8E0]' : ''}`}
+										>
+											<p className='m-0 flex items-center gap-x-2 text-sm font-normal leading-[18px] text-[#485F7D]'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 												<span>{item.name.split(' - ')[0]}</span>
-												{
-													date.includes('NaN')?
-														null
-														: <> |
-															<ClockCircleOutlined />
-															<span>{date}</span>
-
-														</>
-												}
+												{date.includes('NaN') ? null : (
+													<>
+														{' '}
+														|
+														<ClockCircleOutlined />
+														<span>{date}</span>
+													</>
+												)}
 											</p>
-											{
-												item.name.endsWith('.pdf') ? (
-													<PdfViewer
-														item={item}
-													/>
-												) : item.name.endsWith('.png') ?(
-													<ImageViewer
-														item={item}
-													/>
-												) : null}
+											{item.name.endsWith('.pdf') ? <PdfViewer item={item} /> : item.name.endsWith('.png') ? <ImageViewer item={item} /> : null}
 										</article>
 									);
-								}))
-							}
+								})}
 						</section>
 					) : (
 						<></>
 					)}
+<<<<<<< HEAD
 					{
 						selectedType === 'videos' && videoData.length > 0 ? (
 							<section>
@@ -170,6 +202,25 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 						) : null
 					}
 
+=======
+					{selectedType === 'videos' && videoData.length > 0 ? (
+						<section>
+							{videoData.map((item, index) => (
+								<article
+									key={item.title}
+									className={`flex flex-col gap-y-6 py-[26px] ${index !== 0 ? 'border-0 border-t border-solid border-[#D2D8E0]' : ''}`}
+								>
+									<p className='m-0 flex items-center gap-x-2 text-sm font-normal leading-[18px] text-[#485F7D]'>
+										<span>{item.name}</span> |
+										<ClockCircleOutlined />
+										<span>{formatDate(item.date)}</span>
+									</p>
+									<VideoViewer item={item} />
+								</article>
+							))}
+						</section>
+					) : null}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				</>
 			}
 		</div>

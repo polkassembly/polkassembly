@@ -2,7 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+<<<<<<< HEAD
 import { Select, Tabs as AntdTabs } from 'antd';
+=======
+import { Segmented, Select, Tabs } from 'antd';
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 import { GetServerSideProps } from 'next';
 import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -20,20 +24,25 @@ import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import VotesHistory from '~src/ui-components/VotesHistory';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 interface IUserProfileProps {
 	userPosts: {
-		data: IUserPostsListingResponse,
+		data: IUserPostsListingResponse;
 		error: string | null;
 	};
 	userProfile: {
 		data: ProfileDetailsResponse;
 		error: string | null;
-	}
+	};
 	network: string;
 	className?: string;
 }
 
+<<<<<<< HEAD
 const Tabs = styled(AntdTabs)`
 	.ant-tabs-tab-active > .ant-tabs-tab-btn{
  	color: ${props => props.theme === 'dark' ? '#FF60B5' : ''} !important;
@@ -52,16 +61,32 @@ const Tabs = styled(AntdTabs)`
 		border-bottom: ${props => props.theme=='dark' ? 'none' : ''} !important;
 	}
 `;
+=======
+export const votesHistoryUnavailableNetworks = [
+	AllNetworks.MOONBASE,
+	AllNetworks.MOONRIVER,
+	AllNetworks.POLYMESH,
+	AllNetworks.COLLECTIVES,
+	AllNetworks.WESTENDCOLLECTIVES,
+	AllNetworks.MOONBEAM
+];
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const username = context.params?.username;
-	if (!username) {
-		return { props: {
-			error: 'No username provided'
-		} };
-	}
 	const req = context.req;
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	const username = context.params?.username;
+	if (!username) {
+		return {
+			props: {
+				error: 'No username provided'
+			}
+		};
+	}
 
 	const userProfile = await getUserProfileWithUsername(username.toString());
 	const userPosts = await getUserPosts({
@@ -95,43 +120,51 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const EmptyState = styled.div`
-	display:flex;
-	flex-direction:column;
-	gap:16px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 
-	svg{
-		max-width:600px;
-		margin:auto;
+	svg {
+		max-width: 600px;
+		margin: auto;
 	}
 `;
+export enum EProfileHistory {
+	VOTES = 'Votes',
+	POSTS = 'Posts'
+}
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
 	const { setNetwork } = useNetworkContext();
+<<<<<<< HEAD
 	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
 	const { resolvedTheme: theme } = useTheme();
+=======
+	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
+	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(!votesHistoryUnavailableNetworks.includes(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if(userPosts.error === 'UserId is invalid'){
+	const handleSelectGov = (type: EGovType) => {
+		setProfileHistory(EProfileHistory.VOTES);
+		setSelectedGov(type);
+	};
+
+	if (userPosts.error === 'UserId is invalid') {
 		return (
 			<EmptyState>
-				<ErrorAlert
-					errorMsg="Invalid User. This user does't have any account with Polkassembly"
-				/>
-				<UserNotFound/>
+				<ErrorAlert errorMsg="Invalid User. This user does't have any account with Polkassembly" />
+				<UserNotFound />
 			</EmptyState>
 		);
 	}
 	if (userPosts.error || userProfile.error) {
-		return (
-			<ErrorAlert
-				errorMsg={userPosts.error || userProfile.error || ''}
-			/>
-		);
+		return <ErrorAlert errorMsg={userPosts.error || userProfile.error || ''} />;
 	}
 	const tabItems = Object.entries(userPosts.data?.[selectedGov]).map(([key, value]) => {
 		if (!value) return null;
@@ -146,18 +179,29 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			});
 		}
 		return {
+<<<<<<< HEAD
 			children: (
 				<PostsTab
 					posts={value}
 					theme={theme}
 				/>
 			),
+=======
+			children: <PostsTab posts={value} />,
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			key: key,
-			label: <CountBadgePill label={key?.split('_').join(' ') || ''} count={count} />
+			label: (
+				<CountBadgePill
+					label={key?.split('_').join(' ') || ''}
+					count={count}
+				/>
+			)
 		};
 	});
+
 	return (
 		<>
+<<<<<<< HEAD
 			<SEOHead title='User Profile' network={network}/>
 			<section className={`my-0 pb-5 md:pb-0 md:bg-white dark:bg-section-dark-overlay md:shadow-md rounded-[4px] flex h-full min-h-[calc(100vh-150px)] ${className}`}>
 				<Details userPosts={userPosts.data} userProfile={userProfile} />
@@ -195,7 +239,68 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							type="card"
 							items={tabItems as any}
 						/>
+=======
+			<SEOHead
+				title='User Profile'
+				network={network}
+			/>
+			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 md:bg-white md:pb-0 md:shadow-md ${className}`}>
+				<Details
+					userPosts={userPosts.data}
+					userProfile={userProfile}
+				/>
+				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 md:flex'>
+					<div className='flex items-start justify-between'>
+						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue '>Activity</h2>
+						{isOpenGovSupported(network) && (
+							<Select
+								value={selectedGov}
+								style={{
+									width: 120
+								}}
+								onChange={(v) => {
+									handleSelectGov(v);
+								}}
+								options={[
+									{
+										label: 'Gov1',
+										value: 'gov1'
+									},
+									{
+										label: 'OpenGov',
+										value: 'open_gov'
+									}
+								]}
+							/>
+						)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					</div>
+					{!votesHistoryUnavailableNetworks.includes(network) && (
+						<div className='mb-6'>
+							<Segmented
+								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
+								onChange={(e) => setProfileHistory(e as EProfileHistory)}
+								value={profileHistory}
+							/>
+						</div>
+					)}
+
+					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
+						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
+							<VotesHistory
+								userAddresses={userProfile?.data?.addresses || []}
+								govType={selectedGov}
+							/>
+						</div>
+					) : (
+						<div className='fullHeight'>
+							<Tabs
+								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+								type='card'
+								items={tabItems as any}
+							/>
+						</div>
+					)}
 				</article>
 			</section>
 		</>
@@ -214,5 +319,20 @@ export default styled(UserProfile)`
 	}
 	.fullHeight .ant-tabs-tabpane {
 		height: 100% !important;
+	}
+	.ant-select-selector {
+		height: 40px !important;
+		border-radius: 4px !important;
+		padding: 4px 12px !important;
+	}
+	.ant-segmented {
+		padding: 4px;
+		font-weight: 500 !important;
+		color: #464f60 !important;
+	}
+	.ant-segmented-item-selected {
+		text: 14px;
+		font-weight: 600 !important;
+		color: var(--pink_primary) !important;
 	}
 `;

@@ -13,19 +13,19 @@ import messages from '~src/util/messages';
 export const updateComments = async (postId: string, network: string, postType: ProposalType, comments: any) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
-		for(const comment of comments){
+		for (const comment of comments) {
 			const commentRef = await postRef.collection('comments').doc(comment.id);
 			await commentRef.set({ ...comment });
 		}
 		return {
 			error: null,
-			message:'success',
+			message: 'success',
 			status: 200
 		};
 	} catch (error) {
 		return {
 			error: error.message || messages.API_FETCH_ERROR,
-			message:'failed',
+			message: 'failed',
 			status: Number(error.name) || 500
 		};
 	}

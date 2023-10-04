@@ -10,13 +10,13 @@ import TrackListingCard from 'src/components/Listing/FellowshipReferendum/TrackL
 import { useTheme } from 'next-themes';
 
 const AboutTrackCard = dynamic(() => import('~src/components/Listing/FellowshipReferendum/AboutTrackCard'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 interface ITrackListingProps {
-	posts: IFellowshipReferendumPostsByTrackName|undefined;
-    fellowshipReferendumPostOrigins: string[];
+	posts: IFellowshipReferendumPostsByTrackName | undefined;
+	fellowshipReferendumPostOrigins: string[];
 }
 
 const TrackListing: FC<ITrackListingProps> = (props) => {

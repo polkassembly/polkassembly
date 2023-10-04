@@ -7,7 +7,7 @@ import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useNetworkContext } from '~src/context';
 import ClientOnly, { Search } from './ClientOnly';
-import   NewSearch from 'src/components/Search';
+import NewSearch from 'src/components/Search';
 import { Modal } from 'antd';
 import { allowedNetwork } from '~src/components/Search';
 import { poppins } from 'pages/_app';
@@ -24,8 +24,9 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
 
-	return (allowedNetwork.includes(network.toUpperCase()) ?
+	return allowedNetwork.includes(network?.toUpperCase()) ? (
 		<div className={className}>
+<<<<<<< HEAD
 			{
 				isSmallScreen?
 					<div className='small-client relative '>
@@ -75,6 +76,70 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						</Modal>
 					</>
 			}
+=======
+			{isSmallScreen ? (
+				<div className='small-client relative '>
+					<SearchOutlined className='absolute left-2.5 top-[11px] z-50' />
+					<NewSearch
+						openModal={open}
+						setOpenModal={setOpen}
+						isSuperSearch={isSuperSearch}
+						setIsSuperSearch={setIsSuperSearch}
+					/>
+				</div>
+			) : (
+				<>
+					<div
+						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
+						onClick={() => setOpen(true)}
+					>
+						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none'>
+							<SearchOutlined />
+						</button>
+					</div>
+					<NewSearch
+						openModal={open}
+						setOpenModal={setOpen}
+						isSuperSearch={isSuperSearch}
+						setIsSuperSearch={setIsSuperSearch}
+					/>
+				</>
+			)}
+		</div>
+	) : (
+		<div className={className}>
+			{isSmallScreen ? (
+				<div className='small-client relative'>
+					<SearchOutlined className='absolute left-2.5 top-[11px] z-50' />
+					<ClientOnly>
+						<Search network={network} />
+					</ClientOnly>
+				</div>
+			) : (
+				<>
+					<button
+						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none'
+						onClick={() => setOpen(true)}
+					>
+						<SearchOutlined />
+					</button>
+					<Modal
+						title='Search'
+						closable={false}
+						open={open}
+						onCancel={() => setOpen(false)}
+						footer={[]}
+						className={`${className} ${poppins.className} ${poppins.variable}`}
+					>
+						<div className='client'>
+							<ClientOnly>
+								<Search network={network} />
+							</ClientOnly>
+						</div>
+					</Modal>
+				</>
+			)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		</div>
 	);
 };
@@ -88,7 +153,7 @@ export default styled(SearchBar)`
 	}
 	.small-client .gsc-input input {
 		background-color: white !important;
-		border: 1px solid #D2D8E0 !important;
+		border: 1px solid #d2d8e0 !important;
 		height: 34px !important;
 	}
 	.small-client .gsc-control-cse {

@@ -18,6 +18,7 @@ type Props = {
 	theme?: string;
 };
 
+<<<<<<< HEAD
 const TelegramInfoModal = ({
 	icon,
 	title,
@@ -27,6 +28,9 @@ const TelegramInfoModal = ({
 	onClose,
 	theme
 }: Props) => {
+=======
+const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = '', onClose }: Props) => {
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
 	const { username } = useUserDetailsContext();
@@ -45,7 +49,11 @@ const TelegramInfoModal = ({
 	return (
 		<Modal
 			title={
+<<<<<<< HEAD
 				<h3 className='flex items-center gap-3 mb-5 dark:bg-section-dark-overlay dark:text-white'>
+=======
+				<h3 className='mb-5 flex items-center gap-3'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					{icon} {title}
 				</h3>
 			}
@@ -60,7 +68,7 @@ const TelegramInfoModal = ({
 				<ol>
 					<li className='list-inside leading-[40px] dark:text-blue-dark-high dark:font-normal'>
 						Click this invite link
-						<span className='p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
+						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
 							<a
 								href='https://t.me/PolkassemblyBot'
 								target='_blank'
@@ -73,10 +81,14 @@ const TelegramInfoModal = ({
 						or Add
 						<span
 							onClick={() => handleCopyClicked('@PolkassemblyBot')}
-							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
+<<<<<<< HEAD
 							<CopyIcon className='relative text-pink_primary' />{' '}
 							@PolkassemblyBot
+=======
+							<CopyIcon className='color-pink_primary relative top-[6px]' /> @PolkassemblyBot
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</span>
 						to your Telegram Chat as a member
 					</li>
@@ -84,20 +96,20 @@ const TelegramInfoModal = ({
 						Send this command to the chat with the bot:
 						<br />
 						<span
-							onClick={() =>
-								handleCopyClicked(
-									'/add <username> <verificationToken>'
-								)
-							}
-							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+							onClick={() => handleCopyClicked('/add <username> <verificationToken>')}
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
+<<<<<<< HEAD
 							<CopyIcon className='relative text-pink_primary' />{' '}
 							{'<username>'} {'<verificationToken>'}
+=======
+							<CopyIcon className='relative top-[6px]' /> {'<username>'} {'<verificationToken>'}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</span>
 						<Button
 							loading={loading}
 							onClick={handleGenerateToken}
-							className='bg-pink_primary text-white font-normal'
+							className='bg-pink_primary font-normal text-white'
 						>
 							Generate Token
 						</Button>
@@ -107,8 +119,9 @@ const TelegramInfoModal = ({
 								<span>Username & Verification Token: </span>
 								<div
 									onClick={() => handleCopyClicked(`/add ${username} ${token}`)}
-									className='flex items-center max-w-[230px] p-0 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary h-[30px]'
+									className='bg-bg-secondary border-text_secondary mx-2 flex h-[30px] max-w-[230px] cursor-pointer items-center rounded-md border border-solid p-0 text-pink_primary'
 								>
+<<<<<<< HEAD
 									<CopyIcon className='relative text-pink_primary' />{' '}
 									<span className='max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block mr-2'>
 										{username}
@@ -116,6 +129,10 @@ const TelegramInfoModal = ({
 									<span className='max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block'>
 										{token}
 									</span>
+=======
+									<CopyIcon className='relative' /> <span className='mr-2 inline-block max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{username}</span>
+									<span className='inline-block max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{token}</span>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 								</div>
 							</div>
 						)}
@@ -124,7 +141,7 @@ const TelegramInfoModal = ({
 						(Optional) Send this command to get help:
 						<span
 							onClick={() => handleCopyClicked('/start')}
-							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
 							<CopyIcon className='relative text-pink_primary' /> /start
 						</span>

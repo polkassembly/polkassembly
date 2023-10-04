@@ -10,7 +10,7 @@ import HelperTooltip from 'src/ui-components/HelperTooltip';
 import Address from '../../../../ui-components/Address';
 
 interface IMotionVoteInfoProps {
-	className?: string
+	className?: string;
 	councilVotes: {
 		decision: string;
 		voter: string;
@@ -22,25 +22,41 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 
 	return (
 		<GovSidebarCard className={`${className} px-1 md:px-9`}>
+<<<<<<< HEAD
 			<h3 className='dashboard-heading flex items-center dark:text-white dark:font-normal'>Council Votes <HelperTooltip className='ml-2 font-normal' text='This represents the onchain votes of council members'/></h3>
+=======
+			<h3 className='dashboard-heading flex items-center'>
+				Council Votes{' '}
+				<HelperTooltip
+					className='ml-2 font-normal'
+					text='This represents the onchain votes of council members'
+				/>
+			</h3>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			<div className='mt-6'>
-				{councilVotes.map((councilVote, index) =>
-					<div className='flex items-center justify-between mb-6' key={`${councilVote.voter}_${index}`}>
+				{councilVotes.map((councilVote, index) => (
+					<div
+						className='mb-6 flex items-center justify-between'
+						key={`${councilVote.voter}_${index}`}
+					>
 						<div className='item'>
-							<Address isSubVisible={false} address={councilVote.voter} />
+							<Address
+								isSubVisible={false}
+								address={councilVote.voter}
+							/>
 						</div>
 
-						{councilVote.decision === 'yes' ?
-							<div className='flex items-center text-aye_green text-md'>
+						{councilVote.decision === 'yes' ? (
+							<div className='text-md flex items-center text-aye_green'>
 								<LikeFilled className='mr-2' /> Aye
 							</div>
-							:
-							<div className='flex items-center text-nay_red text-md'>
+						) : (
+							<div className='text-md flex items-center text-nay_red'>
 								<DislikeFilled className='mr-2' /> Nay
 							</div>
-						}
+						)}
 					</div>
-				)}
+				))}
 			</div>
 		</GovSidebarCard>
 	);

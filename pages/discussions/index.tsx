@@ -20,6 +20,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import { DiscussionsListingIcon } from '~src/ui-components/CustomIcons';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -28,9 +29,14 @@ interface IDiscussionsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.COMMENTED, filterBy } = query;
 
-	if(!Object.values(sortValues).includes(sortBy.toString()) || filterBy && filterBy.length!==0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))) {
+	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
 		return {
 			redirect: {
 				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}&filterBy=${filterBy}`,
@@ -39,23 +45,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		};
 	}
 
-	const network = getNetworkFromReqHeaders(req.headers);
-
 	const redisKey = generateKey({ filterBy: filterBy, keyType: 'page', network: network, page: page, proposalType: ProposalType.DISCUSSIONS, sortBy: sortBy });
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
+	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(redisKey);
 
-		if (redisData){
+		if (redisData) {
 			const props = JSON.parse(redisData);
-			if(!props.error){
+			if (!props.error) {
 				return { props };
 			}
 		}
 	}
 
-	const { data, error = ''  } = await getOffChainPosts({
-		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+	const { data, error = '' } = await getOffChainPosts({
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page: Number(page),
@@ -65,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const props = { data, error, network };
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
+	if (process.env.IS_CACHING_ALLOWED == '1') {
 		await redisSet(redisKey, JSON.stringify(props));
 	}
 
@@ -75,12 +79,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const Discussions: FC<IDiscussionsProps> = (props) => {
 	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
-	const [openModal,setModalOpen]=useState<boolean>(false);
-	const router=useRouter();
+	const [openModal, setModalOpen] = useState<boolean>(false);
+	const router = useRouter();
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const { id } = useContext(UserDetailsContext);
@@ -89,16 +93,16 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	if (!data) return null;
 	const { posts, count } = data;
 
-	const handleClick=() => {
-		if(id){
+	const handleClick = () => {
+		if (id) {
 			router.push('/post/create');
-		}else{
+		} else {
 			setModalOpen(true);
 		}
-
 	};
 	return (
 		<>
+<<<<<<< HEAD
 			<SEOHead title='Discussions' network={network}/>
 			<div className='flex flex-col sm:flex-row w-full justify-between align-middle mt-3'>
 				<div className='text-blue-light-high dark:text-blue-dark-high font-semibold text-2xl leading-9 mx-2 flex'><DiscussionsListingIcon className='xs:mr-3 mt-2 sm:mr-2 sm:mt-1.5 text-lightBlue dark:text-icon-dark-inactive' />Latest Discussions({count})</div>
@@ -109,10 +113,45 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			<div className="flex flex-col md:flex-row mt-3">
 				<p className="text-blue-light-high dark:text-blue-dark-high text-sm font-medium bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
 						This is the place to discuss all things polkadot. Anyone can start a new discussion.
+=======
+			<SEOHead
+				title='Discussions'
+				network={network}
+			/>
+
+			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
+				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue'>
+					<DiscussionsIcon className='mt-2 xs:mr-3 sm:mr-2 sm:mt-1.5' />
+					Latest Discussions({count})
+				</div>
+				<button
+					onClick={handleClick}
+					className='flex cursor-pointer items-center justify-center whitespace-pre rounded-[4px] border-none  bg-pink_primary p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none xs:mt-3 sm:-mt-1 sm:h-[40px] sm:w-[120px]'
+				>
+					+ Add Post
+				</button>
+			</div>
+
+			{/* Intro and Create Post Button */}
+			<div className='mt-3 flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+					This is the place to discuss all things polkadot. Anyone can start a new discussion.
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				</p>
 			</div>
-			<OffChainPostsContainer proposalType={OffChainProposalType.DISCUSSIONS} posts={posts} count={count} className='mt-6' />
-			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
+			<OffChainPostsContainer
+				proposalType={OffChainProposalType.DISCUSSIONS}
+				posts={posts}
+				count={count}
+				className='mt-6'
+			/>
+			<ReferendaLoginPrompts
+				modalOpen={openModal}
+				setModalOpen={setModalOpen}
+				image='/assets/referenda-discussion.png'
+				title='Join Polkassembly to Start a New Discussion.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+			/>
 		</>
 	);
 };

@@ -15,15 +15,10 @@ type Props = {
 	onSetNotification: any;
 	dispatch: any;
 	options: any;
-	userNotification: any
+	userNotification: any;
 };
 
-export default function SubscribedPosts({
-	onSetNotification,
-	dispatch,
-	options,
-	userNotification
-}: Props) {
+export default function SubscribedPosts({ onSetNotification, dispatch, options, userNotification }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
 	const { resolvedTheme:theme } = useTheme();
@@ -58,11 +53,7 @@ export default function SubscribedPosts({
 		setAll(checked);
 	};
 
-	const handleChange = (
-		categoryOptions: any,
-		checked: boolean,
-		value: string
-	) => {
+	const handleChange = (categoryOptions: any, checked: boolean, value: string) => {
 		dispatch({
 			payload: {
 				params: { categoryOptions, checked, value }
@@ -99,14 +90,18 @@ export default function SubscribedPosts({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<SubscribedPostsNotification />
+<<<<<<< HEAD
 						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0'>
+=======
+						<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 							Subscribed Posts <span className='hidden md:inline'>(Others proposals)</span>
 						</h3>
 						{!!active && (
 							<>
-								<span className='flex gap-[8px] items-center'>
+								<span className='flex items-center gap-[8px]'>
 									<Switch
 										size='small'
 										id='postParticipated'

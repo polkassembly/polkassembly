@@ -8,7 +8,7 @@ import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
 
 export interface IUsernameExistResponse {
-    isExist: boolean;
+	isExist: boolean;
 }
 
 const handler: NextApiHandler<IUsernameExistResponse | MessageType> = async (req, res) => {

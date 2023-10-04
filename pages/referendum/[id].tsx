@@ -11,18 +11,26 @@ import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext,useApiContext } from '~src/context';
+import { useNetworkContext, useApiContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
+<<<<<<< HEAD
 import { useTheme } from 'next-themes';
+=======
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 
 const proposalType = ProposalType.REFERENDUMS;
-export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
@@ -39,51 +47,81 @@ interface IReferendumPostProps {
 }
 
 const ReferendumPost: FC<IReferendumPostProps> = (props) => {
-
-	const { post, error , status, network } = props;
+	const { post, error, status, network } = props;
 	const { setNetwork } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
 	const { id } = router.query;
+<<<<<<< HEAD
 	const [isUnfinalized,setIsUnFinalized] = useState(false);
 	const { resolvedTheme:theme } = useTheme();
+=======
+	const [isUnfinalized, setIsUnFinalized] = useState(false);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 
 	useEffect(() => {
-
-		if(!api || !apiReady || !error || !status || !id || status !== 404 ){
+		if (!api || !apiReady || !error || !status || !id || status !== 404) {
 			return;
 		}
-		(async() => {
-			setIsUnFinalized( Boolean(await checkIsOnChain(String(id),proposalType, api)));
+		(async () => {
+			setIsUnFinalized(Boolean(await checkIsOnChain(String(id), proposalType, api)));
 		})();
-
-	}, [api, apiReady, error, status,id]);
+	}, [api, apiReady, error, status, id]);
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-	if(isUnfinalized){
-		return <PostEmptyState image={<EmptyIcon/>} description={<div className='p-5'><b className='text-xl my-4'>Waiting for Block Confirmation</b><p>Usually its done within a few seconds</p></div>} imageStyle={ { height:300  } }/>;
+	if (isUnfinalized) {
+		return (
+			<PostEmptyState
+				image={<EmptyIcon />}
+				description={
+					<div className='p-5'>
+						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
+						<p>Usually its done within a few seconds</p>
+					</div>
+				}
+				imageStyle={{ height: 300 }}
+			/>
+		);
 	}
-	if (error ){
+	if (error) {
 		return <ErrorState errorMessage={error} />;
 	}
 	if (!post) return null;
 
-	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Referendum`} desc={post.content} network={network}/>
+	if (post)
+		return (
+			<>
+				<SEOHead
+					title={post.title || `${noTitle} - Referendum`}
+					desc={post.content}
+					network={network}
+				/>
 
-		<BackToListingView postCategory={PostCategory.REFERENDA} />
+				<BackToListingView postCategory={PostCategory.REFERENDA} />
 
+<<<<<<< HEAD
 		<div className='mt-6'>
 			<Post post={post} proposalType={proposalType} theme={theme} />
+=======
+				<div className='mt-6'>
+					<Post
+						post={post}
+						proposalType={proposalType}
+					/>
+				</div>
+			</>
+		);
+
+	return (
+		<div className='mt-16'>
+			<LoadingState />
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		</div>
-	</>);
-
-	return <div className='mt-16'><LoadingState /></div>;
-
+	);
 };
 
 export default ReferendumPost;

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { FlagOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button,Form,Input,Modal, Select } from 'antd';
+import { Button, Form, Input, Modal, Select } from 'antd';
 import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -19,7 +19,7 @@ import { useTheme } from 'next-themes';
 
 interface IReportButtonProps {
 	type: string;
-	postId?: number|string;
+	postId?: number | string;
 	commentId?: string;
 	replyId?: string;
 	className?: string;
@@ -28,15 +28,10 @@ interface IReportButtonProps {
 	onSuccess?: () => void;
 }
 
-const reasons = [
-	'It\'s suspicious or spam',
-	'It\'s abusive or harmful',
-	'It expresses intentions of self-harm or suicide',
-	'other (please let us know in the field below)'
-];
+const reasons = ["It's suspicious or spam", "It's abusive or harmful", 'It expresses intentions of self-harm or suicide', 'other (please let us know in the field below)'];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , onSuccess } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess } = props;
 	const { allowed_roles } = useUserDetailsContext();
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
@@ -50,14 +45,14 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	const handleReport = async () => {
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
-		if(validationErrors.length > 0) return;
+		if (validationErrors.length > 0) return;
 		setFormDisabled(true);
 		const reason = form.getFieldValue('reason');
 		const comments = form.getFieldValue('comments');
 
 		setLoading(true);
 
-		const { data: reportData , error: reportError } = await nextApiClientFetch<IReportContentResponse>('api/v1/auth/actions/reportContent', {
+		const { data: reportData, error: reportError } = await nextApiClientFetch<IReportContentResponse>('api/v1/auth/actions/reportContent', {
 			comments,
 			// eslint-disable-next-line sort-keys
 			comment_id: commentId,
@@ -68,7 +63,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			type
 		});
 
-		if(reportError) {
+		if (reportError) {
 			console.error('Error reporting content ', reportError);
 			queueNotification({
 				header: 'Error!',
@@ -79,12 +74,11 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			setError(reportError);
 		}
 
-		if(reportData) {
-
-			const handleSpamComments = (commentsWithTimeline:any, commentId:string) => {
+		if (reportData) {
+			const handleSpamComments = (commentsWithTimeline: any, commentId: string) => {
 				const commentsPayload = Object.assign({}, commentsWithTimeline);
-				for(const key in commentsWithTimeline){
-					commentsPayload[key] = commentsWithTimeline[key].map((comment:IComment) => {
+				for (const key in commentsWithTimeline) {
+					commentsPayload[key] = commentsWithTimeline[key].map((comment: IComment) => {
 						if (comment.id === commentId) {
 							return {
 								...comment,
@@ -99,14 +93,14 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				}
 				return commentsPayload;
 			};
-			const handleSpamReply = (commentsWithTimeline:any, commentId:string) => {
+			const handleSpamReply = (commentsWithTimeline: any, commentId: string) => {
 				const commentsPayload = Object.assign({}, commentsWithTimeline);
-				for(const key in commentsWithTimeline){
-					commentsPayload[key] = commentsWithTimeline[key].map((comment:IComment) => {
+				for (const key in commentsWithTimeline) {
+					commentsPayload[key] = commentsWithTimeline[key].map((comment: IComment) => {
 						if (comment?.id === commentId) {
 							return {
 								...comment,
-								replies: (comment?.replies || []).map((reply:any) => {
+								replies: (comment?.replies || []).map((reply: any) => {
 									if (reply?.id === replyId) {
 										return {
 											...reply,
@@ -133,24 +127,25 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				message: reportData.message,
 				status: NotificationStatus.SUCCESS
 			});
-			setPostData && setPostData((prev) => {
-				if (type === 'post') {
-					return {
-						...prev,
-						spam_reports_count: reportData.spam_users_count
-					};
-				} else if (type === 'comment') {
-					return {
-						...prev,
-						comments: handleSpamComments(prev.comments, commentId || '')
-					};
-				} else {
-					return {
-						...prev,
-						comments: handleSpamReply(prev.comments, commentId || '')
-					};
-				}
-			});
+			setPostData &&
+				setPostData((prev) => {
+					if (type === 'post') {
+						return {
+							...prev,
+							spam_reports_count: reportData.spam_users_count
+						};
+					} else if (type === 'comment') {
+						return {
+							...prev,
+							comments: handleSpamComments(prev.comments, commentId || '')
+						};
+					} else {
+						return {
+							...prev,
+							comments: handleSpamReply(prev.comments, commentId || '')
+						};
+					}
+				});
 			setShowModal(false);
 			setFormDisabled(false);
 			form.setFieldValue('comments', '');
@@ -159,14 +154,14 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		setLoading(false);
 	};
 	const handleDelete = async () => {
-		if(!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
+		if (!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
 		setLoading(true);
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
-		if(validationErrors.length > 0) return;
+		if (validationErrors.length > 0) return;
 		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
-		if(allowed_roles?.includes('moderator')) {
+		if (allowed_roles?.includes('moderator')) {
 			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
 			setLoading(false);
 		}
@@ -174,7 +169,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	return (
 		<>
 			<button
-				className={`${type=== 'comment' ? 'p-0 m-0': ''} cursor-pointer flex items-center border-none shadow-none pr-1 bg-transparent gap-x-[6px]`}
+				className={`${type === 'comment' ? 'm-0 p-0' : ''} ml-2 flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent pr-1 shadow-none`}
 				onClick={() => setShowModal(true)}
 			>
 				{isDeleteModal ? <DeleteOutlined className={`${className}`} /> : <FlagOutlined className={`${className}`} />}
@@ -184,48 +179,68 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 				title={isDeleteModal ? <div className='dark:bg-black dark:text-white'>Delete</div> : <div className='dark:bg-black dark:text-white'>Report</div>}
 				open={showModal}
+<<<<<<< HEAD
 				onOk={
 					isDeleteModal ? handleDelete : handleReport
 				}
 				wrapClassName='dark:bg-modalOverlayDark'
+=======
+				onOk={isDeleteModal ? handleDelete : handleReport}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
 				zIndex={1067}
 				footer={[
-					<Button key="back" disabled={loading} onClick={() => setShowModal(false)}>
-            Cancel
+					<Button
+						key='back'
+						disabled={loading}
+						onClick={() => setShowModal(false)}
+					>
+						Cancel
 					</Button>,
-					<Button htmlType='submit' key="submit" className='bg-pink_primary hover:bg-pink_secondary text-white' disabled={loading} onClick={
-						isDeleteModal ? handleDelete : handleReport
-					}>
-						{
-							isDeleteModal ? 'Delete' : 'Report'
-						}
+					<Button
+						htmlType='submit'
+						key='submit'
+						className='bg-pink_primary text-white hover:bg-pink_secondary'
+						disabled={loading}
+						onClick={isDeleteModal ? handleDelete : handleReport}
+					>
+						{isDeleteModal ? 'Delete' : 'Report'}
 					</Button>
 				]}
 			>
 				<Form
 					form={form}
-					name="report-post-form"
-					onFinish={
-						isDeleteModal ? handleDelete : handleReport
-					}
-					layout="vertical"
+					name='report-post-form'
+					onFinish={isDeleteModal ? handleDelete : handleReport}
+					layout='vertical'
 					disabled={formDisabled}
-					validateMessages={
-						{ required: "Please add the '${name}'" }
-					}
+					validateMessages={{ required: "Please add the '${name}'" }}
 					initialValues={{
 						comments: '',
 						reason: reasons[0]
 					}}
 				>
-					{error && <ErrorAlert errorMsg={error} className='mb-4' />}
+					{error && (
+						<ErrorAlert
+							errorMsg={error}
+							className='mb-4'
+						/>
+					)}
 
-					<Form.Item name='reason' label="Reason" rules={[{ required: true }]}>
+					<Form.Item
+						name='reason'
+						label='Reason'
+						rules={[{ required: true }]}
+					>
 						<Select
+<<<<<<< HEAD
 							popupClassName='z-[9999] dark:bg-black dark:text-white'
 							defaultValue={'It\'s suspicious or spam'}
+=======
+							popupClassName='z-[9999]'
+							defaultValue={"It's suspicious or spam"}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 							options={reasons.map((reason) => {
 								return {
 									label: reason,
@@ -235,11 +250,21 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						/>
 					</Form.Item>
 					<Form.Item
+<<<<<<< HEAD
 						name="comments"
 						label="Comments (300 char max)"
 						className='dark:bg-black dark:text-white'
+=======
+						name='comments'
+						label='Comments (300 char max)'
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					>
-						<Input.TextArea name="comments" showCount rows={4} maxLength={300} />
+						<Input.TextArea
+							name='comments'
+							showCount
+							rows={4}
+							maxLength={300}
+						/>
 					</Form.Item>
 				</Form>
 			</Modal>

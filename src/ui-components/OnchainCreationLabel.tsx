@@ -9,16 +9,17 @@ import Link from 'next/link';
 //import TopicTag from './TopicTag';
 
 interface Props {
-	address: string
-	topic?: string
+	address: string;
+	topic?: string;
 	username?: string;
-	truncateUsername?:boolean;
+	truncateUsername?: boolean;
 }
 
-const OnchainCreationLabel = ({ address, username, truncateUsername }:Props ) => {
+const OnchainCreationLabel = ({ address, username, truncateUsername }: Props) => {
 	return (
-		<div className='flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-[#485F7D] w-full min-[340px]:w-auto'>
+		<div className='flex w-full justify-between text-xs text-lightBlue min-[340px]:w-auto min-[340px]:flex-row min-[340px]:items-center'>
 			<div className='flex items-center'>
+<<<<<<< HEAD
 				{
 					username || address?
 						<>
@@ -41,8 +42,33 @@ const OnchainCreationLabel = ({ address, username, truncateUsername }:Props ) =>
 						</>
 						: null
 				}
+=======
+				{username || address ? (
+					<>
+						{address ? (
+							<Address
+								address={address}
+								className='address '
+								displayInline
+								isTruncateUsername={truncateUsername}
+								isSubVisible={false}
+								usernameClassName='font-semibold'
+							/>
+						) : (
+							<span className='max-w-[150px] overflow-hidden text-ellipsis font-semibold text-bodyBlue'>
+								<Link
+									href={`/user/${username}`}
+									target='_blank'
+									rel='noreferrer'
+								>
+									{username}
+								</Link>
+							</span>
+						)}
+					</>
+				) : null}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			</div>
-
 		</div>
 	);
 };

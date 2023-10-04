@@ -17,10 +17,15 @@ import { useNetworkContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { data, error } = await getOffChainPost({
 		network,
 		postId: id,
@@ -41,23 +46,41 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} Discussion`} desc={post.content} network={network}/>
+	if (post)
+		return (
+			<>
+				<SEOHead
+					title={post.title || `${noTitle} Discussion`}
+					desc={post.content}
+					network={network}
+				/>
 
-		<BackToListingView postCategory={PostCategory.DISCUSSION} />
+				<BackToListingView postCategory={PostCategory.DISCUSSION} />
 
+<<<<<<< HEAD
 		<div className='mt-6' >
 			<Post post={post} theme={theme} proposalType={ProposalType.DISCUSSIONS} />
+=======
+				<div className='mt-6'>
+					<Post
+						post={post}
+						proposalType={ProposalType.DISCUSSIONS}
+					/>
+				</div>
+			</>
+		);
+
+	return (
+		<div className='mt-16'>
+			<LoadingState />
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		</div>
-	</>);
-
-	return <div className='mt-16'><LoadingState /></div>;
-
+	);
 };
 
 export default DiscussionPost;

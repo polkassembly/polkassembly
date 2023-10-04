@@ -53,10 +53,10 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const [modalArgs, setModalArgs] = useState<any>(null);
 
 	useEffect(() => {
-		if(!router?.query?.hash) return;
+		if (!router?.query?.hash) return;
 		setModalArgs(preimages?.[0]?.proposedCall.args);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[router]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router]);
 
 	const columns: ColumnsType<any> = [
 		{
@@ -64,7 +64,11 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'hash',
 			key: 'hash',
 			width: 350,
+<<<<<<< HEAD
 			render: (hash) => <span className='text-sidebarBlue font-medium dark:text-white dark:font-normal'>{hash}</span>
+=======
+			render: (hash) => <span className='font-medium text-sidebarBlue'>{hash}</span>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		},
 		{
 			title: 'Author',
@@ -78,43 +82,76 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'deposit',
 			key: 'deposit',
 			width: 120,
+<<<<<<< HEAD
 			render: (deposit) => <span className='text-sidebarBlue font-medium whitespace-pre dark:text-white dark:font-normal'>{deposit && formatBnBalance(deposit, { numberAfterComma: 2, withUnit: true }, network)}</span>
+=======
+			render: (deposit) => (
+				<span className='whitespace-pre font-medium text-sidebarBlue'>{deposit && formatBnBalance(deposit, { numberAfterComma: 2, withUnit: true }, network)}</span>
+			)
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		},
 		{
 			title: 'Arguments',
 			dataIndex: 'proposedCall',
 			key: 'proposedCall',
 			width: 265,
+<<<<<<< HEAD
 			render: (proposedCall) => proposedCall && proposedCall.section && proposedCall.method && <div className='flex items-center'>
 				<code className='px-2 rounded-md dark:bg-slate-200'>{proposedCall.section}.{proposedCall.method}</code>
 				{proposedCall.args && <ProfileOutlined className='ml-2 p-1 text-base rounded-md hover:text-pink_primary cursor-pointer dark:text-white dark:font-normal dark:hover:text-blue-dark-helper' onClick={() => setModalArgs(proposedCall.args)} />}
 			</div>
+=======
+			render: (proposedCall) =>
+				proposedCall &&
+				proposedCall.section &&
+				proposedCall.method && (
+					<div className='flex items-center'>
+						<code className='rounded-md px-2'>
+							{proposedCall.section}.{proposedCall.method}
+						</code>
+						{proposedCall.args && (
+							<ProfileOutlined
+								className='ml-2 cursor-pointer rounded-md p-1 text-base hover:text-pink_primary'
+								onClick={() => setModalArgs(proposedCall.args)}
+							/>
+						)}
+					</div>
+				)
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		},
 		{
 			title: 'Size',
 			dataIndex: 'length',
 			key: 'length',
 			width: 65,
+<<<<<<< HEAD
 			render: (length) => <span className='text-sidebarBlue font-medium dark:text-white dark:font-normal'>{length}</span>
+=======
+			render: (length) => <span className='font-medium text-sidebarBlue'>{length}</span>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		},
 		{
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
 			width: 135,
+<<<<<<< HEAD
 			render: (status) => <span className='text-sidebarBlue font-medium dark:text-white dark:font-normal'>
 				{ status }
 			</span>
+=======
+			render: (status) => <span className='font-medium text-sidebarBlue'>{status}</span>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		}
 	];
 
-	if(preimages) {
-		if(!preimages || !preimages.length) return <PostEmptyState />;
+	if (preimages) {
+		if (!preimages || !preimages.length) return <PostEmptyState />;
 
 		const tableData: any[] = [];
 
-		preimages.forEach((preImageObj: any, index:number) => {
-			tableData.push({ key:index, ...preImageObj });
+		preimages.forEach((preImageObj: any, index: number) => {
+			tableData.push({ key: index, ...preImageObj });
 		});
 
 		return (
@@ -135,10 +172,21 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					onCancel={() => setModalArgs(null)}
 					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 					footer={[
+<<<<<<< HEAD
 						<Button className='dark:bg-transparent dark:text-white' key="back" onClick={() => setModalArgs(null)}> Close </Button>
+=======
+						<Button
+							key='back'
+							onClick={() => setModalArgs(null)}
+						>
+							{' '}
+							Close{' '}
+						</Button>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					]}
 					wrapClassName='dark:bg-modalOverlayDark'
 				>
+<<<<<<< HEAD
 					{modalArgs &&
 					<div className='w-full max-h-[60vh] overflow-auto'>
 						<ReactJson
@@ -149,6 +197,18 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 							displayDataTypes={false}
 						/>
 					</div>}
+=======
+					{modalArgs && (
+						<div className='max-h-[60vh] w-full overflow-auto'>
+							<ReactJson
+								src={modalArgs}
+								iconStyle='circle'
+								enableClipboard={false}
+								displayDataTypes={false}
+							/>
+						</div>
+					)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				</Modal>
 			</div>
 		);
@@ -158,6 +218,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	return <LoadingState />;
 };
 
+<<<<<<< HEAD
 export default styled(React.memo(PreImagesTable))`
 	.ant-table-wrapper .ant-table-thead >tr>th, .ant-table-wrapper .ant-table-thead >tr>td{
 		background: ${props => props.theme === 'dark' ? 'black' : 'white'} !important;
@@ -166,3 +227,6 @@ export default styled(React.memo(PreImagesTable))`
 		background: ${props => props.theme === 'dark' ? '#1E1E1E' : 'white'} !important;
 	}
 `;
+=======
+export default React.memo(PreImagesTable);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29

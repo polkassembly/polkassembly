@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { Button, Skeleton, Tooltip, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
@@ -22,10 +23,10 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 });
 
 interface Props {
-  username: string;
-  address: string;
-  isSearch?: boolean;
-  className?: string;
+	username: string;
+	address: string;
+	isSearch?: boolean;
+	className?: string;
 }
 
 const DelegationProfile = ({ username, address, isSearch, className }: Props) => {
@@ -41,23 +42,23 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		username: ''
 	});
 
-	const { image, social_links, bio , username: userName, addresses } = profileDetails;
+	const { image, social_links, bio, username: userName, addresses } = profileDetails;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
 
-	const getData = async() => {
+	const getData = async () => {
 		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
 
-		if(data){setProfileDetails({ ...profileDetails, ...data });}
-		else{
+		if (data) {
+			setProfileDetails({ ...profileDetails, ...data });
+		} else {
 			console.log(error);
 		}
-
 	};
 
 	useEffect(() => {
 		getData();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [username, address]);
 
 	const success = () => {
@@ -67,76 +68,114 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 			type: 'success'
 		});
 	};
-	const copyLink = (address:string) => {
+	const copyLink = (address: string) => {
 		copyToClipboard(address);
 	};
 
-	return ((username?.length > 0 || username.length > 0)? <div className={`flex justify-between shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white dark:bg-section-dark-overlay rounded-[14px] ${className}`}>
-		<div className='flex justify-center gap-[34px] '>
-			<ImageComponent
-				src={image}
-				alt='User Picture'
-				className='bg-transparent flex items-center justify-center w-[105px] h-[105px] '
-				iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
-			/>
-			<div className='text-blue-light-high dark:text-blue-dark-high'>
-				<span className='text-blue-light-high dark:text-blue-dark-high font-semibold mb-4 tracking-wide text-lg'>{username || userName}</span >
-				{address && address.length > 0  && <div className='flex gap-2 items-center'>
-					<Address address={address} displayInline className='text-sm text-blue-light-high dark:text-blue-dark-high' truncateUsername={false} identiconSize={34} />
-					<span className='flex items-center cursor-pointer ml-2' onClick={(e) => {isSearch && e.preventDefault(); copyLink(address || addresses[0]) ;success();}}>
-						{contextHolder}
-						<CopyIcon className='text-lightBlue dark:text-blue-dark-medium'/>
-					</span>
-				</div> }
+	return username?.length > 0 || username.length > 0 ? (
+		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] dark:bg-section-dark-overlay flex justify-between rounded-[14px] bg-white ${className}`}>
+			<div className='flex justify-center gap-[34px] '>
+				<ImageComponent
+					src={image}
+					alt='User Picture'
+					className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
+					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
+				/>
+				<div className='text-blue-light-high dark:text-blue-dark-high'>
+					<span className='text-blue-light-high dark:text-blue-dark-high mb-4 text-lg font-semibold tracking-wide'>{username || userName}</span>
+					{address && address.length > 0 && (
+						<div className='flex items-center gap-2'>
+							<Address
+								address={address}
+								displayInline
+								usernameClassName='text-blue-light-high dark:text-blue-dark-high text-sm'
+								isTruncateUsername={false}
+							/>
+							<span
+								className='ml-2 flex cursor-pointer items-center'
+								onClick={(e) => {
+									isSearch && e.preventDefault();
+									copyLink(address || addresses[0]);
+									success();
+								}}
+							>
+								{contextHolder}
+								<CopyIcon className='dark:text-blue-dark-medium text-lightBlue' />
+							</span>
+						</div>
+					)}
 
-				{bio?.length === 0
-					? <h2 className={`text-sm font-normal text-[#576D8BCC] dark:text-blue-dark-medium mt-2 ${username === userProfile.username && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
-						{username === userProfile.username ? 'Click here to add bio' : 'No Bio' }
-					</h2>
-					: <h2  onClick={() => setOpenEditModal(true)} className={`text-sm mt-2 text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] cursor-pointer font-normal ${username === userProfile.username && 'cursor-pointer'}`}>{bio}</h2>
-				}
-
-				<div
-					className={`flex flex-wrap items-center text-xl text-blue-light-high dark:text-blue-dark-high gap-x-5 md:gap-x-3 mt-[10px] ${isSearch && 'mt-0'}`}
-				>
-					{
-						socialLinks?.map((social: any, index: number) => {
-							const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
+					{bio?.length === 0 ? (
+						<h2
+							className={`dark:text-blue-dark-medium mt-2 text-sm font-normal text-[#576D8BCC] ${username === userProfile.username && 'cursor-pointer'}`}
+							onClick={() => setOpenEditModal(true)}
+						>
+							{username === userProfile.username ? 'Click here to add bio' : 'No Bio'}
+						</h2>
+					) : (
+						<h2
+							onClick={() => setOpenEditModal(true)}
+							className={`text-blue-light-high dark:text-blue-dark-high mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] ${
+								username === userProfile.username && 'cursor-pointer'
+							}`}
+						>
+							{bio}
+						</h2>
+					)}
+					<div className={`text-blue-light-high dark:text-blue-dark-high mt-[10px] flex flex-wrap items-center gap-x-5 text-xl md:gap-x-3 ${isSearch && 'mt-0'}`}>
+						{socialLinks?.map((social: any, index: number) => {
+							const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
 							return (
 								<SocialLink
-									className={`flex items-center justify-center text-2xl hover:text-[#576D8B] p-[10px] bg-[#edeff3] dark:bg-inactiveIconDark rounded-[20px] h-[39px] w-[40px] ${isSearch ? 'mt-2' : 'mt-4'}`}
+									className={`dark:bg-inactiveIconDark flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-2xl hover:text-[#576D8B] ${
+										isSearch ? 'mt-2' : 'mt-4'
+									}`}
 									key={index}
 									link={link}
 									disable={!link}
 									type={social}
 									iconClassName={`text-lg ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6] dark:text-[#424141]'}`}
-
 								/>
 							);
-						})
-					}
+						})}
+					</div>
 				</div>
 			</div>
-		</div>
-
-		{!isSearch && <div className='flex gap-2.5 text-pink_primary'>
-			<Tooltip
-				title='Coming Soon' key={1} color='linear-gradient(0deg, #5A46FF, #5A46FF), linear-gradient(0deg, #AD00FF, #AD00FF), linear-gradient(0deg, #407BFF, #407BFF), #FFFFFF'>
-				<MessengerIcon/>
-			</Tooltip>
-			<span>
-				{username === userProfile.username && <Button onClick={() => setOpenEditModal(true)} className='text-pink_primary dark:bg-transparent border-[1px] border-solid border-pink_primary h-[40px] w-[87px] max-lg:w-auto font-medium'>
-					<EditIcon className='text-pink_primary text-[14px] tracking-wide ' />
-					<span className='max-md:hidden'>
-					Edit
+			{!isSearch && (
+				<div className='flex gap-2.5 text-pink_primary'>
+					<Tooltip
+						title='Coming Soon'
+						key={1}
+						color='linear-gradient(0deg, #5A46FF, #5A46FF), linear-gradient(0deg, #AD00FF, #AD00FF), linear-gradient(0deg, #407BFF, #407BFF), #FFFFFF'
+					>
+						<MessengerIcon />
+					</Tooltip>
+					<span>
+						{username === userProfile.username && (
+							<Button
+								onClick={() => setOpenEditModal(true)}
+								className='h-[40px] w-[87px] border-[1px] border-solid border-pink_primary font-medium text-pink_primary dark:bg-transparent max-lg:w-auto'
+							>
+								<EditIcon className='text-[14px] tracking-wide text-pink_primary ' />
+								<span className='max-md:hidden'>Edit</span>
+							</Button>
+						)}
 					</span>
-				</Button>
-				}
-			</span>
-		</div>}
-		{openEditModal  && username === userProfile.username &&
-				<EditProfileModal openModal={openEditModal} setOpenModal={setOpenEditModal} data={profileDetails} setProfileDetails={setProfileDetails}/>
-		}
-	</div> : <div className='p-6'><Skeleton/></div>);
+				</div>
+			)}
+			{openEditModal && username === userProfile.username && (
+				<EditProfileModal
+					openModal={openEditModal}
+					setOpenModal={setOpenEditModal}
+					data={profileDetails}
+					setProfileDetails={setProfileDetails}
+				/>
+			)}
+		</div>
+	) : (
+		<div className='p-6'>
+			<Skeleton />
+		</div>
+	);
 };
 export default DelegationProfile;

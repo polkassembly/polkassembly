@@ -17,6 +17,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 const ZERO = new BN(0);
 
+<<<<<<< HEAD
 interface Props{
   tally: any;
   onchainId?: number | string | null;
@@ -28,10 +29,22 @@ interface Props{
 }
 
 const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType, votesData, theme }:Props) => {
+=======
+interface Props {
+	tally: any;
+	onchainId?: number | string | null;
+	status?: string | null;
+	proposalType?: ProposalType | string;
+	index: number;
+	votesData: any;
+}
+
+const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType, votesData }: Props) => {
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	const { network } = useNetworkContext();
-	const  { api, apiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const [tallyData, setTallyData] = useState({
-		ayes: ZERO ,
+		ayes: ZERO,
 		nays: ZERO
 	});
 	const trailColor = theme === 'dark' ? 'transparent' : (((index % 2) === 0) ? '#fbfbfc' : 'white');
@@ -41,20 +54,22 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 		nays: 0
 	});
 	const { ayes, nays } = tallyAyeNayVotes;
-	const bnToIntBalance = function (bn: BN): number{
+	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
-	const usingTallyForAyeNayVotes = [getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS), ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as TSubsquidProposalType );
+	const usingTallyForAyeNayVotes = [getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS), ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(
+		proposalType as TSubsquidProposalType
+	);
 
-	const ayeVotesNumber = ( usingTallyForAyeNayVotes) ? (ayes) : bnToIntBalance(tallyData.ayes || ZERO);
-	const totalVotesNumber = ( usingTallyForAyeNayVotes) ? (ayes + nays) : bnToIntBalance(tallyData.ayes?.add(tallyData.nays|| ZERO) || ZERO);
-	const ayePercent = ayeVotesNumber/totalVotesNumber*100;
+	const ayeVotesNumber = usingTallyForAyeNayVotes ? ayes : bnToIntBalance(tallyData.ayes || ZERO);
+	const totalVotesNumber = usingTallyForAyeNayVotes ? ayes + nays : bnToIntBalance(tallyData.ayes?.add(tallyData.nays || ZERO) || ZERO);
+	const ayePercent = (ayeVotesNumber / totalVotesNumber) * 100;
 	const nayPercent = 100 - ayePercent;
 	const isAyeNaN = isNaN(ayePercent);
 	const isNayNaN = isNaN(nayPercent);
-	const getReferendumVoteInfo = async() => {
-		if(!onchainId || !votesData) return;
+	const getReferendumVoteInfo = async () => {
+		if (!onchainId || !votesData) return;
 		if (network === 'cere') {
 			(async () => {
 				const res = await fetchSubsquid({
@@ -104,13 +119,13 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 				}
 			})();
 			setLoading(false);
-		}else if( votesData && !votesData.error && votesData.data) {
+		} else if (votesData && !votesData.error && votesData.data) {
 			setLoading(true);
 
 			const info = votesData.data;
 
 			const voteInfo = {
-				ayes : ZERO,
+				ayes: ZERO,
 				nays: ZERO
 			};
 
@@ -122,36 +137,33 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 		}
 	};
 
-	const getReferendumV2VoteInfo = async() => {
-		if( !api || !apiReady || !status || !network ) return;
+	const getReferendumV2VoteInfo = async () => {
+		if (!api || !apiReady || !status || !network) return;
 
-		if(usingTallyForAyeNayVotes){
+		if (usingTallyForAyeNayVotes) {
 			setLoading(false);
 			setTallyAyeNayVotes({
 				ayes: Number(tally?.ayes),
 				nays: Number(tally?.nays)
 			});
-		}else if([ProposalType.COMMUNITY_PIPS].includes(proposalType as ProposalType)){
+		} else if ([ProposalType.COMMUNITY_PIPS].includes(proposalType as ProposalType)) {
 			const pipId = onchainId;
-			const voteInfo:any = await api.query.pips.proposalResult(pipId).then((data) => data.toJSON());
-			if(voteInfo){
-
+			const voteInfo: any = await api.query.pips.proposalResult(pipId).then((data) => data.toJSON());
+			if (voteInfo) {
 				setTallyData({
-					ayes: new BN( voteInfo.ayesStake) || ZERO,
+					ayes: new BN(voteInfo.ayesStake) || ZERO,
 					nays: new BN(voteInfo.naysStake) || ZERO
 				});
 			}
 			setLoading(false);
-		}
-
-		else{
+		} else {
 			setLoading(true);
 			formatBalance.setDefaults({
 				decimals: chainProperties[network].tokenDecimals,
 				unit: chainProperties[network].tokenSymbol
 			});
 
-			if(['confirmed', 'executed', 'timedout', 'cancelled', 'rejected'].includes(status.toLowerCase())){
+			if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected'].includes(status.toLowerCase())) {
 				setTallyData({
 					ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
 					nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0)
@@ -165,8 +177,14 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 				const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 				if (parsedReferendumInfo?.ongoing?.tally) {
 					setTallyData({
-						ayes: typeof parsedReferendumInfo.ongoing.tally.ayes === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex') : new BN(parsedReferendumInfo.ongoing.tally.ayes),
-						nays: typeof parsedReferendumInfo.ongoing.tally.nays === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex') : new BN(parsedReferendumInfo.ongoing.tally.nays)
+						ayes:
+							typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+								? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
+								: new BN(parsedReferendumInfo.ongoing.tally.ayes),
+						nays:
+							typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+								? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
+								: new BN(parsedReferendumInfo.ongoing.tally.nays)
 					});
 				} else {
 					setTallyData({
@@ -180,33 +198,78 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 	};
 
 	useEffect(() => {
-		if(proposalType === ProposalType.REFERENDUMS && network !== 'polymesh'){
+		if (proposalType === ProposalType.REFERENDUMS && network !== 'polymesh') {
 			getReferendumVoteInfo();
-		}
-		else{
+		} else {
 			(async () => {
 				await getReferendumV2VoteInfo();
 			})();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, votesData]);
 
-	return loading ? <Skeleton.Button active={loading}/>
-		: <>
+	return loading ? (
+		<Skeleton.Button active={loading} />
+	) : (
+		<>
 			<div className='max-sm:hidden'>
-				<Tooltip color='#575255' overlayClassName='max-w-none' title={<div className={`flex flex-col whitespace-nowrap text-xs gap-1 p-1.5 ${poppins.className} ${poppins.variable}`}>
-					<span>Aye = {usingTallyForAyeNayVotes ? ayes : formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%) </span>
-					<span>Nay = {usingTallyForAyeNayVotes ? nays  : formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isNayNaN ? 50 : nayPercent).toFixed(2)}%) </span>
-				</div>}>
+				<Tooltip
+					color='#575255'
+					overlayClassName='max-w-none'
+					title={
+						<div className={`flex flex-col gap-1 whitespace-nowrap p-1.5 text-xs ${poppins.className} ${poppins.variable}`}>
+							<span>
+								Aye ={' '}
+								{usingTallyForAyeNayVotes
+									? ayes
+									: formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}{' '}
+								({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%){' '}
+							</span>
+							<span>
+								Nay ={' '}
+								{usingTallyForAyeNayVotes
+									? nays
+									: formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}{' '}
+								({(isNayNaN ? 50 : nayPercent).toFixed(2)}%){' '}
+							</span>
+						</div>
+					}
+				>
 					<div>
+<<<<<<< HEAD
 						<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={trailColor} />
+=======
+						<Progress
+							size={30}
+							percent={50}
+							success={{ percent: (isAyeNaN ? 50 : ayePercent) / 2 }}
+							type='circle'
+							className='progress-rotate mt-3'
+							gapPosition='bottom'
+							strokeWidth={16}
+							trailColor={index % 2 === 0 ? '#fbfbfc' : 'white'}
+						/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					</div>
 				</Tooltip>
 			</div>
 			<div className='sm:hidden'>
+<<<<<<< HEAD
 				<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={trailColor} />
+=======
+				<Progress
+					size={30}
+					percent={50}
+					success={{ percent: (isAyeNaN ? 50 : ayePercent) / 2 }}
+					type='circle'
+					className='progress-rotate mt-3'
+					gapPosition='bottom'
+					strokeWidth={16}
+					trailColor={index % 2 === 0 ? '#fbfbfc' : 'white'}
+				/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			</div>
 		</>
-	;
+	);
 };
 export default VotesProgressInListing;

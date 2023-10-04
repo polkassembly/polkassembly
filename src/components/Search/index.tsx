@@ -40,13 +40,13 @@ const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 export const algolia_client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
 
-export const allowedNetwork = ['KUSAMA', 'POLKADOT', 'POLKADEX','CERE'];
+export const allowedNetwork = ['KUSAMA', 'POLKADOT', 'POLKADEX', 'CERE'];
 
 const AUTOCOMPLETE_INDEX_LIMIT = 5;
 
 interface IAutocompleteResults {
-	posts: {[index: string]: any}[],
-	users: {[index: string]: any}[]
+	posts: { [index: string]: any }[];
+	users: { [index: string]: any }[];
 }
 
 const initAutocompleteResults: IAutocompleteResults = {
@@ -54,45 +54,43 @@ const initAutocompleteResults: IAutocompleteResults = {
 	users: []
 };
 
-interface Props{
-  className?: string;
-  openModal: boolean;
-  setOpenModal: (pre: boolean) => void;
-  isSuperSearch: boolean;
-  setIsSuperSearch: ( pre: boolean) => void;
+interface Props {
+	className?: string;
+	openModal: boolean;
+	setOpenModal: (pre: boolean) => void;
+	isSuperSearch: boolean;
+	setIsSuperSearch: (pre: boolean) => void;
 }
 
 export enum EFilterBy {
-  Referenda = 'on-chain-posts',
-  People = 'people',
-  Discussions = 'off-chain-posts'
+	Referenda = 'on-chain-posts',
+	People = 'people',
+	Discussions = 'off-chain-posts'
 }
 
 export enum EMultipleCheckFilters {
-  Tracks = 'track',
-  Tags = 'tags',
-  Topic = 'topic',
-  Chain = 'chains'
+	Tracks = 'track',
+	Tags = 'tags',
+	Topic = 'topic',
+	Chain = 'chains'
 }
 
 export enum EDateFilter {
-  Today = 'today',
-  Last_7_days = 'last_7_days',
-  Last_30_days = 'last_30_days' ,
-  Last_3_months = 'last_3_months',
+	Today = 'today',
+	Last_7_days = 'last_7_days',
+	Last_30_days = 'last_30_days',
+	Last_3_months = 'last_3_months'
 }
 
-const gov1Tracks =['tips','council_motions','bounties','child_bounties','treasury_proposals','democracy_proposals','tech_committee_proposals','referendums'];
-const getTrackNameFromId = (network: string, trackId: number ) => {
-
+const gov1Tracks = ['tips', 'council_motions', 'bounties', 'child_bounties', 'treasury_proposals', 'democracy_proposals', 'tech_committee_proposals', 'referendums'];
+const getTrackNameFromId = (network: string, trackId: number) => {
 	let trackName = '';
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
-		if(value?.trackId === trackId && !value?.fellowshipOrigin){
+		if (value?.trackId === trackId && !value?.fellowshipOrigin) {
 			trackName = value?.name;
 		}
-	}
-	);
+	});
 	return trackName;
 };
 
@@ -107,19 +105,19 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const [finalSearchInput, setFinalSearchInput] = useState<string>('');
 	const [filterBy, setFilterBy] = useState<EFilterBy>(EFilterBy.Referenda);
 	const [dateFilter, setDateFilter] = useState<EDateFilter | null>(null);
-	const [selectedTags, setSelectedTags] =  useState<string[]>([]);
+	const [selectedTags, setSelectedTags] = useState<string[]>([]);
 	const [selectedOpengovTracks, setSelectedOpengovTracks] = useState<CheckboxValueType[]>([]);
 	const [selectedGov1Tracks, setSelectedGov1Tracks] = useState<CheckboxValueType[]>([]);
 	const [selectedTopics, setSelectedTopics] = useState<CheckboxValueType[]>([]);
 	const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
 	const [peopleResults, setPeopleResults] = useState<any[] | null>(null);
-	const [onchainPostResults, setOnchainPostResults] = useState<{data: any[] , total:number} | null>(null);
-	const [offchainPostResults, setOffchainPostResults] = useState<{data: any[] , total:number} | null>(null);
+	const [onchainPostResults, setOnchainPostResults] = useState<{ data: any[]; total: number } | null>(null);
+	const [offchainPostResults, setOffchainPostResults] = useState<{ data: any[]; total: number } | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const topicOptions: string[] = [];
 	const [peoplePage, setPeoplePage] = useState({ page: 1, totalPeople: 0 });
 	const [postsPage, setPostsPage] = useState(1);
-	const [openFilter, setOpenFilter] = useState<{ date: boolean , topic: boolean, track: boolean }>({ date: false , topic: false, track: false });
+	const [openFilter, setOpenFilter] = useState<{ date: boolean; topic: boolean; track: boolean }>({ date: false, topic: false, track: false });
 	const [searchInputErr, setSearchInputErr] = useState({ clicked: false, err: false });
 	const [autoCompleteResults, setAutoCompleteResults] = useState<IAutocompleteResults>(initAutocompleteResults);
 	const [isFilter, setIsFilter] = useState<boolean>(false);
@@ -127,12 +125,11 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 	Object.keys(post_topic).map((topic) => topicOptions.push(topicToOptionText(topic)));
 
-	const openGovTracks: { name: string; trackId: number; }[] = [];
+	const openGovTracks: { name: string; trackId: number }[] = [];
 
 	if (networkTrackInfo?.[network]) {
-		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) =>
-		{
-			if(!value.fellowshipOrigin){
+		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
+			if (!value.fellowshipOrigin) {
 				openGovTracks.push({ name: key === 'root' ? 'Root' : value?.name, trackId: value?.trackId });
 			}
 		});
@@ -141,79 +138,85 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const getFacetFileters = (filterBy?: EFilterBy) => {
 		const postTypeFilter = [];
 
-		if(filterBy === EFilterBy.Referenda){
-			postTypeFilter.push([`post_type:-${ProposalType.DISCUSSIONS}`],[`post_type:-${ProposalType.GRANTS}`]);
-			if(selectedGov1Tracks.length > 0 ){
-				postTypeFilter.push(...selectedGov1Tracks.map((track) => [`post_type:${track}`] ));
+		if (filterBy === EFilterBy.Referenda) {
+			postTypeFilter.push([`post_type:-${ProposalType.DISCUSSIONS}`], [`post_type:-${ProposalType.GRANTS}`]);
+			if (selectedGov1Tracks.length > 0) {
+				postTypeFilter.push(...selectedGov1Tracks.map((track) => [`post_type:${track}`]));
 			}
-		}else if(filterBy === EFilterBy.Discussions){
-			postTypeFilter.push([`post_type:${ProposalType.DISCUSSIONS}`,`post_type:${ProposalType.GRANTS}`]);
+		} else if (filterBy === EFilterBy.Discussions) {
+			postTypeFilter.push([`post_type:${ProposalType.DISCUSSIONS}`, `post_type:${ProposalType.GRANTS}`]);
 		}
 		const tracksFilter = [
-			(isOpenGovSupported(network)|| isSuperSearch) && filterBy !== EFilterBy.Discussions ?  selectedOpengovTracks.map((trackId) => `track_number:${Number(trackId)}`) : []
+			(isOpenGovSupported(network) || isSuperSearch) && filterBy !== EFilterBy.Discussions ? selectedOpengovTracks.map((trackId) => `track_number:${Number(trackId)}`) : []
 		];
 
-		return  [
+		return [
 			...postTypeFilter,
 			...tracksFilter,
-			!isSuperSearch ? [`network:${network}`] : selectedNetworks.length > 0 ? selectedNetworks.map((networkStr) => `network:${(networkStr).toLowerCase()}`) : allowedNetwork.map((networkStr) => `network:${(networkStr).toLowerCase()}`),
-			selectedTags.map((tag) => { return `tags:${tag}`;}),
-			selectedTopics.map((topic) => `topic_id:${post_topic[optionTextToTopic(String(topic)) as keyof typeof post_topic]}`)];
+			!isSuperSearch
+				? [`network:${network}`]
+				: selectedNetworks.length > 0
+				? selectedNetworks.map((networkStr) => `network:${networkStr.toLowerCase()}`)
+				: allowedNetwork.map((networkStr) => `network:${networkStr.toLowerCase()}`),
+			selectedTags.map((tag) => {
+				return `tags:${tag}`;
+			}),
+			selectedTopics.map((topic) => `topic_id:${post_topic[optionTextToTopic(String(topic)) as keyof typeof post_topic]}`)
+		];
 	};
 
 	const getDateFilter = () => {
-		if(!dateFilter) return '';
+		if (!dateFilter) return '';
 
 		const currentDate = dayjs(); // Get the current date
 
-		function getPreviousDate(day: number){
+		function getPreviousDate(day: number) {
 			return currentDate.subtract(day, 'day').unix();
 		}
 
-		switch (dateFilter){
-		case EDateFilter.Today:
-			return `created_at:${currentDate.unix()} TO ${currentDate.unix()}`;
-		case EDateFilter.Last_7_days:
-			return `created_at:${currentDate.unix()} TO ${getPreviousDate(7)}`;
-		case EDateFilter.Last_30_days:
-			return `created_at:${currentDate.unix()} TO ${getPreviousDate(30)}`;
-		case EDateFilter.Last_3_months:
-			return `created_at:${currentDate.unix()} TO ${getPreviousDate(91)}`;
+		switch (dateFilter) {
+			case EDateFilter.Today:
+				return `created_at:${currentDate.unix()} TO ${currentDate.unix()}`;
+			case EDateFilter.Last_7_days:
+				return `created_at:${currentDate.unix()} TO ${getPreviousDate(7)}`;
+			case EDateFilter.Last_30_days:
+				return `created_at:${currentDate.unix()} TO ${getPreviousDate(30)}`;
+			case EDateFilter.Last_3_months:
+				return `created_at:${currentDate.unix()} TO ${getPreviousDate(91)}`;
 		}
-
 	};
 
 	const getpeopleDatawithAddress = (addressData: any[], postsData: any[]) => {
-		if(!addressData || !postsData) return;
-		const results = postsData?.map((people: any) =>
-		{
+		if (!addressData || !postsData) return;
+		const results = postsData?.map((people: any) => {
 			let result = people;
-			for(const data of addressData){
-				if(Number(data?.objectID) === Number(data?.objectID) && data?.default){
+			for (const data of addressData) {
+				if (Number(data?.objectID) === Number(data?.objectID) && data?.default) {
 					result = { ...people, defaultAddress: data?.address || '' };
 				}
-
 			}
 			return result;
-		}
-		);
+		});
 		setPeopleResults(results);
 	};
 
-	const getDefaultAddress= async(data: any[]) => {
-		if(!addressIndex) return ;
+	const getDefaultAddress = async (data: any[]) => {
+		if (!addressIndex) return;
 
 		const userIds = data.map((people: any) => `user_id:${Number(people?.objectID)}`);
 
-		addressIndex.search('', { facetFilters: userIds, hitsPerPage: LISTING_LIMIT  }).then(({ hits }) => {
-			getpeopleDatawithAddress(hits, data);
-		}).catch((err) => {
-			console.log(err);
-		});
+		addressIndex
+			.search('', { facetFilters: userIds, hitsPerPage: LISTING_LIMIT })
+			.then(({ hits }) => {
+				getpeopleDatawithAddress(hits, data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 
-	const getResultData = async() => {
-		if(finalSearchInput.length <= 2 || !userIndex || !postIndex ){
+	const getResultData = async () => {
+		if (finalSearchInput.length <= 2 || !userIndex || !postIndex) {
 			setLoading(false);
 			return;
 		}
@@ -222,45 +225,70 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		setLoading(true);
 
 		//onchain data
-		await postIndex.search(finalSearchInput, { facetFilters : getFacetFileters(EFilterBy.Referenda), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage-1 }).then(({ hits, nbHits }) => {
-			setOnchainPostResults({ data: hits, total: nbHits });
-		}).catch((error) => {
-			console.log(error);
-			setLoading(false);
-		});
+		await postIndex
+			.search(finalSearchInput, { facetFilters: getFacetFileters(EFilterBy.Referenda), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage - 1 })
+			.then(({ hits, nbHits }) => {
+				setOnchainPostResults({ data: hits, total: nbHits });
+			})
+			.catch((error) => {
+				console.log(error);
+				setLoading(false);
+			});
 
 		//ofchain data
-		await postIndex.search(finalSearchInput, { facetFilters : getFacetFileters(EFilterBy.Discussions), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage-1 }).then(({ hits, nbHits }) => {
-			setOffchainPostResults({ data: hits, total: nbHits });
-		}).catch((error) => {
-			console.log(error);
-			setLoading(false);
-		});
+		await postIndex
+			.search(finalSearchInput, { facetFilters: getFacetFileters(EFilterBy.Discussions), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage - 1 })
+			.then(({ hits, nbHits }) => {
+				setOffchainPostResults({ data: hits, total: nbHits });
+			})
+			.catch((error) => {
+				console.log(error);
+				setLoading(false);
+			});
 
 		//people data
-		await userIndex.search(finalSearchInput, { hitsPerPage: LISTING_LIMIT, page: peoplePage.page-1 }).then(({ hits, nbHits }) => {
-			setPeoplePage({ ...peoplePage, totalPeople: nbHits });
-			setPeopleResults(hits);
-			getDefaultAddress(hits);
-
-		}).catch((error) => {
-			console.log(error);
-			setLoading(false);
-		});
+		await userIndex
+			.search(finalSearchInput, { hitsPerPage: LISTING_LIMIT, page: peoplePage.page - 1 })
+			.then(({ hits, nbHits }) => {
+				setPeoplePage({ ...peoplePage, totalPeople: nbHits });
+				setPeopleResults(hits);
+				getDefaultAddress(hits);
+			})
+			.catch((error) => {
+				console.log(error);
+				setLoading(false);
+			});
 
 		setLoading(false);
-
 	};
 
 	useEffect(() => {
-
-		(Boolean(dateFilter) || selectedGov1Tracks.length > 0 || (filterBy === EFilterBy.Discussions ? false : selectedOpengovTracks.length > 0) || selectedTags.length > 0 ||  selectedTopics.length > 0 || (isSuperSearch ? selectedNetworks.length > 0 : false)) ? setIsFilter(true) : setIsFilter(false);
-		if(finalSearchInput.length > 2 && !searchInputErr.err){
+		Boolean(dateFilter) ||
+		selectedGov1Tracks.length > 0 ||
+		(filterBy === EFilterBy.Discussions ? false : selectedOpengovTracks.length > 0) ||
+		selectedTags.length > 0 ||
+		selectedTopics.length > 0 ||
+		(isSuperSearch ? selectedNetworks.length > 0 : false)
+			? setIsFilter(true)
+			: setIsFilter(false);
+		if (finalSearchInput.length > 2 && !searchInputErr.err) {
 			setLoading(true);
 			getResultData();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[finalSearchInput, selectedTags, selectedTopics, peoplePage.page, postsPage, isSuperSearch, selectedNetworks, selectedGov1Tracks, selectedOpengovTracks, dateFilter, searchInputErr.err]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [
+		finalSearchInput,
+		selectedTags,
+		selectedTopics,
+		peoplePage.page,
+		postsPage,
+		isSuperSearch,
+		selectedNetworks,
+		selectedGov1Tracks,
+		selectedOpengovTracks,
+		dateFilter,
+		searchInputErr.err
+	]);
 
 	const handleClearFilters = (close?: boolean) => {
 		setIsFilter(false);
@@ -284,27 +312,31 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	};
 
 	const getAutoCompleteData = async (queryStr: string) => {
-		if(!queryStr) {
+		if (!queryStr) {
 			setAutoCompleteResults({ posts: [], users: [] });
 			return;
 		}
 
-		const postResults = await postIndex.search(queryStr, {
-			facetFilters: getFacetFileters(filterBy),
-			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
-			highlightPreTag:'<mark>',
-			highlightPostTag:'</mark>',
-			page: 0,
-			restrictSearchableAttributes: ['title', 'parsed_content']
-		}).catch((error) => console.log('Posts autocomplete fetch error: ', error));
+		const postResults = await postIndex
+			.search(queryStr, {
+				facetFilters: getFacetFileters(filterBy),
+				hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
+				highlightPreTag: '<mark>',
+				highlightPostTag: '</mark>',
+				page: 0,
+				restrictSearchableAttributes: ['title', 'parsed_content']
+			})
+			.catch((error) => console.log('Posts autocomplete fetch error: ', error));
 
-		const userResults = await userIndex.search(queryStr, {
-			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
-			page: 0,
-			highlightPreTag:'<mark>',
-			highlightPostTag:'</mark>',
-			restrictSearchableAttributes: ['username', 'profile.bio', 'profile.title']
-		}).catch((error) => console.log('Users autocomplete fetch error: ', error));
+		const userResults = await userIndex
+			.search(queryStr, {
+				hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
+				page: 0,
+				highlightPreTag: '<mark>',
+				highlightPostTag: '</mark>',
+				restrictSearchableAttributes: ['username', 'profile.bio', 'profile.title']
+			})
+			.catch((error) => console.log('Users autocomplete fetch error: ', error));
 
 		setAutoCompleteResults({ posts: postResults?.hits || [], users: userResults?.hits || [] });
 	};
@@ -314,14 +346,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 	const handleSearchOnChange = async (queryStr: string) => {
 		setSearchInput(queryStr);
-		setSearchInputErr({ ...searchInputErr, clicked:false });
+		setSearchInputErr({ ...searchInputErr, clicked: false });
 
-		if(autoCompleteResults.posts.length || autoCompleteResults.users.length){
+		if (autoCompleteResults.posts.length || autoCompleteResults.users.length) {
 			setAutoCompleteResults(initAutocompleteResults);
-		}else {
+		} else {
 			debouncedAutoCompleteFn(queryStr);
 		}
-
 	};
 
 	function getMatchedWordsLength(hitObject: any) {
@@ -340,7 +371,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		return str.replace(/<[^>]+>|\n|<br\s*\/?>|[*_~`]|(?:^|\s)#\S+|!\[.*?\]\(.*?\)|\[.*?\]\(.*?\)/g, '');
 	};
 
-	const getAutocompleteMarkedText = (highlightResult: {[index: string]: any}) => {
+	const getAutocompleteMarkedText = (highlightResult: { [index: string]: any }) => {
 		const keysToCheck = ['parsed_content', 'title', 'profile', 'username'];
 		let maxMatchedWordsLength = 0;
 		let maxMatchedWordsObject = null;
@@ -375,14 +406,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	};
 
 	const handleSearchSubmit = () => {
-		if(loading) return;
+		if (loading) return;
 		setJustStart(false);
 		setAutoCompleteResults(initAutocompleteResults);
-		if(searchInput?.trim().length > 2){
+		if (searchInput?.trim().length > 2) {
 			setFinalSearchInput(searchInput?.trim());
 			setSearchInputErr({ err: false, clicked: true });
-		}
-		else if(searchInput?.trim().length <= 2) {
+		} else if (searchInput?.trim().length <= 2) {
 			setOnchainPostResults(null);
 			setOffchainPostResults(null);
 			setPeopleResults([]);
@@ -390,7 +420,6 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		}
 		setPeoplePage({ page: 1, totalPeople: 0 });
 		setPostsPage(1);
-
 	};
 
 	const sortedAutoCompleteResults = useMemo(() => {
@@ -399,7 +428,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			const bMatchedWordsLength = getMatchedWordsLength(b);
 			return aMatchedWordsLength - bMatchedWordsLength;
 		});
-	},[autoCompleteResults]);
+	}, [autoCompleteResults]);
 
 	const dedupedSortedAutoCompleteResults = useMemo(() => {
 		const dedupedResults = [];
@@ -420,16 +449,16 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				}
 			}
 
-			if(!isDuplicate) {
+			if (!isDuplicate) {
 				dedupedResults.push(item);
 			}
-
 		}
 
 		return dedupedResults;
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[sortedAutoCompleteResults]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sortedAutoCompleteResults]);
 
+<<<<<<< HEAD
 	return <Modal
 		title={<label className={'text-blue-light-high dark:text-blue-dark-high dark:bg-black text-xl font-semibold flex flex-wrap search gap-1'}>{isSuperSearch ? <span className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><span className='supersearch'><LeftArrow className='mr-2'/></span> {'Super Search'} </span> : 'Search'}{finalSearchInput.length > 0 && ` Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
@@ -572,41 +601,457 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<span className='flex flex-wrap'>
 							{selectedOpengovTracks?.map((trackId, index) => <span key={index} className="capitalize">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedOpengovTracks.length - 1 && ', '} </span> )}
 							{selectedGov1Tracks.map((track, index) => <span key={index} className="capitalize flex flex-shrink-0"> {selectedOpengovTracks.length > 0 && ', '}{ (track as string)?.split('_')?.join(' ')}{index !== selectedGov1Tracks.length - 1 && ', '} </span>)}
+=======
+	return (
+		<Modal
+			title={
+				<label className={'search flex flex-wrap gap-1 text-xl font-semibold text-bodyBlue'}>
+					{isSuperSearch ? (
+						<span
+							className='flex cursor-pointer items-center'
+							onClick={() => {
+								setIsSuperSearch(false);
+								setPostsPage(1);
+								setPeoplePage({ page: 1, totalPeople: 0 });
+							}}
+						>
+							<span className='supersearch'>
+								<LeftArrow className='mr-2' />
+							</span>{' '}
+							{'Super Search'}{' '}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</span>
-					</div>}
-					{selectedTopics.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
-						<span className='text-pink_primary'>Topics:</span>
-						<span className='flex flex-wrap'>{selectedTopics.map((topic, index) => <span key={index} className="capitalize flex flex-shrink-0"> {topic}{(selectedTopics.length - 1) !== index && ', '}</span>)}</span>
-					</div>}
+					) : (
+						'Search'
+					)}
+					{finalSearchInput.length > 0 && ` Results for "${finalSearchInput}"`}
+				</label>
+			}
+			open={openModal}
+			onCancel={() => handleClearFilters(true)}
+			footer={false}
+			className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} `}
+			closeIcon={<CloseIcon />}
+		>
+			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
+				<Input
+					className='placeholderColor mt-2 h-[40px] rounded-[4px] border-pink_primary text-bodyBlue'
+					type='search'
+					value={searchInput}
+					onChange={(e) => handleSearchOnChange(e.target.value)}
+					allowClear={{ clearIcon: <InputClearIcon /> }}
+					placeholder='Type here to search for something'
+					onPressEnter={handleSearchSubmit}
+					addonAfter={
+						<div
+							onClick={handleSearchSubmit}
+							className={`text-[18px] tracking-[0.02em] text-white  ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+						>
+							<SearchOutlined />
+						</div>
+					}
+				/>
+
+				{/* Autocomplete results */}
+				{(autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && !searchInputErr?.err && !searchInputErr.clicked && (
+					<section className='absolute z-50 w-[94.3%] rounded-b-[4px] border-[1px] border-solid border-gray-200 bg-white max-md:w-[85.7%]'>
+						{/* Posts List */}
+						<List
+							size='small'
+							dataSource={dedupedSortedAutoCompleteResults}
+							className='listing'
+							renderItem={(item) => {
+								const isPost = 'post_type' in item;
+								const str = getAutocompleteMarkedText(item._highlightResult) || 'No title';
+								const cleanStr = getCleanString(str);
+
+								return (
+									<List.Item
+										className='flex flex-wrap justify-start whitespace-nowrap hover:cursor-pointer hover:bg-[#FEF2F8] '
+										onClick={() => {
+											setFilterBy(!isPost ? EFilterBy.People : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
+											handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
+											setFinalSearchInput(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
+										}}
+									>
+										<Markdown
+											className='flex flex-wrap hover:text-pink_primary max-md:truncate'
+											md={str}
+											isAutoComplete
+										/>
+										<span className='mx-2 text-[9px] text-gray-400'>&#9679;</span>
+										<span className='text-xs text-gray-500'>{isPost ? 'in Posts' : 'in People'}</span>
+									</List.Item>
+								);
+							}}
+						/>
+					</section>
+				)}
+				<div className={`radio-btn mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2'}`}>
+					<Radio.Group
+						disabled={finalSearchInput.length === 0 && justStart}
+						onChange={(e: RadioChangeEvent) => {
+							setFilterBy(e.target.value);
+							setPostsPage(1);
+							setPeoplePage({ ...peoplePage, page: 1 });
+						}}
+						value={filterBy}
+						className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-sm:flex-wrap`}
+					>
+						<Radio
+							value={finalSearchInput.length > 0 && EFilterBy.Referenda}
+							className={`rounded-[24px] py-1.5 text-xs font-medium ${
+								filterBy === EFilterBy.Referenda && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue md:px-2' : 'text-[#667589]'
+							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
+						>
+							Referenda {finalSearchInput.length > 0 && `(${onchainPostResults?.total || 0})`}
+						</Radio>
+						<Radio
+							value={EFilterBy.People}
+							className={`rounded-[24px] py-1.5 text-xs font-medium ${
+								filterBy === EFilterBy.People && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue md:px-2' : 'text-[#667589]'
+							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
+						>
+							People {finalSearchInput.length > 0 && `(${peoplePage.totalPeople || 0})`}
+						</Radio>
+						<Radio
+							value={EFilterBy.Discussions}
+							className={`rounded-[24px] py-1.5 text-xs font-medium ${
+								filterBy === EFilterBy.Discussions && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue md:px-2' : 'text-[#667589]'
+							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
+						>
+							Discussions {finalSearchInput.length > 0 && `(${offchainPostResults?.total || 0})`}
+						</Radio>
+					</Radio.Group>
+					{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && (
+						<div className='flex gap-3.5 text-xs font-medium tracking-[0.02em] text-[#667589] max-md:gap-1.5 max-md:px-0'>
+							{isSuperSearch && (
+								<NetworkDropdown
+									setSidedrawer={() => {}}
+									isSmallScreen={true}
+									isSearch={true}
+									setSelectedNetworks={setSelectedNetworks}
+									selectedNetworks={selectedNetworks}
+									allowedNetwork={allowedNetwork}
+								/>
+							)}
+
+							<Popover
+								open={openFilter.date}
+								onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, date: !openFilter.date })}
+								content={
+									<div className='flex flex-col gap-1'>
+										<Radio.Group
+											size='large'
+											onChange={(e: RadioChangeEvent) => setDateFilter(e.target.value)}
+											value={dateFilter}
+											className={`flex flex-col gap-[1px] ${poppins.variable} ${poppins.className}`}
+										>
+											<Radio
+												value={EDateFilter.Today}
+												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Today ? 'text-bodyBlue' : 'text-[#667589]'}`}
+											>
+												Today
+											</Radio>
+											<Radio
+												value={EDateFilter.Last_7_days}
+												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_7_days ? 'text-bodyBlue' : 'text-[#667589]'}`}
+											>
+												Last 7 days
+											</Radio>
+											<Radio
+												value={EDateFilter.Last_30_days}
+												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_30_days ? 'text-bodyBlue' : 'text-[#667589]'}`}
+											>
+												Last 30 days
+											</Radio>
+											<Radio
+												value={EDateFilter.Last_3_months}
+												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_3_months ? 'text-bodyBlue' : 'text-[#667589]'}`}
+											>
+												Last 3 months
+											</Radio>
+											<Radio
+												value={null}
+												className={`py-1.5 text-xs font-normal ${!dateFilter ? 'text-bodyBlue' : 'text-[#667589]'}`}
+											>
+												All time
+											</Radio>
+										</Radio.Group>
+									</div>
+								}
+								placement='bottomLeft'
+							>
+								<div
+									className={`flex items-center justify-center text-xs ${openFilter.date && 'text-pink_primary'} ${
+										finalSearchInput.length === 0 ? 'cursor-not-allowed text-[#B5BFCC]' : 'cursor-pointer'
+									} max-sm:text-[10px]`}
+								>
+									Date
+									<span className='text-[#96A4B6]'>
+										{openFilter.date ? <HighlightDownOutlined className='max-md-ml-1 ml-2.5 mt-1' /> : <DownOutlined className='max-md-ml-1 ml-2.5 mt-1' />}
+									</span>
+								</div>
+							</Popover>
+
+							<FilterByTags
+								clearTags={!isFilter}
+								isSearch={true}
+								setSelectedTags={setSelectedTags}
+								disabled={finalSearchInput.length === 0}
+							/>
+
+							{filterBy === EFilterBy.Referenda && (
+								<Popover
+									rootClassName='track-popover'
+									open={openFilter.track}
+									onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, track: !openFilter.track })}
+									content={
+										<Collapse
+											collapsible='header'
+											className={`${poppins.className} ${poppins.variable} cursor-pointer`}
+										>
+											<Collapse.Panel
+												key={1}
+												header='Gov1'
+												className='cursor-pointer'
+											>
+												<Checkbox.Group
+													className={`checkboxStyle flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em] ${poppins.className} ${poppins.variable}`}
+													onChange={(list) => setSelectedGov1Tracks(list)}
+													value={selectedGov1Tracks}
+												>
+													{gov1Tracks &&
+														gov1Tracks?.map((track) => (
+															<Checkbox
+																key={track}
+																value={track}
+																className={`ml-0 py-1.5 text-xs font-normal ${selectedGov1Tracks.includes(track) ? 'text-bodyBlue' : 'text-[#667589]'}`}
+															>
+																<div className='mt-[2px] capitalize'>{track?.split('_')?.join(' ')}</div>
+															</Checkbox>
+														))}
+												</Checkbox.Group>
+											</Collapse.Panel>
+											{isOpenGovSupported(network) && (
+												<Collapse.Panel
+													key={2}
+													header='OpenGov'
+													className='cursor-pointer'
+												>
+													<Checkbox.Group
+														className={`checkboxStyle flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em] ${poppins.className} ${poppins.variable}`}
+														onChange={(list) => setSelectedOpengovTracks(list)}
+														value={selectedOpengovTracks}
+													>
+														{openGovTracks &&
+															openGovTracks?.map((track) => (
+																<Checkbox
+																	key={track?.name}
+																	value={track?.trackId}
+																	className={`ml-0 py-1.5 text-xs font-normal ${selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue' : 'text-[#667589]'}`}
+																>
+																	<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
+																</Checkbox>
+															))}
+													</Checkbox.Group>
+												</Collapse.Panel>
+											)}
+										</Collapse>
+									}
+									placement='bottomLeft'
+								>
+									<div
+										className={`flex items-center justify-center text-xs ${openFilter.track && 'text-pink_primary'} ${
+											finalSearchInput.length === 0 ? 'cursor-not-allowed text-[#B5BFCC]' : 'cursor-pointer'
+										} max-sm:text-[10px]`}
+									>
+										Tracks
+										<span className='text-[#96A4B6]'>
+											{openFilter.track ? <HighlightDownOutlined className='max-md-ml-1 ml-2.5 mt-1' /> : <DownOutlined className='max-md-ml-1 ml-2.5 mt-1' />}
+										</span>
+									</div>
+								</Popover>
+							)}
+
+							<Popover
+								open={openFilter.topic}
+								onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, topic: !openFilter.topic })}
+								content={
+									<Checkbox.Group
+										className={`checkboxStyle flex flex-col justify-start tracking-[0.01em] ${poppins.className} ${poppins.variable}`}
+										onChange={(list) => setSelectedTopics(list)}
+										value={selectedTopics}
+									>
+										{topicOptions &&
+											topicOptions?.map((topic) => (
+												<Checkbox
+													key={topic}
+													value={topic}
+													className={`ml-0 py-1.5 text-xs font-normal ${selectedTopics.includes(topic) ? 'text-bodyBlue' : 'text-[#667589]'}`}
+												>
+													<div className='mt-[2px]'>{topic}</div>
+												</Checkbox>
+											))}
+									</Checkbox.Group>
+								}
+								placement='bottomLeft'
+							>
+								<div
+									className={`flex items-center justify-center text-xs ${openFilter.topic && 'text-pink_primary'} ${
+										finalSearchInput.length === 0 ? 'cursor-not-allowed text-[#B5BFCC]' : 'cursor-pointer'
+									} max-sm:text-[10px]`}
+								>
+									Topic
+									<span className='text-[#96A4B6]'>
+										{openFilter.topic ? <HighlightDownOutlined className='max-md-ml-1 ml-2.5 mt-1' /> : <DownOutlined className='max-md-ml-1 ml-2.5 mt-1' />}
+									</span>
+								</div>
+							</Popover>
+						</div>
+					)}
 				</div>
-				{finalSearchInput.length > 0 && <span className={`${!isFilter ? 'text-[#667589] cursor-default' : 'text-pink_primary cursor-pointer'} max-sm:border-solid max-sm:border-[1px] flex max-sm:border-pink_primary max-sm:p-1 items-center`} onClick={() => handleClearFilters()}>Clear All Filters</span>}
-			</div>}
-			{(finalSearchInput.length > 2 || searchInputErr.err ) && <div className={`${loading && 'hidden'} z-10`}>
-				{
-					(filterBy === EFilterBy.Referenda || filterBy ===  EFilterBy.Discussions) && !searchInputErr.err
-						&& (onchainPostResults || offchainPostResults) && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={filterBy === EFilterBy.Referenda ? onchainPostResults?.data || [] : offchainPostResults?.data || []} totalPage={ filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0 } className='mt-3' postsPage={postsPage} setPostsPage={setPostsPage}/>
-				}
 
-				{filterBy === EFilterBy.People && !searchInputErr.err
-					&& peopleResults && <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={peopleResults} peoplePage={peoplePage} setPeoplePage={setPeoplePage} />
-				}
+				{filterBy !== EFilterBy.People && isFilter && (
+					<div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue max-xs:flex-wrap'>
+						<div className='flex gap-1 max-sm:mb-2 max-sm:flex-wrap'>
+							{isSuperSearch && selectedNetworks.length > 0 && (
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1'>
+									<span className='text-pink_primary'>Network:</span>
+									<span>
+										{selectedNetworks?.map((network, index) => (
+											<span key={index}>
+												{' '}
+												{network[0] + network.slice(1).toLowerCase()}
+												{index !== selectedNetworks.length - 1 && ', '}
+											</span>
+										))}
+									</span>
+								</div>
+							)}
+							{dateFilter && (
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 font-medium'>
+									<span className='text-pink_primary'>Date:</span>
+									<span className='capitalize'>{dateFilter?.split('_')?.join(' ')}</span>
+								</div>
+							)}
+							{selectedTags.length > 0 && (
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1'>
+									<span className='text-pink_primary'>Tags:</span>
+									<span className='capitalize'>{selectedTags?.join(', ')}</span>
+								</div>
+							)}
+							{(selectedOpengovTracks.length > 0 || selectedGov1Tracks.length > 0) && filterBy !== EFilterBy.Discussions && (
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1'>
+									<span className='text-pink_primary'>Tracks:</span>
+									<span className='flex flex-wrap'>
+										{selectedOpengovTracks?.map((trackId, index) => (
+											<span
+												key={index}
+												className='capitalize'
+											>
+												{getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}
+												{index !== selectedOpengovTracks.length - 1 && ', '}{' '}
+											</span>
+										))}
+										{selectedGov1Tracks.map((track, index) => (
+											<span
+												key={index}
+												className='flex flex-shrink-0 capitalize'
+											>
+												{' '}
+												{selectedOpengovTracks.length > 0 && ', '}
+												{(track as string)?.split('_')?.join(' ')}
+												{index !== selectedGov1Tracks.length - 1 && ', '}{' '}
+											</span>
+										))}
+									</span>
+								</div>
+							)}
+							{selectedTopics.length > 0 && (
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1'>
+									<span className='text-pink_primary'>Topics:</span>
+									<span className='flex flex-wrap'>
+										{selectedTopics.map((topic, index) => (
+											<span
+												key={index}
+												className='flex flex-shrink-0 capitalize'
+											>
+												{' '}
+												{topic}
+												{selectedTopics.length - 1 !== index && ', '}
+											</span>
+										))}
+									</span>
+								</div>
+							)}
+						</div>
+						{finalSearchInput.length > 0 && (
+							<span
+								className={`${
+									!isFilter ? 'cursor-default text-[#667589]' : 'cursor-pointer text-pink_primary'
+								} flex items-center max-sm:border-[1px] max-sm:border-solid max-sm:border-pink_primary max-sm:p-1`}
+								onClick={() => handleClearFilters()}
+							>
+								Clear All Filters
+							</span>
+						)}
+					</div>
+				)}
+				{(finalSearchInput.length > 2 || searchInputErr.err) && (
+					<div className={`${loading && 'hidden'} z-10`}>
+						{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && !searchInputErr.err && (onchainPostResults || offchainPostResults) && (
+							<ResultPosts
+								setOpenModal={setOpenModal}
+								isSuperSearch={isSuperSearch}
+								postsData={filterBy === EFilterBy.Referenda ? onchainPostResults?.data || [] : offchainPostResults?.data || []}
+								totalPage={filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0}
+								className='mt-3'
+								postsPage={postsPage}
+								setPostsPage={setPostsPage}
+							/>
+						)}
 
-				{
-					!loading && (searchInputErr.err || onchainPostResults || offchainPostResults || peopleResults)  && <SearchErrorsCard
-						isSearchErr = {searchInput?.trim().length <= 2 && searchInputErr.clicked ? true : searchInputErr?.err}
-						filterBy={filterBy}
-						setFilterBy={setFilterBy}
-						setOpenModal= {setOpenModal}
-						setIsSuperSearch={setIsSuperSearch}
-						setPeoplePage={setPeoplePage}
-						setPostsPage= {setPostsPage}
-						postResultsCounts={filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0}
-						peopleResultsCounts={peoplePage.totalPeople || 0}
-						isSuperSearch= {isSuperSearch}
+						{filterBy === EFilterBy.People && !searchInputErr.err && peopleResults && (
+							<ResultPeople
+								searchInput={finalSearchInput}
+								setOpenModal={setOpenModal}
+								peopleData={peopleResults}
+								peoplePage={peoplePage}
+								setPeoplePage={setPeoplePage}
+							/>
+						)}
+
+						{!loading && (searchInputErr.err || onchainPostResults || offchainPostResults || peopleResults) && (
+							<SearchErrorsCard
+								isSearchErr={searchInput?.trim().length <= 2 && searchInputErr.clicked ? true : searchInputErr?.err}
+								filterBy={filterBy}
+								setFilterBy={setFilterBy}
+								setOpenModal={setOpenModal}
+								setIsSuperSearch={setIsSuperSearch}
+								setPeoplePage={setPeoplePage}
+								setPostsPage={setPostsPage}
+								postResultsCounts={filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0}
+								peopleResultsCounts={peoplePage.totalPeople || 0}
+								isSuperSearch={isSuperSearch}
+							/>
+						)}
+					</div>
+				)}
+
+				<div className={`flex flex-col items-center justify-center gap-4 pb-8 pt-10 ${!loading && 'hidden'}`}>
+					<Image
+						src={SearchLoader}
+						alt=''
+						height={150}
+						width={150}
 					/>
-				}
-			</div>}
+					<span className='text-center text-sm font-medium tracking-[0.01em] text-bodyBlue'>
+						{isSuperSearch ? 'Looking for results across the Polkassembly Universe.' : 'Looking for results.'}
+					</span>
+				</div>
 
+<<<<<<< HEAD
 			<div className={`flex flex-col justify-center items-center pt-10 pb-8 gap-4 ${!loading && 'hidden'}`}>
 				<Image src={SearchLoader} alt='' height={150} width={150}/>
 				<span className='font-medium text-sm text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-center'>
@@ -621,52 +1066,67 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			</div>}
 		</div>
 	</Modal>;
+=======
+				{finalSearchInput.length === 0 && justStart && (
+					<div className='flex h-[360px] flex-col items-center justify-center text-sm font-medium text-bodyBlue'>
+						<StartSearchIcon />
+						<span className='mt-8 text-center tracking-[0.01em]'>Welcome to the all new & supercharged search!</span>
+						<div className='mt-2 flex items-center gap-1 text-xs font-medium tracking-[0.01em]'>
+							powered by
+							<PaLogo className='h-[30px] w-[99px]' />
+						</div>
+					</div>
+				)}
+			</div>
+		</Modal>
+	);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 };
 
 export default styled(NewSearch)`
-.placeholderColor .ant-input-group-addon{
-background: var(--pink_primary);
-color: white !important;
-font-size:12px;
-border: 1px solid var(--pink_primary);
-}
-.ant-modal-close{
-  margin-top: 6px;
-}
-.checkboxStyle .ant-checkbox-wrapper+.ant-checkbox-wrapper{
-  margin-inline-start: 0px !important;
-}
-.ant-input-affix-wrapper {
-	border-width: 1px !important;
-  border-radius:4px 0px 0px 4px !important;
-  border: 1px solid var(--pink_primary);
-  height: 38px !important;
-  color:red !important;
-}
-.ant-input{
-   color:#7788A0 !important;
-}
-input::placeholder {
-	font-weight: 400 !important;
-	font-size: 14px !important;
-	line-height: 21px !important;
-	letter-spacing: 0.0025em !important;
-  color:#7788A0 !important;
-}
-.listing .ant-spin-nested-loading .ant-spin-container .ant-list-items .ant-list-item{
-  padding:0px 18px !important;
-}
-.track-popover .ant-popover-content .ant-popover-inner {
-  padding:0px !important;
-  border-radius: 4px !important;
-}
-.track-popover .ant-popover-content .ant-popover-inner .ant-collapse{
-  padding:0px !important;
-  border-radius: 4px !important;
-  border:none !important;
-  cursor: pointer !important;
-}
-.supersearch:hover{
-	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
-}
+	.placeholderColor .ant-input-group-addon {
+		background: var(--pink_primary);
+		color: white !important;
+		font-size: 12px;
+		border: 1px solid var(--pink_primary);
+	}
+	.ant-modal-close {
+		margin-top: 6px;
+	}
+	.checkboxStyle .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+		margin-inline-start: 0px !important;
+	}
+	.ant-input-affix-wrapper {
+		border-width: 1px !important;
+		border-radius: 4px 0px 0px 4px !important;
+		border: 1px solid var(--pink_primary);
+		height: 38px !important;
+		color: red !important;
+	}
+	.ant-input {
+		color: #7788a0 !important;
+	}
+	input::placeholder {
+		font-weight: 400 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
+		letter-spacing: 0.0025em !important;
+		color: #7788a0 !important;
+	}
+	.listing .ant-spin-nested-loading .ant-spin-container .ant-list-items .ant-list-item {
+		padding: 0px 18px !important;
+	}
+	.track-popover .ant-popover-content .ant-popover-inner {
+		padding: 0px !important;
+		border-radius: 4px !important;
+	}
+	.track-popover .ant-popover-content .ant-popover-inner .ant-collapse {
+		padding: 0px !important;
+		border-radius: 4px !important;
+		border: none !important;
+		cursor: pointer !important;
+	}
+	.supersearch:hover {
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	}
 `;

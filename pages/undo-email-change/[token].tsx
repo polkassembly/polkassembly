@@ -16,10 +16,15 @@ import { handleTokenChange } from '~src/services/auth.service';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 
@@ -28,7 +33,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -36,8 +41,8 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 	const currentUser = useUserDetailsContext();
 
 	const handleUndoEmailChange = useCallback(async () => {
-		const { data , error } = await nextApiClientFetch<UndoEmailChangeResponseType>( 'api/v1/auth/actions/requestResetPassword');
-		if(error) {
+		const { data, error } = await nextApiClientFetch<UndoEmailChangeResponseType>('api/v1/auth/actions/requestResetPassword');
+		if (error) {
 			console.error('Undo email change error ', error);
 			setError(error);
 			queueNotification({
@@ -56,7 +61,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 			});
 			router.replace('/');
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentUser]);
 
 	useEffect(() => {
@@ -65,6 +70,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 
 	return (
 		<>
+<<<<<<< HEAD
 			<SEOHead title="Undo Email Change" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-16'>
 				{ error ? <article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
@@ -75,6 +81,27 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 				</article>
 					: <Loader/>
 				}
+=======
+			<SEOHead
+				title='Undo Email Change'
+				network={network}
+			/>
+			<Row
+				justify='center'
+				align='middle'
+				className='-mt-16 h-full'
+			>
+				{error ? (
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
+							<WarningOutlined />
+							<FilteredError text={error} />
+						</h2>
+					</article>
+				) : (
+					<Loader />
+				)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			</Row>
 		</>
 	);

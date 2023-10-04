@@ -17,8 +17,12 @@ import { ProposalType } from '~src/global/proposalType';
 import AllGov2PostsTable from './AllGov2PostsTable';
 import TrackPostsTable from './TrackPostsTable';
 
+<<<<<<< HEAD
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Gov2LatestActivity = ({ className, gov2LatestPosts, theme }: { className?:string, gov2LatestPosts: any , theme?:string }) => {
+=======
+const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string; gov2LatestPosts: any }) => {
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	const [currentTab, setCurrentTab] = useState('all');
 	const { network } = useContext(NetworkContext);
 	const tabItems = [
@@ -57,7 +61,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts, theme }: { className?:
 		}
 	];
 
-	if(network) {
+	if (network) {
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
 			tabItems.push({
 				children: (
@@ -66,8 +70,11 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts, theme }: { className?:
 						posts={gov2LatestPosts[trackName]?.data?.posts}
 					/>
 				),
-				key: trackName.split(/(?=[A-Z])/).join('-').toLowerCase(),
-				label:(
+				key: trackName
+					.split(/(?=[A-Z])/)
+					.join('-')
+					.toLowerCase(),
+				label: (
 					<CountBadgePill
 						label={trackName.split(/(?=[A-Z])/).join(' ')}
 						count={gov2LatestPosts[trackName]?.data?.count}
@@ -78,15 +85,33 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts, theme }: { className?:
 	}
 
 	return (
+<<<<<<< HEAD
 		<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
 			<div className="flex justify-between items-center pr-4 pl-1">
 				<h2 className='text-blue-light-high dark:text-blue-dark-high text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-3.5 lg:mx-0'>Latest Activity</h2>
 				{currentTab !== 'all' && <Link className='text-blue-light-high dark:text-blue-dark-high font-medium hover:text-pink_primary px-2 rounded-lg dark:text-blue-dark-helper dark:font-normal' href={`/${currentTab}`}>View all</Link>}
+=======
+		<div className={`${className} rounded-xxl bg-white p-0 drop-shadow-md lg:p-6`}>
+			<div className='flex items-center justify-between pl-1 pr-4'>
+				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue lg:mx-0 lg:mt-0'>Latest Activity</h2>
+				{currentTab !== 'all' && (
+					<Link
+						className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary'
+						href={`/${currentTab}`}
+					>
+						View all
+					</Link>
+				)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			</div>
 			<Tabs
-				type="card"
+				type='card'
 				items={tabItems}
+<<<<<<< HEAD
 				className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-blue-light-high dark:text-blue-dark-high text-sm md:px-2 font-medium'
+=======
+				className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue md:px-2'
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				onChange={(key) => setCurrentTab(key)}
 			/>
 		</div>
@@ -95,7 +120,11 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts, theme }: { className?:
 
 export default React.memo(styled(Gov2LatestActivity)`
 	th {
+<<<<<<< HEAD
 		/* color: #485F7D !important; */
+=======
+		color: #485f7d !important;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -109,8 +138,12 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 
 	th.ant-table-cell {
+<<<<<<< HEAD
 		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
+=======
+		color: #485f7d !important;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -118,14 +151,19 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 
 	.ant-table-thead > tr > th {
+<<<<<<< HEAD
 		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
+=======
+		color: #485f7d !important;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		white-space: nowrap;
 	}
 
+<<<<<<< HEAD
 	.ant-table-row{
 		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
@@ -138,6 +176,16 @@ export default React.memo(styled(Gov2LatestActivity)`
 	tr{
 		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
 		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
+=======
+	.ant-table-row {
+		color: #243a57 !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
+	}
+
+	tr {
+		color: #243a57 !important;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		font-size: 14px !important;
 		font-weight: 400 !important;
 		cursor: pointer !important;
@@ -151,9 +199,10 @@ export default React.memo(styled(Gov2LatestActivity)`
 		border-top-color: white;
 		border-left-color: white;
 		border-right-color: white;
-		border-bottom-color: #E1E6EB;
+		border-bottom-color: #e1e6eb;
 	}
 
+<<<<<<< HEAD
 	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab-active{
 		border-top-color: #E1E6EB;
 		border-left-color: #E1E6EB;
@@ -189,3 +238,16 @@ export default React.memo(styled(Gov2LatestActivity)`
 		color: ${props => props.theme=='dark' ? '#FF60B5' : '#e5007a'} !important;
 	}
 `);
+=======
+	.ant-tabs-tab-bg-white .ant-tabs-tab-active {
+		border-top-color: #e1e6eb;
+		border-left-color: #e1e6eb;
+		border-right-color: #e1e6eb;
+		border-radius: 6px 6px 0 0 !important;
+	}
+
+	.ant-tabs-tab-bg-white .ant-tabs-nav:before {
+		border-bottom: 1px solid #e1e6eb;
+	}
+`);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29

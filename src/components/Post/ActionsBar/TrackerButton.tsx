@@ -16,37 +16,34 @@ interface IDiscussionProps {
 }
 
 function getTrackType(proposalType: ProposalType): string {
-	switch(proposalType) {
-	case ProposalType.BOUNTIES:
-		return 'bounty';
-	case ProposalType.CHILD_BOUNTIES:
-		return 'child_bounty';
-	case ProposalType.COUNCIL_MOTIONS:
-		return 'motion';
-	case ProposalType.DEMOCRACY_PROPOSALS:
-		return 'proposal';
-	case ProposalType.DISCUSSIONS:
-		return 'post';
-	case ProposalType.FELLOWSHIP_REFERENDUMS:
-		return 'fellowship_referendum';
-	case ProposalType.OPEN_GOV:
-		return 'referendumV2';
-	case ProposalType.REFERENDUMS:
-		return 'referendum';
-	case ProposalType.TECH_COMMITTEE_PROPOSALS:
-		return 'techCommitteeProposal';
-	case ProposalType.TIPS:
-		return 'tipProposal';
-	case ProposalType.TREASURY_PROPOSALS:
-		return 'treasuryProposal';
+	switch (proposalType) {
+		case ProposalType.BOUNTIES:
+			return 'bounty';
+		case ProposalType.CHILD_BOUNTIES:
+			return 'child_bounty';
+		case ProposalType.COUNCIL_MOTIONS:
+			return 'motion';
+		case ProposalType.DEMOCRACY_PROPOSALS:
+			return 'proposal';
+		case ProposalType.DISCUSSIONS:
+			return 'post';
+		case ProposalType.FELLOWSHIP_REFERENDUMS:
+			return 'fellowship_referendum';
+		case ProposalType.OPEN_GOV:
+			return 'referendumV2';
+		case ProposalType.REFERENDUMS:
+			return 'referendum';
+		case ProposalType.TECH_COMMITTEE_PROPOSALS:
+			return 'techCommitteeProposal';
+		case ProposalType.TIPS:
+			return 'tipProposal';
+		case ProposalType.TREASURY_PROPOSALS:
+			return 'treasuryProposal';
 	}
 	return 'post';
 }
 
-const TrackerButton: FC<IDiscussionProps> = function ({
-	onchainId,
-	proposalType
-}) {
+const TrackerButton: FC<IDiscussionProps> = function ({ onchainId, proposalType }) {
 	const [tracked, setTracked] = useState(false);
 	const postType = getTrackType(proposalType);
 
@@ -96,7 +93,11 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 
 	return (
 		<Button
+<<<<<<< HEAD
 			className={'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2 dark:bg-transparent dark:text-blue-dark-helper'}
+=======
+			className={'flex items-center border-none px-1 text-pink_primary shadow-none md:pl-2 md:pr-1'}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			onClick={handleTrack}
 		>
 			{tracked ? <EyeInvisibleOutlined /> : <EyeOutlined />}

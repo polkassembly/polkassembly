@@ -10,7 +10,7 @@ import React, { FC } from 'react';
 import TrackListingCard from 'src/components/Listing/Tracks/TrackListingCard';
 
 const AboutTrackCard = dynamic(() => import('~src/components/Listing/Tracks/AboutTrackCard'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
@@ -24,7 +24,7 @@ const TrackListing: FC<ITrackListingProps> = (props) => {
 	const { resolvedTheme:theme } = useTheme();
 	return (
 		<>
-			<AboutTrackCard trackName={trackName}  />
+			<AboutTrackCard trackName={trackName} />
 			<TrackListingCard
 				className='mt-12'
 				posts={posts}

@@ -10,17 +10,18 @@ import Login from 'pages/login';
 import styled from 'styled-components';
 
 interface Props {
-  modalOpen: boolean;
-  setModalOpen: (pre: boolean) => void;
-  isModal: boolean;
-  setSignupOpen: (pre: boolean) => void;
-  className?: string;
-  closable?: boolean;
-  isDelegation?: boolean;
+	modalOpen: boolean;
+	setModalOpen: (pre: boolean) => void;
+	isModal: boolean;
+	setSignupOpen: (pre: boolean) => void;
+	className?: string;
+	closable?: boolean;
+	isDelegation?: boolean;
 }
 
 const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className, closable, isDelegation }: Props) => {
 	const { network } = useNetworkContext();
+<<<<<<< HEAD
 	return <Modal
 		open={modalOpen}
 		footer={false}
@@ -32,10 +33,33 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 		onCancel={() => setModalOpen && setModalOpen(false)}
 		closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}>
 		<Login network={network} isModal={isModal} setLoginOpen={setModalOpen} setSignupOpen={setSignupOpen} isDelegation={isDelegation} /></Modal>;
+=======
+	return (
+		<Modal
+			open={modalOpen}
+			footer={false}
+			closable={closable}
+			maskClosable={closable}
+			zIndex={1008}
+			wrapClassName={className}
+			className={`${poppins.variable} ${poppins.className} padding-0 `}
+			onCancel={() => setModalOpen && setModalOpen(false)}
+			closeIcon={<CloseIcon />}
+		>
+			<Login
+				network={network}
+				isModal={isModal}
+				setLoginOpen={setModalOpen}
+				setSignupOpen={setSignupOpen}
+				isDelegation={isDelegation}
+			/>
+		</Modal>
+	);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 };
 export default styled(LoginPopup)`
- 
-.padding-0 .ant-modal-content{
-  padding:0px !important;
-  border-radius:4px;
-}`;
+	.padding-0 .ant-modal-content {
+		padding: 0px !important;
+		border-radius: 4px;
+	}
+`;

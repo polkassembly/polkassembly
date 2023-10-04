@@ -16,54 +16,73 @@ import { formatedBalance } from '~src/util/formatedBalance';
 
 const ZERO_BN = new BN(0);
 
-interface Props{
-	className?: string
-	label?: string
-	helpText?: string
-	onChange: (balance: BN) => void
-	placeholder?: string
+interface Props {
+	className?: string;
+	label?: string;
+	helpText?: string;
+	onChange: (balance: BN) => void;
+	placeholder?: string;
 	address?: string;
 	withBalance?: boolean;
-	onAccountBalanceChange?: (balance: string) => void
+	onAccountBalanceChange?: (balance: string) => void;
 	balance?: BN;
 	inputClassName?: string;
 	noRules?: boolean;
 	formItemName?: string;
 	size?: 'large' | 'small' | 'middle';
 	tooltipMessage?: string;
-	setInputValue? : (pre: string)=> void;
+	setInputValue?: (pre: string) => void;
 	onBlur?: () => void;
 	theme?: string;
 }
 
+<<<<<<< HEAD
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue, onBlur, theme }: Props) => {
 
+=======
+const BalanceInput = ({
+	className,
+	label = '',
+	onChange,
+	placeholder = '',
+	size,
+	address,
+	withBalance = false,
+	onAccountBalanceChange,
+	balance,
+	inputClassName,
+	noRules,
+	formItemName = 'balance',
+	tooltipMessage,
+	setInputValue,
+	onBlur
+}: Props) => {
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
 	const onBalanceChange = (value: string | null): void => {
-
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
-		if(isValid){
+		if (isValid) {
 			setInputValue?.(value || '0');
 			onChange(balance);
-		}else{
+		} else {
 			onChange(ZERO_BN);
 			setInputValue?.('0');
 		}
 	};
 
 	useEffect(() => {
-
-		if(!network) return ;
+		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+<<<<<<< HEAD
 	return <div className={`${className} w-full flex flex-col balance-input`}>
 		{(label || (address && withBalance)) && <label className='mb-[2px] inner-headings dark:text-blue-dark-medium'>
 			<span className='flex items-center'>
@@ -145,5 +164,106 @@ input::placeholder {
 	line-height: 21px !important;
 	letter-spacing: 0.0025em !important;
 }
+=======
+	return (
+		<div className={`${className} balance-input flex w-full flex-col`}>
+			{(label || (address && withBalance)) && (
+				<label className='inner-headings mb-[2px]'>
+					<span className='flex items-center'>
+						{label}
+						<span>
+							{tooltipMessage && (
+								<HelperTooltip
+									text={tooltipMessage}
+									className='ml-1'
+								/>
+							)}
+						</span>
+					</span>
+					{address && withBalance && (
+						<span>
+							<Balance
+								address={address}
+								onChange={onAccountBalanceChange}
+							/>
+						</span>
+					)}
+				</label>
+			)}
+			<Form.Item
+				name={formItemName}
+				initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
+				rules={
+					noRules
+						? []
+						: [
+								{
+									message: 'Invalid Balance',
+									validator(rule, value, callback) {
+										if (
+											callback &&
+											(isNaN(Number(value)) ||
+												(Number(value) > 0 && value?.split('.')?.[1]?.length && chainProperties[network]?.tokenDecimals < (value?.split('.')?.[1].length || 0)) ||
+												(value.length && Number(value) <= 0))
+										) {
+											callback(rule?.message?.toString());
+										} else {
+											callback();
+										}
+									}
+								}
+						  ]
+				}
+			>
+				<Input
+					onBlur={() => onBlur?.()}
+					addonAfter={chainProperties[network]?.tokenSymbol}
+					name={formItemName || 'balance'}
+					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary`}
+					onChange={(e) => onBalanceChange(e.target.value)}
+					placeholder={placeholder}
+					value={formatedBalance(String(balance || ZERO_BN), unit)}
+					size={size || 'middle'}
+				/>
+			</Form.Item>
+		</div>
+	);
+};
+export default styled(BalanceInput)`
+	.suffixColor .ant-input-group .ant-input-group-addon {
+		background: var(--pink_primary);
+		color: white;
+		font-size: 12px !important;
+		border: 1px solid var(--pink_primary);
+		border-radius: 0px 4px 4px 0px !important ;
+	}
+	.suffixColor .ant-input {
+		color: var(--bodyBlue) !important;
+		border-radius: 4px 0px 0px 4px !important;
+		height: 40px !important;
+	}
+	.balance-input .ant-input-number-handler-up {
+		display: none !important;
+	}
+	.balance-input .ant-input-number-handler-down {
+		display: none !important;
+	}
+	.balance-input .ant-input-number-group-addon {
+		border-radius: 4px !important;
+		position: relative;
+		right: 2px;
+	}
+	.balance-input .ant-input-number {
+		border: 1px solid #d2d8e0;
+	}
+	.balance-input .ant-input-number-focused {
+		border: 1px solid var(--pink_primary);
+	}
+	input::placeholder {
+		font-weight: 400 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
+		letter-spacing: 0.0025em !important;
+	}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 `;
-

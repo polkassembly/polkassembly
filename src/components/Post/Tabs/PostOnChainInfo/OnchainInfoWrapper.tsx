@@ -6,6 +6,7 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
 interface Props {
+<<<<<<< HEAD
 	children: ReactNode
 	className?: string
 	theme?: string
@@ -16,6 +17,14 @@ const OnchainInfoWrapper = ({ children, className, theme }: Props) => {
 	return (
 		<div className={className}>{children}</div>
 	);
+=======
+	children: ReactNode;
+	className?: string;
+}
+
+const OnchainInfoWrapper = ({ children, className }: Props) => {
+	return <div className={className}>{children}</div>;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 };
 
 export default styled(OnchainInfoWrapper)`
@@ -30,7 +39,8 @@ export default styled(OnchainInfoWrapper)`
 		font-weight: 500;
 	}
 
-	.ant-col, .arguments {
+	.ant-col,
+	.arguments {
 		margin-bottom: 48px;
 	}
 
@@ -43,7 +53,7 @@ export default styled(OnchainInfoWrapper)`
 		word-wrap: normal;
 	}
 
-	.motion-sub-info{
+	.motion-sub-info {
 		.row {
 			width: 100%;
 		}
@@ -84,18 +94,24 @@ export default styled(OnchainInfoWrapper)`
 		.buttons {
 			margin-left: 12px;
 			.active-btn {
-				background: #E5007A !important;
+				background: #e5007a !important;
 				color: #fff;
 			}
 		}
 	}
 
-	.json-view, .table-view {
+	.json-view,
+	.table-view {
 		width: 100%;
 		max-width: 100%;
 		overflow-x: auto;
+<<<<<<< HEAD
 		background: ${props => props.theme ==='dark'? 'red' : '#fff'} !important;
 		border-bottom: 1px solid rgb(238,238,238);
+=======
+		background: #fff !important;
+		border-bottom: 1px solid rgb(238, 238, 238);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	}
 
 	.react-json-view {
@@ -115,7 +131,8 @@ export default styled(OnchainInfoWrapper)`
 		background-color: #fff !important;
 	}
 
-	.table-view, .json-view {
+	.table-view,
+	.json-view {
 		max-height: 500px;
 		overflow-y: auto;
 		table {
@@ -194,7 +211,7 @@ export default styled(OnchainInfoWrapper)`
 		margin-left: 6px;
 		font-weight: 500;
 
-		&>div {
+		& > div {
 			margin-left: 12px;
 		}
 	}

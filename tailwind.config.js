@@ -6,10 +6,7 @@
 module.exports = {
 	darkMode: 'class',
 	important: true,
-	content: [
-		'./pages/**/*.{js,ts,jsx,tsx}',
-		'./src/**/*.{jsx,tsx}'
-	],
+	content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{jsx,tsx}'],
 	theme: {
 		extend: {
 			fontFamily: {
@@ -95,7 +92,7 @@ module.exports = {
 				}
 			},
 			screens: {
-				'xs': '320px'
+				xs: '320px'
 			},
 			borderRadius: {
 				'xxl': '0.875rem'

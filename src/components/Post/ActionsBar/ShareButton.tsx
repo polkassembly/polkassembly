@@ -8,7 +8,7 @@ import React, { useContext } from 'react';
 
 import { NetworkContext } from '~src/context/NetworkContext';
 
-const ShareButton = function ({ title }: {title?: string | null}) {
+const ShareButton = function ({ title }: { title?: string | null }) {
 	const { network } = useContext(NetworkContext);
 
 	const share = () => {
@@ -30,7 +30,11 @@ const ShareButton = function ({ title }: {title?: string | null}) {
 	return (
 		<>
 			<Button
+<<<<<<< HEAD
 				className={'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2 dark:bg-transparent dark:text-blue-dark-helper'}
+=======
+				className={'flex items-center border-none px-1 text-pink_primary shadow-none md:px-2'}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				onClick={share}
 			>
 				<ShareAltOutlined /> {' Share'}

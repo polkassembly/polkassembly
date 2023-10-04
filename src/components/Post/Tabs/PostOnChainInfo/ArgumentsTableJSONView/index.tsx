@@ -11,12 +11,13 @@ import ArgumentsTable from './ArgumentsTable';
 import { useTheme } from 'next-themes';
 
 interface Props {
-	className?: string
-	postArguments: any
-	showAccountArguments: boolean
+	className?: string;
+	postArguments: any;
+	showAccountArguments: boolean;
 }
 
 const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments }: Props) => {
+<<<<<<< HEAD
 	const { resolvedTheme:theme } = useTheme();
 	if(postArguments) {
 		const tabItems = [
@@ -38,10 +39,34 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 						</tbody>
 					</table>
 				</div>,
+=======
+	if (postArguments) {
+		const tabItems = [
+			{
+				children: (
+					<div className='table-view'>
+						<table
+							cellSpacing={0}
+							cellPadding={0}
+						>
+							<thead>
+								<tr>
+									<th className='direct-data data-0'>Name</th>
+									<th className='direct-data data-2'>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<ArgumentsTable argumentsJSON={postArguments} />
+							</tbody>
+						</table>
+					</div>
+				),
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				key: 'table',
 				label: 'Table'
 			},
 			{
+<<<<<<< HEAD
 				children: <div className="json-view">
 					<ReactJson
 						theme={theme === 'dark' ? 'monokai' : 'rjv-default'}
@@ -51,6 +76,18 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 						displayDataTypes={false}
 					/>
 				</div>,
+=======
+				children: (
+					<div className='json-view'>
+						<ReactJson
+							src={postArguments}
+							iconStyle='circle'
+							enableClipboard={false}
+							displayDataTypes={false}
+						/>
+					</div>
+				),
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				key: 'json',
 				label: 'JSON'
 			}
@@ -60,29 +97,35 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 			<div className={className}>
 				<Tabs
 					className='onchain-tabs'
-					defaultActiveKey="table"
+					defaultActiveKey='table'
 					items={tabItems}
 				/>
 
-				{
-					!showAccountArguments && postArguments.map((element:any, index:any) => {
-						return element.name === 'account' && <div key={index}>
-							<Address address={element.value} key={index}/>
-						</div>;
-					})
-				}
+				{!showAccountArguments &&
+					postArguments.map((element: any, index: any) => {
+						return (
+							element.name === 'account' && (
+								<div key={index}>
+									<Address
+										address={element.value}
+										key={index}
+									/>
+								</div>
+							)
+						);
+					})}
 			</div>
 		);
 	} else {
-		return (<div></div>);
+		return <div></div>;
 	}
-
 };
 
 export default styled(ArgumentsTableJSONView)`
-	.onchain-tabs .ant-tabs-tab{
+	.onchain-tabs .ant-tabs-tab {
 		background: transparent !important;
 	}
+<<<<<<< HEAD
 	.ant-tabs-tab-btn{
 		color: ${props => props.theme=='dark' ? '#909090' : ''} !important;
 		font-weight: 500 !important;
@@ -91,3 +134,6 @@ export default styled(ArgumentsTableJSONView)`
 		white-space: nowrap;
 	}
 `;
+=======
+`;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29

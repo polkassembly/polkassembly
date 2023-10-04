@@ -7,10 +7,10 @@ import React, { useState } from 'react';
 
 import Reply from './Reply';
 
-interface Props{
-	className?: string
-	repliesArr: any[]
-	commentId: string
+interface Props {
+	className?: string;
+	repliesArr: any[];
+	commentId: string;
 }
 
 const Replies = ({ className, commentId, repliesArr }: Props) => {
@@ -18,6 +18,7 @@ const Replies = ({ className, commentId, repliesArr }: Props) => {
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
 		<div className={className}>
+<<<<<<< HEAD
 			{repliesArr.length > 0 ?
 				!showReplies ?
 					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center dark:text-blue-dark-medium' onClick={toggleShowReplies}>{repliesArr.length} replies <DownOutlined className='ml-1' /></div>
@@ -36,6 +37,38 @@ const Replies = ({ className, commentId, repliesArr }: Props) => {
 						/>
 					</div>);}
 			)}
+=======
+			{repliesArr.length > 0 ? (
+				!showReplies ? (
+					<div
+						className='flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue'
+						onClick={toggleShowReplies}
+					>
+						{repliesArr.length} replies <DownOutlined className='ml-1' />
+					</div>
+				) : (
+					<div
+						className='flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue'
+						onClick={toggleShowReplies}
+					>
+						Hide replies <UpOutlined className='ml-1' />
+					</div>
+				)
+			) : null}
+			{showReplies &&
+				repliesArr.map((reply: any) => {
+					return (
+						<div key={reply.id}>
+							<Reply
+								reply={reply}
+								key={reply.id}
+								commentId={commentId}
+								userName={reply.username}
+							/>
+						</div>
+					);
+				})}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		</div>
 	);
 };

@@ -11,40 +11,44 @@ import { Collapse } from '../Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
 const { Panel } = Collapse;
 
-const Address = dynamic(() => import('./Address'),{
+const Address = dynamic(() => import('./Address'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
 
-const MultiSignatureAddress = dynamic(() => import('./MultiSignatureAddress'),{
+const MultiSignatureAddress = dynamic(() => import('./MultiSignatureAddress'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
 
-const Proxy = dynamic(() => import('./Proxy'),{
+const Proxy = dynamic(() => import('./Proxy'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 interface IAddressHeaderProps {
-    header?: string;
-    id?: string;
-    checked?: boolean;
-    onChange?: React.Dispatch<React.SetStateAction<boolean>>;
+	header?: string;
+	id?: string;
+	checked?: boolean;
+	onChange?: React.Dispatch<React.SetStateAction<boolean>>;
 	modal?: React.ReactNode;
-	subHeading?:string
+	subHeading?: string;
 }
 
 const AddressHeader: FC<IAddressHeaderProps> = ({ checked, header, id, onChange, modal, subHeading }) => {
 	return (
 		<>
-			<article className='flex items-center gap-1 text-xs font-normal tracking-wide leading-6 align-center'>
-				<label className='cursor-pointer text-pink_primary font-medium text-sm' htmlFor={id} onClick={(e:any) => onChange?.(e)}>
+			<article className='align-center flex items-center gap-1 text-xs font-normal leading-6 tracking-wide'>
+				<label
+					className='cursor-pointer text-sm font-medium text-pink_primary'
+					htmlFor={id}
+					onClick={(e: any) => onChange?.(e)}
+				>
 					{header}
 				</label>
 				<span>{subHeading}</span>
 			</article>
-			{checked? modal: null}
+			{checked ? modal : null}
 		</>
 	);
 };
@@ -72,17 +76,27 @@ const Account: FC<Props> = ({ className }) => {
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<AccountIcon />
+<<<<<<< HEAD
 						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
 						Account Settings {active && <span className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>Update your account settings here</span>}
+=======
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>
+							Account Settings {active && <span className='text-sm font-normal text-[#243A57]'>Update your account settings here</span>}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</h3>
 					</div>
 				}
 				key='1'
 			>
+<<<<<<< HEAD
 				<Row className={`${className} flex flex-col w-full`}>
 					<div className='flex flex-col gap-4 dark:text-blue-dark-medium'>
+=======
+				<Row className={`${className} flex w-full flex-col`}>
+					<div className='flex flex-col gap-4'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						<section>
 							<AddressHeader
 								checked={isLinkAddress}
@@ -136,7 +150,6 @@ const Account: FC<Props> = ({ className }) => {
 					</div>
 				</Row>
 			</Panel>
-
 		</Collapse>
 	);
 };

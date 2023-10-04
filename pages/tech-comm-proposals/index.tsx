@@ -19,16 +19,21 @@ import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import TechComIcon from '~assets/icons/tech-com-icon.svg';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.TECH_COMMITTEE_PROPOSALS;
-	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
-		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -60,13 +65,13 @@ const Pagination = styled(AntdPagination)`
 `;
 
 const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
-	const { data, error,network } = props;
+	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 	const { resolvedTheme:theme } = useTheme();
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -75,9 +80,9 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 	if (!data) return null;
 	const { posts, count } = data;
 
-	const onPaginationChange = (page:number) => {
+	const onPaginationChange = (page: number) => {
 		router.push({
-			query:{
+			query: {
 				page
 			}
 		});
@@ -86,6 +91,7 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 
 	return (
 		<>
+<<<<<<< HEAD
 			<SEOHead title='Tech Committee Proposals' network={network}/>
 			<div className='flex sm:items-center mt-3'>
 				<TechComIcon className='sm:-mt-3.5 xs:mt-1' />
@@ -100,14 +106,34 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 			</div>
 
 			<div className='shadow-md bg-white dark:bg-section-dark-overlay py-5 px-0 rounded-xxl mt-6'>
+=======
+			<SEOHead
+				title='Tech Committee Proposals'
+				network={network}
+			/>
+			<div className='mt-3 flex sm:items-center'>
+				<TechComIcon className='xs:mt-1 sm:-mt-3.5' />
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>Tech Committee Proposals</h1>
+			</div>
+			{/* Intro and Create Post Button */}
+			<div className='flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+					This is the place to discuss on-chain technical committee proposals. On-chain posts are automatically generated as soon as they are created on the chain. Only the
+					proposer is able to edit them.
+				</p>
+			</div>
+
+			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				<div className='flex items-center justify-between'>
-					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
-						<FilteredTags/>
+					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
+						<FilteredTags />
 					</div>
-					<FilterByTags className='my-6 sm:mr-14 xs:mx-6 xs:my-2'/>
+					<FilterByTags className='my-6 xs:mx-6 xs:my-2 sm:mr-14' />
 				</div>
 
 				<div>
+<<<<<<< HEAD
 					<Listing posts={posts} proposalType={ProposalType.TECH_COMMITTEE_PROPOSALS} />
 					<div className='flex justify-end mt-6'>
 						{
@@ -123,6 +149,24 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 							responsive={true}
 						/>
 						}
+=======
+					<Listing
+						posts={posts}
+						proposalType={ProposalType.TECH_COMMITTEE_PROPOSALS}
+					/>
+					<div className='mt-6 flex justify-end'>
+						{!!count && count > 0 && count > LISTING_LIMIT && (
+							<Pagination
+								defaultCurrent={1}
+								pageSize={LISTING_LIMIT}
+								total={count}
+								showSizeChanger={false}
+								hideOnSinglePage={true}
+								onChange={onPaginationChange}
+								responsive={true}
+							/>
+						)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					</div>
 				</div>
 			</div>

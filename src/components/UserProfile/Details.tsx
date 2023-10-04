@@ -24,14 +24,15 @@ import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import OnChainIdentity from './OnChainIdentity';
 import SocialLink from '~src/ui-components/SocialLinks';
+import { EGovType } from '~src/types';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
 interface IDetailsProps {
-    userProfile: {
+	userProfile: {
 		data: ProfileDetailsResponse;
 		error: string | null;
-	}
+	};
 	userPosts: IUserPostsListingResponse;
 }
 
@@ -44,33 +45,49 @@ interface ITitleBioProps {
 
 export const TitleBio: FC<ITitleBioProps> = (props) => {
 	const { title, bio, titleClassName, bioClassName } = props;
+	const [showFullBio, setShowFullBio] = useState(false);
+
+	const toggleBio = () => {
+		setShowFullBio(!showFullBio);
+	};
+
+	const truncateBio = (text: string | undefined, limit: number) => {
+		if (!text) return '';
+		const words = text.split(' ');
+		return words.slice(0, limit).join(' ') + (words.length > limit ? ' ...' : '');
+	};
+
+	const displayedBio = showFullBio ? bio : truncateBio(bio, 15);
+
 	return (
 		<>
+			{title && (
+				<p
+					className={`mt-[10px] text-sm font-normal leading-[22px] text-white ${titleClassName}`}
+					title={title}
+				>
+					{title}
+				</p>
+			)}
 
-			{
-				title?
+			{bio && (
+				<>
 					<p
-						className={`text-white font-normal text-sm leading-[22px] mt-[10px] ${titleClassName}`}
-						title={title}
-					>
-						{
-							title
-						}
-					</p>
-					: null
-			}
-			{
-				bio?
-					<p
-						className={`text-white font-normal text-sm leading-[22px] mt-[10px] ${bioClassName}`}
+						className={`mt-[10px] w-[296px] break-words text-center text-sm font-normal leading-[22px] text-white ${bioClassName}`}
 						title={bio}
 					>
-						{
-							bio
-						}
+						{showFullBio ? bio : displayedBio}
 					</p>
-					: null
-			}
+					{bio.split(' ').length > 15 && (
+						<span
+							className='read-more-button cursor-pointer text-xs text-white underline'
+							onClick={toggleBio}
+						>
+							{showFullBio ? 'See Less' : 'See More'}
+						</span>
+					)}
+				</>
+			)}
 		</>
 	);
 };
@@ -115,15 +132,15 @@ const Details: FC<IDetailsProps> = (props) => {
 			let isTwitterAvailable = false;
 			let isRiotAvailable = false;
 			social_links.forEach((v) => {
-				switch(v.type) {
-				case ESocialType.EMAIL:
-					isEmailAvailable = true;
-					break;
-				case ESocialType.TWITTER:
-					isTwitterAvailable = true;
-					break;
-				case ESocialType.RIOT:
-					isRiotAvailable = true;
+				switch (v.type) {
+					case ESocialType.EMAIL:
+						isEmailAvailable = true;
+						break;
+					case ESocialType.TWITTER:
+						isTwitterAvailable = true;
+						break;
+					case ESocialType.RIOT:
+						isRiotAvailable = true;
 				}
 			});
 			if (email && !isEmailAvailable) {
@@ -151,7 +168,7 @@ const Details: FC<IDetailsProps> = (props) => {
 				};
 			});
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onChainIdentity, userProfile]);
 
 	useEffect(() => {
@@ -170,27 +187,30 @@ const Details: FC<IDetailsProps> = (props) => {
 		};
 		const resolved: any[] = [];
 		addresses.forEach((address) => {
-			api.derive.accounts.info(`${address}`, (info) => {
-				const { identity } = info;
-				if (info.nickname && !onChainIdentity.nickname) {
-					onChainIdentity.nickname = info.nickname;
-				}
-				Object.entries(identity).forEach(([key, value]) => {
-					if (value) {
-						if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)?.[key]?.length === 0) {
-							(onChainIdentity as any)[key] = value;
-						} else if (!(onChainIdentity as any)?.[key]) {
-							(onChainIdentity as any)[key] = value;
-						}
+			api.derive.accounts
+				.info(`${address}`, (info) => {
+					const { identity } = info;
+					if (info.nickname && !onChainIdentity.nickname) {
+						onChainIdentity.nickname = info.nickname;
 					}
-				});
-				resolved.push(true);
-				if (resolved.length === addresses.length) {
-					setOnChainIdentity(onChainIdentity);
-				}
-			})
-				.then(unsub => { unsubscribes?.push(unsub); })
-				.catch(e => console.error(e));
+					Object.entries(identity).forEach(([key, value]) => {
+						if (value) {
+							if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)?.[key]?.length === 0) {
+								(onChainIdentity as any)[key] = value;
+							} else if (!(onChainIdentity as any)?.[key]) {
+								(onChainIdentity as any)[key] = value;
+							}
+						}
+					});
+					resolved.push(true);
+					if (resolved.length === addresses.length) {
+						setOnChainIdentity(onChainIdentity);
+					}
+				})
+				.then((unsub) => {
+					unsubscribes?.push(unsub);
+				})
+				.catch((e) => console.error(e));
 		});
 
 		return () => {
@@ -198,79 +218,92 @@ const Details: FC<IDetailsProps> = (props) => {
 		};
 	}, [addresses, api, apiReady]);
 	const { nickname, display, legal } = onChainIdentity;
-	const newUsername = legal || display || nickname || username;
+	const newUsername = display || legal || nickname || username;
 	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 
 	return (
-		<div className='w-full md:w-auto h-full flex flex-col gap-y-5 bg-[#F5F5F5]'>
-			<article className='md:w-[330px] bg-[#910365] rounded-l-[4px] md:flex-1 py-[22px] md:py-8 px-4'>
-				<div
-					className='flex flex-col items-center w-full'
-				>
-					<div className='grid grid-cols-3 w-full'>
+		<div className='flex h-full w-full flex-col gap-y-5 bg-[#F5F5F5] md:w-auto'>
+			<article className='rounded-l-[4px] bg-[#910365] px-4 py-[22px] md:w-[330px] md:flex-1 md:py-8'>
+				<div className='flex w-full flex-col items-center'>
+					<div className='grid w-full grid-cols-3'>
 						<div className='col-span-1'></div>
 						<div className='col-span-1 flex items-center justify-center'>
 							<ImageComponent
 								src={image}
 								alt='User Picture'
-								className='bg-transparent flex items-center justify-center w-[95px] h-[95px] '
+								className='flex h-[95px] w-[95px] items-center justify-center bg-transparent '
 								iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 							/>
 						</div>
 						<div className='col-span-1 flex justify-end'>
-							{
-								userDetails.username === username?
-									<EditProfile setProfileDetails={setProfileDetails} data={profileDetails} />
-									: null
-							}
+							{userDetails.username === username ? (
+								<EditProfile
+									setProfileDetails={setProfileDetails}
+									data={profileDetails}
+								/>
+							) : null}
 						</div>
 					</div>
+<<<<<<< HEAD
 					<div className='flex gap-2 text-xl items-center justify-center'>
 						<h2 title={newUsername} className='font-semibold text-xl text-white truncate max-w-[200px] mt-[18px]'>{newUsername}</h2>
 						{isGood  && onChainIdentity.judgements.length > 0 && <CheckCircleFilled style={ { color:'green' } } className='rounded-[50%] bg-white dark:bg-section-dark-overlay h-[20px] border-solid border-[#910365] mt-[7px]' />}
+=======
+					<div className='flex items-center justify-center gap-2 text-xl'>
+						<h2
+							title={newUsername}
+							className='mt-[18px] max-w-[200px] truncate text-xl font-semibold text-white'
+						>
+							{newUsername}
+						</h2>
+						{isGood && onChainIdentity.judgements.length > 0 && (
+							<CheckCircleFilled
+								style={{ color: 'green' }}
+								className='mt-[7px] h-[20px] rounded-[50%] border-solid border-[#910365] bg-white'
+							/>
+						)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					</div>
-					<div
-						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-'
-					>
-						{
-							socialLinks?.map((social, index) => {
-								const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
+					<div className='mt- flex items-center gap-x-5 text-xl text-navBlue md:gap-x-3'>
+						{socialLinks?.map((social, index) => {
+							const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
+							return (
+								<SocialLink
+									className='flex items-center justify-center text-2xl text-[#FCE5F2] hover:text-[#FCE5F2] md:text-base'
+									key={index}
+									link={link}
+									disable={!link}
+									type={social}
+								/>
+							);
+						})}
+					</div>
+					{badges && Array.isArray(badges) && badges.length > 0 ? (
+						<p className='mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-2'>
+							{badges?.map((badge) => {
 								return (
-									<SocialLink
-										className='flex items-center justify-center text-2xl md:text-base text-[#FCE5F2] hover:text-[#FCE5F2]'
-										key={index}
-										link={link}
-										disable={!link}
-										type={social}
-									/>
+									<span
+										key={badge}
+										className='rounded-[50px] border border-solid border-[#FCE5F2] px-[14px] py-1 text-[10px] font-medium text-[#FCE5F2]'
+									>
+										{badge}
+									</span>
 								);
-							})
-						}
-					</div>
-					{
-						badges && Array.isArray(badges) && badges.length > 0 ?
-							<p className='flex items-center justify-center gap-x-2 mt-5 flex-wrap gap-y-2'>
-								{
-									badges?.map((badge) => {
-										return (
-											<span
-												key={badge}
-												className='rounded-[50px] border border-solid border-[#FCE5F2] py-1 px-[14px] text-[#FCE5F2] font-medium text-[10px]'
-											>
-												{badge}
-											</span>
-										);
-									})
-								}
-							</p>
-							: null
-					}
-					<TitleBio bio={bio} title={title} titleClassName='hidden md:block' bioClassName='hidden md:block' />
+							})}
+						</p>
+					) : null}
+					<TitleBio
+						bio={bio}
+						title={title}
+						titleClassName='hidden md:block'
+						bioClassName='hidden md:block'
+					/>
 				</div>
 				<div className='hidden md:block'>
-					<Divider className='bg-[#FCE5F2] mt-2 mb-6 border-0 border-t-[0.5px]' />
+					<Divider className='mb-6 mt-2 border-0 border-t-[0.5px] bg-[#FCE5F2]' />
 					<Addresses addresses={addresses} />
+<<<<<<< HEAD
 					{
 						onChainIdentity && addresses && addresses.length > 0?
 							<>
@@ -285,6 +318,23 @@ const Details: FC<IDetailsProps> = (props) => {
 				<Tabs
 					type="card"
 					className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue font-medium my-4'
+=======
+					{onChainIdentity && addresses && addresses.length > 0 ? (
+						<>
+							<Divider className='my-6 border-0 border-t-[0.5px] bg-[#FCE5F2]' />
+							<OnChainIdentity
+								onChainIdentity={onChainIdentity}
+								addresses={addresses}
+							/>
+						</>
+					) : null}
+				</div>
+			</article>
+			<div className='flex-1 rounded-[4px] bg-white px-4 md:hidden'>
+				<Tabs
+					type='card'
+					className='ant-tabs-tab-bg-white my-4 font-medium text-sidebarBlue'
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					items={[
 						{
 							children: (
@@ -294,25 +344,29 @@ const Details: FC<IDetailsProps> = (props) => {
 									addresses={addresses}
 								/>
 							),
-							key:'about',
+							key: 'about',
 							label: 'About'
 						},
 						{
 							children: (
 								<GovTab
 									posts={userPosts.gov1}
+									govType={EGovType.GOV1}
+									userAddresses={userProfile.data?.addresses || []}
 								/>
 							),
-							key:'gov1',
+							key: 'gov1',
 							label: 'Gov 1'
 						},
 						{
 							children: (
 								<GovTab
 									posts={userPosts.open_gov}
+									govType={EGovType.OPEN_GOV}
+									userAddresses={userProfile.data?.addresses || []}
 								/>
 							),
-							key:'open_gov',
+							key: 'open_gov',
 							label: 'OpenGov'
 						}
 					]}

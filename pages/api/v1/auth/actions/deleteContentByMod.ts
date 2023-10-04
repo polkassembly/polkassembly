@@ -27,34 +27,29 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !['polkadot', 'kusama'].includes(network)) return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
+	if (!network || !['polkadot', 'kusama'].includes(network)) return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
 
-	const { commentId= '', postId, postType , replyId= '', reason = '' } = req.body;
+	const { commentId = '', postId, postType, replyId = '', reason = '' } = req.body;
 
-	if(isNaN(postId) || !postType || !reason) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (isNaN(postId) || !postType || !reason) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	let ref = postsByTypeRef(network, postType)
-		.doc(String(postId));
-	if(commentId){
-		ref = ref
-			.collection('comments')
-			.doc(String(commentId));
+	let ref = postsByTypeRef(network, postType).doc(String(postId));
+	if (commentId) {
+		ref = ref.collection('comments').doc(String(commentId));
 	}
-	if(commentId && replyId){
-		ref = ref
-			.collection('replies')
-			.doc(String(replyId));
+	if (commentId && replyId) {
+		ref = ref.collection('replies').doc(String(replyId));
 	}
 	await ref.update({
 		isDeleted: true
 	});
-	const notificationArgs:Args = {
+	const notificationArgs: Args = {
 		commentId,
 		network,
 		postId,

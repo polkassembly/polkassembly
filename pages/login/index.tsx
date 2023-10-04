@@ -12,49 +12,57 @@ import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
+<<<<<<< HEAD
 import { useTheme } from 'next-themes';
+=======
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
-interface Props{
+interface Props {
 	network: string;
 	isModal?: boolean;
-	setLoginOpen?: (pre: boolean)=> void;
-	setSignupOpen?: (pre: boolean)=> void;
-  isDelegation?: boolean;
+	setLoginOpen?: (pre: boolean) => void;
+	setSignupOpen?: (pre: boolean) => void;
+	isDelegation?: boolean;
 }
 
 const Web3Login = dynamic(() => import('src/components/Login/Web3Login'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 const MetamaskLogin = dynamic(() => import('src/components/Login/MetamaskLogin'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 const WalletConnectLogin = dynamic(() => import('src/components/Login/WalletConnectLogin'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 
-const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:Props) => {
+const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: Props) => {
 	const { setNetwork } = useNetworkContext();
 	const { resolvedTheme:theme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const currentUser = useUserDetailsContext();
+	const { id } = useUserDetailsContext();
 	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
-	const [chosenWallet, setChosenWallet] = useState<Wallet |null>(null);
-	const [walletError, setWalletError] =  useState<string | undefined>();
+	const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
+	const [walletError, setWalletError] = useState<string | undefined>();
 	const [withPolkasafe, setWithPolkasafe] = useState<boolean>(false);
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
@@ -76,13 +84,14 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	};
 
 	useEffect(() => {
-		if (currentUser?.id && !isModal) {
+		if (id && !isModal) {
 			router.push('/');
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[currentUser?.id, router]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [id, router]);
 	return (
 		<>
+<<<<<<< HEAD
 			<SEOHead title="Login" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px] dark:bg-section-dark-container'>
@@ -109,8 +118,64 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 											setChosenWallet={setChosenWallet}
 										/>
 							}
+=======
+			<SEOHead
+				title='Login'
+				network={network}
+			/>
+			<Row
+				justify='center'
+				align='middle'
+				className='-mt-5 h-full'
+			>
+				<Col className='w-full sm:max-w-[600px]'>
+					{displayWeb === 2 ? (
+						<Web2Login
+							isModal={isModal}
+							setLoginOpen={setLoginOpen}
+							isDelegation={isDelegation}
+							setSignupOpen={setSignupOpen}
+							onWalletSelect={onWalletSelect}
+							walletError={walletError}
+							setWithPolkasafe={setWithPolkasafe}
+						/>
+					) : null}
+
+					{displayWeb === 3 && chosenWallet && (
+						<>
+							{chosenWallet === Wallet.METAMASK ? (
+								<MetamaskLogin
+									isModal={isModal}
+									setLoginOpen={setLoginOpen}
+									setSignupOpen={setSignupOpen}
+									setWalletError={setWalletError}
+									setDisplayWeb2={setDisplayWeb2}
+									chosenWallet={chosenWallet}
+									onWalletUpdate={onWalletUpdate}
+								/>
+							) : chosenWallet == Wallet.WALLETCONNECT ? (
+								<WalletConnectLogin
+									isModal={isModal}
+									setLoginOpen={setLoginOpen}
+									setDisplayWeb2={setDisplayWeb2}
+									setPolkadotWallet={setPolkadotWallet}
+								/>
+							) : (
+								<Web3Login
+									isModal={isModal}
+									setLoginOpen={setLoginOpen}
+									setSignupOpen={setSignupOpen}
+									chosenWallet={chosenWallet}
+									setDisplayWeb2={setDisplayWeb2}
+									setWalletError={setWalletError}
+									onWalletUpdate={onWalletUpdate}
+									withPolkasafe={withPolkasafe}
+									setChosenWallet={setChosenWallet}
+								/>
+							)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</>
-					}
+					)}
 				</Col>
 			</Row>
 		</>

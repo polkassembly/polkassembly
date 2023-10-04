@@ -85,10 +85,12 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 	const [err, setErr] = useState('');
 	const [postId, setPostId] = useState<number | string>();
 	const [data, setData] = useState<ILinkPostStartResponse>();
-	const [options, setOptions] = useState<{
-		label: string;
-		value: string;
-	}[]>([]);
+	const [options, setOptions] = useState<
+		{
+			label: string;
+			value: string;
+		}[]
+	>([]);
 	const [postType, setPostType] = useState('');
 	const [footer, setFooter] = useState<React.ReactNode>([]);
 
@@ -189,7 +191,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 	};
 
 	useEffect(() => {
-		const options = isOffChainProposalTypeValid(currPostType)? onChainOptions: offChainOptions;
+		const options = isOffChainProposalTypeValid(currPostType) ? onChainOptions : offChainOptions;
 		setOptions(options);
 		setPostType(options[0].value);
 	}, [currPostType]);
@@ -200,7 +202,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				<Button
 					icon={<DeleteOutlined />}
 					htmlType='reset'
-					key="reset"
+					key='reset'
 					disabled={loading}
 					onClick={handleRemove}
 					className='mr-auto'
@@ -213,8 +215,8 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				<Button
 					icon={<CheckOutlined />}
 					htmlType='submit'
-					key="submit"
-					type="primary"
+					key='submit'
+					type='primary'
 					disabled={loading}
 					onClick={handleConfirm}
 					className='bg-green_primary'
@@ -227,8 +229,8 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				<Button
 					icon={<LinkOutlined />}
 					htmlType='submit'
-					key="submit"
-					type="primary"
+					key='submit'
+					type='primary'
 					disabled={loading}
 					onClick={handleSubmit}
 				>
@@ -237,7 +239,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 			);
 		}
 		setFooter(<div className='flex items-center justify-end'>{footer}</div>);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data, postId, postType, postData, loading]);
 
 	useEffect(() => {
@@ -250,31 +252,31 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				setPostType(post_link.type);
 			}
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postData]);
 	return (
 		<>
-			<Button htmlType="button" className={className} onClick={() => {
-				setShowModal(true);
-				setErr('');
-				const post_link = postData.post_link;
-				if (post_link) {
-					const { type, id } = post_link;
-					setPostId(id);
-					if (type) {
-						setPostType(type);
+			<Button
+				htmlType='button'
+				className={className}
+				onClick={() => {
+					setShowModal(true);
+					setErr('');
+					const post_link = postData.post_link;
+					if (post_link) {
+						const { type, id } = post_link;
+						setPostId(id);
+						if (type) {
+							setPostType(type);
+						}
 					}
-				}
-			}}>
+				}}
+			>
 				<LinkOutlined /> Link Post
 			</Button>
 
 			<Modal
-				title={<h2 className='leading-7 font-medium text-lg text-sidebarBlue'>
-					{
-						data? 'Confirm Details of Post ID to Link': 'Post ID to Link'
-					}
-				</h2>}
+				title={<h2 className='text-lg font-medium leading-7 text-sidebarBlue'>{data ? 'Confirm Details of Post ID to Link' : 'Post ID to Link'}</h2>}
 				open={showModal}
 				onOk={handleSubmit}
 				confirmLoading={loading}
@@ -287,22 +289,30 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				className={className}
 				footer={footer}
 			>
-				<Spin spinning={loading} indicator={<LoadingOutlined />}>
+				<Spin
+					spinning={loading}
+					indicator={<LoadingOutlined />}
+				>
 					<Form
-						name="post-content-form"
+						name='post-content-form'
 						onFinish={handleSubmit}
-						layout="vertical"
+						layout='vertical'
 						disabled={formDisabled}
-						className='flex flex-col gap-y-3 my-5'
+						className='my-5 flex flex-col gap-y-3'
 					>
-						<div
-							className='flex flex-col gap-y-1'
-						>
-							<label htmlFor="postId" className='text-sm font-normal leading-5 text-sidebarBlue'>
-							Enter post id
+						<div className='flex flex-col gap-y-1'>
+							<label
+								htmlFor='postId'
+								className='text-sm font-normal leading-5 text-sidebarBlue'
+							>
+								Enter post id
 							</label>
 							<Input
+<<<<<<< HEAD
 								className='font-medium text-sm leading-6 py-2 px-2.5 rounded-md disabled: bg-white dark:bg-section-dark-overlay'
+=======
+								className='disabled: rounded-md bg-white px-2.5 py-2 text-sm font-medium leading-6'
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 								id='postId'
 								disabled={!!data}
 								value={postId}
@@ -312,15 +322,16 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 								type='number'
 							/>
 						</div>
-						<div
-							className='flex flex-col gap-y-1'
-						>
-							<label htmlFor="postType" className='text-sm font-normal leading-5 text-sidebarBlue'>
-							Enter post type
+						<div className='flex flex-col gap-y-1'>
+							<label
+								htmlFor='postType'
+								className='text-sm font-normal leading-5 text-sidebarBlue'
+							>
+								Enter post type
 							</label>
 							<Select
 								id='postType'
-								className='w-full postTypeSelect'
+								className='postTypeSelect w-full'
 								disabled={!!data}
 								value={postType}
 								onChange={(e) => setPostType(e)}
@@ -328,20 +339,19 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 								options={options}
 							/>
 						</div>
-						{
-							err?
-								<div>
-									<ErrorState isRefreshBtnVisible={false} errorMessage={err} />
-								</div>
-								: data?
-									<div
-										className='my-4'
-									>
-										<h3 className='text-xl font-medium text-sidebarBlue'>{data?.title || 'Untitled'}</h3>
-										<div className='max-h-[350px] overflow-y-auto'>{data?.description? <Markdown md={data?.description} />: null}</div>
-									</div>
-									: null
-						}
+						{err ? (
+							<div>
+								<ErrorState
+									isRefreshBtnVisible={false}
+									errorMessage={err}
+								/>
+							</div>
+						) : data ? (
+							<div className='my-4'>
+								<h3 className='text-xl font-medium text-sidebarBlue'>{data?.title || 'Untitled'}</h3>
+								<div className='max-h-[350px] overflow-y-auto'>{data?.description ? <Markdown md={data?.description} /> : null}</div>
+							</div>
+						) : null}
 					</Form>
 				</Spin>
 			</Modal>

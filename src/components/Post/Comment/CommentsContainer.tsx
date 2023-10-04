@@ -84,42 +84,42 @@ interface ISentimentsPercentage {
 	slightlyFor: ESentiments | 0;
 }
 
-export const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
-	const commentResponse:any = {};
-	for(const key in comments){
-		commentResponse[key] = comments[key].sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
+export const getSortedComments = (comments: { [index: string]: Array<IComment> }) => {
+	const commentResponse: any = {};
+	for (const key in comments) {
+		commentResponse[key] = comments[key].sort((a, b) => dayjs(a.created_at).diff(dayjs(b.created_at)));
 	}
 	return commentResponse;
 };
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
+<<<<<<< HEAD
 	const { postData: { postType, timeline, created_at } } = usePostDataContext();
 	const targetOffset = 10;
 	const { resolvedTheme:theme } = useTheme();
+=======
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	const {
-		comments,
-		setComments,
-		setTimelines,
-		timelines,
-		overallSentiments,
-		setOverallSentiments
-	} = useCommentDataContext();
+		postData: { postType, timeline, created_at }
+	} = usePostDataContext();
+	const targetOffset = 10;
+	const { comments, setComments, setTimelines, timelines, overallSentiments, setOverallSentiments } = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
 	const { network } = useNetworkContext();
-	const [filterSentiments, setFilterSentiments] = useState<ESentiments|null>(null);
+	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
 
-	if(filterSentiments){
+	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
 	}
 
-	const handleTimelineClick = (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode; href: string; }) => {
+	const handleTimelineClick = (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode; href: string }) => {
 		if (link.href === '#') {
 			e.preventDefault();
 			return;
@@ -136,20 +136,23 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		const totalCount = againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount;
 
 		setSentimentsPercentage({
-			against: Number(Math.round(againstCount / totalCount * 100)) || 0,
-			for: Number(Math.round(forCount / totalCount * 100)) || 0,
-			neutral: Number(Math.round(neutralCount / totalCount * 100)) || 0,
-			slightlyAgainst: Number(Math.round(slightlyAgainstCount / totalCount * 100)) || 0,
-			slightlyFor: Number(Math.round(slightlyForCount / totalCount * 100)) || 0
+			against: Number(Math.round((againstCount / totalCount) * 100)) || 0,
+			for: Number(Math.round((forCount / totalCount) * 100)) || 0,
+			neutral: Number(Math.round((neutralCount / totalCount) * 100)) || 0,
+			slightlyAgainst: Number(Math.round((slightlyAgainstCount / totalCount) * 100)) || 0,
+			slightlyFor: Number(Math.round((slightlyForCount / totalCount) * 100)) || 0
 		});
 
 		allComments?.length === 0 ? setShowOverallSentiment(false) : setShowOverallSentiment(true);
-		if (againstCount === 0 && slightlyAgainstCount === 0 && neutralCount === 0 && slightlyForCount === 0 && forCount === 0) { setShowOverallSentiment(false); } else { setShowOverallSentiment(true); }
-
+		if (againstCount === 0 && slightlyAgainstCount === 0 && neutralCount === 0 && slightlyForCount === 0 && forCount === 0) {
+			setShowOverallSentiment(false);
+		} else {
+			setShowOverallSentiment(true);
+		}
 	};
 
 	const getFilteredComments = (sentiment: number) => {
-		setFilterSentiments(filterSentiments === sentiment ? null:sentiment);
+		setFilterSentiments(filterSentiments === sentiment ? null : sentiment);
 	};
 
 	const checkActive = (sentiment: ESentiments) => {
@@ -162,12 +165,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	}, [comments]);
 
 	const addCommentDataToTimeline = async () => {
-		if(!timeline){
+		if (!timeline) {
 			setLoading(false);
 			return;
 		}
-		const timelines:ITimeline[] = [];
-		const comments:{[index:string]:IComment[]} ={};
+		const timelines: ITimeline[] = [];
+		const comments: { [index: string]: IComment[] } = {};
 		if (timeline && timeline.length > 0) {
 			timeline.forEach((obj) => {
 				timelines.push({
@@ -177,54 +180,46 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					id: timelines.length + 1,
 					index: obj?.index?.toString(),
 					status: getStatus(obj?.type),
-					type:obj?.type
+					type: obj?.type
 				});
 				comments[`${obj?.index?.toString()}_${obj?.type}`] = [];
 			});
 			setTimelines(timelines);
 		}
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
-		if(!commentResponse || Object.keys(commentResponse).length==0){
+		if (!commentResponse || Object.keys(commentResponse).length == 0) {
 			setComments(comments);
-		}
-		else{
+		} else {
 			setComments(getSortedComments(commentResponse.comments));
 			setOverallSentiments(commentResponse.overallSentiments);
 		}
-		if(loading){
+		if (loading) {
 			setLoading(false);
 		}
 	};
 
-	const handleCurrentCommentAndTimeline = (postId:string, type:string, comment:IComment) => {
+	const handleCurrentCommentAndTimeline = (postId: string, type: string, comment: IComment) => {
 		const key = `${postId}_${type}`;
 		const commentsPayload = {
 			...comments,
-			[key]:[
-				...comments[key],
-				comment
-			]
+			[key]: [...comments[key], comment]
 		};
 		setComments(getSortedComments(commentsPayload));
-		const timelinePayload = timelines.map((timeline) => (
-			timeline.index === postId ?
-				{ ...timeline,commentsCount:timeline.commentsCount+1 } :
-				timeline
-		));
+		const timelinePayload = timelines.map((timeline) => (timeline.index === postId ? { ...timeline, commentsCount: timeline.commentsCount + 1 } : timeline));
 		setTimelines(timelinePayload);
 		router.push(`#${comment.id}`);
 	};
 
 	useEffect(() => {
-		if(!timeline || timeline.length == 0){
-			if(loading){
+		if (!timeline || timeline.length == 0) {
+			if (loading) {
 				setLoading(false);
 			}
 			return;
 		}
 		addCommentDataToTimeline();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[timeline]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [timeline]);
 
 	const sentimentsData = [
 		{
@@ -266,6 +261,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	return (
 		<div className={className}>
+<<<<<<< HEAD
 			{id ? <>
 				{isGrantClosed ?
 					<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
@@ -307,20 +303,98 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							</Tooltip>
 						))}
 					</div>}
+=======
+			{id ? (
+				<>
+					{isGrantClosed ? (
+						<Alert
+							message='Grant closed, no comments can be added or edited.'
+							type='info'
+							showIcon
+						/>
+					) : (
+						<PostCommentForm
+							className='mb-8'
+							setCurrentState={handleCurrentCommentAndTimeline}
+						/>
+					)}
+				</>
+			) : (
+				<div className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md'>
+					<Image
+						src='/assets/icons/alert-login.svg'
+						width={20}
+						height={20}
+						alt={''}
+					/>
+					<div className='text-sm font-medium text-bodyBlue'>
+						Please{' '}
+						<span
+							className='cursor-pointer text-pink_primary'
+							onClick={() => {
+								setOpenLoginModal(true);
+							}}
+						>
+							Log In
+						</span>{' '}
+						to comment
+					</div>
 				</div>
-			}
-			<div className={'block xl:grid grid-cols-12'}>
-				{
-					!!allComments?.length && timelines.length >= 1 &&
-					<div className='hidden h-min xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[110px] ml-1 mb-[65px]'>
-						<Anchor targetOffset={targetOffset} className='h-full min-w-[140px]' onClick={handleTimelineClick}>
+			)}
+			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
+				<div className='tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1'>
+					<span className='text-lg font-medium text-bodyBlue'>
+						{allComments.length || 0}
+						<span className='ml-1'>Comments</span>
+					</span>
+					{showOverallSentiment && (
+						<div className='flex gap-2 max-sm:-ml-2 max-sm:gap-[2px] '>
+							{sentimentsData.map((data) => (
+								<Tooltip
+									key={data.sentiment}
+									color='#E5007A'
+									title={
+										<div className='flex flex-col px-1 text-xs'>
+											<span className='text-center font-medium'>{data.title}</span>
+											<span className='pt-1 text-center'>Select to filter</span>
+										</div>
+									}
+								>
+									<div
+										onClick={() => getFilteredComments(data.sentiment)}
+										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8] ${
+											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary'
+										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none' : ''}`}
+									>
+										{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
+										<span className={'flex justify-center font-medium'}>{data.percentage}%</span>
+									</div>
+								</Tooltip>
+							))}
+						</div>
+					)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
+				</div>
+			)}
+			<div className={'block grid-cols-12 xl:grid'}>
+				{!!allComments?.length && timelines.length >= 1 && (
+					<div className='sticky top-[110px] col-start-1 col-end-2 mb-[65px] ml-1 hidden h-min min-w-[100px] xl:block'>
+						<Anchor
+							targetOffset={targetOffset}
+							className='h-full min-w-[140px]'
+							onClick={handleTimelineClick}
+						>
 							{timelines.map((timeline) => {
-								return (
-									timeline.commentsCount > 0 ?
-										<div key={id} className='m-0 p-0 border-none [&>.ant-card-body]:p-0'>
-											{comments[`${timeline.index}_${timeline.type}`]?.[0]?.id ? <AnchorLink
+								return timeline.commentsCount > 0 ? (
+									<div
+										key={timeline.id}
+										className='m-0 border-none p-0 [&>.ant-card-body]:p-0'
+									>
+										{comments[`${timeline.index}_${timeline.type}`]?.[0]?.id ? (
+											<AnchorLink
 												href={`#${comments[`${timeline.index}_${timeline.type}`]?.[0]?.id}`}
 												title={
+<<<<<<< HEAD
 													<div className='flex flex-col text-lightBlue sticky top-10 dark:text-blue-dark-medium'>
 														<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
@@ -341,29 +415,60 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
 											<div className='text-xs'>({timeline.commentsCount})</div>
 										</div>
+=======
+													<div className='sticky top-10 flex flex-col text-lightBlue'>
+														<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
+														<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
+														<div className='text-xs'>({comments[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
+													</div>
+												}
+											/>
+										) : (
+											<div className='sticky top-10 ml-5 flex cursor-pointer flex-col text-lightBlue'>
+												<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
+												<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
+												<div className='text-xs'>({timeline.commentsCount})</div>
+											</div>
+										)}
+									</div>
+								) : (
+									<div
+										key={timeline.id}
+										className='sticky top-10 ml-5 flex cursor-default flex-col text-lightBlue'
+									>
+										<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
+										<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
+										<div className='text-xs'>({timeline.commentsCount})</div>
+									</div>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 								);
 							})}
 						</Anchor>
 					</div>
-				}
+				)}
 				<div className={`col-start-1 ${timelines.length >= 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
-					{!!allComments?.length && !loading &&
+					{!!allComments?.length && !loading && (
 						<>
-							<Comments disableEdit={isGrantClosed} comments={allComments} />
+							<Comments
+								disableEdit={isGrantClosed}
+								comments={allComments}
+							/>
 						</>
-					}
-					{loading && <Loader/>}
-					{allComments.length === 0 && allComments.length > 0 && <div className='mt-4 mb-4'>
-						<Empty description='No comments available' />
-					</div>}
+					)}
+					{loading && <Loader />}
+					{allComments.length === 0 && allComments.length > 0 && (
+						<div className='mb-4 mt-4'>
+							<Empty description='No comments available' />
+						</div>
+					)}
 					{
 						<RefendaLoginPrompts
 							theme={theme}
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
-							image="/assets/post-comment.png"
-							title="Join Polkassembly to Comment on this proposal."
-							subtitle="Discuss, contribute and get regular updates from Polkassembly."
+							image='/assets/post-comment.png'
+							title='Join Polkassembly to Comment on this proposal.'
+							subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 						/>
 					}
 				</div>
@@ -374,34 +479,34 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 // @ts-ignore
 export default React.memo(styled(CommentsContainer)`
-.ant-anchor-wrapper {
-	.ant-anchor {
-		display: flex;
-		flex-direction: column;
-		gap: 96px;
-	}
+	.ant-anchor-wrapper {
+		.ant-anchor {
+			display: flex;
+			flex-direction: column;
+			gap: 96px;
+		}
 
-	.ant-anchor-ink {
-		margin-left: 5px;
-	}
+		.ant-anchor-ink {
+			margin-left: 5px;
+		}
 
-	.ant-anchor-link {
-		margin-left: 5px;
-	}
+		.ant-anchor-link {
+			margin-left: 5px;
+		}
 
-	.ant-anchor-ink-ball-visible {
-		display: block !important;
-		background: url('/assets/pa-small-circle.png') !important;
-		background-repeat: no-repeat !important;
-		background-position: center !important;
-		height: 18px !important;
-		width: 18px !important;
-		border: none !important;
-		border-radius: 50% !important;
-		margin-left: -7px;
+		.ant-anchor-ink-ball-visible {
+			display: block !important;
+			background: url('/assets/pa-small-circle.png') !important;
+			background-repeat: no-repeat !important;
+			background-position: center !important;
+			height: 18px !important;
+			width: 18px !important;
+			border: none !important;
+			border-radius: 50% !important;
+			margin-left: -7px;
+		}
+		.my-alert .ant-alert-message span {
+			color: red !important;
+		}
 	}
-	.my-alert .ant-alert-message span {
-  		color: red !important;
-	}
-}
 `);

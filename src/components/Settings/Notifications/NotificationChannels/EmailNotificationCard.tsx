@@ -8,9 +8,9 @@ import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
 type Props = {
 	verifiedEmail: string;
-	handleEnableDisabled: any
-	verified:boolean
-	notificationEnabled:boolean
+	handleEnableDisabled: any;
+	verified: boolean;
+	notificationEnabled: boolean;
 };
 
 export default function EmailNotificationCard({ verifiedEmail, handleEnableDisabled, verified, notificationEnabled }: Props) {
@@ -20,28 +20,45 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 	};
 
 	return (
+<<<<<<< HEAD
 		<div className='flex flex-col mb-2'>
 			<h3 className='flex gap-2 items-center text-base text-blue-light-high dark:text-blue-dark-high font-medium m-0 gap-1'>
 				<span>
 					<MailFilledIcon className='text-lightBlue dark:text-icon-dark-inactive' /> Email Notifications{' '}
 					{!verified && <span className='text-[10px] px-[4px] py-[2px] bg-[red] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>  {verifiedEmail ? 'Not Verified' : 'Not Added'}</span>}
 
+=======
+		<div className='mb-2 flex flex-col'>
+			<h3 className='m-0 flex items-center gap-1 gap-2 text-base font-medium text-[#243A57]'>
+				<span>
+					<MailFilled /> Email Notifications{' '}
+					{!verified && (
+						<span className='rounded-bl-lg rounded-tr-lg border-2 border-[#5A46FF] bg-[red] px-[4px] py-[2px] text-[10px] text-[#FFFFFF]'>
+							{' '}
+							{verifiedEmail ? 'Not Verified' : 'Not Added'}
+						</span>
+					)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				</span>
-				{(!!verifiedEmail && verified) &&
-					<span className='flex gap-1 items-center'>
+				{!!verifiedEmail && verified && (
+					<span className='flex items-center gap-1'>
 						<Switch
 							checked={!!notificationEnabled}
 							size='small'
-							onChange={(checked) => !checked ? handleToggleClick() : handleEnableDisabled(CHANNEL.EMAIL, true)}
+							onChange={(checked) => (!checked ? handleToggleClick() : handleEnableDisabled(CHANNEL.EMAIL, true))}
 						/>
 						<label>
 							<span className={`text-[14px] font-medium  ${notificationEnabled ? 'text-pink_primary' : 'text-[#485F7D]'}`}>{notificationEnabled ? 'Enabled' : 'Disabled'}</span>
 						</label>
 					</span>
-				}
+				)}
 			</h3>
 			<div className='ml-5'>
+<<<<<<< HEAD
 				<h3 className='m-0 text-blue-light-high dark:text-blue-dark-high text-[14px]'>{verifiedEmail ? verifiedEmail: 'Please add your email on account page.'}</h3>
+=======
+				<h3 className='m-0 text-[14px] text-[#243A57]'>{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}</h3>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			</div>
 			<DisabledConfirmation
 				open={showModal}
@@ -50,8 +67,8 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 					handleEnableDisabled(CHANNEL.EMAIL);
 				}}
 				onCancel={() => setShowModal(false)}
-				channel={CHANNEL.EMAIL} />
-
+				channel={CHANNEL.EMAIL}
+			/>
 		</div>
 	);
 }

@@ -15,18 +15,22 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import SEOHead from '~src/global/SEOHead';
 import { IPreimagesListingResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1 } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
 
 	const { data, error } = await getPreimages({
 		listingLimit: LISTING_LIMIT,
@@ -39,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 interface IPreImagesProps {
 	data?: IPreimagesListingResponse;
 	error?: string;
-	network: string
+	network: string;
 }
 
 const Pagination = styled(AntdPagination)`
@@ -64,7 +68,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -84,20 +88,31 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 
 	return (
 		<>
+<<<<<<< HEAD
 			<SEOHead title='PreImages' network={network}/>
 			<h1 className='text-blue-light-high dark:text-blue-dark-high font-semibold text-2xl leading-9 mx-2'>{ count } Preimages</h1>
+=======
+			<SEOHead
+				title='PreImages'
+				network={network}
+			/>
+			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>{count} Preimages</h1>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 
 			{/* <div className="mt-8 mx-1">
 				<PreImagesTable tableData={tableData} />
 			</div> */}
 
+<<<<<<< HEAD
 			<div className='shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-xxl'>
+=======
+			<div className='rounded-xxl bg-white p-3 shadow-md md:p-8'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				<div>
 					<PreImagesTable theme={theme} preimages={preimages} />
 
-					<div className='flex justify-end mt-6'>
-						{
-							!!preimages && preimages.length > 0 && count && count > 0 && count > LISTING_LIMIT &&
+					<div className='mt-6 flex justify-end'>
+						{!!preimages && preimages.length > 0 && count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
 								theme={theme}
 								defaultCurrent={1}
@@ -108,7 +123,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 								onChange={onPaginationChange}
 								responsive={true}
 							/>
-						}
+						)}
 					</div>
 				</div>
 			</div>

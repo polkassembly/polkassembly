@@ -64,29 +64,47 @@ export default function App({ Component, pageProps }: AppProps) {
 		logPageView();
 	}, []);
 
-	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
-		<Image
-			style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
-			width={32}
-			height={32}
-			src='/favicon.ico'
-			alt={'Loading'}
-		/>
-	</div>;
+	const SplashLoader = () => (
+		<div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
+			<Image
+				style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
+				width={32}
+				height={32}
+				src='/favicon.ico'
+				alt={'Loading'}
+			/>
+		</div>
+	);
 
+<<<<<<< HEAD
 	return <ConfigProvider theme={antdTheme}>
 		<ThemeProvider attribute='class' enableSystem>
+=======
+	return (
+		<ConfigProvider theme={antdTheme}>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			<ModalProvider>
 				<ErrorBoundary>
 					<UserDetailsProvider>
 						<ApiContextProvider network={network}>
 							<NetworkContextProvider initialNetwork={network}>
 								<>
+<<<<<<< HEAD
 									{ showSplashScreen && <SplashLoader /> }
 									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
 										<NextNProgress color="#E5007A" />
 										<CMDK />
 										<AppLayout Component={Component} pageProps={pageProps} />
+=======
+									{showSplashScreen && <SplashLoader />}
+									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+										<NextNProgress color='#E5007A' />
+										<CMDK />
+										<AppLayout
+											Component={Component}
+											pageProps={pageProps}
+										/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 									</main>
 								</>
 							</NetworkContextProvider>
@@ -94,6 +112,11 @@ export default function App({ Component, pageProps }: AppProps) {
 					</UserDetailsProvider>
 				</ErrorBoundary>
 			</ModalProvider>
+<<<<<<< HEAD
 		</ThemeProvider>
 	</ConfigProvider>;
+=======
+		</ConfigProvider>
+	);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 }

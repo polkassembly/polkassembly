@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Tooltip , Skeleton } from 'antd';
+import { Divider, Tooltip, Skeleton } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -19,7 +19,7 @@ import blockToTime from '~src/util/blockToTime';
 import dynamic from 'next/dynamic';
 
 const Curves = dynamic(() => import('./Curves'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 // import DelegateModalEthV2 from './DelegateModalEthV2';
@@ -76,14 +76,14 @@ export const getTrackData = (network: string, trackName?: string, trackNumber?: 
 	return defaultTrackMetaData;
 };
 
-export const blocksToRelevantTime = (network: string, blocks:number): string => {
-	const blockTimeSeconds:number = chainProperties?.[network]?.blockTime / 1000;
-	let divisor:number = 1;
-	let text:string = 'sec';
+export const blocksToRelevantTime = (network: string, blocks: number): string => {
+	const blockTimeSeconds: number = chainProperties?.[network]?.blockTime / 1000;
+	let divisor: number = 1;
+	let text: string = 'sec';
 
-	const blockSeconds = blocks*blockTimeSeconds;
+	const blockSeconds = blocks * blockTimeSeconds;
 
-	if(blockSeconds > 60 && blockSeconds <= 3600) {
+	if (blockSeconds > 60 && blockSeconds <= 3600) {
 		divisor = 60;
 		text = 'min';
 	} else if (blockSeconds > 3600 && blockSeconds < 86400) {
@@ -94,7 +94,7 @@ export const blocksToRelevantTime = (network: string, blocks:number): string => 
 		text = 'days';
 	}
 
-	return `${Math.round(blockSeconds/divisor)} ${text}`;
+	return `${Math.round(blockSeconds / divisor)} ${text}`;
 };
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
@@ -136,21 +136,21 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						});
 					}
 					const labels: number[] = [];
-					const supportData: { x: number; y: number; }[] = [];
-					const approvalData: { x: number; y: number; }[] = [];
+					const supportData: { x: number; y: number }[] = [];
+					const approvalData: { x: number; y: number }[] = [];
 					const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
-					for (let i = 0; i < (decisionPeriodHrs * 60); i++) {
+					for (let i = 0; i < decisionPeriodHrs * 60; i++) {
 						labels.push(i);
 						if (supportCalc) {
 							supportData.push({
 								x: i,
-								y: supportCalc((i / (decisionPeriodHrs * 60))) * 100
+								y: supportCalc(i / (decisionPeriodHrs * 60)) * 100
 							});
 						}
 						if (approvalCalc) {
 							approvalData.push({
 								x: i,
-								y: approvalCalc((i / (decisionPeriodHrs * 60))) * 100
+								y: approvalCalc(i / (decisionPeriodHrs * 60)) * 100
 							});
 						}
 					}
@@ -187,10 +187,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 			setCurvesLoading(false);
 		};
 		getData();
-	}
-	, [api, apiReady, network , track_number]);
+	}, [api, apiReady, network, track_number]);
 
 	return (
+<<<<<<< HEAD
 		<section className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md rounded-xxl md:p-4`}>
 			<article className="flex justify-between px-4 xs:py-2 md:py-0">
 				<div className='flex items-center gap-x-2 xs:flex-wrap xs:mt-2 md:mt-0'>
@@ -201,14 +201,26 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<h4 className=' text-[#E5007A] text-xl mb-0 font-semibold leading-8 tracking-[0.01em]'>
           #{trackMetaData.trackId}
 						</h4>
+=======
+		<section className={`${className} rounded-xxl bg-white drop-shadow-md md:p-4`}>
+			<article className='flex justify-between px-4 xs:py-2 md:py-0'>
+				<div className='flex items-center gap-x-2 xs:mt-2 xs:flex-wrap md:mt-0'>
+					<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue'>About {trackName.split(/(?=[A-Z])/).join(' ')}</h2>
+					<Tooltip
+						color='#E5007A'
+						title='Track Number'
+						className='cursor-pointer'
+					>
+						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em] text-[#E5007A]'>#{trackMetaData.trackId}</h4>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					</Tooltip>
 				</div>
-				<div className="xs:hidden md:flex justify-end md:p-1 lg:mr-3 xl:mr-1.5">
-					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
-    <DelegateModal trackNum={trackMetaData?.trackId} />}
+				<div className='justify-end xs:hidden md:flex md:p-1 lg:mr-3 xl:mr-1.5'>
+					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 				</div>
 			</article>
 
+<<<<<<< HEAD
 			<p className="xs:mt-2 md:mt-0 font-normal text-base leading-6 text-blue-light-high dark:text-blue-dark-high px-4">{trackMetaData?.description}</p>
 
 			<article className='md:flex md:justify-between'>
@@ -231,47 +243,93 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<div className='flex flex-col'>
 							<span className='font-medium leading-5 text-sm text-lightBlue dark:text-blue-dark-medium whitespace-pre'>Min. Enactment Period</span>
 							<span className='whitespace-pre text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</span>
+=======
+			<p className='px-4 text-base font-normal leading-6 text-bodyBlue xs:mt-2 md:mt-0'>{trackMetaData?.description}</p>
+
+			<article className='md:flex md:justify-between'>
+				<section className='mt-6 flex w-full flex-wrap text-xs md:grid md:w-[70%] md:grid-cols-3'>
+					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+						<div className='flex flex-col'>
+							<span className='whitespace-pre text-sm font-medium text-lightBlue'>Max Deciding</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{trackMetaData.maxDeciding}</span>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</div>
 					</article>
 
-					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
+<<<<<<< HEAD
 							<span className='font-medium leading-5 text-sm text-lightBlue dark:text-blue-dark-medium whitespace-pre'>Decision Period</span>
 							<span className='whitespace-pre text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</span>
+=======
+							<span className='whitespace-pre text-sm font-medium text-lightBlue'>Confirm Period</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</span>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</div>
 					</article>
 
-					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
+<<<<<<< HEAD
 							<span className='font-medium leading-5 text-sm text-lightBlue dark:text-blue-dark-medium whitespace-pre'>Decision Deposit</span>
 							<span className='text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5 whitespace-pre'>
+=======
+							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue'>Min. Enactment Period</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</span>
+						</div>
+					</article>
+
+					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+						<div className='flex flex-col'>
+							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue'>Decision Period</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</span>
+						</div>
+					</article>
+
+					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+						<div className='flex flex-col'>
+							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue'>Decision Deposit</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 								{trackMetaData.decisionDeposit &&
-              formatUSDWithUnits(formatBnBalance(`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)
-								}
+									formatUSDWithUnits(
+										formatBnBalance(
+											`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit,
+											{ numberAfterComma: 2, withThousandDelimitor: false, withUnit: true },
+											network
+										),
+										1
+									)}
 							</span>
 						</div>
 					</article>
 
-					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
+<<<<<<< HEAD
 							<span className='font-medium leading-5 text-sm text-lightBlue dark:text-blue-dark-medium whitespace-pre'>Prepare Period</span>
 							<span className='whitespace-pre text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</span>
+=======
+							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue'>Prepare Period</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</span>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</div>
 					</article>
 				</section>
-				<section className='flex justify-center xs:mt-6 sm:mt-0 mr-5 mb-5 md:w-[30%]'>
-					<Curves curvesLoading={curvesLoading} data={data} />
+				<section className='mb-5 mr-5 flex justify-center xs:mt-6 sm:mt-0 md:w-[30%]'>
+					<Curves
+						curvesLoading={curvesLoading}
+						data={data}
+					/>
 				</section>
 			</article>
 
 			<Divider className='xs:block sm:hidden' />
 
-			<article className="md:hidden xs:flex justify-end pt-0 px-4 pb-4 md:p-4">
-				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
-      <DelegateModal trackNum={trackMetaData?.trackId} />}
+			<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
+				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 			</article>
 		</section>
-
 	);
 };
 

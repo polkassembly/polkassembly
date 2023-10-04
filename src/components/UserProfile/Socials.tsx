@@ -11,14 +11,15 @@ import { SocialIcon } from '~src/ui-components/SocialLinks';
 import styled from 'styled-components';
 
 interface ISocialsProps {
-    loading: boolean;
-    setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>
-    profile: ProfileDetails;
+	loading: boolean;
+	setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>;
+	profile: ProfileDetails;
 	errorCheck?: string | undefined;
 	theme?: string;
 }
 
 const Socials: FC<ISocialsProps> = (props) => {
+<<<<<<< HEAD
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { loading, profile, setProfile , errorCheck, theme } = props;
 	console.log(theme);
@@ -48,6 +49,34 @@ const Socials: FC<ISocialsProps> = (props) => {
 									setProfile((prev) => {
 										let isUpdated = false;
 										const social_links = prev?.social_links?.map((link) => {
+=======
+	const { loading, profile, setProfile, errorCheck } = props;
+	return (
+		<div className='flex max-h-[552px] flex-col gap-y-4'>
+			{socialLinks.map((socialLink) => {
+				const strLink = socialLink.toString();
+				return (
+					<article key={strLink}>
+						<label
+							className='flex cursor-pointer items-center gap-x-[6px] text-base font-normal text-[#485F7D]'
+							htmlFor={strLink}
+						>
+							<SocialIcon type={socialLink} />
+							<span>{strLink}</span>
+						</label>
+						<Input
+							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632]'
+							size='large'
+							type='url'
+							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)]' />}
+							placeholder={`Enter ${strLink} ${strLink === 'Email' ? '' : 'URL'}`}
+							onChange={(e) => {
+								const value = e.target.value.trim();
+								setProfile((prev) => {
+									let isUpdated = false;
+									const social_links =
+										prev?.social_links?.map((link) => {
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 											if (link.type === strLink) {
 												isUpdated = true;
 												return {
@@ -59,6 +88,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 												...link
 											};
 										}) || [];
+<<<<<<< HEAD
 										if (!isUpdated) {
 											social_links.push({
 												link: value,
@@ -87,12 +117,44 @@ const Socials: FC<ISocialsProps> = (props) => {
 						showIcon
 					/>
 			}
+=======
+									if (!isUpdated) {
+										social_links.push({
+											link: value,
+											type: socialLink
+										});
+									}
+									return {
+										...prev,
+										social_links
+									};
+								});
+							}}
+							value={profile?.social_links?.find((link) => link.type === strLink)?.link}
+							disabled={loading}
+						/>
+					</article>
+				);
+			})}
+			{errorCheck && (
+				<Alert
+					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue'
+					message={errorCheck}
+					type='info'
+					showIcon
+				/>
+			)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		</div>
 	);
 };
 
+<<<<<<< HEAD
 export default styled(Socials)`
 	.ant-input{
 		background-color: ${props => props.theme === 'dark' ? '#0D0D0D' : 'white'} !important;
 	}
 `;
+=======
+export default Socials;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29

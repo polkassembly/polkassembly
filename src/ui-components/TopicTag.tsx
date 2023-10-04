@@ -6,6 +6,7 @@ import { Tag } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 
+<<<<<<< HEAD
 interface Props{
 	className?: string,
 	topic: string,
@@ -18,6 +19,15 @@ const TopicTag = ({ className, topic,theme }: Props) => {
 	return (
 		<Tag className={`${className} ${topic} text-xs py-1 px-3`}>{topic}</Tag>
 	);
+=======
+interface Props {
+	className?: string;
+	topic: string;
+}
+
+const TopicTag = ({ className, topic }: Props) => {
+	return <Tag className={`${className} ${topic} px-3 py-1 text-xs`}>{topic}</Tag>;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 };
 
 export default styled(TopicTag)`
@@ -33,6 +43,7 @@ export default styled(TopicTag)`
 	}
 
 	&.Democracy {
+<<<<<<< HEAD
 		background-color: ${props => props.theme === 'dark'? '#1C2945':'#EEF8FF'} !important;
 		color: ${props => props.theme === 'dark'? '#96AAD6':'#093874'} !important; 
 	}
@@ -51,5 +62,26 @@ export default styled(TopicTag)`
 	&.General {
 		background-color: ${props => props.theme === 'dark'? '#380E0E':'#FDF5F0'} !important;
 		color: ${props => props.theme === 'dark'? '#DB8383':'#EF884A'} !important;
+=======
+		background-color: #eef8ff !important;
+		color: #093874;
+	}
+	&.Council {
+		background-color: #ffedf2 !important;
+		color: #cd1f59;
+	}
+	&.Treasury {
+		background-color: #fff4eb !important;
+		color: #ac6a30;
+	}
+	&.Technical,
+	&.Tech {
+		background-color: #fef7dd !important;
+		color: #75610e;
+	}
+	&.General {
+		background-color: #fdf5f0 !important;
+		color: #ef884a;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	}
 `;

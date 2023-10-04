@@ -9,16 +9,17 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 
-interface Props{
-    modalOpen:boolean;
-    setModalOpen:( pre:boolean)=>void;
-    isModal?:boolean
-    setLoginOpen?:(pre:boolean)=>void;
-    className?:string;
-    closable?: boolean;
-    isDelegation?: boolean;
+interface Props {
+	modalOpen: boolean;
+	setModalOpen: (pre: boolean) => void;
+	isModal?: boolean;
+	setLoginOpen?: (pre: boolean) => void;
+	className?: string;
+	closable?: boolean;
+	isDelegation?: boolean;
 }
 
+<<<<<<< HEAD
 const SignupPopup=({ modalOpen, setModalOpen, isModal, setLoginOpen, className, closable, isDelegation }:Props) => {
 	const { network }=useNetworkContext();
 	return <Modal
@@ -32,10 +33,34 @@ const SignupPopup=({ modalOpen, setModalOpen, isModal, setLoginOpen, className, 
 		closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive'/>}>
 		<Signup network={network}  isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setModalOpen} isDelegation={isDelegation}/>
 	</Modal>;
+=======
+const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className, closable, isDelegation }: Props) => {
+	const { network } = useNetworkContext();
+	return (
+		<Modal
+			open={modalOpen}
+			footer={false}
+			closable={closable}
+			maskClosable={closable}
+			wrapClassName={className}
+			className={`${poppins.variable} ${poppins.className} padding-0 max-w-full  shrink-0`}
+			onCancel={() => setModalOpen(false)}
+			closeIcon={<CloseIcon />}
+		>
+			<Signup
+				network={network}
+				isModal={isModal}
+				setLoginOpen={setLoginOpen}
+				setSignupOpen={setModalOpen}
+				isDelegation={isDelegation}
+			/>
+		</Modal>
+	);
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 };
 export default styled(SignupPopup)`
- 
-.padding-0 .ant-modal-content{
-  padding:0px !important;
-  border-radius:4px;
-}`;
+	.padding-0 .ant-modal-content {
+		padding: 0px !important;
+		border-radius: 4px;
+	}
+`;

@@ -11,9 +11,9 @@ import { getSinglePostLinkFromProposalType, OffChainProposalType } from '~src/gl
 import OffChainCard from './OffChainCard';
 
 interface IOffChainPostsListingProps {
-	className?: string
-	posts?: any[]
-	loading?: boolean
+	className?: string;
+	posts?: any[];
+	loading?: boolean;
 	proposalType: OffChainProposalType;
 }
 
@@ -27,12 +27,16 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 	}
 	return (
 		<div className={`${className} flex flex-col `}>
-			{posts.map((post,index) => (
+			{posts.map((post, index) => (
 				<div key={post.post_id}>
 					<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${post.post_id}`}>
 						<OffChainCard
 							post_id={post.post_id}
+<<<<<<< HEAD
 							className={`${(index+1)%2!==0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'dark:bg-section-dark-overlay'}`}
+=======
+							className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'}`}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 							postReactionCount={post?.post_reactions}
 							address={post?.proposer || ''}
 							commentsCount={post.comments_count || 0}
@@ -45,8 +49,7 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 						/>
 					</Link>
 				</div>
-			)
-			)}
+			))}
 		</div>
 	);
 };

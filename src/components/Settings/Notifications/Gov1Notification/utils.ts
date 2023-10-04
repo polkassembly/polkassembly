@@ -168,30 +168,30 @@ const allGov1 = {
 
 const titleMapper = (title: string) => {
 	switch (title) {
-	case 'Tips': {
-		return ProposalType.TIPS;
-	}
-	case 'Tech Committee': {
-		return ProposalType.TECH_COMMITTEE_PROPOSALS;
-	}
-	case 'Bounties': {
-		return ProposalType.BOUNTIES;
-	}
-	case 'Child Bounties': {
-		return ProposalType.CHILD_BOUNTIES;
-	}
-	case 'Referendums': {
-		return ProposalType.REFERENDUMS;
-	}
-	case 'Proposal': {
-		return ProposalType.DEMOCRACY_PROPOSALS;
-	}
-	case 'Treasury Proposal': {
-		return ProposalType.TREASURY_PROPOSALS;
-	}
-	case 'Council Motion': {
-		return ProposalType.COUNCIL_MOTIONS;
-	}
+		case 'Tips': {
+			return ProposalType.TIPS;
+		}
+		case 'Tech Committee': {
+			return ProposalType.TECH_COMMITTEE_PROPOSALS;
+		}
+		case 'Bounties': {
+			return ProposalType.BOUNTIES;
+		}
+		case 'Child Bounties': {
+			return ProposalType.CHILD_BOUNTIES;
+		}
+		case 'Referendums': {
+			return ProposalType.REFERENDUMS;
+		}
+		case 'Proposal': {
+			return ProposalType.DEMOCRACY_PROPOSALS;
+		}
+		case 'Treasury Proposal': {
+			return ProposalType.TREASURY_PROPOSALS;
+		}
+		case 'Council Motion': {
+			return ProposalType.COUNCIL_MOTIONS;
+		}
 	}
 };
 

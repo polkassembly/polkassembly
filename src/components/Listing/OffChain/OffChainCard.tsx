@@ -17,24 +17,24 @@ import TopicTag from '~src/ui-components/TopicTag';
 import { useTheme } from 'next-themes';
 
 export interface IDiscussionProps {
-	created_at: Date
+	created_at: Date;
 	address: string;
-	commentsCount?: number
-	title: string
-	username: string
-	topic: string
+	commentsCount?: number;
+	title: string;
+	username: string;
+	topic: string;
 	postReactionCount: {
 		'👍': number;
 		'👎': number;
 	};
 	post_id: string;
-	tags:string[] | [];
+	tags: string[] | [];
 	spam_users_count?: number;
-	className?:string;
+	className?: string;
 }
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
-	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count , className } = props;
+	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count, className } = props;
 	const currentUser = useContext(UserDetailsContext);
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
@@ -43,6 +43,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 	return (
 		<>
+<<<<<<< HEAD
 			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 min-h-[120px] sm:flex xs:hidden dark:border-[#1F2125] dark:border-[1px] ${className}`}>
 				<span className='font-medium text-center flex-none sm:w-[120px] text-blue-light-high dark:text-blue-dark-high dark:font-normal sm:mt-2'>#{post_id}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-[6px]">
@@ -50,19 +51,38 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					<div className="hidden sm:mt-2 sm:mb-1 sm:flex sm:justify-between sm:items-start sm:flex-row">
 						<div className='mt-3 lg:mt-1'>
 							<h1 className='text-blue-light-high dark:text-blue-dark-high font-medium text-sm flex dark:font-normal'>
+=======
+			<div
+				className={`${
+					ownPost && 'border-l-4 border-l-pink_primary'
+				} min-h-[120px] border-2 border-solid border-[#DCDFE350] p-3 transition-all duration-200 hover:border-pink_primary hover:shadow-xl xs:hidden sm:flex md:p-4 ${className}`}
+			>
+				<span className='flex-none text-center font-medium text-bodyBlue sm:mt-2 sm:w-[120px]'>#{post_id}</span>
+				<div className='flex-1 flex-col sm:mt-[6px] sm:flex sm:justify-between'>
+					<OnchainCreationLabel
+						address={address}
+						topic={topic}
+						username={username}
+					/>
+					<div className='hidden sm:mb-1 sm:mt-2 sm:flex sm:flex-row sm:items-start sm:justify-between'>
+						<div className='mt-3 lg:mt-1'>
+							<h1 className='flex text-sm font-medium text-bodyBlue'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 								{title}
-								{
-									spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-										<div className='hidden lg:flex items-center justify-center ml-5'>
-											<Tooltip color="#E5007A" title="This post could be a spam.">
-												<WarningMessageIcon className='text-xl text-[#FFA012]' />
-											</Tooltip>
-										</div>
-										: null
-								}
+								{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+									<div className='ml-5 hidden items-center justify-center lg:flex'>
+										<Tooltip
+											color='#E5007A'
+											title='This post could be a spam.'
+										>
+											<WarningMessageIcon className='text-xl text-[#FFA012]' />
+										</Tooltip>
+									</div>
+								) : null}
 							</h1>
 						</div>
 					</div>
+<<<<<<< HEAD
 					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center dark:font-normal">
 
 						<div className='flex items-center gap-x-2'>
@@ -101,25 +121,113 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 									<div className='flex items-center sm:-mt-1'>
 										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 										<TopicTag theme={theme} className='sm:mt-0 sm:mx-2' topic={topic} />
+=======
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:flex lg:flex-row lg:items-center'>
+						<div className='flex items-center gap-x-2'>
+							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
+								<LikeOutlined style={{ color: '#485F7D' }} />
+								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
+							</div>
+
+							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
+								<DislikeOutlined style={{ color: '#485F7D' }} />
+								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
+							</div>
+
+							<div className='items-center xs:hidden sm:flex'>
+								<NewChatIcon
+									className='mr-1'
+									style={{ color: '#485F7D' }}
+								/>
+								<span className=' text-lightBlue'>{commentsCount}</span>
+							</div>
+							<Divider
+								type='vertical'
+								style={{ borderLeft: '1px solid #485F7D' }}
+							/>
+
+							{tags && tags.length > 0 && (
+								<>
+									{tags?.slice(0, 2).map((tag, index) => (
+										<div
+											key={index}
+											style={{ fontSize: '10px' }}
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue'
+										>
+											{tag}
+										</div>
+									))}
+									{tags.length > 2 && (
+										<span
+											className='text-bodyBlue'
+											style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
+											onClick={(e) => {
+												e.stopPropagation();
+												e.preventDefault();
+												setTagsModal(true);
+											}}
+										>
+											+{tags.length - 2}
+										</span>
+									)}
+								</>
+							)}
+							{tags && tags.length > 0 && (
+								<Divider
+									type='vertical'
+									className='max-sm:hidden'
+									style={{ borderLeft: '1px solid #485F7D' }}
+								/>
+							)}
+							{relativeCreatedAt && (
+								<>
+									<div className='hidden items-center text-lightBlue sm:flex'>
+										<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 									</div>
-									: null
-							}
+								</>
+							)}
+							{topic ? (
+								<div className='flex items-center sm:-mt-1'>
+									<Divider
+										type='vertical'
+										className='max-sm:hidden sm:mt-1'
+										style={{ borderLeft: '1px solid #485F7D' }}
+									/>
+									<TopicTag
+										className='sm:mx-2 sm:mt-0'
+										topic={topic}
+									/>
+								</div>
+							) : null}
 						</div>
 					</div>
 				</div>
 				<Modal
-					open= {tagsModal}
-					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
+					open={tagsModal}
+					onCancel={(e) => {
+						e.stopPropagation();
+						e.preventDefault();
+						setTagsModal(false);
+					}}
 					footer={false}
+<<<<<<< HEAD
 					closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 					wrapClassName='dark:bg-modalOverlayDark'
 				><div className='flex'>
 						<div className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2 dark:bg-black'>
+=======
+					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%]`}
+				>
+					<div className='flex'>
+						<h2 className='mb-2 text-lg font-medium tracking-wide text-bodyBlue'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 							<TagsIcon className='mr-2' />
 							Tags
 						</div>
 					</div>
+<<<<<<< HEAD
 					<div className='w-full h-[1px] bg-[#D2D8E0] dark:bg-separatorDark' />
 					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
 						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] dark:border-separatorDark px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
@@ -149,17 +257,66 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 									</div>
 									: null
 							}
+=======
+					<div className='h-[1px] w-full bg-[#D2D8E0]' />
+					<div className='mt-4 flex flex-wrap gap-2'>
+						{tags && tags.length > 0 && (
+							<>
+								{tags?.map((tag, index) => (
+									<div
+										key={index}
+										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue'
+									>
+										{tag}
+									</div>
+								))}
+							</>
+						)}
+					</div>
+				</Modal>
+			</div>
+
+			<div
+				className={`${
+					ownPost && 'border-l-4 border-l-pink_primary'
+				} h-auto min-h-[150px] border-2 border-solid border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl xs:flex xs:p-2 sm:hidden md:p-4 ${className}`}
+			>
+				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
+					{topic && (
+						<div className='flex justify-start'>
+							<TopicTag
+								className='xs:mx-2 xs:my-0.5'
+								topic={topic}
+							/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</div>
-						{
-							spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-								<div className='hidden lg:flex items-center justify-center'>
-									<Tooltip color="#E5007A" title="This post could be a spam.">
+					)}
+					<div className='max-xs-hidden m-2.5 text-sm font-medium text-bodyBlue'>
+						#{post_id} {title}
+						<div className='flex items-center justify-between'>
+							{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+								<div className='flex items-center justify-center lg:hidden'>
+									<Tooltip
+										color='#E5007A'
+										title='This post could be a spam.'
+									>
 										<WarningMessageIcon className='text-xl text-[#FFA012]' />
 									</Tooltip>
 								</div>
-								: null
-						}
+							) : null}
+						</div>
+						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
+							<div className='hidden items-center justify-center lg:flex'>
+								<Tooltip
+									color='#E5007A'
+									title='This post could be a spam.'
+								>
+									<WarningMessageIcon className='text-xl text-[#FFA012]' />
+								</Tooltip>
+							</div>
+						) : null}
 					</div>
+<<<<<<< HEAD
 					<div className="xs:mt-1 xs:gap-0 sm:gap-2.5 xs:ml-2 sm:ml-0 font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
 
 						<div className='sm:hidden xs:flex xs:justify-start'>
@@ -182,13 +339,74 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
                 +{tags.length-2}
 							</span>}
 							</>}
+=======
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
+						<div className='xs:flex xs:justify-start sm:hidden'>
+							<OnchainCreationLabel
+								address={address}
+								username={username}
+							/>
+							<Divider
+								type='vertical'
+								className='max-lg:hidden xs:mt-0.5 xs:inline-block'
+								style={{ borderLeft: '1px solid #485F7D' }}
+							/>
+							{relativeCreatedAt && (
+								<>
+									<div className='mt-0 items-center text-sm xs:-mt-0.5 xs:flex xs:text-lightBlue lg:flex'>
+										<ClockCircleOutlined className='mr-1 mt-0' /> {relativeCreatedAt}
+									</div>
+								</>
+							)}
+						</div>
+
+						<div className='items-center justify-between xs:mt-3.5 xs:flex xs:gap-x-2'>
+							{tags && tags.length > 0 && (
+								<Divider
+									type='vertical'
+									className='max-lg:hidden'
+									style={{ borderLeft: '1px solid #90A0B7' }}
+								/>
+							)}
+							{tags && tags.length > 0 && (
+								<>
+									{tags?.slice(0, 2).map((tag, index) => (
+										<div
+											key={index}
+											style={{ fontSize: '10px' }}
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue'
+										>
+											{tag}
+										</div>
+									))}
+									{tags.length > 2 && (
+										<span
+											className='text-bodyBlue'
+											style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
+											onClick={(e) => {
+												e.stopPropagation();
+												e.preventDefault();
+												setTagsModal(true);
+											}}
+										>
+											+{tags.length - 2}
+										</span>
+									)}
+								</>
+							)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</div>
 					</div>
 				</div>
 				<Modal
-					open= {tagsModal}
-					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
+					open={tagsModal}
+					onCancel={(e) => {
+						e.stopPropagation();
+						e.preventDefault();
+						setTagsModal(false);
+					}}
 					footer={false}
+<<<<<<< HEAD
 					className={`${theme === 'dark'? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName='dark:bg-modalOverlayDark'
@@ -202,6 +420,29 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							{tag}
 						</div>))}
 					</>}</div>
+=======
+					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%]`}
+				>
+					<div className='flex'>
+						<TagsIcon className='mr-2 mt-1.5' />
+						<h2 className='mb-2 text-lg font-semibold tracking-wide text-bodyBlue'>Tags</h2>
+					</div>
+					<div className='h-[1px] w-full bg-[#D2D8E0]' />
+					<div className='mt-4 flex flex-wrap gap-2'>
+						{tags && tags.length > 0 && (
+							<>
+								{tags?.map((tag, index) => (
+									<div
+										key={index}
+										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue'
+									>
+										{tag}
+									</div>
+								))}
+							</>
+						)}
+					</div>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				</Modal>
 			</div>
 		</>

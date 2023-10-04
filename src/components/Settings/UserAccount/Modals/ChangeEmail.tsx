@@ -11,6 +11,7 @@ import messages from '~src/util/messages';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 
+<<<<<<< HEAD
 const ChangeEmail = ({
 	open,
 	onConfirm,
@@ -24,6 +25,9 @@ const ChangeEmail = ({
     email: string;
 	theme?: string;
 }) => {
+=======
+const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onConfirm?: () => void; onCancel: () => void; email: string }) => {
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
 
@@ -32,12 +36,9 @@ const ChangeEmail = ({
 			const values = await form.validateFields();
 			const { newEmail } = values;
 			setLoading(true);
-			const { data, error } = await nextApiClientFetch<any>(
-				'api/v1/auth/actions/sendVerificationEmail',
-				{
-					email: newEmail
-				}
-			);
+			const { data, error } = await nextApiClientFetch<any>('api/v1/auth/actions/sendVerificationEmail', {
+				email: newEmail
+			});
 			if (error) {
 				queueNotification({
 					header: 'Failed!',
@@ -68,9 +69,15 @@ const ChangeEmail = ({
 	return (
 		<Modal
 			title={
+<<<<<<< HEAD
 				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay'>
 					<h3 className='ml-[24px] mb-0 flex items-center gap-2 text-base md:text-md'>
 						<ChangeEmailIcon className='text-lightBlue dark:text-white'/> Change your email
+=======
+				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+					<h3 className='md:text-md mb-0 ml-[24px] flex items-center gap-2 text-base'>
+						<ChangeEmailIcon /> Change your email
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					</h3>
 					<Divider className='dark:bg-[#90909060]' />
 				</div>
@@ -83,12 +90,13 @@ const ChangeEmail = ({
 			onOk={onConfirm}
 			footer={null}
 		>
-			<div className='flex gap-[10px] flex-wrap items-center'>
+			<div className='flex flex-wrap items-center gap-[10px]'>
 				<Form
 					onFinish={handleClick}
 					form={form}
-					className='flex flex-col gap-6 w-full'
+					className='flex w-full flex-col gap-6'
 				>
+<<<<<<< HEAD
 					{Boolean(email) && <Form.Item
 						name='old-email'
 						className='m-0 w-full min-w-[250px]'
@@ -102,14 +110,31 @@ const ChangeEmail = ({
 					</Form.Item>}
 					<div>
 						<label className='dark:text-blue-dark-medium' htmlFor="new-email">New Email</label>
+=======
+					{Boolean(email) && (
+						<Form.Item
+							name='old-email'
+							className='m-0 w-full min-w-[250px]'
+						>
+							<label htmlFor='old-email'>Old Email</label>
+							<Input
+								className='p-2 text-sm leading-[21px]'
+								value={email}
+								disabled
+							/>
+						</Form.Item>
+					)}
+					<div>
+						<label htmlFor='new-email'>New Email</label>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						<Form.Item
 							name={'newEmail'}
 							className='m-0 w-full min-w-[250px]'
 							rules={[
 								{
 									message: messages.VALIDATION_EMAIL_ERROR,
-									required:true,
-									type:'email'
+									required: true,
+									type: 'email'
 								}
 							]}
 						>
@@ -121,23 +146,27 @@ const ChangeEmail = ({
 						</Form.Item>
 					</div>
 					<div>
-						<div className='mr-[-24px] ml-[-24px]'>
+						<div className='ml-[-24px] mr-[-24px]'>
 							<Divider className='my-4 mt-0' />
 						</div>
 						<div className='flex justify-end gap-4'>
 							<Button
 								key='1'
 								onClick={onCancel}
+<<<<<<< HEAD
 								className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize dark:bg-transparent'
+=======
+								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 							>
-                                Cancel
+								Cancel
 							</Button>
 							<Button
 								loading={loading}
 								htmlType='submit'
-								className='h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
 							>
-                                Save
+								Save
 							</Button>
 						</div>
 					</div>

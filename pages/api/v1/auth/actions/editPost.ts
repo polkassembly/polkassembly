@@ -16,7 +16,13 @@ import getDefaultUserAddressFromId from '~src/auth/utils/getDefaultUserAddressFr
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { getFirestoreProposalType, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE, GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 } from '~src/queries';
+import {
+	GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE,
+	GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE,
+	GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE,
+	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE,
+	GET_PROPOSAL_BY_INDEX_AND_TYPE_V2
+} from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -32,8 +38,8 @@ export interface IEditPostResponse {
 	summary: string;
 	title: string;
 	topic: {
-		id: number,
-		name: string
+		id: number;
+		name: string;
 	};
 	last_edited_at: Date;
 }
@@ -42,26 +48,26 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { content, postId, proposalType, title, timeline, tags } = req.body;
-	if(proposalType === ProposalType.ANNOUNCEMENT){
-		if(!postId || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
-	}
-	else{
-		if(isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (proposalType === ProposalType.ANNOUNCEMENT) {
+		if (!postId || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	} else {
+		if (isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 	}
 
-	if(tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
+	if (tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
 
 	const strProposalType = String(proposalType);
-	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
+	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType))
+		return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 
@@ -76,16 +82,17 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const post = postDoc.data();
 	let isAuthor = false;
 	let proposerAddress = post?.proposer_address || '';
-	if(postDoc.exists && !isNaN(post?.user_id)) {
-		if(![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)){
+	if (postDoc.exists && !isNaN(post?.user_id)) {
+		if (![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)) {
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
-			let postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?
-				GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE :
-				proposalType === ProposalType.ANNOUNCEMENT ?
-					GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE :
-					GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
+			let postQuery =
+				proposalType === ProposalType.ALLIANCE_MOTION
+					? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE
+					: proposalType === ProposalType.ANNOUNCEMENT
+					? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
+					: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
-			if(network === 'polymesh'){
+			if (network === 'polymesh') {
 				postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
 			}
 			let variables: any = {
@@ -107,30 +114,34 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			});
 
 			const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-			if(!post) return res.status(500).json({ message: 'Something went wrong.' });
-			if(!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
+			if (!post) return res.status(500).json({ message: 'Something went wrong.' });
+			if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
 
 			proposerAddress = post?.proposer || post?.preimage?.proposer;
 
 			const substrateAddress = getSubstrateAddress(proposerAddress);
-			if(!substrateAddress)  return res.status(500).json({ message: 'Something went wrong.' });
+			if (!substrateAddress) return res.status(500).json({ message: 'Something went wrong.' });
 			proposer_address = substrateAddress;
-			isAuthor = Boolean(userAddresses.find(address => address.address === substrateAddress));
-			if(network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post?.id === 23){
-				if(userAddresses.find(address => address.address === '0xbb1e1722513a8fa80f7593617bb0113b1258b7f1')){
+			isAuthor = Boolean(userAddresses.find((address) => address.address === substrateAddress));
+			if (network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post?.id === 23) {
+				if (userAddresses.find((address) => address.address === '0xbb1e1722513a8fa80f7593617bb0113b1258b7f1')) {
 					isAuthor = true;
 				}
 			}
-			if(network === 'moonriver' && proposalType === ProposalType.REFERENDUM_V2 && post?.id === 3){
-				if(userAddresses.find(address => address.address === '0x16095c509f728721ad19a51704fc39116157be3a')){
+			if (network === 'moonriver' && proposalType === ProposalType.REFERENDUM_V2 && post?.id === 3) {
+				if (userAddresses.find((address) => address.address === '0x16095c509f728721ad19a51704fc39116157be3a')) {
 					isAuthor = true;
 				}
 			}
-			if(!isAuthor){
-				isAuthor = await checkIsProposer(proposerAddress, userAddresses.map(a => a.address), network);
+			if (!isAuthor) {
+				isAuthor = await checkIsProposer(
+					proposerAddress,
+					userAddresses.map((a) => a.address),
+					network
+				);
 			}
 
-			if(proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1'){
+			if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
 				const latestActivitykey = `${network}_latestActivity_OpenGov`;
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
 				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
@@ -139,15 +150,17 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				await deleteKeys(trackListingKey);
 				await redisDel(referendumDetailsKey);
 			}
-		}
-		else if(post?.user_id === user.id){
+		} else if (post?.user_id === user.id) {
 			isAuthor = true;
+		} else {
+			isAuthor = await checkIsProposer(
+				proposerAddress,
+				userAddresses.map((a) => a.address),
+				network
+			); // true
 		}
-		else{
-			isAuthor = await checkIsProposer(proposerAddress, userAddresses.map(a => a.address), network); // true
-		}
-		if(process.env.IS_CACHING_ALLOWED == '1'){
-			if(proposalType == ProposalType.DISCUSSIONS){
+		if (process.env.IS_CACHING_ALLOWED == '1') {
+			if (proposalType == ProposalType.DISCUSSIONS) {
 				const latestActivitykey = `${network}_latestActivity_OpenGov`;
 				const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
 				const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
@@ -158,24 +171,27 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			}
 		}
 
-		if(!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
+		if (!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
 		created_at = post?.created_at?.toDate();
 		topic_id = post?.topic_id;
 		post_link = post?.post_link;
 		proposer_address = post?.proposer_address;
-	}else {
+	} else {
 		const defaultUserAddress = await getDefaultUserAddressFromId(user.id);
 		proposer_address = defaultUserAddress?.address || '';
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
-		let postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?
-			GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE :
-			proposalType === ProposalType.ANNOUNCEMENT ?
-				GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE :
-				GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
+		let postQuery =
+			proposalType === ProposalType.ALLIANCE_MOTION
+				? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE
+				: proposalType === ProposalType.ANNOUNCEMENT
+				? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
+				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && network === 'collectives'
+				? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
+				: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
-		if(network === 'polymesh'){
-			postQuery =  GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
+		if (network === 'polymesh') {
+			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
 		}
 
 		let variables: any = {
@@ -197,31 +213,35 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 
 		const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-		if(!post) return res.status(500).json({ message: 'Something went wrong.' });
-		if(!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
+		if (!post) return res.status(500).json({ message: 'Something went wrong.' });
+		if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
 
 		const proposerAddress = post?.proposer || post?.preimage?.proposer;
 
 		const substrateAddress = getSubstrateAddress(proposerAddress);
-		if(!substrateAddress)  return res.status(500).json({ message: 'Something went wrong.' });
+		if (!substrateAddress) return res.status(500).json({ message: 'Something went wrong.' });
 		proposer_address = substrateAddress;
-		let isAuthor:any = userAddresses.find(address => address.address === substrateAddress);
-		if(network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post.index === 23){
-			isAuthor = userAddresses.find(address => address.address === '0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
+		let isAuthor: any = userAddresses.find((address) => address.address === substrateAddress);
+		if (network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post.index === 23) {
+			isAuthor = userAddresses.find((address) => address.address === '0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
 		}
-		if(network === 'moonriver' && proposalType === ProposalType.REFERENDUM_V2 && post.index === 3){
-			isAuthor = userAddresses.find(address => address.address === '0x16095c509f728721ad19a51704fc39116157be3a');
+		if (network === 'moonriver' && proposalType === ProposalType.REFERENDUM_V2 && post.index === 3) {
+			isAuthor = userAddresses.find((address) => address.address === '0x16095c509f728721ad19a51704fc39116157be3a');
 		}
-		if(!isAuthor){
-			isAuthor = await checkIsProposer(proposerAddress, userAddresses.map(a => a.address), network);
+		if (!isAuthor) {
+			isAuthor = await checkIsProposer(
+				proposerAddress,
+				userAddresses.map((a) => a.address),
+				network
+			);
 		}
 
 		created_at = dayjs(post.createdAt).toDate();
 
-		if(!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
+		if (!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-		if(process.env.IS_CACHING_ALLOWED == '1'){
-			if(proposalType == ProposalType.REFERENDUM_V2){
+		if (process.env.IS_CACHING_ALLOWED == '1') {
+			if (proposalType == ProposalType.REFERENDUM_V2) {
 				const latestActivitykey = `${network}_latestActivity_OpenGov`;
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
 				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
@@ -239,9 +259,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		title: post?.title
 	};
 
-	const history = post?.history && Array.isArray(post?.history)
-		? [newHistory, ...(post?.history || [])]
-		: [];
+	const history = post?.history && Array.isArray(post?.history) ? [newHistory, ...(post?.history || [])] : [];
 
 	const last_comment_at = new Date();
 
@@ -260,7 +278,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		summary: summary,
 		tags: tags || [],
 		title,
-		topic_id : topic_id || getTopicFromType(proposalType).id,
+		topic_id: topic_id || getTopicFromType(proposalType).id,
 		user_id: postUser?.userId || user.id,
 		username: postUser?.username || user.username
 	};
@@ -273,7 +291,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	if (timeline && Array.isArray(timeline) && timeline.length > 0) {
 		const batch = firestore_db.batch();
 		timeline.forEach((obj) => {
-			const proposalType = getFirestoreProposalType(obj.type)  as ProposalType;
+			const proposalType = getFirestoreProposalType(obj.type) as ProposalType;
 			const postDocRef = postsByTypeRef(network, proposalType).doc(String(obj.index));
 			if (strProposalType === proposalType && Number(obj.index) === Number(postId)) {
 				isCurrPostUpdated = true;
@@ -286,21 +304,25 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				if (isProposalTypeValid(strProposalType)) {
 					post_link = null;
 				}
-				batch.set(postDocRef, {
-					content,
-					created_at,
-					id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
-					isDeleted: false,
-					last_edited_at: last_comment_at,
-					post_link: post_link,
-					proposer_address: proposer_address,
-					summary: summary,
-					tags: tags || [],
-					title,
-					topic_id : topic_id || getTopicFromType(proposalType).id,
-					user_id: post?.user_id || user.id,
-					username: post?.username || user.username
-				}, { merge: true });
+				batch.set(
+					postDocRef,
+					{
+						content,
+						created_at,
+						id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
+						isDeleted: false,
+						last_edited_at: last_comment_at,
+						post_link: post_link,
+						proposer_address: proposer_address,
+						summary: summary,
+						tags: tags || [],
+						title,
+						topic_id: topic_id || getTopicFromType(proposalType).id,
+						user_id: post?.user_id || user.id,
+						username: post?.username || user.username
+					},
+					{ merge: true }
+				);
 			}
 		});
 		await batch.commit();
@@ -326,7 +348,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 	const batch = firestore_db.batch();
 	if (tags && Array.isArray(tags) && tags.length > 0) {
-		tags?.map((tag:string) => {
+		tags?.map((tag: string) => {
 			if (tag && typeof tag === 'string') {
 				const tagRef = firestore_db.collection('tags').doc(tag);
 				const newTag: IPostTag = {

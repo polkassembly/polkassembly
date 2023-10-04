@@ -21,8 +21,13 @@ import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 
-const  OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'),{
-	loading: () => <Skeleton.Button className='w-[100%]' active />,
+const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
+	loading: () => (
+		<Skeleton.Button
+			className='w-[100%]'
+			active
+		/>
+	),
 	ssr: false
 });
 
@@ -31,14 +36,13 @@ const grillChatAllowedNetwork = ['CERE', 'KILT', 'KUSAMA', 'MOONBEAM', 'POLKADOT
 
 interface IAiChatbotProps {
 	floatButtonOpen: boolean;
-	setFloatButtonOpen: React.Dispatch<React.SetStateAction<boolean>>
+	setFloatButtonOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	isAIChatBotOpen: boolean;
 	setIsAIChatBotOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	className?: string | undefined;
 }
 
 const AiBot: FC<IAiChatbotProps> = (props) => {
-
 	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, className } = props;
 	const [grillChat, setGrillChat] = useState(false);
 	const router = useRouter();
@@ -87,14 +91,25 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	}, []);
 
 	const data = [
-
 		{
+<<<<<<< HEAD
 			component: <div className='ml-[-37px] text-xl flex justify-center align-middle text-lightBlue hover:text-blue-light-high dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 				onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
 			>
 				<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
 				<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 			</div>
+=======
+			component: (
+				<div
+					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue'
+					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
+				>
+					<CreateDiscussionIcon className='ml-[-53px] mt-[5px] cursor-pointer' />
+					<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+				</div>
+			)
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		},
 		// {
 		// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-blue-light-high dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
@@ -109,6 +124,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		// </div>
 		// },
 		{
+<<<<<<< HEAD
 			component: <a href='https://polkassembly.hellonext.co/'
 				target='_blank'
 				rel='noreferrer'
@@ -118,18 +134,37 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>Report An Issue</p>
 				</div>
 			</a>
+=======
+			component: (
+				<a
+					href='https://polkassembly.hellonext.co/'
+					target='_blank'
+					rel='noreferrer'
+					className='ml-[-34px] text-lightBlue hover:text-bodyBlue'
+				>
+					<div className='flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle transition delay-150  duration-300 hover:bg-[#e5007a12]'>
+						<CautionIcon className='ml-[-105px] mt-[5px] cursor-pointer' />
+						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%]'>Report An Issue</p>
+					</div>
+				</a>
+			)
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		}
 	];
 
-	if(treasuryProposalCreationAllowedNetwork.includes(network.toUpperCase())){
+	if (treasuryProposalCreationAllowedNetwork.includes(network?.toUpperCase())) {
 		data.splice(0, 0, {
+<<<<<<< HEAD
 			component: <OpenGovTreasuryProposal theme={theme}/>
+=======
+			component: <OpenGovTreasuryProposal />
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		});
 	}
 
-	if(grillChatAllowedNetwork.includes(network.toUpperCase())){
-
+	if (grillChatAllowedNetwork.includes(network?.toUpperCase())) {
 		data.splice(data.length - 1, 0, {
+<<<<<<< HEAD
 			component: <div className='ml-[-34px] flex justify-center align-middle text-lightBlue hover:text-blue-light-high dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 				onClick={() => {
 					if (!isAIChatBotOpen) setGrillChat(!grillChat);
@@ -139,6 +174,20 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				<p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>Grill Chat</p>
 			</div>
 		} );
+=======
+			component: (
+				<div
+					className='ml-[-34px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue'
+					onClick={() => {
+						if (!isAIChatBotOpen) setGrillChat(!grillChat);
+					}}
+				>
+					<GrillChatIcon className='ml-[-149px] mt-[5px] cursor-pointer' />
+					<p className='mb-3 ml-4 mt-2.5  text-sm font-medium leading-5 tracking-[1.25%]'>Grill Chat</p>
+				</div>
+			)
+		});
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	}
 	return (
 		<>
@@ -170,24 +219,27 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					<Button
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
+						onClick={() => {
+							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
 							// (window as any).DocsBotAI.close();
 							// setIsAIChatBotOpen(false);
 							setGrillChat(false);
-						}
-						}>
+						}}
+					>
 						<CloseWhite className='mt-1' />
 					</Button>
 				}
 				open={floatButtonOpen}
 				className={`${className}`}
 			>
+				<></>
 			</FloatButton.Group>
 
 			{
 				<List
 					style={{ bottom: '85px', position: 'fixed', right: '20px', zIndex: '999' }}
 					header={
+<<<<<<< HEAD
 						<div className='flex justify-between font-semibold text-xl text-lightBlue h-[38px]'>
 							<p className='mt-2 h-[25px] dark:text-blue-dark-medium'>
 							Menu
@@ -200,23 +252,37 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					dataSource={data}
 					className={`${className}
 					${floatButtonOpen ? 'opacity-100 translate-y-0 transition-all duration-500 delay-200 w-[311px] max-h-[384px] bg-white dark:bg-section-dark-overlay max-[350px]:right-[5px] rounded-3xl shadow-[0_15px_35px_-20px_rgba(178,59,123,1)]' : 'opacity-0 -translate-y-2 transition-all duration-500 w-[311px] max-h-[384px] bg-white dark:bg-section-dark-overlay max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]'}
+=======
+						<div className='flex h-[38px] justify-between text-xl font-semibold text-lightBlue'>
+							<p className='mt-2 h-[25px]'>Menu</p>
+							<CloseIcon
+								className='mt-4 cursor-pointer'
+								onClick={() => {
+									setFloatButtonOpen(false);
+									setGrillChat(false);
+								}}
+							/>
+						</div>
+					}
+					bordered
+					dataSource={data}
+					className={`${className}
+					${
+						floatButtonOpen
+							? 'max-h-[384px] w-[311px] translate-y-0 rounded-3xl bg-white opacity-100 shadow-[0_15px_35px_-20px_rgba(178,59,123,1)] transition-all delay-200 duration-500 max-[350px]:right-[5px]'
+							: 'max-h-[384px] w-[311px] -translate-y-2 rounded-3xl bg-white opacity-0 shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)] transition-all duration-500 max-[350px]:right-[5px]'
+					}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					${floatButtonOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
-
-					renderItem={(item) => (
-						<List.Item >
-							{item.component}
-						</List.Item>
-					)}
+					renderItem={(item) => <List.Item>{item.component}</List.Item>}
 				/>
-
 			}
-			{
-				grillChat && <ChatFloatingModal />
-			}
+			{grillChat && <ChatFloatingModal />}
 			<ReferendaLoginPrompts
 				modalOpen={openDiscussionLoginPrompt}
 				setModalOpen={setOpenDiscussionLoginPrompt}
-				image='/assets/referenda-discussion.png' title='Join Polkassembly to Start a New Discussion.'
+				image='/assets/referenda-discussion.png'
+				title='Join Polkassembly to Start a New Discussion.'
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>
 		</>
@@ -224,26 +290,26 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 };
 
 export default styled(AiBot)`
-
-
-.ant-float-btn-body{
-	width:56px !important;
-	height:56px !important;
-	background: radial-gradient(circle,#E5007A,#BA0566,#9A0856);
-	box-shadow: 0 0 10px 0 rgba(229, 0, 122, 0.3), 0 0 20px 5px rgba(229, 0, 122, 0.2);
-}
-.ant-float-btn-primary {
-    background: rgba(76, 175, 80, 0.001)
-}
-.ant-float-btn .ant-float-btn-body .ant-float-btn-content .ant-float-btn-icon {
-width:55px !important;
-}
-.ant-list-item{
-	height:65px;
-	width:100%;
-	border-bottom: 2px dotted #D2D8E0;
-}
-.ant-spin-container{
-	padding: 0px 23px;
-}
+	.ant-float-btn-body {
+		width: 56px !important;
+		height: 56px !important;
+		background: radial-gradient(circle, #e5007a, #ba0566, #9a0856);
+		box-shadow:
+			0 0 10px 0 rgba(229, 0, 122, 0.3),
+			0 0 20px 5px rgba(229, 0, 122, 0.2);
+	}
+	.ant-float-btn-primary {
+		background: rgba(76, 175, 80, 0.001);
+	}
+	.ant-float-btn .ant-float-btn-body .ant-float-btn-content .ant-float-btn-icon {
+		width: 55px !important;
+	}
+	.ant-list-item {
+		height: 65px;
+		width: 100%;
+		border-bottom: 2px dotted #d2d8e0;
+	}
+	.ant-spin-container {
+		padding: 0px 23px;
+	}
 `;

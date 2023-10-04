@@ -4,14 +4,18 @@
 import styled from 'styled-components';
 import { Collapse as AntDCollapse } from 'antd';
 export const Collapse = styled(AntDCollapse)`
+	.channel-header {
+		svg {
+			width: 24px;
+			height: 24px;
+		}
+	}
 
-.channel-header{
-    svg{
-        width:24px;
-        height:24px
-    }
-}
+	.ant-collapse-header {
+		padding: 16px 20px !important;
+	}
 
+<<<<<<< HEAD
 .ant-collapse-header{
     padding: 16px 20px !important;
 }
@@ -35,3 +39,11 @@ export const Collapse = styled(AntDCollapse)`
     }
 }
 `;
+=======
+	@media (max-width: 768px) {
+		&.ant-collapse-large > .ant-collapse-item > .ant-collapse-header {
+			padding: 8px 12px !important;
+		}
+	}
+`;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29

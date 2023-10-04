@@ -9,25 +9,24 @@ import dynamic from 'next/dynamic';
 import { Empty, Skeleton } from 'antd';
 import { ETrackDelegationStatus } from '~src/types';
 
-interface Props{
-  className?: string;
-  posts: IPostListing[];
-  trackDetails: any;
-  status: ETrackDelegationStatus[];
-  delegatedTo: string | null;
-
+interface Props {
+	className?: string;
+	posts: IPostListing[];
+	trackDetails: any;
+	status: ETrackDelegationStatus[];
+	delegatedTo: string | null;
 }
 
 const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
-const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo }: Props ) => {
-
+const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo }: Props) => {
 	const count = posts.length;
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 
+<<<<<<< HEAD
 	return <div className=  {`${className} rounded-[14px] bg-white dark:bg-section-dark-overlay py-[24px] px-[37px] mt-[22px]`}>
 		<div onClick={() =>  setExpandProposals(!expandProposals)}  className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div className='flex jutify-center items-center gap-2'>
@@ -40,11 +39,42 @@ const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo 
 				</span>
 			</div>
 			<div  className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon className='text-lightBlue dark:text-blue-dark-medium'/> : <CollapseIcon className='text-lightBlue dark:text-blue-dark-medium'/>}</div>
+=======
+	return (
+		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-[24px]`}>
+			<div
+				onClick={() => setExpandProposals(!expandProposals)}
+				className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex cursor-pointer items-center justify-between'
+			>
+				<div className='jutify-center flex items-center gap-2'>
+					<ActiveProposalsIcon className='mr-[4px]' />
+					<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>Active Proposals</span>
+					<span className='flex h-[34px] items-center justify-center rounded-[26px] bg-[#D2D8E04D] px-3 py-[6px] font-semibold text-[#243A57]'>
+						{count < 10 && count !== 0 && 0}
+						{count}
+					</span>
+				</div>
+				<div className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon /> : <CollapseIcon />}</div>
+			</div>
+			{expandProposals && (
+				<div className='mt-[24px] flex flex-col gap-6'>
+					{posts?.length > 0 ? (
+						posts?.map((proposal, index) => (
+							<ActiveProposalCard
+								proposal={proposal}
+								key={index}
+								trackDetails={trackDetails}
+								status={status}
+								delegatedTo={delegatedTo}
+							/>
+						))
+					) : (
+						<Empty className='mb-4' />
+					)}
+				</div>
+			)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 		</div>
-		{expandProposals && <div className='mt-[24px] flex flex-col gap-6'>
-			{posts?.length > 0 ? posts?.map((proposal, index) => (
-				<ActiveProposalCard proposal= {proposal} key={index}  trackDetails={trackDetails} status={status} delegatedTo = {delegatedTo} />)):<Empty className='mb-4'/>}
-		</div>}
-	</div>;
+	);
 };
 export default ActiveProposals;

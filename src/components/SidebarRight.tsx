@@ -15,7 +15,7 @@ interface Props {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SidebarRight = ({ className, children, open, width, closeSidebar } : Props) => {
+const SidebarRight = ({ className, children, open, width, closeSidebar }: Props) => {
 	return (
 		<Drawer
 			zIndex={9999}
@@ -26,23 +26,21 @@ const SidebarRight = ({ className, children, open, width, closeSidebar } : Props
 			size='large'
 			width={width}
 		>
-			<div className='p-3 md:p-6 h-[92vh] overflow-y-auto'>
-				{children}
-			</div>
+			<div className='h-[92vh] overflow-y-auto p-3 md:p-6'>{children}</div>
 		</Drawer>
 	);
 };
 
 export default styled(SidebarRight)`
-.ant-drawer-body{
-	padding: 0 !important;
+	.ant-drawer-body {
+		padding: 0 !important;
 
-	ul{
-		margin-top: 0 !important;
+		ul {
+			margin-top: 0 !important;
+		}
 	}
-}
 
-.ant-drawer-header-title{
-	justify-content: right;
-}
+	.ant-drawer-header-title {
+		justify-content: right;
+	}
 `;

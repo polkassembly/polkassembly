@@ -18,21 +18,26 @@ import { handleTokenChange } from '~src/services/auth.service';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { token, identityVerification } = query;
-	return { props: { identityVerification:identityVerification || null, network, token: token || null } };
+	return { props: { identityVerification: identityVerification || null, network, token: token || null } };
 };
 
-const VerifyEmail = ({ network, token, identityVerification }: { network: string, token: string, identityVerification: boolean }) => {
+const VerifyEmail = ({ network, token, identityVerification }: { network: string; token: string; identityVerification: boolean }) => {
 	const { setNetwork } = useNetworkContext();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(false);
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -42,8 +47,8 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 	const [handle, setHandle] = useState<string>('');
 
 	const handleVerifyEmail = useCallback(async () => {
-		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/verifyEmail');
-		if(error) {
+		const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/verifyEmail');
+		if (error) {
 			console.error('Email verification error ', error);
 			setError(error);
 			queueNotification({
@@ -62,12 +67,12 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 			});
 			router.replace('/');
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleIdentityEmailTokenVerify = async () => {
-		const { data , error } = await nextApiClientFetch<ChangeResponseType>(`api/v1/verification/verify?token=${token}&type=email`);
-		if(error) {
+		const { data, error } = await nextApiClientFetch<ChangeResponseType>(`api/v1/verification/verify?token=${token}&type=email`);
+		if (error) {
 			console.error('Email verification error ', error);
 			setError(error);
 			queueNotification({
@@ -75,8 +80,7 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 				message: 'There was an error in verifying your email. Please try again.',
 				status: NotificationStatus.ERROR
 			});
-		}
-		else if (data) {
+		} else if (data) {
 			handleTokenChange(data.token, currentUser);
 			queueNotification({
 				header: 'Success!',
@@ -85,47 +89,67 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 			});
 			setIdentityEmailSuccess(true);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	};
 
 	useEffect(() => {
-		if(identityVerification)return;
+		if (identityVerification) return;
 		handleVerifyEmail();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [handleVerifyEmail]);
 
 	useEffect(() => {
-		if(!identityVerification ) return;
+		if (!identityVerification) return;
 
-		let identityFrom:any = localStorage.getItem('identityForm') || '';
+		let identityFrom: any = localStorage.getItem('identityForm') || '';
 
-		if(identityFrom){
+		if (identityFrom) {
 			identityFrom = JSON.parse(identityFrom);
-			setHandle(identityFrom?.email?.value );
+			setHandle(identityFrom?.email?.value);
 		}
-		(async() => {
-
+		(async () => {
 			await handleIdentityEmailTokenVerify();
 		})();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<>
+<<<<<<< HEAD
 			<SEOHead title="Verify Email" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-16'>
 				{ error
 					? <article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
 						<h2 className='flex flex-col gap-y-2 items-center text-xl font-medium'>
+=======
+			<SEOHead
+				title='Verify Email'
+				network={network}
+			/>
+			<Row
+				justify='center'
+				align='middle'
+				className='-mt-16 h-full'
+			>
+				{error ? (
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 							<WarningOutlined />
 							{/* TODO: Check error message from BE when email already verified */}
-							<FilteredError text={error}/>
+							<FilteredError text={error} />
 						</h2>
 					</article>
-					: <Loader/>
-				}
+				) : (
+					<Loader />
+				)}
 			</Row>
-			<VerificationSuccessScreen open={identityEmailSuccess} social='Email' socialHandle={handle} onClose={() => setIdentityEmailSuccess(false) }/>
+			<VerificationSuccessScreen
+				open={identityEmailSuccess}
+				social='Email'
+				socialHandle={handle}
+				onClose={() => setIdentityEmailSuccess(false)}
+			/>
 		</>
 	);
 };

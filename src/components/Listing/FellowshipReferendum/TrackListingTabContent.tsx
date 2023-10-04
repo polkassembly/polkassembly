@@ -11,7 +11,7 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
@@ -23,18 +23,13 @@ interface ITrackListingTabContentProps {
 }
 
 const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
-	const { className, posts, error , count } = props;
+	const { className, posts, error, count } = props;
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if(error) return <div className={className}><ErrorAlert errorMsg={error} /></div>;
-
-	const noPosts = count === 0 || isNaN(Number(count));
-
-	if (noPosts) return <div className={className}><PostEmptyState /></div>;
-
-	if(posts&& posts.length>0)
+	if (error)
 		return (
 			<div className={className}>
+<<<<<<< HEAD
 				{posts.map((post,index) => {
 					return (
 						<div key={post.post_id} className='my-0'>
@@ -64,11 +59,65 @@ const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 					);
 				}
 				)}
+=======
+				<ErrorAlert errorMsg={error} />
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 			</div>
 		);
 
-	return <div className='mt-12'><LoadingState /></div>;
+	const noPosts = count === 0 || isNaN(Number(count));
 
+	if (noPosts)
+		return (
+			<div className={className}>
+				<PostEmptyState />
+			</div>
+		);
+
+	if (posts && posts.length > 0)
+		return (
+			<div className={className}>
+				{posts.map((post, index) => {
+					return (
+						<div
+							key={post.post_id}
+							className='my-0'
+						>
+							{
+								<Link href={`/member-referenda/${post.post_id}`}>
+									<GovernanceCard
+										className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
+										postReactionCount={post.post_reactions}
+										address={post.proposer}
+										commentsCount={post.comments_count || 0}
+										method={post.method}
+										onchainId={post.post_id}
+										status={post.status}
+										title={post.title}
+										topic={post.topic?.name}
+										created_at={post.created_at}
+										tags={post?.tags}
+										spam_users_count={post?.spam_users_count}
+										tally={post?.tally}
+										timeline={post?.timeline || []}
+										statusHistory={post?.status_history || []}
+										index={index}
+										proposalType={post?.type}
+										trackNumber={post?.track_no}
+									/>
+								</Link>
+							}
+						</div>
+					);
+				})}
+			</div>
+		);
+
+	return (
+		<div className='mt-12'>
+			<LoadingState />
+		</div>
+	);
 };
 
 export default TrackListingTabContent;

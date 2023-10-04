@@ -18,27 +18,33 @@ interface ITrackListingAllTabContentProps {
 }
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
-	const { className, posts, error ,count } = props;
+	const { className, posts, error, count } = props;
 
 	const noPosts = count === 0 || isNaN(Number(count));
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (noPosts) return <div className={className}><PostEmptyState /></div>;
+	if (noPosts)
+		return (
+			<div className={className}>
+				<PostEmptyState />
+			</div>
+		);
 
-	if(posts && posts.length>0)
+	if (posts && posts.length > 0)
 		return (
 			<>
 				<div className='sm:mx-3'>
-					<FilteredTags/>
+					<FilteredTags />
 				</div>
 				<div className={`${className} proposals__list`}>
-					{posts.map((post,index) => {
+					{posts.map((post, index) => {
 						return (
+<<<<<<< HEAD
 							<div key={post.post_id} className='my-0'>
 								{<Link href={`/member-referenda/${post.post_id}`}>
 									<GovernanceCard
@@ -62,14 +68,47 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 										trackNumber={post?.track_no}
 									/>
 								</Link>}
+=======
+							<div
+								key={post.post_id}
+								className='my-0'
+							>
+								{
+									<Link href={`/member-referenda/${post.post_id}`}>
+										<GovernanceCard
+											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
+											postReactionCount={post?.post_reactions}
+											address={post.proposer}
+											commentsCount={post.comments_count || 0}
+											method={post.method}
+											onchainId={post.post_id}
+											status={post.status}
+											title={post.title}
+											topic={post.topic?.name}
+											created_at={post.created_at}
+											tags={post?.tags}
+											spam_users_count={post?.spam_users_count}
+											timeline={post?.timeline || []}
+											statusHistory={post?.status_history || []}
+											index={index}
+											tally={post?.tally}
+											proposalType={post?.type}
+											trackNumber={post?.track_no}
+										/>
+									</Link>
+								}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 							</div>
 						);
-					}
-					)}
+					})}
 				</div>
 			</>
 		);
-	return <div className='mt-12'><LoadingState /></div>;
+	return (
+		<div className='mt-12'>
+			<LoadingState />
+		</div>
+	);
 };
 
 export default TrackListingAllTabContent;

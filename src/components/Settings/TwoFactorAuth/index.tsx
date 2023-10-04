@@ -7,15 +7,19 @@ import Enable2FA from './Enable2FA';
 import Disable2FA from './Disable2FA';
 import { useTheme } from 'next-themes';
 
-const TwoFactorAuth: FC<{className?: string}> = ({ className }) => {
+const TwoFactorAuth: FC<{ className?: string }> = ({ className }) => {
 	const { is2FAEnabled } = useUserDetailsContext();
 	const { resolvedTheme:theme } = useTheme();
 
+<<<<<<< HEAD
 	return (
 		<section className={className}>
 			{ !is2FAEnabled ? <Enable2FA theme={theme} /> : <Disable2FA theme={theme} /> }
 		</section>
 	);
+=======
+	return <section className={className}>{!is2FAEnabled ? <Enable2FA /> : <Disable2FA />}</section>;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 };
 
 export default TwoFactorAuth;

@@ -25,12 +25,7 @@ type Props = {
 	options: any;
 };
 
-export default function Gov1Notification({
-	onSetNotification,
-	userNotification,
-	dispatch,
-	options
-}: Props) {
+export default function Gov1Notification({ onSetNotification, userNotification, dispatch, options }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
 	const { resolvedTheme:theme } = useTheme();
@@ -48,8 +43,7 @@ export default function Gov1Notification({
 				if (!option?.triggerName) {
 					return;
 				}
-				let postTypes =
-					notification?.[option.triggerName]?.post_types || [];
+				let postTypes = notification?.[option.triggerName]?.post_types || [];
 				if (checked) {
 					if (!postTypes.includes(key)) postTypes.push(key);
 				} else {
@@ -69,17 +63,11 @@ export default function Gov1Notification({
 	};
 
 	useEffect(() => {
-		const allSelected = Object.values(options).every((option: any) =>
-			option.every((item: any) => item.selected)
-		);
+		const allSelected = Object.values(options).every((option: any) => option.every((item: any) => item.selected));
 		setAll(allSelected);
 	}, [options]);
 
-	const handleCategoryAllClick = (
-		checked: boolean,
-		categoryOptions: any,
-		title: string
-	) => {
+	const handleCategoryAllClick = (checked: boolean, categoryOptions: any, title: string) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -92,8 +80,7 @@ export default function Gov1Notification({
 			if (!option?.triggerName) {
 				return;
 			}
-			let postTypes =
-				notification?.[option.triggerName]?.post_types || [];
+			let postTypes = notification?.[option.triggerName]?.post_types || [];
 			if (checked) {
 				if (!postTypes.includes(title)) postTypes.push(title);
 			} else {
@@ -110,12 +97,7 @@ export default function Gov1Notification({
 		onSetNotification(notification);
 	};
 
-	const handleChange = (
-		categoryOptions: any,
-		checked: boolean,
-		value: string,
-		title: string
-	) => {
+	const handleChange = (categoryOptions: any, checked: boolean, value: string, title: string) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -155,14 +137,18 @@ export default function Gov1Notification({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<OverallPostsNotification />
+<<<<<<< HEAD
 						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
 							Gov 1 Notifications
 						</h3>
+=======
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Gov 1 Notifications</h3>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						{!!active && (
 							<>
-								<span className='flex gap-[8px] items-center'>
+								<span className='flex items-center gap-[8px]'>
 									<Switch
 										size='small'
 										id='postParticipated'
@@ -190,11 +176,16 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+<<<<<<< HEAD
 						<Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />
+=======
+						<Divider
+							className='border-[2px] border-[#D2D8E0] md:hidden'
+							dashed
+						/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.COUNCIL_MOTIONS]
-							}
+							categoryOptions={options[ProposalType.COUNCIL_MOTIONS]}
 							title='Council Motion'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]'
 							Icon={TipsIcon}
@@ -202,23 +193,33 @@ export default function Gov1Notification({
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
+<<<<<<< HEAD
 					<Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />
+=======
+					<Divider
+						className='border-2 border-[#D2D8E0]'
+						dashed
+					/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.DEMOCRACY_PROPOSALS]
-							}
+							categoryOptions={options[ProposalType.DEMOCRACY_PROPOSALS]}
 							title='Proposal'
 							classname='md:basis-[50%]'
 							Icon={TreasuryProposalIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+<<<<<<< HEAD
 						<Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />
+=======
+						<Divider
+							className='border-[2px] border-[#D2D8E0] md:hidden'
+							dashed
+						/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.TREASURY_PROPOSALS]
-							}
+							categoryOptions={options[ProposalType.TREASURY_PROPOSALS]}
 							title='Treasury Proposal'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]'
 							Icon={BountiesIcon}
@@ -226,7 +227,14 @@ export default function Gov1Notification({
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
+<<<<<<< HEAD
 					<Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />
+=======
+					<Divider
+						className='border-2 border-[#D2D8E0]'
+						dashed
+					/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.BOUNTIES]}
@@ -236,11 +244,16 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+<<<<<<< HEAD
 						<Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />
+=======
+						<Divider
+							className='border-[2px] border-[#D2D8E0] md:hidden'
+							dashed
+						/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.CHILD_BOUNTIES]
-							}
+							categoryOptions={options[ProposalType.CHILD_BOUNTIES]}
 							title='Child Bounties'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]'
 							Icon={BountiesIcon}
@@ -248,7 +261,14 @@ export default function Gov1Notification({
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
+<<<<<<< HEAD
 					<Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />
+=======
+					<Divider
+						className='border-2 border-[#D2D8E0]'
+						dashed
+					/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.TIPS]}
@@ -258,11 +278,16 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+<<<<<<< HEAD
 						<Divider className='border-[#D2D8E0] dark:border-separatorDark border-[2px] md:hidden' dashed />
+=======
+						<Divider
+							className='border-[2px] border-[#D2D8E0] md:hidden'
+							dashed
+						/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.TECH_COMMITTEE_PROPOSALS]
-							}
+							categoryOptions={options[ProposalType.TECH_COMMITTEE_PROPOSALS]}
 							title='Tech Committee'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-separatorDark md:pl-[48px]'
 							Icon={TechCommiteeIcon}

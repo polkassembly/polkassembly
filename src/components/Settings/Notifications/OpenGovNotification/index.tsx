@@ -34,12 +34,7 @@ const getConsecutiveKeys = (obj: any) => {
 };
 
 // eslint-disable-next-line no-empty-pattern
-export default function OpenGovNotification({
-	onSetNotification,
-	userNotification,
-	dispatch,
-	options
-}: Props) {
+export default function OpenGovNotification({ onSetNotification, userNotification, dispatch, options }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
 	const [all, setAll] = useState(false);
@@ -79,17 +74,11 @@ export default function OpenGovNotification({
 	};
 
 	useEffect(() => {
-		const allSelected = Object.values(options).every((option: any) =>
-			option.every((item: any) => item.selected)
-		);
+		const allSelected = Object.values(options).every((option: any) => option.every((item: any) => item.selected));
 		setAll(allSelected);
 	}, [options]);
 
-	const handleCategoryAllClick = (
-		checked: boolean,
-		categoryOptions: any,
-		title: any
-	) => {
+	const handleCategoryAllClick = (checked: boolean, categoryOptions: any, title: any) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -118,12 +107,7 @@ export default function OpenGovNotification({
 		onSetNotification(notification);
 	};
 
-	const handleChange = (
-		categoryOptions: any,
-		checked: boolean,
-		value: string,
-		title: string
-	) => {
+	const handleChange = (categoryOptions: any, checked: boolean, value: string, title: string) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -163,14 +147,18 @@ export default function OpenGovNotification({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<OverallPostsNotification />
+<<<<<<< HEAD
 						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
 							OpenGov Notifications
 						</h3>
+=======
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>OpenGov Notifications</h3>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						{!!active && (
 							<>
-								<span className='flex gap-[8px] items-center'>
+								<span className='flex items-center gap-[8px]'>
 									<Switch
 										size='small'
 										id='postParticipated'
@@ -189,10 +177,11 @@ export default function OpenGovNotification({
 				key='1'
 			>
 				<div className='flex flex-col'>
-					{openGovTwoOptions.map((category: any[], i:number) => (
+					{openGovTwoOptions.map((category: any[], i: number) => (
 						<React.Fragment key={category.toString()}>
 							<div className='flex flex-wrap'>
 								{category.map((postType, i) => {
+<<<<<<< HEAD
 									return (<React.Fragment key={postType.toString()}>
 										<GroupCheckbox
 											categoryOptions={options[postType]}
@@ -207,6 +196,34 @@ export default function OpenGovNotification({
 								})}
 							</div>
 							{i !== (openGovTwoOptions.length - 1) && <Divider className='border-[#D2D8E0] dark:border-separatorDark border-2' dashed />}
+=======
+									return (
+										<React.Fragment key={postType.toString()}>
+											<GroupCheckbox
+												categoryOptions={options[postType]}
+												title={postOriginMapper(postType)}
+												classname={i === category.length - 1 ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]' : 'md:basis-[50%]'}
+												Icon={iconMapper(postType)}
+												onChange={handleChange}
+												handleCategoryAllClick={handleCategoryAllClick}
+											/>
+											{i !== category.length - 1 && (
+												<Divider
+													className='border-[2px] border-[#D2D8E0] md:hidden'
+													dashed
+												/>
+											)}
+										</React.Fragment>
+									);
+								})}
+							</div>
+							{i !== openGovTwoOptions.length - 1 && (
+								<Divider
+									className='border-2 border-[#D2D8E0]'
+									dashed
+								/>
+							)}
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						</React.Fragment>
 					))}
 				</div>

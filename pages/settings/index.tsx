@@ -17,11 +17,15 @@ import BackToListingView from '~src/ui-components/BackToListingView';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
 import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
+<<<<<<< HEAD
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
+=======
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 
 interface Props {
-	network: string
+	network: string;
 }
 
 const Tabs = styled(AntdTabs)`
@@ -45,6 +49,10 @@ const Tabs = styled(AntdTabs)`
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 
@@ -60,18 +68,21 @@ const Settings: FC<Props> = (props) => {
 		router.push(`/settings?tab=${key}`);
 	};
 
-	const tabItems = useMemo(() => [
-		{ children: <UserAccount network={network} />, key: 'account', label: 'Account' },
-		{ children: AVAILABLE_NETWORK.includes(network) ? <Notifications network={network} /> : <NotificationUpgradingState />, key: 'notifications', label: 'Notifications' },
-		{ children: <Tracker network={network} />, key: 'tracker', label: 'Tracker' }
-	], [network]);
+	const tabItems = useMemo(
+		() => [
+			{ children: <UserAccount network={network} />, key: 'account', label: 'Account' },
+			{ children: AVAILABLE_NETWORK.includes(network) ? <Notifications network={network} /> : <NotificationUpgradingState />, key: 'notifications', label: 'Notifications' },
+			{ children: <Tracker network={network} />, key: 'tracker', label: 'Tracker' }
+		],
+		[network]
+	);
 
 	useEffect(() => {
 		if (router.isReady) {
 			if (!id) {
 				router.push('/login');
 			}
-			if (!tabItems.map(t => t.key).includes(tab)) {
+			if (!tabItems.map((t) => t.key).includes(tab)) {
 				router.replace('/settings?tab=account');
 				setSearchQuery('account');
 				return;
@@ -87,12 +98,23 @@ const Settings: FC<Props> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Settings' network={network} />
-			{Object.keys(networkTrackInfo).includes(network) ?
-				<BackToListingView postCategory={PageLink.OVERVIEW_GOV_2} trackName='Overview' /> :
-				<BackToListingView postCategory={PageLink.OVERVIEW} trackName='Overview' />
-			}
+			<SEOHead
+				title='Settings'
+				network={network}
+			/>
+			{Object.keys(networkTrackInfo).includes(network) ? (
+				<BackToListingView
+					postCategory={PageLink.OVERVIEW_GOV_2}
+					trackName='Overview'
+				/>
+			) : (
+				<BackToListingView
+					postCategory={PageLink.OVERVIEW}
+					trackName='Overview'
+				/>
+			)}
 
+<<<<<<< HEAD
 			<Col className='w-full h-full'>
 				<div className='mt-6 w-full bg-white dark:bg-section-dark-overlay shadow-md p-8 rounded-md'>
 					<h3
@@ -104,6 +126,14 @@ const Settings: FC<Props> = (props) => {
 						theme={theme}
 						className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue dark:text-blue-dark-medium font-medium'
 						type="card"
+=======
+			<Col className='h-full w-full'>
+				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md'>
+					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue'>Settings</h3>
+					<Tabs
+						className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+						type='card'
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 						defaultActiveKey={tab || 'account'}
 						onTabClick={handleTabClick}
 						items={tabItems}

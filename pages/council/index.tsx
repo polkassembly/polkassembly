@@ -8,22 +8,28 @@ import MembersContainer from 'src/components/Listing/Members/MembersContainer';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 
-const Members = (props : { network: string }) => {
+const Members = (props: { network: string }) => {
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
+<<<<<<< HEAD
 			<SEOHead title='Council' network={props.network}/>
 			<h1 className='text-blue-light-high dark:text-blue-dark-high font-semibold text-2xl leading-9 mx-2'>Council</h1>
 
@@ -31,6 +37,19 @@ const Members = (props : { network: string }) => {
 			<div className="flex flex-col md:flex-row">
 				<p className="text-blue-light-high dark:text-blue-dark-high text-sm font-medium bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
                 Council is the body of elected members that consists of several on-chain accounts. The Council can act as a representative for &quot;passive&quot; (non-voting) stakeholders. Council members have two main tasks: proposing referenda for the overall stakeholder group to vote on and cancelling malicious referenda.
+=======
+			<SEOHead
+				title='Council'
+				network={props.network}
+			/>
+			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>Council</h1>
+
+			{/* Intro and Create Post Button */}
+			<div className='flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+					Council is the body of elected members that consists of several on-chain accounts. The Council can act as a representative for &quot;passive&quot; (non-voting)
+					stakeholders. Council members have two main tasks: proposing referenda for the overall stakeholder group to vote on and cancelling malicious referenda.
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				</p>
 			</div>
 			<MembersContainer className='mt-8' />

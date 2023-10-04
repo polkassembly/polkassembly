@@ -25,69 +25,96 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack, theme }: Pr
 			onSubmit={onSubmit}
 			className={`${className} flex flex-col gap-y-3`}
 		>
+<<<<<<< HEAD
 			<div className="flex flex-col gap-y-1 px-5">
 				<h1 className='text-sidebarBlue dark:text-white'>Two Factor Authentication</h1>
 				<p className='text-sidebarBlue dark:text-blue-dark-medium'>Please open the two-step verification app or extension and input the authentication code for your Polkassembly account.</p>
+=======
+			<div className='flex flex-col gap-y-1 px-5'>
+				<h1 className='text-sidebarBlue'>Two Factor Authentication</h1>
+				<p className='text-sidebarBlue'>Please open the two-step verification app or extension and input the authentication code for your Polkassembly account.</p>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 
-				{error && <FilteredError className='mt-2 mb-6' text={error} />}
+				{error && (
+					<FilteredError
+						className='mb-6 mt-2'
+						text={error}
+					/>
+				)}
 
 				<label
+<<<<<<< HEAD
 					className="text-sm text-[#485F7D] dark:text-blue-dark-medium"
 					htmlFor="authCode"
+=======
+					className='text-sm text-[#485F7D] '
+					htmlFor='authCode'
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				>
-							Authentication Code
+					Authentication Code
 				</label>
 				<Form.Item
-					name="authCode"
+					name='authCode'
 					validateTrigger={['onSubmit']}
 					rules={[
 						{
 							message: 'Please provide a valid authentication code.',
 							validator(rule, value = '', callback) {
-								if (callback && (!value || value.length !== 6 || isNaN(Number(value)))){
+								if (callback && (!value || value.length !== 6 || isNaN(Number(value)))) {
 									callback(rule?.message?.toString());
-								}else {
+								} else {
 									callback();
 								}
 							}
 						}
 					]}
 				>
-					<Input disabled={loading} placeholder='######' name='authCode' id="authCode" className='rounded-md py-3 px-4' />
+					<Input
+						disabled={loading}
+						placeholder='######'
+						name='authCode'
+						id='authCode'
+						className='rounded-md px-4 py-3'
+					/>
 				</Form.Item>
 
-				<div className="flex flex-col justify-center items-center gap-y-4">
+				<div className='flex flex-col items-center justify-center gap-y-4'>
 					<Button
 						loading={loading}
-						htmlType="submit"
-						size="large"
-						className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
+						htmlType='submit'
+						size='large'
+						className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
 					>
-									Login
+						Login
 					</Button>
 
 					<div className='w-[260px]'>
-						<Divider className='border-[#90A0B7] border-[0.5px]'>
+						<Divider className='border-[0.5px] border-[#90A0B7]'>
 							<Button
 								onClick={onBack}
 								disabled={loading}
+<<<<<<< HEAD
 								htmlType="button"
 								size="small"
 								className="rounded-md outline-none border-none text-pink_primary dark:bg-transparent dark:text-white dark:border-pink_primary"
+=======
+								htmlType='button'
+								size='small'
+								className='rounded-md border-none text-pink_primary outline-none'
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 							>
-									Go back
+								Go back
 							</Button>
 						</Divider>
 					</div>
-
 				</div>
-
 			</div>
 		</AuthForm>
 	);
 };
 
 export default styled(TFALoginForm)`
+<<<<<<< HEAD
 .ant-divider-inner-text{
 	padding: 0 0 !important;
 }
@@ -100,3 +127,9 @@ export default styled(TFALoginForm)`
 	color:  ${props => props.theme=='dark' ? '#909090' : ''} !important;
  }
 `;
+=======
+	.ant-divider-inner-text {
+		padding: 0 0 !important;
+	}
+`;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29

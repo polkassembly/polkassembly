@@ -12,46 +12,80 @@ import HelperTooltip from './HelperTooltip';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
 
 interface Props {
-	accounts: InjectedAccount[]
-	address: string
-	onAccountChange: (address: string) => void
-	title?: string
-	withBalance?: boolean
-	isBalanceUpdated?: boolean
-	onBalanceChange?: (balance: string) => void
+	accounts: InjectedAccount[];
+	address: string;
+	onAccountChange: (address: string) => void;
+	title?: string;
+	withBalance?: boolean;
+	isBalanceUpdated?: boolean;
+	onBalanceChange?: (balance: string) => void;
 	className?: string;
 	isDisabled?: boolean;
 	inputClassName?: string;
-	isSwitchButton?: boolean,
+	isSwitchButton?: boolean;
 	setSwitchModalOpen?: (pre: boolean) => void;
 	withoutInfo?: boolean;
 	linkAddressTextDisabled?: boolean;
 	addressTextClassName?: string;
+<<<<<<< HEAD
 	theme?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo, linkAddressTextDisabled=false, addressTextClassName,theme }: Props) => {
 
+=======
+	isTruncateUsername?: boolean;
+}
+
+const AccountSelectionForm = ({
+	accounts,
+	address,
+	onAccountChange,
+	title,
+	withBalance = false,
+	onBalanceChange,
+	className,
+	isBalanceUpdated,
+	isDisabled,
+	inputClassName,
+	isSwitchButton,
+	setSwitchModalOpen,
+	withoutInfo,
+	linkAddressTextDisabled = false,
+	addressTextClassName,
+	isTruncateUsername = true
+}: Props) => {
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
 	useEffect(() => {
 		setIsSelectedAddressMultisig(false);
-		if(address){
+		if (address) {
 			checkIsAddressMultisig(address).then((isMulti) => setIsSelectedAddressMultisig(isMulti));
 		}
-	},[address]);
+	}, [address]);
 	return (
+<<<<<<< HEAD
 		<article className={`w-full flex flex-col ${className}`}>
 			<div className='flex items-center gap-x-2 ml-[-6px] dark:text-blue-dark-medium'>
 				<h3 className='inner-headings mb-[2px] ml-1.5 dark:text-blue-dark-medium'>{title}</h3>
+=======
+		<article className={`flex w-full flex-col ${className}`}>
+			<div className='ml-[-6px] flex items-center gap-x-2'>
+				<h3 className='inner-headings mb-[2px] ml-1.5'>{title}</h3>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
-				{address && withBalance &&
-				<Balance address={address} onChange={onBalanceChange} isBalanceUpdated={isBalanceUpdated} />
-				}
+				{address && withBalance && (
+					<Balance
+						address={address}
+						onChange={onBalanceChange}
+						isBalanceUpdated={isBalanceUpdated}
+					/>
+				)}
 			</div>
 			<AddressDropdown
 				addressTextClassName={addressTextClassName}
-				linkAddressTextDisabled ={linkAddressTextDisabled}
+				linkAddressTextDisabled={linkAddressTextDisabled}
 				isDisabled={isDisabled}
 				accounts={accounts}
 				defaultAddress={address}
@@ -60,12 +94,20 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 				isSwitchButton={isSwitchButton}
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}
+				isTruncateUsername={isTruncateUsername}
 			/>
 		</article>
 	);
 };
 export default styled(AccountSelectionForm)`
+<<<<<<< HEAD
 .ant-dropdown-trigger{
 	border: 1px solid ${props => props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0'} !important;
 }
 `;
+=======
+	.ant-dropdown-trigger {
+		border: 1px solid #d2d8e0 !important;
+	}
+`;
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29

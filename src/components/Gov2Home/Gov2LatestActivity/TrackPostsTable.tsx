@@ -15,6 +15,7 @@ import { useTheme } from 'next-themes';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 
+<<<<<<< HEAD
 const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 	const columns: ColumnsType<IPostsRowData> = [
 		{
@@ -71,6 +72,61 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 
 	return columns;
 };
+=======
+const columns: ColumnsType<IPostsRowData> = [
+	{
+		title: '#',
+		dataIndex: 'post_id',
+		key: 'id',
+		width: 65,
+		fixed: 'left'
+	},
+	{
+		title: 'Title',
+		dataIndex: 'title',
+		key: 'title',
+		width: 400,
+		fixed: 'left',
+		render: (title) => {
+			return (
+				<>
+					<div className='truncate'>{title}</div>
+				</>
+			);
+		}
+	},
+	{
+		title: 'Posted By',
+		dataIndex: 'username',
+		key: 'postedBy',
+		render: (username, { proposer }) => (
+			<NameLabel
+				usernameMaxLength={15}
+				usernameClassName='max-w-[9vw] 2xl:max-w-[12vw]'
+				defaultAddress={proposer}
+				username={username}
+			/>
+		)
+	},
+	{
+		title: 'Created',
+		key: 'created',
+		dataIndex: 'created_at',
+		render: (createdAt) => {
+			const relativeCreatedAt = getRelativeCreatedAt(createdAt);
+			return <span>{relativeCreatedAt}</span>;
+		}
+	},
+	{
+		title: 'Status',
+		dataIndex: 'status',
+		key: 'status',
+		render: (status) => {
+			if (status) return <StatusTag status={status} />;
+		}
+	}
+];
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 
 interface ITrackPostsTableProps {
 	posts: any[];
@@ -81,12 +137,12 @@ const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 	const router = useRouter();
 	const { resolvedTheme:theme } = useTheme();
 
-	function gotoPost(rowData: IPostsRowData){
+	function gotoPost(rowData: IPostsRowData) {
 		let urlPrefix = '/referenda';
 		if (rowData.type === 'FellowshipReferendum') {
 			urlPrefix = '/member-referenda';
 		}
-		if(rowData.origin) {
+		if (rowData.origin) {
 			if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
 				window?.open(`${urlPrefix}/${rowData.post_id}`, '_blank');
 			} else {
@@ -98,21 +154,20 @@ const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 	//error state
 	if (error) return <ErrorLatestActivity errorMessage={error} />;
 
-	if(posts) {
+	if (posts) {
 		//empty state
-		if(!posts || !posts.length) return <EmptyLatestActivity />;
+		if (!posts || !posts.length) return <EmptyLatestActivity />;
 
 		const tableData: IPostsRowData[] = [];
 
-		posts.forEach((post:any) => {
-
-			if(post) {
+		posts.forEach((post: any) => {
+			if (post) {
 				// truncate title
 				let title = post.title || post.method || noTitle;
-				title = title.length > 80 ? `${title.substring(0, Math.min(80, title.length))}...`  : title.substring(0, Math.min(80, title.length));
-				const subTitle = !title && post.method? post.method : null;
+				title = title.length > 80 ? `${title.substring(0, Math.min(80, title.length))}...` : title.substring(0, Math.min(80, title.length));
+				const subTitle = !title && post.method ? post.method : null;
 
-				const tableDataObj:IPostsRowData = {
+				const tableDataObj: IPostsRowData = {
 					key: post.post_Id,
 					post_id: post.post_id,
 					title,
@@ -133,11 +188,22 @@ const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 		return (
 			<>
 				<div className='hidden md:block'>
+<<<<<<< HEAD
 					<PopulatedLatestActivity columns={getCols(theme)} tableData={tableData} onClick={(rowData) => gotoPost(rowData)} />
+=======
+					<PopulatedLatestActivity
+						columns={columns}
+						tableData={tableData}
+						onClick={(rowData) => gotoPost(rowData)}
+					/>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				</div>
 
-				<div className="block md:hidden h-[520px] overflow-y-auto">
-					<Gov2PopulatedLatestActivityCard tableData={tableData} onClick={(rowData) => gotoPost(rowData)} />
+				<div className='block h-[520px] overflow-y-auto md:hidden'>
+					<Gov2PopulatedLatestActivityCard
+						tableData={tableData}
+						onClick={(rowData) => gotoPost(rowData)}
+					/>
 				</div>
 			</>
 		);

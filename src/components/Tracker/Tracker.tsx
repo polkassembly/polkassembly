@@ -10,11 +10,10 @@ import SEOHead from '~src/global/SEOHead';
 
 interface ITrackerProps {
 	className?: string;
-	network: string
+	network: string;
 }
 
 const Tracker: FC<ITrackerProps> = ({ className, network }) => {
-
 	const [ids, setIds] = useState({
 		bounty: [],
 		motion: [],
@@ -40,22 +39,30 @@ const Tracker: FC<ITrackerProps> = ({ className, network }) => {
 			treasuryProposal: []
 		};
 		Object.entries(trackerMap || {}).forEach(([key, value]) => {
-			ids[key] = Object.keys(value || {}).map((k) => key === 'tipProposal' ? String(k) : Number(k));
+			ids[key] = Object.keys(value || {}).map((k) => (key === 'tipProposal' ? String(k) : Number(k)));
 		});
 		setIds(ids);
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Tracker' network={network} />
+			<SEOHead
+				title='Tracker'
+				network={network}
+			/>
 			<div className={className}>
 				<h1 className='text-bodyBlue font-medium text-lg leading-7 tracking-wide dark:text-blue-dark-high mb-4 md:mb-6'> Tracker</h1>
 
 				{/* Intro and Create Post Button */}
+<<<<<<< HEAD
 				<div className="flex flex-col md:flex-row">
 					<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white dark:bg-section-dark-overlay p-4 rounded-md w-full shadow-md mb-4 dark:text-blue-dark-high">
 						This is a place to keep track of on chain posts.
 					</p>
+=======
+				<div className='flex flex-col md:flex-row'>
+					<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md md:p-8 md:text-base'>This is a place to keep track of on chain posts.</p>
+>>>>>>> 540916d451d46767ebc2e85c3f2c900218f76d29
 				</div>
 				<Row gutter={[0, 16]}>
 					<Col span={24}>
@@ -112,7 +119,6 @@ const Tracker: FC<ITrackerProps> = ({ className, network }) => {
 			</div>
 		</>
 	);
-
 };
 
 export default Tracker;

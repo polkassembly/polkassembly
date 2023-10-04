@@ -22,6 +22,7 @@ interface IVoteDataModal {
 		progress: any;
 		setData: any;
 	};
+	theme?: string;
 }
 
 const Modal = styled(AntdModal)`
@@ -47,10 +48,11 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 			open={open}
 			closable
 			closeIcon={<CloseIcon />}
-			className={'sm:w-[600px]'}
+			className={`${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} ? []sm:w-[600px]`}
 			onCancel={() => {
 				setOpen(false);
 			}}
+			wrapClassName='dark:bg-modalOverlayDark'
 			footer={null}
 		>
 			<VotersList

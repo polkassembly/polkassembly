@@ -21,7 +21,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 			{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 				<a
 					href={`https://${network}.moonscan.io/tx/${voteData.txnHash}`}
-					className='w-[200px] overflow-ellipsis text-bodyBlue'
+					className='w-[200px] overflow-ellipsis text-bodyBlue dark:text-white'
 				>
 					<Address
 						isVoterAddress={true}
@@ -33,7 +33,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 					/>
 				</a>
 			) : (
-				<div className='w-[200px] overflow-ellipsis text-bodyBlue'>
+				<div className='w-[200px] overflow-ellipsis text-bodyBlue dark:text-white'>
 					<Address
 						usernameClassName='w-[100px]'
 						isSubVisible={false}
@@ -46,20 +46,20 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 
 			{network !== AllNetworks.COLLECTIVES ? (
 				<>
-					<div className='w-[115px] overflow-ellipsis text-bodyBlue'>
+					<div className='w-[115px] overflow-ellipsis text-bodyBlue dark:text-white'>
 						{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 					</div>
-					<div className='w-[110px] overflow-ellipsis text-bodyBlue'>{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length ? '/d' : ''}` : '0.1x'}</div>
+					<div className='w-[110px] overflow-ellipsis text-bodyBlue dark:text-white'>{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length ? '/d' : ''}` : '0.1x'}</div>
 				</>
 			) : (
 				<>
-					<div className='w-[120px] overflow-ellipsis text-bodyBlue'>
+					<div className='w-[120px] overflow-ellipsis text-bodyBlue dark:text-white'>
 						{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 					</div>
 				</>
 			)}
 
-			{voteData.votingPower && <div className='w-[80px] overflow-ellipsis text-bodyBlue'>{parseBalance(voteData.votingPower.toString(), 2, true, network)}</div>}
+			{voteData.votingPower && <div className='w-[80px] overflow-ellipsis text-bodyBlue dark:text-white'>{parseBalance(voteData.votingPower.toString(), 2, true, network)}</div>}
 		</div>
 	);
 };

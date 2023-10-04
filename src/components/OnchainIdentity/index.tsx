@@ -25,6 +25,7 @@ import { ILoading, Wallet } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -75,6 +76,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 	const [address, setAddress] = useState<string>('');
 	const [name, setName] = useState<IName>({ displayName: '', legalName: '' });
+	const { resolvedTheme: theme } = useTheme();
 	const [socials, setSocials] = useState<ISocials>({
 		email: { value: '', verified: false },
 		riot: { value: '', verified: false },
@@ -358,15 +360,15 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					setIsExitModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px]`}
+				className={`${poppins.className} ${poppins.variable} ${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} opengov-proposals w-[600px]`}
 				closable={false}
 				title={
-					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>Exit Verification</div>
+					<div className='-mx-6 items-center dark:bg-section-dark-overlay gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] dark:border-separatorDark px-6 pb-4 text-lg font-semibold text-bodyBlue'>Exit Verification</div>
 				}
 			>
 				<div className='mt-6'>
-					<span className='text-sm text-bodyBlue'>Your verification is pending. Are you sure you want to exit verification process? </span>
-					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
+					<span className='text-sm text-bodyBlue dark:text-white dark:font-normal'>Your verification is pending. Are you sure you want to exit verification process? </span>
+					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] dark:border-separatorDark px-6 pt-4'>
 						<Button
 							onClick={() => {
 								setIsExitModal(false);
@@ -397,7 +399,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				onCancel={handleCancel}
 				maskClosable={false}
 				closeIcon={<CloseIcon />}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full ${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''} opengov-proposals w-[600px]`}
 				title={
 					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (
@@ -407,9 +409,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						) : (
 							<OnChainIdentityIcon />
 						)}
-						<span className='text-bodyBlue'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
+						<span className='text-bodyBlue dark:text-white'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
 						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
-							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue'>
+							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid dark:border-separatorDark border-[#D2D8E0] dark:border-separatorDark bg-[#f6f7f9] dark:bg-[#222] px-3 py-[6px] text-xs font-semibold text-bodyBlue'>
 								<IdentityProgressIcon />
 								In Progress
 							</span>

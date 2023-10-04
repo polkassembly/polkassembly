@@ -284,8 +284,8 @@ const IdentityForm = ({
 						message='Your identity has already been set. Please edit a field to proceed.'
 					/>
 				)}
-				<div className='mt-6 flex items-center justify-between text-lightBlue'>
-					<label className='text-sm text-lightBlue'>
+				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 						Your Address{' '}
 						<HelperTooltip
 							className='ml-1'
@@ -300,7 +300,7 @@ const IdentityForm = ({
 					)}
 				</div>
 				<div className='flex w-full items-end gap-2 text-sm '>
-					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
+					<div className='flex h-10 w-full items-center justify-between rounded-[4px] dark:border-separatorDark border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
 						<Address
 							address={address}
 							isTruncateUsername={false}
@@ -318,8 +318,8 @@ const IdentityForm = ({
 					</div>
 				</div>
 				<div className='mt-6'>
-					<label className='text-sm text-lightBlue'>
-						Display Name <span className='text-[#FF3C5F]'>*</span>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+						Display Name <span className='text-[#FF3C5F] dark:text-blue-dark-helper'>*</span>
 					</label>
 					<Form.Item
 						name='displayName'
@@ -339,7 +339,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='displayName'
-							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue'
+							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:text-white dark:bg-transparent dark:placeholder-white'
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
@@ -351,7 +351,7 @@ const IdentityForm = ({
 					</Form.Item>
 				</div>
 				<div className='mt-6'>
-					<label className='text-sm text-lightBlue'>Legal Name</label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Legal Name</label>
 					<Form.Item
 						name='legalName'
 						rules={[
@@ -370,7 +370,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='legalName'
-							className='h-10 rounded-[4px] text-bodyBlue'
+							className='h-10 rounded-[4px] text-bodyBlue dark:text-white dark:placeholder-white dark:bg-transparent'
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
@@ -383,7 +383,7 @@ const IdentityForm = ({
 				</div>
 				<Divider />
 				<div>
-					<label className='text-sm font-medium text-lightBlue'>
+					<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 						Socials{' '}
 						<HelperTooltip
 							className='ml-1'
@@ -411,8 +411,8 @@ const IdentityForm = ({
 
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
-							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B]' />
-							<span className='text-sm text-lightBlue'>
+							<EmailIcon className='rounded-full bg-[#edeff3] dark:bg-[#222] dark:text-icon-dark-inactive p-2.5 text-xl text-[#576D8B]' />
+							<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 								Email<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
 						</span>
@@ -442,7 +442,7 @@ const IdentityForm = ({
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
-								className='h-10 rounded-[4px] text-bodyBlue'
+								className='h-10 rounded-[4px] text-bodyBlue dark:text-white dark:placeholder-white dark:bg-transparent'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 									handleInfo();
@@ -454,9 +454,9 @@ const IdentityForm = ({
 
 					<div className='mt-1 flex items-center'>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
-							<TwitterIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B]' />
-							<span className='text-sm text-lightBlue'>
-								Twitter<span className='ml-1 text-[#FF3C5F]'>*</span>
+							<TwitterIcon className='rounded-full bg-[#edeff3] dark:bg-[#222] dark:text-blue-dark-medium p-2.5 text-xl text-[#576D8B]' />
+							<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+								Twitter<span className='ml-1 text-[#FF3C5F] dark:text-blue-dark-helper'>*</span>
 							</span>
 						</span>
 						<Form.Item
@@ -481,7 +481,7 @@ const IdentityForm = ({
 								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
 								value={twitter?.value}
 								placeholder='Enter your twitter name'
-								className='h-10 rounded-[4px] text-bodyBlue'
+								className='h-10 rounded-[4px] text-bodyBlue dark:text-white dark:placeholder-white dark:bg-transparent'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
 									handleInfo();
@@ -519,7 +519,7 @@ const IdentityForm = ({
 							text='Amount that needs held in an address for a verified account.'
 						/>
 					</span>
-					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue'>
+					<span className='rounded-2xl bg-[#EDEFF3] dark:bg-[#222] dark:text-blue-dark-medium px-3 py-1 font-medium text-bodyBlue'>
 						{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
 					</span>
 				</div>
@@ -531,7 +531,7 @@ const IdentityForm = ({
 						type='info'
 						showIcon
 						message={
-							<span className='text-sm font-medium text-bodyBlue '>
+							<span className='text-sm font-medium text-bodyBlue dark:text-white'>
 								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
@@ -547,13 +547,13 @@ const IdentityForm = ({
 							) : (
 								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue'>Gas Fee</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
+										<span className='font-medium text-bodyBlue dark:text-white'>
 											{formatedBalance(gasFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue'>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>
 											Bond{' '}
 											<HelperTooltip
 												className='ml-1'
@@ -565,20 +565,20 @@ const IdentityForm = ({
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue'>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>
 											Registrar fees{' '}
 											<HelperTooltip
 												text='Costs of development & maintenance are funded by the treasury.'
 												className='ml-1'
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='font-medium text-bodyBlue dark:text-white'>
 											{formatedBalance(registerarFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue'>Total</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
+										<span className='font-medium text-bodyBlue dark:text-white'>
 											{formatedBalance(totalFee.toString(), unit, 2)} {unit}
 										</span>
 									</span>
@@ -588,7 +588,7 @@ const IdentityForm = ({
 					/>
 				</Spin>
 			)}
-			<div className='-mx-6 mt-6 flex justify-end gap-4 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5'>
+			<div className='-mx-6 mt-6 flex justify-end gap-4 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] dark:border-separatorDark px-6 pt-5'>
 				<Button
 					onClick={onCancel}
 					className='h-10 w-[134px] rounded-[4px]  border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary'
@@ -597,9 +597,8 @@ const IdentityForm = ({
 				</Button>
 				<Button
 					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
-					className={`h-10 w-[134px] rounded-[4px] border-none bg-pink_primary text-sm tracking-wide text-white ${
-						(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee)) || handleAllowSetIdentity()) && 'opacity-50'
-					}`}
+					className={`h-10 w-[134px] rounded-[4px] border-none bg-pink_primary text-sm tracking-wide text-white ${(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee)) || handleAllowSetIdentity()) && 'opacity-50'
+						}`}
 					onClick={handleSetIdentity}
 					loading={loading}
 				>

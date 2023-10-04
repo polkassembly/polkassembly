@@ -269,7 +269,7 @@ const Address = (props: Props) => {
 								/>
 							))}
 
-						<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
+						<div className={`flex items-center font-semibold text-bodyBlue dark:text-white ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
 							<span
 								title={mainDisplay || encodedAddr}
 								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'}`}

@@ -304,7 +304,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										!!votesRes[decision]?.votes?.length &&
 										votesRes[decision]?.votes.map((voteData: any, index: number) => (
 											<VoterRow
-												className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
+												className={`${index % 2 == 0 ? 'bg-[#FBFBFC] dark:bg-[#222]' : 'bg-white dark:bg-section-dark-overlay'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
 												key={`${voteData.voter}_${index}`}
 												currentKey={activeKey}
 												voteType={voteType}

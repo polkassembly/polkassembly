@@ -4,10 +4,10 @@
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, Tooltip } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
-import { NotificationStatus } from 'src/types';
+import { EReportType, NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
@@ -24,7 +24,9 @@ import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { IconRetry } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
-// import { v4 } from 'uuid';
+import { checkIsProposer } from '../utils/checkIsProposer';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	userId: number;
@@ -42,7 +44,7 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress, addresses, allowed_roles } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
@@ -55,6 +57,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 	const [error, setError] = useState('');
 	const [isReplying, setIsReplying] = useState(false);
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
+	const [isEditable, setIsEditable] = useState(false);
 
 	const toggleEdit = () => setIsEditing(!isEditing);
 
@@ -98,6 +101,23 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		global.window.localStorage.removeItem(newReplyKey(commentId));
 		setIsReplying(!isReplying);
 	};
+
+	const canEditComment = useCallback(async () => {
+		if (id === userId) {
+			return setIsEditable(true);
+		}
+		if (!proposer) {
+			return setIsEditable(false);
+		}
+		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		if (!isProposer) {
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...(addresses || loginAddress)]);
+			if (isProposer) {
+				return setIsEditable(true);
+			}
+		}
+		return setIsEditable(false);
+	}, [addresses, id, loginAddress, proposer, userId]);
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -379,6 +399,36 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		}
 	};
 
+	const removeReplyContent = () => {
+		const keys = Object.keys(comments);
+		setComments((prev: any) => {
+			const comments: any = Object.assign({}, prev);
+			for (const key of keys) {
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev[key].map((comment: any) => {
+						if (comment.id === commentId) {
+							comment.replies = comment?.replies?.filter((reply: any) => reply.id !== replyId) || [];
+							flag = true;
+						}
+						return {
+							...comment
+						};
+					});
+				}
+				if (flag) {
+					break;
+				}
+			}
+			return comments;
+		});
+		queueNotification({
+			header: 'Success!',
+			message: 'The reply has been deleted.',
+			status: NotificationStatus.SUCCESS
+		});
+	};
+
 	const deleteReply = async () => {
 		let oldReplies: any;
 		const keys = Object.keys(comments);
@@ -449,8 +499,15 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				status: NotificationStatus.ERROR
 			});
 		}
+		if (data) {
+			removeReplyContent();
+		}
 		setLoading(false);
 	};
+
+	useEffect(() => {
+		canEditComment();
+	}, [canEditComment]);
 
 	return (
 		<>
@@ -497,7 +554,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							md={content}
 						/>
 						<div className='flex flex-wrap items-center'>
-							{id === userId && (
+							{isEditable && (
 								<Button
 									className={'flex items-center border-none text-pink_primary shadow-none'}
 									disabled={loading}
@@ -514,7 +571,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 									)}
 								</Button>
 							)}
-							{id === userId && (
+							{id === userId ? (
 								<Button
 									className={'flex items-center border-none text-xs text-pink_primary shadow-none'}
 									onClick={deleteReply}
@@ -522,6 +579,20 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 									<DeleteOutlined />
 									Delete
 								</Button>
+							) : (
+								allowed_roles?.includes('moderator') &&
+								['polkadot', 'kusama'].includes(network) && (
+									<ReportButton
+										isDeleteModal={true}
+										proposalType={(reply.post_type as any) || postType}
+										className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
+										type={EReportType.REPLY}
+										onSuccess={removeReplyContent}
+										commentId={commentId}
+										replyId={replyId}
+										postId={(reply.post_index as any) || postIndex}
+									/>
+								)
 							)}
 							{id && !isEditing && (
 								<ReportButton

@@ -144,7 +144,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
 						<div className={'amount-value ml-[92px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
-							{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+							{parseBalance((vote?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{vote?.decision !== 'abstain' && (
 							<div className={'conviction-value ml-10 mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod}x`}</div>
@@ -153,7 +153,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				) : (
 					<>
 						<div className={'amount-value ml-[92px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
-							{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
+							{parseBalance((vote?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{vote?.decision !== 'abstain' && <div className={'conviction-value ml-10 mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}> - </div>}
 					</>
@@ -190,7 +190,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
 		const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
 		const balanceMatch = balance ? balance.match(/[\d.]+/) : null;
-		const power = conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0);
+		const power = (conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0)).toFixed(2);
 		return (
 			<div
 				key={idx}

@@ -42,12 +42,15 @@ const workSans = Work_Sans({
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
 import ErrorBoundary from '~src/ui-components/ErrorBoundary';
+import { PersistGate } from 'redux-persist/integration/react';
+import { wrapper } from '~src/redux/store';
+import { useStore } from 'react-redux';
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
+	const store: any = useStore();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
-
 	useEffect(() => {
 		router.isReady && setShowSplashScreen(false);
 	}, [router.isReady]);
@@ -62,6 +65,7 @@ export default function App({ Component, pageProps }: AppProps) {
 			// @ts-ignore
 			window.GA_INITIALIZED = true;
 		}
+		setNetwork(networkStr);
 		logPageView();
 	}, []);
 
@@ -78,28 +82,32 @@ export default function App({ Component, pageProps }: AppProps) {
 	);
 
 	return (
-		<ConfigProvider theme={antdTheme}>
-			<ModalProvider>
-				<ErrorBoundary>
-					<UserDetailsProvider>
-						<ApiContextProvider network={network}>
-							<NetworkContextProvider initialNetwork={network}>
-								<>
-									{showSplashScreen && <SplashLoader />}
-									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-										<NextNProgress color='#E5007A' />
-										<CMDK />
-										<AppLayout
-											Component={Component}
-											pageProps={pageProps}
-										/>
-									</main>
-								</>
-							</NetworkContextProvider>
-						</ApiContextProvider>
-					</UserDetailsProvider>
-				</ErrorBoundary>
-			</ModalProvider>
-		</ConfigProvider>
+		<PersistGate persistor={store.__persistor}>
+			<ConfigProvider theme={antdTheme}>
+				<ModalProvider>
+					<ErrorBoundary>
+						<UserDetailsProvider>
+							<ApiContextProvider network={network}>
+								<NetworkContextProvider initialNetwork={network}>
+									<>
+										{showSplashScreen && <SplashLoader />}
+										<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+											<NextNProgress color='#E5007A' />
+											<CMDK />
+											<AppLayout
+												Component={Component}
+												pageProps={pageProps}
+											/>
+										</main>
+									</>
+								</NetworkContextProvider>
+							</ApiContextProvider>
+						</UserDetailsProvider>
+					</ErrorBoundary>
+				</ModalProvider>
+			</ConfigProvider>
+		</PersistGate>
 	);
 }
+
+export default wrapper.withRedux(App);

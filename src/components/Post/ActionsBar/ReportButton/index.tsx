@@ -158,7 +158,11 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		const validationErrors = form.getFieldError('reason');
 		if (validationErrors.length > 0) return;
 		const reason = form.getFieldValue('comments');
-		if (!reason) setError('Please add a reason');
+		if (!reason) {
+			setError('Please add a reason');
+			setLoading(false);
+			return;
+		}
 		if (allowed_roles?.includes('moderator') && reason) {
 			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
 			setLoading(false);
@@ -193,6 +197,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						key='submit'
 						className='bg-pink_primary text-white hover:bg-pink_secondary'
 						onClick={isDeleteModal ? handleDelete : handleReport}
+						loading={loading}
 					>
 						{isDeleteModal ? 'Delete' : 'Report'}
 					</Button>

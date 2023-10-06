@@ -69,7 +69,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				status: NotificationStatus.ERROR
 			});
 			setFormDisabled(false);
-			setError(reportError);
+			setError('Please add a reason to report this content');
 		}
 
 		if (reportData) {
@@ -153,16 +153,12 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	};
 	const handleDelete = async () => {
 		if (!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
-		setLoading(true);
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
 		if (validationErrors.length > 0) return;
+		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
-		if (!reason) {
-			setError('Please add a reason');
-			setLoading(false);
-			return;
-		}
+		setLoading(true);
 		if (allowed_roles?.includes('moderator') && reason) {
 			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
 			setLoading(false);
@@ -209,7 +205,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					onFinish={isDeleteModal ? handleDelete : handleReport}
 					layout='vertical'
 					disabled={formDisabled}
-					validateMessages={{ required: "Please add the '${name}'" }}
+					validateMessages={{ required: `Please add reason for ${isDeleteModal ? 'deleting' : 'reporting'}` }}
 					initialValues={{
 						comments: '',
 						reason: reasons[0]
@@ -241,6 +237,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					<Form.Item
 						name='comments'
 						label='Comments (300 char max)'
+						rules={[{ required: true }]}
 					>
 						<Input.TextArea
 							name='comments'

@@ -7,6 +7,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 
 interface Props {
 	api: ApiPromise;
+	apiReady: boolean;
 	network: string;
 	tx: SubmittableExtrinsic<'promise'>;
 	address: string;
@@ -17,9 +18,8 @@ interface Props {
 	onBroadcast?: () => void;
 	setStatus?: (pre: string) => void;
 }
-const executeTx = async ({ api, network, tx, address, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
-	if (!api || !tx) return;
-
+const executeTx = async ({ api, apiReady, network, tx, address, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
+	if (!api || !apiReady || !tx) return;
 	tx.signAndSend(address, params, async ({ status, events, txHash }: any) => {
 		if (status.isInvalid) {
 			console.log('Transaction invalid');
@@ -40,6 +40,7 @@ const executeTx = async ({ api, network, tx, address, params = {}, errorMessageF
 					setStatus?.('Transaction Success');
 					await onSuccess();
 				} else if (event.method === 'ExtrinsicFailed') {
+					setStatus?.('Transaction failed');
 					console.log('Transaction failed');
 					setStatus?.('Transaction failed');
 					const dispatchError = (event.data as any)?.dispatchError;

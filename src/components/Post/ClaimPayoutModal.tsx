@@ -99,6 +99,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 			await executeTx({
 				address: selectedAddress,
 				api,
+				apiReady,
 				errorMessageFallback: 'Transaction failed.',
 				network,
 				onFailed,

@@ -119,7 +119,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		const endorse = api.tx.treasury.tip(tipHash, endorseValue);
-		await executeTx({ address, api, errorMessageFallback: 'Transaction failed.', network, onFailed, onSuccess, tx: endorse });
+		await executeTx({ address, api, apiReady, errorMessageFallback: 'Transaction failed.', network, onFailed, onSuccess, tx: endorse });
 	};
 
 	const GetAccountsButton = () => (

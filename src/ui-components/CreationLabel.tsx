@@ -123,7 +123,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						<div className={'abstain-amount-value ml-[62px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 							{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
-						<div className={'abstain-conviction-value ml-[44px] mr-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
+						<div className={'abstain-conviction-value ml-[44px] mr-[55px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
 					</>
 				) : (
 					<>

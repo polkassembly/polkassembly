@@ -179,6 +179,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				onOk={isDeleteModal ? handleDelete : handleReport}
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
+				destroyOnClose={true}
 				zIndex={1067}
 				footer={[
 					<Button

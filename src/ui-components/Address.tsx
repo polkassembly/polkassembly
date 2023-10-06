@@ -234,7 +234,6 @@ const Address = (props: Props) => {
 
 		window.open(handleRedirectLink(), '_blank');
 	};
-
 	return (
 		<div className={`${className} flex gap-1`}>
 			{!disableIdenticon &&
@@ -259,7 +258,7 @@ const Address = (props: Props) => {
 				className='flex items-center text-bodyBlue'
 			>
 				{displayInline ? (
-					<div className='flex items-center '>
+					<div className='inline-address flex items-center'>
 						{kiltName ||
 							(identity && mainDisplay && (
 								<IdentityBadge
@@ -275,7 +274,11 @@ const Address = (props: Props) => {
 								title={mainDisplay || encodedAddr}
 								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'}`}
 							>
-								{addressPrefix && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{addressPrefix}</span>}
+								{addressPrefix && (
+									<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
+										{usernameMaxLength ? (addressPrefix.length > usernameMaxLength ? `${addressPrefix.slice(0, usernameMaxLength)}...` : addressPrefix) : addressPrefix}
+									</span>
+								)}
 								{sub && isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
 							</span>
 						</div>

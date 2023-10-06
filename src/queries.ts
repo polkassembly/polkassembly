@@ -904,9 +904,19 @@ query ConvictionVotingHistoryByVoterAddressAndProposalTypeAndProposalIndex($offs
     createdAtBlock
     decision
     lockPeriod
-    removedAtBlock
-    removedAt
     voter
+    delegatedVotes(limit: 1) {
+      balance {
+        ... on StandardVoteBalance {
+          value
+        }
+        ... on SplitVoteBalance {
+          aye
+          nay
+          abstain
+        }
+      }
+    }
   }
   convictionVotesConnection(where: {voter_eq: $voter_eq, proposal: {type_eq: $type_eq, index_eq: $index_eq}}, orderBy: createdAt_DESC) {
     totalCount

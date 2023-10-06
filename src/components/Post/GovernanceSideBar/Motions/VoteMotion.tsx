@@ -182,6 +182,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 		await executeTx({
 			address,
 			api,
+			apiReady,
 			errorMessageFallback: 'Transaction failed.',
 			network: Network,
 			onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),

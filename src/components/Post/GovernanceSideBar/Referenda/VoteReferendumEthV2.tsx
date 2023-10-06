@@ -5,24 +5,26 @@
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Button, Form, Modal, Segmented, Select, Spin, Alert } from 'antd';
+import { Button, Form, Modal, Segmented, Spin, Alert } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
-import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import Web3 from 'web3';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-
 import { ProposalType } from '~src/global/proposalType';
-import addEthereumChain from '~src/util/addEthereumChain';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
+import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
+import dayjs from 'dayjs';
+import { getConvictionVoteOptions } from './VoteReferendum';
+import VotingForm, { EFormType } from './VotingFrom';
+import getMetamaskAccounts from '~src/util/getMetamaskAccounts';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import LikeGray from '~assets/icons/like-gray.svg';
@@ -31,12 +33,8 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
-import DownIcon from '~assets/icons/down-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
-import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
-import dayjs from 'dayjs';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { getConvictionVoteOptions } from './VoteReferendum';
+
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -53,9 +51,8 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const userDetails = useUserDetailsContext();
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress } = userDetails;
-	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress, loginWallet } = useUserDetailsContext();
+	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -66,7 +63,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		postData: { postType: proposalType }
 	} = usePostDataContext();
 	const [wallet, setWallet] = useState<Wallet>();
-	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
@@ -80,7 +76,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	}, [CONVICTIONS, proposalType, api, apiReady, network]);
 
 	const [conviction, setConviction] = useState<number>(0);
-
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const [ayeNayForm] = Form.useForm();
@@ -88,9 +83,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
-	const [balanceErr, setBalanceErr] = useState('');
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [successModal, setSuccessModal] = useState(false);
+	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -98,35 +93,55 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
 	};
 
+	const handleBalanceErr = useCallback(() => {
+		switch (vote) {
+			case EVoteDecisionType.AYE:
+				lockedBalance && setIsBalanceErr(availableBalance?.lte(lockedBalance));
+				break;
+			case EVoteDecisionType.NAY:
+				lockedBalance && setIsBalanceErr(availableBalance?.lte(lockedBalance));
+				break;
+			case EVoteDecisionType.SPLIT:
+				setIsBalanceErr(availableBalance?.lte(nayVoteValue.add(ayeVoteValue)));
+				break;
+			case EVoteDecisionType.ABSTAIN:
+				setIsBalanceErr(availableBalance?.lte(nayVoteValue.add(ayeVoteValue).add(abstainVoteValue)));
+				break;
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [availableBalance, lockedBalance, nayVoteValue, ayeVoteValue, abstainVoteValue]);
+
 	const handleDefaultWallet = async (wallet: Wallet) => {
 		setWallet(wallet);
-		await getAccounts(wallet);
+		setLoadingStatus({ isLoading: true, message: 'Getting accounts' });
+		const accountsData = await getMetamaskAccounts({ chosenWallet: wallet, loginAddress, network });
+		if (accountsData) {
+			setAccounts(accountsData?.accounts || []);
+			onAccountChange(accountsData?.account || '');
+			setAddress(accountsData.account);
+			setIsTalismanEthereum(accountsData?.isTalismanEthereum);
+			setLoadingStatus({ isLoading: false, message: 'Getting accounts' });
+		}
 		if (walletConnectProvider) {
 			await getWalletConnectAccounts();
 		}
 	};
 
 	useEffect(() => {
-		if (userDetails.loginWallet && [Wallet.TALISMAN, Wallet.METAMASK].includes(userDetails.loginWallet)) {
-			setLoginWallet(userDetails.loginWallet);
-			setWallet(userDetails.loginWallet);
-			handleDefaultWallet(userDetails.loginWallet);
-		} else {
+		getWallet();
+		const wallet = loginWallet || (localStorage.getItem('loginWallet') as Wallet);
+		if ([Wallet.TALISMAN, Wallet.METAMASK].includes(wallet)) {
 			if (!window) return;
-			const defaultWallet = localStorage.getItem('loginWallet') as Wallet;
-			if (defaultWallet) {
-				if (defaultWallet === Wallet.METAMASK) {
-					setWallet(Wallet.METAMASK);
-					handleDefaultWallet(Wallet.METAMASK);
-				} else if (defaultWallet === Wallet.TALISMAN) {
-					setWallet(Wallet.TALISMAN);
-					handleDefaultWallet(Wallet.TALISMAN);
-				}
-				setLoginWallet(defaultWallet as Wallet);
-			}
+			setWallet(wallet);
+			handleDefaultWallet(wallet);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [apiReady, userDetails]);
+	}, [apiReady, loginWallet]);
+
+	useEffect(() => {
+		handleBalanceErr();
+	}, [handleBalanceErr]);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -138,68 +153,18 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getAccounts = async (wallet: Wallet) => {
-		setAccounts([]);
-		setAddress('');
-		setIsAccountLoading(true);
-		const ethereum = wallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum;
-
-		if (!ethereum) {
-			return;
-		}
-
-		try {
-			await addEthereumChain({
-				ethereum,
-				network
-			});
-		} catch (error) {
-			queueNotification({
-				header: 'Network change!',
-				message: `Error when changing wallet network to ${network}, Please try to change the network manually`,
-				status: NotificationStatus.ERROR
-			});
-			return;
-		}
-
-		const addresses = await ethereum.request({ method: 'eth_requestAccounts' });
-
-		if (addresses.length === 0) {
-			setIsAccountLoading(false);
-			return;
-		}
-
-		wallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0, 2) === '0x').length === 0 ? setIsTalismanEthereum(false) : setIsTalismanEthereum(true);
-
-		const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address,
-				meta: {
-					genesisHash: null,
-					name: 'metamask',
-					source: 'metamask'
-				}
-			};
-
-			return account;
-		});
-
-		if (accounts && Array.isArray(accounts)) {
-			const substrate_address = getSubstrateAddress(loginAddress);
-			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
-			if (index >= 0) {
-				const account = accounts[index];
-				accounts.splice(index, 1);
-				accounts.unshift(account);
-			}
-		}
-
-		setAccounts(accounts);
-
-		if (addresses.length > 0) {
-			setAddress(addresses[0]);
-		}
-		setIsAccountLoading(false);
+	const handleModalReset = () => {
+		setAbstainVoteValue(ZERO_BN);
+		setAyeVoteValue(ZERO_BN);
+		setNayVoteValue(ZERO_BN);
+		setLockedBalance(ZERO_BN);
+		ayeNayForm.setFieldValue('balance', '');
+		splitForm.setFieldValue('ayeVote', '');
+		splitForm.setFieldValue('nayVote', '');
+		abstainFrom.setFieldValue('ayeVote', '');
+		abstainFrom.setFieldValue('nayVote', '');
+		abstainFrom.setFieldValue('abstainVote', '');
+		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
 	const connect = async () => {
@@ -278,71 +243,57 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		});
 	};
 
-	const onBalanceChange = (balance: BN) => {
-		if (!balance) return;
-		if (availableBalance.lte(balance)) {
-			setBalanceErr('Insufficient balance.');
-		} else {
-			setBalanceErr('');
-			setLockedBalance(balance);
+	const handleLastVoteSave = (vote: EVoteDecisionType, totalVoteValue: BN) => {
+		switch (vote) {
+			case EVoteDecisionType.AYE:
+				setLastVote({
+					balance: totalVoteValue,
+					conviction: conviction,
+					decision: vote,
+					time: new Date()
+				});
+				break;
+			case EVoteDecisionType.NAY:
+				setLastVote({
+					balance: totalVoteValue,
+					conviction: conviction,
+					decision: vote,
+					time: new Date()
+				});
+				break;
+			case EVoteDecisionType.SPLIT:
+				setVoteValues((prevState) => ({
+					...prevState,
+					ayeVoteValue: ayeVoteValue,
+					nayVoteValue: nayVoteValue
+				}));
+				setLastVote({
+					balance: totalVoteValue,
+					conviction: conviction,
+					decision: vote,
+					time: new Date()
+				});
+				break;
+			case EVoteDecisionType.ABSTAIN:
+				setVoteValues((prevState) => ({
+					...prevState,
+					abstainVoteValue: abstainVoteValue,
+					ayeVoteValue: ayeVoteValue,
+					nayVoteValue: nayVoteValue
+				}));
+				setLastVote({
+					balance: totalVoteValue,
+					conviction: conviction,
+					decision: vote,
+					time: new Date()
+				});
+				break;
 		}
 	};
 
-	const onAyeValueChange = (balance: BN) => {
-		if (!balance) return;
-		if (availableBalance.lte(balance)) {
-			setBalanceErr('Insufficient balance.');
-		} else {
-			setBalanceErr('');
-			setAyeVoteValue(balance);
-		}
-	};
-
-	const onNayValueChange = (balance: BN) => {
-		if (!balance) return;
-		if (availableBalance.lte(balance)) {
-			setBalanceErr('Insufficient balance.');
-		} else {
-			setBalanceErr('');
-			setNayVoteValue(balance);
-		}
-	};
-
-	const onAbstainValueChange = (balance: BN) => {
-		if (!balance) return;
-		if (availableBalance.lte(balance)) {
-			setBalanceErr('Insufficient balance.');
-		} else {
-			setBalanceErr('');
-			setAbstainVoteValue(balance);
-		}
-	};
-
-	const voteReferendum = async () => {
-		if (!referendumId && referendumId !== 0) {
-			console.error('referendumId not set');
-			return;
-		}
-
+	const handleSubmit = async () => {
 		if (!isTalismanEthereum) {
 			console.error('Please use Ethereum account via Talisman wallet.');
-			return;
-		}
-
-		if (!lockedBalance) {
-			console.error('lockedBalance not set');
-			return;
-		}
-		if (lockedBalance && availableBalance.lte(lockedBalance)) {
-			setBalanceErr('Insufficient balance.');
-			return;
-		}
-		if (
-			(ayeVoteValue && availableBalance.lte(ayeVoteValue)) ||
-			(nayVoteValue && availableBalance.lte(nayVoteValue)) ||
-			(abstainVoteValue && availableBalance.lte(abstainVoteValue))
-		) {
-			setBalanceErr('Insufficient balance.');
 			return;
 		}
 
@@ -352,12 +303,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			.add(lockedBalance || ZERO_BN);
 		setVoteValues((prevState) => ({
 			...prevState,
-			totalVoteValue: totalVoteValue
+			totalVoteValue
 		}));
-		if (totalVoteValue?.gte(availableBalance)) {
-			setBalanceErr('Insufficient balance.');
-			return;
-		}
 
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
 		let web3 = null;
@@ -380,7 +327,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			});
 			return;
 		}
-
 		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
 
 		const voteContract = new web3.eth.Contract(abi, contractAddress);
@@ -388,146 +334,45 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		// estimate gas.
 		//https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
+		let tx;
 		if (vote === EVoteDecisionType.AYE) {
-			voteContract.methods
-				.voteYes(referendumId, lockedBalance.toString(), conviction)
-				.send({
-					from: address,
-					to: contractAddress
-				})
-				.then(() => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-				})
-				.catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
+			tx = voteContract.methods.voteYes(referendumId, lockedBalance.toString(), conviction);
 		} else if (vote === EVoteDecisionType.NAY) {
-			voteContract.methods
-				.voteNo(referendumId, lockedBalance.toString(), conviction)
-				.send({
-					from: address,
-					to: contractAddress
-				})
-				.then(() => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-				})
-				.catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
+			tx = voteContract.methods.voteNo(referendumId, lockedBalance.toString(), conviction);
 		} else if (vote === EVoteDecisionType.SPLIT) {
-			setVoteValues((prevState) => ({
-				...prevState,
-				ayeVoteValue: ayeVoteValue,
-				nayVoteValue: nayVoteValue
-			}));
-			voteContract.methods
-				.voteSplit(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString())
-				.send({
-					from: address,
-					to: contractAddress
-				})
-				.then(() => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-				})
-				.catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
+			tx = voteContract.methods.voteSplit(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString());
 		} else if (vote === EVoteDecisionType.ABSTAIN) {
-			setVoteValues((prevState) => ({
-				...prevState,
-				abstainVoteValue: abstainVoteValue,
-				ayeVoteValue: ayeVoteValue,
-				nayVoteValue: nayVoteValue
-			}));
-			voteContract.methods
-				.voteSplitAbstain(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString(), abstainVoteValue?.toString())
-				.send({
-					from: address,
-					to: contractAddress
-				})
-				.then(() => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-				})
-				.catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
+			tx = voteContract.methods.voteSplitAbstain(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString(), abstainVoteValue?.toString());
 		}
+
+		tx.send({
+			from: address,
+			to: contractAddress
+		})
+			.on('transactionHash', (hash: string) => {
+				setLoadingStatus({ isLoading: true, message: `Transaction hash ${hash.slice(0, 10)}...` });
+				console.log('transactionHash', hash);
+			})
+			.then(() => {
+				setLoadingStatus({ isLoading: false, message: 'Transaction is in progress!' });
+				handleLastVoteSave(vote, totalVoteValue);
+				setShowModal(false);
+				setSuccessModal(true);
+				queueNotification({
+					header: 'Success!',
+					message: `Vote on referendum #${referendumId} successful.`,
+					status: NotificationStatus.SUCCESS
+				});
+			})
+			.catch((error: any) => {
+				setLoadingStatus({ isLoading: false, message: 'Transaction failed!' });
+				console.error('ERROR:', error);
+				queueNotification({
+					header: 'Failed!',
+					message: error.message,
+					status: NotificationStatus.ERROR
+				});
+			});
 	};
 
 	if (isLoggedOut()) {
@@ -537,27 +382,19 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		setShowModal(true);
 	};
 
-	const ConvictionSelect = ({ className }: { className?: string }) => (
-		<Form.Item className={className}>
-			<label className='inner-headings'>Vote lock</label>
-
-			<Select
-				onChange={(key) => setConviction(Number(key))}
-				size='large'
-				className=''
-				defaultValue={conviction}
-				suffixIcon={<DownIcon />}
-			>
-				{convictionOpts}
-			</Select>
-		</Form.Item>
-	);
-
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		event.preventDefault();
 		setWallet(wallet);
-		await getAccounts(wallet);
+		setAccounts([]);
+		setAddress('');
+		const accountsData = await getMetamaskAccounts({ chosenWallet: wallet, loginAddress, network });
+		if (accountsData) {
+			setAccounts(accountsData?.accounts || []);
+			setAddress(accountsData.account);
+			onAccountChange(accountsData?.account || '');
+			setIsTalismanEthereum(accountsData?.isTalismanEthereum);
+		}
 		if (walletConnectProvider) {
 			await getWalletConnectAccounts();
 		}
@@ -576,79 +413,58 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		setAvailableBalance(balance);
 	};
 
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	useEffect(
-		() => {
-			getWallet();
-			if (!loginWallet) return;
-			if (loginWallet === Wallet.METAMASK) {
-				setWallet(Wallet.METAMASK);
-				handleDefaultWallet(Wallet.METAMASK);
-			} else if (loginWallet === Wallet.TALISMAN) {
-				setWallet(Wallet.TALISMAN);
-				handleDefaultWallet(Wallet.TALISMAN);
-			}
+	const ayeNayVotesArr = [
+		{
+			label: (
+				<div
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.AYE ? 'bg-[#2ED47A] text-white' : ''}`}
+				>
+					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-[3px] mr-2' /> : <LikeGray className='mb-[3px] mr-2' />}
+					<span className='text-base font-medium'>Aye</span>
+				</div>
+			),
+			value: 'aye'
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[loginWallet]
-	);
+		{
+			label: (
+				<div
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.NAY ? 'bg-[#F53C3C] text-white' : ''}`}
+				>
+					{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />} <span className='text-base font-medium'>Nay</span>
+				</div>
+			),
+			value: 'nay'
+		}
+	];
 
 	const decisionOptions = isOpenGovSupported(network)
 		? [
+				...ayeNayVotesArr,
 				{
 					label: (
-						<div className={`flex h-[32px] w-[131px] items-center justify-center rounded-[4px] text-[#576D8B] ${vote === 'aye' ? 'bg-[#2ED47A] text-white' : ''}`}>
-							{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-[3px] mr-2' /> : <LikeGray className='mb-[3px] mr-2' />}
-							<span className='font-medium'>Aye</span>
-						</div>
-					),
-					value: 'aye'
-				},
-				{
-					label: (
-						<div className={`flex h-[32px] w-[126px] items-center justify-center rounded-[4px] text-[#576D8B] ${vote === 'nay' ? 'bg-[#F53C3C] text-white' : ''}`}>
-							{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />} <span className='font-medium'>Nay</span>
-						</div>
-					),
-					value: 'nay'
-				},
-				{
-					label: (
-						<div className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === 'split' ? 'bg-[#FFBF60] text-white' : ''}`}>
+						<div
+							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white' : ''}`}
+						>
 							{' '}
-							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' />} <span className='font-medium'>Split</span>{' '}
+							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' />} <span className='text-base font-medium'>Split</span>{' '}
 						</div>
 					),
 					value: 'split'
 				},
 				{
 					label: (
-						<div className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === 'abstain' ? 'bg-[#407BFF] text-white' : ''}`}>
-							<StopOutlined className='mb-[3px] mr-2' /> <span className='font-medium'>Abstain</span>
+						<div
+							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
+								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white' : ''
+							}`}
+						>
+							<StopOutlined className='mb-[3px] mr-2' /> <span className='text-base font-medium'>Abstain</span>
 						</div>
 					),
 					value: 'abstain'
 				}
 		  ]
-		: [
-				{
-					label: (
-						<div className={`flex h-[32px] w-[131px] items-center justify-center rounded-[4px] text-[#576D8B] ${vote === 'aye' ? 'bg-[#2ED47A] text-white' : ''}`}>
-							{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-[3px] mr-2' /> : <LikeGray className='mb-[3px] mr-2' />}
-							<span className='font-medium'>Aye</span>
-						</div>
-					),
-					value: 'aye'
-				},
-				{
-					label: (
-						<div className={`flex h-[32px] w-[126px] items-center justify-center rounded-[4px] text-[#576D8B] ${vote === 'nay' ? 'bg-[#F53C3C] text-white' : ''}`}>
-							{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />} <span className='font-medium'>Nay</span>
-						</div>
-					),
-					value: 'nay'
-				}
-		  ];
+		: ayeNayVotesArr;
 
 	return (
 		<div className={className}>
@@ -660,7 +476,10 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			</Button>
 			<Modal
 				open={showModal}
-				onCancel={() => setShowModal(false)}
+				onCancel={() => {
+					setShowModal(false);
+					handleModalReset();
+				}}
 				footer={false}
 				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable}`}
 				closeIcon={<CloseCross />}
@@ -668,7 +487,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				title={
 					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0]'>
 						<CastVoteIcon className='mt-1' />
-						<span className='text-xl font-semibold tracking-[0.0015em] text-[#243A57]'>Cast Your Vote</span>
+						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Cast Your Vote</span>
 					</div>
 				}
 			>
@@ -677,14 +496,15 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					<Spin
 						spinning={loadingStatus.isLoading || isAccountLoading}
 						indicator={<LoadingOutlined />}
+						tip={loadingStatus.message}
 					>
-						<div className='mt-3 flex items-center justify-center text-sm font-normal text-[#485F7D]'>Select a wallet</div>
+						<div className='text-light mt-3 flex items-center justify-center text-sm font-normal'>Select a wallet</div>
 
 						<div className='mb-[24px] mt-1 flex items-center justify-center gap-x-5'>
 							{availableWallets[Wallet.TALISMAN] && (
 								<WalletButton
 									className={`${wallet === Wallet.TALISMAN ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
-									disabled={!apiReady}
+									disabled={!apiReady || !api}
 									onClick={(event) => handleWalletClick(event as any, Wallet.TALISMAN)}
 									name='Talisman'
 									icon={
@@ -698,7 +518,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							{isMetamaskWallet && (
 								<WalletButton
 									className={`${wallet === Wallet.METAMASK ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
-									disabled={!apiReady}
+									disabled={!apiReady || !api}
 									onClick={(event) => handleWalletClick(event as any, Wallet.METAMASK)}
 									name='MetaMask'
 									icon={
@@ -719,12 +539,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							/>
 						)}
 
-						{balanceErr.length > 0 && wallet && (
+						{isBalanceErr && !loadingStatus.isLoading && wallet && (
 							<Alert
-								type='error'
-								message={balanceErr}
+								type='info'
+								message='Insufficient balance.'
 								showIcon
-								className='mb-4 h-10 rounded-[4px]'
+								className='mb-4 rounded-[4px]'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
@@ -744,7 +564,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								withBalance
 								onAccountChange={onAccountChange}
 								onBalanceChange={handleOnBalanceChange}
-								className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+								className={`${poppins.variable} ${poppins.className} text-light text-sm font-normal`}
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
 							/>
@@ -752,161 +572,69 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							<Alert
 								type='info'
 								message='Please select a wallet.'
+								className='rounded-[4px]'
 								showIcon
 							/>
 						) : null}
 
-						<h3 className='inner-headings mb-[2px] mt-[24px]'>Choose your vote</h3>
+						<h3 className='inner-headings mb-[2px] mt-6'>Choose your vote</h3>
 						<Segmented
 							block
-							className={`${className}  mb-[24px] w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white px-0 py-0 hover:bg-white`}
+							className={`${className}  mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white px-0 py-0 hover:bg-white`}
 							size='large'
 							value={vote}
 							onChange={(value) => {
 								setVote(value as EVoteDecisionType);
-								ayeNayForm.setFieldValue('balance', ZERO_BN);
-								splitForm.setFieldValue('nayVote', ZERO_BN);
-								splitForm.setFieldValue('ayeVote', ZERO_BN);
-								abstainFrom.setFieldValue('abstainVote', ZERO_BN);
-								abstainFrom.setFieldValue('ayeVote', ZERO_BN);
-								abstainFrom.setFieldValue('nayVote', ZERO_BN);
-								setLockedBalance(ZERO_BN);
+								handleModalReset();
 							}}
 							options={decisionOptions}
-							disabled={!apiReady}
+							disabled={!apiReady || !api}
 						/>
 						{vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && (
-							<Form
-								onFinish={async () => {
-									await voteReferendum();
-								}}
+							<VotingForm
 								form={ayeNayForm}
-								name='aye-nay-form'
-								className={`${balanceErr.length > 0 && 'mt-4'}`}
-							>
-								<BalanceInput
-									label={'Lock balance'}
-									helpText={'Amount of you are willing to lock for this vote.'}
-									placeholder={'Add balance'}
-									onChange={onBalanceChange}
-									className='mt-6 text-sm font-normal text-[#485F7D]'
-									inputClassName='text-[#7c899b] text-sm text-red-100'
-								/>
-
-								<ConvictionSelect className={`${className}`} />
-
-								<div className='ml-[-24px] mr-[-24px] mt-[-1px] flex justify-end border-0 border-t-[1.5px] border-solid border-[#D2D8E0] pt-5'>
-									<Button
-										className='mr-[15px] h-[40px] w-[134px] rounded-[4px] border-[#E5007A] bg-[white] font-semibold text-[#E5007A]'
-										onClick={() => setShowModal(false)}
-									>
-										Cancel
-									</Button>
-									<Button
-										className={`mr-[24px] h-[40px] w-[134px] rounded-[4px] border-0 bg-[#E5007A] font-semibold text-[white] ${(!wallet || !lockedBalance) && 'opacity-50'}`}
-										htmlType='submit'
-										disabled={!wallet || !lockedBalance}
-									>
-										Confirm
-									</Button>
-								</div>
-							</Form>
+								formName={EFormType.AYE_NAY_FORM}
+								onBalanceChange={(balance: BN) => setLockedBalance(balance)}
+								convictionClassName={className}
+								handleSubmit={async () => await handleSubmit()}
+								disabled={!wallet || !lockedBalance || isBalanceErr || lockedBalance.lte(ZERO_BN)}
+								conviction={conviction}
+								setConviction={setConviction}
+								convictionOpts={convictionOpts}
+							/>
 						)}
 
 						{vote === EVoteDecisionType.SPLIT && (
-							<Form
+							<VotingForm
 								form={splitForm}
-								name='split-form'
-								className={`${balanceErr.length > 0 && 'mt-4'}`}
-								onFinish={async () => {
-									await voteReferendum();
-								}}
-								style={{ maxWidth: 600 }}
-							>
-								<BalanceInput
-									label={'Aye vote value'}
-									helpText={'Amount of you are willing to lock for this vote.'}
-									placeholder={'Add balance'}
-									onChange={onAyeValueChange}
-									className='text-sm font-medium'
-									formItemName={'ayeVote'}
-								/>
-
-								<BalanceInput
-									label={'Nay vote value'}
-									placeholder={'Add balance'}
-									onChange={onNayValueChange}
-									className='text-sm font-medium'
-									formItemName={'nayVote'}
-								/>
-
-								<div className='ml-[-24px] mr-[-24px] mt-[-1px] flex justify-end border-0 border-t-[1.5px] border-solid border-[#D2D8E0] pt-5'>
-									<Button
-										className='mr-[15px] h-[40px] w-[134px] rounded-[4px] border-[#E5007A] bg-[white] font-semibold text-[#E5007A]'
-										onClick={() => setShowModal(false)}
-									>
-										Cancel
-									</Button>
-									<Button
-										className={`mr-[24px] h-[40px] w-[134px] rounded-[4px] border-0 bg-[#E5007A] font-semibold text-[white] ${(!wallet || !lockedBalance) && 'opacity-50'}`}
-										htmlType='submit'
-										disabled={!wallet || !lockedBalance}
-									>
-										Confirm
-									</Button>
-								</div>
-							</Form>
+								formName={EFormType.SPLIT_FORM}
+								onBalanceChange={(balance: BN) => setLockedBalance(balance)}
+								onAyeValueChange={(balance: BN) => setAyeVoteValue(balance)}
+								onNayValueChange={(balance: BN) => setNayVoteValue(balance)}
+								convictionClassName={className}
+								handleSubmit={async () => await handleSubmit()}
+								disabled={!wallet || ayeVoteValue.lte(ZERO_BN) || nayVoteValue.lte(ZERO_BN) || isBalanceErr}
+								conviction={conviction}
+								setConviction={setConviction}
+								convictionOpts={convictionOpts}
+							/>
 						)}
 
 						{vote === EVoteDecisionType.ABSTAIN && (
-							<Form
+							<VotingForm
 								form={abstainFrom}
-								name='abstain-form'
-								onFinish={async () => {
-									await voteReferendum();
-								}}
-								style={{ maxWidth: 600 }}
-							>
-								<BalanceInput
-									label={'Abstain vote value'}
-									placeholder={'Add balance'}
-									onChange={onAbstainValueChange}
-									className='text-sm font-medium'
-									formItemName={'abstainVote'}
-								/>
-
-								<BalanceInput
-									label={'Aye vote value'}
-									placeholder={'Add balance'}
-									onChange={onAyeValueChange}
-									className='text-sm font-medium'
-									formItemName={'ayeVote'}
-								/>
-
-								<BalanceInput
-									label={'Nay vote value'}
-									placeholder={'Add balance'}
-									onChange={onNayValueChange}
-									className='text-sm font-medium'
-									formItemName={'nayVote'}
-								/>
-
-								<div className='ml-[-24px] mr-[-24px] mt-[-1px] flex justify-end border-0 border-t-[1.5px] border-solid border-[#D2D8E0] pt-5'>
-									<Button
-										className='mr-[15px] h-[40px] w-[134px] rounded-[4px] border-[#E5007A] bg-[white] font-semibold text-[#E5007A]'
-										onClick={() => setShowModal(false)}
-									>
-										Cancel
-									</Button>
-									<Button
-										className={`mr-[24px] h-[40px] w-[134px] rounded-[4px] border-0 bg-[#E5007A] font-semibold text-[white] ${(!wallet || !lockedBalance) && 'opacity-50'}`}
-										htmlType='submit'
-										disabled={!wallet || !lockedBalance}
-									>
-										Confirm
-									</Button>
-								</div>
-							</Form>
+								formName={EFormType.ABSTAIN_FORM}
+								onBalanceChange={(balance: BN) => setLockedBalance(balance)}
+								onAyeValueChange={(balance: BN) => setAyeVoteValue(balance)}
+								onNayValueChange={(balance: BN) => setNayVoteValue(balance)}
+								onAbstainValueChange={(balance: BN) => setAbstainVoteValue(balance)}
+								convictionClassName={className}
+								handleSubmit={async () => await handleSubmit()}
+								disabled={!wallet || ayeVoteValue.lte(ZERO_BN) || nayVoteValue.lte(ZERO_BN) || abstainVoteValue.lte(ZERO_BN) || isBalanceErr}
+								conviction={conviction}
+								setConviction={setConviction}
+								convictionOpts={convictionOpts}
+							/>
 						)}
 					</Spin>
 				</>
@@ -936,18 +664,15 @@ export default styled(VoteReferendumEthV2)`
 		position: absolute;
 		width: 100%;
 	}
-
 	.vote-form-cont {
 		padding: 12px;
 	}
-
 	.alignment-close .ant-select-selector {
 		border: 1px soild !important;
 		border-color: #d2d8e0 !important;
 		height: 40px;
 		border-radius: 4px !important;
 	}
-
 	.alignment-close .ant-select-selection-item {
 		font-style: normal !important;
 		font-weight: 400 !important;
@@ -958,11 +683,9 @@ export default styled(VoteReferendumEthV2)`
 		letter-spacing: 0.0025em !important;
 		color: #243a57 !important;
 	}
-
 	alignment-close .ant-input-number-in-from-item {
 		height: 39.85px !important;
 	}
-
 	.alignment-close .ant-segmented-item-label {
 		display: flex;
 		justify-content: center;
@@ -975,7 +698,6 @@ export default styled(VoteReferendumEthV2)`
 	.alignment-close .ant-segmented {
 		padding: 0px !important;
 	}
-
 	.alignment-close .ant-select-selection-item {
 		color: #243a57 !important;
 	}

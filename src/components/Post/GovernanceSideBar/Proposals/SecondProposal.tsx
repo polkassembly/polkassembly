@@ -81,6 +81,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 		await executeTx({
 			address,
 			api,
+			apiReady,
 			errorMessageFallback: 'Transaction failed.',
 			network,
 			onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),

@@ -78,7 +78,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 	const subsquidData = result?.data;
 	res.status(200).json({
 		count: subsquidData?.convictionDelegatedVotesConnection?.totalCount,
-		votes: subsquidData?.convictionVotes?.[0]?.delegatedVotes
+		votes: subsquidData?.convictionVotes?.[0]?.delegatedVotes.map((data: any) => ({
+			...data,
+			delegatedTo: data.delegatedTo.voter,
+			lockPeriod: Number(data?.lockPeriod || 0) || 0.1
+		}))
 	});
 }
 

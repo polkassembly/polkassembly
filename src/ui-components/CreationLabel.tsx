@@ -343,20 +343,20 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 							{votesArr[0].decision == 'yes' ? (
-								<p className='mb-[-1px]'>
-									<LikeFilled className='text-[green]' /> <span className='voted-icon font-medium capitalize text-[green]'>Voted Aye</span>
+								<p className='voted-icon mb-[-1px]'>
+									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted Aye</span>
 								</p>
 							) : votesArr[0].decision == 'no' ? (
-								<div>
-									<DislikeFilled className='text-[red]' /> <span className='voted-icon mb-[5px] font-medium capitalize text-[red]'>Voted Nay</span>
+								<div className='voted-icon '>
+									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted Nay</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
-								<div className='align-center mb-[-1px] flex justify-center'>
-									<SplitYellow className='mr-1' /> <span className='voted-icon font-medium capitalize text-[#FECA7E]'>Voted Split</span>
+								<div className='voted-icon align-center mb-[-1px] flex justify-center'>
+									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Voted Split</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
-								<div className='align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mb-[-1px] mr-1' /> <span className='voted-icon font-medium capitalize text-bodyBlue'>Voted Abstain</span>
+								<div className='voted-icon align-center mb-[1px] flex justify-center'>
+									<AbstainGray className='mb-[-1px] mr-1' /> <span className='mt-[2px] font-medium capitalize text-bodyBlue'>Voted Abstain</span>
 								</div>
 							) : null}
 							{/* { votesArr.length > 1 && <p title={`${votesArr.length-1}+ votes available`}  className='mb-[-1px] ml-1' >{votesArr.length-1}+</p>} */}
@@ -414,7 +414,24 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</Tooltip>
 					</div>
 				) : null}
-
+				{votesArr.length > 0 ? (
+					<div
+						className={votesArr.length >= 1 ? 'ml-1 flex items-center justify-center hover:cursor-pointer' : 'ml-1 flex items-center justify-center'}
+						onClick={() => {
+							if (votesArr.length >= 1) setShowVotesModal(!showVotesModal);
+						}}
+					>
+						{votesArr[0].decision == 'yes' ? (
+							<LikeFilled className='sentiment-vote-icon mb-[-1px] hidden text-[green]' />
+						) : votesArr[0].decision == 'no' ? (
+							<DislikeFilled className='sentiment-vote-icon hidden text-[red]' />
+						) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
+							<SplitYellow className='sentiment-vote-icon align-center mb-[-1px] mr-1 hidden justify-center' />
+						) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
+							<AbstainGray className='sentiment-vote-icon align-center mr-1 hidden justify-center' />
+						) : null}
+					</div>
+				) : null}
 				<Dropdown
 					overlayClassName='sentiment-hover'
 					placement='topCenter'

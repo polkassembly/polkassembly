@@ -528,9 +528,14 @@ z-index: 1050 !important;
   background: #fff !important;
 }
 
-@media (max-width: 391px) and (min-width: 319px) {
+@media (max-width: 420px) and (min-width: 319px) {
   .voted-icon {
     width:0 !important;
     display: none !important;
+  }
+
+  .sentiment-vote-icon {
+    display:block !important;
+    margin-right: 4px !important;
   }
 }

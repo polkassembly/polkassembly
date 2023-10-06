@@ -4,6 +4,7 @@
 
 import { allGov1 } from '../Gov1Notification/utils';
 import { getOpenGov } from '../OpenGovNotification/utils';
+import { pipNotification } from '../PIP/utils';
 
 const myProposal = [
 	{
@@ -38,5 +39,6 @@ export const notificationInitialState = (network: string) => ({
 	gov1Post: allGov1,
 	myProposal,
 	openGov: getOpenGov(network),
+	pipNotification,
 	subscribePost
 });

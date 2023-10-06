@@ -14,9 +14,9 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Loader from '~src/ui-components/Loader';
 import styled from 'styled-components';
 import { Alert } from 'antd';
-import { useNetworkSelector } from '~src/redux/selectors';
 import { BN } from '@polkadot/util';
 import formatBnBalance from '~src/util/formatBnBalance';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Container = styled.div`
 	display: flex;

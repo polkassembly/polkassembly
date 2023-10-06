@@ -18,6 +18,9 @@ const ACTIONS = {
 	OPEN_GOV_ALL_CHANGE: 'open_gov_all_change',
 	OPEN_GOV_PROPOSAL_ALL_CHANGE: 'open_gov_proposal_all_change',
 	OPEN_GOV_PROPOSAL_SINGLE_CHANGE: 'open_gov_proposal_single_change',
+	PIP_ALL_CHANGE: 'pip_all_change',
+	PIP_PROPOSAL_ALL_CHANGE: 'pip_proposal_all_change',
+	PIP_PROPOSAL_SINGLE_CHANGE: 'pip_proposal_single_change',
 	SUBSCRIBED_PROPOSAL_ALL_CHANGE: 'subscribed_proposal_all_change',
 	SUBSCRIBED_PROPOSAL_SINGLE_CHANGE: 'subscribed_proposal_single_change'
 };
@@ -41,6 +44,27 @@ const updateOpenGovProposal = (payload: any, state: IReducerState) => {
 	const { checked, value, key } = payload.params;
 	const updatedOpenGov = state.openGov[key].map((category: any) => (category.label === value ? { ...category, selected: checked } : category));
 	return { ...state, openGov: { ...state.openGov, [key]: updatedOpenGov } };
+};
+
+const updatePipProposal = (payload: any, state: IReducerState) => {
+	const { checked, value, key } = payload.params;
+	const updatedPip = state.pipNotification[key].map((category: any) => (category.label === value ? { ...category, selected: checked } : category));
+	return { ...state, pipNotification: { ...state.pipNotification, [key]: updatedPip } };
+};
+
+const updatePipProposalAll = (payload: any, state: IReducerState) => {
+	const { checked, key } = payload.params;
+	const updatedPip = state.pipNotification[key].map((category: any) => ({ ...category, selected: checked }));
+	return { ...state, pipNotification: { ...state.pipNotification, [key]: updatedPip } };
+};
+
+const updatePipAll = (payload: any, state: IReducerState) => {
+	const { checked } = payload.params;
+	const updatedPip: any = {};
+	Object.keys(state.pipNotification).forEach((key) => {
+		updatedPip[key] = state.pipNotification[key].map((category: any) => ({ ...category, selected: checked }));
+	});
+	return { ...state, pipNotification: updatedPip };
 };
 
 const updateGovOneAll = (payload: any, state: IReducerState) => {
@@ -129,11 +153,21 @@ const updateAll = (payload: any, state: IReducerState) => {
 			};
 		});
 	}
+	const pipNotification: any = {};
+	for (const key in state.pipNotification) {
+		pipNotification[key] = state.pipNotification?.[key]?.map((category: any) => {
+			return {
+				...category,
+				selected: payload?.data?.[category.triggerName]?.pip_types?.includes(key) || false
+			};
+		});
+	}
 
 	return {
 		gov1Post,
 		myProposal,
 		openGov,
+		pipNotification,
 		subscribePost
 	};
 };
@@ -150,5 +184,8 @@ export {
 	updateSubscribedProposal,
 	updateALLMyProposal,
 	updateMyProposal,
-	updateAll
+	updateAll,
+	updatePipProposal,
+	updatePipAll,
+	updatePipProposalAll
 };

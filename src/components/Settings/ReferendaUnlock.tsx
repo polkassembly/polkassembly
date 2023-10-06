@@ -8,7 +8,7 @@ import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from 'src/types';
+import { EVoteDecisionType, NotificationStatus } from 'src/types';
 import { Button, Divider, Form, Spin } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import Web3 from 'web3';
@@ -38,7 +38,7 @@ export const getTrackName = (network: string, trackId: number) => {
 	}
 	return name;
 };
-
+const ZERO_BN = new BN(0);
 interface IReferendaUnlockProps {
 	className?: string;
 	isBalanceUpdated: boolean;
@@ -52,6 +52,10 @@ interface Vote {
 	trackId: number;
 	unlocksAt: string;
 	conviction: number;
+	ayeBalance: BN;
+	nayBalance: BN;
+	abstainBalance: BN;
+	voteType: EVoteDecisionType | null;
 }
 
 interface Unlock {
@@ -69,6 +73,58 @@ interface IReferendaUnlockStatus {
 		[key: string]: { isLoading: boolean; message: string };
 	};
 }
+export const getUnlockVotesDetails = (vote: any) => {
+	let ayeBalance = ZERO_BN;
+	let nayBalance = ZERO_BN;
+	let abstainBalance = ZERO_BN;
+	let balance = ZERO_BN;
+	let voteType = null;
+	let conviction = 0;
+	if (vote?.isSplit) {
+		conviction = 0.1;
+		ayeBalance = vote?.asSplit.aye || '0';
+		nayBalance = vote?.asSplit.nay || '0';
+		voteType = EVoteDecisionType.SPLIT;
+	} else if (vote?.isSplitAbstain) {
+		conviction = 0.1;
+		ayeBalance = vote?.asSplitAbstain.aye || '0';
+		nayBalance = vote?.asSplitAbstain.nay || '0';
+		abstainBalance = vote?.asSplitAbstain.abstain || '0';
+		voteType = EVoteDecisionType.ABSTAIN;
+	} else if (vote?.asStandard !== undefined) {
+		balance = vote?.asStandard.balance;
+		if (vote?.asStandard.vote.isAye) {
+			voteType = EVoteDecisionType.AYE;
+		} else {
+			voteType = EVoteDecisionType.NAY;
+		}
+
+		if (vote?.asStandard.vote.conviction.isLocked1x) {
+			conviction = 1;
+		} else if (vote?.asStandard.vote.conviction.isLocked2x) {
+			conviction = 2;
+		} else if (vote?.asStandard.vote.conviction.isLocked3x) {
+			conviction = 3;
+		} else if (vote?.asStandard.vote.conviction.isLocked4x) {
+			conviction = 4;
+		} else if (vote?.asStandard.vote.conviction.isLocked5x) {
+			conviction = 5;
+		} else if (vote?.asStandard.vote.conviction.isLocked6x) {
+			conviction = 6;
+		} else {
+			conviction = 0.1;
+		}
+	}
+	return {
+		abstainBalance,
+		amount: balance,
+		ayeBalance,
+		conviction: conviction,
+		nayBalance,
+		vote: !!voteType,
+		voteType
+	};
+};
 
 const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
 	const { network } = useNetworkSelector();
@@ -125,29 +181,13 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 			votes.push(
 				...votingInfo.asCasting.votes.map((vote) => {
 					const refIndex = vote[0];
-					let conviction = 0;
-					if (vote[1].asStandard.vote.conviction.isLocked1x) {
-						conviction = 1;
-					} else if (vote[1].asStandard.vote.conviction.isLocked2x) {
-						conviction = 2;
-					} else if (vote[1].asStandard.vote.conviction.isLocked3x) {
-						conviction = 3;
-					} else if (vote[1].asStandard.vote.conviction.isLocked4x) {
-						conviction = 4;
-					} else if (vote[1].asStandard.vote.conviction.isLocked5x) {
-						conviction = 5;
-					} else if (vote[1].asStandard.vote.conviction.isLocked6x) {
-						conviction = 6;
-					} else {
-						conviction = 0;
-					}
+					const details = getUnlockVotesDetails(vote[1]);
+
 					return {
-						amount: vote[1].asStandard.balance,
-						conviction: conviction,
+						...details,
 						refIndex,
 						trackId: Number(arr[1]),
-						unlocksAt: votingInfo.asCasting.prior[0].toString(),
-						vote: vote[1].asStandard.vote.isAye
+						unlocksAt: votingInfo.asCasting.prior[0].toString()
 					};
 				})
 			);
@@ -453,12 +493,26 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 											<>
 												<li
 													key={vote.refIndex.toString()}
-													className='grid grid-cols-6 gap-x-5 py-1 md:grid-cols-8'
+													className='grid grid-cols-6 items-center gap-x-5 py-1 md:grid-cols-8'
 												>
 													<span className='col-span-2'>
-														<Link href={`/referendum/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
+														<Link href={`/referenda/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
 													</span>
-													<span className='col-span-2'>{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}</span>
+													{vote.voteType === EVoteDecisionType.AYE || vote?.voteType === EVoteDecisionType.NAY ? (
+														<span className='col-span-2'>
+															{vote.voteType === EVoteDecisionType.AYE ? 'Aye' : 'Nay'}
+															{': '}
+															{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
+														</span>
+													) : (
+														<div className='col-span-2 flex flex-col'>
+															<span className='col-span-2'> Aye: {formatBnBalance(String(vote.ayeBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+															<span className='col-span-2'> Nay: {formatBnBalance(String(vote.nayBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+															{vote.voteType === EVoteDecisionType.ABSTAIN && (
+																<span className='col-span-2'> Abstain: {formatBnBalance(String(vote.abstainBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+															)}
+														</div>
+													)}
 													<span className='col-span-2'>{vote.unlocksAt}</span>
 													<span className='col-span-2'>
 														<Button

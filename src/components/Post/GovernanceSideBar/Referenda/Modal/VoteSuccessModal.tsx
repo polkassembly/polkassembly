@@ -7,6 +7,7 @@ import { Modal } from 'antd';
 import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
+
 import { useCommentDataContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
@@ -17,7 +18,6 @@ import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { ReactElement } from 'react-markdown/lib/react-markdown';
-import { useNetworkSelector } from '~src/redux/selectors';
 import PostCommentForm from '~src/components/Post/PostCommentForm';
 import styled from 'styled-components';
 import BackgroundImage from '~assets/icons/vector.svg';
@@ -25,6 +25,7 @@ import LeftQuote from '~assets/icons/chatbox-icons/icon-left-quote.svg';
 import RightQuote from '~assets/icons/chatbox-icons/icon-right-quote.svg';
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -156,10 +157,10 @@ const VoteInitiatedModal = ({
 							With address:{' '}
 							<span className='font-medium'>
 								<Address
-									truncateUsername={false}
+									isTruncateUsername={false}
 									address={address}
 									className='address'
-									displayInline={true}
+									displayInline
 								/>{' '}
 							</span>
 						</div>
@@ -169,10 +170,10 @@ const VoteInitiatedModal = ({
 								With Multisig:{' '}
 								<span className='font-medium'>
 									<Address
-										truncateUsername={false}
+										isTruncateUsername={false}
 										address={multisig}
 										className='address'
-										displayInline={true}
+										displayInline
 									/>{' '}
 								</span>
 							</div>
@@ -245,6 +246,7 @@ const VoteInitiatedModal = ({
 						setCurrentState={handleCurrentCommentAndTimeline}
 						voteDecision={vote}
 						setSuccessModalOpen={setOpen}
+						voteReason={true}
 					/>
 				</div>
 				<span

@@ -374,7 +374,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								<h6 className='col-span-2 font-medium text-lightBlue'>Curator</h6>
 								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue md:col-span-6'>
 									<Address
-										displayInline={true}
+										displayInline
 										address={curator}
 									/>
 								</div>
@@ -419,7 +419,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								<h6 className='col-span-2 font-medium text-lightBlue'>Payee</h6>
 								<div className='col-span-4 overflow-hidden md:col-span-6'>
 									<Address
-										displayInline={true}
+										displayInline
 										address={payee}
 									/>
 								</div>

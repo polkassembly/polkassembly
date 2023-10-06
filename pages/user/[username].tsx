@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Select, Tabs } from 'antd';
+import { Segmented, Select, Tabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -21,6 +21,9 @@ import UserNotFound from '~assets/user-not-found.svg';
 import { useDispatch } from 'react-redux';
 import { networkActions } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import VotesHistory from '~src/ui-components/VotesHistory';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -34,6 +37,15 @@ interface IUserProfileProps {
 	network: string;
 	className?: string;
 }
+
+export const votesHistoryUnavailableNetworks = [
+	AllNetworks.MOONBASE,
+	AllNetworks.MOONRIVER,
+	AllNetworks.POLYMESH,
+	AllNetworks.COLLECTIVES,
+	AllNetworks.WESTENDCOLLECTIVES,
+	AllNetworks.MOONBEAM
+];
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const req = context.req;
@@ -92,16 +104,26 @@ const EmptyState = styled.div`
 		margin: auto;
 	}
 `;
+export enum EProfileHistory {
+	VOTES = 'Votes',
+	POSTS = 'Posts'
+}
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
 	const dispatch = useDispatch();
-	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
+	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
+	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(!votesHistoryUnavailableNetworks.includes(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const handleSelectGov = (type: EGovType) => {
+		setProfileHistory(EProfileHistory.VOTES);
+		setSelectedGov(type);
+	};
 
 	if (userPosts.error === 'UserId is invalid') {
 		return (
@@ -137,6 +159,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			)
 		};
 	});
+
 	return (
 		<>
 			<SEOHead
@@ -150,34 +173,55 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				/>
 				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 md:flex'>
 					<div className='flex items-start justify-between'>
-						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue'>Activity</h2>
-						<Select
-							value={selectedGov}
-							style={{
-								width: 120
-							}}
-							onChange={(v) => {
-								setSelectedGov(v);
-							}}
-							options={[
-								{
-									label: 'Gov1',
-									value: 'gov1'
-								},
-								{
-									label: 'OpenGov',
-									value: 'open_gov'
-								}
-							]}
-						/>
+						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue '>Activity</h2>
+						{isOpenGovSupported(network) && (
+							<Select
+								value={selectedGov}
+								style={{
+									width: 120
+								}}
+								onChange={(v) => {
+									handleSelectGov(v);
+								}}
+								options={[
+									{
+										label: 'Gov1',
+										value: 'gov1'
+									},
+									{
+										label: 'OpenGov',
+										value: 'open_gov'
+									}
+								]}
+							/>
+						)}
 					</div>
-					<div className='fullHeight'>
-						<Tabs
-							className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
-							type='card'
-							items={tabItems as any}
-						/>
-					</div>
+					{!votesHistoryUnavailableNetworks.includes(network) && (
+						<div className='mb-6'>
+							<Segmented
+								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
+								onChange={(e) => setProfileHistory(e as EProfileHistory)}
+								value={profileHistory}
+							/>
+						</div>
+					)}
+
+					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
+						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
+							<VotesHistory
+								userAddresses={userProfile?.data?.addresses || []}
+								govType={selectedGov}
+							/>
+						</div>
+					) : (
+						<div className='fullHeight'>
+							<Tabs
+								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+								type='card'
+								items={tabItems as any}
+							/>
+						</div>
+					)}
 				</article>
 			</section>
 		</>
@@ -196,5 +240,20 @@ export default styled(UserProfile)`
 	}
 	.fullHeight .ant-tabs-tabpane {
 		height: 100% !important;
+	}
+	.ant-select-selector {
+		height: 40px !important;
+		border-radius: 4px !important;
+		padding: 4px 12px !important;
+	}
+	.ant-segmented {
+		padding: 4px;
+		font-weight: 500 !important;
+		color: #464f60 !important;
+	}
+	.ant-segmented-item-selected {
+		text: 14px;
+		font-weight: 600 !important;
+		color: var(--pink_primary) !important;
 	}
 `;

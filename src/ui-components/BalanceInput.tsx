@@ -10,9 +10,9 @@ import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
-import { useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from './HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 

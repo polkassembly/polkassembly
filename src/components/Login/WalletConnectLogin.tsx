@@ -7,7 +7,7 @@ import { stringToHex } from '@polkadot/util';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { handleTokenChange } from 'src/services/auth.service';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -20,7 +20,7 @@ import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
 import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { UserDetailsContext } from '~src/context/UserDetailsContext';
 
 interface Props {
 	className?: string;
@@ -40,7 +40,7 @@ const initAuthResponse: IAuthResponse = {
 const NETWORK = getNetwork();
 
 const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isModal, setLoginOpen }: Props): JSX.Element => {
-	const currentUser = useUserDetailsSelector();
+	const currentUser = useContext(UserDetailsContext);
 	const { setWalletConnectProvider } = currentUser;
 
 	const [error, setError] = useState('');
@@ -421,6 +421,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 							<>
 								<div>
 									<AccountSelectionForm
+										isTruncateUsername={false}
 										title='Choose linked account'
 										accounts={accounts}
 										address={address}

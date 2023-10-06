@@ -129,13 +129,13 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		}
 	];
 
-	if (treasuryProposalCreationAllowedNetwork.includes(network.toUpperCase())) {
+	if (treasuryProposalCreationAllowedNetwork.includes(network?.toUpperCase())) {
 		data.splice(0, 0, {
 			component: <OpenGovTreasuryProposal />
 		});
 	}
 
-	if (grillChatAllowedNetwork.includes(network.toUpperCase())) {
+	if (grillChatAllowedNetwork.includes(network?.toUpperCase())) {
 		data.splice(data.length - 1, 0, {
 			component: (
 				<div

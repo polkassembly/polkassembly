@@ -400,9 +400,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			<Select
 				onChange={(key) => setConviction(Number(key))}
 				size='large'
-				className=''
 				defaultValue={conviction}
 				suffixIcon={<DownIcon />}
+				popupClassName='z-[1060]'
 			>
 				{convictionOpts}
 			</Select>
@@ -859,6 +859,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									) : (
 										<AccountSelectionForm
 											title='Vote with Account'
+											isTruncateUsername={false}
 											accounts={accounts}
 											address={address}
 											withBalance
@@ -1051,7 +1052,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	return VoteUI;
 };
 
-export default styled(VoteReferendum)`
+export default React.memo(styled(VoteReferendum)`
 	.LoaderWrapper {
 		height: 40rem;
 		position: absolute;
@@ -1113,4 +1114,4 @@ export default styled(VoteReferendum)`
 	.vote-referendum .ant-segmented-item {
 		padding: 0px !important;
 	}
-`;
+`);

@@ -119,7 +119,6 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	const dispatch = useDispatch();
 	// const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
 	// const [floatButtonOpen , setFloatButtonOpen] = useState(false);
-
 	const { api, apiReady } = useApiContext();
 	const { id: userId } = useUserDetailsSelector();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);

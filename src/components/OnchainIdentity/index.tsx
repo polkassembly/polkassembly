@@ -58,14 +58,15 @@ export interface IVerifiedFields {
 	displayName: string;
 	legalName: string;
 	alreadyVerified: boolean;
+	isIdentitySet: boolean;
 }
-interface Propos {
+interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	openAddressLinkedModal?: boolean;
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
 }
-const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Propos) => {
+const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
 	const { network } = useNetworkSelector();
 	const { id: userId } = useContext(UserDetailsContext);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
@@ -92,6 +93,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		alreadyVerified: false,
 		displayName: '',
 		email: '',
+		isIdentitySet: false,
 		legalName: '',
 		twitter: ''
 	});
@@ -178,6 +180,19 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			setStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 		}
 	};
+	const handleLocalStorageSave = (field: any) => {
+		let data: any = localStorage.getItem('identityForm');
+		if (data) {
+			data = JSON.parse(data);
+		}
+		localStorage.setItem(
+			'identityForm',
+			JSON.stringify({
+				...data,
+				...field
+			})
+		);
+	};
 
 	useEffect(() => {
 		if (!network) return;
@@ -190,7 +205,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		setLoading({ ...loading, isLoading: true });
 
 		(async () => {
-			const bondFee = api.consts.identity.fieldDeposit;
+			const bondFee = api?.consts?.identity?.fieldDeposit;
 
 			const registerarFee: any = await api.query.identity.registrars().then((e) => JSON.parse(e.toString()));
 			const bnRegisterarFee = new BN(registerarFee[registerarFee.length - 1].fee || ZERO_BN);
@@ -209,10 +224,25 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		if (identityForm) {
 			handleInitialStateSet(identityForm);
 		}
-
-		let unsubscribe: () => void;
 		const encoded_addr = address ? getEncodedAddress(address, network) : '';
 		if (!encoded_addr) return;
+
+		(async () => {
+			try {
+				const identityHash = await api.query.identity.identityOf(encoded_addr).then((res) => res.unwrapOr(null)?.info.hash.toHex());
+				if (!identityHash) {
+					console.log('Error in unwrapping identity hash');
+					return;
+				}
+
+				setIdentityHash(identityHash || '');
+				handleLocalStorageSave({ identityHash });
+			} catch (err) {
+				console.log(err);
+			}
+		})();
+
+		let unsubscribe: () => void;
 
 		api.derive.accounts
 			.info(encoded_addr, (info: DeriveAccountInfo) => {
@@ -232,10 +262,24 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						verified: !unverified && !!identity?.twitter
 					}
 				});
+
+				handleLocalStorageSave({
+					displayName: identity?.display || '',
+					email: {
+						value: identity?.email || '',
+						verified: !unverified && !!identity?.email
+					},
+					legalName: identity?.legal || '',
+					twitter: {
+						value: identity?.twitter || '',
+						verified: !unverified && !!identity?.twitter
+					}
+				});
 				setAlreadyVerifiedFields({
 					alreadyVerified: !unverified,
 					displayName: identity?.display || '',
 					email: identity?.email || '',
+					isIdentitySet: !!identity?.display || !!identity?.legal || !!identity?.twitter || !!identity?.email,
 					legalName: identity?.legal || '',
 					twitter: identity?.twitter || ''
 				});
@@ -380,10 +424,12 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				>
 					{step === ESetIdentitySteps.AMOUNT_BREAKDOWN && (
 						<TotalAmountBreakdown
+							isIdentityAlreadySet={!alreadyVerifiedfields.alreadyVerified && alreadyVerifiedfields.isIdentitySet}
 							loading={loading?.isLoading}
 							txFee={txFee}
 							perSocialBondFee={perSocialBondFee}
 							changeStep={setStep}
+							alreadyVerifiedfields={alreadyVerifiedfields}
 						/>
 					)}
 					{step === ESetIdentitySteps.SET_IDENTITY_FORM && (

@@ -108,10 +108,12 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		}
 	];
 	const router = useRouter();
+
 	const trackStatus = router.query['trackStatus'];
 	const defaultActiveTab =
 		trackStatus && ['closed', 'all', 'voting', 'submitted'].includes(String(trackStatus)) ? String(trackStatus).charAt(0).toUpperCase() + String(trackStatus).slice(1) : 'All';
 	const [activeTab, setActiveTab] = useState(defaultActiveTab);
+
 	const onTabClick = (key: string) => {
 		if (key === 'Filter') return;
 		setActiveTab(key);
@@ -159,7 +161,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 					onChange={onPaginationChange}
 					pageSize={LISTING_LIMIT}
 					showSizeChanger={false}
-					total={posts?.all?.data?.count || 0}
+					total={posts?.[activeTab.toLowerCase() as keyof IReferendumV2PostsByStatus]?.data?.count || 0}
 					responsive={true}
 				/>
 			) : null}

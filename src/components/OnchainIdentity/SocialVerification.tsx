@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
+import { useEffect, useState } from 'react';
 import { Button, Spin, Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
@@ -11,10 +11,10 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { ESocials, ILoading, NotificationStatus, VerificationStatus } from '~src/types';
 import { IVerificationResponse } from 'pages/api/v1/verification';
 import BN from 'bn.js';
-import { useEffect, useState } from 'react';
 import InprogressState from './InprogressState';
-import VerifiedTick from '~assets/icons/verified-tick.svg';
 import { useRouter } from 'next/router';
+import { useApiContext } from '~src/context';
+import VerifiedTick from '~assets/icons/verified-tick.svg';
 
 interface Props {
 	className?: string;
@@ -85,6 +85,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 };
 
 const SocialVerification = ({ className, socials, onCancel, startLoading, closeModal, changeStep, setSocials, address, identityHash, setOpenSuccessModal }: Props) => {
+	const { api, apiReady } = useApiContext();
 	const { email, twitter } = socials;
 	const [open, setOpen] = useState<boolean>(false);
 	const [status, setStatus] = useState({ email: '', twitter: '' });
@@ -231,19 +232,13 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	};
 
 	const handleJudgement = async () => {
-		startLoading({ isLoading: true, message: '' });
+		startLoading({ isLoading: true, message: 'Awaiting Judgement from Polkassembly' });
 		const { data, error } = await nextApiClientFetch<IJudgementResponse>('api/v1/verification/judgement-call', {
 			identityHash,
 			userAddress: address
 		});
 
 		if (data) {
-			const { data: apiData, error: err } = await nextApiClientFetch('api/v1/verification/onchain-identity-via-polkassembly');
-			if (apiData) {
-				console.log('identity_via_polkassembly key set');
-			} else {
-				console.log(err);
-			}
 			localStorage.removeItem('identityForm');
 			localStorage.removeItem('identityAddress');
 			localStorage.removeItem('identityWallet');
@@ -273,13 +268,12 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 			await handleVerify(ESocials.EMAIL, true);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [api, apiReady]);
 
 	const handleProceedDisabled = () => {
 		let socialsCount = 0;
 		let verifiedCount = 0;
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		Object.entries(socials).forEach(([key, value]) => {
+		Object?.values(socials).forEach((value) => {
 			if (value?.value) {
 				socialsCount += 1;
 			}

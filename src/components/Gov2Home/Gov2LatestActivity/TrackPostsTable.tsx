@@ -42,10 +42,10 @@ const columns: ColumnsType<IPostsRowData> = [
 		key: 'postedBy',
 		render: (username, { proposer }) => (
 			<NameLabel
-				textClassName='text-bodyBlue max-w-[9vw] 2xl:max-w-[12vw]'
+				usernameMaxLength={15}
+				usernameClassName='max-w-[9vw] 2xl:max-w-[12vw]'
 				defaultAddress={proposer}
 				username={username}
-				disableIdenticon={false}
 			/>
 		)
 	},

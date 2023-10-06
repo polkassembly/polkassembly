@@ -87,8 +87,8 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 
 	if (post) {
 		let trackName = '';
-		for (const key of Object.keys(networkTrackInfo[network])) {
-			if (networkTrackInfo[network][key].trackId == post.track_number && 'fellowshipOrigin' in networkTrackInfo[network][key]) {
+		for (const key of Object.keys(networkTrackInfo[props.network])) {
+			if (networkTrackInfo[props.network][key].trackId == post.track_number && 'fellowshipOrigin' in networkTrackInfo[props.network][key]) {
 				trackName = key;
 			}
 		}

@@ -167,7 +167,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 					type='info'
 					showIcon
-					className='changeColor text-bodyBlue'
+					className='changeColor  mx-8 mb-5 text-bodyBlue'
 				/>
 			)}
 

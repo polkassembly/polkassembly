@@ -13,11 +13,11 @@ export async function getKiltDidName(api: ApiPromise, lookupAccountAddress: stri
 		return undefined;
 	}
 
-	const { w3n } = didDetails.unwrap();
+	const { w3n = null } = didDetails.unwrapOr({});
 
-	if (w3n.isNone) {
+	if (!w3n || w3n.isNone) {
 		return undefined;
 	}
 
-	return w3n.unwrap().toHuman();
+	return w3n.unwrapOr(null)?.toHuman();
 }

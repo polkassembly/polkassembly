@@ -9,10 +9,10 @@ import React, { useContext, useState } from 'react';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useUserDetailsContext } from '~src/context';
-import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingStatusType, NotificationStatus } from '../../../../types';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
+import { useUserDetailsContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import executeTx from '~src/util/executeTx';
 import { ApiContext } from '~src/context/ApiContext';
 

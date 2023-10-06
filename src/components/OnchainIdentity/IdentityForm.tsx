@@ -42,7 +42,7 @@ interface Props {
 	setIsIdentityCallDone: (pre: boolean) => void;
 	setIdentityHash: (pre: string) => void;
 	setAddressChangeModalOpen: () => void;
-	alreadyVerifiedfields?: IVerifiedFields;
+	alreadyVerifiedfields: IVerifiedFields;
 }
 interface ValueState {
 	info: Record<string, unknown>;
@@ -103,7 +103,7 @@ const IdentityForm = ({
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
-	const totalFee = gasFee.add(bondFee.add(registerarFee.add(alreadyVerifiedfields?.alreadyVerified ? ZERO_BN : minDeposite)));
+	const totalFee = gasFee.add(bondFee.add(registerarFee.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -222,10 +222,15 @@ const IdentityForm = ({
 		const identityTx = api.tx?.identity?.setIdentity(info);
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
 		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-		setStartLoading({ isLoading: true, message: 'awaiting for confirmation' });
+		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
 		const onSuccess = async () => {
-			const identityHash = await api.query.identity.identityOf(address).then((res) => res.unwrap().info.hash.toHex());
+			const identityHash = await api.query.identity.identityOf(address).then((res) => res.unwrapOr(null)?.info.hash.toHex());
+			if (!identityHash) {
+				console.log('Error in unwraping identityHash');
+				return;
+			}
+
 			setIdentityHash(identityHash);
 			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
@@ -298,10 +303,8 @@ const IdentityForm = ({
 					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
 						<Address
 							address={address}
-							truncateUsername={false}
+							isTruncateUsername={false}
 							displayInline
-							clickable={false}
-							textClassName='text-bodyBlue'
 						/>
 						<Button
 							onClick={() => {
@@ -507,7 +510,7 @@ const IdentityForm = ({
 				</div> */}
 				</div>
 			</Form>
-			{!alreadyVerifiedfields?.alreadyVerified && (
+			{!alreadyVerifiedfields?.alreadyVerified && !alreadyVerifiedfields.isIdentitySet && (
 				<div className='mt-6 flex items-center gap-4 text-sm'>
 					<span className='font-medium text-lightBlue'>
 						Min Deposit{' '}
@@ -521,7 +524,6 @@ const IdentityForm = ({
 					</span>
 				</div>
 			)}
-
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert

@@ -263,23 +263,21 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Proposer Address:</span>
 							<Address
-								textClassName='font-medium text-sm'
 								addressClassName='text-bodyBlue'
 								address={proposerAddress}
-								identiconSize={18}
+								iconSize={18}
 								displayInline
-								disableAddressClick
+								isTruncateUsername={false}
 							/>
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Beneficiary Address:</span>
 							<Address
-								textClassName='font-medium text-sm'
 								addressClassName='text-bodyBlue'
 								address={beneficiaryAddress}
-								identiconSize={18}
+								iconSize={18}
 								displayInline
-								disableAddressClick
+								isTruncateUsername={false}
 							/>
 						</span>
 						<span className='flex'>

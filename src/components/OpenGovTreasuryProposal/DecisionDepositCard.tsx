@@ -447,6 +447,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 								<>
 									{accounts.length > 0 ? (
 										<AccountSelectionForm
+											isTruncateUsername={false}
 											title='Beneficiary Address'
 											accounts={accounts}
 											address={address}

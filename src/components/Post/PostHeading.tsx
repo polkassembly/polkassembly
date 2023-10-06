@@ -10,14 +10,14 @@ import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
-
-import { useNetworkSelector } from '~src/redux/selectors';
-import { useApiContext, usePostDataContext } from '~src/context';
+import { useApiContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (

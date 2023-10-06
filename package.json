@@ -31,6 +31,8 @@
     "@sendgrid/mail": "^7.7.0",
     "@subsocial/grill-widget": "^0.0.8",
     "@substrate/connect": "^0.7.30",
+    "@sendgrid/mail": "^7.7.0",
+    "@subsocial/grill-widget": "^0.0.8",
     "@tinymce/tinymce-react": "^4.3.0",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "18.11.17",

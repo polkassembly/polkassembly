@@ -30,7 +30,6 @@ import { getStatusBlock } from '~src/util/getStatusBlock';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import CloseIcon from '~assets/icons/close.svg';
-import checkGov2Route from '~src/util/checkGov2Route';
 import { ProposalType } from '~src/global/proposalType';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
@@ -74,6 +73,7 @@ interface IGovernanceProps {
 	votesData?: any;
 	trackNumber?: number | null;
 	identityId?: string | null;
+	truncateUsername?: boolean;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -105,13 +105,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		index = 0,
 		proposalType,
 		votesData,
-		identityId = null
+		identityId = null,
+		truncateUsername = true
 	} = props;
 
 	const router = useRouter();
-	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const currentUser = useUserDetailsSelector();
 
 	let titleString = title || method || tipReason || noTitle;
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
@@ -161,7 +162,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (!window || !checkGov2Route(router.pathname, router.query) || trackNumber === null) return;
+		if (!window || trackNumber === null) return;
 		const trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
 
 		if (!created_at || !trackDetails) return;
@@ -200,6 +201,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
 								username={username}
+								truncateUsername={truncateUsername}
 							/>
 						</div>
 						<div className='flex items-center justify-end'>

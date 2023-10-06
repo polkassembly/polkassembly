@@ -12,7 +12,6 @@ import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
@@ -528,7 +527,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								</div>
 								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px]'>
 									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue'>
-										{' '}
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
@@ -605,7 +603,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				balance={bnBalance}
 				trackNum={trackNum}
 				conviction={conviction}
-				title={isMultisig ? 'Delegation with Polkasafe initiated' : ' Delegated'}
+				title={isMultisig ? 'Delegation with Polkasafe initiated' : ' Delegated Successfully'}
 			/>
 		</>
 	);

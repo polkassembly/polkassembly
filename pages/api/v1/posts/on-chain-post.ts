@@ -387,26 +387,48 @@ export async function getComments(
 				}
 			}
 
-			const comment = {
-				comment_reactions: comment_reactions,
-				comment_source: data.comment_source || 'polkassembly',
-				content: data.content,
-				created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
-				history: history,
-				id: data.id,
-				is_custom_username: false,
-				post_index: postIndex,
-				post_type: postType,
-				profile: user?.profile || null,
-				proposer: data.proposer || '',
-				replies: data.replies || ([] as any[]),
-				sentiment: data.sentiment || 0,
-				spam_users_count: 0,
-				updated_at: getUpdatedAt(data),
-				user_id: data.user_id,
-				username: data.username,
-				votes: [] as any[]
-			};
+			// Send empty comment data with username and userid if comment is deleted (for replies)
+			const comment = data.isDeleted
+				? {
+						comment_reactions: getDefaultReactionObj(),
+						comment_source: 'polkassembly',
+						content: '[Deleted]',
+						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						history: [],
+						id: data.id,
+						is_custom_username: false,
+						post_index: postIndex,
+						post_type: postType,
+						profile: user?.profile || null,
+						proposer: data.proposer || '',
+						replies: data.replies || ([] as any[]),
+						sentiment: 0,
+						spam_users_count: 0,
+						updated_at: getUpdatedAt(data),
+						user_id: data.user_id,
+						username: data.username,
+						votes: [] as any[]
+				  }
+				: {
+						comment_reactions: comment_reactions,
+						comment_source: data.comment_source || 'polkassembly',
+						content: data.content,
+						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+						history: history,
+						id: data.id,
+						is_custom_username: false,
+						post_index: postIndex,
+						post_type: postType,
+						profile: user?.profile || null,
+						proposer: data.proposer || '',
+						replies: data.replies || ([] as any[]),
+						sentiment: data.sentiment || 0,
+						spam_users_count: 0,
+						updated_at: getUpdatedAt(data),
+						user_id: data.user_id,
+						username: data.username,
+						votes: [] as any[]
+				  };
 
 			const replyIds: string[] = [];
 			const repliesSnapshot = await commentDocRef.collection('replies').where('isDeleted', '==', false).orderBy('created_at', 'asc').get();
@@ -428,9 +450,10 @@ export async function getComments(
 						}
 						comment.replies.push({
 							comment_id,
-							content,
+							content: data.isDeleted ? '[Deleted]' : content,
 							created_at: created_at?.toDate ? created_at.toDate() : created_at,
 							id: id,
+							isDeleted: data.isDeleted || false,
 							is_custom_username: false,
 							post_index: postIndex,
 							post_type: postType,
@@ -580,17 +603,21 @@ export async function getComments(
 			comment.proposer = userIdToUserMap[comment.user_id].proposer || comment.proposer;
 			comment.username = userIdToUserMap[comment.user_id].username || comment.username;
 			comment.is_custom_username = userIdToUserMap[comment.user_id].is_custom_username;
-			const voteHistoryParams = {
-				listingLimit: 1000,
-				network,
-				page: 1,
-				proposalIndex: postIndex,
-				proposalType: postType,
-				voterAddress: getEncodedAddress(comment.proposer, network) || comment.proposer
-			};
-			const { data = null } = await getVotesHistory(voteHistoryParams);
-			if (data && data.count > 0) {
-				comment.votes = data.votes;
+			if (postType !== ProposalType.DISCUSSIONS) {
+				const voteHistoryParams = {
+					listingLimit: 2,
+					network,
+					page: 1,
+					proposalIndex: postIndex,
+					proposalType: postType,
+					voterAddress: getEncodedAddress(comment.proposer, network) || comment.proposer
+				};
+				const { data = null } = await getVotesHistory(voteHistoryParams);
+				if (data && data.count > 0) {
+					comment.votes = data.votes;
+				}
+			} else {
+				comment.votes = [];
 			}
 			if (comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0) {
 				comment.replies = comment.replies.map((reply) => {
@@ -1079,7 +1106,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					const post_index = timeline.type === 'Tip' ? timeline.hash : timeline.index;
 					const type = getFirestoreProposalType(timeline.type) as ProposalType;
 					const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+					const commentsSnapshot = await postDocRef.collection('comments').get();
 					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
 					return comments;
 				});
@@ -1096,10 +1123,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				if (post.post_link) {
 					const { id, type } = post.post_link;
 					const postDocRef = postsByTypeRef(network, type).doc(String(id));
-					const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+					const commentsSnapshot = await postDocRef.collection('comments').get();
 					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
 				}
-				const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).get();
+				const commentsSnapshot = await postDocRef.collection('comments').get();
 				const comments = await getComments(
 					commentsSnapshot,
 					postDocRef,

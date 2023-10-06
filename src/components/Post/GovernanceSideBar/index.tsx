@@ -8,14 +8,13 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip, Skeleton } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { useNetworkSelector } from '~src/redux/selectors';
 import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
@@ -33,7 +32,6 @@ import VoteReferendumEthV2 from './Referenda/VoteReferendumEthV2';
 import EndorseTip from './Tips/EndorseTip';
 import TipInfo from './Tips/TipInfo';
 import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
-import VotersList from './Referenda/VotersList';
 import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
 import blockToTime from '~src/util/blockToTime';
 import { getTrackFunctions } from './Referenda/util';
@@ -41,9 +39,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
-import Curves from './Referenda/Curves';
 import PostEditOrLinkCTA from './PostEditOrLinkCTA';
-import { useCurrentBlock } from '~src/hooks';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
@@ -65,8 +61,13 @@ import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
+import VoteDataModal from './Modal/VoteData';
 import { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
+import VotersList from './Referenda/VotersList';
+import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
+import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -123,12 +124,12 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, pipsVoters, hash, trackName } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters } = props;
 	const [lastVote, setLastVote] = useState<ILastVote>();
 
 	const { network } = useNetworkSelector();
-	const currentBlock = useCurrentBlock();
 	const { api, apiReady } = useApiContext();
+
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
 	const {
 		postData: { created_at, track_number, post_link, statusHistory }
@@ -143,7 +144,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [signersMap, setSignersMap] = useState<{ [key: string]: Signer }>({});
 	const [open, setOpen] = useState(false);
 	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
-	const [thresholdOpen, setThresholdOpen] = useState(false);
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [curvesError, setCurvesError] = useState('');
 	const [data, setData] = useState<any>({
@@ -157,9 +157,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		support: 0,
 		supportThreshold: 0
 	});
-	const isCurvesRender = useRef(false);
 	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
+	const isRun = useRef(false);
 
 	const canVote =
 		Boolean(post.status) &&
@@ -380,8 +380,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			if (!api || !apiReady) {
 				return;
 			}
-			setCurvesLoading(true);
 			const getData = async () => {
+				if (isRun.current) {
+					return;
+				}
+				isRun.current = true;
+				setCurvesLoading(true);
 				const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 				if (tracks && Array.isArray(tracks)) {
 					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
@@ -406,19 +410,21 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						const currentSupportData: { x: number; y: number }[] = [];
 						const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
 
+						// TODO: only show curves if status is deciding
+						// const isDeciding = (statusHistory || [])?.find((v: any) => ['Deciding'].includes(v?.status || ''));
 						setTrackInfo(trackInfo);
-						for (let i = 0; i < decisionPeriodHrs * 60; i++) {
+						for (let i = 0; i < decisionPeriodHrs; i++) {
 							labels.push(i);
 							if (supportCalc) {
 								supportData.push({
 									x: i,
-									y: supportCalc(i / (decisionPeriodHrs * 60)) * 100
+									y: supportCalc(i / decisionPeriodHrs) * 100
 								});
 							}
 							if (approvalCalc) {
 								approvalData.push({
 									x: i,
-									y: approvalCalc(i / (decisionPeriodHrs * 60)) * 100
+									y: approvalCalc(i / decisionPeriodHrs) * 100
 								});
 							}
 						}
@@ -434,20 +440,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							if (graph_points?.length > 0) {
 								const lastGraphPoint = graph_points[graph_points.length - 1];
 								const proposalCreatedAt = dayjs(created_at);
-								const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'minute');
-								if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+								const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'hour');
+								if (decisionPeriodMinutes > decisionPeriodHrs) {
 									labels = [];
 									approvalData = [];
 									supportData = [];
 								}
 								graph_points?.forEach((graph_point: any) => {
-									const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'minute');
+									const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'hour');
 									const new_graph_point = {
 										...graph_point,
 										hour
 									};
 
-									if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+									if (decisionPeriodMinutes > decisionPeriodHrs) {
 										labels.push(hour);
 										approvalData.push({
 											x: hour,
@@ -469,14 +475,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									return new_graph_point;
 								});
 
-								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
-								const currentSupport = currentSupportData[currentSupportData.length - 1];
-
 								const currentApprovalDataLength = currentApprovalData.length;
 								const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
 								for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
 									const approval = approvalData[i];
-									if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'minute')) > 0) {
+									if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'hour')) > 0) {
 										currentApprovalData.push({
 											...lastCurrentApproval,
 											x: approval.x
@@ -487,13 +490,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								const lastCurrentSupport = currentSupportData[currentSupportDataLength - 1];
 								for (let i = currentSupportDataLength; i < supportData.length; i++) {
 									const support = supportData[i];
-									if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'minute')) > 0) {
+									if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'hour')) > 0) {
 										currentSupportData.push({
 											...lastCurrentSupport,
 											x: support.x
 										});
 									}
 								}
+
+								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
+								const currentSupport = currentSupportData[currentSupportData.length - 1];
 
 								let newAPI: ApiPromise = api;
 								let approval: BigNumber | null = null;
@@ -510,25 +516,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										}
 									}
 									if (newAPI) {
-										const issuanceInfo = await newAPI.query.balances.totalIssuance();
+										const inactiveIssuance = await newAPI.query.balances.inactiveIssuance();
+										const totalIssuance = await newAPI.query.balances.totalIssuance();
+										const issuanceInfo = totalIssuance.sub(inactiveIssuance);
 										const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
-										const issuanceData = issuanceInfo.toJSON() as any;
 										const referendaInfoData = referendaInfo.toJSON() as any;
 										if (referendaInfoData?.ongoing?.tally) {
-											const ayes =
-												typeof referendaInfoData.ongoing.tally.ayes === 'string'
-													? new BigNumber(referendaInfoData.ongoing.tally.ayes.slice(2), 16)
-													: new BigNumber(referendaInfoData.ongoing.tally.ayes);
-											const nays =
-												typeof referendaInfoData.ongoing.tally.nays === 'string'
-													? new BigNumber(referendaInfoData.ongoing.tally.nays.slice(2), 16)
-													: new BigNumber(referendaInfoData.ongoing.tally.nays);
+											const ayesInfo = referendaInfoData.ongoing.tally.ayes;
+											const ayes = typeof ayesInfo === 'string' && ayesInfo.startsWith('0x') ? new BigNumber(ayesInfo.slice(2), 16) : new BigNumber(ayesInfo);
+											const naysInfo = referendaInfoData.ongoing.tally.nays;
+											const nays = typeof naysInfo === 'string' && naysInfo.startsWith('0x') ? new BigNumber(naysInfo.slice(2), 16) : new BigNumber(naysInfo);
+											const supportInfo = referendaInfoData.ongoing.tally.support;
 											const supportBigNumber =
-												typeof referendaInfoData.ongoing.tally.support === 'string'
-													? new BigNumber(referendaInfoData.ongoing.tally.support.slice(2), 16)
-													: new BigNumber(referendaInfoData.ongoing.tally.support);
-											const issuance = typeof issuanceData === 'string' ? new BigNumber(issuanceData.slice(2), 16) : new BigNumber(issuanceData);
-											support = supportBigNumber.div(issuance).multipliedBy(100);
+												typeof supportInfo === 'string' && supportInfo.startsWith('0x') ? new BigNumber(supportInfo.slice(2), 16) : new BigNumber(supportInfo);
+											support = supportBigNumber.div(issuanceInfo as any).multipliedBy(100);
 											approval = ayes.div(ayes.plus(nays)).multipliedBy(100);
 										}
 									}
@@ -603,7 +604,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			};
 			getData();
 		}
-	}, [api, apiReady, created_at, network, onchainId, proposalType, statusHistory, track_number]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady]);
 
 	useEffect(() => {
 		if (trackInfo) {
@@ -617,7 +619,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				return;
 			}
 		}
-	}, [currentBlock, post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
+	}, [post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
 
 	useEffect(() => {
 		if (!api || !!apiReady) return;
@@ -647,9 +649,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				spinning={isLastVoteLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-[#243A57]'>Last Vote:</p>
+				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
 
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-[#243A57]'>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -672,7 +674,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							) : decision == 'abstain' && (balance as any).abstain ? (
 								<p className='flex justify-center align-middle'>
 									<AbstainGray className='mb-[-8px] mr-1' />
-									<span className='font-medium capitalize  text-[#243A57]'>{'Abstain'}</span>
+									<span className='font-medium capitalize  text-bodyBlue'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -722,8 +724,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoLocalState: FC<ILastVote> = ({ balance, conviction, decision }) => {
 		return (
 			<div>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-[#243A57]'>Last Vote:</p>
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-[#243A57]'>
+				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -745,7 +747,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								</p>
 							) : decision === EVoteDecisionType.ABSTAIN ? (
 								<p className='flex justify-center align-middle'>
-									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-[#243A57]'>{'Abstain'}</span>
+									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -785,7 +787,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						>
 							<span title='Conviction'>
 								<ConvictionIcon className='mr-1' />
-								{conviction}x
+								{conviction || '0.1'}x
 							</span>
 						</Tooltip>
 					)}
@@ -1014,49 +1016,18 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											<>
 												{proposalType === ProposalType.OPEN_GOV && (
 													<div className={className}>
-														<ReferendumV2VoteInfo
-															setThresholdOpen={(open) => {
-																if (!isCurvesRender.current) {
-																	setTimeout(() => {
-																		isCurvesRender.current = true;
-																	}, 50);
-																}
-																setThresholdOpen(open);
-															}}
+														<ReferendumV2VoteInfo tally={tally} />
+														<RefV2ThresholdData
+															canVote={canVote}
 															setOpen={setOpen}
-															referendumId={onchainId as number}
-															tally={tally}
-														/>
-														<Modal
-															onCancel={() => {
-																setThresholdOpen(false);
+															thresholdData={{
+																curvesError,
+																curvesLoading,
+																data,
+																progress,
+																setData
 															}}
-															open={thresholdOpen}
-															footer={[]}
-															className='md:min-w-[700px]'
-															closeIcon={<CloseIcon />}
-															title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue'>Threshold Curves</h2>}
-														>
-															<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>
-																{!isCurvesRender.current ? (
-																	<div className='absolute inset-0'>
-																		<Skeleton.Input
-																			block={true}
-																			active={true}
-																			className='min-h-[250px] md:min-h-[400px]'
-																		/>
-																	</div>
-																) : (
-																	<Curves
-																		curvesError={curvesError}
-																		curvesLoading={curvesLoading}
-																		data={data}
-																		progress={progress}
-																		setData={setData}
-																	/>
-																)}
-															</div>
-														</Modal>
+														/>
 													</div>
 												)}
 												{proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && (
@@ -1072,23 +1043,42 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									</>
 								)}
 								{(onchainId || onchainId === 0) && (
-									<Modal
-										closeIcon={false}
-										onCancel={() => {
-											setOpen(false);
-										}}
-										open={open}
-										footer={[]}
-										closable={false}
-									>
-										<VotersList
-											className={className}
-											pipsVoters={pipsVoters}
-											referendumId={onchainId as number}
-											voteType={getVotingTypeFromProposalType(proposalType)}
-											proposalType={proposalType}
-										/>
-									</Modal>
+									<>
+										{isSupportedNestedVoteNetwork(network) ? (
+											<VoteDataModal
+												onchainId={onchainId}
+												open={open}
+												setOpen={setOpen}
+												proposalType={proposalType}
+												tally={tally}
+												thresholdData={{
+													curvesError,
+													curvesLoading,
+													data,
+													progress,
+													setData
+												}}
+											/>
+										) : (
+											<Modal
+												closeIcon={false}
+												onCancel={() => {
+													setOpen(false);
+												}}
+												open={open}
+												footer={[]}
+												closable={false}
+											>
+												<VotersList
+													className={className}
+													pipsVoters={pipsVoters}
+													referendumId={onchainId as number}
+													voteType={getVotingTypeFromProposalType(proposalType)}
+													proposalType={proposalType}
+												/>
+											</Modal>
+										)}
+									</>
 								)}
 
 								<div>
@@ -1167,7 +1157,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	);
 };
 
-export default styled(GovernanceSideBar)`
+export default styled(memo(GovernanceSideBar))`
 	.edit-icon-wrapper {
 		transition: all 0.5s;
 	}

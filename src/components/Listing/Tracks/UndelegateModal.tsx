@@ -25,10 +25,11 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { APPNAME } from '~src/global/appName';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
+import { useUserDetailsContext } from '~src/context';
 
 const ZERO_BN = new BN(0);
 
@@ -49,7 +50,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const trackName = handleTrack(String(router.query.track));
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress: defaultAddress } = useUserDetailsSelector();
+	const { delegationDashboardAddress: defaultAddress } = useUserDetailsContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [target, setTarget] = useState<string>(defaultTarget);
 	const lock = Number(2 ** (conviction - 1));
@@ -213,7 +214,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						<Button
 							key='back'
 							disabled={loading}
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary text-pink_primary'
+							className='h-10 w-[134px] rounded-[4px] border-pink_primary text-pink_primary'
 							onClick={() => setOpen(false)}
 						>
 							Cancel
@@ -221,7 +222,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						<Button
 							htmlType='submit'
 							key='submit'
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary'
+							className='h-10 w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary'
 							disabled={loading}
 							onClick={handleSubmit}
 						>
@@ -249,13 +250,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						>
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue'>Your Address</label>
-								<div className='h-[40px] cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b]'>
+								<div className='h-10 rounded-[6px] px-0 py-[px] text-[#7c899b]'>
 									<Address
-										truncateUsername={false}
-										textClassName='text-lightBlue font-medium'
+										isTruncateUsername={false}
 										address={defaultAddress}
-										identiconSize={32}
-										disableAddressClick
+										iconSize={32}
 										addressClassName='text-[#7c899b] text-sm'
 										displayInline
 									/>
@@ -264,13 +263,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue'>Delegated to</label>
-								<div className='h-[40px] cursor-not-allowed rounded-[6px] px-0 py-[px] text-bodyBlue'>
+								<div className='h-10 rounded-[6px] px-0 py-[px] text-bodyBlue'>
 									<Address
-										truncateUsername={false}
-										textClassName='text-lightBlue font-medium'
+										isTruncateUsername={false}
 										address={defaultTarget}
-										identiconSize={32}
-										disableAddressClick
+										iconSize={32}
 										addressClassName='text-[#7c899b] text-sm'
 										displayInline
 									/>
@@ -279,7 +276,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className='mt-4'>
 								<label className='mb-2 text-sm text-lightBlue'>Balance </label>
-								<div className='h-[40px] cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b]'>{`${formatedBalance(balance.toString(), unit)} ${unit}`}</div>
+								<div className='h-10 cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b]'>{`${formatedBalance(balance.toString(), unit)} ${unit}`}</div>
 							</div>
 
 							<div className='mb-[2px]  border-solid border-white'>

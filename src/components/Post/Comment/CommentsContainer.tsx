@@ -328,7 +328,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							{timelines.map((timeline) => {
 								return timeline.commentsCount > 0 ? (
 									<div
-										key={id}
+										key={timeline.id}
 										className='m-0 border-none p-0 [&>.ant-card-body]:p-0'
 									>
 										{comments[`${timeline.index}_${timeline.type}`]?.[0]?.id ? (

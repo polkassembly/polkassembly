@@ -23,6 +23,7 @@ import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import OnChainIdentity from './OnChainIdentity';
 import SocialLink from '~src/ui-components/SocialLinks';
+import { EGovType } from '~src/types';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -43,24 +44,49 @@ interface ITitleBioProps {
 
 export const TitleBio: FC<ITitleBioProps> = (props) => {
 	const { title, bio, titleClassName, bioClassName } = props;
+	const [showFullBio, setShowFullBio] = useState(false);
+
+	const toggleBio = () => {
+		setShowFullBio(!showFullBio);
+	};
+
+	const truncateBio = (text: string | undefined, limit: number) => {
+		if (!text) return '';
+		const words = text.split(' ');
+		return words.slice(0, limit).join(' ') + (words.length > limit ? ' ...' : '');
+	};
+
+	const displayedBio = showFullBio ? bio : truncateBio(bio, 15);
+
 	return (
 		<>
-			{title ? (
+			{title && (
 				<p
 					className={`mt-[10px] text-sm font-normal leading-[22px] text-white ${titleClassName}`}
 					title={title}
 				>
 					{title}
 				</p>
-			) : null}
-			{bio ? (
-				<p
-					className={`mt-[10px] text-sm font-normal leading-[22px] text-white ${bioClassName}`}
-					title={bio}
-				>
-					{bio}
-				</p>
-			) : null}
+			)}
+
+			{bio && (
+				<>
+					<p
+						className={`mt-[10px] w-[296px] break-words text-center text-sm font-normal leading-[22px] text-white ${bioClassName}`}
+						title={bio}
+					>
+						{showFullBio ? bio : displayedBio}
+					</p>
+					{bio.split(' ').length > 15 && (
+						<span
+							className='read-more-button cursor-pointer text-xs text-white underline'
+							onClick={toggleBio}
+						>
+							{showFullBio ? 'See Less' : 'See More'}
+						</span>
+					)}
+				</>
+			)}
 		</>
 	);
 };
@@ -190,7 +216,7 @@ const Details: FC<IDetailsProps> = (props) => {
 		};
 	}, [addresses, api, apiReady]);
 	const { nickname, display, legal } = onChainIdentity;
-	const newUsername = legal || display || nickname || username;
+	const newUsername = display || legal || nickname || username;
 	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 
@@ -297,12 +323,24 @@ const Details: FC<IDetailsProps> = (props) => {
 							label: 'About'
 						},
 						{
-							children: <GovTab posts={userPosts.gov1} />,
+							children: (
+								<GovTab
+									posts={userPosts.gov1}
+									govType={EGovType.GOV1}
+									userAddresses={userProfile.data?.addresses || []}
+								/>
+							),
 							key: 'gov1',
 							label: 'Gov 1'
 						},
 						{
-							children: <GovTab posts={userPosts.open_gov} />,
+							children: (
+								<GovTab
+									posts={userPosts.open_gov}
+									govType={EGovType.OPEN_GOV}
+									userAddresses={userProfile.data?.addresses || []}
+								/>
+							),
 							key: 'open_gov',
 							label: 'OpenGov'
 						}

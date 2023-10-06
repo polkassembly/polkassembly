@@ -11,7 +11,7 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import { ChangeResponseType } from '~src/auth/types';
-import { usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
@@ -19,6 +19,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
+import { v4 } from 'uuid';
 import SadDizzyIcon from '~assets/overall-sentiment/pink-against.svg';
 import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
@@ -33,6 +34,7 @@ interface IPostCommentFormProps {
 	setSuccessModalOpen?: (pre: boolean) => void;
 	setCurrentState?: (postId: string, type: string, comment: IComment) => void;
 	posted?: boolean;
+	voteReason?: boolean;
 }
 
 interface IEmojiOption {
@@ -48,8 +50,9 @@ interface IEmojiOption {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted } = props;
+	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
 	const { id, username, picture } = useUserDetailsContext();
+	const { setComments } = useCommentDataContext();
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
@@ -170,66 +173,116 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		const content = form.getFieldValue('content');
 		setFormContent(content);
 		if (!content) return;
-
-		setLoading(true);
-
-		const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
-			content,
-			postId: postIndex,
-			postType: postType,
-			sentiment: isSentimentPost ? sentiment : 0,
-			trackNumber: track_number,
-			userId: id
-		});
-
-		if (error || !data) {
-			setError(error || 'No data returned from the saving comment query');
-			queueNotification({
-				header: 'Failed!',
-				message: error,
-				status: NotificationStatus.ERROR
-			});
-		}
-		if (data) {
-			setContent('');
-			setIsPosted(true);
-			form.resetFields();
-			form.setFieldValue('content', '');
-			global.window.localStorage.removeItem(commentKey());
-			postIndex && createSubscription(postIndex);
-			queueNotification({
-				header: 'Success!',
-				message: 'Comment created successfully.',
-				status: NotificationStatus.SUCCESS
-			});
-			const comment = {
-				comment_reactions: {
-					'👍': {
-						count: 0,
-						usernames: []
-					},
-					'👎': {
-						count: 0,
-						usernames: []
-					}
+		setError('');
+		setIsPosted(voteReason);
+		setContent('');
+		form.resetFields();
+		form.setFieldValue('content', '');
+		global.window.localStorage.removeItem(commentKey());
+		postIndex && createSubscription(postIndex);
+		const commentId = v4();
+		const comment = {
+			comment_reactions: {
+				'👍': {
+					count: 0,
+					usernames: []
 				},
+				'👎': {
+					count: 0,
+					usernames: []
+				}
+			},
+			content,
+			created_at: new Date(),
+			history: [],
+			id: commentId || '',
+			isError: false,
+			profile: picture || '',
+			replies: [],
+			sentiment: isSentimentPost ? sentiment : 0,
+			updated_at: new Date(),
+			user_id: id as any,
+			username: username || ''
+		};
+		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
+		queueNotification({
+			header: 'Success!',
+			message: 'Comment created successfully.',
+			status: NotificationStatus.SUCCESS
+		});
+		try {
+			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
-				created_at: new Date(),
-				history: [],
-				id: data?.id || '',
-				profile: picture || '',
-				replies: [],
+				postId: postIndex,
+				postType: postType,
 				sentiment: isSentimentPost ? sentiment : 0,
-				updated_at: new Date(),
-				user_id: id as any,
-				username: username || '',
-				vote: voteDecision
-			};
-			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
+				trackNumber: track_number,
+				userId: id
+			});
+			if (error || !data) {
+				console.error('API call failed:', error);
+				setError(error || 'No data returned from the saving comment query');
+				setComments((prev) => {
+					const comments: any = Object.assign({}, prev);
+					for (const key of Object.keys(comments)) {
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev?.[key]?.map((comment: IComment) => {
+								const newComment = comment;
+								if (comment.id === commentId) {
+									newComment.isError = true;
+									flag = true;
+								}
+								return {
+									...newComment
+								};
+							});
+						}
+						if (flag) {
+							break;
+						}
+					}
+					return comments;
+				});
+				queueNotification({
+					header: 'Failed!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
+			} else {
+				setComments((prev) => {
+					const comments: any = Object.assign({}, prev);
+					for (const key of Object.keys(comments)) {
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev?.[key]?.map((comment: IComment) => {
+								const newComment = comment;
+								if (comment.id === commentId) {
+									newComment.id = data.id;
+									flag = true;
+								}
+								return {
+									...newComment
+								};
+							});
+						}
+						if (flag) {
+							break;
+						}
+					}
+					return comments;
+				});
+				comment.id = data.id || '';
+			}
+		} catch (error) {
+			console.error('Error while saving comment:', error);
+			setError('An unexpected error occurred.');
+		} finally {
+			setLoading(false);
+			setIsComment(false);
+			setIsSentimentPost(false);
+			setSentiment(3);
 		}
-		setLoading(false);
-		setIsComment(false);
-		setIsSentimentPost(false);
 	};
 
 	useEffect(() => {
@@ -374,7 +427,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 											disabled={!content}
 											loading={loading}
 											htmlType='submit'
-											className={`my-0 flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
+											className={`my-0 mt-3 flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
 										>
 											<CheckOutlined /> Comment
 										</Button>
@@ -418,7 +471,7 @@ export default styled(PostCommentForm)`
 		justify-content: flex-end;
 	}
 
-	.emoji-button: hover {
+	.emoji-button:hover {
 		background-color: #fbdbec;
 	}
 

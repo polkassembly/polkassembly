@@ -68,200 +68,222 @@ const UpcomingEvents = ({ className }: Props) => {
 
 			for (const [index, eventSettled] of eventsSettled.entries()) {
 				if (eventSettled.status !== 'fulfilled' || !eventSettled.value) continue;
-
+				const currDate = dayjs();
 				switch (index) {
 					case 0:
 						eventSettled.value.forEach((eventObj, i) => {
-							const type = eventObj?.type?.replace(/([A-Z])/g, ' $1');
-							const title = type.charAt(0).toUpperCase() + type.slice(1);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								const type = eventObj?.type?.replace(/([A-Z])/g, ' $1');
+								const title = type.charAt(0).toUpperCase() + type.slice(1);
 
-							eventsArr.push({
-								content:
-									eventObj.type === 'stakingEpoch'
-										? `Start of a new staking session ${eventObj?.data?.index}`
-										: eventObj.type === 'stakingEra'
-										? `Start of a new staking era ${eventObj?.data?.index}`
-										: `${eventObj.type} ${eventObj?.data?.index}`,
-								end_time: dayjs(eventObj.startDate).toDate(),
-								id: `stakingInfoEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.startDate).toDate(),
-								status: 'approved',
-								title,
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.startDate).format('L');
-							eventDatesArr.push(eventDateStr);
+								eventsArr.push({
+									content:
+										eventObj.type === 'stakingEpoch'
+											? `Start of a new staking session ${eventObj?.data?.index}`
+											: eventObj.type === 'stakingEra'
+											? `Start of a new staking era ${eventObj?.data?.index}`
+											: `${eventObj.type} ${eventObj?.data?.index}`,
+									end_time: dayjs(eventObj.startDate).toDate(),
+									id: `stakingInfoEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.startDate).toDate(),
+									status: 'approved',
+									title,
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.startDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 1:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `Council Motion ${String(eventObj?.data?.hash)?.substring(0, 10)}...`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `councilMotionEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'Council Motion',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `Council Motion ${String(eventObj?.data?.hash)?.substring(0, 10)}...`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `councilMotionEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'Council Motion',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 2:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `Election of new council candidates period ${eventObj?.data?.electionRound}`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `councilElectionEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'Start New Council Election',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `Election of new council candidates period ${eventObj?.data?.electionRound}`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `councilElectionEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'Start New Council Election',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 3:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: eventObj?.data?.id ? `Execute named scheduled task ${String(eventObj?.data?.id)?.substring(0, 10)}...` : 'Execute anonymous scheduled task',
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `scheduledEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'Scheduled Task',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: eventObj?.data?.id ? `Execute named scheduled task ${String(eventObj?.data?.id)?.substring(0, 10)}...` : 'Execute anonymous scheduled task',
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `scheduledEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'Scheduled Task',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 4:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `Start of next spend period ${eventObj?.data?.spendingPeriod}`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `treasurySpendEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'Start Spend Period',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `Start of next spend period ${eventObj?.data?.spendingPeriod}`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `treasurySpendEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'Start Spend Period',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 5:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `Democracy Dispatch ${eventObj?.data?.index}`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `democracyDispatchEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'Democracy Dispatch',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `Democracy Dispatch ${eventObj?.data?.index}`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `democracyDispatchEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'Democracy Dispatch',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 6:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `Start of next referendum voting period ${eventObj?.data?.launchPeriod}`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `democracyLaunchEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'Start Referendum Voting Period',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `Start of next referendum voting period ${eventObj?.data?.launchPeriod}`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `democracyLaunchEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'Start Referendum Voting Period',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 7:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `Acceptance of new members and bids ${eventObj?.data?.rotateRound}`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `societyRotateEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'New Members & Bids',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `Acceptance of new members and bids ${eventObj?.data?.rotateRound}`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `societyRotateEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'New Members & Bids',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 8:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `Start of next membership challenge period ${eventObj?.data?.challengePeriod}`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `societyChallengeEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'Start Membership Challenge Period',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `Start of next membership challenge period ${eventObj?.data?.challengePeriod}`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `societyChallengeEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'Start Membership Challenge Period',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 9:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `End of the current parachain auction ${eventObj?.data?.leasePeriod}`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `auctionInfoEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'End Parachain Auction',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `End of the current parachain auction ${eventObj?.data?.leasePeriod}`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `auctionInfoEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'End Parachain Auction',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 
 					case 10:
 						eventSettled.value.forEach((eventObj, i) => {
-							eventsArr.push({
-								content: `Start of the next parachain lease period  ${eventObj?.data?.leasePeriod}`,
-								end_time: dayjs(eventObj.endDate).toDate(),
-								id: `parachainLeaseEvent_${i}`,
-								location: '',
-								start_time: dayjs(eventObj.endDate).toDate(),
-								status: 'approved',
-								title: 'Start Parachain Lease Period',
-								url: ''
-							});
-							const eventDateStr = dayjs(eventObj.endDate).format('L');
-							eventDatesArr.push(eventDateStr);
+							if (dayjs(eventObj.endDate).isAfter(currDate)) {
+								eventsArr.push({
+									content: `Start of the next parachain lease period  ${eventObj?.data?.leasePeriod}`,
+									end_time: dayjs(eventObj.endDate).toDate(),
+									id: `parachainLeaseEvent_${i}`,
+									location: '',
+									start_time: dayjs(eventObj.endDate).toDate(),
+									status: 'approved',
+									title: 'Start Parachain Lease Period',
+									url: ''
+								});
+								const eventDateStr = dayjs(eventObj.endDate).format('L');
+								eventDatesArr.push(eventDateStr);
+							}
 						});
 						break;
 				}

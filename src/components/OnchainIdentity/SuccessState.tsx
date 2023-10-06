@@ -65,8 +65,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 								<Address
 									address={address}
 									displayInline
-									truncateUsername={false}
-									textClassName='text-bodyBlue font-medium'
+									isTruncateUsername={false}
 								/>
 							</span>
 						</span>

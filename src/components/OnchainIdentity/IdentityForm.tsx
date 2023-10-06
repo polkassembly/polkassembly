@@ -253,6 +253,7 @@ const IdentityForm = ({
 		await executeTx({
 			address,
 			api,
+			apiReady,
 			errorMessageFallback: 'failed.',
 			network,
 			onFailed,

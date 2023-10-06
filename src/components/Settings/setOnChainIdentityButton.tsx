@@ -365,6 +365,7 @@ const SetOnChainIdentityButton = ({
 		await executeTx({
 			address: submitWithAccount,
 			api,
+			apiReady,
 			errorMessageFallback: 'Transaction failed.',
 			network,
 			onFailed,

@@ -29,7 +29,9 @@ import Image from 'next/image';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import WalletButtons from '../Login/WalletButtons';
 import { useNetworkSelector } from '~src/redux/selectors';
+import BN from 'bn.js';
 
+const ZERO_BN = new BN(0);
 interface Props {
 	chosenWallet: Wallet;
 	setDisplayWeb2: () => void;
@@ -54,6 +56,7 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
+	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 
 	const currentUser = useUserDetailsContext();
 
@@ -354,6 +357,8 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 										<div className='my-5 flex items-center justify-center'>
 											{withPolkasafe ? (
 												<MultisigAccountSelectionForm
+													multisigBalance={multisigBalance}
+													setMultisigBalance={setMultisigBalance}
 													title='Choose linked account'
 													accounts={accounts}
 													address={address}

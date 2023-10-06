@@ -293,6 +293,7 @@ const TreasuryProposalFormButton = ({
 			await executeTx({
 				address: submitWithAccount,
 				api,
+				apiReady,
 				errorMessageFallback: 'Transaction failed.',
 				network,
 				onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),

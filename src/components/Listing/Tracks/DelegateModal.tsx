@@ -257,7 +257,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			return;
 		}
 
-		await executeTx({ address: delegationDashboardAddress, api, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
+		await executeTx({ address: delegationDashboardAddress, api, apiReady, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {

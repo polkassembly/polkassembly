@@ -14,9 +14,9 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Loader from '~src/ui-components/Loader';
 import styled from 'styled-components';
 import { Alert } from 'antd';
-import { BN } from '@polkadot/util';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
+import BN from 'bn.js';
 
 const Container = styled.div`
 	display: flex;
@@ -42,6 +42,8 @@ interface Props {
 	containerClassName?: string;
 	canMakeTransaction?: boolean;
 	showMultisigBalance?: boolean;
+	multisigBalance: BN;
+	setMultisigBalance: (pre: BN) => void;
 }
 
 const MultisigAccountSelectionForm = ({
@@ -61,13 +63,14 @@ const MultisigAccountSelectionForm = ({
 	setWalletAddress,
 	containerClassName,
 	canMakeTransaction,
-	showMultisigBalance = false
+	showMultisigBalance = false,
+	multisigBalance,
+	setMultisigBalance
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
 	const { api, apiReady } = useApiContext();
 	const client = new Polkasafe();
 	const { network } = useNetworkSelector();
-	const [multisigBalance, setMultisigBalance] = useState<BN>(new BN(0));
 	const [loader, setLoader] = useState<boolean>(false);
 	const handleGetMultisig = async (address: string, network: string) => {
 		setLoader(true);
@@ -80,7 +83,8 @@ const MultisigAccountSelectionForm = ({
 			return;
 		}
 		const initiatorBalance = await api.query.system.account(address);
-		setMultisigBalance(new BN(initiatorBalance.data.free.toString()));
+		const balance = new BN(initiatorBalance.data.free.toString());
+		setMultisigBalance(balance);
 	};
 	const handleChange = (address: string) => {
 		setWalletAddress(address);

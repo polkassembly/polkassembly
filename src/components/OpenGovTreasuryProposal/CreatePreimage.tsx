@@ -387,7 +387,7 @@ const CreatePreimage = ({
 		};
 
 		setLoading(true);
-		await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
+		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
 	};
 
 	const handleSubmit = async () => {

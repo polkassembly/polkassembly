@@ -3,23 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Action, ThunkAction, combineReducers, configureStore } from '@reduxjs/toolkit';
-// import { modalStore } from './modal';
 import { createWrapper } from 'next-redux-wrapper';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { networkStore } from './network';
-// import { notificationStore } from './notification';
-// import { networkStore } from './network';
-// import { userDetailsStore } from './userDetails';
 
 export const makeStore = () => {
 	const isServer = typeof window === 'undefined';
-	// const rootReducer = combineReducers({
-	// [modalStore.name]: modalStore.reducer,
-	// [notificationStore.name]: notificationStore.reducer,
-	// [networkStore.name]: networkStore.reducer,
-	// [userDetailsStore.name]: userDetailsStore.reducer
-	// });
+
 	const rootReducer = combineReducers({
 		[networkStore.name]: networkStore.reducer
 	});

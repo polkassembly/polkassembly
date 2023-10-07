@@ -51,6 +51,7 @@ function App({ Component, pageProps }: AppProps) {
 	const store: any = useStore();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
+
 	useEffect(() => {
 		router.isReady && setShowSplashScreen(false);
 	}, [router.isReady]);

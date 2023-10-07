@@ -47,11 +47,10 @@ const AddressDropdown = ({
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
-
 	const dropdownList: { [index: string]: string } = {};
 	const addressItems: ItemType[] = [];
-	const { setUserDetailsContextState, loginAddress, addresses } = useUserDetailsContext();
-	const substrate_address = getSubstrateAddress(loginAddress);
+	const { setUserDetailsContextState, addresses } = useUserDetailsContext();
+	const substrate_address = getSubstrateAddress(defaultAddress || '');
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
@@ -143,7 +142,11 @@ const AddressDropdown = ({
 					usernameClassName={addressTextClassName}
 					extensionName={dropdownList[selectedAddress]}
 					address={defaultAddress || selectedAddress}
-					addressOtherTextType={getOtherTextType(filteredAccounts.find((account) => account.address === selectedAddress || account.address === defaultAddress))}
+					addressOtherTextType={getOtherTextType(
+						filteredAccounts.find(
+							(account) => account.address === getSubstrateAddress(selectedAddress) || getSubstrateAddress(account.address) === getSubstrateAddress(defaultAddress || '')
+						)
+					)}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
 					addressClassName='text-lightBlue'
 					disableAddressClick

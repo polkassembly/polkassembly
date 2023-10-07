@@ -532,7 +532,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					label: (
 						<ReportButton
 							proposalType={postType}
-							className={`ml-[-7px] mr-2 flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+							className={`flex h-[17.5px] w-[100%] items-center rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
 							type='comment'
 							commentId={commentId}
 							postId={postIndex}
@@ -562,7 +562,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<ReportButton
 							isDeleteModal={true}
 							proposalType={(comment.post_type as any) || postType}
-							className={`flex rounded-none text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+							className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
 							type={EReportType.COMMENT}
 							onSuccess={removeCommentContent}
 							commentId={commentId}

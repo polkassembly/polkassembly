@@ -559,7 +559,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 						<div className='flex flex-wrap items-center'>
 							{isEditable && (
 								<Button
-									className={'flex items-center border-none text-pink_primary shadow-none'}
+									className={'flex items-center border-none p-0 text-pink_primary shadow-none'}
 									disabled={loading}
 									onClick={toggleEdit}
 								>
@@ -576,11 +576,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							)}
 							{id === userId ? (
 								<Button
-									className={'flex items-center border-none text-xs text-pink_primary shadow-none'}
+									className={'flex items-center border-none pl-1.5 pr-0 text-xs text-pink_primary shadow-none'}
 									onClick={deleteReply}
 								>
 									<DeleteOutlined />
-									Delete
+									<span className='m-0 p-1'>Delete</span>
 								</Button>
 							) : (
 								allowed_roles?.includes('moderator') &&
@@ -625,7 +625,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								) : (
 									!isReplying && (
 										<Button
-											className={'flex items-center border-none text-xs text-pink_primary shadow-none'}
+											className={'flex items-center border-none p-0 text-xs text-pink_primary shadow-none'}
 											onClick={() => setIsReplying(!isReplying)}
 										>
 											<ReplyIcon className='mr-1' />

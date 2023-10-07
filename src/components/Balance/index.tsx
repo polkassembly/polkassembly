@@ -50,8 +50,8 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 				.account(address, { '0': 1734700659 })
 				.then((result: any) => {
 					setBalance(result.toHuman()?.Positive?.toString() || '0');
-					setAvailableBalance && setAvailableBalance(result.toHuman()?.Positive?.toString() || '0');
-					onChange && onChange(result.toHuman()?.Positive?.toString() || '0');
+					setAvailableBalance?.(result.toHuman()?.Positive?.toString() || '0');
+					onChange?.(result.toHuman()?.Positive?.toString() || '0');
 				})
 				.catch((e) => console.error(e));
 		} else if (['equilibrium'].includes(network)) {
@@ -61,18 +61,19 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 					const locked = new BN(result.toHuman().data?.V0?.lock?.toString().replaceAll(',', ''));
 					if (isReferendum) {
 						setBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-						setAvailableBalance && setAvailableBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
-						onChange && onChange(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
+						setAvailableBalance?.(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
+						onChange?.(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 					} else {
+						const locked = result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '') || '0';
 						const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
-						if (new BN(positive).cmp(locked)) {
-							setBalance(new BN(positive).sub(locked).toString() || '0');
-							setAvailableBalance && setAvailableBalance(new BN(positive).sub(locked).toString() || '0');
-							onChange && onChange(new BN(positive).sub(locked).toString() || '0');
+						if (new BN(positive).cmp(new BN(locked))) {
+							setBalance(new BN(positive).sub(new BN(locked)).toString() || '0');
+							setAvailableBalance?.(new BN(positive).sub(new BN(locked)).toString() || '0');
+							onChange?.(new BN(positive).sub(new BN(locked)).toString() || '0');
 						} else {
 							setBalance(positive);
-							setAvailableBalance && setAvailableBalance(positive);
-							onChange && onChange(positive);
+							setAvailableBalance?.(positive);
+							onChange?.(positive);
 						}
 					}
 					setLockBalance(locked);
@@ -87,20 +88,20 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 					const locked = new BN(result.data?.frozen?.toBigInt().toString());
 					if (isReferendum) {
 						setBalance(result.data?.free?.toString() || '0');
-						setAvailableBalance && setAvailableBalance(result.data?.free?.toString() || '0');
-						onChange && onChange(result.data?.free?.toString() || '0');
+						setAvailableBalance?.(result.data?.free?.toString() || '0');
+						onChange?.(result.data?.free?.toString() || '0');
 					} else if (isDemocracyProposal && result.data.free && result.data?.free?.toBigInt() >= frozen) {
 						setBalance((result.data?.free?.toBigInt() + reserved).toString() || '0');
 						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved - frozen).toString() || '0');
-						onChange && onChange((result.data?.free?.toBigInt() + reserved).toString() || '0');
+						onChange?.((result.data?.free?.toBigInt() + reserved).toString() || '0');
 					} else if (result.data.free && result.data?.free?.toBigInt() >= frozen) {
 						setBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
-						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
-						onChange && onChange((result.data?.free?.toBigInt() - frozen).toString() || '0');
+						setAvailableBalance?.((result.data?.free?.toBigInt() - frozen).toString() || '0');
+						onChange?.((result.data?.free?.toBigInt() - frozen).toString() || '0');
 					} else {
 						setBalance('0');
 						setAvailableBalance && setAvailableBalance('0');
-						onChange && onChange('0');
+						onChange?.('0');
 					}
 					setLockBalance(locked);
 				})

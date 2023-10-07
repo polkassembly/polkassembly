@@ -162,6 +162,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		if (allowed_roles?.includes('moderator') && reason) {
 			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
 			setLoading(false);
+			setShowModal(false);
 		}
 	};
 	return (

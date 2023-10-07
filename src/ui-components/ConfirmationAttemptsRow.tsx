@@ -12,7 +12,7 @@ const ConfirmationAttemptsRow = ({ timeline = [] }: { timeline: ITimelineData[] 
 
 	return (
 		<>
-			{Boolean(confirmationAttempts) && (
+			{confirmationAttempts > 1 && (
 				<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 					<>
 						<span className='text-bodyblue text-sm font-normal text-bodyBlue'>Confirmation Attempts</span>

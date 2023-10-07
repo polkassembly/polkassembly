@@ -224,7 +224,7 @@ const CreateProposal = ({
 				setLoading(false);
 			};
 			setLoading(true);
-			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
+			await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
 		} catch (error) {
 			setLoading(false);
 			console.log(':( transaction failed');

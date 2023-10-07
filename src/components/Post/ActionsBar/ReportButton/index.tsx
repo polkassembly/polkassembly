@@ -167,11 +167,11 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	return (
 		<>
 			<button
-				className={`${type === 'comment' ? 'm-0 p-0' : ''} ml-2 flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent pr-1 shadow-none`}
+				className={`${type === 'comment' ? 'm-0 p-0' : 'm-0 px-1'} flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent shadow-none`}
 				onClick={() => setShowModal(true)}
 			>
-				{isDeleteModal ? <DeleteOutlined className={`${className}`} /> : <FlagOutlined className={`${className}`} />}
-				{isDeleteModal ? <span className={`${className} break-keep`}>Delete</span> : <span className={`${className} break-keep`}>Report</span>}
+				{isDeleteModal ? <DeleteOutlined className={`${className}`} /> : <FlagOutlined className={`${className} p-0`} />}
+				{isDeleteModal ? <span className={`${className} break-keep`}>Delete</span> : <span className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep`}>Report</span>}
 			</button>
 			<Modal
 				title={isDeleteModal ? 'Delete' : 'Report'}
@@ -179,6 +179,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				onOk={isDeleteModal ? handleDelete : handleReport}
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
+				destroyOnClose={true}
 				zIndex={1067}
 				footer={[
 					<Button
@@ -192,8 +193,10 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						htmlType='submit'
 						key='submit'
 						className='bg-pink_primary text-white hover:bg-pink_secondary'
-						onClick={isDeleteModal ? handleDelete : handleReport}
-						loading={loading}
+						disabled={loading}
+						onClick={() => {
+							isDeleteModal ? handleDelete() : handleReport();
+						}}
 					>
 						{isDeleteModal ? 'Delete' : 'Report'}
 					</Button>

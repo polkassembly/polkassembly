@@ -63,6 +63,7 @@ import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
+import ProposalLive from './ProposalLive';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -687,6 +688,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={'moonbeam'} />
+						<div className='flex flex-row'>
+							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
+							<CustomContent
+								Component={Component}
+								pageProps={pageProps}
+							/>
+						</div>
+					</Layout>
+				) : ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
+					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
+						{/* Dummy Collapsed Sidebar for auto margins */}
+						<ProposalLive />
 						<div className='flex flex-row'>
 							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 							<CustomContent

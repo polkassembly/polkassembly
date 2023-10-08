@@ -909,4 +909,10 @@ export default styled(AppLayout)`
 			transform: scale(0.7);
 		}
 	}
+
+	@media (min-width: 380px) and (max-width: 1024px) {
+		.mobile-margin {
+			margin-top: 0px !important;
+		}
+	}
 `;

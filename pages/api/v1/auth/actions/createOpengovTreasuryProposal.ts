@@ -24,7 +24,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	if (isNaN(Number(userId)) || isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid parameters in request body' });
 
-	if (discussionId < 0 && isNaN(discussionId)) return res.status(400).json({ message: messages.INVALID_DISCUSSION_ID });
+	if (discussionId < 0 || isNaN(discussionId)) return res.status(400).json({ message: messages.INVALID_DISCUSSION_ID });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });

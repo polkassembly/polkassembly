@@ -679,7 +679,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} mt-[60px]`}
+						className={`${username ? 'auth-sider-menu' : ''} ${isMobile && 'mobile-margin'}`}
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
@@ -780,10 +780,9 @@ export default styled(AppLayout)`
 	.ant-drawer-body {
 		text-transform: capitalize !important;
 		padding: 0 !important;
-
-		ul {
-			margin-top: 0 !important;
-		}
+	}
+	.mobile-margin {
+		margin-top: 60px !important;
 	}
 
 	.ant-menu-item .anticon,

@@ -80,7 +80,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
 	return (
 		<ConfigProvider theme={antdTheme}>
-			<ThemeProvider attribute='class' enableSystem>
+			<ThemeProvider
+				attribute='class'
+				enableSystem
+			>
 				<ModalProvider>
 					<ErrorBoundary>
 						<UserDetailsProvider>

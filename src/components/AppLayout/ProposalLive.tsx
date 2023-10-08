@@ -4,6 +4,7 @@
 import React from 'react';
 import { useUserDetailsContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Image from 'next/image';
 
 const ProposalLive = () => {
 	const { id } = useUserDetailsContext();
@@ -28,6 +29,12 @@ const ProposalLive = () => {
 			}}
 		>
 			<h2 className='m-0 flex items-center gap-x-2 p-0 font-poppins text-sm font-medium leading-[21px] text-white md:text-[24px] md:leading-[36px]'>
+				<Image
+					alt='party image'
+					src='/assets/handshake.svg'
+					width={30}
+					height={30}
+				/>
 				<span className='text-center'>
 					Enjoy using Polkassembly? Vote Aye for our proposal <span className='underline underline-offset-2'>here</span>
 				</span>

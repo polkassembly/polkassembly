@@ -35,8 +35,11 @@ const ProposalLive = () => {
 					width={30}
 					height={30}
 				/>
-				<span className='text-center'>
-					Enjoy using Polkassembly? Vote Aye for our proposal <span className='underline underline-offset-2'>here</span>
+				<span className='flex flex-col gap-x-1 text-center md:flex-row'>
+					<span>Enjoy using Polkassembly?</span>{' '}
+					<span>
+						Vote Aye for our proposal <span className='underline underline-offset-2'>here</span>
+					</span>
 				</span>
 			</h2>
 		</a>

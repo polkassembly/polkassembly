@@ -33,7 +33,7 @@ const handler: NextApiHandler<any> = async (req, res) => {
 	} else {
 		delete data?.user_id;
 	}
-	await doc.set(data);
+	await doc.set(data, { merge: true });
 	return res.status(200).json({ message: 'Done' });
 };
 export default withErrorHandling(handler);

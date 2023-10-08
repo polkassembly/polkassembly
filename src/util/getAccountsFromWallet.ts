@@ -93,9 +93,8 @@ const getAccountsFromWallet = async ({
 				api.setSigner(injected.signer);
 			}
 		}
-		const choosenSubstrateAddress = getSubstrateAddress(chosenAddress || '') || '';
 
-		return { account: choosenSubstrateAddress || accounts[0].address, accounts };
+		return { account: chosenAddress || accounts[0].address, accounts };
 	}
 };
 export default getAccountsFromWallet;

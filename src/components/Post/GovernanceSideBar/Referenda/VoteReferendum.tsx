@@ -337,17 +337,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		if (!lockedBalance || availableBalance.lte(lockedBalance)) return;
+		if (!multisig) {
+			if (!lockedBalance || availableBalance.lte(lockedBalance)) return;
 
-		if (lockedBalance && availableBalance.lte(lockedBalance)) {
-			return;
-		}
-		if (
-			(ayeVoteValue && availableBalance.lte(ayeVoteValue)) ||
-			(nayVoteValue && availableBalance.lte(nayVoteValue)) ||
-			(abstainVoteValue && availableBalance.lte(abstainVoteValue))
-		) {
-			return;
+			if (lockedBalance && availableBalance.lte(lockedBalance)) {
+				return;
+			}
+			if (
+				(ayeVoteValue && availableBalance.lte(ayeVoteValue)) ||
+				(nayVoteValue && availableBalance.lte(nayVoteValue)) ||
+				(abstainVoteValue && availableBalance.lte(abstainVoteValue))
+			) {
+				return;
+			}
 		}
 
 		const totalVoteValue = (ayeVoteValue || ZERO_BN)
@@ -358,9 +360,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			...prevState,
 			totalVoteValue: totalVoteValue
 		}));
-		if (totalVoteValue?.gte(availableBalance)) {
-			return;
-		}
 
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 
@@ -505,31 +504,30 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const decisionOptions = isOpenGovSupported(network)
 		? [
-				...ayeNayVotesArr,
-				{
-					label: (
-						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white' : ''}`}
-						>
-							{' '}
-							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' />} <span className='text-base font-medium'>Split</span>{' '}
-						</div>
-					),
-					value: 'split'
-				},
-				{
-					label: (
-						<div
-							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
-								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white' : ''
+			...ayeNayVotesArr,
+			{
+				label: (
+					<div
+						className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white' : ''}`}
+					>
+						{' '}
+						{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' />} <span className='text-base font-medium'>Split</span>{' '}
+					</div>
+				),
+				value: 'split'
+			},
+			{
+				label: (
+					<div
+						className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white' : ''
 							}`}
-						>
-							<StopOutlined className='mb-[3px] mr-2' /> <span className='text-base font-medium'>Abstain</span>
-						</div>
-					),
-					value: 'abstain'
-				}
-		  ]
+					>
+						<StopOutlined className='mb-[3px] mr-2' /> <span className='text-base font-medium'>Abstain</span>
+					</div>
+				),
+				value: 'abstain'
+			}
+		]
 		: ayeNayVotesArr;
 
 	const VoteUI = (
@@ -847,7 +845,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											nayVoteValue.lte(ZERO_BN) ||
 											abstainVoteValue.lte(ZERO_BN) ||
 											(showMultisig && !multisig) ||
-											(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 											isBalanceErr ||
 											(showMultisig && multisigBalance.lte(ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).add(lockedBalance)))
 										}

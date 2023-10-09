@@ -30,7 +30,7 @@ const ShareButton = function ({ title }: { title?: string | null }) {
 	return (
 		<>
 			<Button
-				className={'flex items-center border-none px-1 text-pink_primary shadow-none md:px-2'}
+				className={'share-twitter-button flex items-center border-none px-1 text-pink_primary shadow-none md:px-2'}
 				onClick={share}
 			>
 				<ShareAltOutlined /> {' Share'}

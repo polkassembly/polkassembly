@@ -173,7 +173,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					href='/'
 				>
 					<IconLogout className='userdropdown-icon text-2xl' />
-					<span>Logout</span>
+					<span className='logout-ga'>Logout</span>
 				</Link>
 			)
 		}

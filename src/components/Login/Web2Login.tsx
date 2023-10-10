@@ -261,7 +261,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							loading={loading}
 							htmlType='submit'
 							size='large'
-							className='login-ga'
+							className='login-ga w-56 rounded-md border-none bg-pink_primary text-white outline-none'
 						>
 							Login
 						</Button>

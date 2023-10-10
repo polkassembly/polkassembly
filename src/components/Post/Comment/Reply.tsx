@@ -46,7 +46,7 @@ export const Reply = ({ className, commentId, reply, userName }: Props) => {
 			/>
 			<div className='comment-box'>
 				<CreationLabel
-					className='-mt-1 rounded-t-md bg-[#EBF0F5] px-0 py-2 pt-4 md:px-4'
+					className='reply-user-container -mt-1 rounded-t-md px-0 py-2 pt-4 md:px-4'
 					created_at={created_at}
 					defaultAddress={proposer}
 					text={'replied'}

@@ -8,38 +8,32 @@ import styled from 'styled-components';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import CloseIcon from '~assets/icons/close.svg';
 type Props = {
-    icon?: any;
-    name: any;
-    selected?: boolean;
-    onActionClick?: any;
-    onClose?: any;
+	icon?: any;
+	name: any;
+	selected?: boolean;
+	onActionClick?: any;
+	onClose?: any;
 };
 
 const PlusIcon = styled(PlusCircleOutlined)`
-    svg {
-        width: 25px;
-        height: 25px;
-        color: #e5007a;
-    }
+	svg {
+		width: 25px;
+		height: 25px;
+		color: #e5007a;
+	}
 `;
 
-export default function NetworkTags({
-	icon,
-	name,
-	selected = true,
-	onActionClick,
-	onClose
-}: Props) {
+export default function NetworkTags({ icon, name, selected = true, onActionClick, onClose }: Props) {
 	return (
 		<Tag
 			onClick={onActionClick}
-			className={`flex items-center justify-between border-solid border rounded-[34px] border-[#E5007A] px-[24px] ${
+			className={`flex items-center justify-between rounded-[34px] border border-solid border-[#E5007A] px-[24px] ${
 				selected ? 'bg-[#FEF2F8] py-[8px]' : 'bg-white py-[14px]'
 			} cursor-pointer`}
 		>
 			{icon ? (
 				<Image
-					className='w-[40px] h-[40px] rounded-full'
+					className='h-[40px] w-[40px] rounded-full'
 					src={icon}
 					alt='Logo'
 				/>
@@ -47,14 +41,17 @@ export default function NetworkTags({
 				<PlusIcon />
 			)}
 			<span
-				className={`items-center justify-center ml-[9.25px] mr-[13.35px] font-semibold ${
+				className={`ml-[9.25px] mr-[13.35px] items-center justify-center font-semibold ${
 					selected ? 'text-[#243A57]' : 'text-pink_primary'
-				} text-lg leading-[21px] tracking-[0.02em] capitalize`}
+				} text-lg capitalize leading-[21px] tracking-[0.02em]`}
 			>
 				{name === 'xx' ? 'XX' : name}
 			</span>
 			{onClose && (
-				<span onClick={() => onClose(name)} className='mt-1'>
+				<span
+					onClick={() => onClose(name)}
+					className='mt-1'
+				>
 					<CloseIcon />
 				</span>
 			)}

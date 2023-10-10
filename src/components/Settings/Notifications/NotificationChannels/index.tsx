@@ -23,14 +23,14 @@ import TelegramIcon from '~assets/icons/telegram-notification.svg';
 import DiscordIcon from '~assets/icons/discord-notification.svg';
 
 const { Panel } = Collapse;
-type Props = { handleEnableDisabled: any, handleReset: any };
+type Props = { handleEnableDisabled: any; handleReset: any };
 
 export enum CHANNEL {
 	TELEGRAM = 'telegram',
 	DISCORD = 'discord',
 	EMAIL = 'email',
 	SLACK = 'slack',
-	ELEMENT = 'element',
+	ELEMENT = 'element'
 }
 
 // eslint-disable-next-line no-empty-pattern
@@ -45,23 +45,19 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 
 	const getVerifyToken = async (channel: CHANNEL) => {
 		try {
-			const verifyTokenRes = await fetch(
-				`${FIREBASE_FUNCTIONS_URL}/getChannelVerifyToken`,
-				{
-					body: JSON.stringify({
-						channel,
-						userId: id
-					}),
-					headers: firebaseFunctionsHeader(network),
-					method: 'POST'
-				}
-			);
+			const verifyTokenRes = await fetch(`${FIREBASE_FUNCTIONS_URL}/getChannelVerifyToken`, {
+				body: JSON.stringify({
+					channel,
+					userId: id
+				}),
+				headers: firebaseFunctionsHeader(network),
+				method: 'POST'
+			});
 
-			const { data: verifyToken, error: verifyTokenError } =
-				(await verifyTokenRes.json()) as {
-					data: string;
-					error: string;
-				};
+			const { data: verifyToken, error: verifyTokenError } = (await verifyTokenRes.json()) as {
+				data: string;
+				error: string;
+			};
 
 			if (verifyTokenError) {
 				queueNotification({
@@ -96,21 +92,24 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 		>
 			<Panel
 				header={
-					<div className='flex justify-between gap-[8px] items-center'>
-						<div className='flex items-center gap-[6px] channel-header'>
+					<div className='flex items-center justify-between gap-[8px]'>
+						<div className='channel-header flex items-center gap-[6px]'>
 							<NotificationChannelsIcon />
-							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 pt-1'>
-								Notification Channels
-							</h3>
+							<h3 className='mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Notification Channels</h3>
 						</div>
 						{!!active && (
-							<div className='gap-4 hidden items-center md:flex'>
-								<div className={`${!networkPreferences?.channelPreferences?.[
-									CHANNEL.EMAIL]?.enabled ? '[&>svg]:opacity-50' : ''}`}>
+							<div className='hidden items-center gap-4 md:flex'>
+								<div className={`${!networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.enabled ? '[&>svg]:opacity-50' : ''}`}>
 									<MailFilled />
 								</div>
-								{Bots.map((bot, i) => <div className={`${!networkPreferences?.channelPreferences?.[
-									bot.channel]?.enabled ? '[&>svg]:opacity-50' : ''}`} key={i}>{bot.Icon}</div>)}
+								{Bots.map((bot, i) => (
+									<div
+										className={`${!networkPreferences?.channelPreferences?.[bot.channel]?.enabled ? '[&>svg]:opacity-50' : ''}`}
+										key={i}
+									>
+										{bot.Icon}
+									</div>
+								))}
 							</div>
 						)}
 					</div>
@@ -118,44 +117,30 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<p className='font-medium text-[16px] leading-[21px] mb-[22px] text-[#243A57]'>
-						Please select the socials where you would like to receive notifications:
-					</p>
+					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-[#243A57]'>Please select the socials where you would like to receive notifications:</p>
 					<EmailNotificationCard
-						verifiedEmail={
-							networkPreferences?.channelPreferences?.[
-								CHANNEL.EMAIL
-							]?.handle || email ||''
-						}
+						verifiedEmail={networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.handle || email || ''}
 						verified={email_verified || false}
-						notificationEnabled={networkPreferences?.channelPreferences?.[
-							CHANNEL.EMAIL
-						]?.enabled ||false}
+						notificationEnabled={networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.enabled || false}
 						handleEnableDisabled={handleEnableDisabled}
 					/>
-					<Divider className='border-[#D2D8E0] border-2 my-[30px]' dashed />
+					<Divider
+						className='my-[30px] border-2 border-[#D2D8E0]'
+						dashed
+					/>
 					{Bots.map((bot, i) => (
 						<div key={bot.title}>
 							<BotSetupCard
 								{...bot}
 								onClick={handleClick}
-								enabled={
-									networkPreferences?.channelPreferences?.[
-										bot.channel
-									]?.enabled || false
-								}
-								isBotSetup={
-									networkPreferences?.channelPreferences?.[
-										bot.channel
-									]?.enabled === undefined
-										? false: true
-								}
+								enabled={networkPreferences?.channelPreferences?.[bot.channel]?.enabled || false}
+								isBotSetup={networkPreferences?.channelPreferences?.[bot.channel]?.enabled === undefined ? false : true}
 								handleEnableDisabled={handleEnableDisabled}
 								handleReset={handleReset}
 							/>
 							{Bots.length - 1 > i && (
 								<Divider
-									className='border-[#D2D8E0] border-[2px] my-[30px]'
+									className='my-[30px] border-[2px] border-[#D2D8E0]'
 									dashed
 								/>
 							)}
@@ -168,11 +153,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					open={showModal === CHANNEL.TELEGRAM}
 					getVerifyToken={getVerifyToken}
 					onClose={() => setShowModal(null)}
-					generatedToken={
-						networkPreferences?.channelPreferences?.[
-							CHANNEL.TELEGRAM
-						]?.verification_token || ''
-					}
+					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.TELEGRAM]?.verification_token || ''}
 				/>
 				<DiscordInfoModal
 					icon={<DiscordIcon />}
@@ -180,11 +161,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					open={showModal === CHANNEL.DISCORD}
 					getVerifyToken={getVerifyToken}
 					onClose={() => setShowModal(null)}
-					generatedToken={
-						networkPreferences?.channelPreferences?.[
-							CHANNEL.DISCORD
-						]?.verification_token || ''
-					}
+					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.DISCORD]?.verification_token || ''}
 				/>
 				<SlackInfoModal
 					icon={<SlackIcon />}
@@ -192,11 +169,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					open={showModal === CHANNEL.SLACK}
 					getVerifyToken={getVerifyToken}
 					onClose={() => setShowModal(null)}
-					generatedToken={
-						networkPreferences?.channelPreferences?.[
-							CHANNEL.DISCORD
-						]?.verification_token || ''
-					}
+					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.DISCORD]?.verification_token || ''}
 				/>
 			</Panel>
 		</Collapse>

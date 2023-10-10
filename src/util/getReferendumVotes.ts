@@ -6,8 +6,8 @@ import { chainProperties } from '~src/global/networkConstants';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
 
 interface IReturnResponse {
-  data?: null | any,
-  error?: null| string;
+	data?: null | any;
+	error?: null | string;
 }
 
 /**
@@ -16,11 +16,11 @@ interface IReturnResponse {
  * @param {number} onchainId - referendum onchain id
  * @returns {IReturnResponse} - returns data or error in an object
  **/
-export default async function getReferendumVotes(network:string, onchainId:number | string):Promise<IReturnResponse> {
-	const returnResponse:IReturnResponse = {
+export default async function getReferendumVotes(network: string, onchainId: number | string): Promise<IReturnResponse> {
+	const returnResponse: IReturnResponse = {
 		data: null,
 		error: null
-	} ;
+	};
 	try {
 		const response = await fetch(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`, {
 			body: JSON.stringify({
@@ -33,10 +33,10 @@ export default async function getReferendumVotes(network:string, onchainId:numbe
 		if (response.ok) {
 			const resJSON = await response.json();
 
-			if(!resJSON?.data?.info) throw new Error('Vote data unavailable');
+			if (!resJSON?.data?.info) throw new Error('Vote data unavailable');
 
 			returnResponse.data = resJSON?.data?.info;
-		}else{
+		} else {
 			throw new Error('Vote data unavailable');
 		}
 	} catch (error) {

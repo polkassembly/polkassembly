@@ -28,13 +28,13 @@ import getNetwork from '../../util/getNetwork';
 const NETWORK = getNetwork();
 
 interface Props {
-	className?: string
-	setMethod: React.Dispatch<React.SetStateAction<string>>
-   isModal?:boolean;
-  setSignupOpen?:(pre:boolean)=>void;
+	className?: string;
+	setMethod: React.Dispatch<React.SetStateAction<string>>;
+	isModal?: boolean;
+	setSignupOpen?: (pre: boolean) => void;
 }
 
-const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Props): JSX.Element => {
+const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: Props): JSX.Element => {
 	const [error, setError] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [address, setAddress] = useState<string>('');
@@ -52,7 +52,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 	const connect = async () => {
 		setIsAccountLoading(true);
 
-		if(provider && provider.wc.connected) {
+		if (provider && provider.wc.connected) {
 			provider.wc.killSession();
 		}
 
@@ -69,7 +69,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 	};
 
 	const getAccounts = async () => {
-		if(!provider) return;
+		if (!provider) return;
 
 		if (!provider.wc.connected) {
 			await provider.wc.createSession();
@@ -87,20 +87,19 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 				return;
 			}
 
-			const { accounts:addresses, chainId } = payload.params[0];
+			const { accounts: addresses, chainId } = payload.params[0];
 
 			getAccountsHandler(addresses, Number(chainId));
 		});
 
 		provider.wc.on('session_update', (error, payload) => {
-
 			if (error) {
 				setError(error?.message);
 				return;
 			}
 
 			// updated accounts and chainId
-			const { accounts:addresses, chainId } = payload.params[0];
+			const { accounts: addresses, chainId } = payload.params[0];
 			getAccountsHandler(addresses, Number(chainId));
 		});
 
@@ -118,8 +117,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 	};
 
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
-
-		if(chainId !== chainProperties[NETWORK].chainId) {
+		if (chainId !== chainProperties[NETWORK].chainId) {
 			setError(`Please login using the ${NETWORK} network`);
 			setAccountsNotFound(true);
 			setIsAccountLoading(false);
@@ -134,18 +132,20 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 			return;
 		}
 
-		setAccounts(checksumAddresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address: address.toLowerCase(),
-				meta: {
-					genesisHash: null,
-					name: 'walletConnect',
-					source: 'walletConnect'
-				}
-			};
+		setAccounts(
+			checksumAddresses.map((address: string): InjectedAccountWithMeta => {
+				const account = {
+					address: address.toLowerCase(),
+					meta: {
+						genesisHash: null,
+						name: 'walletConnect',
+						source: 'walletConnect'
+					}
+				};
 
-			return account;
-		}));
+				return account;
+			})
+		);
 
 		if (checksumAddresses.length > 0) {
 			setAddress(checksumAddresses[0]);
@@ -156,16 +156,16 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 
 	useEffect(() => {
 		connect();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
 		getAccounts();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [provider]);
 
 	const handleSignup = async () => {
-		if(!provider) return;
+		if (!provider) return;
 
 		if (!accounts.length) {
 			return getAccounts();
@@ -176,9 +176,8 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 		let signMessage: any = '';
 
 		try {
-
 			setLoading(true);
-			const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressSignupStart', { address });
+			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address });
 			if (error || !data) {
 				setError(error || 'Something went wrong');
 				setLoading(false);
@@ -186,7 +185,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 			}
 
 			signMessage = data?.signMessage;
-			if (!signMessage){
+			if (!signMessage) {
 				setError('Challenge message not found');
 				setLoading(false);
 				return;
@@ -211,8 +210,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 			.sendCustomRequest(tx)
 			.then(async (result) => {
 				try {
-
-					const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
+					const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignupConfirm', {
 						address,
 						signature: result,
 						wallet: Wallet.WALLETCONNECT
@@ -220,8 +218,8 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 
 					if (confirmData?.token) {
 						setWalletConnectProvider(provider);
-						currentUser.loginWallet=Wallet.WALLETCONNECT;
-						currentUser.loginAddress= address;
+						currentUser.loginWallet = Wallet.WALLETCONNECT;
+						currentUser.loginAddress = address;
 						currentUser.delegationDashboardAddress = address;
 						localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 						localStorage.setItem('delegationDashboardAddress', address);
@@ -232,7 +230,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 							content: 'Add an email in settings if you want to be able to recover your account!',
 							title: 'Add optional email'
 						});
-						if(isModal){
+						if (isModal) {
 							setSignupOpen && setSignupOpen(false);
 							return;
 						}
@@ -258,23 +256,22 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 	return (
 		<div className={className}>
 			<h3>Sign-up with WalletConnect</h3>
-			{accountsNotFound?
+			{accountsNotFound ? (
 				<div className='card'>
 					<div className='text-muted'>You need at least one account via WalletConnect to login.</div>
 					<div className='text-muted'>Please reload this page after adding accounts.</div>
 				</div>
-				: null
-			}
-			{
-				isAccountLoading ?
-					<div className="loader-cont">
-						<Loader text={'Requesting accounts'}/>
-					</div>
-					:
-					accounts.length > 0 &&
+			) : null}
+			{isAccountLoading ? (
+				<div className='loader-cont'>
+					<Loader text={'Requesting accounts'} />
+				</div>
+			) : (
+				accounts.length > 0 && (
 					<>
 						<div>
 							<AccountSelectionForm
+								isTruncateUsername={false}
 								title='Choose linked account'
 								accounts={accounts}
 								address={address}
@@ -295,7 +292,9 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 							</label>
 							{error && <div className={'errorText'}>Please agree to the terms of the Polkassembly end user agreement.</div>}
 						</div>
-						<div className='text-muted'>To see how we use your personal data please see our <Link href='/privacy'>privacy notice</Link>.</div>
+						<div className='text-muted'>
+							To see how we use your personal data please see our <Link href='/privacy'>privacy notice</Link>.
+						</div>
 						<div className={'mainButtonContainer'}>
 							<Button
 								disabled={loading}
@@ -305,10 +304,9 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 							</Button>
 						</div>
 					</>
-			}
-			<div className='my-2'>
-				{error && <FilteredError text={error}/>}
-			</div>
+				)
+			)}
+			<div className='my-2'>{error && <FilteredError text={error} />}</div>
 			<Divider plain>Or</Divider>
 			<div className={'mainButtonContainer'}>
 				<Button

@@ -36,10 +36,10 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 	useEffect(() => {
 		setLoading(true);
 		let substrate_address;
-		if(!proposerAddress.startsWith('0x')) {
+		if (!proposerAddress.startsWith('0x')) {
 			substrate_address = getSubstrateAddress(proposerAddress);
-			if(!substrate_address) return console.error('Invalid address');
-		}else {
+			if (!substrate_address) return console.error('Invalid address');
+		} else {
 			substrate_address = proposerAddress;
 		}
 
@@ -48,7 +48,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 				setLoading(false);
 				if (res.data?.proposals) {
 					setProposals(res.data.proposals);
-				} else if (res.error){
+				} else if (res.error) {
 					setError(res.error);
 				}
 			})
@@ -59,68 +59,129 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 	}, [proposerAddress]);
 	return (
 		<div className={className}>
-			<h4 className="dashboard-heading flex items-center mb-6">
-				Other Proposals by <span className='ml-2'><Address className='text-navBlue' address={proposerAddress} displayInline={false} identiconSize={20} shortenAddressLength={6}/></span>
+			<h4 className='dashboard-heading mb-6 flex items-center'>
+				Other Proposals by{' '}
+				<span className='ml-2'>
+					<Address
+						address={proposerAddress}
+						displayInline={false}
+						iconSize={20}
+						addressMaxLength={6}
+					/>
+				</span>
 			</h4>
 
-			{!loading && error && <ErrorAlert className='mb-6' errorMsg={error} /> }
+			{!loading && error && (
+				<ErrorAlert
+					className='mb-6'
+					errorMsg={error}
+				/>
+			)}
 
 			{loading && <LoadingLatestActivity />}
 
-			{!loading && !error && proposals &&
-				<Space direction="vertical" className='w-full'>
-					{proposals.democracy.length > 0 &&
-						<Collapse collapsible="header" defaultActiveKey={['1']}>
-							<Panel header="Democracy Proposals" key="1">
-								{proposals.democracy.map(post => {
-									return <>
-										{post?.index != currPostOnchainID && <a key={post.id} href={`/proposal/${post?.index}`} className='hover:text-sidebarBlue bg-transparent outline-none border-none w-full cursor-pointer' onClick={closeSidebar}>
-											<div className='my-4 border-solid border-2 border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-2 md:p-4'>
-												<div className="flex justify-between gap-x-2">
-													<div>
-														<h5 className='text-sidebarBlue font-medium text-sm'>{post.title || `#${post.index} Untitled`}</h5>
-														<div className='flex items-center text-pink_primary font-normal text-sm'> <ClockCircleOutlined className='mr-2' /> {getRelativeCreatedAt(post.createdAt)}</div>
+			{!loading && !error && proposals && (
+				<Space
+					direction='vertical'
+					className='w-full'
+				>
+					{proposals.democracy.length > 0 && (
+						<Collapse
+							collapsible='header'
+							defaultActiveKey={['1']}
+						>
+							<Panel
+								header='Democracy Proposals'
+								key='1'
+							>
+								{proposals.democracy.map((post) => {
+									return (
+										<>
+											{post?.index != currPostOnchainID && (
+												<a
+													key={post.id}
+													href={`/proposal/${post?.index}`}
+													className='w-full cursor-pointer border-none bg-transparent outline-none hover:text-sidebarBlue'
+													onClick={closeSidebar}
+												>
+													<div className='my-4 rounded-md border-2 border-solid border-grey_light p-2 transition-all duration-200 hover:border-pink_primary hover:shadow-xl md:p-4'>
+														<div className='flex justify-between gap-x-2'>
+															<div>
+																<h5 className='text-sm font-medium text-sidebarBlue'>{post.title || `#${post.index} Untitled`}</h5>
+																<div className='flex items-center text-sm font-normal text-pink_primary'>
+																	{' '}
+																	<ClockCircleOutlined className='mr-2' /> {getRelativeCreatedAt(post.createdAt)}
+																</div>
+															</div>
+															{post.status && (
+																<StatusTag
+																	className='statusTag'
+																	status={post.status}
+																/>
+															)}
+														</div>
 													</div>
-													{post.status && <StatusTag className='statusTag' status={post.status} />}
-												</div>
-											</div>
-										</a>}
-									</>;
+												</a>
+											)}
+										</>
+									);
 								})}
 							</Panel>
 						</Collapse>
-					}
+					)}
 
-					{proposals.treasury.length > 0 &&
-						<Collapse collapsible="header" defaultActiveKey={['1']}>
-							<Panel header="Treasury Proposals" key="1">
-								{proposals.treasury.map(post => {
-
-									return <>
-										{post.index != currPostOnchainID && <a key={post.id} href={`/treasury/${post.index}`} className='hover:text-sidebarBlue bg-transparent outline-none border-none w-full cursor-pointer' onClick={closeSidebar}>
-											<div className='my-4 border-solid border-2 border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-2 md:p-4'>
-												<div className="flex justify-between">
-													<div>
-														<h5>{post.title || `#${post.index} Untitled`}</h5>
-														<div className='flex items-center'> <ClockCircleOutlined className='mr-2' /> {getRelativeCreatedAt(post.createdAt)}</div>
+					{proposals.treasury.length > 0 && (
+						<Collapse
+							collapsible='header'
+							defaultActiveKey={['1']}
+						>
+							<Panel
+								header='Treasury Proposals'
+								key='1'
+							>
+								{proposals.treasury.map((post) => {
+									return (
+										<>
+											{post.index != currPostOnchainID && (
+												<a
+													key={post.id}
+													href={`/treasury/${post.index}`}
+													className='w-full cursor-pointer border-none bg-transparent outline-none hover:text-sidebarBlue'
+													onClick={closeSidebar}
+												>
+													<div className='my-4 rounded-md border-2 border-solid border-grey_light p-2 transition-all duration-200 hover:border-pink_primary hover:shadow-xl md:p-4'>
+														<div className='flex justify-between'>
+															<div>
+																<h5>{post.title || `#${post.index} Untitled`}</h5>
+																<div className='flex items-center'>
+																	{' '}
+																	<ClockCircleOutlined className='mr-2' /> {getRelativeCreatedAt(post.createdAt)}
+																</div>
+															</div>
+															{post.status && (
+																<StatusTag
+																	className='statusTag'
+																	status={post.status}
+																/>
+															)}
+														</div>
 													</div>
-													{post.status && <StatusTag className='statusTag' status={post.status} />}
-												</div>
-											</div>
-										</a>}
-									</>;
+												</a>
+											)}
+										</>
+									);
 								})}
 							</Panel>
 						</Collapse>
-					}
+					)}
 				</Space>
-			}
+			)}
 
-			{!loading && !error && proposals && proposals.treasury.length === 0 && proposals.democracy.length === 0 &&
-				<div className='flex justify-center items-center mt-36'>
+			{!loading && !error && proposals && proposals.treasury.length === 0 && proposals.democracy.length === 0 && (
+				<div className='mt-36 flex items-center justify-center'>
 					<PostEmptyState description='No other proposals found' />
 				</div>
-			}
+			)}
 		</div>
 	);
 };

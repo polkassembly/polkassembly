@@ -24,7 +24,6 @@ import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
-import { useNetworkContext } from '~src/context';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
@@ -32,6 +31,7 @@ import styled from 'styled-components';
 import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -97,7 +97,7 @@ const Post: FC<IPostProps> = (props) => {
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [canEdit, setCanEdit] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [duration, setDuration] = useState(dayjs.duration(0));
 	const [totalAuditCount, setTotalAuditCount] = useState<number>(0);
 	const [totalVideoCount, setTotalVideoCount] = useState<number>(0);

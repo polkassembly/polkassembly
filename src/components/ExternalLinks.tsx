@@ -3,10 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { FC } from 'react';
-import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
-
 import { ProposalType } from '~src/global/proposalType';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { isCereSupport, isExplorerSupport, isPolkaholicSupport, isSubscanSupport } from '~src/util/subscanCheck';
 
 interface IExternalLinksProps {
@@ -37,7 +36,7 @@ const getService = (network: string) => {
 
 const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 	const { className, onchainId, proposalType, blockNumber } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const serviceMap = {
 		[EService.SUBSCAN]: (network: string) => {

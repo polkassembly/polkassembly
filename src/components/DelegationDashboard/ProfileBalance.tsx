@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import { Divider } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
@@ -18,6 +18,7 @@ import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import BN from 'bn.js';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -30,7 +31,7 @@ const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConn
 const ZERO_BN = new BN(0);
 const ProfileBalances = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);

@@ -9,7 +9,7 @@ import BN from 'bn.js';
 import dynamic from 'next/dynamic';
 import SelectTracks from './SelectTracks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import AddressInput from '~src/ui-components/AddressInput';
 import Web3 from 'web3';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -39,6 +39,7 @@ import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -101,7 +102,7 @@ const CreatePreimage = ({
 	form
 }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [preimageCreated, setPreimageCreated] = useState<boolean>(false);
 	const [preimageLinked, setPreimageLinked] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;

@@ -16,7 +16,7 @@ import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
-import { NetworkContextProvider } from '~src/context/NetworkContext';
+// import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 import { initGA, logPageView } from '../analytics';
 
@@ -89,19 +89,17 @@ function App({ Component, pageProps }: AppProps) {
 					<ErrorBoundary>
 						<UserDetailsProvider>
 							<ApiContextProvider network={network}>
-								<NetworkContextProvider initialNetwork={network}>
-									<>
-										{showSplashScreen && <SplashLoader />}
-										<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-											<NextNProgress color='#E5007A' />
-											<CMDK />
-											<AppLayout
-												Component={Component}
-												pageProps={pageProps}
-											/>
-										</main>
-									</>
-								</NetworkContextProvider>
+								<>
+									{showSplashScreen && <SplashLoader />}
+									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+										<NextNProgress color='#E5007A' />
+										<CMDK />
+										<AppLayout
+											Component={Component}
+											pageProps={pageProps}
+										/>
+									</main>
+								</>
 							</ApiContextProvider>
 						</UserDetailsProvider>
 					</ErrorBoundary>

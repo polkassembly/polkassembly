@@ -19,9 +19,9 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
 import Web3 from 'web3';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
 
@@ -33,7 +33,7 @@ const ZERO_BN = new BN(0);
 
 const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
 

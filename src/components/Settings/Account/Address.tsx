@@ -7,7 +7,7 @@ import { stringToHex } from '@polkadot/util';
 import { Button, Divider, Modal, Spin, Tooltip } from 'antd';
 import React, { FC, useState } from 'react';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useApiContext, useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { NotificationStatus, Wallet } from 'src/types';
 import AddressComponent from 'src/ui-components/Address';
@@ -21,6 +21,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import { poppins } from 'pages/_app';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	open?: boolean;
@@ -46,7 +47,7 @@ const WalletIconAndTitle: FC<{
 
 const Address: FC<Props> = ({ dismissModal, open }) => {
 	const currentUser = useUserDetailsContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [fetchAccountsInfo, setFetchAccountsInfo] = useState(true);
 

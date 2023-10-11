@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import StatusTag from './StatusTag';
-import { useNetworkContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IProfileVoteHistoryRespose } from 'pages/api/v1/votesHistory/getVotesByVoter';
 import { Empty, Pagination, Popover, Spin, Checkbox } from 'antd';
@@ -27,6 +26,7 @@ import { poppins } from 'pages/_app';
 import { EGovType } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { formatBalance } from '@polkadot/util';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -51,7 +51,7 @@ enum EHeading {
 }
 
 const VotesHistory = ({ className, userAddresses, govType }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS];
 	const [votesData, setVotesData] = useState<IVotesData[] | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);

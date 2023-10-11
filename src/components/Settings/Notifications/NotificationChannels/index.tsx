@@ -14,13 +14,14 @@ import TelegramInfoModal from './Modals/Telegram';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utils';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useUserDetailsContext } from '~src/context';
 import DiscordInfoModal from './Modals/Discord';
 import SlackInfoModal from './Modals/Slack';
 import { Collapse } from '../common-ui/Collapse';
 import MailFilled from '~assets/icons/email-notification.svg';
 import TelegramIcon from '~assets/icons/telegram-notification.svg';
 import DiscordIcon from '~assets/icons/discord-notification.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const { Panel } = Collapse;
 type Props = { handleEnableDisabled: any; handleReset: any };
@@ -36,7 +37,7 @@ export enum CHANNEL {
 // eslint-disable-next-line no-empty-pattern
 export default function NotificationChannels({ handleEnableDisabled, handleReset }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { id, networkPreferences, email, email_verified } = useUserDetailsContext();
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const handleClick = (channelName: CHANNEL) => {

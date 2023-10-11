@@ -25,11 +25,11 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 
 import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -100,7 +100,7 @@ const SetOnChainIdentityButton = ({
 	className // setTipModalOpen,
 }: Props) => {
 	const { id } = useContext(UserDetailsContext);
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const [validAddress, setValidAddress] = useState<boolean>(false);

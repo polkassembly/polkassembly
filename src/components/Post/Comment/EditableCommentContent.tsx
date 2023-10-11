@@ -6,7 +6,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { EReportType, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -17,7 +17,6 @@ import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -52,6 +51,7 @@ import { Caution } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { checkIsProposer } from '../utils/checkIsProposer';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -79,7 +79,7 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, is_custom_username, proposer } = props;
 	const { comments, setComments, setTimelines } = useCommentDataContext();
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
 

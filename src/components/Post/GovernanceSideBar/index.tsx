@@ -14,7 +14,7 @@ import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } 
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
@@ -67,6 +67,7 @@ import BigNumber from 'bignumber.js';
 import VotersList from './Referenda/VotersList';
 import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
 import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -126,7 +127,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters } = props;
 	const [lastVote, setLastVote] = useState<ILastVote>();
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();

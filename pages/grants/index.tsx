@@ -10,7 +10,6 @@ import { FC, useContext, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
-import { useNetworkContext } from '~src/context';
 import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType } from '~src/global/proposalType';
@@ -20,6 +19,8 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useRouter } from 'next/router';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { setNetwork } from '~src/redux/network';
+import { useDispatch } from 'react-redux';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -64,11 +65,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const Grants: FC<IGrantsProps> = (props) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -4,7 +4,7 @@
 
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import StatusTag from '~src/ui-components/StatusTag';
 import VoteProgress from '~src/ui-components/VoteProgress';
@@ -12,6 +12,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import { Divider } from 'antd';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -25,7 +26,7 @@ const ZERO_BN = new BN(0);
 
 const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [voteInfo, setVoteInfo] = useState({
 		ayes: ZERO_BN,

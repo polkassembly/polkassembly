@@ -15,7 +15,7 @@ import styled from 'styled-components';
 
 import CloseIcon from '~assets/icons/close.svg';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
 import { formatBalance } from '@polkadot/util';
@@ -29,6 +29,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -44,7 +45,7 @@ interface Props {
 }
 const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, isMultisig }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const trackName = handleTrack(String(router.query.track));
 	const [form] = Form.useForm();

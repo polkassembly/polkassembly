@@ -9,7 +9,7 @@ import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -31,6 +31,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import addEthereumChain from '~src/util/addEthereumChain';
 import TFALoginForm from './TFALoginForm';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -80,7 +81,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLoginOpen, setSignupOpen, onWalletUpdate }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);

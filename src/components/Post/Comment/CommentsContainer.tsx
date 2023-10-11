@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
@@ -29,6 +29,7 @@ import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
 import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -94,7 +95,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];

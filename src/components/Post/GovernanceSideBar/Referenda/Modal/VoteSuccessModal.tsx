@@ -200,9 +200,8 @@ const VoteInitiatedModal = ({
 							) : null}
 						</div>
 						<div className='flex gap-[30px] text-sm font-normal text-lightBlue'>
-							{' '}
 							Conviction:
-							<span className='font-medium text-bodyBlue'>{conviction || '0.1'}x</span>{' '}
+							<span className='font-medium text-bodyBlue'>{conviction || '0.1'}x</span>
 						</div>
 						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue'>
 							Time of Vote : <span className='font-medium text-bodyBlue'>{votedAt}</span>

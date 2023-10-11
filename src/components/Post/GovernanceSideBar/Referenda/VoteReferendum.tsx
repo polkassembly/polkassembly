@@ -338,17 +338,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		if (!lockedBalance || availableBalance.lte(lockedBalance)) return;
+		if (!multisig) {
+			if (!lockedBalance || availableBalance.lte(lockedBalance)) return;
 
-		if (lockedBalance && availableBalance.lte(lockedBalance)) {
-			return;
-		}
-		if (
-			(ayeVoteValue && availableBalance.lte(ayeVoteValue)) ||
-			(nayVoteValue && availableBalance.lte(nayVoteValue)) ||
-			(abstainVoteValue && availableBalance.lte(abstainVoteValue))
-		) {
-			return;
+			if (lockedBalance && availableBalance.lte(lockedBalance)) {
+				return;
+			}
+			if (
+				(ayeVoteValue && availableBalance.lte(ayeVoteValue)) ||
+				(nayVoteValue && availableBalance.lte(nayVoteValue)) ||
+				(abstainVoteValue && availableBalance.lte(abstainVoteValue))
+			) {
+				return;
+			}
 		}
 
 		const totalVoteValue = (ayeVoteValue || ZERO_BN)
@@ -359,9 +361,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			...prevState,
 			totalVoteValue: totalVoteValue
 		}));
-		if (totalVoteValue?.gte(availableBalance)) {
-			return;
-		}
 
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 
@@ -848,7 +847,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											nayVoteValue.lte(ZERO_BN) ||
 											abstainVoteValue.lte(ZERO_BN) ||
 											(showMultisig && !multisig) ||
-											(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 											isBalanceErr ||
 											(showMultisig && multisigBalance.lte(ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).add(lockedBalance)))
 										}

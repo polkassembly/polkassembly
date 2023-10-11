@@ -500,3 +500,42 @@ z-index: 1050 !important;
 .ant-modal-root .ant-modal-wrap{
   z-index: 1052 !important;
 }
+
+@media (max-width: 767px) {
+  .modal-content {
+    overflow-x: auto; 
+  }
+  .modal-container{
+    width:515px !important;
+  }
+  .vote-history-container {
+    width: 515px !important;
+  }
+  .modal-inner-content {
+    width:515px !important;
+  }
+}
+
+.comment-usernames-container {
+  background: #f9fafb !important;
+}
+
+.reply-user-container {
+  background:#EBF0F5 !important;
+}
+
+.post-user-container {
+  background: #fff !important;
+}
+
+@media (max-width: 420px) and (min-width: 319px) {
+  .voted-icon {
+    width:0 !important;
+    display: none !important;
+  }
+
+  .sentiment-vote-icon {
+    display:block !important;
+    margin-right: 4px !important;
+  }
+}

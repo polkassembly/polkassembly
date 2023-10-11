@@ -248,7 +248,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className='flex items-center text-lightBlue max-xs:ml-1'>
+				<div className='-ml-[2px] flex items-center text-lightBlue max-xs:ml-1'>
 					{(topic || text || created_at) && (
 						<>
 							&nbsp;

@@ -102,7 +102,6 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
 						>
 							{getSentimentIcon(item.sentiment as ESentiment)}
-							{/* <div>heloo</div> */}
 						</Dropdown>
 					</div>
 					<div className={`mt-2 px-[2px] text-sm font-normal tracking-[0.01em] text-bodyBlue ${poppins.className} ${poppins.variable} pr-2 leading-6`}>
@@ -125,7 +124,6 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							className='text-sm'
 							md={!item?.expanded && item?.content.length > 100 ? `${item?.content.slice(0, 100)}...` : item?.content}
 						/>
-						{/* )} */}
 					</div>
 					{item?.content.length > 100 && (
 						<span

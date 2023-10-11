@@ -6,14 +6,14 @@ import { useSelector } from 'react-redux';
 import { TAppState } from './store';
 // import { IModalStore } from './modal/@types';
 import { INetworkStore } from './network/@types';
-// import { IUserDetailsStore } from './userDetails/@types';
+import { IUserDetailsStore } from './userDetails/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
 };
 
-// const useUserDetailsSelector = () => {
-// return useSelector<TAppState, IUserDetailsStore>((state) => state.userDetails);
-// };
+const useUserDetailsSelector = () => {
+	return useSelector<TAppState, IUserDetailsStore>((state) => state.userDetails);
+};
 
-export { useNetworkSelector };
+export { useNetworkSelector, useUserDetailsSelector };

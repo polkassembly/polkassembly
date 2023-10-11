@@ -4,6 +4,8 @@
 
 import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
+import { IReferendumV2PostsByStatus } from 'pages/root';
+
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
@@ -32,6 +34,7 @@ import styled from 'styled-components';
 import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
+import TrackListingAllTabContent from '../Listing/Tracks/TrackListingAllTabContent';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -76,6 +79,7 @@ const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
 interface IPostProps {
 	className?: string;
 	post: IPostResponse;
+	posts: IReferendumV2PostsByStatus;
 	trackName?: string;
 	proposalType: ProposalType;
 }
@@ -90,7 +94,7 @@ function formatDuration(duration: any) {
 }
 
 const Post: FC<IPostProps> = (props) => {
-	const { className, post, trackName, proposalType } = props;
+	const { className, post, trackName, proposalType, posts } = props;
 
 	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
@@ -414,7 +418,6 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-
 	return (
 		<PostDataContextProvider
 			initialPostData={{
@@ -507,6 +510,23 @@ const Post: FC<IPostProps> = (props) => {
 								</>
 							)}
 						</div>
+						<div>
+							{/* seperation-line */}
+							<div className='flex items-center'>
+								<hr className='seperation-border mr-2 flex-grow' />
+								<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
+								<hr className='seperation-border ml-2 flex-grow' />
+							</div>
+
+							{/* main content */}
+							<div className='mt-5 w-full rounded-xxl bg-white p-3 drop-shadow-md md:p-4 lg:p-6 '>
+								<TrackListingAllTabContent
+									posts={posts?.all?.data?.posts || []}
+									error={posts?.all?.error}
+									count={posts?.all?.data?.count || 0}
+								/>
+							</div>
+						</div>
 					</div>
 
 					{!isEditing ? <Sidebar className='hidden xl:block' /> : null}
@@ -526,5 +546,9 @@ export default styled(Post)`
 	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn .audit .card-bg {
 		background-color: var(--pink_primary) !important;
 		color: white !important;
+	}
+
+	.seperation-border {
+		border-top: 1px solid #90a0b7;
 	}
 `;

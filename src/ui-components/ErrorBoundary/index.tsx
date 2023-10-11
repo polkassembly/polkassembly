@@ -9,11 +9,7 @@ interface IErrorBoundaryProps extends PropsWithChildren {}
 const ErrorBoundary: FC<IErrorBoundaryProps> = (props) => {
 	const { children } = props;
 
-	return (
-		<div className='relative'>
-			{children}
-		</div>
-	);
+	return <div className='relative'>{children}</div>;
 };
 
 export default ErrorBoundary;

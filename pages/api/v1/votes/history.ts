@@ -8,16 +8,22 @@ import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType, TSubsquidProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
-import { CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX, MOONBEAM_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX, VOTING_HISTORY_BY_VOTER_ADDRESS, VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX, VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM } from '~src/queries';
+import {
+	CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
+	MOONBEAM_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
+	VOTING_HISTORY_BY_VOTER_ADDRESS,
+	VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
+	VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM
+} from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 
 export enum EDecision {
-    YES = 'yes',
-    NO = 'no',
-    ABSTAIN = 'abstain'
+	YES = 'yes',
+	NO = 'no',
+	ABSTAIN = 'abstain'
 }
 
 export interface IVoteHistory {
@@ -32,14 +38,15 @@ export interface IVoteHistory {
 		nay?: string;
 		aye?: string;
 		abstain?: string;
-	},
+	};
 	createdAt?: string;
-	createdAtBlock?: number,
-	lockPeriod?: string,
-	isDelegated?: boolean,
-	removedAtBlock?: null | number,
-	removedAt?: null | string,
-	voter?: string
+	createdAtBlock?: number;
+	lockPeriod?: string;
+	isDelegated?: boolean;
+	removedAtBlock?: null | number;
+	removedAt?: null | string;
+	voter?: string;
+	delegatedVotes?: Array<any>;
 }
 
 export interface IVotesHistoryResponse {
@@ -47,10 +54,10 @@ export interface IVotesHistoryResponse {
 	votes: IVoteHistory[];
 }
 export interface IGetVotesHistoryParams {
-    network: string;
-    listingLimit?: string | string[] | number;
-    page?: string | string[] | number;
-    voterAddress?: string | string[];
+	network: string;
+	listingLimit?: string | string[] | number;
+	page?: string | string[] | number;
+	voterAddress?: string | string[];
 	proposalType?: ProposalType | string | string[];
 	proposalIndex?: string | string[] | number;
 }
@@ -118,10 +125,13 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 		if (votes && Array.isArray(votes)) {
 			votes.forEach((vote) => {
 				if (vote) {
-					res.votes.push({
+					const currentVote = {
+						isDelegated: vote?.delegatedVotes.length > 0 || false,
 						proposalType: vote?.proposal?.type,
 						...vote
-					} as IVoteHistory);
+					} as IVoteHistory;
+					delete currentVote.delegatedVotes;
+					res.votes.push(currentVote);
 				}
 			});
 		}
@@ -138,11 +148,11 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 		};
 	}
 }
-async function handler (req: NextApiRequest, res: NextApiResponse<IVotesHistoryResponse | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<IVotesHistoryResponse | MessageType>) {
 	const { listingLimit = VOTES_LISTING_LIMIT, page = 0, voterAddress, proposalType, proposalIndex } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 	const { data, error, status } = await getVotesHistory({
 		listingLimit,
 		network,
@@ -152,10 +162,10 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesHistoryR
 		voterAddress
 	});
 
-	if(error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
-	}else {
-		res.status(status).json(data);
+	if (error || !data) {
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+	} else {
+		return res.status(status).json(data);
 	}
 }
 

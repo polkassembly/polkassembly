@@ -24,16 +24,13 @@ export const getBlockLink = (network: string) => {
 	let url = chainProperties[network]?.externalLinks;
 	if (url.includes('subscan')) {
 		url = `${url.replace('.api', '')}/block/`;
-	}
-	else if(isPolkaholicSupport(network)){
+	} else if (isPolkaholicSupport(network)) {
 		url += `/block/${network}/`;
-	}
-	else if(isExplorerSupport(network)){
+	} else if (isExplorerSupport(network)) {
 		url += '/blocks/';
 	} else if (isCereSupport(network)) {
 		url += '/block?blockNumber=';
-	}
-	else {
+	} else {
 		url += '/block/';
 	}
 	return url;

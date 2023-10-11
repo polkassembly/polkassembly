@@ -189,7 +189,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			return;
 		}
 
-		await executeTx({ address: defaultAddress, api, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
+		await executeTx({ address: defaultAddress, api, apiReady, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	return (

@@ -257,7 +257,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			return;
 		}
 
-		await executeTx({ address: delegationDashboardAddress, api, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
+		await executeTx({ address: delegationDashboardAddress, api, apiReady, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
@@ -527,7 +527,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								</div>
 								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px]'>
 									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue'>
-										{' '}
 										<LockIcon />
 										<span>Locking period</span>
 									</div>

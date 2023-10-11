@@ -14,9 +14,19 @@ interface Props {
 	usernameClassName?: string;
 	disableAddressClick?: boolean;
 	truncateUsername?: boolean;
+	usernameMaxLength?: number;
 }
 
-const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, usernameClassName, disableAddressClick = false, truncateUsername }: Props) => {
+const NameLabel = ({
+	className,
+	defaultAddress,
+	username,
+	disableIdenticon = false,
+	usernameClassName,
+	disableAddressClick = false,
+	truncateUsername,
+	usernameMaxLength
+}: Props) => {
 	return (
 		<div
 			className={`${className}`}
@@ -47,6 +57,7 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 					disableAddressClick={disableAddressClick}
 					isTruncateUsername={truncateUsername || false}
 					isSubVisible={false}
+					usernameMaxLength={usernameMaxLength}
 				/>
 			)}
 		</div>

@@ -9,9 +9,9 @@ import DashboardTrackListing from './TracksListing';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
-import { Wallet } from '~src/types';
 import { Skeleton } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
+import { Wallet } from '~src/types';
 
 interface Props {
 	className?: string;
@@ -33,6 +33,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
+
 	useEffect(() => {
 		if (!window) return;
 		const wallet = localStorage.getItem('delegationWallet') || '';
@@ -46,7 +47,9 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		}
 		isMobile ? userDetails.isLoggedOut() && setOpenLoginModal(false) : userDetails.isLoggedOut() && setOpenLoginModal(true);
 		!userDetails.isLoggedOut() && setOpenLoginModal(false);
-	}, [userDetails, isMobile]);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isMobile, userDetails]);
 
 	useEffect(() => {
 		if (window.innerWidth < 768) {
@@ -61,7 +64,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	return (
 		<div className={`${className} delegation-dashboard`}>
 			<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw]'>
-				<ProfileBalances address={userDetails.delegationDashboardAddress} />
+				<ProfileBalances />
 			</div>
 			<h2 className=' mb-6 mt-5 text-[24px] font-semibold text-[#243A57] max-lg:pt-[60px] md:mb-5'>Delegation dashboard</h2>
 			<DelegationProfile

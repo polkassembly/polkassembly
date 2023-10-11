@@ -14,8 +14,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
@@ -34,6 +32,8 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
+import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 
 interface Props {
 	className?: string;
@@ -87,6 +87,7 @@ const AddressConnectModal = ({
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
+	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
@@ -269,118 +270,20 @@ const AddressConnectModal = ({
 		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
 	};
 
-	const getMetamaskAccounts = async (): Promise<InjectedAccount[]> => {
-		const ethereum = (window as any).ethereum;
-		if (!ethereum) return [];
-
-		let addresses = await ethereum.request({ method: 'eth_requestAccounts' });
-		addresses = addresses.map((address: string) => address);
-
-		if (addresses.length > 0) {
-			addresses = addresses.map((address: string): InjectedAccount => {
-				return {
-					address: address.toLowerCase(),
-					genesisHash: null,
-					name: 'metamask',
-					type: 'ethereum'
-				};
-			});
-		}
-
-		return addresses as InjectedAccount[];
-	};
-
-	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?: string | null): Promise<void> => {
-		if (!api || !apiReady) return;
-		setLoading(true);
-
-		setExtentionOpen(false);
-
-		if (chosenWallet === Wallet.METAMASK) {
-			const accounts = await getMetamaskAccounts();
-			setAccounts(accounts);
-			setAddress(accounts[0]?.address);
-			if (defaultWalletAddress) {
-				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)?.[0]?.address || accounts[0]?.address);
-			} else {
-				setAddress(accounts[0]?.address);
-			}
-		} else {
-			const injectedWindow = window as Window & InjectedWindow;
-
-			const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
-
-			if (!wallet) {
-				setExtentionOpen(true);
-				setLoading(false);
-				return;
-			}
-
-			let injected: Injected | undefined;
-			try {
-				injected = await new Promise((resolve, reject) => {
-					const timeoutId = setTimeout(() => {
-						reject(new Error('Wallet Timeout'));
-					}, 60000); // wait 60 sec
-
-					if (wallet && wallet.enable) {
-						wallet
-							.enable(APPNAME)
-							.then((value) => {
-								clearTimeout(timeoutId);
-								resolve(value);
-							})
-							.catch((error) => {
-								reject(error);
-							});
-					}
-				});
-			} catch (err) {
-				console.log(err?.message);
-				setLoading(false);
-			}
-			if (!injected) {
-				setLoading(false);
-				return;
-			}
-
-			const accounts = await injected.accounts.get();
-			if (accounts.length === 0) {
-				setLoading(false);
-				return;
-			}
-
-			accounts.forEach((account) => {
-				account.address = getEncodedAddress(account.address, network) || account.address;
-			});
-
-			setAccounts(accounts);
-			if (accounts.length > 0) {
-				if (api && apiReady) {
-					api.setSigner(injected.signer);
-				}
-
-				setAddress(accounts[0]?.address);
-				if (defaultWalletAddress) {
-					setAddress(
-						accounts.filter((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))?.[0]?.address || accounts[0]?.address
-					);
-				} else {
-					setAddress(accounts[0]?.address);
-				}
-			}
-		}
-		setLoading(false);
-		return;
-	};
-
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		if (!api || !apiReady) return;
 		localStorage.setItem('selectedWallet', wallet);
 		setAccounts([]);
 		setAddress('');
 		event.preventDefault();
 		setWallet(wallet);
-		await getAccounts(wallet);
+		(async () => {
+			setLoading(true);
+			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network, setExtentionOpen });
+			setAccounts(accountData?.accounts || []);
+			setAddress(accountData?.account || '');
+			setLoading(false);
+		})();
 	};
 
 	const handleOnBalanceChange = async (balanceStr: string) => {
@@ -399,7 +302,22 @@ const AddressConnectModal = ({
 		const wallet = localStorage.getItem('loginWallet') || '';
 		const address = localStorage.getItem('loginAddress');
 		setWallet((loginWallet || wallet) as Wallet);
-		getAccounts((loginWallet || wallet) as Wallet, loginAddress || address);
+		if (!api || !apiReady) return;
+		(async () => {
+			setLoading(true);
+			const accountData = await getAccountsFromWallet({
+				api,
+				apiReady,
+				chosenAddress: (loginAddress || address) as string,
+				chosenWallet: (loginWallet || wallet) as Wallet,
+				loginAddress,
+				network,
+				setExtentionOpen
+			});
+			setAccounts(accountData?.accounts || []);
+			setAddress(accountData?.account || '');
+			setLoading(false);
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginWallet, loginAddress]);
 
@@ -690,6 +608,8 @@ const AddressConnectModal = ({
 							{accounts.length > 0 ? (
 								showMultisig ? (
 									<MultisigAccountSelectionForm
+										multisigBalance={multisigBalance}
+										setMultisigBalance={setMultisigBalance}
 										title='Select Address'
 										accounts={accounts}
 										address={address}

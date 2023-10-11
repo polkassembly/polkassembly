@@ -151,11 +151,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	};
 
 	const renderVoteContent = (vote: any, network: any, idx: number) => {
-		// const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
-		// const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
 		const conviction = 0.5;
-		// const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
-		const balance = '2.43K KSM';
+		const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
 		const balanceUnit = balance.slice(-3);
 		const balanceMatch = balance ? balance.match(/[\d.]+/) : null;
 		if (balance.slice(-5, -4) == 'K' && balanceMatch) {

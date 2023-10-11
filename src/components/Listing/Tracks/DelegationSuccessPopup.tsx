@@ -188,7 +188,7 @@ const DelegationSuccessPopup = ({
 								</div>
 							)}
 							<div className='flex gap-[30px] text-sm font-normal text-bodyBlue'>
-								Conviction:<span className='font-medium text-bodyBlue'>{conviction === 0 ? 0.1 : 0}x</span>{' '}
+								Conviction:<span className='font-medium text-bodyBlue'>{conviction === 0 ? 0.1 : conviction}x</span>
 							</div>
 							{isMultisig && (
 								<div className='flex h-[21px] gap-[35px] text-sm font-normal text-lightBlue'>

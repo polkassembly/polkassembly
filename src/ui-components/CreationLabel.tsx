@@ -323,19 +323,19 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 							{votesArr[0].decision == 'yes' ? (
-								<p className='aye-voted-icon mb-[-1px]'>
+								<p className='aye-voted-icon voted-icon mb-[-1px]'>
 									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted Aye</span>
 								</p>
 							) : votesArr[0].decision == 'no' ? (
-								<div className='nye-voted-icon'>
+								<div className='nye-voted-icon voted-icon'>
 									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted Nay</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
-								<div className='split-voted-icon align-center mb-[-1px] flex justify-center'>
+								<div className='split-voted-icon voted-icon align-center mb-[-1px] flex justify-center'>
 									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Voted Split</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
-								<div className='abstain-voted-icon align-center mb-[1px] flex justify-center'>
+								<div className='abstain-voted-icon voted-icon align-center mb-[1px] flex justify-center'>
 									<AbstainGray className='mb-[-1px] mr-1' /> <span className='mt-[2px] font-medium capitalize text-bodyBlue'>Voted Abstain</span>
 								</div>
 							) : null}

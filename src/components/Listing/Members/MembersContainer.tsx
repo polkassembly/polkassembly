@@ -9,7 +9,7 @@ import { LoadingState } from 'src/ui-components/UIStates';
 
 import MembersListing from './MembersListing';
 
-const MembersContainer = ({ className } : { className?:string }) => {
+const MembersContainer = ({ className }: { className?: string }) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const [error, setErr] = useState<Error | null>(null);
 	const [members, setMembers] = useState<string[]>([]);
@@ -23,28 +23,36 @@ const MembersContainer = ({ className } : { className?:string }) => {
 			return;
 		}
 
-		if(!api.query?.council?.members){
+		if (!api.query?.council?.members) {
 			setNoCouncil(true);
 			return;
 		}
 
-		api.query?.council?.prime().then(primeId => {
-			setPrime(primeId.unwrapOr('').toString());
-		}).catch(error => setErr(error));
+		api.query?.council
+			?.prime()
+			.then((primeId) => {
+				setPrime(primeId.unwrapOr('').toString());
+			})
+			.catch((error) => setErr(error));
 
-		api.query?.council?.members().then((members) => {
-			setMembers(members.map(member => member.toString()));
-		}).catch(error => setErr(error));
+		api.query?.council
+			?.members()
+			.then((members) => {
+				setMembers(members.map((member) => member.toString()));
+			})
+			.catch((error) => setErr(error));
 
-		if(!api.derive){
+		if (!api.derive) {
 			setRunnersup([]);
 			return;
 		}
 
-		api.derive?.elections?.info().then((electionInfo) => {
-			setRunnersup(electionInfo.runnersUp.map(runner => runner.toString().split(',')[0]));
-		}).catch(error => setErr(error));
-
+		api.derive?.elections
+			?.info()
+			.then((electionInfo) => {
+				setRunnersup(electionInfo.runnersUp.map((runner) => runner.toString().split(',')[0]));
+			})
+			.catch((error) => setErr(error));
 	}, [api, apiReady]);
 
 	if (error) {
@@ -55,32 +63,41 @@ const MembersContainer = ({ className } : { className?:string }) => {
 		return <PostEmptyState className='mt-8' />;
 	}
 
-	if(members.length || runnersUp.length){
+	if (members.length || runnersUp.length) {
 		return (
 			<>
-				<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+				<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
 					<div className='flex items-center justify-between'>
 						<h1 className='dashboard-heading'>Members</h1>
 					</div>
 
-					<MembersListing className='mt-6' data={members} prime={prime} />
+					<MembersListing
+						className='mt-6'
+						data={members}
+						prime={prime}
+					/>
 				</div>
 
-				<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+				<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
 					<div className='flex items-center justify-between'>
 						<h1 className='dashboard-heading'>Runners up</h1>
 					</div>
 
-					<MembersListing className='mt-6' data={runnersUp} prime={prime} />
+					<MembersListing
+						className='mt-6'
+						data={runnersUp}
+						prime={prime}
+					/>
 				</div>
 			</>
 		);
 	}
 
 	return (
-		<div className={className}><LoadingState /></div>
+		<div className={className}>
+			<LoadingState />
+		</div>
 	);
-
 };
 
 export default MembersContainer;

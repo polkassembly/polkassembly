@@ -6,12 +6,12 @@
 
 import BN from 'bn.js';
 
-interface Options{
-    tolerance: BN
-    epsilon: BN
-    maxIterations: number
-    h: BN
-    verbose: boolean
+interface Options {
+	tolerance: BN;
+	epsilon: BN;
+	maxIterations: number;
+	h: BN;
+	verbose: boolean;
 }
 
 export interface NewtonRaphsonResult {
@@ -28,7 +28,7 @@ export interface NewtonRaphsonResult {
  * @param options optional options to specify the `tolerance`, `epsilon`, macIterations` or `verbose`.
  **/
 
-export function newtonRaphson (f: (x: BN) => BN, fp: (x: BN) => BN, x0: BN, options?: Options): NewtonRaphsonResult {
+export function newtonRaphson(f: (x: BN) => BN, fp: (x: BN) => BN, x0: BN, options?: Options): NewtonRaphsonResult {
 	let x1: BN, y: BN, yp: BN, iter: number;
 
 	const tol = options?.tolerance === undefined ? new BN(1e-7) : options.tolerance;

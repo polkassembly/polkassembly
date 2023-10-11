@@ -6,12 +6,14 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
-import { Modal, Skeleton } from 'antd';
+import { Button, Modal, Skeleton } from 'antd';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
 import styled from 'styled-components';
 import Gif from './Gif';
 import { algolia_client } from '~src/components/Search';
+import MarkdownEditor from './MarkdownEditor';
+import { SwapOutlined } from '@ant-design/icons';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -21,10 +23,10 @@ const converter = new showdown.Converter({
 });
 
 interface ITextEditorProps {
-    className?: string;
-    height?: number | string;
-    value?: string;
-    onChange: (value: string) => void;
+	className?: string;
+	height?: number | string;
+	value?: string;
+	onChange: (value: string) => void;
 	isDisabled?: boolean;
 	name: string;
 	autofocus?: boolean;
@@ -79,233 +81,298 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [mdEditor, setMdEditor] = useState<boolean>(true);
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
-		if (!value ||
-			!(value.startsWith('<p><a href="../user/') || value.startsWith('<p><a href="../address/')) ||
-			!value.endsWith('</a>&nbsp;</p>')
-		) return;
+		if (!value || !(value.startsWith('<p><a target="_blank" rel="noreferrer" href="../user/') || value.startsWith('<p><a href="../address/')) || !value.endsWith('</a>&nbsp;</p>'))
+			return;
 
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
 
+	function handleEditorChange() {
+		// if it's being changed to md editor
+		if (!mdEditor) {
+			const mdContent = converter.makeMarkdown(value || '');
+			onChange(mdContent);
+		} else {
+			const htmlContent = converter.makeHtml(value || '');
+			onChange(htmlContent);
+		}
+
+		setMdEditor(!mdEditor);
+	}
+
 	return (
 		<>
-			{loading &&  (
-				<Skeleton.Input block={true} active={true} style={{ height: '300px' }} />
-			)}
-			<Modal
-				open={isModalVisible}
-				onCancel={() => setIsModalVisible(false)}
-				title='Select Gif'
-				footer={null}
-			>
-				<Gif
-					onClick={(url, title) => {
-						const caretPosition = ref.current?.editor?.selection.getRng();
-						const content = `<img src="${url}" alt="${title}" data-mce-src="${url}">`;
-						ref.current?.editor?.insertContent(content, { format: 'html', caretPosition });
-						setIsModalVisible(false);
-					}}
+			{mdEditor ? (
+				<MarkdownEditor
+					onChange={onChange}
+					value={value || ''}
+					height={Number(height) || 300}
 				/>
-			</Modal>
-			<div style={{
-				minHeight: `${height || 300}px`
-			}} className={classNames('flex-1 w-full', className, { 'invisible' : loading })}>
-				<div className={`${loading && 'invisible'}`}>
-					<Editor
-						onPaste={(e) => {
-							e.stopPropagation();
-							e.preventDefault();
-							const content = e.clipboardData?.getData('text/plain') || '';
-							const caretPosition = ref.current?.editor?.selection.getRng();
-							const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
-							const parsed_content = converter.makeHtml(sanitisedContent);
-							ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
+			) : (
+				<div className='relative'>
+					{loading && (
+						<div className='absolute inset-0'>
+							<Skeleton.Input
+								block={true}
+								active={true}
+								style={{ height: `${height || 300}px` }}
+							/>
+						</div>
+					)}
+
+					<Modal
+						open={isModalVisible}
+						onCancel={() => setIsModalVisible(false)}
+						title='Select Gif'
+						footer={null}
+					>
+						<Gif
+							onClick={(url, title) => {
+								const caretPosition = ref.current?.editor?.selection.getRng();
+								const content = `<img src="${url}" alt="${title}" data-mce-src="${url}">`;
+								ref.current?.editor?.insertContent(content, { format: 'html', caretPosition });
+								setIsModalVisible(false);
+							}}
+						/>
+					</Modal>
+
+					<div
+						style={{
+							minHeight: `${height || 300}px`
 						}}
-						textareaName={name}
-						value={converter.makeHtml(value || '')}
-						ref={ref}
-						disabled={isDisabled}
-						onEditorChange={(content) => {
-							onChange(content);
-						}}
-						apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
-						cloudChannel='5-stable'
-						onInit={() => setLoading(false)}
-						onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach(elem => elem.classList?.add('focused'))}
-						onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach(elem => elem.classList?.remove('focused'))}
-						init={{
-							block_unsupported_drop: false,
-							branding: false,
-							content_style: editorContentStyle,
-							height: height || 400,
-							icons: 'thin',
-							images_file_types: 'jpg,png,jpeg,gif,svg',
-							images_upload_handler: ((blobInfo: any, success: any, failure: any, progress: any) => {
-								const xhr = new XMLHttpRequest();
-								xhr.withCredentials = false;
-								xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
+						className={classNames('w-full flex-1', className, { invisible: loading })}
+					>
+						<div className={`${loading && 'invisible'}`}>
+							<Editor
+								onPaste={(e) => {
+									e.stopPropagation();
+									e.preventDefault();
+									const content = e.clipboardData?.getData('text/html') || '';
+									const caretPosition = ref.current?.editor?.selection.getRng();
+									const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
+									const parsed_content = converter.makeHtml(sanitisedContent);
+									ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
+								}}
+								textareaName={name}
+								value={converter.makeHtml(value || '')}
+								ref={ref}
+								disabled={isDisabled}
+								onEditorChange={(content) => {
+									const allowedTags = ['ul', 'li', 'img', 'table'];
+									const regex = new RegExp(`<(?!\\/?(${allowedTags.join('|')})\\b)[^>]+>|&nbsp;|\\n`, 'gi');
+									const cleanContent = content.replace(regex, '');
 
-								xhr.upload.onprogress = (e) => {
-									progress(Number((e.loaded / e.total * 100).toPrecision(2)));
-								};
+									const textContent = ref.current?.editor?.getContent({ format: 'text' }).trim();
 
-								xhr.onload = () => {
-									if (xhr.status === 403) {
-										failure({ message: 'HTTP Error: ' + xhr.status, remove: true });
+									if (!textContent && !cleanContent) {
+										onChange('');
 										return;
 									}
+									onChange(content);
+								}}
+								apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
+								cloudChannel='5-stable'
+								onInit={() => setLoading(false)}
+								onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.add('focused'))}
+								onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach((elem) => elem.classList?.remove('focused'))}
+								init={{
+									block_unsupported_drop: false,
+									branding: false,
+									content_style: editorContentStyle,
+									height: height || 400,
+									icons: 'thin',
+									images_file_types: 'jpg,png,jpeg,gif,svg',
+									images_upload_handler: ((blobInfo: any, success: any, failure: any, progress: any) => {
+										const xhr = new XMLHttpRequest();
+										xhr.withCredentials = false;
+										xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
 
-									if (xhr.status < 200 || xhr.status >= 300) {
-										failure('HTTP Error: ' + xhr.status);
-										return;
-									}
+										xhr.upload.onprogress = (e) => {
+											progress(Number(((e.loaded / e.total) * 100).toPrecision(2)));
+										};
 
-									const json = JSON.parse(xhr.responseText);
+										xhr.onload = () => {
+											if (xhr.status === 403) {
+												failure({ message: 'HTTP Error: ' + xhr.status, remove: true });
+												return;
+											}
 
-									if (!json || typeof json?.data?.display_url != 'string') {
-										failure('Invalid JSON: ' + xhr.responseText);
-										return;
-									}
+											if (xhr.status < 200 || xhr.status >= 300) {
+												failure('HTTP Error: ' + xhr.status);
+												return;
+											}
 
-									success(json?.data?.display_url);
-								};
-								xhr.onerror = () => {
-									failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-								};
-								const formData = new FormData();
-								formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
-								xhr.send(formData);
-							}) as any,
-							menubar: false,
-							paste_data_images: true,
-							placeholder: 'Please type here...',
-							plugins: [
-								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-								'searchreplace', 'visualblocks', 'fullscreen',
-								'insertdatetime', 'media', 'table', 'textpattern', 'emoticons'
-							],
-							setup: (editor) => {
-								editor.on('init', () => {
-									if (autofocus) editor.focus();
-								});
+											const json = JSON.parse(xhr.responseText);
 
-								editor.ui.registry.addAutocompleter('specialchars_cardmenuitems', {
-									ch: '@',
-									minChars: 1,
-									columns: 1,
-									fetch: (pattern: string) => {
-										// eslint-disable-next-line no-async-promise-executor
-										return new Promise(async (resolve) => {
-											const queries = [{
-												indexName: 'polkassembly_users',
-												query: pattern,
-												params: {
-													hitsPerPage: 6,
-													restrictSearchableAttributes: ['username']
-												}
-											}, {
-												indexName: 'polkassembly_addresses',
-												query: pattern,
-												params: {
-													hitsPerPage: 4,
-													restrictSearchableAttributes: ['address']
-												}
-											}];
+											if (!json || typeof json?.data?.display_url != 'string') {
+												failure('Invalid JSON: ' + xhr.responseText);
+												return;
+											}
 
-											const hits = await algolia_client.search(queries, { strategy: 'none' });
-
-											const usernameHits = hits.results[0]?.hits || [];
-											const addressHits = hits.results[1]?.hits || [];
-
-											const usernameResults = (usernameHits || [])?.map((user: any) => ({
-												type: 'cardmenuitem',
-												value: `<a target="_blank" href="/user/${user.username}">@${user.username}</a>`,
-												label: user.username,
-												items: [
-													{
-														type: 'cardcontainer',
-														direction: 'vertical',
-														items: [
-															{
-																type: 'cardtext',
-																text: user.username,
-																name: 'char_name'
-															}
-														]
-													}
-												]
-											}));
-
-											const addressResults = (addressHits || [])?.map((user: any) => ({
-												type: 'cardmenuitem',
-												value: `<a target="_blank" href="/address/${user.address}">@${user.address}</a>`,
-												label: user.address,
-												items: [
-													{
-														type: 'cardcontainer',
-														direction: 'vertical',
-														items: [
-															{
-																type: 'cardtext',
-																text: user.address,
-																name: 'char_name'
-															}
-														]
-													}
-												]
-											}));
-
-											resolve((usernameResults || []).concat(addressResults || []) as any);
+											success(json?.data?.display_url);
+										};
+										xhr.onerror = () => {
+											failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+										};
+										const formData = new FormData();
+										formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
+										xhr.send(formData);
+									}) as any,
+									menubar: false,
+									paste_data_images: true,
+									placeholder: 'Please type here...',
+									plugins: [
+										'advlist',
+										'autolink',
+										'lists',
+										'link',
+										'image',
+										'charmap',
+										'preview',
+										'searchreplace',
+										'visualblocks',
+										'fullscreen',
+										'insertdatetime',
+										'media',
+										'table',
+										'textpattern',
+										'emoticons'
+									],
+									setup: (editor) => {
+										editor.on('init', () => {
+											if (autofocus) editor.focus();
 										});
+
+										editor.ui.registry.addAutocompleter('specialchars_cardmenuitems', {
+											ch: '@',
+											minChars: 1,
+											columns: 1,
+											fetch: (pattern: string) => {
+												// eslint-disable-next-line no-async-promise-executor
+												return new Promise(async (resolve) => {
+													const queries = [
+														{
+															indexName: 'polkassembly_users',
+															query: pattern,
+															params: {
+																hitsPerPage: 6,
+																restrictSearchableAttributes: ['username']
+															}
+														},
+														{
+															indexName: 'polkassembly_addresses',
+															query: pattern,
+															params: {
+																hitsPerPage: 4,
+																restrictSearchableAttributes: ['address']
+															}
+														}
+													];
+
+													const hits = await algolia_client.search(queries, { strategy: 'none' });
+
+													const usernameHits = hits.results[0]?.hits || [];
+													const addressHits = hits.results[1]?.hits || [];
+
+													const usernameResults = (usernameHits || [])?.map((user: any) => ({
+														type: 'cardmenuitem',
+														value: `<a target="_blank" rel="noreferrer" href="/user/${user.username}">@${user.username}</a>`,
+														label: user.username,
+														items: [
+															{
+																type: 'cardcontainer',
+																direction: 'vertical',
+																items: [
+																	{
+																		type: 'cardtext',
+																		text: user.username,
+																		name: 'char_name'
+																	}
+																]
+															}
+														]
+													}));
+
+													const addressResults = (addressHits || [])?.map((user: any) => ({
+														type: 'cardmenuitem',
+														value: `<a target="_blank" href="/address/${user.address}">@${user.address}</a>`,
+														label: user.address,
+														items: [
+															{
+																type: 'cardcontainer',
+																direction: 'vertical',
+																items: [
+																	{
+																		type: 'cardtext',
+																		text: user.address,
+																		name: 'char_name'
+																	}
+																]
+															}
+														]
+													}));
+
+													resolve((usernameResults || []).concat(addressResults || []) as any);
+												});
+											},
+											highlightOn: ['char_name'],
+											onAction: (autocompleteApi, rng, value) => {
+												editor.selection.setRng(rng);
+												editor.insertContent(value);
+												autocompleteApi.hide();
+											}
+										});
+
+										editor.ui.registry.addIcon('custom-icon', gifSVGData);
+										editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 									},
-									highlightOn: ['char_name'],
-									onAction: (autocompleteApi, rng, value) => {
-										editor.selection.setRng(rng);
-										editor.insertContent(value);
-										autocompleteApi.hide();
-									}
-								});
-
-								editor.ui.registry.addIcon('custom-icon', gifSVGData);
-								editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
-							},
-							toolbar: 'undo redo preview | ' +
-								'bold italic backcolor | ' +
-								'bullist numlist table customButton | ' +
-								'removeformat link image emoticons',
-							xss_sanitization: true,
-							textpattern_patterns: [
-								{ start: '*', end: '*', format: 'italic' },
-								{ start: '**', end: '**', format: 'bold' },
-								{ start: '#', format: 'h1' },
-								{ start: '##', format: 'h2' },
-								{ start: '###', format: 'h3' },
-								{ start: '####', format: 'h4' },
-								{ start: '#####', format: 'h5' },
-								{ start: '######', format: 'h6' },
-								{ start: '* ', cmd: 'InsertUnorderedList' },
-								{ start: '- ', cmd: 'InsertUnorderedList' },
-								{ start: '1. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' } },
-								{ start: '1) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' } },
-								{ start: 'a. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
-								{ start: 'a) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
-								{ start: 'i. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
-								{ start: 'i) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
-								{ start: '---', replacement: '<hr/>' },
-								{ start: '--', replacement: '—' },
-								{ start: '-', replacement: '—' },
-								{ start: '(c)', replacement: '©' }
-							]
-						}}
-					/>
+									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image emoticons',
+									xss_sanitization: true,
+									textpattern_patterns: [
+										{ start: '*', end: '*', format: 'italic' },
+										{ start: '**', end: '**', format: 'bold' },
+										{ start: '#', format: 'h1' },
+										{ start: '##', format: 'h2' },
+										{ start: '###', format: 'h3' },
+										{ start: '####', format: 'h4' },
+										{ start: '#####', format: 'h5' },
+										{ start: '######', format: 'h6' },
+										{ start: '* ', cmd: 'InsertUnorderedList' },
+										{ start: '- ', cmd: 'InsertUnorderedList' },
+										{ start: '1. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' } },
+										{ start: '1) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' } },
+										{ start: 'a. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
+										{ start: 'a) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
+										{ start: 'i. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
+										{ start: 'i) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
+										{ start: '---', replacement: '<hr/>' },
+										{ start: '--', replacement: '—' },
+										{ start: '-', replacement: '—' },
+										{ start: '(c)', replacement: '©' }
+									]
+								}}
+							/>
+						</div>
+					</div>
 				</div>
-			</div>
-		</>
+			)}
 
+			<Button
+				className='ml-auto mt-1'
+				size='small'
+				type='text'
+				onClick={() => handleEditorChange()}
+			>
+				<small>
+					<SwapOutlined /> Switch To {!mdEditor ? 'Markdown Editor' : 'Fancy Pants Editor'}
+				</small>
+			</Button>
+		</>
 	);
 };
 

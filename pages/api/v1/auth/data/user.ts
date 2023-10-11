@@ -12,7 +12,7 @@ export async function getUser(userId: number): Promise<PublicUser | null> {
 	const firestore = firebaseAdmin.firestore();
 
 	const userDoc = await firestore.collection('users').doc(String(userId)).get();
-	if(!userDoc.exists) return null;
+	if (!userDoc.exists) return null;
 	const userData = userDoc.data() as User;
 
 	const addresses = await getAddressesFromUserId(Number(userId));
@@ -31,9 +31,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<PublicUser | Me
 	if (!userId || isNaN(Number(userId))) return res.status(400).json({ message: 'Invalid id.' });
 
 	const user = await getUser(Number(userId));
-	if(!user) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
+	if (!user) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
 
-	res.status(200).json(user);
+	return res.status(200).json(user);
 }
 
 export default withErrorHandling(handler);

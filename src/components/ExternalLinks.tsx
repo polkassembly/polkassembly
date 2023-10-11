@@ -10,8 +10,8 @@ import { ProposalType } from '~src/global/proposalType';
 import { isCereSupport, isExplorerSupport, isPolkaholicSupport, isSubscanSupport } from '~src/util/subscanCheck';
 
 interface IExternalLinksProps {
-	className?: string
-	proposalType: ProposalType
+	className?: string;
+	proposalType: ProposalType;
 	onchainId?: string | number | null | undefined;
 	blockNumber?: number;
 }
@@ -28,7 +28,7 @@ const getService = (network: string) => {
 		return EService.SUBSCAN;
 	} else if (isExplorerSupport(network)) {
 		return EService.EXPLORER;
-	}else if (isPolkaholicSupport(network)) {
+	} else if (isPolkaholicSupport(network)) {
 		return EService.POLKAHOLIC;
 	} else if (isCereSupport(network)) {
 		return EService.CERE;
@@ -63,7 +63,7 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 			if (proposalType === ProposalType.TECH_COMMITTEE_PROPOSALS) {
 				url = `${host}/tech/${onchainId}`;
 			}
-			if ([ProposalType.REFERENDUM_V2.toString() , ProposalType.OPEN_GOV.toString()].includes(proposalType)) {
+			if ([ProposalType.REFERENDUM_V2.toString(), ProposalType.OPEN_GOV.toString()].includes(proposalType)) {
 				url = `${host}/referenda_v2/${onchainId}`;
 			} else if (ProposalType.FELLOWSHIP_REFERENDUMS.toString() === proposalType) {
 				url = `${host}/fellowship/${onchainId}`;
@@ -115,10 +115,14 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 		}
 	};
 
-	const getUrlAndLabel = (service: EService): {
-		label: string;
-		url: string;
-	} | undefined => {
+	const getUrlAndLabel = (
+		service: EService
+	):
+		| {
+				label: string;
+				url: string;
+		  }
+		| undefined => {
 		return (serviceMap as any)[service](network);
 	};
 
@@ -131,7 +135,12 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 	return (
 		<div className={className}>
 			<div>
-				<a href={url} rel="noopener noreferrer" target='_blank' className='text-pink_primary'>{`-> ${label}`}</a>
+				<a
+					href={url}
+					rel='noopener noreferrer'
+					target='_blank'
+					className='text-pink_primary'
+				>{`-> ${label}`}</a>
 			</div>
 		</div>
 	);

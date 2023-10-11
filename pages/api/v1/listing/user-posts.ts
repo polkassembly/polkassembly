@@ -78,7 +78,7 @@ export interface IUserPostsListingResponse {
 			whitelisted_caller: IUserPost[];
 			fellowship_admin: IUserPost[];
 		};
-	}
+	};
 }
 
 export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
@@ -134,7 +134,7 @@ export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 interface IGetPostsByAddressParams {
 	network: string;
 	userId?: string | string[] | number;
-    addresses?: string | string[] | any[];
+	addresses?: string | string[] | any[];
 }
 
 type TGetUserPosts = (params: IGetPostsByAddressParams) => Promise<IApiResponse<IUserPostsListingResponse>>;
@@ -142,7 +142,7 @@ type TGetUserPosts = (params: IGetPostsByAddressParams) => Promise<IApiResponse<
 export const getUserPosts: TGetUserPosts = async (params) => {
 	try {
 		const { network, userId, addresses } = params;
-		if ((!userId && userId !== 0) && !addresses) {
+		if (!userId && userId !== 0 && !addresses) {
 			throw apiErrorWithStatusCode('Missing parameters in request body', 400);
 		}
 		const numUserId = Number(userId);
@@ -157,7 +157,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		if (userDoc.exists && userDoc.data()) {
 			username = userDoc?.data()?.username;
 		}
-		let proposer = ((addresses && addresses.length > 0)? addresses[0]: '');
+		let proposer = addresses && addresses.length > 0 ? addresses[0] : '';
 		if (!proposer) {
 			const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', numUserId).where('default', '==', true).limit(1).get();
 			if (addressDocs && addressDocs.size > 0) {
@@ -167,7 +167,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 				}
 			}
 		}
-		const discussionsQuerySnapshot = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('user_id', '==', numUserId).get();
+		const discussionsQuerySnapshot = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('isDeleted', '==', false).where('user_id', '==', numUserId).get();
 		const discussionsPromise = discussionsQuerySnapshot.docs.map(async (doc) => {
 			const data = doc.data();
 			if (doc && doc.exists && data) {
@@ -214,25 +214,27 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		});
 		const edges = subsquidRes?.data?.proposalsConnection?.edges;
 		if (edges && Array.isArray(edges)) {
-			const onChainPostsPromise = (edges)?.map(async (edge) => {
+			const onChainPostsPromise = edges?.map(async (edge) => {
 				if (edge && edge.node) {
 					const { type, hash, index, createdAt, description, proposalArguments, proposer, preimage, trackNumber } = edge.node;
 					const proposalType = getFirestoreProposalType(type);
-					const id = type === 'Tip'? hash: index;
+					const id = type === 'Tip' ? hash : index;
 					const newData: IUserPost = {
-						content: description || ((proposalArguments && proposalArguments.description)? proposalArguments.description: ''),
+						content: description || (proposalArguments && proposalArguments.description ? proposalArguments.description : ''),
 						created_at: createdAt || null,
 						id: id,
 						post_reactions: {
 							'👍': 0,
 							'👎': 0
 						},
-						proposer: proposer || ((preimage && preimage.proposer)? preimage.proposer: ''),
-						title: (preimage && preimage.method)? preimage.method: '',
+						proposer: proposer || (preimage && preimage.proposer ? preimage.proposer : ''),
+						title: preimage && preimage.method ? preimage.method : '',
 						track_number: trackNumber,
 						type: proposalType as ProposalType
 					};
-					const doc = await postsByTypeRef(network, proposalType as any).doc(String(id)).get();
+					const doc = await postsByTypeRef(network, proposalType as any)
+						.doc(String(id))
+						.get();
 					const data = doc?.data();
 					if (doc && doc.exists && data) {
 						if (data.created_at) {
@@ -280,52 +282,52 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 					} else if (ProposalType.REFERENDUM_V2 === type) {
 						const track_number = value.track_number;
 						if (track_number !== undefined && track_number !== null) {
-							switch(track_number) {
-							case 0:
-								userPosts.open_gov.root.push(value);
-								break;
-							case 1:
-								userPosts.open_gov.fellowship.whitelisted_caller.push(value);
-								break;
-							case 10:
-								userPosts.open_gov.staking_admin.push(value);
-								break;
-							case 11:
-								userPosts.open_gov.treasury.treasurer.push(value);
-								break;
-							case 12:
-								userPosts.open_gov.governance.lease_admin.push(value);
-								break;
-							case 13:
-								userPosts.open_gov.fellowship.fellowship_admin.push(value);
-								break;
-							case 14:
-								userPosts.open_gov.governance.general_admin.push(value);
-								break;
-							case 15:
-								userPosts.open_gov.auction_admin.push(value);
-								break;
-							case 20:
-								userPosts.open_gov.governance.referendum_canceller.push(value);
-								break;
-							case 21:
-								userPosts.open_gov.governance.referendum_killer.push(value);
-								break;
-							case 30:
-								userPosts.open_gov.treasury.small_tipper.push(value);
-								break;
-							case 31:
-								userPosts.open_gov.treasury.big_tipper.push(value);
-								break;
-							case 32:
-								userPosts.open_gov.treasury.small_spender.push(value);
-								break;
-							case 33:
-								userPosts.open_gov.treasury.medium_spender.push(value);
-								break;
-							case 34:
-								userPosts.open_gov.treasury.big_spender.push(value);
-								break;
+							switch (track_number) {
+								case 0:
+									userPosts.open_gov.root.push(value);
+									break;
+								case 1:
+									userPosts.open_gov.fellowship.whitelisted_caller.push(value);
+									break;
+								case 10:
+									userPosts.open_gov.staking_admin.push(value);
+									break;
+								case 11:
+									userPosts.open_gov.treasury.treasurer.push(value);
+									break;
+								case 12:
+									userPosts.open_gov.governance.lease_admin.push(value);
+									break;
+								case 13:
+									userPosts.open_gov.fellowship.fellowship_admin.push(value);
+									break;
+								case 14:
+									userPosts.open_gov.governance.general_admin.push(value);
+									break;
+								case 15:
+									userPosts.open_gov.auction_admin.push(value);
+									break;
+								case 20:
+									userPosts.open_gov.governance.referendum_canceller.push(value);
+									break;
+								case 21:
+									userPosts.open_gov.governance.referendum_killer.push(value);
+									break;
+								case 30:
+									userPosts.open_gov.treasury.small_tipper.push(value);
+									break;
+								case 31:
+									userPosts.open_gov.treasury.big_tipper.push(value);
+									break;
+								case 32:
+									userPosts.open_gov.treasury.small_spender.push(value);
+									break;
+								case 33:
+									userPosts.open_gov.treasury.medium_spender.push(value);
+									break;
+								case 34:
+									userPosts.open_gov.treasury.big_spender.push(value);
+									break;
 							}
 						}
 					} else if (ProposalType.FELLOWSHIP_REFERENDUMS === type) {
@@ -351,7 +353,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 // expects proposerAddress
 const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { userId, addresses } = req.body;
 
@@ -361,10 +363,10 @@ const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (
 		userId
 	});
 
-	if(error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
-	}else {
-		res.status(status).json(data);
+	if (error || !data) {
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+	} else {
+		return res.status(status).json(data);
 	}
 };
 

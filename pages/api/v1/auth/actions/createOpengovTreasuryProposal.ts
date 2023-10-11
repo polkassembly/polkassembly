@@ -24,7 +24,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	if (isNaN(Number(userId)) || isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid parameters in request body' });
 
-	if (discussionId && isNaN(discussionId)) return res.status(400).json({ message: messages.INVALID_DISCUSSION_ID });
+	if (discussionId < 0 || isNaN(discussionId)) return res.status(400).json({ message: messages.INVALID_DISCUSSION_ID });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
@@ -36,10 +36,23 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	const postDoc = await postDocRef.get();
 	if (postDoc.exists) {
-		return res.status(403).json({ message: `Post with id ${postId} already exists.` });
+		return res.status(400).json({ message: `Post with id ${postId} already exists.` });
 	}
 
 	const current_datetime = new Date();
+	const discussionDoc = postsByTypeRef(network, ProposalType.DISCUSSIONS).doc(String(discussionId));
+
+	if (!discussionDoc) {
+		return res.status(400).json({ message: `No discussion post found with id ${discussionId}.` });
+	}
+
+	discussionDoc.update({
+		last_edited_at: current_datetime,
+		post_link: {
+			id: Number(postId),
+			type: ProposalType.REFERENDUM_V2
+		}
+	});
 
 	const newPost: Post = {
 		content,

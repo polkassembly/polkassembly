@@ -89,7 +89,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			{/* Actions Bar */}
 			<div
 				id='actions-bar'
-				className={`mt-2 flex ${canEdit && 'flex-col'} mb-8 flex-wrap`}
+				className={'mb-8 mt-2 flex flex-wrap'}
 			>
 				<div className='flex items-center'>
 					<PostReactionBar
@@ -112,7 +112,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						</Button>
 					)}
 				</div>
-				<div className='flex items-center'>
+				<div className='flex flex-wrap items-center'>
 					{id && !isEditing && (
 						<ReportButton
 							className={'flex items-center border-none p-0 text-pink_primary shadow-none'}

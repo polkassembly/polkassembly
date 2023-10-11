@@ -10,7 +10,7 @@ import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -31,6 +31,7 @@ import WalletButtons from './WalletButtons';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import TFALoginForm from './TFALoginForm';
 import BN from 'bn.js';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -53,7 +54,7 @@ const initAuthResponse: IAuthResponse = {
 };
 
 const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, isModal, setLoginOpen, setSignupOpen, withPolkasafe, setChosenWallet, onWalletUpdate }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();

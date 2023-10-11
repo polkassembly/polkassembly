@@ -9,7 +9,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import GovernanceCard from '../GovernanceCard';
 import getReferendumVotes from '~src/util/getReferendumVotes';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IListingProps {
 	className?: string;
@@ -22,8 +22,7 @@ interface IListingProps {
 const Listing: FC<IListingProps> = (props) => {
 	const { className, proposalType, isTip, tipStartedIndex } = props;
 
-	const { network } = useNetworkContext();
-
+	const { network } = useNetworkSelector();
 	const [posts, setPosts] = useState(props.posts || []);
 
 	useEffect(() => {

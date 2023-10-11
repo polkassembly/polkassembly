@@ -9,7 +9,7 @@ import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -29,6 +29,7 @@ import Image from 'next/image';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import WalletButtons from '../Login/WalletButtons';
 import BN from 'bn.js';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -44,7 +45,7 @@ interface Props {
 }
 
 const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, isModal, setSignupOpen, setLoginOpen, withPolkasafe, setChosenWallet, onWalletUpdate }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [error, setErr] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);

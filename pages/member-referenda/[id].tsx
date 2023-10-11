@@ -9,7 +9,6 @@ import Post from 'src/components/Post/Post';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
@@ -21,6 +20,8 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import { useApiContext } from '~src/context';
 import { useState, useEffect } from 'react';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 const proposalType = ProposalType.FELLOWSHIP_REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -48,14 +49,14 @@ interface IReferendaPostProps {
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { post, error, status } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { id } = router.query;
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

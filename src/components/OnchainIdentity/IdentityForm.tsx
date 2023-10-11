@@ -8,7 +8,6 @@ import { Alert, Button, Divider, Form, FormInstance, Input, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { NetworkContext } from '~src/context/NetworkContext';
 import styled from 'styled-components';
 import { ApiContext } from '~src/context/ApiContext';
 import BN from 'bn.js';
@@ -21,6 +20,7 @@ import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
 import VerifiedTick from '~assets/icons/verified-tick.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -92,7 +92,7 @@ const IdentityForm = ({
 	setIdentityHash,
 	setAddressChangeModalOpen
 }: Props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);

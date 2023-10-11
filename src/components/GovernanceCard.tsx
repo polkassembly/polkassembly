@@ -21,7 +21,7 @@ import { chainProperties } from 'src/global/networkConstants';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { useRouter } from 'next/router';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
@@ -31,6 +31,7 @@ import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import CloseIcon from '~assets/icons/close.svg';
 import { ProposalType } from '~src/global/proposalType';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -111,7 +112,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	const router = useRouter();
 	const currentUser = useContext(UserDetailsContext);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
 	let titleString = title || method || tipReason || noTitle;

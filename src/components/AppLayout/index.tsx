@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useApiContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
 import {
 	AuctionAdminIcon,
@@ -63,6 +63,7 @@ import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
+import { useNetworkSelector } from '~src/redux/selectors';
 import ProposalLive from './ProposalLive';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
@@ -220,7 +221,7 @@ interface Props {
 }
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { setUserDetailsContextState, username, picture, loginAddress } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);

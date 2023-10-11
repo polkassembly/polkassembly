@@ -16,7 +16,7 @@ import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
-import { NetworkContextProvider } from '~src/context/NetworkContext';
+// import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 import { initGA, logPageView } from '../analytics';
 
@@ -42,9 +42,13 @@ const workSans = Work_Sans({
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
 import ErrorBoundary from '~src/ui-components/ErrorBoundary';
+import { PersistGate } from 'redux-persist/integration/react';
+import { wrapper } from '~src/redux/store';
+import { useStore } from 'react-redux';
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
+	const store: any = useStore();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
 
@@ -62,6 +66,7 @@ export default function App({ Component, pageProps }: AppProps) {
 			// @ts-ignore
 			window.GA_INITIALIZED = true;
 		}
+		setNetwork(networkStr);
 		logPageView();
 	}, []);
 
@@ -78,12 +83,12 @@ export default function App({ Component, pageProps }: AppProps) {
 	);
 
 	return (
-		<ConfigProvider theme={antdTheme}>
-			<ModalProvider>
-				<ErrorBoundary>
-					<UserDetailsProvider>
-						<ApiContextProvider network={network}>
-							<NetworkContextProvider initialNetwork={network}>
+		<PersistGate persistor={store.__persistor}>
+			<ConfigProvider theme={antdTheme}>
+				<ModalProvider>
+					<ErrorBoundary>
+						<UserDetailsProvider>
+							<ApiContextProvider network={network}>
 								<>
 									{showSplashScreen && <SplashLoader />}
 									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
@@ -95,11 +100,13 @@ export default function App({ Component, pageProps }: AppProps) {
 										/>
 									</main>
 								</>
-							</NetworkContextProvider>
-						</ApiContextProvider>
-					</UserDetailsProvider>
-				</ErrorBoundary>
-			</ModalProvider>
-		</ConfigProvider>
+							</ApiContextProvider>
+						</UserDetailsProvider>
+					</ErrorBoundary>
+				</ModalProvider>
+			</ConfigProvider>
+		</PersistGate>
 	);
 }
+
+export default wrapper.withRedux(App);

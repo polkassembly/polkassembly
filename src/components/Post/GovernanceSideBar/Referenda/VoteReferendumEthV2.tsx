@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -34,6 +34,7 @@ import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -57,7 +58,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const {
 		setPostData,
 		postData: { postType: proposalType }

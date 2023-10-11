@@ -5,16 +5,17 @@
 import { GetServerSideProps } from 'next';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import TrackListing from '~src/components/Listing/FellowshipReferendum/TrackListing';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import { setNetwork } from '~src/redux/network';
 import { IApiResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -106,8 +107,12 @@ interface IFellowshipReferendumProps {
 
 const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 	const { posts, error, network } = props;
-	const { setNetwork } = useNetworkContext();
-	setNetwork(network);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(setNetwork(network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 	const fellowshipReferendumPostOrigins: string[] = [];

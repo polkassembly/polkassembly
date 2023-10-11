@@ -13,7 +13,7 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -43,6 +43,7 @@ import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import VotingForm, { EFormType } from './VotingFrom';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -114,7 +115,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);
 	const [fetchingFellowship, setFetchingFellowship] = useState(true);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);

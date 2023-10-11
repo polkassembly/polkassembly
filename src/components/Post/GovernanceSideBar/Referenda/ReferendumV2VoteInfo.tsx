@@ -10,7 +10,7 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import VoteProgress from 'src/ui-components/VoteProgress';
 import formatBnBalance from 'src/util/formatBnBalance';
 
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, VoteAmountIcon } from '~src/ui-components/CustomIcons';
@@ -18,6 +18,7 @@ import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
 import { poppins } from 'pages/_app';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -27,7 +28,7 @@ interface IReferendumV2VoteInfoProps {
 const ZERO = new BN(0);
 
 const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const {
 		postData: { status, postIndex }
 	} = usePostDataContext();

@@ -14,7 +14,7 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -33,6 +33,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import executeTx from '~src/util/executeTx';
 import VoteInitiatedModal from '../Referenda/Modal/VoteSuccessModal';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -104,7 +105,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);

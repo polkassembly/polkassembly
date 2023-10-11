@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import { getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect } from 'react';
 import Listing from '~src/components/Listing';
-import { useNetworkContext } from '~src/context';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -16,6 +15,8 @@ import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -43,11 +44,12 @@ interface IAnnouncementProps {
 
 const Announcements = (props: IAnnouncementProps) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
+
 	const router = useRouter();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

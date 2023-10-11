@@ -3,16 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { useMemo } from 'react';
-
-import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 
 import useCurrentBlock from './useCurrentBlock';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const TWO_WEEKS = 2 * 7 * 24 * 60 * 60 * 1000;
 
 export default function usePollEndBlock() {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const blocktime: number = chainProperties?.[network]?.blockTime;
 	const currenBlockNumber = useCurrentBlock()?.toNumber();

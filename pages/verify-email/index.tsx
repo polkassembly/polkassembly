@@ -7,13 +7,15 @@ import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useDispatch } from 'react-redux';
+import { useUserDetailsContext } from 'src/context';
 import queueNotification from 'src/ui-components/QueueNotification';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ChangeResponseType } from '~src/auth/types';
 import VerificationSuccessScreen from '~src/components/OnchainIdentity/VerificationSuccessScreen';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import { handleTokenChange } from '~src/services/auth.service';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
@@ -32,11 +34,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 const VerifyEmail = ({ network, token, identityVerification }: { network: string; token: string; identityVerification: boolean }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(false);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

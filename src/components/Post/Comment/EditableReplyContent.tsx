@@ -15,7 +15,7 @@ import ReplyIcon from '~assets/icons/reply.svg';
 import { Caution } from '~src/ui-components/CustomIcons';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
@@ -27,6 +27,7 @@ import { v4 } from 'uuid';
 import { checkIsProposer } from '../utils/checkIsProposer';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { poppins } from 'pages/_app';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	userId: number;
@@ -46,7 +47,7 @@ const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.l
 const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { comments, setComments } = useCommentDataContext();
 
 	const [form] = Form.useForm();

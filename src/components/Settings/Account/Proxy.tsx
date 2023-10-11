@@ -7,7 +7,7 @@ import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider, Form, Input, Modal } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { NotificationStatus } from 'src/types';
@@ -18,6 +18,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChangeResponseType } from '~src/auth/types';
+import { useNetworkSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -29,7 +30,7 @@ interface Props {
 const Proxy: FC<Props> = ({ dismissModal, open }) => {
 	const [form] = Form.useForm();
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const currentUser = useUserDetailsContext();
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);

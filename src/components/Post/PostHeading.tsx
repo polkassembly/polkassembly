@@ -11,13 +11,14 @@ import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
 
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -63,7 +64,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 

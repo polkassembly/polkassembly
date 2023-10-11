@@ -3,11 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
 import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import MembersContainer from 'src/components/Listing/Members/MembersContainer';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
@@ -20,10 +21,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Members = (props: { network: string }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

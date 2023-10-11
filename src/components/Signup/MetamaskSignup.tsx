@@ -8,7 +8,7 @@ import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -22,6 +22,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import { WalletIcon } from '../Login/MetamaskLogin';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -43,7 +44,7 @@ const MetamaskSignup: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setS
 	const router = useRouter();
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const [loading, setLoading] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsContext();
 
 	const handleClick = () => {

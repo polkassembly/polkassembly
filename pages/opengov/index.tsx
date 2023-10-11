@@ -16,7 +16,7 @@ import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -29,6 +29,8 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -113,13 +115,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
 	const { id: userId } = useUserDetailsContext();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		if (!api || !apiReady) return;
 
 		let unsubscribe: () => void;

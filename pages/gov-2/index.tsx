@@ -10,6 +10,7 @@ import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
@@ -17,11 +18,11 @@ import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
-import { useNetworkContext } from '~src/context';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -104,10 +105,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 

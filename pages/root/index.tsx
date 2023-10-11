@@ -6,15 +6,15 @@ import { GetServerSideProps } from 'next';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import React, { FC, useEffect } from 'react';
-
+import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import TrackListing from '~src/components/Listing/Tracks/TrackListing';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import { setNetwork } from '~src/redux/network';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -104,10 +104,10 @@ interface IRootProps {
 
 const Root: FC<IRootProps> = (props) => {
 	const { posts, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	if (error) return <ErrorState errorMessage={error} />;

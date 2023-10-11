@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -32,6 +32,7 @@ import LikeGray from '~assets/icons/like-gray.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -60,7 +61,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setPostData,
 		postData: { postType: proposalType }
 	} = usePostDataContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });

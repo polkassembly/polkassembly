@@ -4,7 +4,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { ApiContext } from '~src/context/ApiContext';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,6 +24,7 @@ import { ILoading, Wallet } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -67,7 +67,7 @@ interface Props {
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
 }
 const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { id: userId } = useContext(UserDetailsContext);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);

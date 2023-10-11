@@ -10,13 +10,13 @@ import ImportIcon from '~assets/icons/import-icon.svg';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
 import NetworkTags from './NetworkTags';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
 import AddNetworkModal from './AddNetworkModal';
 import ImportPrimaryNetworkSettingModal from './ImportPrinaryBetwork';
 import SetPrimaryNetworkSettingModal from './PrimaryNetworkConfirmModal';
 import { ISelectedNetwork } from '../types';
 import Image from 'next/image';
 import { Collapse } from '../common-ui/Collapse';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const { Panel } = Collapse;
 type Props = {
@@ -30,7 +30,7 @@ type Props = {
 
 // eslint-disable-next-line no-empty-pattern
 export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNetworkPreferences, onCopyPrimaryNetworkNotification, selectedNetwork, setSelectedNetwork }: Props) {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [openModal, setOpenModal] = useState(false);
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const handleModalConfirm = (networks: ISelectedNetwork) => {

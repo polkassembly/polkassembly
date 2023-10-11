@@ -20,7 +20,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 import { CreatePostResponseType } from '~src/auth/types';
 
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -28,6 +28,7 @@ import AddressComponent from '../../ui-components/Address';
 import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
 import executeTx from '~src/util/executeTx';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -42,7 +43,7 @@ enum AvailableAccountsInput {
 const TreasuryProposalFormButton = ({
 	className // setTipModalOpen,
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const [extensionNotAvailable, setExtensionNotAvailable] = useState(false);

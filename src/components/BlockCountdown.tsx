@@ -9,8 +9,8 @@ import useCurrentBlock from 'src/hooks/useCurrentBlock';
 import blockToTime from 'src/util/blockToTime';
 import styled from 'styled-components';
 
-import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -23,7 +23,7 @@ const SpanContent = styled.span`
 `;
 
 const BlockCountdown = ({ className, endBlock }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const ZERO = new BN(0);
 	const currentBlock = useCurrentBlock() || ZERO;

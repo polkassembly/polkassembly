@@ -16,9 +16,10 @@ import Web3 from 'web3';
 
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import addEthereumChain from '~src/util/addEthereumChain';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export interface SecondProposalProps {
 	className?: string;
@@ -37,7 +38,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [address, setAddress] = useState<string>('');
 	const [modalOpen, setModalOpen] = useState(false);

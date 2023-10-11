@@ -20,7 +20,7 @@ import styled from 'styled-components';
 
 import chainLink from '~assets/chain-link.png';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -44,6 +44,8 @@ import {
 } from '~src/util/getCalendarEvents';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -83,7 +85,7 @@ const initCategories = ['Staking', 'Council', 'Schedule', 'Treasury', 'Democracy
 
 const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCalendarEvents = undefined, network }) => {
 	const { api, apiReady } = useApiContext();
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [width, setWidth] = useState(0);
 	const [calLeftPanelWidth, setCalLeftPanelWidth] = useState<any>(0);
 	const [error, setError] = useState('');
@@ -101,7 +103,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	const [eventApprovalStatus, setEventApprovalStatus] = useState<string>(queryApprovalStatus);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		if (window) {
 			const width = window.innerWidth > 0 ? window.innerWidth : screen.width;
 			setWidth(width);

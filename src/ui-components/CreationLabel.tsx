@@ -23,7 +23,7 @@ import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Styled = styled.div`
 	padding: 0;
@@ -103,7 +103,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	console.log(voteData, vote);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const getSentimentLabel = (sentiment: ESentiment) => {
 		return <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};

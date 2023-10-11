@@ -6,7 +6,7 @@ import BN from 'bn.js';
 import dayjs from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
-import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import CloseIcon from 'public/assets/icons/close.svg';
@@ -16,6 +16,7 @@ import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import ConfirmationAttemptsRow from '~src/ui-components/ConfirmationAttemptsRow';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -52,7 +53,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const {
 		postData: { track_name, track_number, created_at, status, timeline, requested }
 	} = usePostDataContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const trackData = getTrackData(network, track_name, track_number);
 	const proposalCreatedAt = dayjs(created_at);

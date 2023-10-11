@@ -12,7 +12,7 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import VoteIcon from '~assets/icons/vote.svg';
 import Link from 'next/link';
 import { getDefaultPeriod } from '../Post/GovernanceSideBar/Referenda/ReferendaV2Messages';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useUserDetailsContext } from '~src/context';
 import dayjs from 'dayjs';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesResponse } from 'pages/api/v1/votes';
@@ -25,6 +25,7 @@ import { ETrackDelegationStatus, IPeriod } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { getPeriodData } from '~src/util/getPeriodData';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	proposal: IPostListing;
@@ -34,7 +35,7 @@ interface Props {
 }
 
 const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const timeline = [{ created_at: proposal.created_at, hash: proposal.hash }];
 	const [decision, setDecision] = useState<IPeriod>(getDefaultPeriod());
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');

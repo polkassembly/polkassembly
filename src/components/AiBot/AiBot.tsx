@@ -10,7 +10,6 @@ import { useRouter } from 'next/router';
 // import Script from 'next/script';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { useNetworkContext } from '~src/context';
 // import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
 import CautionIcon from '~assets/icons/caution-icon.svg';
 import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
@@ -19,6 +18,7 @@ import CloseWhite from '~assets/icons/close-cross-thinner.svg';
 import FabButton from '~assets/icons/fab-icon.svg';
 import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -47,7 +47,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const router = useRouter();
 	const { id } = useContext(UserDetailsContext);
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	// useEffect(() => {
 	// if (!isAIChatBotOpen) return;

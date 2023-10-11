@@ -6,14 +6,15 @@ import { Button, Form, Input, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import AuthForm from 'src/ui-components/AuthForm';
 import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -34,10 +35,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const RequestResetPassword: FC<Props> = (props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

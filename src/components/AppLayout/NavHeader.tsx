@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import styled from 'styled-components';
 import { chainProperties } from '~src/global/networkConstants';
@@ -34,6 +34,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -53,7 +54,7 @@ interface Props {
 }
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsContext();
 	const { username, setUserDetailsContextState, isLoggedOut } = useUserDetailsContext();
 	const router = useRouter();

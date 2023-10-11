@@ -10,7 +10,7 @@ import PostTab from '../User/PostTab';
 import { EGovType } from '~src/global/proposalType';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export const getLabel = (str: string) => {
 	const newStr = str.split('_').join(' ');
@@ -71,7 +71,7 @@ interface IGovTabProps {
 
 const GovTab: FC<IGovTabProps> = (props) => {
 	const { posts, className, govType, userAddresses } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [selectedPostsType, setSelectedPostsType] = useState('discussions');
 	const [selectedPost, setSelectedPost] = useState('posts');
 	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(!votesHistoryUnavailableNetworks.includes(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);

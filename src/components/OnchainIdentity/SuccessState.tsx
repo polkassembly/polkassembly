@@ -1,16 +1,16 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
 import Address from '~src/ui-components/Address';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import SuccessIcon from '~assets/icons/identity-success.svg';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -25,7 +25,7 @@ interface Props {
 }
 
 const SuccessState = ({ className, open, close, changeStep, openPreModal, name, socials, address }: Props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { displayName } = name;
 	const { email, web, twitter, riot } = socials;
 

@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { useUserDetailsContext } from '~src/context';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { ESetIdentitySteps, ITxFee, IVerifiedFields } from '.';
 import { Alert, Button } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
@@ -15,6 +14,7 @@ import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -36,7 +36,7 @@ const getLearnMoreRedirection = (network: string) => {
 
 const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, loading, isIdentityAlreadySet, alreadyVerifiedfields }: Props) => {
 	const { registerarFee, minDeposite } = txFee;
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsContext();

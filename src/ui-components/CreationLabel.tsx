@@ -118,10 +118,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const AbstainDetailsComponent = ({ network, vote, power }: any) => {
 		return (
 			<>
-				<div className={'abstain-amount-value ml-[62px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+				<div className={'abstain-amount-value ml-[64px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 					{parseBalance((vote?.balance?.abstain || 0).toString(), 2, true, network)}
 				</div>
-				<div className={'abstain-conviction-value ml-[44px] mr-[55px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
+				<div className={'abstain-conviction-value ml-[44px] mr-[50px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
 				<div className='abstain-power-value w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
 			</>
 		);
@@ -130,10 +130,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const AyeNyeDetailsComponent = ({ network, vote, power }: any) => {
 		return (
 			<>
-				<div className={'amount-value ml-[92px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+				<div className={'amount-value ml-[95px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 					{parseBalance((vote?.balance?.value || 0).toString(), 2, true, network)}
 				</div>
-				<div className={'conviction-value ml-10 mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod}x`}</div>
+				<div className={'conviction-value ml-10 mr-[55px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod}x`}</div>
 				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
 			</>
 		);
@@ -154,8 +154,22 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
 		const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
 		const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
+		const balanceUnit = balance.slice(-3);
 		const balanceMatch = balance ? balance.match(/[\d.]+/) : null;
-		const power = (conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0)).toFixed(2);
+		if (balance.slice(-5, -4) == 'K' && balanceMatch) {
+			balanceMatch[0] = (parseFloat(balanceMatch[0]) * 1000).toString();
+		} else if (balance.slice(-5, -4) == 'M' && balanceMatch) {
+			balanceMatch[0] = (parseFloat(balanceMatch[0]) * 1000000).toString();
+		}
+		let power = (conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0)).toFixed(2);
+		if (balance.slice(-5, -4) == 'K' && balanceMatch) {
+			power = (parseFloat(power) / 1000).toString();
+			power = `${power}K ${balanceUnit}`;
+		} else if (balance.slice(-5, -4) == 'M' && balanceMatch) {
+			power = (parseFloat(power) / 1000000).toString();
+			power = `${power}M ${balanceUnit}`;
+		}
+
 		return (
 			<div
 				key={idx}
@@ -308,19 +322,19 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 							{votesArr[0].decision == 'yes' ? (
-								<p className='voted-icon mb-[-1px]'>
+								<p className='aye-voted-icon mb-[-1px]'>
 									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted Aye</span>
 								</p>
 							) : votesArr[0].decision == 'no' ? (
-								<div className='voted-icon '>
+								<div className='nye-voted-icon'>
 									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted Nay</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
-								<div className='voted-icon align-center mb-[-1px] flex justify-center'>
+								<div className='split-voted-icon align-center mb-[-1px] flex justify-center'>
 									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Voted Split</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
-								<div className='voted-icon align-center mb-[1px] flex justify-center'>
+								<div className='abstain-voted-icon align-center mb-[1px] flex justify-center'>
 									<AbstainGray className='mb-[-1px] mr-1' /> <span className='mt-[2px] font-medium capitalize text-bodyBlue'>Voted Abstain</span>
 								</div>
 							) : null}
@@ -387,13 +401,13 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						}}
 					>
 						{votesArr[0].decision == 'yes' ? (
-							<LikeFilled className='sentiment-vote-icon mb-[-1px] hidden text-[green]' />
+							<LikeFilled className='aye-voted-icon sentiment-vote-icon mb-[-1px] hidden text-[green]' />
 						) : votesArr[0].decision == 'no' ? (
-							<DislikeFilled className='sentiment-vote-icon hidden text-[red]' />
+							<DislikeFilled className='nye-voted-icon sentiment-vote-icon hidden text-[red]' />
 						) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
-							<SplitYellow className='sentiment-vote-icon align-center mb-[-1px] mr-1 hidden justify-center' />
+							<SplitYellow className='split-voted-icon sentiment-vote-icon align-center mb-[-1px] mr-1 hidden justify-center' />
 						) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
-							<AbstainGray className='sentiment-vote-icon align-center mr-1 hidden justify-center' />
+							<AbstainGray className='abstain-voted-icon sentiment-vote-icon align-center mr-1 hidden justify-center' />
 						) : null}
 					</div>
 				) : null}

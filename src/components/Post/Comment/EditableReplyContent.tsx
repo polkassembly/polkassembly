@@ -556,7 +556,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							className='bg-blue-grey rounded-b-md px-2 py-2 text-sm md:px-4'
 							md={content}
 						/>
-						<div className='flex flex-wrap items-center'>
+						<div className='flex flex-wrap items-center gap-3'>
 							{isEditable && (
 								<Button
 									className={'flex items-center border-none p-0 text-pink_primary shadow-none'}

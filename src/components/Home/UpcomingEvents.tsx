@@ -398,7 +398,7 @@ const UpcomingEvents = ({ className }: Props) => {
 			<List
 				className='h-[100%] overflow-y-auto'
 				itemLayout='horizontal'
-				dataSource={calendarEvents.sort((a, b) => (a?.end_time?.getTime() || a?.start_time?.getTime()) - (b?.end_time?.getTime() || b?.start_time?.getTime()))}
+				dataSource={calendarEvents.sort((a, b) => (a?.end_time?.getTime() || a?.start_time?.getTime()) - (b?.end_time?.getTime() || b?.start_time?.getTime())).reverse()}
 				renderItem={(item) => {
 					return (
 						<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>

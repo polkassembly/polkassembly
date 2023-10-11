@@ -260,8 +260,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</>
 					)}
 					{created_at && (
-						<span className='-ml-[6px] -mt-[1px] flex items-center md:mt-0 md:pl-0'>
-							<ClockCircleOutlined className='mx-1' />
+						<span className={`mr-1 flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
+							<ClockCircleOutlined className='mr-1' />
 							{relativeCreatedAt}
 						</span>
 					)}

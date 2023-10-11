@@ -69,7 +69,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				status: NotificationStatus.ERROR
 			});
 			setFormDisabled(false);
-			setError(reportError);
+			setError('Please add a reason to report this content');
 		}
 
 		if (reportData) {
@@ -153,25 +153,30 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	};
 	const handleDelete = async () => {
 		if (!allowed_roles?.includes('moderator') || isNaN(Number(postId))) return;
-		setLoading(true);
 		await form.validateFields();
 		const validationErrors = form.getFieldError('reason');
 		if (validationErrors.length > 0) return;
 		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
-		if (allowed_roles?.includes('moderator')) {
+		setLoading(true);
+		if (allowed_roles?.includes('moderator') && reason) {
 			await deleteContentByMod(postId as string | number, proposalType, reason, commentId, replyId, onSuccess);
 			setLoading(false);
+			setShowModal(false);
 		}
 	};
 	return (
 		<>
 			<button
-				className={`${type === 'comment' ? 'm-0 ml-2 p-0' : ''} flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent pr-1 shadow-none`}
+				className={`${type === 'comment' ? 'm-0 p-0' : 'm-0 px-1'} flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent shadow-none`}
 				onClick={() => setShowModal(true)}
 			>
-				{isDeleteModal ? <DeleteOutlined className={`${className} text-pink_primary`} /> : <FlagOutlined className={`${className} text-pink_primary`} />}
-				{isDeleteModal ? <span className={`${className} break-keep text-pink_primary`}>Delete</span> : <span className={`${className} break-keep text-pink_primary`}>Report</span>}
+				{isDeleteModal ? <DeleteOutlined className={`${className} text-pink_primary`} /> : <FlagOutlined className={`${className} p-0 text-pink_primary`} />}
+				{isDeleteModal ? (
+					<span className={`${className} break-keep text-pink_primary`}>Delete</span>
+				) : (
+					<span className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary`}>Report</span>
+				)}
 			</button>
 			<Modal
 				title={isDeleteModal ? 'Delete' : 'Report'}
@@ -196,7 +201,6 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						disabled={loading}
 						onClick={() => {
 							isDeleteModal ? handleDelete() : handleReport();
-							setShowModal(false);
 						}}
 					>
 						{isDeleteModal ? 'Delete' : 'Report'}
@@ -209,7 +213,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					onFinish={isDeleteModal ? handleDelete : handleReport}
 					layout='vertical'
 					disabled={formDisabled}
-					validateMessages={{ required: "Please add the '${name}'" }}
+					validateMessages={{ required: `Please add reason for ${isDeleteModal ? 'deleting' : 'reporting'}` }}
 					initialValues={{
 						comments: '',
 						reason: reasons[0]
@@ -241,6 +245,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					<Form.Item
 						name='comments'
 						label='Comments (300 char max)'
+						rules={[{ required: true }]}
 					>
 						<Input.TextArea
 							name='comments'

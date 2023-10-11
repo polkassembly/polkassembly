@@ -105,11 +105,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							{/* <div>heloo</div> */}
 						</Dropdown>
 					</div>
-					<div
-						className={`mt-2 px-[2px] text-sm font-normal text-bodyBlue ${!item?.expanded && item?.content.length > 100 && 'truncate-content'} tracking-[0.01em] ${
-							poppins.className
-						} ${poppins.variable} pr-2 leading-6`}
-					>
+					<div className={`mt-2 px-[2px] text-sm font-normal tracking-[0.01em] text-bodyBlue ${poppins.className} ${poppins.variable} pr-2 leading-6`}>
 						{/* {historyData[index + 1] ? (
 							<div>
 								{historyData?.map((text, idx) => (
@@ -126,8 +122,8 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							</div>
 						) : ( */}
 						<Markdown
-							className={`text-sm ${!item?.expanded && item?.content.length > 100 && 'truncate-content'}`}
-							md={item.content}
+							className='text-sm'
+							md={!item?.expanded && item?.content.length > 100 ? `${item?.content.slice(0, 100)}...` : item?.content}
 						/>
 						{/* )} */}
 					</div>
@@ -186,13 +182,6 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 export default styled(CommentHistoryModal)`
 	.closeIcon .ant-modal-close-x {
 		margin-top: 4px;
-	}
-	.truncate-content {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		width: 100%;
-		overflow: hidden;
 	}
 	.post-history-timeline .ant-timeline-item {
 		padding-bottom: 30px !important;

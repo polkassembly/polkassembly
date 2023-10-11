@@ -565,11 +565,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								>
 									{loading ? (
 										<span className='flex items-center text-xs'>
-											<LoadingOutlined className='mr-2' /> Editing
+											<LoadingOutlined className='mr-1' /> Editing
 										</span>
 									) : (
 										<span className='flex items-center text-xs'>
-											<FormOutlined className='mr-2' /> Edit
+											<FormOutlined className='mr-1' /> Edit
 										</span>
 									)}
 								</Button>

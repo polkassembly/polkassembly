@@ -153,24 +153,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const renderVoteContent = (vote: any, network: any, idx: number) => {
 		const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
 		const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
-		const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
-		const balanceUnit = balance.slice(-3);
-		const balanceMatch = balance ? balance.match(/[\d.]+/) : null;
-		if (balance.slice(-5, -4) == 'K' && balanceMatch) {
-			balanceMatch[0] = (parseFloat(balanceMatch[0]) * 1000).toString();
-		} else if (balance.slice(-5, -4) == 'M' && balanceMatch) {
-			balanceMatch[0] = (parseFloat(balanceMatch[0]) * 1000000).toString();
-		}
-		let power = (conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0)).toFixed(2);
-		if (balance.slice(-5, -4) == 'K' && balanceMatch) {
-			power = (parseFloat(power) / 1000).toString();
-			power = `${power}K ${balanceUnit}`;
-		} else if (balance.slice(-5, -4) == 'M' && balanceMatch) {
-			power = (parseFloat(power) / 1000000).toString();
-			power = `${power}M ${balanceUnit}`;
-		} else {
-			power = `${power} ${balanceUnit}`;
-		}
+		const powerValue = conviction * (vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0);
+		const power = parseBalance(powerValue.toString(), 2, true, network);
 
 		return (
 			<div

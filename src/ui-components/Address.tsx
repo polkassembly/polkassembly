@@ -251,12 +251,7 @@ const Address = (props: Props) => {
 						theme={'polkadot'}
 					/>
 				))}
-			<Link
-				href={handleRedirectLink()}
-				target='_blank'
-				onClick={(e) => handleClick(e)}
-				className='flex items-center text-bodyBlue'
-			>
+			<div className='flex items-center text-bodyBlue'>
 				{displayInline ? (
 					<div className='inline-address flex items-center'>
 						{kiltName ||
@@ -270,9 +265,12 @@ const Address = (props: Props) => {
 							))}
 
 						<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
-							<span
+							<Link
+								href={handleRedirectLink()}
+								target='_blank'
+								onClick={(e) => handleClick(e)}
 								title={mainDisplay || encodedAddr}
-								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'}`}
+								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'} hover:text-bodyBlue`}
 							>
 								{addressPrefix && (
 									<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -280,7 +278,7 @@ const Address = (props: Props) => {
 									</span>
 								)}
 								{sub && isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
-							</span>
+							</Link>
 						</div>
 					</div>
 				) : extensionName || mainDisplay ? (
@@ -298,12 +296,17 @@ const Address = (props: Props) => {
 											/>
 										))}
 									<Space className={'header'}>
-										<span className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
+										<Link
+											href={handleRedirectLink()}
+											target='_blank'
+											onClick={(e) => handleClick(e)}
+											className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue`}
+										>
 											{addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 											{!extensionName && sub && isSubVisible && (
 												<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
 											)}
-										</span>
+										</Link>
 									</Space>
 								</div>
 							</div>
@@ -317,7 +320,7 @@ const Address = (props: Props) => {
 						{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 					</div>
 				)}
-			</Link>
+			</div>
 			{addressOtherTextType ? (
 				<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue'}>
 					<span

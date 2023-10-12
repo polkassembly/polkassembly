@@ -325,9 +325,9 @@ const Address = (props: Props) => {
 				<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue'}>
 					<span
 						className={classNames('h-[6px] w-[6px] rounded-full', {
-							'bg-aye_green ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(addressOtherTextType),
+							'bg-aye_green ': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.COUNCIL_CONNECTED].includes(addressOtherTextType),
 							'bg-blue ': addressOtherTextType === EAddressOtherTextType.COUNCIL,
-							'bg-nay_red': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.UNLINKED_ADDRESS].includes(addressOtherTextType)
+							'bg-nay_red': [EAddressOtherTextType.UNLINKED_ADDRESS].includes(addressOtherTextType)
 						})}
 					></span>
 					<span className='text-xs text-lightBlue'>{addressOtherTextType}</span>

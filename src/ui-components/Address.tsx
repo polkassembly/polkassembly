@@ -254,15 +254,18 @@ const Address = (props: Props) => {
 			<div className='flex items-center text-bodyBlue'>
 				{displayInline ? (
 					<div className='inline-address flex items-center'>
-						{kiltName ||
-							(identity && mainDisplay && (
-								<IdentityBadge
-									address={address}
-									identity={identity}
-									flags={flags}
-									className='text-navBlue'
-								/>
-							))}
+						{!!kiltName ||
+							!!(
+								identity &&
+								mainDisplay && (
+									<IdentityBadge
+										address={address}
+										identity={identity}
+										flags={flags}
+										className='text-navBlue'
+									/>
+								)
+							)}
 
 						<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
 							<Link
@@ -272,22 +275,22 @@ const Address = (props: Props) => {
 								title={mainDisplay || encodedAddr}
 								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'} hover:text-bodyBlue`}
 							>
-								{addressPrefix && (
+								{!!addressPrefix && (
 									<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
 										{usernameMaxLength ? (addressPrefix.length > usernameMaxLength ? `${addressPrefix.slice(0, usernameMaxLength)}...` : addressPrefix) : addressPrefix}
 									</span>
 								)}
-								{sub && isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
+								{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
 							</Link>
 						</div>
 					</div>
-				) : extensionName || mainDisplay ? (
+				) : !!extensionName || !!mainDisplay ? (
 					<div className='ml-0.5 font-semibold text-bodyBlue'>
 						{!disableHeader && (
 							<div>
 								<div className='flex items-center'>
 									{kiltName ||
-										(identity && mainDisplay && (
+										(!!identity && !!mainDisplay && (
 											<IdentityBadge
 												address={address}
 												identity={identity}
@@ -302,7 +305,7 @@ const Address = (props: Props) => {
 											onClick={(e) => handleClick(e)}
 											className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue`}
 										>
-											{addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
+											{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 											{!extensionName && sub && isSubVisible && (
 												<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
 											)}

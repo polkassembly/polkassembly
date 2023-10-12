@@ -1678,3 +1678,19 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
   }
 }
 `;
+
+export const GET_PROPOSAL_BY_STATUS_AND_TYPE = `query ProposalByStatusAndType($type_eq:ProposalType) {
+  proposals(where: {type_eq: $type_eq, status_in: [Started,Deciding,Submitted, DecisionDepositPlaced, Active ]}, limit: 50) {
+    id
+    proposer
+    status
+    statusHistory {
+      id
+      status
+    }
+    type
+    createdAt
+    updatedAt
+    trackNumber
+  }
+}`;

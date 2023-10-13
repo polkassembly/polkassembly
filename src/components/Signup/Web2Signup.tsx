@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
 import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -22,7 +21,8 @@ import { trackEvent } from 'analytics';
 import { TokenType } from '~src/auth/types';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
@@ -55,8 +55,9 @@ interface Props {
 const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { password, username } = validation;
 	const router = useRouter();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState(false);
+	const dispatch = useDispatch();
 
 	const [isPassword, setIsPassword] = useState(false);
 	const [error, setError] = useState('');
@@ -97,7 +98,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 
 				if (data) {
 					if (data.token) {
-						handleTokenChange(data.token, currentUser);
+						handleTokenChange(data.token, currentUser, dispatch);
 						if (isModal) {
 							setLoading(false);
 							setSignupOpen && setSignupOpen(false);

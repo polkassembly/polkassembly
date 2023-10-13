@@ -17,7 +17,6 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useUserDetailsContext } from '~src/context';
 import CloseIcon from '~assets/icons/close.svg';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -36,7 +35,7 @@ import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
 import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import LockIcon from '~assets/icons/lock.svg';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -54,7 +53,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress } = useUserDetailsContext();
+	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [target, setTarget] = useState<string>('');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);

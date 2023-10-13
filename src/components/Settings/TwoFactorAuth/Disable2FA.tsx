@@ -12,8 +12,9 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import { poppins } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
-import { useUserDetailsContext } from '~src/context';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 const Title = (
 	<>
@@ -26,7 +27,8 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 	const [error, setError] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 
 	const handleSubmit = async () => {
 		// don't submit if loading or if user is already 2FA enabled
@@ -42,7 +44,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 				return;
 			}
 
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 
 			queueNotification({
 				header: 'Success',

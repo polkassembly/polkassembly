@@ -7,8 +7,7 @@ import { Divider, Modal, Progress, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
 import OnchainCreationLabel from 'src/ui-components/OnchainCreationLabel';
@@ -31,7 +30,7 @@ import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import CloseIcon from '~assets/icons/close.svg';
 import { ProposalType } from '~src/global/proposalType';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -111,7 +110,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	} = props;
 
 	const router = useRouter();
-	const currentUser = useContext(UserDetailsContext);
+	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 

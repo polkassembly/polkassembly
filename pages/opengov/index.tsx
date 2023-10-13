@@ -16,7 +16,7 @@ import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -31,6 +31,7 @@ import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -117,7 +118,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
-	const { id: userId } = useUserDetailsContext();
+	const { id: userId } = useUserDetailsSelector();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
 
 	useEffect(() => {

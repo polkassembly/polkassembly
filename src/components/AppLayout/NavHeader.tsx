@@ -12,7 +12,6 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import styled from 'styled-components';
 import { chainProperties } from '~src/global/networkConstants';
@@ -26,15 +25,15 @@ import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
-import { logout } from '~src/services/auth.service';
 import { EGovType } from '~src/global/proposalType';
 import UserProfileDropdown from '../../ui-components/UserProfileDropdown';
-import { UserDetailsContextType } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { logout, setUserDetailsState } from '~src/redux/userDetails';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -55,8 +54,8 @@ interface Props {
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified }: Props) => {
 	const { network } = useNetworkSelector();
-	const currentUser = useUserDetailsContext();
-	const { username, setUserDetailsContextState, isLoggedOut } = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const { username, id } = currentUser;
 	const router = useRouter();
 	const { web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
@@ -65,9 +64,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const dispatch = useDispatch();
 
 	const handleLogout = async (username: string) => {
-		logout(setUserDetailsContextState);
+		dispatch(logout());
 		router.replace(router.asPath);
 		if (!router.query?.username) return;
 		if (router.query?.username.includes(username)) {
@@ -75,12 +75,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	};
 	const setGovTypeToContext = (govType: EGovType) => {
-		setUserDetailsContextState((prev: UserDetailsContextType) => {
-			return {
-				...prev,
+		dispatch(
+			setUserDetailsState({
+				...currentUser,
 				govType
-			};
-		});
+			})
+		);
 	};
 
 	useEffect(() => {
@@ -267,7 +267,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
 						{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
-						{isLoggedOut() ? (
+						{!id ? (
 							<div className='flex items-center lg:gap-x-2'>
 								<Button
 									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'

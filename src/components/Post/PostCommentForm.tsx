@@ -11,7 +11,7 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import { ChangeResponseType } from '~src/auth/types';
-import { useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useCommentDataContext, usePostDataContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
@@ -26,6 +26,7 @@ import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 import { ESentiment } from '~src/types';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -51,7 +52,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
-	const { id, username, picture } = useUserDetailsContext();
+	const { id, username, picture } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
 	const {
 		postData: { postIndex, postType, track_number }

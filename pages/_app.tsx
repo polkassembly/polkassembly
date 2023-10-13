@@ -11,7 +11,6 @@ import NextNProgress from 'nextjs-progressbar';
 import { useEffect, useState } from 'react';
 import AppLayout from 'src/components/AppLayout';
 import CMDK from 'src/components/CMDK';
-import { UserDetailsProvider } from 'src/context/UserDetailsContext';
 import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
@@ -87,21 +86,19 @@ function App({ Component, pageProps }: AppProps) {
 			<ConfigProvider theme={antdTheme}>
 				<ModalProvider>
 					<ErrorBoundary>
-						<UserDetailsProvider>
-							<ApiContextProvider network={network}>
-								<>
-									{showSplashScreen && <SplashLoader />}
-									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-										<NextNProgress color='#E5007A' />
-										<CMDK />
-										<AppLayout
-											Component={Component}
-											pageProps={pageProps}
-										/>
-									</main>
-								</>
-							</ApiContextProvider>
-						</UserDetailsProvider>
+						<ApiContextProvider network={network}>
+							<>
+								{showSplashScreen && <SplashLoader />}
+								<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+									<NextNProgress color='#E5007A' />
+									<CMDK />
+									<AppLayout
+										Component={Component}
+										pageProps={pageProps}
+									/>
+								</main>
+							</>
+						</ApiContextProvider>
 					</ErrorBoundary>
 				</ModalProvider>
 			</ConfigProvider>

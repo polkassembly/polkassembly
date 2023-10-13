@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { Divider } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
@@ -18,7 +18,9 @@ import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import BN from 'bn.js';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setUserDetailsState } from '~src/redux/userDetails';
 
 interface Props {
 	className?: string;
@@ -38,7 +40,9 @@ const ProfileBalances = ({ className }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const { loginWallet, setUserDetailsContextState, delegationDashboardAddress, loginAddress } = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const { loginWallet, delegationDashboardAddress, loginAddress } = currentUser;
+	const dispatch = useDispatch();
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
 
 	useEffect(() => {
@@ -63,9 +67,7 @@ const ProfileBalances = ({ className }: Props) => {
 		if (loginWallet && defaultAddress) {
 			localStorage.setItem('delegationWallet', loginWallet);
 			localStorage.setItem('delegationDashboardAddress', defaultAddress || delegationDashboardAddress);
-			setUserDetailsContextState((prev) => {
-				return { ...prev, delegationDashboardAddress: defaultAddress || delegationDashboardAddress };
-			});
+			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: defaultAddress || delegationDashboardAddress }));
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps

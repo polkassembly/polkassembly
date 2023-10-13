@@ -12,7 +12,6 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import VoteIcon from '~assets/icons/vote.svg';
 import Link from 'next/link';
 import { getDefaultPeriod } from '../Post/GovernanceSideBar/Referenda/ReferendaV2Messages';
-import { useUserDetailsContext } from '~src/context';
 import dayjs from 'dayjs';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesResponse } from 'pages/api/v1/votes';
@@ -25,7 +24,7 @@ import { ETrackDelegationStatus, IPeriod } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { getPeriodData } from '~src/util/getPeriodData';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	proposal: IPostListing;
@@ -44,7 +43,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	const [isAye, setIsAye] = useState<boolean>(false);
 	const [isNay, setIsNay] = useState<boolean>(false);
 	const [isAbstain, setIsAbstain] = useState<boolean>(false);
-	const { delegationDashboardAddress: address } = useUserDetailsContext();
+	const { delegationDashboardAddress: address } = useUserDetailsSelector();
 
 	let titleString = proposal?.title || proposal?.method || noTitle;
 

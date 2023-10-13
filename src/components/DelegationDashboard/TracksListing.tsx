@@ -7,7 +7,7 @@ import { Button, Radio, Table } from 'antd';
 import styled from 'styled-components';
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { GetColumns } from './Coloumn';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 
@@ -17,7 +17,7 @@ import { ETrackDelegationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import { IDelegation } from '~src/types';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -48,7 +48,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const [data, setData] = useState<ITrackDataType[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress } = useUserDetailsContext();
+	const { delegationDashboardAddress } = useUserDetailsSelector();
 
 	const filterTrackDataByTrackNumber = (trackNo: number) => {
 		if (network) {

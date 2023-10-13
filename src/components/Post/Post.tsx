@@ -6,8 +6,7 @@ import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
@@ -31,7 +30,7 @@ import styled from 'styled-components';
 import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -92,7 +91,7 @@ function formatDuration(duration: any) {
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
 
-	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
+	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);

@@ -8,7 +8,6 @@ import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -22,7 +21,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import { WalletIcon } from '../Login/MetamaskLogin';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -45,7 +45,8 @@ const MetamaskSignup: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setS
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const { network } = useNetworkSelector();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -156,10 +157,11 @@ const MetamaskSignup: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setS
 					}
 
 					if (confirmData.token) {
-						currentUser.loginWallet = Wallet.METAMASK;
-						currentUser.loginAddress = address;
-						currentUser.delegationDashboardAddress = address;
-						handleTokenChange(confirmData.token, currentUser);
+						const user: any = {};
+						user.loginWallet = Wallet.METAMASK;
+						user.loginAddress = address;
+						user.delegationDashboardAddress = address;
+						handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 						localStorage.setItem('loginWallet', Wallet.METAMASK);
 						if (isModal) {
 							setSignupOpen && setSignupOpen(false);

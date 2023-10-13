@@ -18,10 +18,9 @@ import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import { BN_HUNDRED } from '@polkadot/util';
 import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { useApiContext } from '~src/context';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -81,7 +80,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
 	const [postId, setPostId] = useState<number>(0);
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 

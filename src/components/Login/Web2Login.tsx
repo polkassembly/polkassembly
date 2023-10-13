@@ -8,7 +8,6 @@ import dynamic from 'next/dynamic';
 // import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -22,7 +21,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
 import { trackEvent } from 'analytics';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (
@@ -61,8 +61,9 @@ interface Props {
 }
 const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { username } = validation;
+	const dispatch = useDispatch();
 	const router = useRouter();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
@@ -87,7 +88,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			}
 
 			if (data?.token) {
-				handleTokenChange(data.token, currentUser);
+				handleTokenChange(data.token, currentUser, dispatch);
 				if (isModal) {
 					setLoading(false);
 					setLoginOpen && setLoginOpen(false);
@@ -127,7 +128,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 		if (data?.token) {
 			setError('');
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			if (isModal) {
 				setLoading(false);
 				setAuthResponse(initAuthResponse);

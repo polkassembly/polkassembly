@@ -9,11 +9,11 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Web2Login from 'src/components/Login/Web2Login';
-import { useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
@@ -56,7 +56,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);

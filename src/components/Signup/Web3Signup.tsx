@@ -9,7 +9,6 @@ import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -29,7 +28,8 @@ import Image from 'next/image';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import WalletButtons from '../Login/WalletButtons';
 import BN from 'bn.js';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -59,7 +59,8 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 	const [loading, setLoading] = useState(false);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -213,11 +214,12 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 			}
 
 			if (confirmData.token) {
-				currentUser.loginWallet = chosenWallet;
-				currentUser.loginAddress = multiWallet || address;
-				currentUser.multisigAssociatedAddress = address;
-				currentUser.delegationDashboardAddress = multiWallet || address;
-				handleTokenChange(confirmData.token, currentUser);
+				const user: any = {};
+				user.loginWallet = chosenWallet;
+				user.loginAddress = multiWallet || address;
+				user.multisigAssociatedAddress = address;
+				user.delegationDashboardAddress = multiWallet || address;
+				handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 				localStorage.setItem('loginWallet', chosenWallet);
 				localStorage.setItem('multisigAssociatedAddress', address);
 				localStorage.setItem('delegationWallet', chosenWallet);

@@ -7,13 +7,13 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useUserDetailsContext } from 'src/context';
 import queueNotification from 'src/ui-components/QueueNotification';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { UndoEmailChangeResponseType } from '~src/auth/types';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { handleTokenChange } from '~src/services/auth.service';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
@@ -40,7 +40,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 
 	const router = useRouter();
 	const [error, setError] = useState('');
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 
 	const handleUndoEmailChange = useCallback(async () => {
 		const { data, error } = await nextApiClientFetch<UndoEmailChangeResponseType>('api/v1/auth/actions/requestResetPassword');
@@ -55,7 +55,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 		}
 
 		if (data) {
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			queueNotification({
 				header: 'Success!',
 				message: data.message,

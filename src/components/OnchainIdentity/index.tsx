@@ -14,7 +14,6 @@ import OnChainIdentityIcon from '~assets/icons/onchain-identity.svg';
 import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
@@ -24,7 +23,7 @@ import { ILoading, Wallet } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -68,7 +67,7 @@ interface Props {
 }
 const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
 	const { network } = useNetworkSelector();
-	const { id: userId } = useContext(UserDetailsContext);
+	const { id: userId } = useUserDetailsSelector();
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });

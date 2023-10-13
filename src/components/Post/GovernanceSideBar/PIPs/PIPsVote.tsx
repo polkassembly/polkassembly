@@ -14,7 +14,7 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -33,7 +33,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import executeTx from '~src/util/executeTx';
 import VoteInitiatedModal from '../Referenda/Modal/VoteSuccessModal';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -99,8 +99,8 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 };
 
 const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, hash }: Props) => {
-	const userDetails = useUserDetailsContext();
-	const { isLoggedOut, loginAddress } = userDetails;
+	const userDetails = useUserDetailsSelector();
+	const { id, loginAddress } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
@@ -212,7 +212,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		}
 	};
 
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToVote />;
 	}
 

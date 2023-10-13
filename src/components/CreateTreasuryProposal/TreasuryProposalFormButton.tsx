@@ -20,7 +20,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 import { CreatePostResponseType } from '~src/auth/types';
 
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -28,7 +28,7 @@ import AddressComponent from '../../ui-components/Address';
 import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
 import executeTx from '~src/util/executeTx';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -71,7 +71,7 @@ const TreasuryProposalFormButton = ({
 		minBond: ''
 	});
 
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];

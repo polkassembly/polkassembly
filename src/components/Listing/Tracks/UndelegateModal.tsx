@@ -15,7 +15,6 @@ import styled from 'styled-components';
 
 import CloseIcon from '~assets/icons/close.svg';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
-import { useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
 import { formatBalance } from '@polkadot/util';
@@ -29,7 +28,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -50,7 +49,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const trackName = handleTrack(String(router.query.track));
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress: defaultAddress } = useUserDetailsContext();
+	const { delegationDashboardAddress: defaultAddress } = useUserDetailsSelector();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [target, setTarget] = useState<string>(defaultTarget);
 	const lock = Number(2 ** (conviction - 1));

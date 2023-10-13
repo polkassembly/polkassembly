@@ -10,7 +10,6 @@ import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -31,7 +30,8 @@ import WalletButtons from './WalletButtons';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import TFALoginForm from './TFALoginForm';
 import BN from 'bn.js';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -57,7 +57,8 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 	const { network } = useNetworkSelector();
 
 	const router = useRouter();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -257,17 +258,18 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						}
 
 						if (confirmData.token) {
-							currentUser.loginWallet = chosenWallet;
-							currentUser.loginAddress = multisigAddress || address;
-							currentUser.multisigAssociatedAddress = address;
-							currentUser.delegationDashboardAddress = multisigAddress || address;
+							const user: any = {};
+							user.loginWallet = chosenWallet;
+							user.loginAddress = multisigAddress || address;
+							user.multisigAssociatedAddress = address;
+							user.delegationDashboardAddress = multisigAddress || address;
 							localStorage.setItem('delegationWallet', chosenWallet);
 							localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 							localStorage.setItem('multisigDelegationAssociatedAddress', address);
 							localStorage.setItem('loginWallet', chosenWallet);
 							localStorage.setItem('loginAddress', address);
 							localStorage.setItem('multisigAssociatedAddress', address);
-							handleTokenChange(confirmData.token, currentUser);
+							handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 							if (isModal) {
 								setLoginOpen && setLoginOpen(false);
 								setLoading(false);
@@ -287,10 +289,11 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 			}
 
 			if (addressLoginData?.token) {
-				currentUser.loginWallet = chosenWallet;
-				currentUser.loginAddress = multisigAddress || address;
-				currentUser.delegationDashboardAddress = multisigAddress || address;
-				currentUser.multisigAssociatedAddress = address;
+				const user: any = {};
+				user.loginWallet = chosenWallet;
+				user.loginAddress = multisigAddress || address;
+				user.delegationDashboardAddress = multisigAddress || address;
+				user.multisigAssociatedAddress = address;
 				localStorage.setItem('delegationWallet', chosenWallet);
 				localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 				localStorage.setItem('multisigDelegationAssociatedAddress', address);
@@ -298,7 +301,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				localStorage.setItem('loginAddress', address);
 
 				localStorage.setItem('multisigAssociatedAddress', address);
-				handleTokenChange(addressLoginData.token, currentUser);
+				handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
 				if (isModal) {
 					setLoginOpen?.(false);
 					setLoading(false);
@@ -342,7 +345,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 		if (data?.token) {
 			setError('');
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			if (isModal) {
 				setLoading(false);
 				setAuthResponse(initAuthResponse);

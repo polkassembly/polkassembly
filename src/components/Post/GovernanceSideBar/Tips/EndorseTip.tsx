@@ -12,12 +12,12 @@ import BalanceInput from 'src/ui-components/BalanceInput';
 import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import LoginToEndorse from '../LoginToVoteOrEndorse';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import executeTx from '~src/util/executeTx';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -37,7 +37,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 	const [forceEndorse, setForceEndorse] = useState(false);
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
-	const { isLoggedOut } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 
 	useEffect(() => {
@@ -134,7 +134,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 	);
 
 	const noAccount = accounts.length === 0;
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToEndorse to='Endorse' />;
 	}
 	const endorse = noAccount ? (

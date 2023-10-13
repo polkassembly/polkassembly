@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Dispatch, SetStateAction } from 'react';
-import { INetworkPreferences, UserDetailsContextType, Wallet } from '~src/types';
+import { INetworkPreferences, Wallet } from '~src/types';
 
 export interface IUserDetailsStore {
 	id?: number | null;
@@ -14,11 +13,8 @@ export interface IUserDetailsStore {
 	addresses?: string[] | null;
 	allowed_roles?: string[] | null;
 	defaultAddress?: string | null;
-	setUserDetailsContextState: Dispatch<SetStateAction<UserDetailsContextType>>;
 	web3signup?: boolean | null;
 	walletConnectProvider: WalletConnectProvider | null;
-	setWalletConnectProvider: React.Dispatch<React.SetStateAction<WalletConnectProvider | null>>;
-	isLoggedOut: () => boolean;
 	loginWallet: Wallet | null;
 	delegationDashboardAddress: string;
 	loginAddress: string;

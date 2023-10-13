@@ -5,8 +5,6 @@ import { Button, Form, Input, Modal, Select } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
-import { logout } from 'src/services/auth.service';
 import { NotificationStatus } from 'src/types';
 import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -18,6 +16,8 @@ import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Collapse } from './Notifications/common-ui/Collapse';
 import DeleteIcon from '~assets/icons/delete-icon-settings.svg';
+import { useDispatch } from 'react-redux';
+import { logout } from '~src/redux/userDetails';
 const { Panel } = Collapse;
 
 const Delete: FC<{ className?: string }> = ({ className }) => {
@@ -26,11 +26,11 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	const [isOther, setIsOther] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-	const { setUserDetailsContextState } = useUserDetailsContext();
 	const router = useRouter();
+	const dispatch = useDispatch();
 
 	const handleLogout = async () => {
-		logout(setUserDetailsContextState);
+		dispatch(logout());
 		router.replace('/');
 	};
 

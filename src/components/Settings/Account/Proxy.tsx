@@ -6,8 +6,8 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider, Form, Input, Modal } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
-import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { NotificationStatus } from 'src/types';
@@ -18,7 +18,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChangeResponseType } from '~src/auth/types';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -32,13 +32,14 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 	const { network } = useNetworkSelector();
 
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [proxyAddress, setProxyAddress] = useState<string>('');
 	const [extensionNotFound, setExtensionNotFound] = useState(false);
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const dispatch = useDispatch();
 
 	const onProxyAddressChange = (address: string) => {
 		setProxyAddress(address);
@@ -126,7 +127,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		}
 
 		if (data?.token) {
-			handleTokenChange(data?.token, currentUser);
+			handleTokenChange(data?.token, currentUser, dispatch);
 		}
 
 		setLoading(false);

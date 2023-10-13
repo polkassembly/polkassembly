@@ -6,11 +6,10 @@ import { Button } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -21,6 +20,7 @@ import { useRouter } from 'next/router';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -73,7 +73,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;

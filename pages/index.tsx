@@ -15,7 +15,7 @@ import AboutNetwork from '~src/components/Home/AboutNetwork';
 import LatestActivity from '~src/components/Home/LatestActivity';
 import News from '~src/components/Home/News';
 import UpcomingEvents from '~src/components/Home/UpcomingEvents';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -41,6 +41,7 @@ import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -186,7 +187,7 @@ const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOver
 
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const { api, apiReady } = useApiContext();
-	const { id: userId } = useUserDetailsContext();
+	const { id: userId } = useUserDetailsSelector();
 	const router = useRouter();
 	const dispatch = useDispatch();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);

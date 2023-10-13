@@ -8,7 +8,6 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Notifications from '~src/components/Settings/Notifications';
 import UserAccount from '~src/components/Settings/UserAccount';
-import { useUserDetailsContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import Tracker from '~src/components/Tracker/Tracker';
 import { useRouter } from 'next/router';
@@ -18,7 +17,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
 import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 
@@ -40,7 +39,7 @@ const Settings: FC<Props> = (props) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const tab = router.query?.tab as string;
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 	const [searchQuery, setSearchQuery] = useState<string>('');
 
 	const handleTabClick = (key: string) => {

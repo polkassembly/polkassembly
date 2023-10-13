@@ -13,9 +13,8 @@ import styled from 'styled-components';
 
 import { LoadingStatusType, NotificationStatus } from '../../../../types';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { useUserDetailsContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 export interface SecondProposalProps {
 	accounts: InjectedAccount[];
@@ -33,7 +32,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	const { network } = useNetworkSelector();
 	const [modalOpen, setModalOpen] = useState(false);
 	const [seconds, setSeconds] = useState<number>(0);
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 
 	const onSuccess = () => {
 		setLoadingStatus({ isLoading: false, message: '' });

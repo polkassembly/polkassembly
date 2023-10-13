@@ -8,10 +8,9 @@ import { Badge, Button, Col, Divider, Dropdown, Row, Space } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Calendar, DateHeaderProps, dayjsLocalizer, View } from 'react-big-calendar';
 import SidebarRight from 'src/components/SidebarRight';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { approvalStatus } from 'src/global/statuses';
 import { NetworkEvent, NotificationStatus } from 'src/types';
 import { Role } from 'src/types';
@@ -46,6 +45,7 @@ import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -318,7 +318,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 	const utcDate = new Date(new Date().toISOString().slice(0, -1));
 
-	const { id, allowed_roles } = useContext(UserDetailsContext);
+	const { id, allowed_roles } = useUserDetailsSelector();
 	let accessible = false;
 	if (allowed_roles && allowed_roles?.length > 0 && allowed_roles.includes(ALLOWED_ROLE)) {
 		accessible = true;

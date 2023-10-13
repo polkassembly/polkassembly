@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useUserDetailsContext } from '~src/context';
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -22,7 +21,9 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	className?: string;
@@ -81,7 +82,8 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const [status, setStatus] = useState<ETrackDelegationStatus[]>([]);
 	const router = useRouter();
 	const [showTable, setShowTable] = useState<boolean>(false);
-	const { delegationDashboardAddress: address, loginWallet, isLoggedOut, setUserDetailsContextState } = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const { delegationDashboardAddress: address, loginWallet, id } = currentUser;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [rowData, setRowData] = useState<ITrackRowData[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -90,6 +92,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
+	const dispatch = useDispatch();
 	useEffect(() => {
 		setIsSelectedAddressMultisig(false);
 		if (address) {
@@ -102,9 +105,13 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 
 		const wallet = localStorage.getItem('delegationWallet') || '';
 		const address = localStorage.getItem('delegationDashboardAddress') || '';
-		setUserDetailsContextState((prev) => {
-			return { ...prev, delegationDashboardAddress: address, loginWallet: wallet as Wallet };
-		});
+		dispatch(
+			setUserDetailsState({
+				...currentUser,
+				delegationDashboardAddress: address,
+				loginWallet: wallet as Wallet
+			})
+		);
 
 		if (!network) return;
 
@@ -117,8 +124,8 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	}, []);
 
 	useEffect(() => {
-		isLoggedOut() && setOpenLoginModal(true);
-	}, [isLoggedOut]);
+		!id && setOpenLoginModal(true);
+	}, [id]);
 
 	useEffect(() => {
 		if (!address) {

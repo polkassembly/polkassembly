@@ -8,11 +8,11 @@ import ReactMde, { Suggestion } from 'react-mde';
 import styled from 'styled-components';
 import Markdown from './Markdown';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
-import { useUserDetailsContext } from '~src/context';
 import { useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import debounce from 'lodash/debounce';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const StyledTextArea = styled.div`
 	textarea {
@@ -173,7 +173,7 @@ interface Props {
 }
 
 function MarkdownEditor(props: Props): React.ReactElement {
-	const { id, username } = useUserDetailsContext();
+	const { id, username } = useUserDetailsSelector();
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
 
 	const loadSuggestions = async (text: string) => {

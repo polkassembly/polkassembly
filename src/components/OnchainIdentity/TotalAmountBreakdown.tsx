@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
-import { useUserDetailsContext } from '~src/context';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -14,7 +13,7 @@ import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -39,7 +38,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
-	const { id: userId } = useUserDetailsContext();
+	const { id: userId } = useUserDetailsSelector();
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 
 	const handleLocalStorageSave = (field: any) => {

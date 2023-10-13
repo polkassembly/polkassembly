@@ -7,7 +7,8 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Checkbox, Divider, Form, Input, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
-import { useApiContext, useUserDetailsContext } from 'src/context';
+import { useDispatch } from 'react-redux';
+import { useApiContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { chainProperties } from 'src/global/networkConstants';
 import { handleTokenChange } from 'src/services/auth.service';
@@ -21,7 +22,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -34,7 +35,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [linkStarted, setLinkStarted] = useState(false);
 	const [signatories, setSignatories] = useState<{ [key: number | string]: string }>({ 0: '' });
 	const [signatoryAccounts, setSignatoryAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -227,7 +229,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		}
 
 		if (confirmData?.token) {
-			handleTokenChange(confirmData?.token, currentUser);
+			handleTokenChange(confirmData?.token, currentUser, dispatch);
 			queueNotification({
 				header: 'Success!',
 				message: confirmData?.message || '',

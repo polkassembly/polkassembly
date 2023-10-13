@@ -13,7 +13,6 @@ import { checkAddress } from '@polkadot/util-crypto';
 import { Button, Form, Input, Modal, Tooltip } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { APPNAME } from 'src/global/appName';
 import { addressPrefix } from 'src/global/networkConstants';
 import { chainProperties } from 'src/global/networkConstants';
@@ -29,7 +28,7 @@ import EthIdenticon from '~src/ui-components/EthIdenticon';
 
 import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -99,7 +98,7 @@ function checkValue(
 const SetOnChainIdentityButton = ({
 	className // setTipModalOpen,
 }: Props) => {
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 
 	const [modalOpen, setModalOpen] = useState<boolean>(false);

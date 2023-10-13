@@ -12,11 +12,12 @@ import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
 
 import { MessageType } from '~src/auth/types';
-import { useUserDetailsContext } from '~src/context';
 import { handleTokenChange } from '~src/services/auth.service';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import Header from '../Header';
+import { useDispatch } from 'react-redux';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IPasswordProps {
 	name: string;
@@ -91,8 +92,8 @@ const initialPasswordsState = { new: '', old: '' };
 const Profile = () => {
 	const [form] = Form.useForm();
 	const { password, email: emailValidation } = validation;
-
-	const currentUser = useUserDetailsContext();
+	const dispatch = useDispatch();
+	const currentUser = useUserDetailsSelector();
 	const { email: currentEmail } = currentUser;
 
 	const [isChange, setIsChange] = useState(false);
@@ -101,7 +102,7 @@ const Profile = () => {
 	const [passwords, setPasswords] = useState(initialPasswordsState);
 	const [err, setErr] = useState('');
 	const [loading, setLoading] = useState(false);
-	const { web3signup } = useUserDetailsContext();
+	const { web3signup } = currentUser;
 
 	const isSubmitDisabled = web3signup ? email === '' : isChange ? !passwords.old || !passwords.new : !currentPassword || currentEmail === email;
 
@@ -173,7 +174,7 @@ const Profile = () => {
 			}
 
 			if (data && data.message && data.token) {
-				handleTokenChange(data.token, currentUser);
+				handleTokenChange(data.token, currentUser, dispatch);
 
 				form.resetFields();
 				setIsChange(false);

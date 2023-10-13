@@ -4,9 +4,8 @@
 
 import { Button, Form, Input, Radio, Switch } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostCategory } from 'src/global/post_categories';
 import { usePollEndBlock } from 'src/hooks';
 import { NotificationStatus } from 'src/types';
@@ -21,6 +20,7 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TopicsRadio from './TopicsRadio';
 import AddTags from '~src/ui-components/AddTags';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -31,7 +31,7 @@ const postFormKey = `form:post:${ProposalType.DISCUSSIONS}`;
 
 const CreatePost = ({ className, proposalType }: Props) => {
 	const router = useRouter();
-	const currentUser = useContext(UserDetailsContext);
+	const currentUser = useUserDetailsSelector();
 
 	const [form] = Form.useForm();
 	const pollEndBlock = usePollEndBlock();

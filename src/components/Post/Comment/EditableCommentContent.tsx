@@ -16,7 +16,7 @@ import copyToClipboard from 'src/util/copyToClipboard';
 import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -51,7 +51,7 @@ import { Caution } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { checkIsProposer } from '../utils/checkIsProposer';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -80,7 +80,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, is_custom_username, proposer } = props;
 	const { comments, setComments, setTimelines } = useCommentDataContext();
 	const { network } = useNetworkSelector();
-	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsContext();
+	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 
 	const [replyForm] = Form.useForm();

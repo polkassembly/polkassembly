@@ -7,7 +7,6 @@ import { Alert, Button, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
-import { useUserDetailsContext } from '~src/context';
 import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
@@ -33,7 +32,9 @@ import ArrowLeft from '~assets/icons/arrow-left.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	className?: string;
@@ -68,8 +69,9 @@ const AddressConnectModal = ({
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
-	const currentUser = useUserDetailsContext();
-	const { loginWallet, setUserDetailsContextState, loginAddress, addresses } = currentUser;
+	const currentUser = useUserDetailsSelector();
+	const { loginWallet, loginAddress, addresses } = currentUser;
+	const dispatch = useDispatch();
 	const [address, setAddress] = useState<string>('');
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -188,7 +190,7 @@ const AddressConnectModal = ({
 						}
 
 						if (confirmData?.token) {
-							handleTokenChange(confirmData.token, currentUser);
+							handleTokenChange(confirmData.token, currentUser, dispatch);
 							queueNotification({
 								header: 'Success!',
 								message: confirmData.message || '',
@@ -224,7 +226,7 @@ const AddressConnectModal = ({
 					}
 
 					if (confirmData?.token) {
-						handleTokenChange(confirmData.token, currentUser);
+						handleTokenChange(confirmData.token, currentUser, dispatch);
 						queueNotification({
 							header: 'Success!',
 							message: confirmData.message || '',
@@ -254,9 +256,7 @@ const AddressConnectModal = ({
 			localStorage.setItem(localStorageAddressKeyName, address);
 			localStorage.setItem('delegationDashboardAddress', multisig || address);
 			localStorage.setItem('multisigDelegationAssociatedAddress', address);
-			setUserDetailsContextState((prev) => {
-				return { ...prev, delegationDashboardAddress: multisig || address, loginWallet: wallet || null };
-			});
+			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: multisig || address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
 			onConfirm && onConfirm(address);

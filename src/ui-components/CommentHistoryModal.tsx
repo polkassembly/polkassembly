@@ -96,7 +96,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							</div>
 						</div>
 						<Dropdown
-							overlayClassName='sentiment-hover'
+							overlayClassName='sentiment-hover z-[1056]'
 							placement='topCenter'
 							menu={{ items }}
 							className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'

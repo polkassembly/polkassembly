@@ -539,6 +539,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									<Popover
 										content={content}
 										placement='topLeft'
+										zIndex={1056}
 									>
 										<Checkbox
 											indeterminate={indeterminate}

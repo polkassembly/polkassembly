@@ -172,6 +172,7 @@ const getUserDropDown = (
 			menu={{ items: dropdownMenuItems }}
 			trigger={['click']}
 			className='profile-dropdown'
+			overlayClassName='z-[1056]'
 		>
 			{children}
 		</Dropdown>

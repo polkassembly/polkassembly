@@ -239,6 +239,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 								<>
 									<Dropdown
 										className='status-dropdown'
+										overlayClassName='z-[1056]'
 										disabled={loading}
 										menu={{ items: statusOptions, onClick: onStatusChange }}
 									>

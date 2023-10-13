@@ -62,6 +62,7 @@ function NetworkSelect({ selectedNetwork, setSelectedNetwork }: { selectedNetwor
 			<Dropdown
 				disabled
 				trigger={['click']}
+				overlayClassName='z-[1056]'
 				dropdownRender={(menus) => <div className='max-h-[20rem] overflow-auto rounded-md drop-shadow-xl'>{menus}</div>}
 				menu={{ items: networkOptions, onClick: handleSetSelectedNetwork }}
 			>

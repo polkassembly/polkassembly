@@ -191,6 +191,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 
 	return (
 		<Popover
+			zIndex={1056}
 			content={content}
 			open={!disabled && openFilter}
 			className={className}

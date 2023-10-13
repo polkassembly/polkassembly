@@ -136,7 +136,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 			>
 				<Dropdown
 					disabled={tags.length === 5 || disabled}
-					overlayClassName='ml-[-10px] min-w-[104px] rounded create-post'
+					overlayClassName='ml-[-10px] min-w-[104px] rounded create-post z-[1056]'
 					menu={{ items }}
 					placement='topLeft'
 				>

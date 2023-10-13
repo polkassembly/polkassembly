@@ -16,7 +16,6 @@ interface Props {
 	truncateUsername?: boolean;
 	usernameMaxLength?: number;
 }
-
 const NameLabel = ({
 	className,
 	defaultAddress,

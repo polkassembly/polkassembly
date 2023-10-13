@@ -101,6 +101,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	return (
 		<Dropdown
 			open={openFilter}
+			overlayClassName='z-[1056]'
 			onOpenChange={() => setOpenFilter(!openFilter)}
 			placement={'bottomLeft'}
 			className='navbar-dropdowns'

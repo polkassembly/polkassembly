@@ -720,7 +720,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								))}
 							<Dropdown
 								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
-								overlayClassName='sentiment-dropdown'
+								overlayClassName='sentiment-dropdown z-[1056]'
 								placement='bottomRight'
 								menu={{ items }}
 							>

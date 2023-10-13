@@ -401,7 +401,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					overlayClassName='sentiment-hover'
 					placement='topCenter'
 					menu={{ items }}
-					className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
+					className='z-[1056] flex  items-center justify-center text-lg  text-white min-[320px]:mr-2'
 				>
 					<div>{getSentimentIcon(sentiment as ESentiment)}</div>
 				</Dropdown>

@@ -97,10 +97,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		truncateUsername,
 		vote,
 		votesArr = [],
-		isRow,
-		voteData
+		isRow
 	} = props;
-	console.log(voteData, vote);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
 	const { network } = useNetworkContext();

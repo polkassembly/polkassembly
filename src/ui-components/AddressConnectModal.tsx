@@ -106,7 +106,8 @@ const AddressConnectModal = ({
 		}
 	};
 
-	const isUnlinkedAddress = getAddressType(accounts?.filter((account) => account.address === address)?.[0]) === EAddressOtherTextType.UNLINKED_ADDRESS;
+	const isUnlinkedAddress =
+		getAddressType(accounts?.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(address))?.[0]) === EAddressOtherTextType.UNLINKED_ADDRESS;
 
 	const handleAddressLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
 		setLoading(true);

@@ -138,7 +138,7 @@ const ProfileBalances = ({ className }: Props) => {
 						isSwitchButton={true}
 						setSwitchModalOpen={setOpenModal}
 						withoutInfo={true}
-						isTruncateUsername={false}
+						isTruncateUsername
 					/>
 				)}
 			</div>

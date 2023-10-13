@@ -50,7 +50,7 @@ const AddressDropdown = ({
 	const dropdownList: { [index: string]: string } = {};
 	const addressItems: ItemType[] = [];
 	const { setUserDetailsContextState, addresses } = useUserDetailsContext();
-	const substrate_address = getSubstrateAddress(defaultAddress || '');
+	const substrate_address = getSubstrateAddress(selectedAddress || '');
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
@@ -64,8 +64,6 @@ const AddressDropdown = ({
 			return EAddressOtherTextType.COUNCIL;
 		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
-		} else if (isConnected && !substrate_addresses.includes(account_substrate_address)) {
-			return EAddressOtherTextType.CONNECTED;
 		} else if (substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
 		} else {

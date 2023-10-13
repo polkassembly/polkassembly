@@ -36,7 +36,7 @@ for (const key of Object.keys(network)) {
 		: `https://${key === 'POLYMESHTEST' ? 'polymesh-test' : keyVal}.polkassembly.io`;
 
 	if (isOpenGovSupported(keyVal)) {
-		link = `${link}`;
+		link = `${link}/opengov`;
 	}
 	const optionObj: DropdownMenuItemType = {
 		key,

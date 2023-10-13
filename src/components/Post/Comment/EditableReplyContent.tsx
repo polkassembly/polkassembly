@@ -56,7 +56,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [isReplying, setIsReplying] = useState(false);
-	const [onChainUsername, setOnChainUsername] = useState<string>();
+	const [onChainUsername, setOnChainUsername] = useState<string>('');
 	const [isEditable, setIsEditable] = useState(false);
 
 	const toggleEdit = () => setIsEditing(!isEditing);

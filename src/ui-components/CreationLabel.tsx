@@ -220,7 +220,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							username={username}
 							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
-							usernameClassName='text-xs text-ellipsis overflow-hidden mr-1'
+							usernameClassName='text-xs text-ellipsis overflow-hidden'
 						/>
 						{text}&nbsp;
 						{topic && (

@@ -20,9 +20,6 @@ const initialState: IUserDetailsStore = {
 	email_verified: false,
 	id: null,
 	is2FAEnabled: false,
-	isLoggedOut: (): boolean => {
-		throw new Error('isLoggedIn function must be overridden');
-	},
 	loginAddress: '',
 	loginWallet: null,
 	multisigAssociatedAddress: '',
@@ -32,18 +29,10 @@ const initialState: IUserDetailsStore = {
 	},
 	picture: null,
 	primaryNetwork: '',
-	setUserDetailsContextState: (): void => {
-		throw new Error('setUserDetailsContextState function must be overridden');
-	},
-	setWalletConnectProvider: (): void => {
-		throw new Error('setWalletConnectLogin function must be overridden');
-	},
 	username: null,
 	walletConnectProvider: null,
 	web3signup: false
 };
-
-const accessToken = getLocalStorageToken();
 
 export const deleteLocalStorageToken = (): void => {
 	if (typeof window !== 'undefined') {
@@ -52,6 +41,8 @@ export const deleteLocalStorageToken = (): void => {
 };
 
 try {
+	const accessToken = getLocalStorageToken();
+
 	const tokenPayload = accessToken && decodeToken<JWTPayloadType>(accessToken);
 
 	if (tokenPayload && tokenPayload.sub) {
@@ -94,12 +85,8 @@ try {
 export const userDetailsStore = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(HYDRATE, (state, action) => {
-			const isLoggedOut = () => {
-				return state.id === null || state.id === undefined;
-			};
 			return {
 				...state,
-				isLoggedOut,
 				...(action as PayloadAction<any>).payload.userDetails
 			};
 		});
@@ -133,7 +120,23 @@ export const userDetailsStore = createSlice({
 			state.web3signup = false;
 		},
 		setUserDetailsState: (state, action: PayloadAction<IUserDetailsStore>) => {
-			state = action.payload;
+			state.addresses = action.payload.addresses;
+			state.allowed_roles = action.payload.allowed_roles;
+			state.defaultAddress = action.payload.defaultAddress;
+			state.delegationDashboardAddress = action.payload.delegationDashboardAddress;
+			state.email = action.payload.email;
+			state.email_verified = action.payload.email_verified;
+			state.id = action.payload.id;
+			state.is2FAEnabled = action.payload.is2FAEnabled;
+			state.loginAddress = action.payload.loginAddress;
+			state.loginWallet = action.payload.loginWallet;
+			state.multisigAssociatedAddress = action.payload.multisigAssociatedAddress;
+			state.networkPreferences = action.payload.networkPreferences;
+			state.picture = action.payload.picture;
+			state.primaryNetwork = action.payload.primaryNetwork;
+			state.username = action.payload.username;
+			state.walletConnectProvider = action.payload.walletConnectProvider;
+			state.web3signup = action.payload.web3signup;
 		},
 		setWalletConnectProvider: (state, action: PayloadAction<WalletConnectProvider | null>) => {
 			state.walletConnectProvider = action.payload;
@@ -160,4 +163,4 @@ const setWalletConnectProvider: any = (wcPprovider: WalletConnectProvider | null
 
 export default userDetailsStore.reducer;
 const userDetailsActions = userDetailsStore.actions;
-export { Logout, setUserDetailsState, setWalletConnectProvider };
+export { Logout, setUserDetailsState, setWalletConnectProvider, userDetailsActions };

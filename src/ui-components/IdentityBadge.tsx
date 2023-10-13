@@ -130,6 +130,11 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 							target='_blank'
 							rel='noreferrer'
 							className='flex items-center text-pink-500 underline'
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
+								window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
+							}}
 						>
 							<ShareScreenIcon className='mr-2' />
 							Polkaverse Profile
@@ -145,6 +150,11 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 							target='_blank'
 							rel='noreferrer'
 							className='flex text-pink-500'
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
+								window.open(`https://w3n.id/${web3Name}`, '_blank');
+							}}
 						>
 							<ShareScreenIcon className='mr-2' />
 							Web3 Name Profile

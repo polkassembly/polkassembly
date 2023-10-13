@@ -528,6 +528,22 @@ z-index: 1050 !important;
   background: #fff !important;
 }
 
+.split-voted-icon {
+  border-bottom: 1px solid #FECA7E;
+}
+
+.aye-voted-icon {
+  border-bottom: 1px solid green !important;
+}
+
+.nye-voted-icon {
+  border-bottom: 1px solid red;
+}
+
+.abstain-voted-icon {
+  border-bottom: 1px solid grey !important;
+}
+
 @media (max-width: 420px) and (min-width: 319px) {
   .voted-icon {
     width:0 !important;

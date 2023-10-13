@@ -251,45 +251,46 @@ const Address = (props: Props) => {
 						theme={'polkadot'}
 					/>
 				))}
-			<Link
-				href={handleRedirectLink()}
-				target='_blank'
-				onClick={(e) => handleClick(e)}
-				className='flex items-center text-bodyBlue'
-			>
+			<div className='flex items-center text-bodyBlue'>
 				{displayInline ? (
 					<div className='inline-address flex items-center'>
-						{kiltName ||
-							(identity && mainDisplay && (
-								<IdentityBadge
-									address={address}
-									identity={identity}
-									flags={flags}
-									className='text-navBlue'
-								/>
-							))}
+						{!!kiltName ||
+							!!(
+								identity &&
+								mainDisplay && (
+									<IdentityBadge
+										address={address}
+										identity={identity}
+										flags={flags}
+										className='text-navBlue'
+									/>
+								)
+							)}
 
 						<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
-							<span
+							<Link
+								href={handleRedirectLink()}
+								target='_blank'
+								onClick={(e) => handleClick(e)}
 								title={mainDisplay || encodedAddr}
-								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'}`}
+								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'} hover:text-bodyBlue`}
 							>
-								{addressPrefix && (
+								{!!addressPrefix && (
 									<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
 										{usernameMaxLength ? (addressPrefix.length > usernameMaxLength ? `${addressPrefix.slice(0, usernameMaxLength)}...` : addressPrefix) : addressPrefix}
 									</span>
 								)}
-								{sub && isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
-							</span>
+								{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
+							</Link>
 						</div>
 					</div>
-				) : extensionName || mainDisplay ? (
+				) : !!extensionName || !!mainDisplay ? (
 					<div className='ml-0.5 font-semibold text-bodyBlue'>
 						{!disableHeader && (
 							<div>
 								<div className='flex items-center'>
 									{kiltName ||
-										(identity && mainDisplay && (
+										(!!identity && !!mainDisplay && (
 											<IdentityBadge
 												address={address}
 												identity={identity}
@@ -298,12 +299,17 @@ const Address = (props: Props) => {
 											/>
 										))}
 									<Space className={'header'}>
-										<span className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
-											{addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
+										<Link
+											href={handleRedirectLink()}
+											target='_blank'
+											onClick={(e) => handleClick(e)}
+											className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue`}
+										>
+											{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 											{!extensionName && sub && isSubVisible && (
 												<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
 											)}
-										</span>
+										</Link>
 									</Space>
 								</div>
 							</div>
@@ -317,14 +323,14 @@ const Address = (props: Props) => {
 						{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 					</div>
 				)}
-			</Link>
+			</div>
 			{addressOtherTextType ? (
 				<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue'}>
 					<span
 						className={classNames('h-[6px] w-[6px] rounded-full', {
-							'bg-aye_green ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(addressOtherTextType),
+							'bg-aye_green ': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.COUNCIL_CONNECTED].includes(addressOtherTextType),
 							'bg-blue ': addressOtherTextType === EAddressOtherTextType.COUNCIL,
-							'bg-nay_red': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.UNLINKED_ADDRESS].includes(addressOtherTextType)
+							'bg-nay_red': [EAddressOtherTextType.UNLINKED_ADDRESS].includes(addressOtherTextType)
 						})}
 					></span>
 					<span className='text-xs text-lightBlue'>{addressOtherTextType}</span>

@@ -77,7 +77,7 @@ const editCommentKey = (commentId: string) => `comment:${commentId}:${global.win
 const replyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
-	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, is_custom_username, proposer } = props;
+	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, proposer } = props;
 	const { comments, setComments, setTimelines } = useCommentDataContext();
 	const { network } = useContext(NetworkContext);
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsContext();
@@ -121,11 +121,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const toggleReply = async () => {
 		let usernameContent = '';
-
-		if (onChainUsername && proposer) {
+		console.log(onChainUsername);
+		if (!!onChainUsername && !!proposer) {
+			console.log(onChainUsername, proposer);
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
-		} else if (!onChainUsername && proposer && !is_custom_username) {
-			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}

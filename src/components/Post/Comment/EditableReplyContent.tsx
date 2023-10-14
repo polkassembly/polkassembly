@@ -80,7 +80,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 
 	useEffect(() => {
 		let usernameContent = '';
-		console.log(proposer, onChainUsername, is_custom_username);
 
 		if (onChainUsername && proposer) {
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;

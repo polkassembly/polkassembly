@@ -378,8 +378,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				'treasury_group',
 				null,
 				isOpenGovSupported(network)
-					? !['moonbeam', 'moonbase', 'moonriver'].includes(network)
+					? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
 						? [...gov1Items.treasuryItems]
+						: network === AllNetworks.MOONBEAM
+						? [
+								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
+								getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+						  ]
 						: [
 								...gov1Items.treasuryItems,
 								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
@@ -537,7 +542,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
 	];
 
-	const gov2CollapsedItems: MenuProps['items'] = [
+	let gov2CollapsedItems: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [...gov2TrackItems.governanceItems]),
@@ -552,7 +557,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network)) {
 		if (network !== 'picasso') {
 			let items = [...gov2TrackItems.treasuryItems];
 			if (isOpenGovSupported(network)) {
@@ -572,7 +577,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (!['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network)) {
 		if (network !== 'picasso') {
 			gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [...gov2TrackItems.treasuryItems]));
 		} else {
@@ -606,6 +611,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			}
 		}
 	};
+	if (network === AllNetworks.MOONBEAM) {
+		gov2Items = [...gov2Items, getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov1Items.treasuryItems])];
+		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov1Items.treasuryItems])];
+	}
+
 	if (network !== AllNetworks.POLYMESH) {
 		gov2Items = [...gov2Items, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='text-lightBlue' />, [...items])];
 	}
@@ -685,7 +695,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
-				{['moonbeam', 'moonriver'].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
+				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={'moonbeam'} />

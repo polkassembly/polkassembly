@@ -20,7 +20,7 @@ const LinkCard = ({ timeline, proposalType }: Props) => {
 						key={index}
 						className='cursor-default text-lg font-medium text-bodyBlue max-md:text-sm'
 					>
-						<span className=''>{item?.type === 'ReferendumV2' ? 'Open Gov Referendum' : item?.type?.split(/(?=[A-Z])/).join(' ')}</span>
+						<span className=''>{item?.type === 'ReferendumV2' ? 'OpenGov Referendum' : item?.type?.split(/(?=[A-Z])/).join(' ')}</span>
 						<span className='mx-2 text-bodyBlue'>#{item?.index}</span>
 						<span className='mr-2'>{index !== timeline.length - 1 && ' >> '}</span>
 					</span>

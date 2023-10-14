@@ -36,7 +36,7 @@ for (const key of Object.keys(network)) {
 		: `https://${key === 'POLYMESHTEST' ? 'polymesh-test' : keyVal}.polkassembly.io`;
 
 	if (isOpenGovSupported(keyVal)) {
-		link = `${link}`;
+		link = `${link}/opengov`;
 	}
 	const optionObj: DropdownMenuItemType = {
 		key,
@@ -101,6 +101,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	return (
 		<Dropdown
 			open={openFilter}
+			overlayClassName='z-[1056]'
 			onOpenChange={() => setOpenFilter(!openFilter)}
 			placement={'bottomLeft'}
 			className='navbar-dropdowns'

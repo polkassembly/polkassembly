@@ -382,8 +382,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						? [...gov1Items.treasuryItems]
 						: network === AllNetworks.MOONBEAM
 						? [
-								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-								getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+								...[
+									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
+									getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+								]
 						  ]
 						: [
 								...gov1Items.treasuryItems,
@@ -612,8 +614,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	if (network === AllNetworks.MOONBEAM) {
-		gov2Items = [...gov2Items, getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov1Items.treasuryItems])];
-		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...gov1Items.treasuryItems])];
+		gov2Items = gov2Items.concat(getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, gov1Items.treasuryItems));
+		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, gov1Items.treasuryItems)];
 	}
 
 	if (network !== AllNetworks.POLYMESH) {

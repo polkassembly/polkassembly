@@ -6,7 +6,7 @@ import { Divider, Skeleton, Tabs } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { CheckCircleFilled } from '@ant-design/icons';
 import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import Addresses from './Addresses';
 import EditProfile from './EditProfile';
 
@@ -23,7 +23,7 @@ import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import OnChainIdentity from './OnChainIdentity';
 import SocialLink from '~src/ui-components/SocialLinks';
-import { EGovType } from '~src/types';
+import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -219,7 +219,45 @@ const Details: FC<IDetailsProps> = (props) => {
 	const newUsername = display || legal || nickname || username;
 	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+	const { network } = useNetworkContext();
 
+	const items = [
+		{
+			children: (
+				<About
+					title={title}
+					bio={bio}
+					addresses={addresses}
+				/>
+			),
+			key: 'about',
+			label: 'About'
+		},
+		{
+			children: (
+				<GovTab
+					posts={userPosts}
+					historyType={EProfileHistory.POSTS}
+					userAddresses={userProfile.data?.addresses || []}
+				/>
+			),
+			key: 'posts',
+			label: 'Posts'
+		}
+	];
+
+	if (!votesHistoryUnavailableNetworks.includes(network)) {
+		items.splice(1, 0, {
+			children: (
+				<GovTab
+					userAddresses={userProfile.data?.addresses || []}
+					historyType={EProfileHistory.VOTES}
+				/>
+			),
+			key: 'votes',
+			label: 'Votes'
+		});
+	}
 	return (
 		<div className='flex h-full w-full flex-col gap-y-5 bg-[#F5F5F5] md:w-auto'>
 			<article className='rounded-l-[4px] bg-[#910365] px-4 py-[22px] md:w-[330px] md:flex-1 md:py-8'>
@@ -310,41 +348,7 @@ const Details: FC<IDetailsProps> = (props) => {
 				<Tabs
 					type='card'
 					className='ant-tabs-tab-bg-white my-4 font-medium text-sidebarBlue'
-					items={[
-						{
-							children: (
-								<About
-									title={title}
-									bio={bio}
-									addresses={addresses}
-								/>
-							),
-							key: 'about',
-							label: 'About'
-						},
-						{
-							children: (
-								<GovTab
-									posts={userPosts.open_gov}
-									govType={EGovType.OPEN_GOV}
-									userAddresses={userProfile.data?.addresses || []}
-								/>
-							),
-							key: 'open_gov',
-							label: 'OpenGov'
-						},
-						{
-							children: (
-								<GovTab
-									posts={userPosts.gov1}
-									govType={EGovType.GOV1}
-									userAddresses={userProfile.data?.addresses || []}
-								/>
-							),
-							key: 'gov1',
-							label: 'Gov 1'
-						}
-					]}
+					items={items}
 				/>
 			</div>
 		</div>

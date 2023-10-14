@@ -122,9 +122,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const toggleReply = async () => {
 		let usernameContent = '';
 
-		if (!is_custom_username && onChainUsername && proposer) {
+		if (onChainUsername && proposer) {
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
-		} else if (!is_custom_username && proposer && !onChainUsername) {
+		} else if (!onChainUsername && proposer && !is_custom_username) {
 			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;

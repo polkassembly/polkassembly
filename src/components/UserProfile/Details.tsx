@@ -325,17 +325,6 @@ const Details: FC<IDetailsProps> = (props) => {
 						{
 							children: (
 								<GovTab
-									posts={userPosts.gov1}
-									govType={EGovType.GOV1}
-									userAddresses={userProfile.data?.addresses || []}
-								/>
-							),
-							key: 'gov1',
-							label: 'Gov 1'
-						},
-						{
-							children: (
-								<GovTab
 									posts={userPosts.open_gov}
 									govType={EGovType.OPEN_GOV}
 									userAddresses={userProfile.data?.addresses || []}
@@ -343,6 +332,17 @@ const Details: FC<IDetailsProps> = (props) => {
 							),
 							key: 'open_gov',
 							label: 'OpenGov'
+						},
+						{
+							children: (
+								<GovTab
+									posts={userPosts.gov1}
+									govType={EGovType.GOV1}
+									userAddresses={userProfile.data?.addresses || []}
+								/>
+							),
+							key: 'gov1',
+							label: 'Gov 1'
 						}
 					]}
 				/>

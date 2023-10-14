@@ -228,7 +228,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
-	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) || false;
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 
@@ -614,7 +614,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	if (network === AllNetworks.MOONBEAM) {
-		gov2Items = gov2Items.concat(getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, gov1Items.treasuryItems));
+		gov2Items = gov2Items.concat(getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, gov1Items.treasuryItems));
 		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, gov1Items.treasuryItems)];
 	}
 
@@ -920,12 +920,6 @@ export default styled(AppLayout)`
 
 		.user-info-dropdown {
 			transform: scale(0.7);
-		}
-	}
-
-	@media (min-width: 380px) and (max-width: 1024px) {
-		.mobile-margin {
-			margin-top: 0px !important;
 		}
 	}
 `;

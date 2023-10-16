@@ -137,6 +137,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		} finally {
 			setFormDisabled(false);
 		}
+		localStorage.removeItem(postFormKey);
 	};
 
 	const savePostFormCacheValue = (key: string, value: string) => {

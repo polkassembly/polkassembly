@@ -1,9 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import { Segmented } from 'antd';
-import { SegmentedValue } from 'antd/lib/segmented';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNetworkContext } from '~src/context';
@@ -83,19 +80,24 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [govType]);
 
-	const onTopicChange = (value: SegmentedValue) => {
+	const onTopicChange = (value: any) => {
 		const topic = optionTextToTopic(String(value));
 		onTopicSelection(post_topic[topic as keyof typeof post_topic]);
 	};
 
 	return (
 		<div className={`${className} overflow-x-auto`}>
-			<Segmented
-				className='borderRadius flex gap-4 rounded-xl bg-white text-xs text-navBlue'
-				options={topicOptions}
-				onChange={onTopicChange}
-				value={topicIdToTopictext(topicId)}
-			/>
+			<div className='mt-2 flex gap-2'>
+				{topicOptions.map((topic) => (
+					<div
+						onClick={() => onTopicChange(topic)}
+						className={`cursor-pointer rounded-2xl px-3 py-2 text-xs ${topicIdToTopictext(topicId) === topic ? 'bg-pink_primary text-white' : 'bg-[#ebeef2] text-lightBlue'}`}
+						key={topic}
+					>
+						{topic}
+					</div>
+				))}
+			</div>
 		</div>
 	);
 };

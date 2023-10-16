@@ -4,6 +4,7 @@
 
 export const post_topic = {
 	AUCTION_ADMIN: 8,
+	COMMUNITY_PIPS: 14,
 	COUNCIL: 2,
 	DEMOCRACY: 1,
 	FELLOWSHIP: 10,
@@ -12,5 +13,8 @@ export const post_topic = {
 	ROOT: 6,
 	STAKING_ADMIN: 7,
 	TECHNICAL_COMMITTEE: 3,
-	TREASURY: 4
+	TECHNICAL_PIPS: 12,
+	TREASURY: 4,
+	UPGRADE_PIPS: 13,
+	WHITELIST: 11
 };

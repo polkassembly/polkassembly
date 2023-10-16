@@ -4,9 +4,14 @@
 
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { Tooltip } from 'antd';
-import React from 'react';
+import { Button, Modal, Tooltip } from 'antd';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import VerifiedIcon from '~assets/icons/verified-icon.svg';
+import CloseCross from '~assets/icons/close-cross-icon.svg';
+import { poppins } from 'pages/_app';
+import DollarIcon from '~assets/icons/dollar-icon.svg';
+import { useRouter } from 'next/router';
 import EmailIcon from '~assets/icons/email-icon.svg';
 import LegalIcon from '~assets/icons/legal-icon.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
@@ -24,10 +29,17 @@ interface Props {
 	web3Name?: string;
 }
 
+export interface INetworkWalletErr {
+	message: string;
+	description: string;
+	error: number;
+}
+
 const StyledPopup = styled.div`
 	font-size: sm;
 	list-style: none;
-	padding: 1rem;
+	padding: 0.75rem 0.5rem;
+	border-radius: 8px;
 
 	li {
 		margin-bottom: 0.3rem;
@@ -43,28 +55,12 @@ const StyledPopup = styled.div`
 	}
 `;
 
-const getIdentityIcons = (key: string) => {
-	switch (key) {
-		case 'Legal':
-			return <LegalIcon className='mr-1.5' />;
-		case 'Email':
-			return <EmailIcon className='mr-2' />;
-		case 'Judgements':
-			return <JudgementIcon className='mr-1.5' />;
-		case 'Pgp':
-			return <PgpIcon className='mr-1' />;
-		case 'Riot':
-			return <RiotIcon className='mr-1.5' />;
-		case 'Twitter':
-			return <TwitterIcon className='mr-1.5 mt-1' />;
-		case 'Web':
-			return <WebIcon />;
-	}
-};
 const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const [showModal, setShowModal] = useState(false);
+	const router = useRouter();
 	const identityArr = [
 		{ key: 'Email', value: identity?.email },
 		{ key: 'Judgements', value: identity?.judgements || [] },
@@ -74,6 +70,8 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		{ key: 'Twitter', value: identity?.twitter },
 		{ key: 'Web', value: identity?.web }
 	];
+
+	console.log(identityArr);
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const CouncilEmoji = () => (
@@ -93,66 +91,116 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		</span>
 	);
 
-	const displayJudgements = JSON.stringify(judgements?.map(([, jud]) => jud.toString()));
-	const popupContent = (
-		<StyledPopup>
-			{identityArr.map((item, index) => {
-				{
-					return (
-						(item?.key === 'Judgements' ? !!identity?.judgements?.length : !!item?.value) && (
-							<li
-								className='flex items-center'
-								key={index}
-							>
-								<span className='desc flex items-center text-sm font-medium capitalize text-bodyBlue'>
-									{getIdentityIcons(item?.key)}
-									{item?.key}:
-								</span>
-								<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}</span>
-							</li>
-						)
-					);
-				}
-			})}
+	const getIdentityIcons = (key: string) => {
+		switch (key) {
+			case 'Legal':
+				return <LegalIcon className='mx-1' />;
+			case 'Email':
+				return <EmailIcon className='mx-1' />;
+			case 'Pgp':
+				return <PgpIcon className='mx-1' />;
+			case 'Riot':
+				return <RiotIcon className='mx-1' />;
+			case 'Twitter':
+				return <TwitterIcon className='mx-1' />;
+			case 'Web':
+				return <WebIcon className='mx-1' />;
+		}
+	};
 
-			{flags?.isCouncil && (
-				<li className='flex items-center'>
-					<span className='desc text-sm font-medium text-bodyBlue'>
-						<CouncilEmoji /> Council member{' '}
-					</span>
-				</li>
-			)}
-			{
-				<li className='flex items-center'>
-					<span className='desc'>
-						<a
-							href={`https://polkaverse.com/accounts/${address}`}
-							target='_blank'
-							rel='noreferrer'
-							className='flex items-center text-pink-500 underline'
-						>
-							<ShareScreenIcon className='mr-2' />
-							Polkaverse Profile
-						</a>
-					</span>
-				</li>
-			}
-			{web3Name && (
-				<li className='flex items-center'>
-					<span className='desc flex items-center'>
-						<a
-							href={`https://w3n.id/${web3Name}`}
-							target='_blank'
-							rel='noreferrer'
-							className='flex text-pink-500'
-						>
-							<ShareScreenIcon className='mr-2' />
-							Web3 Name Profile
-						</a>
-					</span>
-				</li>
-			)}
-		</StyledPopup>
+	console.log(identityArr);
+
+	// const displayJudgements = JSON.stringify(judgements?.map(([, jud]) => jud.toString()));
+	const popupContent = (
+		<>
+			<StyledPopup>
+				<div className='flex items-center'>
+					<h3 className='mb-px inline whitespace-pre text-lg text-sm font-semibold text-bodyBlue'>Hannah Baker</h3>
+					{isGood ? (
+						<VerifiedIcon className='ml-1.5' />
+					) : (
+						<MinusCircleFilled
+							className='ml-1'
+							style={{ color }}
+						/>
+					)}
+					<a
+						href={`https://w3n.id/${web3Name}`}
+						target='_blank'
+						rel='noreferrer'
+						className='flex text-pink-500'
+						onClick={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							router.push(`https://w3n.id/${web3Name}`);
+						}}
+					>
+						<ShareScreenIcon className='ml-1 mr-2' />
+					</a>
+				</div>
+				<div className='my-1 text-xs text-bodyBlue'>{address}</div>
+				<p className='mb-0.5 text-xs text-[#7C899A]'>Since: Jul 27, 2023</p>
+				<div className='flex items-center justify-around'>
+					<p className='mb-0 text-xs text-[#7C899A]'>Last Seen: 5 days ago</p>
+					<div className='flex items-center'>
+						{identityArr.map((item, index) => {
+							return (
+								<Tooltip
+									color='#575255'
+									key={index}
+									title={JSON.stringify(item?.value)}
+								>
+									{/* item should not be judgements */}
+									{JSON.stringify(item?.value) && item?.key !== 'Judgements' ? (
+										<span className='px-auto ml-1 h-[20px] w-[22px] cursor-pointer rounded-xl bg-[#EDEFF3] text-bodyBlue '>
+											{item?.key !== 'Judgements' && getIdentityIcons(item?.key)}
+										</span>
+									) : null}
+								</Tooltip>
+							);
+						})}
+					</div>
+				</div>
+				<article className='mx-auto mt-2 flex h-11 w-48 rounded-lg bg-[#F4F8FF] text-xs text-bodyBlue'>
+					<div className='m-auto flex items-center'>
+						<span className='font-medium text-lightBlue'>
+							<JudgementIcon className='mx-1' />
+							Judgements:
+						</span>
+						<div className='ml-1 mt-0.5'>{judgements?.map(([, jud]) => jud.toString()).join(', ') || 'None'}</div>
+					</div>
+				</article>
+				<div className='flex justify-end'>
+					<Button
+						className='mt-2 h-[30px] w-[110px] border-pink_primary bg-[#FFEAF4] px-4 py-0.5 text-pink_primary text-pink_primary'
+						size='small'
+						onClick={(e) => {
+							setShowModal(true);
+							e.stopPropagation();
+							e.preventDefault();
+						}}
+					>
+						Tip
+					</Button>
+				</div>
+			</StyledPopup>
+
+			<Modal
+				open={showModal}
+				onCancel={() => {
+					setShowModal(false);
+				}}
+				footer={false}
+				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable}`}
+				closeIcon={<CloseCross />}
+				title={
+					<div className='flex h-10 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0]'>
+						<DollarIcon />
+						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Give a tip</span>
+					</div>
+				}
+			></Modal>
+		</>
 	);
 
 	return (
@@ -161,7 +209,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 				color='#fff'
 				title={popupContent}
 			>
-				{infoElem}
+				<div>{infoElem}</div>
 			</Tooltip>
 		</div>
 	);

@@ -22,7 +22,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TopicsRadio from './TopicsRadio';
 import AddTags from '~src/ui-components/AddTags';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -34,7 +34,7 @@ const postFormKey = `form:post:${ProposalType.DISCUSSIONS}`;
 const CreatePost = ({ className, proposalType }: Props) => {
 	const router = useRouter();
 	const currentUser = useContext(UserDetailsContext);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
 	const pollEndBlock = usePollEndBlock();

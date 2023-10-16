@@ -228,6 +228,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	};
 	const sortByDropdown = (
 		<Dropdown
+			overlayClassName='z-[1056]'
 			menu={{
 				defaultSelectedKeys: [votesSortValues.TIME_DESC],
 				items: [

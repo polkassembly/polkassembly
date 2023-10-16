@@ -169,6 +169,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 			{userAddresses.length > 1 && (
 				<div className='pb-4'>
 					<Popover
+						zIndex={1056}
 						content={content}
 						placement='bottom'
 						open={addressDropdownExpand}

@@ -97,10 +97,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		truncateUsername,
 		vote,
 		votesArr = [],
-		isRow,
-		voteData
+		isRow
 	} = props;
-	console.log(voteData, vote);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
 	const { network } = useNetworkSelector();
@@ -220,7 +218,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							username={username}
 							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
-							usernameClassName='text-xs text-ellipsis overflow-hidden mr-1'
+							usernameClassName='text-xs text-ellipsis overflow-hidden'
 						/>
 						{text}&nbsp;
 						{topic && (
@@ -401,7 +399,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					overlayClassName='sentiment-hover'
 					placement='topCenter'
 					menu={{ items }}
-					className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
+					className='z-[1056] flex  items-center justify-center text-lg  text-white min-[320px]:mr-2'
 				>
 					<div>{getSentimentIcon(sentiment as ESentiment)}</div>
 				</Dropdown>

@@ -52,6 +52,7 @@ import { Caution } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { checkIsProposer } from '../utils/checkIsProposer';
+import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -121,10 +122,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const toggleReply = async () => {
 		let usernameContent = '';
-
-		if (!is_custom_username && onChainUsername && proposer) {
+		if (!!onChainUsername && !!proposer) {
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
-		} else if (!is_custom_username && proposer && !onChainUsername) {
+		} else if (!onChainUsername && proposer && !(is_custom_username || MANUAL_USERNAME_25_CHAR.includes(username || '') || username?.length !== 25)) {
 			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;

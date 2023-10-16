@@ -68,7 +68,7 @@ const Address = (props: Props) => {
 	const {
 		className,
 		address,
-		disableIdenticon,
+		disableIdenticon = false,
 		displayInline,
 		iconSize,
 		isSubVisible = true,
@@ -255,17 +255,14 @@ const Address = (props: Props) => {
 				{displayInline ? (
 					<div className='inline-address flex items-center'>
 						{!!kiltName ||
-							!!(
-								identity &&
-								mainDisplay && (
-									<IdentityBadge
-										address={address}
-										identity={identity}
-										flags={flags}
-										className='text-navBlue'
-									/>
-								)
-							)}
+							(!!identity && !!mainDisplay && (
+								<IdentityBadge
+									address={address}
+									identity={identity}
+									flags={flags}
+									className='text-navBlue'
+								/>
+							))}
 
 						<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
 							<Link

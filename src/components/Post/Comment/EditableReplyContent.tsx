@@ -28,6 +28,7 @@ import { checkIsProposer } from '../utils/checkIsProposer';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
+import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 
 interface Props {
 	userId: number;
@@ -81,17 +82,16 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 
 	useEffect(() => {
 		let usernameContent = '';
-
-		if (!is_custom_username && onChainUsername && proposer) {
+		if (!!onChainUsername && !!proposer) {
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
-		} else if (!is_custom_username && !onChainUsername && proposer) {
+		} else if (!onChainUsername && proposer && !(is_custom_username || MANUAL_USERNAME_25_CHAR.includes(username || '') || username?.length !== 25)) {
 			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
 
 		replyToreplyForm.setFieldValue('content', `${usernameContent}&nbsp;` || '');
-	}, [is_custom_username, network, onChainUsername, proposer, replyToreplyForm, userName]);
+	}, [is_custom_username, network, onChainUsername, proposer, replyToreplyForm, userName, username]);
 
 	const handleCancel = () => {
 		toggleEdit();

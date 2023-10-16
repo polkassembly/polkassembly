@@ -27,24 +27,31 @@ export default styled(TopicTag)`
 		padding: 0.2rem 0.4rem;
 	}
 
-	&.Democracy {
+	&.Democracy,
+	&.Community,
+	&.Staking {
 		background-color: #eef8ff !important;
 		color: #093874;
 	}
-	&.Council {
+	&.Council,
+	&.Root,
+	&.Whitelist {
 		background-color: #ffedf2 !important;
 		color: #cd1f59;
 	}
-	&.Treasury {
+	&.Treasury,
+	&.Governance {
 		background-color: #fff4eb !important;
 		color: #ac6a30;
 	}
 	&.Technical,
-	&.Tech {
+	&.Tech,
+	&.Auction {
 		background-color: #fef7dd !important;
 		color: #75610e;
 	}
-	&.General {
+	&.General,
+	&.Upgrade {
 		background-color: #fdf5f0 !important;
 		color: #ef884a;
 	}

@@ -39,7 +39,7 @@ const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 export const algolia_client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
 
-export const allowedNetwork = ['KUSAMA', 'POLKADOT', 'POLKADEX', 'CERE'];
+export const allowedNetwork = ['KUSAMA', 'POLKADOT', 'POLKADEX', 'CERE', 'MOONBEAM', 'MOONRIVER', 'MOONBASE'];
 
 const AUTOCOMPLETE_INDEX_LIMIT = 5;
 
@@ -590,6 +590,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							)}
 
 							<Popover
+								zIndex={1055}
 								open={openFilter.date}
 								onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, date: !openFilter.date })}
 								content={
@@ -656,6 +657,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 							{filterBy === EFilterBy.Referenda && (
 								<Popover
+									zIndex={1055}
 									rootClassName='track-popover'
 									open={openFilter.track}
 									onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, track: !openFilter.track })}
@@ -728,6 +730,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							)}
 
 							<Popover
+								zIndex={1055}
 								open={openFilter.topic}
 								onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, topic: !openFilter.topic })}
 								content={
@@ -774,7 +777,6 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 									<span>
 										{selectedNetworks?.map((network, index) => (
 											<span key={index}>
-												{' '}
 												{network[0] + network.slice(1).toLowerCase()}
 												{index !== selectedNetworks.length - 1 && ', '}
 											</span>

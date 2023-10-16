@@ -169,6 +169,7 @@ function CustomToolbar(props: any) {
 						<div className='select-div'>
 							<label>Type</label>
 							<Dropdown
+								overlayClassName='z-[1056]'
 								trigger={['click']}
 								menu={{ items: viewStateOptions, onClick: onViewStateChange }}
 							>
@@ -220,6 +221,7 @@ function CustomToolbar(props: any) {
 						>
 							<div className='flex'>
 								<Dropdown
+									overlayClassName='z-[1056]'
 									trigger={['click']}
 									className='select-month-dropdown'
 									menu={{ items: months, onClick: onSelectMonthChange }}
@@ -256,6 +258,7 @@ function CustomToolbar(props: any) {
 									alt='Today'
 								/>
 								<Dropdown
+									overlayClassName='z-[1056]'
 									trigger={['click']}
 									className='select-view-dropdown'
 									menu={{ items: viewStateOptions, onClick: onViewStateChange }}

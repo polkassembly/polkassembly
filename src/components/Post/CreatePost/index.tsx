@@ -2,13 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Form, Input, Radio, Switch } from 'antd';
+import { Button, Form, Input, Switch } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { PostCategory } from 'src/global/post_categories';
 import { usePollEndBlock } from 'src/hooks';
-import { NotificationStatus } from 'src/types';
+import { EGovType, NotificationStatus } from 'src/types';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -20,7 +20,8 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TopicsRadio from './TopicsRadio';
 import AddTags from '~src/ui-components/AddTags';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 interface Props {
 	className?: string;
@@ -32,6 +33,7 @@ const postFormKey = `form:post:${ProposalType.DISCUSSIONS}`;
 const CreatePost = ({ className, proposalType }: Props) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
 	const pollEndBlock = usePollEndBlock();
@@ -40,7 +42,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
-	const [govType, setGovType] = useState<'gov_1' | 'open_gov'>('gov_1');
+	const [govType, setGovType] = useState<EGovType>(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [tags, setTags] = useState<string[]>([]);
 
 	useEffect(() => {
@@ -134,6 +136,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		} finally {
 			setFormDisabled(false);
 		}
+		localStorage.removeItem(postFormKey);
 	};
 
 	const savePostFormCacheValue = (key: string, value: string) => {
@@ -162,7 +165,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			<BackToListingView postCategory={proposalType === ProposalType.DISCUSSIONS ? PostCategory.DISCUSSION : PostCategory.GRANT} />
 
 			<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
-				<h2 className='dashboard-heading mb-8'>New Post</h2>
+				<h2 className='dashboard-heading mb-8 text-bodyBlue'>New Post</h2>
 				{error && (
 					<ErrorAlert
 						errorMsg={error}
@@ -190,7 +193,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							name='title'
 							autoFocus
 							placeholder='Enter Title'
-							className='text-black'
+							className='text-bodyBlue'
 						/>
 					</Form.Item>
 					<ContentForm onChange={(v) => savePostFormCacheValue('content', v)} />
@@ -205,32 +208,6 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						/>
 						<span className='ml-2 text-sm text-sidebarBlue'>Add poll to {proposalType === ProposalType.DISCUSSIONS ? 'discussion' : 'grant'}</span>
 					</div>
-					<h5 className='text-color mt-8 text-sm font-normal'>
-						Select Governance version <span className='text-red-500'>*</span>
-					</h5>
-					<Radio.Group
-						className='p-1 text-xs font-normal'
-						onChange={(e) => {
-							setGovType(e.target.value);
-							savePostFormCacheValue('govType', e.target.value);
-						}}
-						value={govType}
-					>
-						<Radio
-							className={`text-xs font-normal text-navBlue ${govType === 'gov_1' && 'text-pink_primary'}`}
-							value='gov_1'
-							defaultChecked
-						>
-							Governance V1
-						</Radio>
-						<Radio
-							className={`text-xs font-normal text-navBlue ${govType === 'open_gov' && 'text-pink_primary'}`}
-							value='open_gov'
-							defaultChecked={false}
-						>
-							Governance V2
-						</Radio>
-					</Radio.Group>
 					{proposalType === ProposalType.DISCUSSIONS && (
 						<Form.Item
 							className='mt-8'
@@ -253,7 +230,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 									Select Topic <span className='ml-1 text-red-500'>*</span>
 								</label>
 								<TopicsRadio
-									govType={govType}
+									govType={isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1}
 									onTopicSelection={(id) => {
 										setTopicId(id);
 										savePostFormCacheValue('topicId', String(id));

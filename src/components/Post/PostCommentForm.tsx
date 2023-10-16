@@ -52,7 +52,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
-	const { id, username, picture } = useUserDetailsSelector();
+	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
 	const {
 		postData: { postIndex, postType, track_number }
@@ -199,6 +199,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			id: commentId || '',
 			isError: false,
 			profile: picture || '',
+			proposer: loginAddress,
 			replies: [],
 			sentiment: isSentimentPost ? sentiment : 0,
 			updated_at: new Date(),

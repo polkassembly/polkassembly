@@ -52,6 +52,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						address={address}
 						topic={topic}
 						username={username}
+						truncateUsername={false}
 					/>
 					<div className='hidden sm:mb-1 sm:mt-2 sm:flex sm:flex-row sm:items-start sm:justify-between'>
 						<div className='mt-3 lg:mt-1'>

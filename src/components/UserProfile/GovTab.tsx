@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Segmented, Select } from 'antd';
-import { IUserPost } from 'pages/api/v1/listing/user-posts';
+import { Select } from 'antd';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
@@ -11,6 +10,8 @@ import { EGovType } from '~src/global/proposalType';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 import { useNetworkContext } from '~src/context';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 
 export const getLabel = (str: string) => {
 	const newStr = str.split('_').join(' ');
@@ -19,73 +20,42 @@ export const getLabel = (str: string) => {
 
 interface IGovTabProps {
 	className?: string;
-	govType: EGovType;
 	userAddresses?: string[];
-	posts:
-		| {
-				discussions: {
-					posts: IUserPost[];
-				};
-				root: IUserPost[];
-				staking_admin: IUserPost[];
-				auction_admin: IUserPost[];
-				governance: {
-					lease_admin: IUserPost[];
-					general_admin: IUserPost[];
-					referendum_canceller: IUserPost[];
-					referendum_killer: IUserPost[];
-				};
-				treasury: {
-					treasurer: IUserPost[];
-					small_tipper: IUserPost[];
-					big_tipper: IUserPost[];
-					small_spender: IUserPost[];
-					medium_spender: IUserPost[];
-					big_spender: IUserPost[];
-				};
-				fellowship: {
-					member_referenda: IUserPost[];
-					whitelisted_caller: IUserPost[];
-					fellowship_admin: IUserPost[];
-				};
-		  }
-		| {
-				discussions: {
-					posts: IUserPost[];
-				};
-				democracy: {
-					referenda: IUserPost[];
-					proposals: IUserPost[];
-				};
-				treasury: {
-					treasury_proposals: IUserPost[];
-					bounties: IUserPost[];
-					tips: IUserPost[];
-				};
-				collective: {
-					council_motions: IUserPost[];
-					tech_comm_proposals: IUserPost[];
-				};
-		  };
+	posts?: IUserPostsListingResponse;
+	historyType?: EProfileHistory;
 }
 
 const GovTab: FC<IGovTabProps> = (props) => {
-	const { posts, className, govType, userAddresses } = props;
+	const { posts, className, userAddresses, historyType: profileHistory } = props;
 	const { network } = useNetworkContext();
+	const [govType, setGovType] = useState<EGovType>(!votesHistoryUnavailableNetworks.includes(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
+
 	const [selectedPostsType, setSelectedPostsType] = useState('discussions');
 	const [selectedPost, setSelectedPost] = useState('posts');
-	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(!votesHistoryUnavailableNetworks.includes(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
 
 	return (
 		<div className={className}>
 			<div className='mb-6'>
-				{!votesHistoryUnavailableNetworks.includes(network) && (
-					<div className='mb-6'>
-						<Segmented
-							options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
-							onChange={(e) => setProfileHistory(e as EProfileHistory)}
-						/>
-					</div>
+				{isOpenGovSupported(network) && (profileHistory === EProfileHistory.VOTES || profileHistory === EProfileHistory.POSTS) && (
+					<Select
+						value={govType}
+						style={{
+							width: 120
+						}}
+						onChange={(v) => {
+							setGovType(v);
+						}}
+						options={[
+							{
+								label: 'Gov1',
+								value: 'gov1'
+							},
+							{
+								label: 'OpenGov',
+								value: 'open_gov'
+							}
+						]}
+					/>
 				)}
 			</div>
 			{profileHistory === EProfileHistory.POSTS && (
@@ -96,7 +66,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 						className='select'
 						onChange={(v) => {
 							setSelectedPostsType(v);
-							const obj = (posts as any)?.[v];
+							const obj = ((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[v];
 							if (obj && !Array.isArray(obj)) {
 								const objKeys = Object.keys(obj);
 								if (objKeys && objKeys.length > 0) {
@@ -104,15 +74,15 @@ const GovTab: FC<IGovTabProps> = (props) => {
 								}
 							}
 						}}
-						options={Object.keys(posts).map((key) => ({
+						options={Object.keys((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any).map((key) => ({
 							label: getLabel(key),
 							value: key
 						}))}
 					/>
 					<div className='scroll-hidden my-5 flex max-w-full items-center gap-x-2 overflow-x-auto'>
-						{(posts as any)?.[selectedPostsType] &&
-							!Array.isArray((posts as any)?.[selectedPostsType]) &&
-							Object.keys((posts as any)?.[selectedPostsType]).map((key) => {
+						{((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType] &&
+							!Array.isArray(((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType]) &&
+							Object.keys(((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType]).map((key) => {
 								return (
 									<button
 										key={key}
@@ -129,11 +99,13 @@ const GovTab: FC<IGovTabProps> = (props) => {
 							})}
 					</div>
 					<div>
-						{(posts as any)?.[selectedPostsType] && Array.isArray((posts as any)?.[selectedPostsType]) ? (
-							<PostTab posts={(posts as any)?.[selectedPostsType]} />
+						{((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType] && Array.isArray((posts as any)?.[selectedPostsType]) ? (
+							<PostTab posts={((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType]} />
 						) : (
-							(posts as any)?.[selectedPostsType]?.[selectedPost] &&
-							Array.isArray((posts as any)?.[selectedPostsType]?.[selectedPost]) && <PostTab posts={(posts as any)?.[selectedPostsType]?.[selectedPost]} />
+							((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType]?.[selectedPost] &&
+							Array.isArray(((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType]?.[selectedPost]) && (
+								<PostTab posts={((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType]?.[selectedPost]} />
+							)
 						)}
 					</div>
 				</>

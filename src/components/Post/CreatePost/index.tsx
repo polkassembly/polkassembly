@@ -4,9 +4,8 @@
 
 import { Button, Form, Input, Switch } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostCategory } from 'src/global/post_categories';
 import { usePollEndBlock } from 'src/hooks';
 import { EGovType, NotificationStatus } from 'src/types';
@@ -21,8 +20,8 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TopicsRadio from './TopicsRadio';
 import AddTags from '~src/ui-components/AddTags';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { useNetworkContext } from '~src/context';
 
 interface Props {
 	className?: string;
@@ -33,8 +32,8 @@ const postFormKey = `form:post:${ProposalType.DISCUSSIONS}`;
 
 const CreatePost = ({ className, proposalType }: Props) => {
 	const router = useRouter();
-	const currentUser = useContext(UserDetailsContext);
-	const { network } = useNetworkContext();
+	const currentUser = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
 	const pollEndBlock = usePollEndBlock();

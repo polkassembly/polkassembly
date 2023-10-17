@@ -9,12 +9,13 @@ import styled from 'styled-components';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ParachainInfoCard from '~src/components/Parachains/ParachainInfoCard';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
 import ChainDataTable from '../../src/components/Parachains/ChainDataTable';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 interface Props {
 	className?: string;
@@ -31,10 +32,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Parachains = ({ className, network }: Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

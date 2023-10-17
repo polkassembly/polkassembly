@@ -4,9 +4,9 @@
 
 import { CheckCircleFilled } from '@ant-design/icons';
 import React from 'react';
-import { useUserDetailsContext } from '~src/context';
 import DownIcon from '~assets/icons/down-arrow.svg';
 import ImageComponent from '~src/components/ImageComponent';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 export enum EAddressOtherTextType {
 	CONNECTED = 'Connected',
@@ -23,7 +23,7 @@ interface Props {
 }
 
 const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX.Element => {
-	const { username, picture } = useUserDetailsContext();
+	const { username, picture } = useUserDetailsSelector();
 	const profileUsername = displayName || username || '';
 
 	return (

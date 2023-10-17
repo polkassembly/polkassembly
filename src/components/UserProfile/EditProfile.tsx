@@ -16,10 +16,11 @@ import BasicInformation from './BasicInformation';
 import Socials from './Socials';
 import messages from '~src/auth/utils/messages';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
-import { useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
 import { poppins } from 'pages/_app';
 import validator from 'validator';
+import { useDispatch } from 'react-redux';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IEditProfileModalProps {
 	id?: number | null;
@@ -48,7 +49,8 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		basicInformationError: '',
 		socialsError: ''
 	});
-	const userDetailsContext = useUserDetailsContext();
+	const dispatch = useDispatch();
+	const userDetailsContext = useUserDetailsSelector();
 	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
 	const router = useRouter();
 	const validateData = (image: string | undefined, social_links: ISocial[] | undefined) => {
@@ -179,7 +181,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				};
 			});
 			setProfile(getDefaultProfile());
-			handleTokenChange(data?.token, { ...userDetailsContext, picture: image });
+			handleTokenChange(data?.token, { ...userDetailsContext, picture: image }, dispatch);
 			router.push(`/user/${username}`);
 		}
 

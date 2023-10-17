@@ -4,9 +4,8 @@
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, Tooltip } from 'antd';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { EReportType, NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -15,7 +14,7 @@ import ReplyIcon from '~assets/icons/reply.svg';
 import { Caution } from '~src/ui-components/CustomIcons';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
@@ -27,6 +26,7 @@ import { v4 } from 'uuid';
 import { checkIsProposer } from '../utils/checkIsProposer';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { poppins } from 'pages/_app';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 
 interface Props {
@@ -45,9 +45,9 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress, addresses, allowed_roles } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { comments, setComments } = useCommentDataContext();
 
 	const [form] = Form.useForm();

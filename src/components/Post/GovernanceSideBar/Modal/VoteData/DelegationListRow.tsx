@@ -6,8 +6,8 @@ import React, { FC } from 'react';
 import Address from 'src/ui-components/Address';
 import { VoteType } from '~src/global/proposalType';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
 import { parseBalance } from './utils/parseBalaceToReadable';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IDelegationListRow {
 	voteType: VoteType;
@@ -15,7 +15,7 @@ interface IDelegationListRow {
 }
 
 const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	return (
 		<div className='flex items-center text-xs text-bodyBlue'>
 			{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (

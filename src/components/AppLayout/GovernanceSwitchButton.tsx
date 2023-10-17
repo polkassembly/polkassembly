@@ -4,8 +4,8 @@
 
 import Link from 'next/link';
 import React from 'react';
-import { useNetworkContext } from '~src/context';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { SyncIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const GovernanceSwitchButton = ({ className }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	return (
 		<div className={`${className}`}>

@@ -11,7 +11,7 @@ import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CautionIcon from '~assets/icons/grey-caution.svg';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { APPNAME } from '~src/global/appName';
 import { NotificationStatus, Wallet } from '~src/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -28,6 +28,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import { gov2ReferendumStatus } from '~src/global/statuses';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 
 const ZERO_BN = new BN(0);
@@ -39,10 +40,10 @@ interface Props {
 
 const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
-	const { loginWallet, loginAddress } = useUserDetailsContext();
+	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const [address, setAddress] = useState<string>('');
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);

@@ -12,7 +12,7 @@ import AyeNayButtons from 'src/ui-components/AyeNayButtons';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { EDecision, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
@@ -25,6 +25,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import executeTx from '~src/util/executeTx';
 import { formatBalance } from '@polkadot/util';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -45,8 +46,8 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 	const [forceVote, setForceVote] = useState(false);
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
-	const { isLoggedOut } = useUserDetailsContext();
-	const { network: Network } = useNetworkContext();
+	const { id } = useUserDetailsSelector();
+	const { network: Network } = useNetworkSelector();
 	const [vote, setVote] = useState<{
 		timestamp: string | undefined;
 		decision: EDecision;
@@ -192,7 +193,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 		});
 	};
 
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToVote />;
 	}
 	const openModal = () => {

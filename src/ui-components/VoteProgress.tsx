@@ -7,8 +7,7 @@ import BN from 'bn.js';
 import { PieChart } from 'react-minimal-pie-chart';
 import React, { FC } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
-
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IVoteProgressProps {
 	ayeVotes?: BN;
@@ -30,7 +29,7 @@ interface IVoteProgressLegacyProps {
 const ZERO = new BN(0);
 
 export const VoteProgressLegacy = ({ ayeVotes, className, nayVotes, ayesNum, naysNum }: IVoteProgressLegacyProps) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -64,7 +63,7 @@ export const VoteProgressLegacy = ({ ayeVotes, className, nayVotes, ayesNum, nay
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, ayesNum, naysNum, turnoutPercentage }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));

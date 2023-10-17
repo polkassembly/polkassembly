@@ -11,8 +11,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
-import { getLocalStorageToken, logout } from 'src/services/auth.service';
+import { useApiContext } from 'src/context';
+import { getLocalStorageToken } from 'src/services/auth.service';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -63,7 +63,10 @@ import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalLive from './ProposalLive';
+import { useDispatch } from 'react-redux';
+import { logout } from '~src/redux/userDetails';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -221,9 +224,9 @@ interface Props {
 }
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { setUserDetailsContextState, username, picture, loginAddress } = useUserDetailsContext();
+	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -235,6 +238,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -255,7 +259,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		if (!global?.window) return;
 		const authToken = getLocalStorageToken();
 		if (authToken && isExpired(authToken)) {
-			logout(setUserDetailsContextState);
+			dispatch(logout());
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.asPath]);
@@ -593,7 +597,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		setSidedrawer(false);
 	};
 	const handleLogout = async (username: string) => {
-		logout(setUserDetailsContextState);
+		dispatch(logout());
 		router.replace(router.asPath);
 		if (!router.query?.username) return;
 		if (router.query?.username.includes(username)) {

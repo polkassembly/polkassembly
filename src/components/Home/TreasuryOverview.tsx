@@ -17,13 +17,14 @@ import blockToTime from 'src/util/blockToTime';
 import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import styled from 'styled-components';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import Available from '~assets/icons/available.svg';
 import CurrentPrice from '~assets/icons/currentprice.svg';
 import NextBurn from '~assets/icons/nextburn.svg';
 import SpendPeriod from '~assets/icons/spendperiod.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -34,7 +35,7 @@ interface ITreasuryOverviewProps {
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useApiContext();
 

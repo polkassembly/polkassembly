@@ -7,8 +7,8 @@ import React from 'react';
 import { Wallet } from 'src/types';
 
 import WalletButton from '../WalletButton';
-import { useNetworkContext } from '~src/context';
 import { WalletIcon } from './MetamaskLogin';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	disabled: boolean;
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, noHeader = false, selectedWallet }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	function handleWalletClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) {
 		event.preventDefault();
 		onWalletSelect(wallet);

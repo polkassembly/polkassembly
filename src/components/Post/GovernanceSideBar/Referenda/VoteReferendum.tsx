@@ -13,7 +13,7 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -43,6 +43,7 @@ import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import VotingForm, { EFormType } from './VotingFrom';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
@@ -107,15 +108,15 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 };
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
-	const userDetails = useUserDetailsContext();
-	const { addresses, isLoggedOut, loginAddress, loginWallet } = userDetails;
+	const userDetails = useUserDetailsSelector();
+	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);
 	const [fetchingFellowship, setFetchingFellowship] = useState(true);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -304,7 +305,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, api, availableWallets]);
 
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToVote />;
 	}
 	const handleModalReset = () => {

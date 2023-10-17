@@ -19,15 +19,15 @@ import OverviewSVG from '~assets/sidebar/overview.svg';
 import DiscussionsSVG from '~assets/sidebar/discussions.svg';
 import ParachainsSVG from '~assets/sidebar/parachains.svg';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const CMDK = () => {
 	const [page, setPage] = useState('home');
 	const [open, setOpen] = useState<boolean>(false);
 	const [search, setSearch] = useState('');
 	useHandleOpenCommandPalette(setOpen);
-	const { network } = useNetworkContext();
-	const { isLoggedOut } = useUserDetailsContext();
+	const { network } = useNetworkSelector();
+	const { id } = useUserDetailsSelector();
 
 	function onPageEscape(page: any) {
 		if (page.id === 'home') {
@@ -37,7 +37,7 @@ const CMDK = () => {
 		setPage('home');
 	}
 	const homeMenus = getHomeMenu(network);
-	if (isLoggedOut()) {
+	if (!id) {
 		if (homeMenus && Array.isArray(homeMenus) && homeMenus.length > 0) {
 			const index = homeMenus?.[0]?.items?.findIndex((item) => item?.value === 'settings');
 			if (index >= 0) {

@@ -16,9 +16,10 @@ import HelperTooltip from 'src/ui-components/HelperTooltip';
 import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
-import { usePostDataContext, useUserDetailsContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IGeneralSignalsProps {
@@ -31,7 +32,7 @@ interface IGeneralSignalsProps {
 }
 
 const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId, canEdit, proposalType, votes }) => {
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 	const [error, setErr] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [ayes, setAyes] = useState(0);

@@ -5,7 +5,6 @@
 import { Col, Row } from 'antd';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import Loader from 'src/ui-components/Loader';
 import styled from 'styled-components';
 
@@ -13,6 +12,7 @@ import DiscussionsBoard from './DiscussionsBoard';
 import PostSidebar from './PostSidebar';
 import ReferendaBoard from './ReferendaBoard';
 import TipsBoard from './TipsBoard';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 enum SidebarReducerAction {
 	CLOSE,
@@ -62,7 +62,7 @@ const CouncilBoardContainer = ({ className }: { className?: string }) => {
 	const [members, setMembers] = useState<string[]>([]);
 	const [sidebarState, dispatch] = useReducer(reducer, initSidebarState);
 
-	const { defaultAddress } = useContext(UserDetailsContext);
+	const { defaultAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useContext(ApiContext);
 
 	useEffect(() => {

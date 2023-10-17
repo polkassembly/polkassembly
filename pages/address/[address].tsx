@@ -7,7 +7,6 @@ import { GetServerSideProps } from 'next';
 import { getUserIdWithAddress, getUserProfileWithUserId } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkContext } from 'src/context';
 import styled from 'styled-components';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -24,6 +23,8 @@ import VotesHistory from '~src/ui-components/VotesHistory';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getOnChainUserPosts } from 'pages/api/v1/listing/get-on-chain-user-post';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -103,12 +104,12 @@ const EmptyState = styled.div`
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className, error } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(isOpenGovSupported(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

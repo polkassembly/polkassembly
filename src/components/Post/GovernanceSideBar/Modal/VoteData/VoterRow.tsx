@@ -6,7 +6,6 @@ import React, { FC, useState, useEffect } from 'react';
 import Address from 'src/ui-components/Address';
 import { VoteType } from '~src/global/proposalType';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import CollapseDownIcon from '~assets/icons/keyboard_arrow_down.svg';
 import CollapseUpIcon from '~assets/icons/keyboard_arrow_up.svg';
@@ -23,6 +22,7 @@ import dayjs from 'dayjs';
 import { parseBalance } from './utils/parseBalaceToReadable';
 import Loader from '~src/ui-components/Loader';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IVoterRow {
 	className?: string;
@@ -84,7 +84,7 @@ const getPercentage = (userVotes: string, totalVotes: string) => {
 
 const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData, className, setDelegationVoteModal, index, tally, referendumId, decision, isReferendum2 }) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [delegatorLoading, setDelegatorLoading] = useState(true);
 	const [delegatedData, setDelegatedData] = useState<any>(null);
 	useEffect(() => {

@@ -6,7 +6,7 @@ import { Divider, Skeleton, Tabs } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { CheckCircleFilled } from '@ant-design/icons';
 import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import Addresses from './Addresses';
 import EditProfile from './EditProfile';
 
@@ -23,6 +23,7 @@ import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import OnChainIdentity from './OnChainIdentity';
 import SocialLink from '~src/ui-components/SocialLinks';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
@@ -95,7 +96,7 @@ export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
 const Details: FC<IDetailsProps> = (props) => {
 	const { userProfile, userPosts } = props;
-	const userDetails = useUserDetailsContext();
+	const userDetails = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
@@ -219,7 +220,7 @@ const Details: FC<IDetailsProps> = (props) => {
 	const newUsername = display || legal || nickname || username;
 	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const items = [
 		{

@@ -12,13 +12,13 @@ import Address from 'src/ui-components/Address';
 import blockToTime from 'src/util/blockToTime';
 import formatBnBalance from 'src/util/formatBnBalance';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { useCurrentBlock } from '~src/hooks';
 import { getBlockLink } from '~src/util/subscanCheck';
 
 import OnchainInfoWrapper from './OnchainInfoWrapper';
 import Link from 'next/link';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active />,
@@ -104,7 +104,7 @@ export const getBlockNumber = (
 };
 
 const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const { className, onChainInfo, proposalType } = props;
 	const currentBlock = useCurrentBlock();

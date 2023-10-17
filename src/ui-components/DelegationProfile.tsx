@@ -14,7 +14,7 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
-import { useUserDetailsContext } from '~src/context';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -29,7 +29,7 @@ interface Props {
 }
 
 const DelegationProfile = ({ username, address, isSearch, className }: Props) => {
-	const userProfile = useUserDetailsContext();
+	const userProfile = useUserDetailsSelector();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],

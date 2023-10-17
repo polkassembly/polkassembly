@@ -7,11 +7,12 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { getProfileWithAddress } from 'pages/api/v1/auth/data/profileWithAddress';
 import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ProfileDetails } from '~src/auth/types';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 interface IProfileProps {
@@ -57,9 +58,10 @@ const ProfileComponent = dynamic(() => import('~src/components/Profile'), {
 
 const Profile: FC<IProfileProps> = (props) => {
 	const { className, userProfile, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
+
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

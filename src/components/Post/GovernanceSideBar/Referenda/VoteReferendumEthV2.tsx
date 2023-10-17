@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -34,6 +34,9 @@ import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setWalletConnectProvider } from '~src/redux/userDetails';
 
 const ZERO_BN = new BN(0);
 
@@ -51,13 +54,14 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress, loginWallet } = useUserDetailsContext();
+	const { walletConnectProvider, id, loginAddress, loginWallet } = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const {
 		setPostData,
 		postData: { postType: proposalType }
@@ -180,7 +184,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			}
 		});
 		await wcPprovider.wc.createSession();
-		setWalletConnectProvider(wcPprovider);
+		dispatch(setWalletConnectProvider(wcPprovider));
 	};
 
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
@@ -375,7 +379,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			});
 	};
 
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToVote />;
 	}
 	const openModal = () => {

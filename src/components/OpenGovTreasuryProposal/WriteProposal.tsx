@@ -6,7 +6,6 @@ import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
 import { ISteps } from '.';
-import { useNetworkContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -15,6 +14,7 @@ import { NotificationStatus } from '~src/types';
 import _ from 'lodash';
 import styled from 'styled-components';
 import ContentForm from '../ContentForm';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	isDiscussionLinked: boolean | null;
@@ -45,7 +45,7 @@ const WriteProposal = ({
 	setTags,
 	form
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionFound, setIsDiscussionFound] = useState<boolean>(true);
 

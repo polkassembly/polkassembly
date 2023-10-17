@@ -16,14 +16,13 @@ import Loader from 'src/ui-components/Loader';
 import PassingInfoTag from 'src/ui-components/PassingInfoTag';
 import VoteProgress from 'src/ui-components/VoteProgress';
 import formatBnBalance from 'src/util/formatBnBalance';
-
-import { useNetworkContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { isSubscanSupport } from 'src/util/subscanCheck';
 import { chainProperties } from '~src/global/networkConstants';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/queries';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IReferendumVoteInfoProps {
 	className?: string;
@@ -35,7 +34,7 @@ interface IReferendumVoteInfoProps {
 const ZERO = new BN(0);
 
 const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen, voteThreshold }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useContext(ApiContext);
 	const [totalIssuance, setTotalIssuance] = useState<BN | null>(null);

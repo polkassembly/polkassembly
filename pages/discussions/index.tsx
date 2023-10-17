@@ -6,11 +6,9 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useEffect, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -21,6 +19,9 @@ import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -78,16 +79,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const Discussions: FC<IDiscussionsProps> = (props) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 	const router = useRouter();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;

@@ -3,9 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
-
 import { post_topic } from '~src/global/post_topics';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { EGovType } from '~src/types';
 
 interface Props {
@@ -38,7 +37,7 @@ const topicIdToTopictext = (topicId: number) => {
 };
 
 const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [topicOptions, setTopicOptions] = useState<string[]>([]);
 
 	useEffect(() => {

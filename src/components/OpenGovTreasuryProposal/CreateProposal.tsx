@@ -7,7 +7,7 @@ import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { BN_HUNDRED, formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -24,6 +24,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -71,7 +72,7 @@ const CreateProposal = ({
 	availableBalance,
 	discussionLink
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
 	const { api, apiReady } = useApiContext();
@@ -79,7 +80,7 @@ const CreateProposal = ({
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { id: userId } = useUserDetailsContext();
+	const { id: userId } = useUserDetailsSelector();
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const success = (message: string) => {
 		messageApi.open({

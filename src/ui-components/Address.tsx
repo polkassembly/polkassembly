@@ -6,7 +6,6 @@ import { DeriveAccountFlags, DeriveAccountRegistration, DeriveAccountInfo } from
 import { ApiPromise } from '@polkadot/api';
 import { ApiContext } from '~src/context/ApiContext';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { NetworkContext } from '~src/context/NetworkContext';
 import dayjs from 'dayjs';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -23,6 +22,7 @@ import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
 import { Skeleton, Space } from 'antd';
 import dynamic from 'next/dynamic';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	loading: () => (
@@ -86,8 +86,7 @@ const Address = (props: Props) => {
 		ethIdenticonSize,
 		isVoterAddress
 	} = props;
-
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);

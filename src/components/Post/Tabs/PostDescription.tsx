@@ -7,8 +7,7 @@ import { Button, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
 import Markdown from 'src/ui-components/Markdown';
-
-import { usePostDataContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 
 import CreateOptionPoll from '../ActionsBar/OptionPoll/CreateOptionPoll';
 import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
@@ -20,6 +19,7 @@ import { EReportType, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ProposalType } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (
@@ -50,8 +50,8 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const {
 		postData: { content, postType, postIndex, title, post_reactions }
 	} = usePostDataContext();
-	const { allowed_roles } = useUserDetailsContext();
-	const { network } = useNetworkContext();
+	const { allowed_roles } = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const isOffchainPost: Boolean = postType == ProposalType.DISCUSSIONS || postType == ProposalType.GRANTS;
 	//write a function which redirects to the proposalType page

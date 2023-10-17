@@ -9,9 +9,9 @@ import PostTab from '../User/PostTab';
 import { EGovType } from '~src/global/proposalType';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
-import { useNetworkContext } from '~src/context';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export const getLabel = (str: string) => {
 	const newStr = str.split('_').join(' ');
@@ -27,7 +27,7 @@ interface IGovTabProps {
 
 const GovTab: FC<IGovTabProps> = (props) => {
 	const { posts, className, userAddresses, historyType: profileHistory } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [govType, setGovType] = useState<EGovType>(!votesHistoryUnavailableNetworks.includes(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 
 	const [selectedPostsType, setSelectedPostsType] = useState('discussions');

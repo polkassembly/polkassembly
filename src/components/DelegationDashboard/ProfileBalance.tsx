@@ -147,6 +147,7 @@ const ProfileBalances = ({ className }: Props) => {
 				localStorageAddressKeyName='delegationDashboardAddress'
 				open={openModal}
 				setOpen={setOpenModal}
+				walletAlertTitle={'Delegation'}
 				closable={true}
 			/>
 		</div>

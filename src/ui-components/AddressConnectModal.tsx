@@ -251,11 +251,11 @@ const AddressConnectModal = ({
 		} else {
 			setLoading(true);
 			localStorage.setItem(localStorageWalletKeyName, String(wallet));
-			localStorage.setItem(localStorageAddressKeyName, address);
-			localStorage.setItem('delegationDashboardAddress', multisig || address);
+			localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
+			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('multisigDelegationAssociatedAddress', address);
 			setUserDetailsContextState((prev) => {
-				return { ...prev, delegationDashboardAddress: multisig || address, loginWallet: wallet || null };
+				return { ...prev, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null };
 			});
 			setShowMultisig(false);
 			setMultisig('');

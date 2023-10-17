@@ -31,6 +31,7 @@ export enum CustomStatus {
 }
 
 const TrackListingCard = ({ className, posts, trackName }: Props) => {
+	console.warn(posts);
 	const items = [
 		{
 			label: (

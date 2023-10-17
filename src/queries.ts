@@ -1679,9 +1679,10 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
 }
 `;
 
+// get similar proposals
 export const GET_PROPOSAL_BY_STATUS_AND_TYPE = `query ProposalByStatusAndType($type_eq:ProposalType) {
   proposals(where: {type_eq: $type_eq, status_in: [Started,Deciding,Submitted, DecisionDepositPlaced, Active ]}, limit: 50) {
-    id
+    index
     proposer
     status
     statusHistory {
@@ -1692,5 +1693,124 @@ export const GET_PROPOSAL_BY_STATUS_AND_TYPE = `query ProposalByStatusAndType($t
     createdAt
     updatedAt
     trackNumber
+  }
+}`;
+
+export const GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT = `query getAllianceAnnouncements( $limit: Int = 50, $offset: Int = 0, $type_in:[ProposalType!] ) {
+  announcements(limit: $limit, offset: $offset, where:{status_not_in:[Rejected,Executed,TimedOut, Approved], type_in: $type_in}) {
+    id
+    code
+    codec
+    createdAt
+    createdAtBlock
+    hash
+    index
+    proposer
+    type
+    updatedAt
+    version
+    cid
+    status
+    statusHistory {
+      id
+      status
+    }
+  }
+}`;
+
+export const GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE = `query ProposalsListingByType($limit: Int = 50, $offset: Int = 0,  $type_in:[ProposalType!]) {
+  proposals(limit: $limit, offset: $offset, where: {status_not_in:[Rejected,Executed,TimedOut, Approved], type_in: $type_in}) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+     
+    }
+    preimage {
+      method
+      proposer
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    trackNumber
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+  }
+}`;
+
+export const GET_POSTS_LISTING_BY_TYPE = `query ProposalsListingByType( $limit: Int = 50, $type_in:[ProposalType!]) {
+  proposals(limit: $limit, where:{status_in:[Started,Submitted,Deciding, DecisionDepositPlaced, ConfirmStarted, ConfirmAborted], type_in:$type_in}) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
+    index
+    end
+    hash
+    description
+    type
+    trackNumber
+    statusHistory {
+      status
+    }
+  }
+}`;
+
+export const GET_POSTS_LISTING_FOR_POLYMESH = `query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10) {
+  proposals(limit: $limit, where:{type_in:$type_in, status_not_in:[Rejected,Executed, Expired]}) {
+    createdAt
+    createdAtBlock
+    deposit
+    endedAtBlock
+    endedAt
+    hash
+    fee
+    description
+    proposer
+    index
+    status
+    identity
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+    }
+    updatedAt
+    updatedAtBlock
+    type
+  }
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {type_in: $type_in}) {
+    totalCount
   }
 }`;

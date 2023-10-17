@@ -418,6 +418,14 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
+
+	(async () => {
+		const url = '/api/v1/listing/get-similar-posts';
+		let { data, error } = await nextApiClientFetch<any>(url);
+		data = data.flat();
+		console.log(data);
+	})();
+
 	return (
 		<PostDataContextProvider
 			initialPostData={{

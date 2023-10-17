@@ -211,7 +211,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	return (
 		<div className={`${className} comment-usernames-container flex w-[100%] justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
-				<div className={'flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
+				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex flex-shrink-0 items-center'}>
 						<NameLabel
 							defaultAddress={defaultAddress}
@@ -259,7 +259,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					)}
 					{created_at && (
 						<span className={`mr-1 flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
-							<ClockCircleOutlined className='mr-1' />
+							<ClockCircleOutlined className='ml-1 mr-1' />
 							{relativeCreatedAt}
 						</span>
 					)}
@@ -301,7 +301,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							}}
 						>
 							<Divider
-								className='mb-[-1px] ml-1 hidden md:inline-block'
+								className='mb-[-1px] ml-1 mr-3 hidden md:inline-block'
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>

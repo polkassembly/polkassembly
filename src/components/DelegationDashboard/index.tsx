@@ -73,7 +73,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 				className='px-[34px] py-[24px]'
 			/>
 			<div>
-				{userDetails?.delegationDashboardAddress.length > 0 ? (
+				{userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (
 					<DashboardTrackListing
 						className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] mt-8 rounded-[14px] bg-white'
 						address={String(userDetails.delegationDashboardAddress)}

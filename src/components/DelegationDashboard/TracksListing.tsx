@@ -129,14 +129,17 @@ const DashboardTrackListing = ({ className }: Props) => {
 	};
 
 	useEffect(() => {
-		delegationDashboardAddress.length > 0 && getData();
+		if (delegationDashboardAddress) {
+			getData();
+		}
+
 		setStatusValue(ETrackDelegationStatus.All);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [delegationDashboardAddress, api, apiReady]);
 
 	useEffect(() => {
-		if (data.length > 0) {
+		if (data) {
 			const receivedDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Received_Delegation));
 			setReceivedDelegationCount(receivedDelegations?.length);
 			const delegateDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Delegated));
@@ -229,7 +232,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 					columns={GetColumns(status)}
 					dataSource={rowsData}
 					rowClassName='cursor-pointer'
-					loading={loading || !delegationDashboardAddress || delegationDashboardAddress.length === 0}
+					loading={loading || !delegationDashboardAddress}
 					pagination={false}
 					onRow={(rowData: ITrackDataType) => {
 						return {

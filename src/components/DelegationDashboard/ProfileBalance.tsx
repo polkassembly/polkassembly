@@ -124,7 +124,7 @@ const ProfileBalances = ({ className }: Props) => {
 				</div>
 			</div>
 			<div className='-mt-6 mr-6 w-[200px]'>
-				{accounts.length > 0 && (
+				{accounts && accounts?.length > 0 && (
 					<AccountSelectionForm
 						linkAddressTextDisabled
 						addressTextClassName='text-white'
@@ -147,6 +147,7 @@ const ProfileBalances = ({ className }: Props) => {
 				localStorageAddressKeyName='delegationDashboardAddress'
 				open={openModal}
 				setOpen={setOpenModal}
+				walletAlertTitle={'Delegation'}
 				closable={true}
 			/>
 		</div>

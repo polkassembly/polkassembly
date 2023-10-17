@@ -292,6 +292,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									created_at: new Date(),
 									id: replyId,
 									isReplyError: false,
+									postIndex: postIndex,
+									postType,
 									proposer: loginAddress,
 									updated_at: new Date(),
 									user_id: id,
@@ -325,8 +327,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			const { data, error: addCommentError } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 				commentId: commentId,
 				content: replyContent,
-				postId: comment.post_index,
-				postType: comment.post_type,
+				postId: comment.post_index || postIndex,
+				postType: comment.post_type || postType,
 				trackNumber: track_number,
 				userId: id
 			});

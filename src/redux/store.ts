@@ -33,7 +33,7 @@ export const makeStore = () => {
 		const persistConfig = {
 			key: 'polkassembly',
 			storage,
-			whitelist: [] // make sure it does not clash with server keys
+			whitelist: ['userDetails'] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

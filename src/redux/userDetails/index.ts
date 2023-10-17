@@ -1,12 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import { getLocalStorageToken } from '~src/services/auth.service';
 import { IUserDetailsStore } from './@types';
-import { JWTPayloadType } from '~src/auth/types';
-import { Wallet } from '~src/types';
-import { decodeToken } from 'react-jwt';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import WalletConnectProvider from '@walletconnect/web3-provider';
@@ -40,48 +35,6 @@ export const deleteLocalStorageToken = (): void => {
 	}
 };
 
-try {
-	const accessToken = getLocalStorageToken();
-
-	const tokenPayload = accessToken && decodeToken<JWTPayloadType>(accessToken);
-
-	if (tokenPayload && tokenPayload.sub) {
-		const {
-			addresses,
-			default_address,
-			is2FAEnabled = false,
-			roles,
-			sub: id,
-			username,
-			email,
-			email_verified,
-			web3signup,
-			login_address,
-			login_wallet
-		} = tokenPayload as JWTPayloadType;
-
-		if (id) {
-			initialState.id = Number(id);
-		}
-		if (username) {
-			initialState.username = username;
-		}
-		if (email) {
-			initialState.email = email;
-		}
-		initialState.email_verified = email_verified || false;
-
-		initialState.addresses = addresses;
-		initialState.defaultAddress = default_address;
-		initialState.allowed_roles = roles.allowedRoles;
-		initialState.web3signup = web3signup || false;
-		initialState.is2FAEnabled = is2FAEnabled;
-		initialState.loginAddress = login_address || window?.localStorage?.getItem('loginAddress') || '';
-		initialState.loginWallet = login_wallet || (window?.localStorage?.getItem('loginWallet') as Wallet) || null;
-	}
-} catch {
-	//do nothing, the user will be authenticated as soon as there's a new call to the server.
-}
 export const userDetailsStore = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(HYDRATE, (state, action) => {

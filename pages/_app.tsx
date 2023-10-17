@@ -15,7 +15,6 @@ import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
-// import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 import { initGA, logPageView } from '../analytics';
 

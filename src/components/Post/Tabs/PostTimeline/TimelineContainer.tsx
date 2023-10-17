@@ -242,6 +242,25 @@ export default styled(TimelineContainer)`
 		width: 98px;
 	}
 
+	@media (max-width: 1500px) and (min-width: 1320px) {
+		.content-container {
+			width: 580px;
+		}
+
+		.timeline-dropdown {
+			margin-left: 586px;
+		}
+	}
+	@media (max-width: 1320px) and (min-width: 1280px) {
+		.content-container {
+			width: 540px;
+		}
+
+		.timeline-dropdown {
+			margin-left: 544px;
+		}
+	}
+
 	@media (min-width: 1100px) and (max-width: 1280px) {
 		.content-container {
 			width: 800px;

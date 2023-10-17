@@ -10,44 +10,47 @@ import styled from 'styled-components';
 import ArgumentsTable from './ArgumentsTable';
 
 interface Props {
-	className?: string
-	postArguments: any
-	showAccountArguments: boolean
+	className?: string;
+	postArguments: any;
+	showAccountArguments: boolean;
 }
 
 const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments }: Props) => {
-	if(postArguments) {
+	if (postArguments) {
 		const tabItems = [
 			{
-				children: <div className="table-view">
-					<table cellSpacing={0} cellPadding={0}>
-						<thead>
-							<tr>
-								<th className='direct-data data-0'>
-									Name
-								</th>
-								<th className='direct-data data-2'>
-									Value
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<ArgumentsTable argumentsJSON={postArguments} />
-						</tbody>
-					</table>
-				</div>,
+				children: (
+					<div className='table-view'>
+						<table
+							cellSpacing={0}
+							cellPadding={0}
+						>
+							<thead>
+								<tr>
+									<th className='direct-data data-0'>Name</th>
+									<th className='direct-data data-2'>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<ArgumentsTable argumentsJSON={postArguments} />
+							</tbody>
+						</table>
+					</div>
+				),
 				key: 'table',
 				label: 'Table'
 			},
 			{
-				children: <div className="json-view">
-					<ReactJson
-						src={postArguments}
-						iconStyle='circle'
-						enableClipboard={false}
-						displayDataTypes={false}
-					/>
-				</div>,
+				children: (
+					<div className='json-view'>
+						<ReactJson
+							src={postArguments}
+							iconStyle='circle'
+							enableClipboard={false}
+							displayDataTypes={false}
+						/>
+					</div>
+				),
 				key: 'json',
 				label: 'JSON'
 			}
@@ -57,27 +60,32 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 			<div className={className}>
 				<Tabs
 					className='onchain-tabs'
-					defaultActiveKey="table"
+					defaultActiveKey='table'
 					items={tabItems}
 				/>
 
-				{
-					!showAccountArguments && postArguments.map((element:any, index:any) => {
-						return element.name === 'account' && <div key={index}>
-							<Address address={element.value} key={index}/>
-						</div>;
-					})
-				}
+				{!showAccountArguments &&
+					postArguments.map((element: any, index: any) => {
+						return (
+							element.name === 'account' && (
+								<div key={index}>
+									<Address
+										address={element.value}
+										key={index}
+									/>
+								</div>
+							)
+						);
+					})}
 			</div>
 		);
 	} else {
-		return (<div></div>);
+		return <div></div>;
 	}
-
 };
 
 export default styled(ArgumentsTableJSONView)`
-	.onchain-tabs .ant-tabs-tab{
+	.onchain-tabs .ant-tabs-tab {
 		background: transparent !important;
 	}
 `;

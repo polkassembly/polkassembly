@@ -10,11 +10,11 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DiscussionPostCard from './DiscussionPostCard';
 
 interface Props {
-	className?: string
-	openSidebar: (postID: number) => void
+	className?: string;
+	openSidebar: (postID: number) => void;
 }
 
-const DiscussionsBoard = ({ className, openSidebar } : Props) => {
+const DiscussionsBoard = ({ className, openSidebar }: Props) => {
 	const [posts, setPosts] = useState<IPostListing[]>();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -40,27 +40,34 @@ const DiscussionsBoard = ({ className, openSidebar } : Props) => {
 			{!loading && error && <h3>Error fetching discussions</h3>}
 
 			<h3>Discussions {!loading && !error && posts && <span className='card-count'>{posts.length}</span>}</h3>
-			{
-				!loading && !error && posts &&
+			{!loading && !error && posts && (
 				<>
-					{ posts.length > 0 ?
-						posts.map(post => {
+					{posts.length > 0 ? (
+						posts.map((post) => {
 							const numPostId = Number(post.post_id);
-							return !!post?.username &&
-						<div key={numPostId} className='post-card-div' onClick={() => openSidebar(numPostId)}>
-							<DiscussionPostCard
-								id={numPostId}
-								title={post.title}
-								username={post?.username}
-								commentsCount={post.comments_count}
-								createdAt={post.created_at}
-							/>
-						</div>;
+							return (
+								!!post?.username && (
+									<div
+										key={numPostId}
+										className='post-card-div'
+										onClick={() => openSidebar(numPostId)}
+									>
+										<DiscussionPostCard
+											id={numPostId}
+											title={post.title}
+											username={post?.username}
+											commentsCount={post.comments_count}
+											createdAt={post.created_at}
+										/>
+									</div>
+								)
+							);
 						})
-						: <p>No Discussions found.</p>
-					}
+					) : (
+						<p>No Discussions found.</p>
+					)}
 				</>
-			}
+			)}
 		</div>
 	);
 };

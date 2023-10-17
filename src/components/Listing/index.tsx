@@ -12,11 +12,11 @@ import getReferendumVotes from '~src/util/getReferendumVotes';
 import { useNetworkContext } from '~src/context';
 
 interface IListingProps {
-  className?: string;
-  posts?: any[];
-  proposalType: ProposalType;
-  isTip?: boolean;
-  tipStartedIndex?: number
+	className?: string;
+	posts?: any[];
+	proposalType: ProposalType;
+	isTip?: boolean;
+	tipStartedIndex?: number;
 }
 
 const Listing: FC<IListingProps> = (props) => {
@@ -27,15 +27,15 @@ const Listing: FC<IListingProps> = (props) => {
 	const [posts, setPosts] = useState(props.posts || []);
 
 	useEffect(() => {
-		if(!network || !props.posts || !props.posts.length || proposalType != ProposalType.REFERENDUMS) return;
+		if (!network || !props.posts || !props.posts.length || proposalType != ProposalType.REFERENDUMS) return;
 		(async () => {
 			// function to await for ms milliseconds
-			const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+			const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 			const postsWithVotesData = [];
 
 			for (const post of props.posts || []) {
-				const votesData =  await getReferendumVotes(network, post.post_id);
+				const votesData = await getReferendumVotes(network, post.post_id);
 				postsWithVotesData.push({ ...post, votesData });
 
 				sleep(500); // to avoid rate limit
@@ -44,12 +44,12 @@ const Listing: FC<IListingProps> = (props) => {
 			setPosts(postsWithVotesData);
 		})();
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, props.posts, proposalType]);
 
 	useEffect(() => {
 		setPosts(props?.posts || []);
-	},[props.posts]);
+	}, [props.posts]);
 
 	if (!posts || !posts.length) {
 		return (
@@ -69,6 +69,7 @@ const Listing: FC<IListingProps> = (props) => {
 					post_reactions,
 					proposer,
 					comments_count,
+					identity,
 					status,
 					title,
 					topic,
@@ -84,11 +85,14 @@ const Listing: FC<IListingProps> = (props) => {
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
-					<div key={id} className="my-0">
+					<div
+						key={id}
+						className='my-0'
+					>
 						{
 							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
 								<GovernanceCard
-									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
+									className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 									cid={cid}
 									postReactionCount={post_reactions}
 									address={proposer || curator}
@@ -101,13 +105,14 @@ const Listing: FC<IListingProps> = (props) => {
 									title={title || description}
 									topic={topic && topic?.name ? topic.name : ''}
 									created_at={created_at}
-									tip_index={tipStartedIndex? tipStartedIndex - index: null}
+									tip_index={tipStartedIndex ? tipStartedIndex - index : null}
 									isTip={isTip}
 									tags={tags}
 									spam_users_count={spam_users_count}
 									tally={tally}
 									proposalType={proposalType}
 									votesData={votesData}
+									identityId={identity || null}
 								/>
 							</Link>
 						}

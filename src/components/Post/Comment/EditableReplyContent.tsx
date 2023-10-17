@@ -230,8 +230,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 			commentId: commentId,
 			content: replyContent,
-			postId: postIndex,
-			postType: postType,
+			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
+			postType: reply.post_type || postType,
 			trackNumber: track_number,
 			userId: id
 		});
@@ -330,12 +330,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 			message: 'Your reply was added.',
 			status: NotificationStatus.SUCCESS
 		});
+
 		if (id) {
 			const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 				commentId: commentId,
 				content: replyContent,
-				postId: postIndex,
-				postType: postType,
+				postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
+				postType: reply.post_type || postType,
 				trackNumber: track_number,
 				userId: id
 			});

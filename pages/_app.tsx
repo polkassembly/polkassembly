@@ -58,7 +58,7 @@ export default function App({ Component, pageProps }: AppProps) {
 		setNetwork(networkStr);
 
 		if (!window.GA_INITIALIZED) {
-			initGA();
+			initGA(networkStr);
 			// @ts-ignore
 			window.GA_INITIALIZED = true;
 		}

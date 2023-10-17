@@ -43,6 +43,7 @@ import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import VotingForm, { EFormType } from './VotingFrom';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 
@@ -328,6 +329,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		handleModalReset();
 	};
 	const handleSubmit = async () => {
+		trackEvent('vote', 'vote_click', 'cast_vote');
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
 			return;

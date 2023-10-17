@@ -42,6 +42,7 @@ const workSans = Work_Sans({
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
 import ErrorBoundary from '~src/ui-components/ErrorBoundary';
+import { chainProperties } from '~src/global/networkConstants';
 
 export default function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
@@ -53,8 +54,8 @@ export default function App({ Component, pageProps }: AppProps) {
 	}, [router.isReady]);
 
 	useEffect(() => {
-		if (!global?.window) return;
 		const networkStr = getNetwork();
+		if (!global?.window || !chainProperties[networkStr].gTag)return;
 		setNetwork(networkStr);
 
 		if (!window.GA_INITIALIZED) {

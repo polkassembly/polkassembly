@@ -43,6 +43,7 @@ import ErrorBoundary from '~src/ui-components/ErrorBoundary';
 import { PersistGate } from 'redux-persist/integration/react';
 import { wrapper } from '~src/redux/store';
 import { useStore } from 'react-redux';
+import { chainProperties } from '~src/global/networkConstants';
 
 function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
@@ -55,12 +56,12 @@ function App({ Component, pageProps }: AppProps) {
 	}, [router.isReady]);
 
 	useEffect(() => {
-		if (!global?.window) return;
 		const networkStr = getNetwork();
+		if (!global?.window || !chainProperties[networkStr].gTag) return;
 		setNetwork(networkStr);
 
 		if (!window.GA_INITIALIZED) {
-			initGA();
+			initGA(networkStr);
 			// @ts-ignore
 			window.GA_INITIALIZED = true;
 		}

@@ -22,6 +22,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
+	if (!['kusama', 'polkadot'].includes(network)) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/'
+			}
+		};
+	}
 	return { props: { network } };
 };
 

@@ -113,7 +113,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					<h5 className='text-sm font-medium text-bodyBlue'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>
 				)}
 			</div>
-			<h2 className='mb-3 text-lg font-medium leading-7 text-bodyBlue'>
+			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')

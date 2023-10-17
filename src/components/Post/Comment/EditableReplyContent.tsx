@@ -557,7 +557,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							className='bg-blue-grey rounded-b-md px-2 py-2 text-sm md:px-4'
 							md={content}
 						/>
-						<div className='flex flex-wrap items-center'>
+						<div className='flex flex-wrap items-center gap-3'>
 							{isEditable && (
 								<Button
 									className={'flex items-center border-none p-0 text-pink_primary shadow-none'}
@@ -566,11 +566,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								>
 									{loading ? (
 										<span className='flex items-center text-xs'>
-											<LoadingOutlined className='mr-2' /> Editing
+											<LoadingOutlined className='mr-1' /> Editing
 										</span>
 									) : (
 										<span className='flex items-center text-xs'>
-											<FormOutlined className='mr-2' /> Edit
+											<FormOutlined className='mr-1' /> Edit
 										</span>
 									)}
 								</Button>

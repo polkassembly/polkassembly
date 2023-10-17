@@ -253,10 +253,10 @@ const AddressConnectModal = ({
 		} else {
 			setLoading(true);
 			localStorage.setItem(localStorageWalletKeyName, String(wallet));
-			localStorage.setItem(localStorageAddressKeyName, address);
-			localStorage.setItem('delegationDashboardAddress', multisig || address);
+			localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
+			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('multisigDelegationAssociatedAddress', address);
-			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: multisig || address, loginWallet: wallet || null }));
+			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
 			onConfirm && onConfirm(address);
@@ -374,7 +374,7 @@ const AddressConnectModal = ({
 			footer={
 				<Button
 					onClick={handleSubmit}
-					disabled={accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
+					disabled={!accounts || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
 					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
 						accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit) && 'opacity-50')
 					}`}
@@ -391,7 +391,7 @@ const AddressConnectModal = ({
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex flex-col'>
-					{linkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && (
+					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
 							<ConnectAddressIcon />
 							<span className='mt-6 text-center text-sm text-bodyBlue'>
@@ -573,7 +573,7 @@ const AddressConnectModal = ({
 						</div>
 					)}
 
-					{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0 && !loading && (
+					{Object.keys(availableWallets || {})?.length !== 0 && !accounts && wallet && wallet?.length !== 0 && !loading && (
 						<Alert
 							message={`For using ${walletAlertTitle}:`}
 							description={

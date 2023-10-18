@@ -24,6 +24,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import VoteUnlock from '~src/components/VoteUnlock';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -196,16 +197,19 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							/>
 						)}
 					</div>
-					{!votesHistoryUnavailableNetworks.includes(network) && (
-						<div className='mb-6'>
-							<Segmented
-								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
-								onChange={(e) => setProfileHistory(e as EProfileHistory)}
-								value={profileHistory}
-							/>
+					{(profileHistory === EProfileHistory.POSTS || !votesHistoryUnavailableNetworks.includes(network)) && (
+						<div className='mb-6 flex justify-between'>
+							{!votesHistoryUnavailableNetworks.includes(network) && (
+								<Segmented
+									className='h-[36px]'
+									options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
+									onChange={(e) => setProfileHistory(e as EProfileHistory)}
+									value={profileHistory}
+								/>
+							)}
+							{profileHistory === EProfileHistory.POSTS && <VoteUnlock addresses={userProfile.data.addresses} />}
 						</div>
 					)}
-
 					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
 							<VotesHistory

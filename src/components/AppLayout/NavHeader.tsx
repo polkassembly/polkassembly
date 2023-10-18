@@ -270,6 +270,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						{!id ? (
 							<div className='flex items-center lg:gap-x-2'>
 								<Button
+									id='login-btn'
 									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
 										setSidedrawer(false);

@@ -109,6 +109,9 @@ const Post: FC<IPostProps> = (props) => {
 	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const [data, setData] = useState<IPostResponse[]>([]);
+	// const [loading, setLoading] = useState(true);
+	// const [error, setError] = useState('');
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
@@ -152,7 +155,8 @@ const Post: FC<IPostProps> = (props) => {
 	useEffect(() => {
 		if (!post) return;
 		handleCanEdit();
-	}, [handleCanEdit, post]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		if (proposalType !== ProposalType.GRANTS || dayjs(post.created_at).isBefore(dayjs().subtract(6, 'days'))) return;
@@ -256,6 +260,28 @@ const Post: FC<IPostProps> = (props) => {
 		videosData().then(() => {});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+	console.warn(post);
+	const fetchData = async () => {
+		const { data, error } = await nextApiClientFetch<IPostResponse[]>('/api/v1/listing/get-similar-posts', {
+			postId: post?.post_id,
+			proposalType,
+			tags: post?.tags || [],
+			topicId: post?.topic?.id,
+			trackNumber: post?.track_number
+		});
+		if (data) {
+			setData(data);
+		} else {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	// console.log(data);
 
 	if (!post) {
 		return (
@@ -419,13 +445,6 @@ const Post: FC<IPostProps> = (props) => {
 		...getOnChainTabs()
 	];
 
-	(async () => {
-		const url = '/api/v1/listing/get-similar-posts';
-		let { data, error } = await nextApiClientFetch<any>(url);
-		data = data.flat();
-		console.log(data);
-	})();
-
 	return (
 		<PostDataContextProvider
 			initialPostData={{
@@ -518,23 +537,28 @@ const Post: FC<IPostProps> = (props) => {
 								</>
 							)}
 						</div>
-						<div>
-							{/* seperation-line */}
-							<div className='flex items-center'>
-								<hr className='seperation-border mr-2 flex-grow' />
-								<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
-								<hr className='seperation-border ml-2 flex-grow' />
-							</div>
+						{data && (
+							<div>
+								{/* seperation-line */}
+								<div className='flex items-center'>
+									<hr className='seperation-border mr-2 flex-grow' />
+									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
+									<hr className='seperation-border ml-2 flex-grow' />
+								</div>
 
-							{/* main content */}
-							<div className='mt-5 w-full rounded-xxl bg-white p-3 drop-shadow-md md:p-4 lg:p-6 '>
-								<TrackListingAllTabContent
-									posts={posts?.all?.data?.posts || []}
-									error={posts?.all?.error}
-									count={posts?.all?.data?.count || 0}
-								/>
+								{/* main content */}
+								<div className='mt-5 w-full rounded-xxl bg-transparent p-3 drop-shadow-md md:p-4 lg:p-6 '>
+									{data && (
+										<TrackListingAllTabContent
+											posts={data}
+											// error={error}
+											count={posts?.all?.data?.count || 0}
+											showSimilarPost={true}
+										/>
+									)}
+								</div>
 							</div>
-						</div>
+						)}
 					</div>
 
 					{!isEditing ? <Sidebar className='hidden xl:block' /> : null}

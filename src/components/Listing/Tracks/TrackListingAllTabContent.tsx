@@ -15,6 +15,7 @@ interface ITrackListingAllTabContentProps {
 	posts: any[];
 	error?: any;
 	count?: number;
+	showSimilarPost?: boolean;
 }
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
@@ -23,11 +24,12 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 });
 
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
-	const { className, posts, error, count } = props;
-	const noPosts = count === 0 || isNaN(Number(count));
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { className, posts, error, count, showSimilarPost } = props;
+	// const noPosts = count === 0 || isNaN(Number(count));
 	if (error) return <ErrorState errorMessage={error} />;
-
-	if (noPosts)
+	console.log(posts, posts.length);
+	if (posts.length <= 0)
 		return (
 			<div className={className}>
 				<PostEmptyState />
@@ -50,7 +52,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 								{
 									<Link href={`/referenda/${post.post_id}`}>
 										<GovernanceCard
-											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
+											className={`${showSimilarPost ? 'mb-6 rounded-2xl bg-white' : (index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 											postReactionCount={post?.post_reactions}
 											address={post.proposer}
 											commentsCount={post.comments_count || 0}
@@ -58,6 +60,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 											onchainId={post.post_id}
 											status={post.status}
 											title={post.title}
+											description={post.description}
 											topic={post?.topic?.name}
 											created_at={post.created_at}
 											tags={post?.tags}
@@ -70,6 +73,8 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 											proposalType={post?.type}
 											trackNumber={post?.track_no}
 											truncateUsername={false}
+											type={post?.type}
+											showSimilarPost={showSimilarPost}
 										/>
 									</Link>
 								}

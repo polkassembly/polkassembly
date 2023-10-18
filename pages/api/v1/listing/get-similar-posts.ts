@@ -8,13 +8,7 @@ import { isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType';
-import {
-	GET_PROPOSAL_BY_STATUS_AND_TYPE,
-	GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT,
-	GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE,
-	GET_POSTS_LISTING_BY_TYPE,
-	GET_POSTS_LISTING_FOR_POLYMESH
-} from '~src/queries';
+import { GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT, GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE, GET_POSTS_LISTING_BY_TYPE, GET_POSTS_LISTING_FOR_POLYMESH } from '~src/queries';
 import { network as AllNetworks } from '~src/global/networkConstants';
 
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -26,9 +20,8 @@ import { IProfileVoteHistoryRespose } from '../votesHistory/getVotesByVoter';
 import { noTitle } from '~src/global/noTitle';
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
-	const { tags = ['xcm'], proposalType = 'referendums_v2', trackNumber = 34, topicId = 1 } = req.body;
-	// const { proposalType } = req.query;
-	// console.log(proposalType);
+	const { postId, proposalType, tags, topicId, trackNumber } = req.body;
+	// const { tags = ['xcm'], proposalType = 'referendums_v2', trackNumber = 34, topicId = 1 } = req.body;
 	const network = String(req.headers['x-network']);
 	let query;
 	if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
@@ -58,13 +51,16 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	});
 	let posts: any;
 	const subsquidData = subsquidRes.data.proposals;
-
 	const activePostIds = subsquidData.map((proposal: any) => proposal.index);
-	// console.log(typeof tags, activePostIds);
 	let onChainCollRef;
 	if (tags && activePostIds && topicId) {
 		onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
-		const postsSnapshotArr = await onChainCollRef.where('tags', 'array-contains-any', tags).get();
+		let postsSnapshotArr;
+		if (tags.lenght > 0) {
+			postsSnapshotArr = await onChainCollRef.where('tags', 'array-contains-any', tags).get();
+		} else {
+			postsSnapshotArr = await onChainCollRef.get();
+		}
 		const postsPromise = postsSnapshotArr.docs.map(async (doc: any) => {
 			if (doc && doc.exists) {
 				const docData = doc.data();
@@ -105,7 +101,9 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 		posts = await Promise.all(postsPromise);
 	}
-	console.log(subsquidRes['data'].proposals);
+
+	console.log(posts);
+
 	let result = [];
 	if (subsquidRes['data'].proposal && posts) {
 		result = subsquidRes['data'].proposals
@@ -180,22 +178,17 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		}
 	}
 
-	//for categories (end)
-
-	// if none matches
 	if (result.length < 3) {
 		result = subsquidRes['data'].proposals.map((proposal: any) => {
 			console.log(`ids from non matches -> ${proposal.index}`);
 			return proposal.index;
 		});
 	}
-
-	// need only 1st three elements
-	// result = result.splice(3);
-	// let postData = [];
+	result = result.filter((number: any) => number !== postId);
 	result = result.slice(0, 3);
-	console.log(result);
+	// console.log(result);
 	const postDataPromise = result.map(async (id: any) => {
+		console.log(id);
 		const postRef = postsByTypeRef(network, proposalType).doc(String(id));
 		const postData = (await postRef.get()).data();
 		const subsquidDatas = subsquidData.map((post: any) => {
@@ -214,9 +207,10 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					tags: postData?.tags || [],
 					tally: post?.tally,
 					title: postData?.title || noTitle,
-					topic: postData?.topic.id || postData?.topicId,
+					topic: postData?.topic || postData?.topicId,
 					trackNumber: post?.trackNumber,
-					type: postData?.type || getSubsquidProposalType(proposalType as any)
+					type: postData?.type || getSubsquidProposalType(proposalType as any),
+					username: postData?.username
 				};
 			}
 			return null;
@@ -225,16 +219,14 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	});
 	const resultArray = await Promise.allSettled(postDataPromise);
 
-	const data = resultArray.reduce((prev, post) => {
+	let data = resultArray.reduce((prev, post) => {
 		if (post && post.status === 'fulfilled') {
 			prev.push(post.value);
 		}
 		return prev;
 	}, [] as IProfileVoteHistoryRespose[]);
-
-	// console.log(data);
-	const filteredArray = data.map((innerArray) => innerArray.filter((item: any) => item !== null));
-
+	data = data.flat();
+	const filteredArray = data.filter((item) => item !== null);
 	if (!subsquidRes) {
 		return res.status(400).json({ message: 'error' || messages.API_FETCH_ERROR });
 	} else {

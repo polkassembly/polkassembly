@@ -27,7 +27,7 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod } from '~src/types';
+import { IPeriod, PostOrigin } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import CloseIcon from '~assets/icons/close.svg';
 import { ProposalType } from '~src/global/proposalType';
@@ -74,6 +74,9 @@ interface IGovernanceProps {
 	trackNumber?: number | null;
 	identityId?: string | null;
 	truncateUsername?: boolean;
+	showSimilarPost?: boolean;
+	type?: string;
+	description?: string;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -106,7 +109,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		proposalType,
 		votesData,
 		identityId = null,
-		truncateUsername = true
+		truncateUsername = true,
+		showSimilarPost,
+		type,
+		description
 	} = props;
 
 	const router = useRouter();
@@ -126,6 +132,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
+	const content =
+		// description;
+		'Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more';
+
+	const [showMore, setShowMore] = useState(false);
+
+	const toggleShowMore = () => {
+		setShowMore(!showMore);
+	};
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
@@ -137,6 +152,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
 	const decidingBlock = statusHistory?.filter((status) => status.status === 'Deciding')?.[0]?.block || 0;
+	// console.warn(PostOrigin);
 	const convertRemainingTime = (preiodEndsAt: any) => {
 		const diffMilliseconds = preiodEndsAt.diff();
 
@@ -234,17 +250,37 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						)}
 					</div>
+					{showSimilarPost && (
+						<div className='ml-[120px]'>
+							<h1 className='mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue lg:max-w-none'>
+								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 150)}...`}</p>
+							</h1>
+							{content.length > 120 && (
+								<p
+									onClick={toggleShowMore}
+									className='m-0 p-0 text-xs text-pink_primary'
+								>
+									{showMore ? 'See Less' : 'See More'}
+								</p>
+							)}
+							<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
+						</div>
+					)}
 					<div className='flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:mb-1 sm:ml-[120px] sm:mt-0 sm:flex lg:flex-row lg:items-center'>
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
-							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-								<LikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
-							</div>
-							<div className='mr-0.5 items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-								<DislikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
-							</div>
-							{isCommentsVisible ? (
+							{postReactionCount && (
+								<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
+									<LikeOutlined style={{ color: '#485F7D' }} />
+									<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
+								</div>
+							)}
+							{postReactionCount && (
+								<div className='mr-0.5 items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
+									<DislikeOutlined style={{ color: '#485F7D' }} />
+									<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
+								</div>
+							)}
+							{isCommentsVisible && !showSimilarPost ? (
 								<>
 									<div className='items-center text-lightBlue xs:hidden sm:flex'>
 										<NewChatIcon
@@ -285,13 +321,20 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 											+{tags.length - 2}
 										</span>
 									)}
+
+									<Divider
+										type='vertical'
+										style={{ borderLeft: '1px solid #485F7D' }}
+									/>
 								</>
 							)}
 
-							<Divider
-								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
-							/>
+							{!showSimilarPost && (
+								<Divider
+									type='vertical'
+									style={{ borderLeft: '1px solid #485F7D' }}
+								/>
+							)}
 							{cid ? (
 								<>
 									<Link
@@ -370,6 +413,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										topic={topic}
 									/>
 								</div>
+							) : null}
+							{type && showSimilarPost ? (
+								//type yaha daalo
+								<>
+									<Divider
+										type='vertical'
+										className='max-sm:hidden'
+										style={{ borderLeft: '1px solid #90A0B7' }}
+									/>
+									<p className='m-0 p-0 text-pink_primary'>{type}</p>
+								</>
 							) : null}
 						</div>
 

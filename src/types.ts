@@ -545,3 +545,11 @@ export enum EAddressOtherTextType {
 	LINKED_ADDRESS = 'Linked',
 	UNLINKED_ADDRESS = 'Address not linked'
 }
+
+export interface ILockData {
+	track: BN;
+	endBlock: BN;
+	locked: string;
+	refId: BN;
+	total: BN;
+}

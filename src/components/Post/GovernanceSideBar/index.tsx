@@ -46,7 +46,7 @@ import BN from 'bn.js';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
+import { EVoteDecisionType, ILastVote, NotificationStatus, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -68,6 +68,8 @@ import VotersList from './Referenda/VotersList';
 import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
 import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import queueNotification from '~src/ui-components/QueueNotification';
+import executeTx from '~src/util/executeTx';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -132,7 +134,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsSelector();
 	const {
-		postData: { created_at, track_number, post_link, statusHistory }
+		postData: { created_at, track_number, post_link, statusHistory, postIndex }
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 
@@ -642,6 +644,28 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		getVotingHistory();
 	}, [getVotingHistory]);
 
+	const onSuccess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'Delegation successful.',
+			status: NotificationStatus.SUCCESS
+		});
+	};
+	const onFailed = (message: string) => {
+		queueNotification({
+			header: 'Failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+	};
+
+	const handleRemoveVote = async () => {
+		if (!api || !apiReady || !track_number) return;
+		const tx = api.tx.convictionVoting.removeVote(track_number, postIndex);
+
+		await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: 'Transactions failed!', network, onFailed, onSuccess, tx });
+	};
+
 	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod }) => {
 		const unit = `${chainProperties[network]?.tokenSymbol}`;
 		return (
@@ -649,7 +673,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				spinning={isLastVoteLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
+				<div className='mb-1.5 flex items-center justify-between'>
+					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue'>Last Vote:</span>
+					<Button
+						onClick={handleRemoveVote}
+						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
+					>
+						Remove Vote
+					</Button>
+				</div>
 
 				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
 					<Tooltip
@@ -724,7 +756,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoLocalState: FC<ILastVote> = ({ balance, conviction, decision }) => {
 		return (
 			<div>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
+				<div className='mb-1.5 flex items-center justify-between'>
+					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue'>Last Vote:</span>
+					<Button
+						onClick={handleRemoveVote}
+						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
+					>
+						Remove Vote
+					</Button>
+				</div>
 				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
 					<Tooltip
 						placement='bottom'

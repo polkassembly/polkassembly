@@ -647,7 +647,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
-			message: 'Delegation successful.',
+			message: 'Vote Clear successfully.',
 			status: NotificationStatus.SUCCESS
 		});
 	};

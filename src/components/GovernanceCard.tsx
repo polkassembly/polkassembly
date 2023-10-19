@@ -112,8 +112,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		votesData,
 		identityId = null,
 		truncateUsername = true,
-		showSimilarPost
-		// description
+		showSimilarPost,
+		description
 	} = props;
 
 	const router = useRouter();
@@ -133,9 +133,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
-	const content =
-		// description;
-		'Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more';
+	const content = description;
 
 	const [showMore, setShowMore] = useState(false);
 
@@ -261,12 +259,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						)}
 					</div>
-					{showSimilarPost && (
+					{showSimilarPost && content && (
 						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'}`}>
 							<h1 className='desc-container mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
 								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 150)}...`}</p>
 							</h1>
-							{content.length > 120 && (
+							{content && content.length > 120 && (
 								<p
 									onClick={toggleShowMore}
 									className='m-0 p-0 text-xs text-pink_primary'
@@ -575,12 +573,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</div>
 							)}
 						</div>
-						{showSimilarPost && (
+						{showSimilarPost && content && (
 							<div className=''>
 								<h1 className='desc-container mr-5 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
 									<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 120)}...`}</p>
 								</h1>
-								{content.length > 120 && (
+								{content && content.length > 120 && (
 									<p
 										onClick={toggleShowMore}
 										className='m-0 p-0 text-xs text-pink_primary'

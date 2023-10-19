@@ -11,12 +11,13 @@ import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import DelegateModal from './DelegateModal';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { TrackProps } from '~src/types';
 import { ChartData, Point } from 'chart.js';
 import { getTrackFunctions } from '../../Post/GovernanceSideBar/Referenda/util';
 import blockToTime from '~src/util/blockToTime';
 import dynamic from 'next/dynamic';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -98,7 +99,7 @@ export const blocksToRelevantTime = (network: string, blocks: number): string =>
 };
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { className, trackName } = props;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	useEffect(() => {

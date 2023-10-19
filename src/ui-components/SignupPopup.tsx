@@ -4,10 +4,10 @@
 
 import { Modal } from 'antd';
 import Signup from 'pages/signup';
-import { useNetworkContext } from '~src/context';
 import CloseIcon from 'public/assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	modalOpen: boolean;
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className, closable, isDelegation }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	return (
 		<Modal
 			open={modalOpen}

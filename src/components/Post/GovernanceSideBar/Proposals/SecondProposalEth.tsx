@@ -16,9 +16,12 @@ import Web3 from 'web3';
 
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import addEthereumChain from '~src/util/addEthereumChain';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setWalletConnectProvider } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 export interface SecondProposalProps {
 	className?: string;
@@ -33,11 +36,12 @@ const currentNetwork = getNetwork();
 const abi = require('src/moonbeamAbi.json');
 
 const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalProps) => {
-	const { walletConnectProvider, setWalletConnectProvider, id, loginAddress } = useUserDetailsContext();
+	const { walletConnectProvider, id, loginAddress } = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [address, setAddress] = useState<string>('');
 	const [modalOpen, setModalOpen] = useState(false);
@@ -71,7 +75,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			}
 		});
 		await wcPprovider.wc.createSession();
-		setWalletConnectProvider(wcPprovider);
+		dispatch(setWalletConnectProvider(wcPprovider));
 	};
 
 	const getWalletConnectAccounts = async () => {

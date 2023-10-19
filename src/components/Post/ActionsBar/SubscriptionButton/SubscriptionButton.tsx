@@ -4,8 +4,7 @@
 
 import { BookFilled, BookOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import React, { FC, useContext, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
@@ -13,6 +12,7 @@ import cleanError from 'src/util/cleanError';
 import { ChangeResponseType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface ISubscriptionButtonProps {
@@ -28,7 +28,7 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 		setPostData
 	} = usePostDataContext();
 
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 	const [subscribed, setSubscribed] = useState<boolean>(Boolean(id && subscribers.includes(id)));
 	const [loading, setLoading] = useState(false);
 

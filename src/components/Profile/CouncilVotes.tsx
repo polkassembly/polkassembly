@@ -9,9 +9,9 @@ import Link from 'next/link';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -24,7 +24,7 @@ interface ICouncilVotesProps {
 
 const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const { className, address } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [votesHistory, setVotesHistory] = useState<IVoteHistory[]>([]);

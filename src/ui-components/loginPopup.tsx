@@ -3,11 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Modal } from 'antd';
-import { useNetworkContext } from '~src/context';
 import CloseIcon from 'public/assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import Login from 'pages/login';
 import styled from 'styled-components';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	modalOpen: boolean;
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className, closable, isDelegation }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	return (
 		<Modal
 			open={modalOpen}

@@ -5,11 +5,11 @@
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useContext } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC } from 'react';
 
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 export interface IReactionButtonProps {
@@ -42,7 +42,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
-	const { id, username } = useContext(UserDetailsContext);
+	const { id, username } = useUserDetailsSelector();
 
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const reacted = username && usernames?.includes(username);

@@ -10,16 +10,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 
-import { NetworkContext } from '~src/context/NetworkContext';
-
 import WhitelistMembersListing from './WhitelistMembersListing';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export type WhitelistMember = { accountId: string; rank?: number };
 
 const WhitelistMembersContainer = ({ className, membersType }: { className?: string; membersType: EMembersType }) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useContext(ApiContext);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -4,9 +4,8 @@
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, Tooltip } from 'antd';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { EReportType, NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -15,7 +14,7 @@ import ReplyIcon from '~assets/icons/reply.svg';
 import { Caution } from '~src/ui-components/CustomIcons';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
@@ -27,6 +26,8 @@ import { v4 } from 'uuid';
 import { checkIsProposer } from '../utils/checkIsProposer';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { poppins } from 'pages/_app';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 
 interface Props {
 	userId: number;
@@ -44,9 +45,9 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress, addresses, allowed_roles } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { comments, setComments } = useCommentDataContext();
 
 	const [form] = Form.useForm();
@@ -80,17 +81,16 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 
 	useEffect(() => {
 		let usernameContent = '';
-
-		if (!is_custom_username && onChainUsername && proposer) {
+		if (!!onChainUsername && !!proposer) {
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
-		} else if (!is_custom_username && !onChainUsername && proposer) {
+		} else if (!onChainUsername && proposer && !(is_custom_username || MANUAL_USERNAME_25_CHAR.includes(username || '') || username?.length !== 25)) {
 			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
 
 		replyToreplyForm.setFieldValue('content', `${usernameContent}&nbsp;` || '');
-	}, [is_custom_username, network, onChainUsername, proposer, replyToreplyForm, userName]);
+	}, [is_custom_username, network, onChainUsername, proposer, replyToreplyForm, userName, username]);
 
 	const handleCancel = () => {
 		toggleEdit();
@@ -230,8 +230,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 			commentId: commentId,
 			content: replyContent,
-			postId: postIndex,
-			postType: postType,
+			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
+			postType: reply.post_type || postType,
 			trackNumber: track_number,
 			userId: id
 		});
@@ -330,12 +330,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 			message: 'Your reply was added.',
 			status: NotificationStatus.SUCCESS
 		});
+
 		if (id) {
 			const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 				commentId: commentId,
 				content: replyContent,
-				postId: postIndex,
-				postType: postType,
+				postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
+				postType: reply.post_type || postType,
 				trackNumber: track_number,
 				userId: id
 			});
@@ -556,7 +557,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							className='bg-blue-grey rounded-b-md px-2 py-2 text-sm md:px-4'
 							md={content}
 						/>
-						<div className='flex flex-wrap items-center'>
+						<div className='flex flex-wrap items-center gap-3'>
 							{isEditable && (
 								<Button
 									className={'flex items-center border-none p-0 text-pink_primary shadow-none'}
@@ -565,11 +566,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								>
 									{loading ? (
 										<span className='flex items-center text-xs'>
-											<LoadingOutlined className='mr-2' /> Editing
+											<LoadingOutlined className='mr-1' /> Editing
 										</span>
 									) : (
 										<span className='flex items-center text-xs'>
-											<FormOutlined className='mr-2' /> Edit
+											<FormOutlined className='mr-1' /> Edit
 										</span>
 									)}
 								</Button>

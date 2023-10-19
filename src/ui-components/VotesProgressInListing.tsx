@@ -7,10 +7,11 @@ import { Progress, Skeleton, Tooltip } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import { ProposalType, TSubsquidProposalType, getSubsquidProposalType } from '~src/global/proposalType';
 import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/queries';
+import { useNetworkSelector } from '~src/redux/selectors';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
@@ -27,7 +28,7 @@ interface Props {
 }
 
 const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType, votesData }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO,

@@ -5,8 +5,7 @@
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
 import { Divider, Modal, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
-import React, { FC, useContext, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
@@ -14,6 +13,7 @@ import TagsIcon from '~assets/icons/tags-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import TopicTag from '~src/ui-components/TopicTag';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 export interface IDiscussionProps {
 	created_at: Date;
@@ -34,7 +34,7 @@ export interface IDiscussionProps {
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
 	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count, className } = props;
-	const currentUser = useContext(UserDetailsContext);
+	const currentUser = useUserDetailsSelector();
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
@@ -52,6 +52,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						address={address}
 						topic={topic}
 						username={username}
+						truncateUsername={false}
 					/>
 					<div className='hidden sm:mb-1 sm:mt-2 sm:flex sm:flex-row sm:items-start sm:justify-between'>
 						<div className='mt-3 lg:mt-1'>

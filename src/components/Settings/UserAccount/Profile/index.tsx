@@ -9,11 +9,11 @@ import EditPencilIcon from '~assets/icons/edit-pencil.svg';
 import PasswordDotIcon from '~assets/icons/password-dot.svg';
 import { Collapse } from '../../Notifications/common-ui/Collapse';
 import { Divider } from 'antd';
-import { useUserDetailsContext } from '~src/context';
 import ChangeUsername from '../Modals/ChangeUsername';
 import ChangeEmail from '../Modals/ChangeEmail';
 import ChangePassword from '../Modals/ChangePassword';
 import TwoFactorAuth from '../../TwoFactorAuth';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const { Panel } = Collapse;
 
@@ -56,9 +56,8 @@ export enum ModalType {
 }
 
 export default function ProfileSettings() {
-	const { username, email, web3signup } = useUserDetailsContext();
+	const { username, email, web3signup, id } = useUserDetailsSelector();
 	const [showModal, setShowModal] = useState<ModalType | null>(null);
-	const { id } = useUserDetailsContext();
 	return (
 		<Collapse
 			size='large'

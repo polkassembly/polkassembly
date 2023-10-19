@@ -6,7 +6,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { EReportType, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -16,8 +16,7 @@ import copyToClipboard from 'src/util/copyToClipboard';
 import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { NetworkContext } from '~src/context/NetworkContext';
+import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -52,6 +51,8 @@ import { Caution } from '~src/ui-components/CustomIcons';
 import { v4 } from 'uuid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { checkIsProposer } from '../utils/checkIsProposer';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -79,8 +80,8 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, is_custom_username, proposer } = props;
 	const { comments, setComments, setTimelines } = useCommentDataContext();
-	const { network } = useContext(NetworkContext);
-	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsContext();
+	const { network } = useNetworkSelector();
+	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 
 	const [replyForm] = Form.useForm();
@@ -121,10 +122,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const toggleReply = async () => {
 		let usernameContent = '';
-
-		if (!is_custom_username && onChainUsername && proposer) {
+		if (!!onChainUsername && !!proposer) {
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
-		} else if (!is_custom_username && proposer && !onChainUsername) {
+		} else if (!onChainUsername && proposer && !(is_custom_username || MANUAL_USERNAME_25_CHAR.includes(username || '') || username?.length !== 25)) {
 			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
@@ -292,6 +292,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									created_at: new Date(),
 									id: replyId,
 									isReplyError: false,
+									postIndex: postIndex,
+									postType,
 									proposer: loginAddress,
 									updated_at: new Date(),
 									user_id: id,
@@ -325,8 +327,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			const { data, error: addCommentError } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 				commentId: commentId,
 				content: replyContent,
-				postId: props.postId,
-				postType: props.proposalType,
+				postId: comment.post_index || postIndex,
+				postType: comment.post_type || postType,
 				trackNumber: track_number,
 				userId: id
 			});
@@ -720,7 +722,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								))}
 							<Dropdown
 								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
-								overlayClassName='sentiment-dropdown'
+								overlayClassName='sentiment-dropdown z-[1056]'
 								placement='bottomRight'
 								menu={{ items }}
 							>

@@ -9,12 +9,15 @@ import { NotificationStatus } from '~src/types';
 import messages from 'src/util/messages';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { username as usernameValidation } from 'src/util/validation';
-import { useUserDetailsContext } from '~src/context';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean; onConfirm?: () => void; onCancel: () => void; username: string }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
-	const { setUserDetailsContextState } = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const handleClick = async () => {
 		try {
 			const values = await form.validateFields();
@@ -32,7 +35,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 				});
 			}
 			if (data) {
-				setUserDetailsContextState((prev) => ({ ...prev, username: newUsername }));
+				dispatch(setUserDetailsState({ ...currentUser, username: newUsername }));
 				queueNotification({
 					header: 'Success!',
 					message: 'Username changed successfully.',

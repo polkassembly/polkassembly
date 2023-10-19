@@ -6,7 +6,7 @@ import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
-import { useUserDetailsContext } from '~src/context';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 type Props = {
 	icon: any;
@@ -20,7 +20,7 @@ type Props = {
 const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = '', onClose }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
-	const { username } = useUserDetailsContext();
+	const { username } = useUserDetailsSelector();
 	const handleGenerateToken = async () => {
 		setLoading(true);
 		const data = await getVerifyToken(CHANNEL.DISCORD);

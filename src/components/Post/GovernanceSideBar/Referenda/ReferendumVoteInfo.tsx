@@ -16,14 +16,13 @@ import Loader from 'src/ui-components/Loader';
 import PassingInfoTag from 'src/ui-components/PassingInfoTag';
 import VoteProgress from 'src/ui-components/VoteProgress';
 import formatBnBalance from 'src/util/formatBnBalance';
-
-import { useNetworkContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { isSubscanSupport } from 'src/util/subscanCheck';
 import { chainProperties } from '~src/global/networkConstants';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/queries';
+import { GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL, GET_TOTAL_CONVICTION_VOTES_COUNT } from '~src/queries';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IReferendumVoteInfoProps {
 	className?: string;
@@ -35,7 +34,7 @@ interface IReferendumVoteInfoProps {
 const ZERO = new BN(0);
 
 const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen, voteThreshold }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useContext(ApiContext);
 	const [totalIssuance, setTotalIssuance] = useState<BN | null>(null);
@@ -52,90 +51,92 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 	});
 
 	useEffect(() => {
-		if (network === 'cere') {
-			(async () => {
-				setIsFetchingCereVoteInfo(true);
+		if (network != 'cere') return;
+
+		(async () => {
+			setIsFetchingCereVoteInfo(true);
+			const res = await fetchSubsquid({
+				network,
+				query: GET_TOTAL_CONVICTION_VOTES_COUNT,
+				variables: {
+					index_eq: referendumId,
+					type_eq: 'Referendum'
+				}
+			});
+			const totalCount = res?.data?.convictionVotesConnection?.totalCount;
+
+			if (totalCount) {
 				const res = await fetchSubsquid({
 					network,
-					query: GET_TOTAL_VOTES_COUNT,
+					query: GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL,
 					variables: {
 						index_eq: referendumId,
+						limit: totalCount,
 						type_eq: 'Referendum'
 					}
 				});
-				const totalCount = res?.data?.votesConnection?.totalCount;
-				if (totalCount) {
-					const res = await fetchSubsquid({
-						network,
-						query: GET_VOTES_WITH_LIMIT_IS_NULL_TRUE,
-						variables: {
-							index_eq: referendumId,
-							limit: totalCount,
-							type_eq: 'Referendum'
+
+				if (res && res.data && res.data.convictionVotes && Array.isArray(res.data.convictionVotes)) {
+					const voteInfo: VoteInfo = {
+						aye_amount: ZERO,
+						aye_without_conviction: ZERO,
+						isPassing: null,
+						nay_amount: ZERO,
+						nay_without_conviction: ZERO,
+						turnout: ZERO,
+						voteThreshold: ''
+					};
+					res.data.convictionVotes.forEach((vote: any) => {
+						if (vote) {
+							const { balance, lockPeriod, decision } = vote;
+							if (decision === 'yes') {
+								voteInfo.aye_without_conviction = voteInfo.aye_without_conviction.add(new BN(balance.value));
+								if (lockPeriod === 0) {
+									voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).div(new BN(10)));
+								} else {
+									voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
+								}
+							} else {
+								voteInfo.nay_without_conviction = voteInfo.nay_without_conviction.add(new BN(balance.value));
+								if (lockPeriod === 0) {
+									voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).div(new BN(10)));
+								} else {
+									voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
+								}
+							}
 						}
 					});
-					if (res && res.data && res.data.votes && Array.isArray(res.data.votes)) {
-						const voteInfo: VoteInfo = {
-							aye_amount: ZERO,
-							aye_without_conviction: ZERO,
-							isPassing: null,
-							nay_amount: ZERO,
-							nay_without_conviction: ZERO,
-							turnout: ZERO,
-							voteThreshold: ''
-						};
-						res.data.votes.forEach((vote: any) => {
-							if (vote) {
-								const { balance, lockPeriod, decision } = vote;
-								if (decision === 'yes') {
-									voteInfo.aye_without_conviction = voteInfo.aye_without_conviction.add(new BN(balance.value));
-									if (lockPeriod === 0) {
-										voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).div(new BN(10)));
+					voteInfo.turnout = voteInfo.aye_without_conviction.add(voteInfo.nay_without_conviction);
+					if (voteThreshold) {
+						voteInfo.voteThreshold = voteThreshold?.split(/(?=[A-Z])/).join(' ');
+						if (totalIssuance !== null) {
+							let capitalizedVoteThreshold = voteThreshold?.toLowerCase();
+							capitalizedVoteThreshold = `${capitalizedVoteThreshold.charAt(0).toUpperCase()}${capitalizedVoteThreshold.slice(1)}`;
+							//nays needed for a referendum to fail
+							const { failingThreshold } = getFailingThreshold({
+								ayes: voteInfo.aye_amount,
+								ayesWithoutConviction: voteInfo.aye_without_conviction,
+								threshold: capitalizedVoteThreshold as any,
+								totalIssuance: totalIssuance
+							});
+							if (failingThreshold) {
+								try {
+									if (voteInfo.nay_amount.gte(failingThreshold)) {
+										voteInfo.isPassing = false;
 									} else {
-										voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
+										voteInfo.isPassing = true;
 									}
-								} else {
-									voteInfo.nay_without_conviction = voteInfo.nay_without_conviction.add(new BN(balance.value));
-									if (lockPeriod === 0) {
-										voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).div(new BN(10)));
-									} else {
-										voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
-									}
-								}
-							}
-						});
-						voteInfo.turnout = voteInfo.aye_without_conviction.add(voteInfo.nay_without_conviction);
-						if (voteThreshold) {
-							voteInfo.voteThreshold = voteThreshold?.split(/(?=[A-Z])/).join(' ');
-							if (totalIssuance !== null) {
-								let capitalizedVoteThreshold = voteThreshold?.toLowerCase();
-								capitalizedVoteThreshold = `${capitalizedVoteThreshold.charAt(0).toUpperCase()}${capitalizedVoteThreshold.slice(1)}`;
-								//nays needed for a referendum to fail
-								const { failingThreshold } = getFailingThreshold({
-									ayes: voteInfo.aye_amount,
-									ayesWithoutConviction: voteInfo.aye_without_conviction,
-									threshold: capitalizedVoteThreshold as any,
-									totalIssuance: totalIssuance
-								});
-								if (failingThreshold) {
-									try {
-										if (voteInfo.nay_amount.gte(failingThreshold)) {
-											voteInfo.isPassing = false;
-										} else {
-											voteInfo.isPassing = true;
-										}
-									} catch (e) {
-										console.log('Error calculating Passing state: ', e);
-									}
+								} catch (e) {
+									console.log('Error calculating Passing state: ', e);
 								}
 							}
 						}
-						setVoteInfo(voteInfo);
 					}
+					setVoteInfo(voteInfo);
 				}
-				setIsFetchingCereVoteInfo(false);
-			})();
-		}
+			}
+			setIsFetchingCereVoteInfo(false);
+		})();
 	}, [network, referendumId, totalIssuance, voteThreshold]);
 
 	useEffect(() => {

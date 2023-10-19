@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
-import { useNetworkContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -17,6 +16,7 @@ import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrack
 import CloseIcon from '~assets/icons/close.svg';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import Link from 'next/link';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -57,7 +57,7 @@ const TreasuryProposalSuccessPopup = ({
 	selectedTrack,
 	postId
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 

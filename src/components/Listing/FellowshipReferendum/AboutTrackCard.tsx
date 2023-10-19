@@ -3,10 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import React, { FC, useEffect, useState, useContext } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
-
-import { NetworkContext } from '~src/context/NetworkContext';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
@@ -16,6 +14,7 @@ import blockToTime from '~src/util/blockToTime';
 import { useApiContext } from '~src/context';
 import dynamic from 'next/dynamic';
 import { Skeleton } from 'antd';
+import { useNetworkSelector } from '~src/redux/selectors';
 const Curves = dynamic(() => import('../Tracks/Curves'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -28,7 +27,7 @@ interface IAboutTrackCardProps {
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { className, trackName, fellowshipReferendumPostOrigins } = props;
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const trackMetaData = networkTrackInfo[network][trackName];
 	const [data, setData] = useState<any>({
 		datasets: [],

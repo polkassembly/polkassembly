@@ -8,8 +8,7 @@ import { IReferendumV2PostsByStatus } from 'pages/root';
 
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
@@ -26,7 +25,6 @@ import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
-import { useNetworkContext } from '~src/context';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
@@ -35,6 +33,7 @@ import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 import TrackListingAllTabContent from '../Listing/Tracks/TrackListingAllTabContent';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -96,12 +95,12 @@ function formatDuration(duration: any) {
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType, posts } = props;
 
-	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
+	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [canEdit, setCanEdit] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [duration, setDuration] = useState(dayjs.duration(0));
 	const [totalAuditCount, setTotalAuditCount] = useState<number>(0);
 	const [totalVideoCount, setTotalVideoCount] = useState<number>(0);

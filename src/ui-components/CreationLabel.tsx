@@ -23,7 +23,7 @@ import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Styled = styled.div`
 	padding: 0;
@@ -97,13 +97,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		truncateUsername,
 		vote,
 		votesArr = [],
-		isRow,
-		voteData
+		isRow
 	} = props;
-	console.log(voteData, vote);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const getSentimentLabel = (sentiment: ESentiment) => {
 		return <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
@@ -118,10 +116,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const AbstainDetailsComponent = ({ network, vote, power }: any) => {
 		return (
 			<>
-				<div className={'abstain-amount-value ml-[62px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+				<div className={'abstain-amount-value ml-[64px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 					{parseBalance((vote?.balance?.abstain || 0).toString(), 2, true, network)}
 				</div>
-				<div className={'abstain-conviction-value ml-[44px] mr-[55px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
+				<div className={'abstain-conviction-value ml-[44px] mr-[50px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
 				<div className='abstain-power-value w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
 			</>
 		);
@@ -130,10 +128,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const AyeNyeDetailsComponent = ({ network, vote, power }: any) => {
 		return (
 			<>
-				<div className={'amount-value ml-[92px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+				<div className={'amount-value ml-[95px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
 					{parseBalance((vote?.balance?.value || 0).toString(), 2, true, network)}
 				</div>
-				<div className={'conviction-value ml-10 mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod}x`}</div>
+				<div className={'conviction-value ml-10 mr-[55px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod}x`}</div>
 				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
 			</>
 		);
@@ -153,9 +151,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const renderVoteContent = (vote: any, network: any, idx: number) => {
 		const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
 		const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
-		const balance = parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network);
-		const balanceMatch = balance ? balance.match(/[\d.]+/) : null;
-		const power = (conviction * (balanceMatch ? parseFloat(balanceMatch[0]) : 0)).toFixed(2);
+		const powerValue = conviction * (vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0);
+		const power = parseBalance(powerValue.toString(), 2, true, network);
+
 		return (
 			<div
 				key={idx}
@@ -213,14 +211,14 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	return (
 		<div className={`${className} comment-usernames-container flex w-[100%] justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
-				<div className={'flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
+				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex flex-shrink-0 items-center'}>
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
 							disableAddressClick={commentSource !== 'polkassembly'}
 							truncateUsername={truncateUsername}
-							usernameClassName='text-xs text-ellipsis overflow-hidden mr-1'
+							usernameClassName='text-xs text-ellipsis overflow-hidden'
 						/>
 						{text}&nbsp;
 						{topic && (
@@ -261,7 +259,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					)}
 					{created_at && (
 						<span className={`mr-1 flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
-							<ClockCircleOutlined className='mr-1' />
+							<ClockCircleOutlined className='ml-1 mr-1' />
 							{relativeCreatedAt}
 						</span>
 					)}
@@ -303,24 +301,24 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							}}
 						>
 							<Divider
-								className='mb-[-1px] ml-1 hidden md:inline-block'
+								className='mb-[-1px] ml-1 mr-3 hidden md:inline-block'
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 							{votesArr[0].decision == 'yes' ? (
-								<p className='voted-icon mb-[-1px]'>
+								<p className='aye-voted-icon voted-icon mb-[-1px]'>
 									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted Aye</span>
 								</p>
 							) : votesArr[0].decision == 'no' ? (
-								<div className='voted-icon '>
+								<div className='nye-voted-icon voted-icon'>
 									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-[red]'>Voted Nay</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
-								<div className='voted-icon align-center mb-[-1px] flex justify-center'>
+								<div className='split-voted-icon voted-icon align-center mb-[-1px] flex justify-center'>
 									<SplitYellow className='mr-1' /> <span className='font-medium capitalize text-[#FECA7E]'>Voted Split</span>
 								</div>
 							) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
-								<div className='voted-icon align-center mb-[1px] flex justify-center'>
+								<div className='abstain-voted-icon voted-icon align-center mb-[1px] flex justify-center'>
 									<AbstainGray className='mb-[-1px] mr-1' /> <span className='mt-[2px] font-medium capitalize text-bodyBlue'>Voted Abstain</span>
 								</div>
 							) : null}
@@ -387,13 +385,13 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						}}
 					>
 						{votesArr[0].decision == 'yes' ? (
-							<LikeFilled className='sentiment-vote-icon mb-[-1px] hidden text-[green]' />
+							<LikeFilled className='aye-voted-icon sentiment-vote-icon mb-[-1px] hidden text-[green]' />
 						) : votesArr[0].decision == 'no' ? (
-							<DislikeFilled className='sentiment-vote-icon hidden text-[red]' />
+							<DislikeFilled className='nye-voted-icon sentiment-vote-icon hidden text-[red]' />
 						) : votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ? (
-							<SplitYellow className='sentiment-vote-icon align-center mb-[-1px] mr-1 hidden justify-center' />
+							<SplitYellow className='split-voted-icon sentiment-vote-icon align-center mb-[-1px] mr-1 hidden justify-center' />
 						) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
-							<AbstainGray className='sentiment-vote-icon align-center mr-1 hidden justify-center' />
+							<AbstainGray className='abstain-voted-icon sentiment-vote-icon align-center mr-1 hidden justify-center' />
 						) : null}
 					</div>
 				) : null}
@@ -401,7 +399,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					overlayClassName='sentiment-hover'
 					placement='topCenter'
 					menu={{ items }}
-					className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
+					className='z-[1056] flex  items-center justify-center text-lg  text-white min-[320px]:mr-2'
 				>
 					<div>{getSentimentIcon(sentiment as ESentiment)}</div>
 				</Dropdown>

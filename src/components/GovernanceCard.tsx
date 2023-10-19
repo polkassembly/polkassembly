@@ -7,8 +7,7 @@ import { Divider, Modal, Progress, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
 import OnchainCreationLabel from 'src/ui-components/OnchainCreationLabel';
@@ -21,7 +20,7 @@ import { chainProperties } from 'src/global/networkConstants';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { useRouter } from 'next/router';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
@@ -32,6 +31,7 @@ import { getPeriodData } from '~src/util/getPeriodData';
 import CloseIcon from '~assets/icons/close.svg';
 import { ProposalType } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -116,8 +116,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	} = props;
 
 	const router = useRouter();
-	const currentUser = useContext(UserDetailsContext);
-	const { network } = useNetworkContext();
+	const currentUser = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
 	let titleString = title || method || tipReason || noTitle;

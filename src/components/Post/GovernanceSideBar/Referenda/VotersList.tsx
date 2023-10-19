@@ -11,7 +11,7 @@ import { LoadingStatusType } from 'src/types';
 import Address from 'src/ui-components/Address';
 // import formatBnBalance from 'src/util/formatBnBalance';
 
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { LISTING_LIMIT, VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortOptions, votesSortValues } from '~src/global/sortOptions';
@@ -22,6 +22,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import classNames from 'classnames';
 import { IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
 import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IVotersListProps {
 	className?: string;
@@ -34,7 +35,7 @@ interface IVotersListProps {
 type DecisionType = 'yes' | 'no' | 'abstain';
 
 const VotersList: FC<IVotersListProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const firstRef = useRef(true);
 	const { api, apiReady } = useApiContext();
 
@@ -227,6 +228,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	};
 	const sortByDropdown = (
 		<Dropdown
+			overlayClassName='z-[1056]'
 			menu={{
 				defaultSelectedKeys: [votesSortValues.TIME_DESC],
 				items: [

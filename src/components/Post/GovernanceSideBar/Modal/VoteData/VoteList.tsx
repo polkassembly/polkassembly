@@ -8,7 +8,7 @@ import { Divider, Modal as AntdModal, Pagination, PaginationProps, Segmented, Sp
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 import { LoadingStatusType } from 'src/types';
-import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
@@ -25,6 +25,7 @@ import DelegationVotersList from './DelegateVoteList';
 // import GraphExpandIcon from '~assets/graph-expand.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -75,7 +76,7 @@ const sortedCheck = {
 };
 
 const VotersList: FC<IVotersListProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const firstRef = useRef(true);
 	const {
 		postData: { postType }

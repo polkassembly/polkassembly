@@ -19,6 +19,7 @@ interface IOffChainContainerProps {
 	className?: string;
 	count: number;
 	proposalType: OffChainProposalType;
+	defaultPage?: number;
 }
 
 export function getTitle(proposalType: OffChainProposalType): string {
@@ -31,7 +32,7 @@ export function getTitle(proposalType: OffChainProposalType): string {
 	return '';
 }
 
-const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType }) => {
+const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType, defaultPage }) => {
 	const router = useRouter();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 
@@ -82,6 +83,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 				count={count}
 				posts={posts}
 				className=''
+				defaultPage={defaultPage}
 			/>
 		</div>
 	);

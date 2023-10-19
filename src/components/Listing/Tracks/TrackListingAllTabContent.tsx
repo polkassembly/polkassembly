@@ -37,6 +37,12 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	} else {
 		url = 'referenda';
 	}
+
+	const handleLinkClick = (event: any, post: any) => {
+		event.preventDefault();
+		window.location.href = `/${url}/${post.post_id}`;
+	};
+
 	// const noPosts = count === 0 || isNaN(Number(count));
 	if (error) return <ErrorState errorMessage={error} />;
 	if (posts.length <= 0)
@@ -69,7 +75,10 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 								className='my-0'
 							>
 								{
-									<Link href={`/${url}/${post.post_id}`}>
+									<Link
+										href={`/${url}/${post.post_id}`}
+										onClick={(event) => handleLinkClick(event, post)}
+									>
 										<GovernanceCard
 											className={`${showSimilarPost ? 'mb-6 rounded-2xl bg-white' : (index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 											postReactionCount={post?.post_reactions}

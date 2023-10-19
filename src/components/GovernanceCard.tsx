@@ -193,7 +193,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, []);
 
 	useEffect(() => {
 		if (!identityId || address) return;

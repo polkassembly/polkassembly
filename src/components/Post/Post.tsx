@@ -78,7 +78,7 @@ const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
 interface IPostProps {
 	className?: string;
 	post: IPostResponse;
-	posts: IReferendumV2PostsByStatus;
+	posts?: IReferendumV2PostsByStatus;
 	trackName?: string;
 	proposalType: ProposalType;
 }

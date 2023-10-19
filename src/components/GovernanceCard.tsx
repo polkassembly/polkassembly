@@ -32,6 +32,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import { ProposalType } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -179,8 +180,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	useEffect(() => {
 		if (!window || trackNumber === null) return;
-		const trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
-
+		let trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
+		if (!trackDetails) {
+			trackDetails = getTrackData(network, '', trackNumber);
+		}
+		console.log(trackDetails);
 		if (!created_at || !trackDetails) return;
 
 		const prepare = getPeriodData(network, dayjs(created_at), trackDetails, 'preparePeriod');

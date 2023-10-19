@@ -5,11 +5,13 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 export const getTrackNameFromId = (network: string, trackId: any) => {
 	let trackName = '';
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
-		if (value?.trackId === trackId && !value?.fellowshipOrigin) {
-			trackName = value?.name;
-		}
-	});
+	if (networkTrackInfo?.[network] && Object?.entries(networkTrackInfo[network])) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		Object?.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
+			if (value?.trackId === trackId && !value?.fellowshipOrigin) {
+				trackName = value?.name;
+			}
+		});
+	}
 	return trackName;
 };

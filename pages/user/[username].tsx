@@ -216,7 +216,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 									value={profileHistory}
 								/>
 							)}
-							{profileHistory === EProfileHistory.VOTES && userId === id && <VoteUnlock addresses={userProfile.data.addresses} />}
+							{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && <VoteUnlock addresses={userProfile.data.addresses} />}
 						</div>
 					)}
 					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (

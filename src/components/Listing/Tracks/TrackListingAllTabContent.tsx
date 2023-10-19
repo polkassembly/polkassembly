@@ -28,12 +28,20 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	const { className, posts, error, count, showSimilarPost } = props;
 	// const noPosts = count === 0 || isNaN(Number(count));
 	if (error) return <ErrorState errorMessage={error} />;
-	console.log(posts, posts.length);
 	if (posts.length <= 0)
 		return (
-			<div className={className}>
-				<PostEmptyState />
-			</div>
+			<>
+				{!showSimilarPost && (
+					<div className={className}>
+						<PostEmptyState />
+					</div>
+				)}
+				{showSimilarPost && (
+					<div className='mt-12'>
+						<LoadingState />
+					</div>
+				)}
+			</>
 		);
 
 	if (posts && posts.length > 0)
@@ -44,6 +52,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 				</div>
 				<div className={`${className} proposals__list`}>
 					{posts.map((post, index) => {
+						console.log(post.timeline);
 						return (
 							<div
 								key={post.post_id}
@@ -71,7 +80,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 											statusHistory={post?.status_history || []}
 											index={index}
 											proposalType={post?.type}
-											trackNumber={post?.track_no}
+											trackNumber={post?.track_no || post?.trackNumber}
 											truncateUsername={false}
 											type={post?.type}
 											showSimilarPost={showSimilarPost}

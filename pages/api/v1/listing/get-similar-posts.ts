@@ -14,14 +14,15 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
-import { getProposerAddressFromFirestorePostData } from './on-chain-posts';
+import { IPostListing, getProposerAddressFromFirestorePostData } from './on-chain-posts';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { IProfileVoteHistoryRespose } from '../votesHistory/getVotesByVoter';
 import { noTitle } from '~src/global/noTitle';
+import { getTimeline } from '../posts/on-chain-post';
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
-	const { postId, proposalType, tags, topicId, trackNumber } = req.body;
-	// const { tags = ['xcm'], proposalType = 'referendums_v2', trackNumber = 34, topicId = 1 } = req.body;
+	// const { postId, proposalType, tags, topicId, trackNumber } = req.body;
+	const { tags = ['xcm'], proposalType = 'referendums_v2', trackNumber = 34, topicId = 1, postId = 278 } = req.body;
 	const network = String(req.headers['x-network']);
 	let query;
 	if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
@@ -102,15 +103,15 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		posts = await Promise.all(postsPromise);
 	}
 
-	console.log(posts);
+	// console.log(posts);
 
-	let result = [];
+	let result: any = [];
 	if (subsquidRes['data'].proposal && posts) {
 		result = subsquidRes['data'].proposals
 			.map((proposal: any) => posts.filter((post: any) => proposal.index === post?.post_id))
 			.flat()
 			.map((match: any) => {
-				console.log(`ids from active tags -> ${match}`);
+				// console.log(`ids from active tags -> ${match}`);
 				return match;
 			});
 	}
@@ -119,7 +120,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		result = subsquidRes['data'].proposals
 			.filter((proposal: any) => proposal.trackNumber === trackNumber && proposal.trackNumber !== null)
 			.map((proposal: any) => {
-				console.log(`ids from active tracks -> ${proposal.index}`);
+				// console.log(`ids from active tracks -> ${proposal.index}`);
 				return proposal.index;
 			});
 	}
@@ -172,7 +173,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				.map((proposal: any) => postTopics.filter((postTopic: any) => proposal.index === postTopic?.post_id))
 				.flat()
 				.map((match: any) => {
-					console.log(`ids from active subtracks -> ${match}`);
+					// console.log(`ids from active subtracks -> ${match}`);
 					return match;
 				});
 		}
@@ -180,19 +181,42 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 	if (result.length < 3) {
 		result = subsquidRes['data'].proposals.map((proposal: any) => {
-			console.log(`ids from non matches -> ${proposal.index}`);
+			// console.log(`ids from non matches -> ${proposal.index}`);
 			return proposal.index;
 		});
 	}
 	result = result.filter((number: any) => number !== postId);
 	result = result.slice(0, 3);
-	// console.log(result);
+
 	const postDataPromise = result.map(async (id: any) => {
-		console.log(id);
+		// console.log(id);
 		const postRef = postsByTypeRef(network, proposalType).doc(String(id));
 		const postData = (await postRef.get()).data();
 		const subsquidDatas = subsquidData.map((post: any) => {
+			const { createdAt, hash, index, statusHistory, type } = post;
 			if (post.index == id) {
+				let timeline = [];
+				const isStatus = {
+					swap: false
+				};
+
+				if (!post?.group?.proposals) {
+					timeline = getTimeline(
+						[
+							{
+								createdAt,
+								hash,
+								index,
+								statusHistory,
+								type
+							}
+						],
+						isStatus
+					);
+				} else {
+					timeline = getTimeline(post?.group?.proposals, isStatus) || [];
+				}
+
 				return {
 					...postData,
 					created_at: post?.createdAt,
@@ -206,6 +230,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					status_history: post?.statusHistory,
 					tags: postData?.tags || [],
 					tally: post?.tally,
+					timeline,
 					title: postData?.title || noTitle,
 					topic: postData?.topic || postData?.topicId,
 					trackNumber: post?.trackNumber,

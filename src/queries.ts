@@ -1696,8 +1696,8 @@ export const GET_PROPOSAL_BY_STATUS_AND_TYPE = `query ProposalByStatusAndType($t
   }
 }`;
 
-export const GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT = `query getAllianceAnnouncements( $limit: Int = 50, $offset: Int = 0, $type_in:[ProposalType!] ) {
-  announcements(limit: $limit, offset: $offset, where:{status_not_in:[Rejected,Executed,TimedOut, Approved], type_in: $type_in}) {
+export const GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT = `query getAllianceAnnouncements( $limit: Int = 50, $offset: Int = 0, $type_in:[AnnouncementType!] ) {
+  announcements(limit: $limit, offset: $offset, where:{status_in:[Rejected,Executed,TimedOut, Approved, Cancelled,ConfirmStarted, ConfirmAborted], type_in: $type_in}) {
     id
     code
     codec
@@ -1773,6 +1773,23 @@ export const GET_POSTS_LISTING_BY_TYPE = `query ProposalsListingByType( $limit: 
       nays
       support
     }
+     group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
     index
     end
     hash
@@ -1785,8 +1802,8 @@ export const GET_POSTS_LISTING_BY_TYPE = `query ProposalsListingByType( $limit: 
   }
 }`;
 
-export const GET_POSTS_LISTING_FOR_POLYMESH = `query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10) {
-  proposals(limit: $limit, where:{type_in:$type_in, status_not_in:[Rejected,Executed, Expired]}) {
+export const GET_POSTS_LISTING_FOR_POLYMESH = `query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 50) {
+  proposals(limit: $limit, where:{type_in:$type_in, status_in:[Proposed, Scheduled]}) {
     createdAt
     createdAtBlock
     deposit

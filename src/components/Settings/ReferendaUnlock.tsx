@@ -19,24 +19,11 @@ import formatBnBalance from '../../util/formatBnBalance';
 import getNetwork from '../../util/getNetwork';
 import { useApiContext, useNetworkContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
-
+import { getTrackNameFromId } from '~src/util/trackNameFromId';
 const abi = require('../../moonbeamConvictionVoting.json');
 
 const currentNetwork = getNetwork();
 
-export const getTrackName = (network: string, trackId: number) => {
-	const tracksObj = networkTrackInfo[network];
-	let name = '';
-	if (tracksObj) {
-		Object.values(tracksObj).forEach((obj) => {
-			if (obj.trackId === trackId) {
-				name = obj.name;
-			}
-		});
-	}
-	return name;
-};
 const ZERO_BN = new BN(0);
 interface IReferendaUnlockProps {
 	className?: string;
@@ -542,7 +529,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 										<Divider className='my-1' />
 										{unlocks.map((unlock) => {
 											const { amount, trackId } = unlock;
-											const name = getTrackName(network, trackId);
+											const name = getTrackNameFromId(network, trackId);
 											return (
 												<>
 													<li

@@ -156,7 +156,7 @@ const Post: FC<IPostProps> = (props) => {
 		if (!post) return;
 		handleCanEdit();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [handleCanEdit, post]);
 
 	useEffect(() => {
 		if (proposalType !== ProposalType.GRANTS || dayjs(post.created_at).isBefore(dayjs().subtract(6, 'days'))) return;
@@ -260,7 +260,7 @@ const Post: FC<IPostProps> = (props) => {
 		videosData().then(() => {});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-	console.warn(post);
+
 	const fetchData = async () => {
 		const { data, error } = await nextApiClientFetch<IPostResponse[]>('/api/v1/listing/get-similar-posts', {
 			postId: post?.post_id,
@@ -547,7 +547,7 @@ const Post: FC<IPostProps> = (props) => {
 								</div>
 
 								{/* main content */}
-								<div className='mt-5 w-full rounded-xxl bg-transparent p-3 drop-shadow-md md:p-4 lg:p-6 '>
+								<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
 									{data && (
 										<TrackListingAllTabContent
 											posts={data}

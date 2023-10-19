@@ -27,10 +27,11 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod, PostOrigin } from '~src/types';
+import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import CloseIcon from '~assets/icons/close.svg';
 import { ProposalType } from '~src/global/proposalType';
+import { getTrackNameFromId } from '~src/util/trackNameFromId';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -71,7 +72,7 @@ interface IGovernanceProps {
 	index?: number;
 	proposalType?: ProposalType | string;
 	votesData?: any;
-	trackNumber?: number | null;
+	trackNumber?: number;
 	identityId?: string | null;
 	truncateUsername?: boolean;
 	showSimilarPost?: boolean;
@@ -110,9 +111,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		votesData,
 		identityId = null,
 		truncateUsername = true,
-		showSimilarPost,
-		type,
-		description
+		showSimilarPost
+		// description
 	} = props;
 
 	const router = useRouter();
@@ -203,6 +203,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
+	function formatTrackName(str: string) {
+		return str
+			.split('_') // Split the string into words using underscores as separators
+			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
+			.join(' '); // Join the words back together with a space separator
+	}
+
 	return (
 		<>
 			<div
@@ -213,7 +220,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
-							<span className='flex-none text-center font-medium text-bodyBlue sm:w-[120px]'>#{isTip ? tip_index : onchainId}</span>
+							<span className={`flex-none text-center font-medium text-bodyBlue ${showSimilarPost ? 'ml-5 w-[76px]' : 'sm:w-[120px]'}`}>#{isTip ? tip_index : onchainId}</span>
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
 								username={username}
@@ -230,7 +237,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 					<div className='mt-1 flex items-center justify-between'>
-						<div className='ml-[120px] flex flex-grow'>
+						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'} flex flex-grow`}>
 							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue lg:max-w-none'>
 								<span className='break-all text-sm font-medium text-bodyBlue'>{mainTitle}</span>
 							</h1>
@@ -251,8 +258,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						)}
 					</div>
 					{showSimilarPost && (
-						<div className='ml-[120px]'>
-							<h1 className='mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue lg:max-w-none'>
+						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'}`}>
+							<h1 className='desc-container mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
 								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 150)}...`}</p>
 							</h1>
 							{content.length > 120 && (
@@ -266,7 +273,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 						</div>
 					)}
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:mb-1 sm:ml-[120px] sm:mt-0 sm:flex lg:flex-row lg:items-center'>
+					<div
+						className={`flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:mb-1 ${
+							showSimilarPost ? 'ml-[96px]' : 'sm:ml-[120px]'
+						} sm:mt-0 sm:flex lg:flex-row lg:items-center`}
+					>
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
 							{postReactionCount && (
 								<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
@@ -414,7 +425,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</div>
 							) : null}
-							{type && showSimilarPost ? (
+							{showSimilarPost ? (
 								//type yaha daalo
 								<>
 									<Divider
@@ -422,7 +433,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='max-sm:hidden'
 										style={{ borderLeft: '1px solid #90A0B7' }}
 									/>
-									<p className='m-0 p-0 text-pink_primary'>{type}</p>
+									<p className='m-0 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
 								</>
 							) : null}
 						</div>
@@ -490,8 +501,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
-						#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
+					<div className='flex'>
+						<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
+							#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
+						</div>
+						{showSimilarPost && (
+							<Divider
+								type='vertical'
+								className='my-4'
+								style={{ borderLeft: '1px solid #485F7D' }}
+							/>
+						)}
+						{showSimilarPost && <p className='m-0 my-[14px] ml-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
 					</div>
 
 					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue xs:flex sm:hidden lg:flex-row lg:items-center'>
@@ -550,6 +571,22 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</div>
 							)}
 						</div>
+						{showSimilarPost && (
+							<div className=''>
+								<h1 className='desc-container mr-5 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
+									<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 120)}...`}</p>
+								</h1>
+								{content.length > 120 && (
+									<p
+										onClick={toggleShowMore}
+										className='m-0 p-0 text-xs text-pink_primary'
+									>
+										{showMore ? 'See Less' : 'See More'}
+									</p>
+								)}
+								<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
+							</div>
+						)}
 
 						<div className='mb-1 items-center justify-between xs:flex xs:gap-x-2'>
 							{status && <StatusTag status={status} />}

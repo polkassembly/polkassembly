@@ -63,7 +63,6 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 				</div>
 				<div className={`${className} proposals__list`}>
 					{posts.map((post, index) => {
-						console.log(post.timeline);
 						return (
 							<div
 								key={post.post_id}

@@ -274,7 +274,6 @@ const Post: FC<IPostProps> = (props) => {
 			console.log(error);
 		}
 	};
-	console.log(data);
 
 	useEffect(() => {
 		fetchData();

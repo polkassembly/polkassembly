@@ -21,8 +21,7 @@ import { noTitle } from '~src/global/noTitle';
 import { getTimeline } from '../posts/on-chain-post';
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
-	// const { postId, proposalType, tags, topicId, trackNumber } = req.body;
-	const { tags = ['xcm'], proposalType = 'referendums_v2', trackNumber = 34, topicId = 1, postId = 278 } = req.body;
+	const { postId, proposalType, tags, topicId, trackNumber } = req.body;
 	const network = String(req.headers['x-network']);
 	let query;
 	if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
@@ -102,8 +101,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 		posts = await Promise.all(postsPromise);
 	}
-
-	// console.log(posts);
 
 	let result: any = [];
 	if (subsquidRes['data'].proposal && posts) {
@@ -189,7 +186,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	result = result.slice(0, 3);
 
 	const postDataPromise = result.map(async (id: any) => {
-		// console.log(id);
 		const postRef = postsByTypeRef(network, proposalType).doc(String(id));
 		const postData = (await postRef.get()).data();
 		const subsquidDatas = subsquidData.map((post: any) => {

@@ -151,7 +151,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
 	const decidingBlock = statusHistory?.filter((status) => status.status === 'Deciding')?.[0]?.block || 0;
-	// console.warn(PostOrigin);
 	const convertRemainingTime = (preiodEndsAt: any) => {
 		const diffMilliseconds = preiodEndsAt.diff();
 
@@ -182,7 +181,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		if (!trackDetails) {
 			trackDetails = getTrackData(network, '', trackNumber);
 		}
-		console.log(trackDetails);
 		if (!created_at || !trackDetails) return;
 
 		const prepare = getPeriodData(network, dayjs(created_at), trackDetails, 'preparePeriod');
@@ -191,7 +189,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
 		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

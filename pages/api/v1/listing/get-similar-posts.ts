@@ -14,7 +14,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
-import { IPostListing, getProposerAddressFromFirestorePostData } from './on-chain-posts';
+import { getProposerAddressFromFirestorePostData } from './on-chain-posts';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { IProfileVoteHistoryRespose } from '../votesHistory/getVotesByVoter';
 import { noTitle } from '~src/global/noTitle';

@@ -55,6 +55,8 @@ const getQueryToTrack = (track: string, network: string) => {
 			return networkTrackInfo[network]?.[PostOrigin.STAKING_ADMIN];
 		case 'SMALL_TIPPER':
 			return networkTrackInfo[network]?.[PostOrigin.SMALL_TIPPER];
+		// case 'REFERENDA':
+		// return networkTrackInfo[network]?.[PostOrigin.REFERENDA];
 	}
 };
 

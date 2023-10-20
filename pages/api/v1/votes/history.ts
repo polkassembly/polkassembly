@@ -19,7 +19,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
 
 export enum EDecision {
 	YES = 'yes',
@@ -88,7 +88,7 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 			limit: Number(listingLimit),
 			offset: Number(listingLimit) * (numPage - 1),
 			type_eq: getSubsquidProposalType(proposalType as any),
-			voter_eq: getSubstrateAddress(String(voterAddress))
+			voter_eq: String(voterAddress)
 		};
 
 		if (proposalType === ProposalType.REFERENDUM_V2) {
@@ -152,7 +152,7 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 	}
 }
 async function handler(req: NextApiRequest, res: NextApiResponse<IVotesHistoryResponse | MessageType>) {
-	const { listingLimit = 1, page = 1, voterAddress, proposalType, proposalIndex } = req.body;
+	const { listingLimit = LISTING_LIMIT, page = 1, voterAddress, proposalType, proposalIndex } = req.body;
 
 	const network = String(req.headers['x-network']);
 

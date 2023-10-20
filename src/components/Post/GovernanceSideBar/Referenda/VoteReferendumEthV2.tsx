@@ -251,6 +251,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			case EVoteDecisionType.AYE:
 				setLastVote({
 					balance: totalVoteValue,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -258,6 +259,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			case EVoteDecisionType.NAY:
 				setLastVote({
 					balance: totalVoteValue,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -270,6 +272,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				}));
 				setLastVote({
 					balance: totalVoteValue,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -283,6 +286,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				}));
 				setLastVote({
 					balance: totalVoteValue,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});

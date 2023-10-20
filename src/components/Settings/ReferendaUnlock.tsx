@@ -17,9 +17,10 @@ import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
 import formatBnBalance from '../../util/formatBnBalance';
 import getNetwork from '../../util/getNetwork';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const abi = require('../../moonbeamConvictionVoting.json');
 
@@ -126,7 +127,7 @@ export const getUnlockVotesDetails = (vote: any) => {
 };
 
 const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [address, setAddress] = useState<string>('');
 	const [votes, setVotes] = useState<Vote[]>([]);
 	const [unlocks, setUnlocks] = useState<Unlock[]>([]);

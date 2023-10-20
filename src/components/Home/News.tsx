@@ -16,8 +16,8 @@ const News: FC<INewsProps> = (props) => {
 		profile = twitter.split('/')[3];
 	}
 	return (
-		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md lg:h-[550px] lg:p-6'>
-			<h2 className='mb-6 text-xl font-medium leading-8 leading-8 text-bodyBlue'>News</h2>
+		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>
+			<h2 className='mb-6 text-xl font-medium leading-8 leading-8 text-bodyBlue dark:text-white'>News</h2>
 
 			<div>
 				<TwitterTimelineEmbed

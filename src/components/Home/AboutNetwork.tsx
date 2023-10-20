@@ -26,7 +26,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<HomeFilled className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+					<HomeFilled className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.twitter ? (
@@ -35,7 +35,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<TwitterOutlined className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+					<TwitterOutlined className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.discord ? (
@@ -44,7 +44,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<DiscordIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+					<DiscordIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.github ? (
@@ -53,7 +53,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<GithubIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+					<GithubIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.youtube ? (
@@ -62,7 +62,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<YoutubeFilled className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+					<YoutubeFilled className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.reddit ? (
@@ -71,7 +71,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<RedditIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+					<RedditIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.telegram ? (
@@ -80,7 +80,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<TelegramIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+					<TelegramIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.block_explorer ? (
@@ -89,7 +89,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<CubeIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+					<CubeIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 		</Space>
@@ -115,21 +115,21 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText }: { className
 		</div>
 
 		<div className='flex flex-col justify-between'>
-			<div className='text-sm font-semibold leading-[150%] text-bodyBlue group-hover:text-pink_secondary'>{text}</div>
-			<div className='text-xs font-medium text-lightBlue group-hover:text-pink_secondary'>{subText}</div>
+			<div className='text-sm font-semibold leading-[150%] text-bodyBlue group-hover:text-pink_secondary dark:text-white'>{text}</div>
+			<div className='text-xs font-medium text-lightBlue group-hover:text-pink_secondary dark:text-blue-dark-medium'>{subText}</div>
 		</div>
 	</a>
 );
 
 const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
 	return (
-		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md md:p-6`}>
+		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-xl font-medium leading-8 text-bodyBlue'>About</h2>
+				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-white'>About</h2>
 				<div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 			</div>
 
-			<p className='medium mt-1.5 text-sm text-bodyBlue'>Join our Community to discuss, contribute and get regular updates from us!</p>
+			<p className='medium mt-1.5 text-sm text-bodyBlue dark:text-white'>Join our Community to discuss, contribute and get regular updates from us!</p>
 
 			<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 

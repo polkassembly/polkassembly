@@ -155,7 +155,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 					Set Deadline Date
 				</Button>
 			) : canEdit && isUpdate ? (
-				<div className='transition:colors duration:500 edit-icon-wrapper flex h-[60px] w-full items-center justify-center rounded-md bg-white drop-shadow-md'>
+				<div className='transition:colors duration:500 edit-icon-wrapper flex h-[60px] w-full items-center justify-center rounded-md bg-white drop-shadow-md dark:bg-section-dark-overlay'>
 					<div className='text-center text-[18px] font-medium text-sidebarBlue'>
 						<>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
 					</div>
@@ -165,13 +165,15 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 					/>
 				</div>
 			) : isUpdate ? (
-				<div className='transition:colors duration:500 flex h-[60px] w-full items-center justify-center rounded-md bg-white drop-shadow-md'>
+				<div className='transition:colors duration:500 flex h-[60px] w-full items-center justify-center rounded-md bg-white drop-shadow-md dark:bg-section-dark-overlay'>
 					<div className='text-center text-[18px] font-medium text-sidebarBlue'>
 						<>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
 					</div>
 				</div>
 			) : (
-				<div className='flex h-[60px] w-full items-center justify-center rounded-md bg-white text-[18px] font-medium text-sidebarBlue drop-shadow-md'>Deadline: Not Set</div>
+				<div className='flex h-[60px] w-full items-center justify-center rounded-md bg-white text-[18px] font-medium text-sidebarBlue drop-shadow-md dark:bg-section-dark-overlay'>
+					Deadline: Not Set
+				</div>
 			)}
 
 			<Modal

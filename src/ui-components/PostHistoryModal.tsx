@@ -53,7 +53,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 					</div>
 				</div>
 			) : (
-				<div className={`ml-3 mt-1 rounded-[4px] border-[0.5px] border-solid border-[#D2D8E0] bg-white px-3 py-3 max-sm:ml-0 max-sm:w-full ${item?.expanded && 'active-timeline'}`}>
+				<div className={`ml-3 mt-1 rounded-[4px] border-[0.5px] border-solid border-[#D2D8E0] bg-white dark:bg-section-dark-overlay px-3 py-3 max-sm:ml-0 max-sm:w-full ${item?.expanded && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:items-start max-sm:justify-start  max-sm:gap-2'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
@@ -90,7 +90,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							title
 						)}
 					</div>
-					<div className='mt-1 pr-2 text-sm font-normal leading-6 tracking-[0.01em] text-bodyBlue'>
+					<div className='mt-1 pr-2 text-sm font-normal leading-6 tracking-[0.01em] text-bodyBlue dark:text-white'>
 						{/* {historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content} */}
 						<Markdown
 							className='text-sm'

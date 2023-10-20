@@ -6,13 +6,13 @@
 import { MenuProps } from 'antd';
 import { Dropdown } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import { TRPCEndpoint } from '~src/types';
 import { ArrowDownIcon, SignalTowerIcon } from './CustomIcons';
 import Loader from './Loader';
 import styled from 'styled-components';
-
+import { useNetworkSelector } from '~src/redux/selectors';
 interface IRPCDropdownProps {
 	className?: string;
 	setSidebarHiddenFunc?: () => void;
@@ -35,7 +35,7 @@ export const dropdownLabel = (wsProvider: string, network: string) => {
 const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	const { className, isSmallScreen } = props;
 	const { isApiLoading, setWsProvider, wsProvider } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [rpcEndpoints, setRPCEndpoints] = useState<TRPCEndpoint[]>([]);
 
 	useEffect(() => {
@@ -57,7 +57,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 				selectable: true
 			}}
 			className={`${className}`}
-			overlayClassName={`${className} navbar-dropdowns text-sm font-medium text-bodyBlue hover:text-pink_primary z-[1056]`}
+			overlayClassName={`${className} navbar-dropdowns text-sm font-medium text-bodyBlue dark:text-white hover:text-pink_primary z-[1056]`}
 		>
 			{isSmallScreen ? (
 				<span className='flex h-10 items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-[18px]'>
@@ -82,7 +82,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 
 export default styled(RPCDropdown)`
 	.ant-dropdown-menu-item {
-		color: #243a57 !important;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
 		font-weight: 500 !important;
 	}
 `;

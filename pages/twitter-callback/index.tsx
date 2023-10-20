@@ -7,10 +7,11 @@ import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getTwitterCallback } from 'pages/api/v1/verification/twitter-callback';
 import React, { useEffect, useState } from 'react';
-import { useNetworkContext } from 'src/context';
+import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import VerificationSuccessScreen from '~src/components/OnchainIdentity/VerificationSuccessScreen';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -35,11 +36,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 const TwitterCallback = ({ error, network, twitterHandle }: { network: string; error?: null | any; twitterHandle?: string }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(!error);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
@@ -56,7 +57,7 @@ const TwitterCallback = ({ error, network, twitterHandle }: { network: string; e
 				className='-mt-16 h-full'
 			>
 				{error ? (
-					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
 						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
 							<WarningOutlined />
 							{/* TODO: Check error message from BE when email already verified */}

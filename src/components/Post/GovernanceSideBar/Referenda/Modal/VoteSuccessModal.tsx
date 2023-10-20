@@ -8,7 +8,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useCommentDataContext, useNetworkContext } from '~src/context';
+import { useCommentDataContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,6 +25,7 @@ import LeftQuote from '~assets/icons/chatbox-icons/icon-left-quote.svg';
 import RightQuote from '~assets/icons/chatbox-icons/icon-right-quote.svg';
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -59,7 +60,7 @@ const VoteInitiatedModal = ({
 	abstainVoteValue,
 	icon
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 	const [posted, setPosted] = useState(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -105,7 +106,7 @@ const VoteInitiatedModal = ({
 						{` ${unit}`}
 					</div>
 					{vote === EVoteDecisionType.SPLIT && (
-						<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue'>
+						<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-white'>
 							{' '}
 							<span className='mr-3'>
 								<span className='font-semibold'> Aye: </span>
@@ -124,7 +125,7 @@ const VoteInitiatedModal = ({
 						</div>
 					)}
 					{vote === EVoteDecisionType.ABSTAIN && (
-						<div className='flex flex-wrap justify-center text-sm font-normal text-bodyBlue'>
+						<div className='flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-white'>
 							{' '}
 							<span className='mr-3'>
 								<span className='font-semibold'> Abstain:</span>{' '}
@@ -152,7 +153,7 @@ const VoteInitiatedModal = ({
 						</div>
 					)}
 					<div className='flex flex-col items-start justify-center gap-[10px]'>
-						<div className='flex gap-3 text-sm font-normal text-lightBlue'>
+						<div className='flex gap-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							With address:{' '}
 							<span className='font-medium'>
 								<Address
@@ -165,7 +166,7 @@ const VoteInitiatedModal = ({
 						</div>
 
 						{multisig && (
-							<div className='flex gap-[17px] text-sm font-normal text-lightBlue'>
+							<div className='flex gap-[17px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 								With Multisig:{' '}
 								<span className='font-medium'>
 									<Address
@@ -178,37 +179,37 @@ const VoteInitiatedModal = ({
 							</div>
 						)}
 
-						<div className='flex h-[21px] gap-[70px] text-sm font-normal text-lightBlue'>
+						<div className='flex h-[21px] gap-[70px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Vote :
 							{vote === EVoteDecisionType.AYE ? (
 								<p>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue'>{vote}</span>
+									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-white'>{vote}</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (
 								<div>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-bodyBlue'>{vote}</span>
+									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-bodyBlue dark:text-white'>{vote}</span>
 								</div>
 							) : vote === EVoteDecisionType.SPLIT ? (
 								<p>
-									<SplitYellow /> <span className='font-medium capitalize text-bodyBlue'>{vote}</span>
+									<SplitYellow /> <span className='font-medium capitalize text-bodyBlue dark:text-white'>{vote}</span>
 								</p>
 							) : vote === EVoteDecisionType.ABSTAIN ? (
 								<p className='flex align-middle'>
-									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue'>{vote}</span>
+									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-white'>{vote}</span>
 								</p>
 							) : null}
 						</div>
-						<div className='flex gap-[30px] text-sm font-normal text-lightBlue'>
+						<div className='flex gap-[30px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Conviction:
-							<span className='font-medium text-bodyBlue'>{conviction || '0.1'}x</span>
+							<span className='font-medium text-bodyBlue dark:text-white'>{conviction || '0.1'}x</span>
 						</div>
-						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue'>
-							Time of Vote : <span className='font-medium text-bodyBlue'>{votedAt}</span>
+						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							Time of Vote : <span className='font-medium text-bodyBlue dark:text-white'>{votedAt}</span>
 						</div>
 						{multisig && (
-							<div className='flex h-[21px] gap-11 text-sm font-normal text-lightBlue'>
+							<div className='flex h-[21px] gap-11 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 								Vote Link:{' '}
-								<span className='font-medium text-bodyBlue'>
+								<span className='font-medium text-bodyBlue dark:text-white'>
 									<a
 										className='text-pink_primary'
 										href='https://app.polkasafe.xyz/transactions'

@@ -4,7 +4,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { ApiContext } from '~src/context/ApiContext';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
@@ -15,7 +14,6 @@ import OnChainIdentityIcon from '~assets/icons/onchain-identity.svg';
 import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
@@ -25,6 +23,7 @@ import { ILoading, Wallet } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -67,8 +66,8 @@ interface Props {
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
 }
 const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
-	const { network } = useContext(NetworkContext);
-	const { id: userId } = useContext(UserDetailsContext);
+	const { network } = useNetworkSelector();
+	const { id: userId } = useUserDetailsSelector();
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
@@ -361,11 +360,11 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px]`}
 				closable={false}
 				title={
-					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>Exit Verification</div>
+					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-white'>Exit Verification</div>
 				}
 			>
 				<div className='mt-6'>
-					<span className='text-sm text-bodyBlue'>Your verification is pending. Are you sure you want to exit verification process? </span>
+					<span className='text-sm text-bodyBlue dark:text-white'>Your verification is pending. Are you sure you want to exit verification process? </span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
 						<Button
 							onClick={() => {
@@ -407,9 +406,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						) : (
 							<OnChainIdentityIcon />
 						)}
-						<span className='text-bodyBlue'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
+						<span className='text-bodyBlue dark:text-white'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
 						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
-							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue'>
+							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue dark:text-white'>
 								<IdentityProgressIcon />
 								In Progress
 							</span>

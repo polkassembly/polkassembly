@@ -20,9 +20,10 @@ interface IOffChainPostsListingContainerProps {
 	sortBy: string;
 	count: number | null | undefined;
 	proposalType: OffChainProposalType;
+	defaultPage?: number;
 }
 
-const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = ({ posts, className, count, proposalType }) => {
+const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = ({ posts, className, count, proposalType, defaultPage }) => {
 	const router = useRouter();
 	const onPaginationChange = (page: number) => {
 		router.push({
@@ -44,7 +45,7 @@ const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = (
 			<div className='mt-6 flex justify-end pb-5'>
 				{!!count && count > 0 && count > LIMIT && (
 					<Pagination
-						defaultCurrent={1}
+						defaultCurrent={defaultPage || 1}
 						pageSize={LIMIT}
 						total={count}
 						showSizeChanger={false}

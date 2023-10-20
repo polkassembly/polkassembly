@@ -8,11 +8,11 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { getPreimages } from 'pages/api/v1/listing/preimages';
 import React, { FC, useEffect } from 'react';
-
+import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import { IPreimagesListingResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -46,10 +46,10 @@ interface IPreImagesProps {
 
 const PreImages: FC<IPreImagesProps> = (props) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -74,13 +74,13 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 				title='PreImages'
 				network={network}
 			/>
-			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>{count} Preimages</h1>
+			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-white'>{count} Preimages</h1>
 
 			{/* <div className="mt-8 mx-1">
 				<PreImagesTable tableData={tableData} />
 			</div> */}
 
-			<div className='rounded-xxl bg-white p-3 shadow-md md:p-8'>
+			<div className='rounded-xxl bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8'>
 				<div>
 					<PreImagesTable preimages={preimages} />
 

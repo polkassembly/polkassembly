@@ -9,12 +9,13 @@ import styled from 'styled-components';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ParachainInfoCard from '~src/components/Parachains/ParachainInfoCard';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
 import ChainDataTable from '../../src/components/Parachains/ChainDataTable';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 interface Props {
 	className?: string;
@@ -31,10 +32,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Parachains = ({ className, network }: Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -93,7 +94,7 @@ const Parachains = ({ className, network }: Props) => {
 				network={network}
 			/>
 			<div className={className}>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>Polkadot and Kusama ecosystem and directory</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-white'>Polkadot and Kusama ecosystem and directory</h1>
 
 				<Row
 					gutter={[{ lg: 16 }, 16]}
@@ -119,11 +120,11 @@ const Parachains = ({ className, network }: Props) => {
 					</Col>
 				</Row>
 
-				<div className={`${className} h-[650px] rounded-xxl bg-white p-2 drop-shadow-md lg:p-6`}>
-					<h2 className='mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue sm:mt-0'>Projects</h2>
+				<div className={`${className} h-[650px] rounded-xxl bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}>
+					<h2 className='mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-white sm:mt-0'>Projects</h2>
 					<Tabs
 						type='card'
-						className='ant-tabs-tab-bg-white font-medium text-bodyBlue'
+						className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-white'
 						items={tabItems}
 					/>
 				</div>

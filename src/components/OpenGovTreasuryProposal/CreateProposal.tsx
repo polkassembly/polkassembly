@@ -7,7 +7,7 @@ import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { BN_HUNDRED, formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -24,6 +24,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -71,7 +72,7 @@ const CreateProposal = ({
 	availableBalance,
 	discussionLink
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
 	const { api, apiReady } = useApiContext();
@@ -79,7 +80,7 @@ const CreateProposal = ({
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { id: userId } = useUserDetailsContext();
+	const { id: userId } = useUserDetailsSelector();
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const success = (message: string) => {
 		messageApi.open({
@@ -246,23 +247,23 @@ const CreateProposal = ({
 				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
-						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:text-white ${poppins.variable} ${poppins.className}`}
 						showIcon
 						message='Insufficient available balance.'
 					/>
 				)}
 				<Alert
 					message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`}
-					className={`mt-4 rounded-[4px] text-sm text-bodyBlue ${poppins.variable} ${poppins.className}`}
+					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-white ${poppins.variable} ${poppins.className}`}
 					type='success'
 					showIcon
 				/>
-				<div className='mt-4 text-sm font-normal text-lightBlue'>
+				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<div className='mt-4 flex flex-col gap-2'>
 						<span className='flex'>
 							<span className='w-[150px]'>Proposer Address:</span>
 							<Address
-								addressClassName='text-bodyBlue'
+								addressClassName='text-bodyBlue dark:text-white'
 								address={proposerAddress}
 								iconSize={18}
 								displayInline
@@ -272,7 +273,7 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Beneficiary Address:</span>
 							<Address
-								addressClassName='text-bodyBlue'
+								addressClassName='text-bodyBlue dark:text-white'
 								address={beneficiaryAddress}
 								iconSize={18}
 								displayInline
@@ -281,19 +282,19 @@ const CreateProposal = ({
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Track:</span>
-							<span className='font-medium text-bodyBlue'>
+							<span className='font-medium text-bodyBlue dark:text-white'>
 								{selectedTrack} <span className='ml-1 text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span>
 							</span>
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Funding Amount:</span>
-							<span className='font-medium text-bodyBlue'>
+							<span className='font-medium text-bodyBlue dark:text-white'>
 								{formatedBalance(fundingAmount.toString(), unit)} {unit}
 							</span>
 						</span>
 						<span className='flex items-center'>
 							<span className='w-[150px]'>Preimage Hash:</span>
-							<span className='font-medium  text-bodyBlue'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
+							<span className='font-medium  text-bodyBlue dark:text-white'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
 							<span
 								className='flex cursor-pointer items-center'
 								onClick={(e) => {
@@ -308,7 +309,7 @@ const CreateProposal = ({
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Preimage Length:</span>
-							<span className='font-medium text-bodyBlue'>{preimageLength}</span>
+							<span className='font-medium text-bodyBlue dark:text-white'>{preimageLength}</span>
 						</span>
 						<span className='flex items-center'>
 							<span className='w-[150px]'>Preimage Link:</span>
@@ -316,7 +317,7 @@ const CreateProposal = ({
 								target='_blank'
 								rel='noreferrer'
 								href={`/preimages/${preimageHash}`}
-								className='font-medium text-bodyBlue'
+								className='font-medium text-bodyBlue dark:text-white'
 							>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0, 5)}...`}</a>
 							<span
 								className='flex cursor-pointer items-center'
@@ -334,11 +335,11 @@ const CreateProposal = ({
 				</div>
 				{showAlert && (
 					<Alert
-						className='mt-6 rounded-[4px] text-bodyBlue'
+						className='mt-6 rounded-[4px] text-bodyBlue dark:text-white'
 						showIcon
 						type='info'
 						message={
-							<span className='text-sm text-bodyBlue'>
+							<span className='text-sm text-bodyBlue dark:text-white'>
 								An amount of{' '}
 								<span className='font-semibold'>
 									{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
@@ -348,21 +349,21 @@ const CreateProposal = ({
 						}
 						description={
 							<div className='mt-[10px] flex flex-col gap-1'>
-								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue'>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
 									<span className='w-[150px]'>Deposit amount</span>
-									<span className='font-medium text-bodyBlue'>
+									<span className='font-medium text-bodyBlue dark:text-white'>
 										{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue'>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
 									<span className='w-[150px]'>Gas fees</span>
-									<span className='font-medium text-bodyBlue'>
+									<span className='font-medium text-bodyBlue dark:text-white'>
 										{formatedBalance(String(txFee.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue'>
+								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-medium'>
 									<span className='w-[150px]'>Total</span>
-									<span className='text-bodyBlue'>
+									<span className='text-bodyBlue dark:text-white'>
 										{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
 									</span>
 								</span>

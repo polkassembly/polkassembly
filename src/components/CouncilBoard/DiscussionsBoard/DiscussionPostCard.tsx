@@ -50,7 +50,7 @@ const DiscussionPostCard = ({ className, id, title, username, commentsCount, cre
 	}, [id]);
 
 	return (
-		<div className={`${className} rounded-md bg-white p-3 drop-shadow-md lg:p-6`}>
+		<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 drop-shadow-md lg:p-6`}>
 			<h3 className='text-sidebarBlue'>{title || noTitle}</h3>
 			{loading && <p>loading...</p>}
 			{!loading && !error && post && <Markdown md={`${(post.content as string).split(' ').splice(0, 30).join(' ')}...`} />}

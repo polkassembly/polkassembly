@@ -73,7 +73,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					<ImageComponent
 						src={profile?.image}
 						alt='User Picture'
-						className='flex h-[103px] w-[103px] items-center justify-center bg-white'
+						className='flex h-[103px] w-[103px] items-center justify-center bg-white dark:bg-section-dark-overlay'
 						iconClassName='flex items-center justify-center text-[#A0A6AE] text-5xl w-full h-full rounded-full'
 					/>
 				</div>
@@ -233,7 +233,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			</div>
 			{errorCheck && (
 				<Alert
-					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue'
+					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue dark:text-white'
 					message={errorCheck}
 					type='info'
 					showIcon

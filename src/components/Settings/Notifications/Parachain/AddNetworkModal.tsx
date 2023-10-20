@@ -5,11 +5,11 @@ import React, { useEffect, useState } from 'react';
 import { Button, Divider, Image, Switch, Tag } from 'antd';
 import SmallParachainIcon from '~assets/icons/parachain-small.svg';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { networkLabel } from './utils';
 import { ISelectedNetwork } from '../types';
 import Modal from '~src/ui-components/Modal';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const AddNetworkModal = ({
 	open,
@@ -23,7 +23,7 @@ const AddNetworkModal = ({
 	onCancel: () => void;
 }) => {
 	const [allNetworks, setAllNetworks] = useState(selectedNetwork);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [showSureModal, setShowSureModal] = useState(false);
 
 	useEffect(() => {
@@ -159,7 +159,7 @@ const AddNetworkModal = ({
 												<Tag
 													onClick={() => handleClick(name, chain)}
 													className={`items-center rounded-[34px] px-[12px] py-[8px] text-navBlue ${
-														selected ? 'border border-solid border-[#E5007A] bg-[#FEF2F8]' : 'border-[#fff] bg-white'
+														selected ? 'border border-solid border-[#E5007A] bg-[#FEF2F8]' : 'border-[#fff] bg-white dark:bg-section-dark-overlay'
 													} max-w-[200px] cursor-pointer pb-[5px] hover:bg-[#FEF2F8]`}
 												>
 													<Image

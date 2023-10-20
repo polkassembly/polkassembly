@@ -9,7 +9,6 @@ import Gov1Notification from './Gov1Notification';
 import OpenGovNotification from './OpenGovNotification';
 import NotificationChannels, { CHANNEL } from './NotificationChannels';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useUserDetailsContext } from '~src/context';
 import { PublicUser } from '~src/auth/types';
 import Loader from '~src/ui-components/Loader';
 import { notificationInitialState } from './Reducer/initState';
@@ -20,6 +19,8 @@ import { networks } from './Parachain/utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PipNotification from './PIP/Pip';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 const getAllNetworks = (network: string) => {
 	for (const category of Object.keys(networks)) {
 		const chains = networks[category];
@@ -33,7 +34,8 @@ const getAllNetworks = (network: string) => {
 };
 
 export default function Notifications({ network }: { network: string }) {
-	const { id, networkPreferences, setUserDetailsContextState, primaryNetwork } = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const { id, networkPreferences, primaryNetwork } = currentUser;
 
 	const [notificationPreferences, dispatch] = useReducer(reducer, notificationInitialState(network));
 	const [selectedNetwork, setSelectedNetwork] = useState<{
@@ -42,16 +44,18 @@ export default function Notifications({ network }: { network: string }) {
 	const [loading, setLoading] = useState(true);
 
 	const handleCurrentNetworkNotifications = (obj: INotificationObject) => {
-		setUserDetailsContextState((prev) => ({
-			...prev,
-			networkPreferences: {
-				...prev.networkPreferences,
-				triggerPreferences: {
-					...prev.networkPreferences.triggerPreferences,
-					[network]: obj
+		dispatch(
+			setUserDetailsState({
+				...currentUser,
+				networkPreferences: {
+					...currentUser.networkPreferences,
+					triggerPreferences: {
+						...currentUser.networkPreferences.triggerPreferences,
+						[network]: obj
+					}
 				}
-			}
-		}));
+			})
+		);
 	};
 
 	const getNotificationSettings = async (network: string) => {
@@ -64,22 +68,26 @@ export default function Notifications({ network }: { network: string }) {
 				throw new Error(error);
 			}
 			if (data?.notification_preferences?.channelPreferences) {
-				setUserDetailsContextState((prev) => ({
-					...prev,
-					networkPreferences: {
-						...prev.networkPreferences,
-						channelPreferences: data?.notification_preferences?.channelPreferences
-					}
-				}));
+				dispatch(
+					setUserDetailsState({
+						...currentUser,
+						networkPreferences: {
+							...currentUser.networkPreferences,
+							channelPreferences: data?.notification_preferences?.channelPreferences
+						}
+					})
+				);
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
-				setUserDetailsContextState((prev) => ({
-					...prev,
-					networkPreferences: {
-						...prev.networkPreferences,
-						triggerPreferences: data?.notification_preferences?.triggerPreferences
-					}
-				}));
+				dispatch(
+					setUserDetailsState({
+						...currentUser,
+						networkPreferences: {
+							...currentUser.networkPreferences,
+							triggerPreferences: data?.notification_preferences?.triggerPreferences
+						}
+					})
+				);
 				dispatch({
 					payload: {
 						data: data?.notification_preferences?.triggerPreferences?.[network],
@@ -101,10 +109,12 @@ export default function Notifications({ network }: { network: string }) {
 				throw new Error(error);
 			}
 			if (data.primary_network) {
-				setUserDetailsContextState((prev) => ({
-					...prev,
-					primaryNetwork: data.primary_network || ''
-				}));
+				dispatch(
+					setUserDetailsState({
+						...currentUser,
+						primaryNetwork: data.primary_network || ''
+					})
+				);
 			} else {
 				handleSetPrimaryNetwork(network);
 			}
@@ -115,10 +125,12 @@ export default function Notifications({ network }: { network: string }) {
 
 	const handleSetPrimaryNetwork = async (network: string) => {
 		try {
-			setUserDetailsContextState((prev) => ({
-				...prev,
-				primaryNetwork: network
-			}));
+			dispatch(
+				setUserDetailsState({
+					...currentUser,
+					primaryNetwork: network
+				})
+			);
 			await nextApiClientFetch('api/v1/auth/actions/setPrimaryNetwork', { primary_network: network });
 		} catch (e) {
 			console.log(e);
@@ -159,16 +171,18 @@ export default function Notifications({ network }: { network: string }) {
 
 	const handleReset = async (channel: CHANNEL) => {
 		try {
-			setUserDetailsContextState((prev) => ({
-				...prev,
-				networkPreferences: {
-					...prev.networkPreferences,
-					channelPreferences: {
-						...prev.networkPreferences.channelPreferences,
-						[channel]: {}
+			dispatch(
+				setUserDetailsState({
+					...currentUser,
+					networkPreferences: {
+						...currentUser.networkPreferences,
+						channelPreferences: {
+							...currentUser.networkPreferences.channelPreferences,
+							[channel]: {}
+						}
 					}
-				}
-			}));
+				})
+			);
 			const { data, error } = (await nextApiClientFetch('api/v1/auth/actions/resetChannelNotification', {
 				channel
 			})) as { data: { message: string }; error: string | null };
@@ -184,19 +198,21 @@ export default function Notifications({ network }: { network: string }) {
 
 	const handleEnableDisabled = async (channel: CHANNEL, enabled = false) => {
 		try {
-			setUserDetailsContextState((prev) => ({
-				...prev,
-				networkPreferences: {
-					...prev.networkPreferences,
-					channelPreferences: {
-						...prev.networkPreferences?.channelPreferences,
-						[channel]: {
-							...prev.networkPreferences?.channelPreferences?.channel,
-							enabled: enabled
+			dispatch(
+				setUserDetailsState({
+					...currentUser,
+					networkPreferences: {
+						...currentUser.networkPreferences,
+						channelPreferences: {
+							...currentUser.networkPreferences?.channelPreferences,
+							[channel]: {
+								...currentUser.networkPreferences?.channelPreferences?.channel,
+								enabled: enabled
+							}
 						}
 					}
-				}
-			}));
+				})
+			);
 			const { data, error } = (await nextApiClientFetch('api/v1/auth/actions/updateChannelNotification', {
 				channel,
 				enabled

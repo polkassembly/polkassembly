@@ -81,7 +81,7 @@ const Gif: FC<IGifProps> = (props) => {
 									});
 								}}
 								type='card'
-								className='ant-tabs-tab-bg-white font-medium text-bodyBlue'
+								className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-white'
 								items={[
 									{
 										key: 'trending',

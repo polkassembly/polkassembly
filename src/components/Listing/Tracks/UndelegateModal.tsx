@@ -15,7 +15,6 @@ import styled from 'styled-components';
 
 import CloseIcon from '~assets/icons/close.svg';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
 import { formatBalance } from '@polkadot/util';
@@ -29,6 +28,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -44,12 +44,12 @@ interface Props {
 }
 const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, isMultisig }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const trackName = handleTrack(String(router.query.track));
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress: defaultAddress } = useUserDetailsContext();
+	const { delegationDashboardAddress: defaultAddress } = useUserDetailsSelector();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [target, setTarget] = useState<string>(defaultTarget);
 	const lock = Number(2 ** (conviction - 1));
@@ -199,7 +199,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] `}
 				wrapClassName={className}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
 						<UndelegateProfileIcon className='mr-2' />
 						Undelegate
 					</div>
@@ -248,7 +248,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							disabled={true}
 						>
 							<div className='mt-4'>
-								<label className='mb-1 text-sm text-lightBlue'>Your Address</label>
+								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 								<div className='h-10 rounded-[6px] px-0 py-[px] text-[#7c899b]'>
 									<Address
 										isTruncateUsername={false}
@@ -261,8 +261,8 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							</div>
 
 							<div className='mt-4'>
-								<label className='mb-1 text-sm text-lightBlue'>Delegated to</label>
-								<div className='h-10 rounded-[6px] px-0 py-[px] text-bodyBlue'>
+								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Delegated to</label>
+								<div className='h-10 rounded-[6px] px-0 py-[px] text-bodyBlue dark:text-white'>
 									<Address
 										isTruncateUsername={false}
 										address={defaultTarget}
@@ -274,12 +274,12 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							</div>
 
 							<div className='mt-4'>
-								<label className='mb-2 text-sm text-lightBlue'>Balance </label>
+								<label className='mb-2 text-sm text-lightBlue dark:text-blue-dark-medium'>Balance </label>
 								<div className='h-10 cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b]'>{`${formatedBalance(balance.toString(), unit)} ${unit}`}</div>
 							</div>
 
 							<div className='mb-[2px]  border-solid border-white'>
-								<label className='flex items-center text-sm text-lightBlue'>
+								<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
 									Conviction
 									<span>
 										<HelperTooltip
@@ -295,7 +295,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 								</div>
 							</div>
 							<div className='mb-4 mt-6 flex items-center justify-start gap-2'>
-								<label className='mb-[2px] text-sm tracking-[0.0025em] text-lightBlue'>Track:</label>
+								<label className='mb-[2px] text-sm tracking-[0.0025em] text-lightBlue dark:text-blue-dark-medium'>Track:</label>
 								<span className='tracking-medium text-sm text-[#7c899b]'>
 									{trackName} #{trackNum}
 								</span>

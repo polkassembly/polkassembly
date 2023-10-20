@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { useUserDetailsContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Image from 'next/image';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const ProposalLive = () => {
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 	return (
 		<a
 			href='https://polkadot.polkassembly.io/referenda/183'

@@ -8,7 +8,7 @@ import { Divider, Modal as AntdModal, Pagination, PaginationProps, Segmented, Sp
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 import { LoadingStatusType } from 'src/types';
-import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
@@ -25,6 +25,7 @@ import DelegationVotersList from './DelegateVoteList';
 // import GraphExpandIcon from '~assets/graph-expand.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -75,7 +76,7 @@ const sortedCheck = {
 };
 
 const VotersList: FC<IVotersListProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const firstRef = useRef(true);
 	const {
 		postData: { postType }
@@ -247,9 +248,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</div>
 							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-									<div className={`w-[190px] text-sm font-medium text-lightBlue  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+									<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-blue-dark-medium  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									<div
-										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]' : ''}`}
+										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-medium ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -262,7 +263,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
-											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue'}
+											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-medium'}
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -275,7 +276,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</div>
 									) : null}
 
-									<div className='flex w-[120px] items-center gap-1 text-lightBlue'>
+									<div className='flex w-[120px] items-center gap-1 text-lightBlue dark:text-blue-dark-medium'>
 										<span
 											className='flex cursor-pointer'
 											onClick={() => {
@@ -293,7 +294,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 												color='#E5007A'
 												title='Vote Power for delegated votes is the self vote power + delegated vote power.'
 											>
-												<InfoCircleOutlined className='text-xs text-lightBlue' />
+												<InfoCircleOutlined className='text-xs text-lightBlue dark:text-blue-dark-medium' />
 											</Tooltip>
 										</span>
 									</div>
@@ -322,8 +323,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</div>
 							</VoteContainer>
 						</div>
-						<div className='z-10 flex justify-between bg-white pt-6 max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
-							<p className='m-0 text-xs text-bodyBlue'>d: Delegation s: Split sa: Split Abstain</p>
+						<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
+							<p className='m-0 text-xs text-bodyBlue dark:text-white'>d: Delegation s: Split sa: Split Abstain</p>
 							<Pagination
 								size='small'
 								defaultCurrent={1}
@@ -362,7 +363,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</p>
 								</p>
 							) : (
-								<p className='row m-0 flex gap-1 text-sm font-medium text-bodyBlue'>
+								<p className='row m-0 flex gap-1 text-sm font-medium text-bodyBlue dark:text-white'>
 									<span>
 										<ChartIcon />
 									</span>
@@ -372,7 +373,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</p>
 							)}
 							<button
-								className='absolute right-0 top-[50px] cursor-pointer border-0 bg-white'
+								className='absolute right-0 top-[50px] cursor-pointer border-0 bg-white dark:bg-section-dark-overlay'
 								onClick={() => setThresholdOpen(true)}
 							>
 								<GraphExpandIcon />
@@ -394,7 +395,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								<span className='relative top-[3px]'>
 									<VoteDataIcon />
 								</span>
-								<span className='text-xl font-semibold text-bodyBlue'>Delegation Data</span>
+								<span className='text-xl font-semibold text-bodyBlue dark:text-white'>Delegation Data</span>
 							</h3>
 							<Divider className='my-2 mb-5 text-[#D2D8E0]' />
 						</div>

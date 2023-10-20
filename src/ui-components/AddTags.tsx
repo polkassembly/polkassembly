@@ -153,14 +153,14 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 										value={inputValue}
 										onChange={handleInputChange}
 										onPressEnter={handleInputConfirm}
-										className={`text-normal  mr-2 flex items-center rounded-xl bg-white px-[16px] py-[4px] text-xs text-[#90A0B7] ${charLimitReached && 'border-red-500'}`}
+										className={`text-normal  mr-2 flex items-center rounded-xl bg-white dark:bg-section-dark-overlay px-[16px] py-[4px] text-xs text-[#90A0B7] ${charLimitReached && 'border-red-500'}`}
 									/>
 							  )
 							: tags.length < 5 &&
 							  !disabled && (
 									<Tag
 										onClick={showInput}
-										className='flex cursor-pointer items-center rounded-xl border-pink_primary bg-white px-[16px] py-[4px] text-xs text-pink_primary'
+										className='flex cursor-pointer items-center rounded-xl border-pink_primary bg-white dark:bg-section-dark-overlay px-[16px] py-[4px] text-xs text-pink_primary'
 									>
 										<PlusOutlined className='mr-1' />
 										Add new tag
@@ -170,7 +170,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 							{tags.map((tag, index) => (
 								<Tag
 									key={index}
-									className={`text-normal mt-1 rounded-xl border-[#90A0B7] bg-white px-[16px] py-[4px] text-xs tracking-wide text-[#90A0B7] ${
+									className={`text-normal mt-1 rounded-xl border-[#90A0B7] bg-white dark:bg-section-dark-overlay px-[16px] py-[4px] text-xs tracking-wide text-[#90A0B7] ${
 										disabled ? 'bg-[#F5F5F5]' : 'hover:border-pink_primary'
 									}`}
 									closable={!disabled}

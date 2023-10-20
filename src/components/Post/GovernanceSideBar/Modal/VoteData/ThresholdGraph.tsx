@@ -217,42 +217,46 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 							<article className='mt-5 flex flex-col items-center gap-3 gap-x-2'>
 								<div className='w-full rounded-[5px] border border-solid border-[#68D183] bg-[#68D18330] px-3 py-2 shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
 									<p className='m-0 flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
-										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue dark:text-white'>
 											<span>
 												<AyeApprovalIcon />
 											</span>
 											Current Approval
 										</span>
-										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.approval}%</span>
+										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-white'>{progress.approval}%</span>
 									</p>
 									<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
-										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue dark:text-white'>
 											<span>
 												<AyeThresholdIcon />
 											</span>
 											Threshold
 										</span>
-										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%</span>
+										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-white'>
+											{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%
+										</span>
 									</p>
 								</div>
 								<div className='w-full rounded-[5px] border border-solid border-[#E5007A] bg-[#FFF5FB] px-3 py-2 shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
 									<p className='m-0 flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
-										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue dark:text-white'>
 											<span>
 												<NayApprovalIcon />
 											</span>
 											Current Support
 										</span>
-										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.support}%</span>
+										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-white'>{progress.support}%</span>
 									</p>
 									<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
-										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue'>
+										<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue dark:text-white'>
 											<span>
 												<NayThresholdIcon />
 											</span>
 											Threshold
 										</span>
-										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue'>{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%</span>
+										<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-white'>
+											{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%
+										</span>
 									</p>
 								</div>
 							</article>

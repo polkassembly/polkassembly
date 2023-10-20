@@ -24,7 +24,7 @@ const Footer = ({ className }: { className?: string }) => {
 	return (
 		<footer
 			aria-label='Site Footer'
-			className={`${className} bg-white max-[650px]:rounded-[14px] `}
+			className={`${className} bg-white dark:bg-section-dark-overlay max-[650px]:rounded-[14px] `}
 		>
 			<div className='mx-auto max-w-screen-xl px-4 pt-8  sm:px-6 lg:pl-8 lg:pr-2'>
 				<div className='flex flex-col md:flex-row '>
@@ -49,7 +49,7 @@ const Footer = ({ className }: { className?: string }) => {
 									target='_blank'
 									rel='noreferrer'
 								>
-									<TwitterIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+									<TwitterIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 								</a>
 
 								<a
@@ -57,7 +57,7 @@ const Footer = ({ className }: { className?: string }) => {
 									target='_blank'
 									rel='noreferrer'
 								>
-									<DiscordIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+									<DiscordIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 								</a>
 
 								<a
@@ -65,7 +65,7 @@ const Footer = ({ className }: { className?: string }) => {
 									target='_blank'
 									rel='noreferrer'
 								>
-									<TelegramIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+									<TelegramIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 								</a>
 
 								<a
@@ -73,7 +73,7 @@ const Footer = ({ className }: { className?: string }) => {
 									target='_blank'
 									rel='noreferrer'
 								>
-									<InternetIcon className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+									<InternetIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 								</a>
 							</Space>
 						</div>
@@ -82,13 +82,13 @@ const Footer = ({ className }: { className?: string }) => {
 					{/* Terms Links */}
 					<div className='mx-auto mt-8 flex flex-col justify-center md:mx-0 md:ml-auto md:mt-0 md:flex-row md:justify-end'>
 						<div className='text-center sm:text-left md:ml-10 lg:ml-14'>
-							<p className='mb-[-5px] text-lg font-bold text-bodyBlue max-[650px]:mt-[-15px] '>Help Center</p>
+							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-white max-[650px]:mt-[-15px] '>Help Center</p>
 
 							<nav
 								aria-label='Footer About Nav'
 								className='mt-4 md:mt-3'
 							>
-								<div className='space-y-2 text-sm font-normal text-lightBlue'>
+								<div className='space-y-2 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 									<div>
 										<a
 											href='https://polkassembly.hellonext.co/'
@@ -126,8 +126,8 @@ const Footer = ({ className }: { className?: string }) => {
 							</nav>
 						</div>
 
-						<div className='mt-8 text-center font-normal text-lightBlue sm:text-left md:ml-10 md:mt-0 lg:ml-14'>
-							<p className='mb-[-5px] text-lg font-bold text-bodyBlue max-[650px]:mt-[-15px] '>Our Services</p>
+						<div className='mt-8 text-center font-normal text-lightBlue dark:text-blue-dark-medium sm:text-left md:ml-10 md:mt-0 lg:ml-14'>
+							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-white max-[650px]:mt-[-15px] '>Our Services</p>
 
 							<nav
 								aria-label='Footer Services Nav'
@@ -160,7 +160,7 @@ const Footer = ({ className }: { className?: string }) => {
 
 				{/* Below divider */}
 				<Divider className='mb-0' />
-				<div className='mt-5 pb-3 text-sm font-medium text-lightBlue'>
+				<div className='mt-5 pb-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 					<div className='text-center sm:flex sm:justify-between sm:text-left'>
 						<div className='flex max-[650px]:flex-col'>
 							<p className=' mr-1 max-[650px]:mb-0 '>A House of Commons Initiative.</p>
@@ -183,7 +183,7 @@ const Footer = ({ className }: { className?: string }) => {
 								target='_blank'
 								rel='noreferrer'
 							>
-								<TwitterIconSm className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+								<TwitterIconSm className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 							</a>
 
 							<a
@@ -191,7 +191,7 @@ const Footer = ({ className }: { className?: string }) => {
 								target='_blank'
 								rel='noreferrer'
 							>
-								<DiscordIconSm className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+								<DiscordIconSm className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 							</a>
 
 							<a
@@ -199,7 +199,7 @@ const Footer = ({ className }: { className?: string }) => {
 								target='_blank'
 								rel='noreferrer'
 							>
-								<TelegramIconSm className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+								<TelegramIconSm className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 							</a>
 
 							<a
@@ -207,7 +207,7 @@ const Footer = ({ className }: { className?: string }) => {
 								target='_blank'
 								rel='noreferrer'
 							>
-								<InternetIconSm className='text-sm text-lightBlue md:mr-1 md:text-lg' />
+								<InternetIconSm className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
 							</a>
 						</Space>
 					</div>

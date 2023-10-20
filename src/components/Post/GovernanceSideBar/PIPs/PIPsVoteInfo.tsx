@@ -4,7 +4,7 @@
 
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import StatusTag from '~src/ui-components/StatusTag';
 import VoteProgress from '~src/ui-components/VoteProgress';
@@ -12,6 +12,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import { Divider } from 'antd';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -25,7 +26,7 @@ const ZERO_BN = new BN(0);
 
 const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [voteInfo, setVoteInfo] = useState({
 		ayes: ZERO_BN,
@@ -58,7 +59,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 	return (
 		<div className={className}>
 			<div className='relative z-50 flex items-center justify-between'>
-				<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue'>Voting</h6>
+				<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Voting</h6>
 				<div className='flex items-center gap-x-2'>
 					<StatusTag status={status} />
 				</div>
@@ -76,7 +77,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 					nayVotes={voteInfo?.naysAmount}
 				/>
 			)}
-			<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue'>
+			<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 				<article className='flex items-center justify-between gap-x-2'>
 					<div className='flex items-center gap-x-1'>
 						<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Ayes:</span>

@@ -6,7 +6,6 @@ import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
 import { ISteps } from '.';
-import { useNetworkContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -15,6 +14,7 @@ import { NotificationStatus } from '~src/types';
 import _ from 'lodash';
 import styled from 'styled-components';
 import ContentForm from '../ContentForm';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	isDiscussionLinked: boolean | null;
@@ -45,7 +45,7 @@ const WriteProposal = ({
 	setTags,
 	form
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionFound, setIsDiscussionFound] = useState<boolean>(true);
 
@@ -174,7 +174,7 @@ const WriteProposal = ({
 				indicator={<LoadingOutlined />}
 			>
 				<div className='write-proposal my-8 flex flex-col'>
-					<label className='text-sm text-lightBlue'>Have you initiated a discussion post for your proposal already? </label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Have you initiated a discussion post for your proposal already? </label>
 					<Radio.Group
 						disabled={loading}
 						onChange={(e) => handleIsDiscussionLinkedChange(e.target.value)}
@@ -184,13 +184,13 @@ const WriteProposal = ({
 					>
 						<Radio
 							value={true}
-							className='text-sm font-normal text-bodyBlue'
+							className='text-sm font-normal text-bodyBlue dark:text-white'
 						>
 							Yes
 						</Radio>
 						<Radio
 							value={false}
-							className='text-sm font-normal text-bodyBlue'
+							className='text-sm font-normal text-bodyBlue dark:text-white'
 						>
 							No
 						</Radio>
@@ -205,7 +205,7 @@ const WriteProposal = ({
 				>
 					{isDiscussionLinked && (
 						<>
-							<label className='mb-1.5 text-sm text-lightBlue'>Link Discussion Post</label>
+							<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>Link Discussion Post</label>
 							<Form.Item
 								name='discussion_link'
 								rules={[
@@ -237,7 +237,7 @@ const WriteProposal = ({
 							className='icon-alert'
 							showIcon
 							message={
-								<span className='text-sm font-medium text-bodyBlue'>
+								<span className='text-sm font-medium text-bodyBlue dark:text-white'>
 									Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
 									<a
 										className='ml-1 text-xs text-pink_primary'
@@ -253,7 +253,7 @@ const WriteProposal = ({
 					)}
 
 					{isDiscussionLinked !== null && (isDiscussionLinked ? discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound : true) && (
-						<div className='mt-6 text-sm font-normal text-lightBlue'>
+						<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							<label className='font-medium'>Write a proposal :</label>
 							<div className='mt-4'>
 								<label className='mb-0.5'>

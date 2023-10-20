@@ -7,7 +7,8 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Checkbox, Divider, Form, Input, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useDispatch } from 'react-redux';
+import { useApiContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { chainProperties } from 'src/global/networkConstants';
 import { handleTokenChange } from 'src/services/auth.service';
@@ -21,6 +22,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -30,10 +32,11 @@ interface Props {
 }
 
 const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [linkStarted, setLinkStarted] = useState(false);
 	const [signatories, setSignatories] = useState<{ [key: number | string]: string }>({ 0: '' });
 	const [signatoryAccounts, setSignatoryAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -226,7 +229,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		}
 
 		if (confirmData?.token) {
-			handleTokenChange(confirmData?.token, currentUser);
+			handleTokenChange(confirmData?.token, currentUser, dispatch);
 			queueNotification({
 				header: 'Success!',
 				message: confirmData?.message || '',
@@ -290,7 +293,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						<Button
 							key='cancel'
 							onClick={dismissModal}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none'
+							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white dark:bg-section-dark-overlay px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none'
 						>
 							Cancel
 						</Button>

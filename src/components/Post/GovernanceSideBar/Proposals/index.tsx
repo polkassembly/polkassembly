@@ -5,12 +5,13 @@
 import React, { FC, useEffect, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 import ProposalVoteInfo from './ProposalVoteInfo';
 import SecondProposal, { SecondProposalProps } from './SecondProposal';
 import SecondProposalEth from './SecondProposalEth';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 type IProposalDisplayProps = SecondProposalProps & {
 	canVote: boolean;
@@ -22,8 +23,8 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 	const { proposalId, accounts, address, canVote, getAccounts, onAccountChange, seconds } = props;
 	const { api, apiReady } = useApiContext();
 	const [deposit, setDeposit] = useState('');
-	const { network } = useNetworkContext();
-	const { walletConnectProvider } = useUserDetailsContext();
+	const { network } = useNetworkSelector();
+	const { walletConnectProvider } = useUserDetailsSelector();
 	const metaMaskError = useHandleMetaMask();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: 'Loading proposal info' });
 

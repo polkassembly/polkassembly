@@ -28,7 +28,7 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo }
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 
 	return (
-		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-[24px]`}>
+		<div className={`${className} mt-[22px] rounded-[14px] bg-white dark:bg-section-dark-overlay px-[37px] py-[24px]`}>
 			<div
 				onClick={() => setExpandProposals(!expandProposals)}
 				className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex cursor-pointer items-center justify-between'

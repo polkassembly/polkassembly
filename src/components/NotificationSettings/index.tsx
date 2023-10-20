@@ -3,16 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Form, Switch } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
 import { NotificationStatus } from 'src/types';
 import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
 
 import { NotificationSettings, UpdatedDataResponseType } from '~src/auth/types';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const NotificationSettings = () => {
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 
 	const [changed, setChanged] = useState<boolean>(false);
 	const [error, setError] = useState('');
@@ -85,7 +85,7 @@ const NotificationSettings = () => {
 	return (
 		<Form
 			onFinish={() => updatePreference()}
-			className='flex w-full flex-col gap-y-8 rounded-md bg-white p-8 shadow-md'
+			className='flex w-full flex-col gap-y-8 rounded-md bg-white dark:bg-section-dark-overlay p-8 shadow-md'
 		>
 			<header>
 				<h3 className='text-lg font-medium tracking-wide text-sidebarBlue'>Notification Settings</h3>

@@ -38,10 +38,10 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			/>
 			<button
 				onClick={() => setOpen(true)}
-				className='ai-btn-border flex cursor-pointer items-center justify-center gap-x-1 bg-white p-[1.5px] text-xs font-medium leading-[18px] text-lightBlue outline-none'
+				className='ai-btn-border flex cursor-pointer items-center justify-center gap-x-1 bg-white p-[1.5px] text-xs font-medium leading-[18px] text-lightBlue outline-none dark:bg-section-dark-overlay dark:text-blue-dark-medium'
 			>
-				<p className='m-0 flex items-center justify-center rounded-[5px] bg-white px-2 py-1'>
-					<span className='flex items-center justify-center text-lg text-lightBlue'>
+				<p className='m-0 flex items-center justify-center rounded-[5px] bg-white px-2 py-1 dark:bg-section-dark-overlay'>
+					<span className='flex items-center justify-center text-lg text-lightBlue dark:text-blue-dark-medium'>
 						<AiStarIcon />
 					</span>
 					<span className='text-xs font-medium leading-[18px] tracking-[0.048px]'>AI Summary</span>
@@ -56,21 +56,21 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 					<div className='m-0 flex items-start justify-between rounded-[14px] p-5 pb-4 md:items-center md:p-6 md:pb-4'>
 						<article className='flex flex-col gap-x-[6px] md:flex-row md:items-center'>
 							<h3 className='m-0 flex items-center gap-x-2 p-0'>
-								<span className='flex items-center justify-center text-2xl text-lightBlue'>
+								<span className='flex items-center justify-center text-2xl text-lightBlue dark:text-blue-dark-medium'>
 									<AiStarIcon />
 								</span>
-								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue md:text-xl md:leading-6'>AI Summary</span>
+								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue dark:text-white md:text-xl md:leading-6'>AI Summary</span>
 							</h3>
 							<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.20)] py-1 pl-[6px] pr-[8px] md:py-[6px] md:pl-[10px] md:pr-3'>
 								<OpenAiIcon className='text-base md:text-2xl' />
-								<p className='m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue md:text-xs'>Powered by OpenAI</p>
+								<p className='m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue dark:text-white md:text-xs'>Powered by OpenAI</p>
 							</div>
 						</article>
 						<button
 							onClick={() => setOpen(false)}
 							className='mt-2 flex cursor-pointer items-center justify-center border-none bg-transparent outline-none md:mt-0'
 						>
-							<SummaryModalClose className='text-sm text-lightBlue' />
+							<SummaryModalClose className='text-sm text-lightBlue dark:text-blue-dark-medium' />
 						</button>
 					</div>
 				}
@@ -79,7 +79,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				<Divider className='m-0 bg-[#e1e6eb] p-0' />
 				<div className='p-4 px-5 md:p-6'>
 					<Markdown
-						className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue'
+						className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-white'
 						md={sanitizeSummary(summary || '')}
 					/>
 				</div>

@@ -19,6 +19,7 @@ interface IOffChainContainerProps {
 	className?: string;
 	count: number;
 	proposalType: OffChainProposalType;
+	defaultPage?: number;
 }
 
 export function getTitle(proposalType: OffChainProposalType): string {
@@ -31,7 +32,7 @@ export function getTitle(proposalType: OffChainProposalType): string {
 	return '';
 }
 
-const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType }) => {
+const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType, defaultPage }) => {
 	const router = useRouter();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 
@@ -66,7 +67,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	);
 
 	return (
-		<div className={`${className} rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] xs:px-0 xs:py-3 md:p-0`}>
+		<div className={`${className} rounded-[14px] bg-white dark:bg-section-dark-overlay shadow-[0px_6px_18px_rgba(0,0,0,0.06)] xs:px-0 xs:py-3 md:p-0`}>
 			<div className='flex items-center justify-between py-5 align-middle'>
 				<div className='mx-1 xs:mt-1 sm:mx-12 sm:mt-3'>
 					<FilteredTags />
@@ -82,6 +83,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 				count={count}
 				posts={posts}
 				className=''
+				defaultPage={defaultPage}
 			/>
 		</div>
 	);

@@ -11,7 +11,7 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import { ChangeResponseType } from '~src/auth/types';
-import { useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useCommentDataContext, usePostDataContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
@@ -26,6 +26,7 @@ import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 import { ESentiment } from '~src/types';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -51,7 +52,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
-	const { id, username, picture } = useUserDetailsContext();
+	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
 	const {
 		postData: { postIndex, postType, track_number }
@@ -198,6 +199,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			id: commentId || '',
 			isError: false,
 			profile: picture || '',
+			proposer: loginAddress,
 			replies: [],
 			sentiment: isSentimentPost ? sentiment : 0,
 			updated_at: new Date(),
@@ -303,12 +305,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			{isPosted ? (
 				<div className='comment-message -mt-[4px]'>
 					<div className='h-30 mt-[35px] w-[500px] overflow-hidden text-center'>
-						<p className='truncate text-lightBlue'>&apos;{formContent}&apos;</p>
+						<p className='truncate text-lightBlue dark:text-blue-dark-medium'>&apos;{formContent}&apos;</p>
 					</div>
 					<div className='-mt-[4px] mb-5 ml-[140px] text-green-600'>Comment posted successfully.</div>
 				</div>
 			) : (
-				<div className={isUsedInSuccessModal ? 'w-[95%] p-[1rem]' : 'comment-box bg-white p-[1rem]'}>
+				<div className={isUsedInSuccessModal ? 'w-[95%] p-[1rem]' : 'comment-box bg-white p-[1rem] dark:bg-section-dark-overlay'}>
 					{error && (
 						<ErrorAlert
 							errorMsg={error}

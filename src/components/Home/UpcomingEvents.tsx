@@ -7,7 +7,7 @@ import { Calendar, List, Spin, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { NetworkEvent } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
@@ -25,6 +25,7 @@ import {
 	fetchTreasurySpend
 } from '~src/util/getCalendarEvents';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 dayjs.extend(localizedFormat);
 interface Props {
@@ -33,7 +34,7 @@ interface Props {
 
 const UpcomingEvents = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [showCalendar, setShowCalendar] = useState<boolean>(false);
 	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
@@ -408,13 +409,13 @@ const UpcomingEvents = ({ className }: Props) => {
 								rel='noreferrer'
 								className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}
 							>
-								<div className='mb-1 flex items-center text-xs text-lightBlue'>
+								<div className='mb-1 flex items-center text-xs text-lightBlue dark:text-blue-dark-medium'>
 									{dayjs(item.end_time).format('MMM D, YYYY')}
 									<span className='mx-2 inline-block h-[4px] w-[4px] rounded-full bg-bodyBlue'></span>
 									{dayjs(item.end_time).format('h:mm a')}
 								</div>
 
-								<div className='text-sm text-bodyBlue'>{item.content}</div>
+								<div className='text-sm text-bodyBlue dark:text-white'>{item.content}</div>
 							</a>
 						</List.Item>
 					);
@@ -428,9 +429,9 @@ const UpcomingEvents = ({ className }: Props) => {
 	}
 
 	return (
-		<div className={`${className} h-[520px] rounded-xxl bg-white p-4 drop-shadow-md lg:h-[550px] lg:p-6`}>
+		<div className={`${className} h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6`}>
 			<div className='mb-5 flex items-center justify-between'>
-				<h2 className='text-xl font-medium leading-8 text-bodyBlue xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>Upcoming Events</h2>
+				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-white xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>Upcoming Events</h2>
 				<CalendarFilled
 					className='inline-block cursor-pointer lg:hidden'
 					onClick={() => setShowCalendar(!showCalendar)}

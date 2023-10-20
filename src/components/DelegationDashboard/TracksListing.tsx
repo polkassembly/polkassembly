@@ -7,7 +7,7 @@ import { Button, Radio, Table } from 'antd';
 import styled from 'styled-components';
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { GetColumns } from './Coloumn';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 
@@ -17,6 +17,7 @@ import { ETrackDelegationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import { IDelegation } from '~src/types';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -36,7 +37,7 @@ export interface ITrackDataType {
 
 const DashboardTrackListing = ({ className }: Props) => {
 	const [status, setStatusValue] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.All);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [delegatedCount, setDelegatedCount] = useState<number>(0);
 	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
 	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
@@ -47,7 +48,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const [data, setData] = useState<ITrackDataType[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress } = useUserDetailsContext();
+	const { delegationDashboardAddress } = useUserDetailsSelector();
 
 	const filterTrackDataByTrackNumber = (trackNo: number) => {
 		if (network) {
@@ -129,14 +130,17 @@ const DashboardTrackListing = ({ className }: Props) => {
 	};
 
 	useEffect(() => {
-		delegationDashboardAddress.length > 0 && getData();
+		if (delegationDashboardAddress) {
+			getData();
+		}
+
 		setStatusValue(ETrackDelegationStatus.All);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [delegationDashboardAddress, api, apiReady]);
 
 	useEffect(() => {
-		if (data.length > 0) {
+		if (data) {
 			const receivedDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Received_Delegation));
 			setReceivedDelegationCount(receivedDelegations?.length);
 			const delegateDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Delegated));
@@ -229,7 +233,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 					columns={GetColumns(status)}
 					dataSource={rowsData}
 					rowClassName='cursor-pointer'
-					loading={loading || !delegationDashboardAddress || delegationDashboardAddress.length === 0}
+					loading={loading || !delegationDashboardAddress}
 					pagination={false}
 					onRow={(rowData: ITrackDataType) => {
 						return {
@@ -240,7 +244,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 			)}
 
 			{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
+				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white dark:bg-section-dark-overlay pt-[56px] text-[258px]'>
 					<div className='mt-5 text-center text-[#243A57]'>
 						<DelegateDelegationIcon />
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegated Tracks</h4>
@@ -265,7 +269,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 			)}
 
 			{status === ETrackDelegationStatus.Undelegated && undelegatedCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
+				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white dark:bg-section-dark-overlay pt-[56px] text-[258px]'>
 					<UnDelegatedIcon />
 					<div className='mt-5 text-center text-[#243A57]'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Undelegated Tracks</h4>
@@ -277,7 +281,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 			)}
 
 			{status === ETrackDelegationStatus.Received_Delegation && receivedDelegationCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
+				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white dark:bg-section-dark-overlay pt-[56px] text-[258px]'>
 					<ReceivedDelegationIcon />
 					<div className='mt-5 text-center text-[#243A57]'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegation Received</h4>

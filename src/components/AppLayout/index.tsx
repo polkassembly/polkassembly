@@ -11,8 +11,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
-import { getLocalStorageToken, logout } from 'src/services/auth.service';
+import { useApiContext } from 'src/context';
+import { getLocalStorageToken } from 'src/services/auth.service';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -63,7 +63,10 @@ import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalLive from './ProposalLive';
+import { useDispatch } from 'react-redux';
+import { logout } from '~src/redux/userDetails';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -101,7 +104,7 @@ const getUserDropDown = (
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-lightBlue dark:text-blue-dark-medium hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<UserOutlined />
@@ -113,7 +116,7 @@ const getUserDropDown = (
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-lightBlue dark:text-blue-dark-medium hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<SettingOutlined />
@@ -126,7 +129,7 @@ const getUserDropDown = (
 			label: (
 				<Link
 					href='/'
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 font-medium text-lightBlue dark:text-blue-dark-medium hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -145,7 +148,7 @@ const getUserDropDown = (
 			key: 'set on-chain identity',
 			label: (
 				<Link
-					className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary ${className}`}
+					className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue dark:text-blue-dark-medium hover:text-pink_primary ${className}`}
 					href={''}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -221,9 +224,9 @@ interface Props {
 }
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { setUserDetailsContextState, username, picture, loginAddress } = useUserDetailsContext();
+	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -235,6 +238,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -255,7 +259,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		if (!global?.window) return;
 		const authToken = getLocalStorageToken();
 		if (authToken && isExpired(authToken)) {
-			logout(setUserDetailsContextState);
+			dispatch(logout());
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.asPath]);
@@ -412,7 +416,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 	if (network === 'polymesh') {
 		items = items.concat(
-			getSiderMenuItem(<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
+			getSiderMenuItem(<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue dark:text-blue-dark-medium hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
 			...gov1Items.PIPsItems
 		);
 		collapsedItems = collapsedItems.concat([...gov1Items.PIPsItems]);
@@ -538,7 +542,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		// Tracks Heading
-		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
+		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue dark:text-blue-dark-medium hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
@@ -593,7 +597,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		setSidedrawer(false);
 	};
 	const handleLogout = async (username: string) => {
-		logout(setUserDetailsContextState);
+		dispatch(logout());
 		router.replace(router.asPath);
 		if (!router.query?.username) return;
 		if (router.query?.username.includes(username)) {
@@ -619,7 +623,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (network !== AllNetworks.POLYMESH) {
-		gov2Items = [...gov2Items, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='text-lightBlue' />, [...items])];
+		gov2Items = [...gov2Items, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='text-lightBlue dark:text-blue-dark-medium' />, [...items])];
 	}
 
 	const userDropdown = getUserDropDown(
@@ -660,7 +664,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'sidebar fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white lg:block'}
+					className={'sidebar fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white dark:bg-section-dark-overlay lg:block'}
 				>
 					<Menu
 						theme='light'
@@ -698,7 +702,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</Drawer>
 				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
-					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
+					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={'moonbeam'} />
 						<div className='flex flex-row'>
@@ -710,7 +714,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</Layout>
 				) : ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
-					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
+					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<ProposalLive />
 						<div className='flex flex-row'>
@@ -722,7 +726,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</Layout>
 				) : (
-					<Layout className={'min-h-[calc(100vh - 10rem)] flex flex-row bg-[#F5F6F8]'}>
+					<Layout className={'min-h-[calc(100vh - 10rem)] flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 						<CustomContent

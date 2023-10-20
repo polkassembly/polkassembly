@@ -14,7 +14,7 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
-import { useUserDetailsContext } from '~src/context';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -29,7 +29,7 @@ interface Props {
 }
 
 const DelegationProfile = ({ username, address, isSearch, className }: Props) => {
-	const userProfile = useUserDetailsContext();
+	const userProfile = useUserDetailsSelector();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],
@@ -71,8 +71,8 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		copyToClipboard(address);
 	};
 
-	return username?.length > 0 || username.length > 0 ? (
-		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white ${className}`}>
+	return username?.length > 0 ? (
+		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className}`}>
 			<div className='flex justify-center gap-[34px] '>
 				<ImageComponent
 					src={image}
@@ -80,8 +80,8 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
 					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 				/>
-				<div className='text-bodyBlue'>
-					<span className='mb-4 text-lg font-semibold tracking-wide text-bodyBlue'>{username || userName}</span>
+				<div className='text-bodyBlue dark:text-white'>
+					<span className='mb-4 text-lg font-semibold tracking-wide text-bodyBlue dark:text-white'>{username || userName}</span>
 					{address && address.length > 0 && (
 						<div className='flex items-center gap-2'>
 							<Address
@@ -103,7 +103,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 						</div>
 					)}
 
-					{bio?.length === 0 ? (
+					{!bio ? (
 						<h2
 							className={`mt-2 text-sm font-normal text-[#576D8BCC] ${username === userProfile.username && 'cursor-pointer'}`}
 							onClick={() => setOpenEditModal(true)}
@@ -113,13 +113,13 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					) : (
 						<h2
 							onClick={() => setOpenEditModal(true)}
-							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue ${username === userProfile.username && 'cursor-pointer'}`}
+							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
 						>
 							{bio}
 						</h2>
 					)}
 
-					<div className={`mt-[10px] flex flex-wrap items-center gap-x-5 text-xl text-bodyBlue md:gap-x-3 ${isSearch && 'mt-0'}`}>
+					<div className={`mt-[10px] flex flex-wrap items-center gap-x-5 text-xl text-bodyBlue dark:text-white md:gap-x-3 ${isSearch && 'mt-0'}`}>
 						{socialLinks?.map((social: any, index: number) => {
 							const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
 							return (

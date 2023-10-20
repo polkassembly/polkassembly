@@ -14,7 +14,7 @@ import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } 
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
@@ -67,6 +67,7 @@ import BigNumber from 'bignumber.js';
 import VotersList from './Referenda/VotersList';
 import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
 import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -126,10 +127,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters } = props;
 	const [lastVote, setLastVote] = useState<ILastVote>();
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
-	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
+	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsSelector();
 	const {
 		postData: { created_at, track_number, post_link, statusHistory }
 	} = usePostDataContext();
@@ -648,9 +649,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				spinning={isLastVoteLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
+				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-white'>Last Vote:</p>
 
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-white'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -673,7 +674,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							) : decision == 'abstain' && (balance as any).abstain ? (
 								<p className='flex justify-center align-middle'>
 									<AbstainGray className='mb-[-8px] mr-1' />
-									<span className='font-medium capitalize  text-bodyBlue'>{'Abstain'}</span>
+									<span className='font-medium capitalize  text-bodyBlue dark:text-white'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -723,8 +724,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoLocalState: FC<ILastVote> = ({ balance, conviction, decision }) => {
 		return (
 			<div>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
+				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-white'>Last Vote:</p>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-white'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -746,7 +747,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								</p>
 							) : decision === EVoteDecisionType.ABSTAIN ? (
 								<p className='flex justify-center align-middle'>
-									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue'>{'Abstain'}</span>
+									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-white'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -814,7 +815,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							trackName && <DecisionDepositCard trackName={String(trackName)} />}
 
 						{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && (
-							<div className=' mb-8 rounded-[14px] bg-white pb-[36px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)]'>
+							<div className=' mb-8 rounded-[14px] bg-white pb-[36px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay'>
 								<div
 									className='flex items-center justify-end px-[20px] py-[17px]'
 									onClick={() => setGraphicOpen(false)}
@@ -920,7 +921,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
 															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue'>Cast your Vote!</h6>
+																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Cast your Vote!</h6>
 																<VoteReferendumEth
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -933,7 +934,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</>
 												) : (
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue'>Cast your Vote!</h6>
+														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -969,7 +970,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
 															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue'>Cast your Vote!</h6>
+																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Cast your Vote!</h6>
 																<VoteReferendumEthV2
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -983,7 +984,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</>
 												) : (
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue'>Cast your Vote!</h6>
+														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Cast your Vote!</h6>
 														{['polymesh'].includes(network) ? (
 															<PIPsVote
 																address={address}
@@ -1135,7 +1136,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							proposalType === ProposalType.TECHNICAL_PIPS || proposalType === ProposalType.UPGRADE_PIPS ? (
 								<GovSidebarCard>
 									<div className='mt-1 flex gap-2'>
-										<span className='text-sm tracking-wide text-bodyBlue'>
+										<span className='text-sm tracking-wide text-bodyBlue dark:text-white'>
 											This PIP is proposed via
 											{proposalType === ProposalType.TECHNICAL_PIPS ? ' Technical Committee ' : ' Upgrade Committee '}& is not open to community voting
 										</span>

@@ -6,8 +6,7 @@ import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
@@ -24,7 +23,6 @@ import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
-import { useNetworkContext } from '~src/context';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
@@ -32,6 +30,7 @@ import styled from 'styled-components';
 import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -92,12 +91,12 @@ function formatDuration(duration: any) {
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
 
-	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
+	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [canEdit, setCanEdit] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [duration, setDuration] = useState(dayjs.duration(0));
 	const [totalAuditCount, setTotalAuditCount] = useState<number>(0);
 	const [totalVideoCount, setTotalVideoCount] = useState<number>(0);
@@ -337,7 +336,7 @@ const Post: FC<IPostProps> = (props) => {
 					<div className='audit flex items-center justify-center gap-2'>
 						Audit
 						{totalAuditCount + totalVideoCount > 0 && (
-							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue'>{totalAuditCount + totalVideoCount}</span>
+							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:text-white'>{totalAuditCount + totalVideoCount}</span>
 						)}{' '}
 					</div>
 				)
@@ -469,13 +468,13 @@ const Post: FC<IPostProps> = (props) => {
 					)}
 				{proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) && (
 					<Link href={`/bounty/${post.parent_bounty_index}`}>
-						<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+						<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 							This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
 						</div>
 					</Link>
 				)}
 				{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-					<div className='dashboard-heading mb-6 flex w-full items-center  gap-x-2 rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+					<div className='dashboard-heading mb-6 flex w-full items-center  gap-x-2 rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 						<span>The child bounty payout is ready to be claimed</span>
 						<ClaimPayoutModal
 							parentBountyId={post?.parentBountyId}
@@ -487,13 +486,13 @@ const Post: FC<IPostProps> = (props) => {
 				<div className={`${className} grid grid-cols-1 gap-9 xl:grid-cols-12`}>
 					<div className='xl:col-span-8'>
 						{proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) && (
-							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 								This grant will be closed in <span className='text-pink_primary'>{formatDuration(duration)}</span>
 							</div>
 						)}
 
 						{/* Post Content */}
-						<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md md:p-4 lg:p-6 '>
+						<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
 							{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && (
@@ -501,7 +500,7 @@ const Post: FC<IPostProps> = (props) => {
 									<PostHeading className='mb-5' />
 									<Tabs
 										type='card'
-										className='ant-tabs-tab-bg-white font-medium text-bodyBlue'
+										className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-white'
 										items={tabItems}
 									/>
 								</>

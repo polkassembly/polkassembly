@@ -66,7 +66,7 @@ const About: FC<IAboutProps> = (props) => {
 			/>
 			<Divider className='m-0 mt-4' />
 			<Collapse
-				className='content-border m-0 border-none bg-white p-0 shadow-none outline-none'
+				className='content-border m-0 border-none bg-white p-0 shadow-none outline-none dark:bg-section-dark-overlay'
 				expandIconPosition='right'
 			>
 				<Collapse.Panel
@@ -113,7 +113,7 @@ const About: FC<IAboutProps> = (props) => {
 								{identity && (
 									<Row gutter={[8, 40]}>
 										<Col span={12}>
-											<div className='text-sm font-medium text-lightBlue'>Account</div>
+											<div className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Account</div>
 											<Address
 												className='mt-1'
 												usernameClassName='text-xs'
@@ -124,13 +124,13 @@ const About: FC<IAboutProps> = (props) => {
 										</Col>
 										{identity?.legal && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-lightBlue'>Legal</div>
+												<div className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Legal</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>{identity.legal}</p>
 											</Col>
 										)}
 										{identity?.email && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-lightBlue'>
+												<div className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 													<EmailIcon className='mr-1' />
 													<span>Email</span>
 												</div>
@@ -144,7 +144,7 @@ const About: FC<IAboutProps> = (props) => {
 										)}
 										{identity?.riot && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-lightBlue'>
+												<div className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 													<RiotIcon className='mr-1' />
 													<span>Riot</span>
 												</div>
@@ -153,7 +153,7 @@ const About: FC<IAboutProps> = (props) => {
 										)}
 										{identity?.twitter && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-lightBlue'>
+												<div className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 													<TwitterIcon className='mr-1' />
 													<span>Twitter</span>
 												</div>
@@ -167,7 +167,7 @@ const About: FC<IAboutProps> = (props) => {
 										)}
 										{identity?.judgements?.length > 0 && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-lightBlue'>Judgements</div>
+												<div className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Judgements</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>
 													{icon} {displayJudgements}
 												</p>
@@ -175,7 +175,7 @@ const About: FC<IAboutProps> = (props) => {
 										)}
 										{identity?.web && (
 											<Col span={12}>
-												<div className='text-sm font-medium text-lightBlue'>Web</div>
+												<div className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Web</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>{identity.web}</p>
 											</Col>
 										)}

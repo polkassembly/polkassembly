@@ -12,7 +12,7 @@ import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import SocialLink from '~src/ui-components/SocialLinks';
@@ -22,6 +22,7 @@ import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import CloseIcon from '~assets/icons/close.svg';
 import BN from 'bn.js';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	delegate: IDelegate;
@@ -36,7 +37,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const [address, setAddress] = useState<string>('');
 	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [social_links, setSocial_links] = useState<any[]>([]);
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
@@ -79,14 +80,14 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			{delegate?.dataSource === 'nova' && (
 				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5'>
 					<NovaWalletIcon />
-					<span className='text-xs font-normal text-bodyBlue'>Nova Wallet Delegate</span>
+					<span className='text-xs font-normal text-bodyBlue dark:text-white'>Nova Wallet Delegate</span>
 				</div>
 			)}
 
 			{delegate?.dataSource === 'parity' && (
 				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5'>
 					<ParityTechIcon />
-					<span className='text-xs font-normal text-bodyBlue'>Polkadot Delegate</span>
+					<span className='text-xs font-normal text-bodyBlue dark:text-white'>Polkadot Delegate</span>
 				</div>
 			)}
 
@@ -142,19 +143,19 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				)}
 			</div>
 			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] '>
-				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue'>
+				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
 					<div className='flex items-end justify-center gap-1'>
 						{formatedBalance(balance.toString(), unit, 2)}
-						<span className='text-sm font-normal text-bodyBlue'>{unit}</span>
+						<span className='text-sm font-normal text-bodyBlue dark:text-white'>{unit}</span>
 					</div>
 					<div className='mt-[4px] text-xs font-normal text-[#576D8B]'>Voting power</div>
 				</div>
-				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4 text-[20px] font-semibold text-bodyBlue'>
+				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
 					{delegate?.voted_proposals_count}
 					<span className='mb-[2px] mt-1 text-xs font-normal text-[#576D8B]'>Voted proposals </span>
 					<span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
 				</div>
-				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue'>
+				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
 					{delegate?.active_delegation_count}
 					<span className='mb-[2px] mt-1 text-center text-xs font-normal text-[#576D8B]'>Received Delegation</span>
 				</div>
@@ -206,19 +207,19 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<p className='w-[90%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
 					</div>
 					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] '>
-						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue'>
+						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
 							<div className='flex items-end justify-center gap-1'>
 								{formatedBalance(balance.toString(), unit, 2)}
-								<span className='text-sm font-normal text-bodyBlue'>{unit}</span>
+								<span className='text-sm font-normal text-bodyBlue dark:text-white'>{unit}</span>
 							</div>
 							<div className='mt-[4px] text-xs font-normal text-[#576D8B]'>Voting power</div>
 						</div>
-						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4 text-[20px] font-semibold text-bodyBlue'>
+						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
 							{delegate?.voted_proposals_count}
 							<span className='mb-[2px] mt-1 text-xs font-normal text-[#576D8B]'>Voted proposals </span>
 							<span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
 						</div>
-						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue'>
+						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
 							{delegate?.active_delegation_count}
 							<span className='mb-[2px] mt-1 text-center text-xs font-normal text-[#576D8B]'>Received Delegation</span>
 						</div>

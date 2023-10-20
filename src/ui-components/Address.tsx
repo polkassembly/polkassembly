@@ -6,7 +6,6 @@ import { DeriveAccountFlags, DeriveAccountRegistration, DeriveAccountInfo } from
 import { ApiPromise } from '@polkadot/api';
 import { ApiContext } from '~src/context/ApiContext';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { NetworkContext } from '~src/context/NetworkContext';
 import dayjs from 'dayjs';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -23,6 +22,7 @@ import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
 import { Skeleton, Space } from 'antd';
 import dynamic from 'next/dynamic';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	loading: () => (
@@ -86,8 +86,7 @@ const Address = (props: Props) => {
 		ethIdenticonSize,
 		isVoterAddress
 	} = props;
-
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);
@@ -252,7 +251,7 @@ const Address = (props: Props) => {
 						theme={'polkadot'}
 					/>
 				))}
-			<div className='flex items-center text-bodyBlue'>
+			<div className='flex items-center text-bodyBlue dark:text-white'>
 				{displayInline ? (
 					<div className='inline-address flex items-center'>
 						{!!kiltName ||
@@ -265,13 +264,13 @@ const Address = (props: Props) => {
 								/>
 							))}
 
-						<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
+						<div className={`flex items-center font-semibold text-bodyBlue dark:text-white ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
 							<Link
 								href={handleRedirectLink()}
 								target='_blank'
 								onClick={(e) => handleClick(e)}
 								title={mainDisplay || encodedAddr}
-								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'} hover:text-bodyBlue`}
+								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-white'} hover:text-bodyBlue dark:text-white`}
 							>
 								{!!addressPrefix && (
 									<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -283,7 +282,7 @@ const Address = (props: Props) => {
 						</div>
 					</div>
 				) : !!extensionName || !!mainDisplay ? (
-					<div className='ml-0.5 font-semibold text-bodyBlue'>
+					<div className='ml-0.5 font-semibold text-bodyBlue dark:text-white'>
 						{!disableHeader && (
 							<div>
 								<div className='flex items-center'>
@@ -301,7 +300,7 @@ const Address = (props: Props) => {
 											href={handleRedirectLink()}
 											target='_blank'
 											onClick={(e) => handleClick(e)}
-											className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue`}
+											className={`flex flex-col font-semibold text-bodyBlue dark:text-white  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue dark:text-white`}
 										>
 											{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 											{!extensionName && sub && isSubVisible && (
@@ -323,7 +322,7 @@ const Address = (props: Props) => {
 				)}
 			</div>
 			{addressOtherTextType ? (
-				<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue'}>
+				<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue dark:text-blue-dark-medium'}>
 					<span
 						className={classNames('h-[6px] w-[6px] rounded-full', {
 							'bg-aye_green ': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.COUNCIL_CONNECTED].includes(addressOtherTextType),
@@ -331,7 +330,7 @@ const Address = (props: Props) => {
 							'bg-nay_red': [EAddressOtherTextType.UNLINKED_ADDRESS].includes(addressOtherTextType)
 						})}
 					></span>
-					<span className='text-xs text-lightBlue'>{addressOtherTextType}</span>
+					<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{addressOtherTextType}</span>
 				</p>
 			) : null}
 		</div>

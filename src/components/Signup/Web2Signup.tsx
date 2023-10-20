@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -22,10 +21,13 @@ import { trackEvent } from 'analytics';
 import { TokenType } from '~src/auth/types';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { useTheme } from 'next-themes';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
-		<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
+		<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md dark:bg-section-dark-overlay md:p-8'>
 			<Skeleton
 				className='mt-8'
 				active
@@ -37,7 +39,7 @@ const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'
 
 const Container = styled.article`
 	.changeColor .ant-alert-message {
-		color: #243a57;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
 	}
 `;
 interface Props {
@@ -54,8 +56,9 @@ interface Props {
 const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { password, username } = validation;
 	const router = useRouter();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState(false);
+	const dispatch = useDispatch();
 
 	const [isPassword, setIsPassword] = useState(false);
 	const [error, setError] = useState('');
@@ -66,7 +69,9 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	});
 	const [firstPassword, setFirstPassword] = useState('');
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
+
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
@@ -96,7 +101,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 
 				if (data) {
 					if (data.token) {
-						handleTokenChange(data.token, currentUser);
+						handleTokenChange(data.token, currentUser, dispatch);
 						if (isModal) {
 							setLoading(false);
 							setSignupOpen && setSignupOpen(false);
@@ -143,7 +148,10 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	}, [isDelegation]);
 
 	return (
-		<Container className={`flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md ${className}`}>
+		<Container
+			className={`flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay ${className}`}
+			theme={theme}
+		>
 			<div className='grid grid-cols-2'>
 				<div
 					onClick={() => {

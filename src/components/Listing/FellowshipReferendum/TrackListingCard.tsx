@@ -95,7 +95,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 	};
 
 	return (
-		<div className={`${className} rounded-xxl bg-white px-0 drop-shadow-md xs:py-4 sm:py-8`}>
+		<div className={`${className} rounded-xxl bg-white dark:bg-section-dark-overlay px-0 drop-shadow-md xs:py-4 sm:py-8`}>
 			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:px-4 xs:pt-2 sm:hidden'>
 				<FilterByTags className='xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden' />
 			</div>
@@ -107,7 +107,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 				onChange={(v) => {
 					setTrackName(v);
 				}}
-				className='ant-tabs-tab-bg-white font-medium text-bodyBlue'
+				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-white'
 			/>
 			{(posts?.[activeTab]?.data?.count || 0) > 0 && (posts as any)[activeTab].data.count > LISTING_LIMIT && (
 				<Pagination

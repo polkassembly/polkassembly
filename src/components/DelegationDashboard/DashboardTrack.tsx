@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -22,6 +21,9 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	className?: string;
@@ -76,11 +78,12 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const {
 		query: { track }
 	} = useRouter();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [status, setStatus] = useState<ETrackDelegationStatus[]>([]);
 	const router = useRouter();
 	const [showTable, setShowTable] = useState<boolean>(false);
-	const { delegationDashboardAddress: address, loginWallet, isLoggedOut, setUserDetailsContextState } = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const { delegationDashboardAddress: address, loginWallet, id } = currentUser;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [rowData, setRowData] = useState<ITrackRowData[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -89,6 +92,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
+	const dispatch = useDispatch();
 	useEffect(() => {
 		setIsSelectedAddressMultisig(false);
 		if (address) {
@@ -101,9 +105,13 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 
 		const wallet = localStorage.getItem('delegationWallet') || '';
 		const address = localStorage.getItem('delegationDashboardAddress') || '';
-		setUserDetailsContextState((prev) => {
-			return { ...prev, delegationDashboardAddress: address, loginWallet: wallet as Wallet };
-		});
+		dispatch(
+			setUserDetailsState({
+				...currentUser,
+				delegationDashboardAddress: address,
+				loginWallet: wallet as Wallet
+			})
+		);
 
 		if (!network) return;
 
@@ -116,8 +124,8 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	}, []);
 
 	useEffect(() => {
-		isLoggedOut() && setOpenLoginModal(true);
-	}, [isLoggedOut]);
+		!id && setOpenLoginModal(true);
+	}, [id]);
 
 	useEffect(() => {
 		if (!address) {
@@ -209,8 +217,8 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 				</span>
 			</div>
 			{status ? (
-				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6'>
-					<div className='flex items-center gap-3 text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue'>
+				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-section-dark-overlay px-9 py-6'>
+					<div className='flex items-center gap-3 text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>
 						{handleTracksIcon(handleTrack(String(track)), 28)}
 						<span>{handleTrack(String(track))}</span>
 						{status &&
@@ -225,7 +233,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 								</span>
 							))}
 					</div>
-					<p className='mt-5 text-sm font-normal tracking-[0.01em] text-bodyBlue'>{trackDetails.description}</p>
+					<p className='mt-5 text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-white'>{trackDetails.description}</p>
 					<div className='mt-6 flex flex-col gap-4'>
 						{showTable &&
 							status.map((item: ETrackDelegationStatus, index: number) => (
@@ -233,10 +241,10 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 									className='flex flex-col gap-2'
 									key={index}
 								>
-									<span className='ml-[1px] text-sm font-semibold text-bodyBlue'>
+									<span className='ml-[1px] text-sm font-semibold text-bodyBlue dark:text-white'>
 										{item === ETrackDelegationStatus.Received_Delegation ? 'Received Delegation(s)' : 'Delegated'}
 									</span>
-									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white pl-[3px] pr-[3px]'>
+									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white dark:bg-section-dark-overlay pl-[3px] pr-[3px]'>
 										<Table
 											className='column'
 											columns={GetTracksColumns(item, setOpenUndelegateModal)}
@@ -261,9 +269,9 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 							))}
 					</div>
 					{status.includes(ETrackDelegationStatus.Undelegated) && (
-						<div className='flex flex-col items-center rounded-b-[14px] bg-white pb-[33px] pt-[24px] text-[169px]'>
+						<div className='flex flex-col items-center rounded-b-[14px] bg-white dark:bg-section-dark-overlay pb-[33px] pt-[24px] text-[169px]'>
 							<DelegateDelegationIcon />
-							<div className='mt-[18px] text-center text-bodyBlue'>
+							<div className='mt-[18px] text-center text-bodyBlue dark:text-white'>
 								<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 									Voting power for this track has not been delegated yet
 									<Button

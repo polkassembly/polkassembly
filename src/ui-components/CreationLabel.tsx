@@ -23,7 +23,7 @@ import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Styled = styled.div`
 	padding: 0;
@@ -97,13 +97,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		truncateUsername,
 		vote,
 		votesArr = [],
-		isRow,
-		voteData
+		isRow
 	} = props;
-	console.log(voteData, vote);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const getSentimentLabel = (sentiment: ESentiment) => {
 		return <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
@@ -118,11 +116,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const AbstainDetailsComponent = ({ network, vote, power }: any) => {
 		return (
 			<>
-				<div className={'abstain-amount-value ml-[64px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+				<div className={'abstain-amount-value ml-[64px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'}>
 					{parseBalance((vote?.balance?.abstain || 0).toString(), 2, true, network)}
 				</div>
-				<div className={'abstain-conviction-value ml-[44px] mr-[50px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>-</div>
-				<div className='abstain-power-value w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+				<div className={'abstain-conviction-value ml-[44px] mr-[50px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'}>-</div>
+				<div className='abstain-power-value w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'>{power}</div>
 			</>
 		);
 	};
@@ -130,22 +128,22 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const AyeNyeDetailsComponent = ({ network, vote, power }: any) => {
 		return (
 			<>
-				<div className={'amount-value ml-[95px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+				<div className={'amount-value ml-[95px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'}>
 					{parseBalance((vote?.balance?.value || 0).toString(), 2, true, network)}
 				</div>
-				<div className={'conviction-value ml-10 mr-[55px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>{`${vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod}x`}</div>
-				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+				<div className={'conviction-value ml-10 mr-[55px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'}>{`${vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod}x`}</div>
+				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'>{power}</div>
 			</>
 		);
 	};
 	const SplitDetailsComponent = ({ network, vote, power }: any) => {
 		return (
 			<>
-				<div className={'amount-value ml-[86px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}>
+				<div className={'amount-value ml-[86px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'}>
 					{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
 				</div>
-				{vote?.decision === 'abstain' && <div className={'conviction-value ml-10 mr-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue'}> - </div>}
-				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue'>{power}</div>
+				{vote?.decision === 'abstain' && <div className={'conviction-value ml-10 mr-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'}> - </div>}
+				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-white'>{power}</div>
 			</>
 		);
 	};
@@ -197,7 +195,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				) : vote.decision == 'abstain' && (vote.balance as any).abstain ? (
 					<div className=' align-center mb-[1px] flex w-[90%] justify-between'>
 						<div className='flex justify-center align-middle'>
-							<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue'>Abstain</span>
+							<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-white'>Abstain</span>
 							<AbstainDetailsComponent
 								network={network}
 								vote={vote}
@@ -213,7 +211,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	return (
 		<div className={`${className} comment-usernames-container flex w-[100%] justify-between`}>
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
-				<div className={'flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
+				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex flex-shrink-0 items-center'}>
 						<NameLabel
 							defaultAddress={defaultAddress}
@@ -225,7 +223,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						{text}&nbsp;
 						{topic && (
 							<div className='flex items-center sm:-mt-0.5'>
-								<span className='mr-2 mt-0.5 text-lightBlue'>in</span>{' '}
+								<span className='mr-2 mt-0.5 text-lightBlue dark:text-blue-dark-medium'>in</span>{' '}
 								<TopicTag
 									topic={topic}
 									className={topic}
@@ -248,7 +246,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className='flex items-center text-lightBlue max-xs:ml-1'>
+				<div className='flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1'>
 					{(topic || text || created_at) && (
 						<>
 							&nbsp;
@@ -261,7 +259,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					)}
 					{created_at && (
 						<span className={`mr-1 flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
-							<ClockCircleOutlined className='mr-1' />
+							<ClockCircleOutlined className='ml-1 mr-1' />
 							{relativeCreatedAt}
 						</span>
 					)}
@@ -288,7 +286,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								</div>
 							) : vote === EVoteDecisionType.ABSTAIN ? (
 								<div className='align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mr-1' /> <span className='ont-medium capitalize text-bodyBlue'>Voted {vote}</span>
+									<AbstainGray className='mr-1' /> <span className='ont-medium capitalize text-bodyBlue dark:text-white'>Voted {vote}</span>
 								</div>
 							) : null}
 						</div>
@@ -303,7 +301,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							}}
 						>
 							<Divider
-								className='mb-[-1px] ml-1 hidden md:inline-block'
+								className='mb-[-1px] ml-1 mr-3 hidden md:inline-block'
 								type='vertical'
 								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
@@ -321,7 +319,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								</div>
 							) : votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ? (
 								<div className='abstain-voted-icon voted-icon align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mb-[-1px] mr-1' /> <span className='mt-[2px] font-medium capitalize text-bodyBlue'>Voted Abstain</span>
+									<AbstainGray className='mb-[-1px] mr-1' /> <span className='mt-[2px] font-medium capitalize text-bodyBlue dark:text-white'>Voted Abstain</span>
 								</div>
 							) : null}
 							{/* { votesArr.length > 1 && <p title={`${votesArr.length-1}+ votes available`}  className='mb-[-1px] ml-1' >{votesArr.length-1}+</p>} */}
@@ -334,12 +332,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								wrapClassName={className}
 								title={
 									<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px]  border-solid border-[#D2D8E0]'>
-										<span className='ml-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Votes</span>
+										<span className='ml-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Votes</span>
 									</div>
 								}
 							>
 								<div className='modal-content'>
-									<div className='modal-container mt-3 flex text-sm font-semibold text-bodyBlue'>
+									<div className='modal-container mt-3 flex text-sm font-semibold text-bodyBlue dark:text-white'>
 										<p className='m-0 p-0'>Vote</p>
 										<p className='amount-container m-0 ml-[124px] p-0'>Amount</p>
 										<p className='conviction-container relative m-0 ml-[64px] p-0'>Conviction</p>
@@ -354,7 +352,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 										{votesArr.length > 1 && (
 											<div className='vote-history-container'>
 												<div className='-ml-6 mb-2 w-[560px] border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
-												<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue'>Vote History</p>
+												<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Vote History</p>
 											</div>
 										)}
 										{votesArr.length > 1 &&

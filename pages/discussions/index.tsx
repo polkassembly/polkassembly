@@ -6,11 +6,9 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useEffect, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -21,11 +19,15 @@ import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
 	error?: string;
 	network: string;
+	page?: number;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -67,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		sortBy: String(sortBy)
 	});
 
-	const props = { data, error, network };
+	const props = { data, error, network, page };
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		await redisSet(redisKey, JSON.stringify(props));
@@ -77,17 +79,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 const Discussions: FC<IDiscussionsProps> = (props) => {
-	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const { data, error, network, page } = props;
+	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 	const router = useRouter();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
@@ -108,7 +110,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			/>
 
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
-				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue'>
+				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-white'>
 					<DiscussionsIcon className='mt-2 xs:mr-3 sm:mr-2 sm:mt-1.5' />
 					Latest Discussions({count})
 				</div>
@@ -122,13 +124,14 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-3 flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue dark:text-white shadow-md dark:bg-section-dark-overlay md:p-8'>
 					This is the place to discuss all things polkadot. Anyone can start a new discussion.
 				</p>
 			</div>
 			<OffChainPostsContainer
 				proposalType={OffChainProposalType.DISCUSSIONS}
 				posts={posts}
+				defaultPage={page || 1}
 				count={count}
 				className='mt-6'
 			/>

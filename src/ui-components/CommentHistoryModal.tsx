@@ -104,7 +104,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							{getSentimentIcon(item.sentiment as ESentiment)}
 						</Dropdown>
 					</div>
-					<div className={`mt-2 px-[2px] text-sm font-normal tracking-[0.01em] text-bodyBlue ${poppins.className} ${poppins.variable} pr-2 leading-6`}>
+					<div className={`mt-2 px-[2px] text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-white ${poppins.className} ${poppins.variable} pr-2 leading-6`}>
 						{/* {historyData[index + 1] ? (
 							<div>
 								{historyData?.map((text, idx) => (

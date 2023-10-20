@@ -1,16 +1,16 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ESetIdentitySteps, ISocials } from '.';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import SuccessIcon from '~assets/icons/identity-success.svg';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { ESocials } from '~src/types';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -25,7 +25,7 @@ interface Props {
 const InprogressState = ({ className, open, close, changeStep, openPreModal, socials, handleVerify }: Props) => {
 	const { email } = socials;
 
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	useEffect(() => {
 		if (!network) return;
@@ -58,7 +58,7 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 			<>
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
 					<SuccessIcon />
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Email verification in progress</label>
+					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Email verification in progress</label>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>Check your email!</div>
 					<div className=' mt-4 flex w-full shrink-0 flex-col items-center justify-center text-center text-sm tracking-wide '>
 						<span className='flex shrink-0'>A verification link has been sent to your mail address</span>

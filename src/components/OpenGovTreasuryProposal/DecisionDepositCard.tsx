@@ -11,9 +11,8 @@ import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CautionIcon from '~assets/icons/grey-caution.svg';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { APPNAME } from '~src/global/appName';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { NotificationStatus, Wallet } from '~src/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -29,6 +28,8 @@ import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import { gov2ReferendumStatus } from '~src/global/statuses';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 
 const ZERO_BN = new BN(0);
 
@@ -36,12 +37,13 @@ interface Props {
 	className?: string;
 	trackName: string;
 }
+
 const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
-	const { loginWallet, loginAddress } = useUserDetailsContext();
+	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const [address, setAddress] = useState<string>('');
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -50,11 +52,17 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const [wallet, setWallet] = useState<Wallet>();
 	const [extensionOpen, setExtensionOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
-	const balance = networkTrackInfo?.[network]?.[trackName]?.decisionDeposit || ZERO_BN;
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [amount, setAmount] = useState<BN>(ZERO_BN);
+	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const { setPostData } = usePostDataContext();
+
+	useEffect(() => {
+		const trackData = getTrackData(network, trackName);
+		const decisionDeposit = trackData.decisionDeposit.toString();
+		setBalance(new BN(decisionDeposit.startsWith('0x') ? new BN(`${decisionDeposit}`.slice(2), 'hex') : decisionDeposit));
+	}, [network, trackName]);
 
 	const handleOnBalanceChange = (balanceStr: string) => {
 		setAvailableBalance(new BN(balanceStr.toString() || ZERO_BN));
@@ -243,7 +251,11 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				open={openModal}
 				closeIcon={<CloseIcon />}
 				onCancel={() => setOpenModal(false)}
-				title={<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>Pay Decision Deposit</div>}
+				title={
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-white'>
+						Pay Decision Deposit
+					</div>
+				}
 				footer={
 					<div className='border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
 						<Button
@@ -409,7 +421,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							<Alert
 								showIcon
 								type='error'
-								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue'
+								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:text-white'
 								message='Insufficient available balance.'
 							/>
 						)}
@@ -464,11 +476,11 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 									) : null}
 
 									<div className='mb-4 mt-6 flex items-center gap-4'>
-										<span className='flex gap-1.5 text-sm tracking-wide text-lightBlue'>
+										<span className='flex gap-1.5 text-sm tracking-wide text-lightBlue dark:text-blue-dark-medium'>
 											Decision Deposit
 											<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.' />
 										</span>
-										<span className='rounded-[16px] bg-[#EDEFF3] px-3 py-0.5 text-sm font-semibold tracking-wide text-bodyBlue'>
+										<span className='rounded-[16px] bg-[#EDEFF3] px-3 py-0.5 text-sm font-semibold tracking-wide text-bodyBlue dark:text-white'>
 											{formatedBalance(balance.toString(), unit)} {unit}
 										</span>
 									</div>

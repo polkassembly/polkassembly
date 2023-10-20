@@ -8,7 +8,6 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Notifications from '~src/components/Settings/Notifications';
 import UserAccount from '~src/components/Settings/UserAccount';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import Tracker from '~src/components/Tracker/Tracker';
 import { useRouter } from 'next/router';
@@ -18,6 +17,9 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
 import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 interface Props {
 	network: string;
@@ -33,10 +35,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Settings: FC<Props> = (props) => {
-	const { setNetwork, network } = useNetworkContext();
+	const { network } = useNetworkSelector();
+	const dispatch = useDispatch();
 	const router = useRouter();
 	const tab = router.query?.tab as string;
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 	const [searchQuery, setSearchQuery] = useState<string>('');
 
 	const handleTabClick = (key: string) => {
@@ -67,7 +70,7 @@ const Settings: FC<Props> = (props) => {
 	}, [id, router, router.isReady, searchQuery, tab, tabItems]);
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -90,7 +93,7 @@ const Settings: FC<Props> = (props) => {
 			)}
 
 			<Col className='h-full w-full'>
-				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md'>
+				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
 					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue'>Settings</h3>
 					<Tabs
 						className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'

@@ -104,11 +104,11 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 								className='flex items-center'
 								key={index}
 							>
-								<span className='desc flex items-center text-sm font-medium capitalize text-bodyBlue'>
+								<span className='desc flex items-center text-sm font-medium capitalize text-bodyBlue dark:text-white'>
 									{getIdentityIcons(item?.key)}
 									{item?.key}:
 								</span>
-								<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue'>{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}</span>
+								<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue dark:text-white'>{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}</span>
 							</li>
 						)
 					);
@@ -117,7 +117,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 
 			{flags?.isCouncil && (
 				<li className='flex items-center'>
-					<span className='desc text-sm font-medium text-bodyBlue'>
+					<span className='desc text-sm font-medium text-bodyBlue dark:text-white'>
 						<CouncilEmoji /> Council member{' '}
 					</span>
 				</li>

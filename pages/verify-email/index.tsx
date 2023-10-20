@@ -7,13 +7,15 @@ import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useDispatch } from 'react-redux';
 import queueNotification from 'src/ui-components/QueueNotification';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ChangeResponseType } from '~src/auth/types';
 import VerificationSuccessScreen from '~src/components/OnchainIdentity/VerificationSuccessScreen';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { handleTokenChange } from '~src/services/auth.service';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
@@ -32,18 +34,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 const VerifyEmail = ({ network, token, identityVerification }: { network: string; token: string; identityVerification: boolean }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(false);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
 	const [error, setError] = useState('');
 
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 	const [handle, setHandle] = useState<string>('');
 
 	const handleVerifyEmail = useCallback(async () => {
@@ -59,7 +61,7 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 		}
 
 		if (data) {
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			queueNotification({
 				header: 'Success!',
 				message: data.message,
@@ -81,7 +83,7 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 				status: NotificationStatus.ERROR
 			});
 		} else if (data) {
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			queueNotification({
 				header: 'Success!',
 				message: data.message,
@@ -125,7 +127,7 @@ const VerifyEmail = ({ network, token, identityVerification }: { network: string
 				className='-mt-16 h-full'
 			>
 				{error ? (
-					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
 						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
 							<WarningOutlined />
 							{/* TODO: Check error message from BE when email already verified */}

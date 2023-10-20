@@ -45,7 +45,7 @@ const AllianceUnscrupulous = ({ className }: { className?: string }) => {
 	if (accounts || websites) {
 		return (
 			<>
-				<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
+				<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
 					<div className='flex items-center justify-between'>
 						<h1 className='dashboard-heading'>Accounts</h1>
 					</div>
@@ -56,7 +56,7 @@ const AllianceUnscrupulous = ({ className }: { className?: string }) => {
 					/>
 				</div>
 
-				<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
+				<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
 					<div className='flex items-center justify-between'>
 						<h1 className='dashboard-heading'>Websites</h1>
 					</div>

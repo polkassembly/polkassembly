@@ -6,12 +6,10 @@ import { Button } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
-import { useNetworkContext } from '~src/context';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -20,6 +18,9 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useRouter } from 'next/router';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { setNetwork } from '~src/redux/network';
+import { useDispatch } from 'react-redux';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -64,15 +65,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const Grants: FC<IGrantsProps> = (props) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
@@ -105,7 +106,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-8 flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md md:p-8 md:text-base'>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
 					This is the place to discuss grants for {network}. Anyone can start a new grants discussion.{' '}
 					<a
 						className='text-pink_primary'

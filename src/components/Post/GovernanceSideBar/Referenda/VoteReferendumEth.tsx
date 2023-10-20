@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -32,6 +32,9 @@ import LikeGray from '~assets/icons/like-gray.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setWalletConnectProvider } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 const ZERO_BN = new BN(0);
 
@@ -49,8 +52,8 @@ const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const userDetails = useUserDetailsContext();
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress, loginWallet } = userDetails;
+	const userDetails = useUserDetailsSelector();
+	const { walletConnectProvider, id, loginAddress, loginWallet } = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -60,7 +63,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setPostData,
 		postData: { postType: proposalType }
 	} = usePostDataContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
@@ -68,6 +71,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [ayeNayForm] = Form.useForm();
+	const dispatch = useDispatch();
 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
@@ -158,7 +162,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			}
 		});
 		await wcPprovider.wc.createSession();
-		setWalletConnectProvider(wcPprovider);
+		dispatch(setWalletConnectProvider(wcPprovider));
 	};
 
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
@@ -312,7 +316,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			});
 	};
 
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToVote />;
 	}
 
@@ -374,7 +378,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				title={
 					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0]'>
 						<CastVoteIcon className='mt-1' />
-						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Cast Your Vote</span>
+						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Cast Your Vote</span>
 					</div>
 				}
 			>
@@ -384,7 +388,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						indicator={<LoadingOutlined />}
 						tip={loadingStatus.message}
 					>
-						<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue'>Select a wallet</div>
+						<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
 						<div className='mb-[24px] mt-1 flex items-center justify-center gap-x-5'>
 							{availableWallets[Wallet.TALISMAN] && (
 								<WalletButton
@@ -461,7 +465,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						<h3 className='inner-headings mb-[2px] mt-6'>Choose your vote</h3>
 						<Segmented
 							block
-							className={'mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white hover:bg-white'}
+							className={'mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white hover:bg-white dark:bg-section-dark-overlay'}
 							size='large'
 							value={vote}
 							onChange={(value) => {

@@ -5,13 +5,13 @@
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
 import { dayjs } from 'dayjs-init';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import Markdown from 'src/ui-components/Markdown';
 import StatusTag from 'src/ui-components/StatusTag';
 
 import { ProposalType } from '~src/global/proposalType';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
@@ -28,7 +28,7 @@ interface Props {
 }
 
 const ReferendaPostCard = ({ className, createdAt, postStatus, referendumId, title, method }: Props) => {
-	const { defaultAddress } = useContext(UserDetailsContext);
+	const { defaultAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
 	const [post, setPost] = useState<IPostResponse>();
@@ -57,7 +57,7 @@ const ReferendaPostCard = ({ className, createdAt, postStatus, referendumId, tit
 		: null;
 
 	return (
-		<div className={`${className} rounded-md bg-white p-3 drop-shadow-md lg:p-6`}>
+		<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 drop-shadow-md lg:p-6`}>
 			<div className='mb-[9px] text-sm font-medium'>
 				{post && post.decision && (
 					<>

@@ -5,14 +5,15 @@
 import { GetServerSideProps } from 'next';
 import { IPostsListingResponse, getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
 import { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import DashboardTrackListing from '~src/components/DelegationDashboard/DashboardTrack';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
+import { setNetwork } from '~src/redux/network';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import getQueryToTrack from '~src/util/getQueryToTrack';
@@ -55,10 +56,10 @@ interface ITrackProps {
 
 const DashboardTracks: FC<ITrackProps> = (props) => {
 	const { data, error, trackDetails } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

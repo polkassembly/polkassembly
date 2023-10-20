@@ -6,12 +6,14 @@ import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useDispatch } from 'react-redux';
 import queueNotification from 'src/ui-components/QueueNotification';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { UndoEmailChangeResponseType } from '~src/auth/types';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { handleTokenChange } from '~src/services/auth.service';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
@@ -29,16 +31,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const UndoEmailChange = ({ network }: { network: string }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
 	const [error, setError] = useState('');
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 
 	const handleUndoEmailChange = useCallback(async () => {
 		const { data, error } = await nextApiClientFetch<UndoEmailChangeResponseType>('api/v1/auth/actions/requestResetPassword');
@@ -53,7 +55,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 		}
 
 		if (data) {
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			queueNotification({
 				header: 'Success!',
 				message: data.message,
@@ -80,7 +82,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 				className='-mt-16 h-full'
 			>
 				{error ? (
-					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
 						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
 							<WarningOutlined />
 							<FilteredError text={error} />

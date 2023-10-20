@@ -8,7 +8,6 @@ import { Alert, Button, Divider, Form, FormInstance, Input, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { NetworkContext } from '~src/context/NetworkContext';
 import styled from 'styled-components';
 import { ApiContext } from '~src/context/ApiContext';
 import BN from 'bn.js';
@@ -21,6 +20,7 @@ import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
 import VerifiedTick from '~assets/icons/verified-tick.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -92,7 +92,7 @@ const IdentityForm = ({
 	setIdentityHash,
 	setAddressChangeModalOpen
 }: Props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
@@ -273,7 +273,7 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='error'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-white'
 						message={`Minimum Balance of ${formatedBalance(totalFee.toString(), unit, 2)} ${unit} is required to proceed`}
 					/>
 				)}
@@ -281,12 +281,12 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-white'
 						message='Your identity has already been set. Please edit a field to proceed.'
 					/>
 				)}
-				<div className='mt-6 flex items-center justify-between text-lightBlue'>
-					<label className='text-sm text-lightBlue'>
+				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 						Your Address{' '}
 						<HelperTooltip
 							className='ml-1'
@@ -319,7 +319,7 @@ const IdentityForm = ({
 					</div>
 				</div>
 				<div className='mt-6'>
-					<label className='text-sm text-lightBlue'>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 						Display Name <span className='text-[#FF3C5F]'>*</span>
 					</label>
 					<Form.Item
@@ -340,7 +340,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='displayName'
-							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue'
+							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:text-white'
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
@@ -352,7 +352,7 @@ const IdentityForm = ({
 					</Form.Item>
 				</div>
 				<div className='mt-6'>
-					<label className='text-sm text-lightBlue'>Legal Name</label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Legal Name</label>
 					<Form.Item
 						name='legalName'
 						rules={[
@@ -371,7 +371,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='legalName'
-							className='h-10 rounded-[4px] text-bodyBlue'
+							className='h-10 rounded-[4px] text-bodyBlue dark:text-white'
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
@@ -384,7 +384,7 @@ const IdentityForm = ({
 				</div>
 				<Divider />
 				<div>
-					<label className='text-sm font-medium text-lightBlue'>
+					<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 						Socials{' '}
 						<HelperTooltip
 							className='ml-1'
@@ -395,7 +395,7 @@ const IdentityForm = ({
 					{/* <div className='flex items-center mt-4'>
 					<span className='flex gap-2 w-[150px] items-center mb-6'>
 						<WebIcon className='bg-[#edeff3] rounded-full text-2xl p-2.5'/>
-						<span className='text-sm text-lightBlue'>Web</span>
+						<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Web</span>
 					</span>
 					<Form.Item className='w-full' name='web' rules={[{
 						message: 'Invalid web',
@@ -406,14 +406,14 @@ const IdentityForm = ({
 								callback();
 							}
 						} }]}>
-						<Input name='web' value={web} placeholder='Enter your website address' className='h-10 rounded-[4px] text-bodyBlue' onChange={(e) => {onChangeSocials({ ...socials, web: e.target.value }); handleInfo({ webVal: e.target.value });}}/>
+						<Input name='web' value={web} placeholder='Enter your website address' className='h-10 rounded-[4px] text-bodyBlue dark:text-white' onChange={(e) => {onChangeSocials({ ...socials, web: e.target.value }); handleInfo({ webVal: e.target.value });}}/>
 					</Form.Item>
 				</div> */}
 
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B]' />
-							<span className='text-sm text-lightBlue'>
+							<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 								Email<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
 						</span>
@@ -443,7 +443,7 @@ const IdentityForm = ({
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
-								className='h-10 rounded-[4px] text-bodyBlue'
+								className='h-10 rounded-[4px] text-bodyBlue dark:text-white'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 									handleInfo();
@@ -456,7 +456,7 @@ const IdentityForm = ({
 					<div className='mt-1 flex items-center'>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<TwitterIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B]' />
-							<span className='text-sm text-lightBlue'>
+							<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 								Twitter<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
 						</span>
@@ -482,7 +482,7 @@ const IdentityForm = ({
 								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
 								value={twitter?.value}
 								placeholder='Enter your twitter name'
-								className='h-10 rounded-[4px] text-bodyBlue'
+								className='h-10 rounded-[4px] text-bodyBlue dark:text-white'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
 									handleInfo();
@@ -495,7 +495,7 @@ const IdentityForm = ({
 					{/* <div className='flex items-center mt-1'>
 					<span className='flex gap-2 items-center w-[150px] mb-6'>
 						<RiotIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
-						<span className='text-sm text-lightBlue'>Riot</span>
+						<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Riot</span>
 					</span>
 					<Form.Item name='riot' className='w-full' rules={[{
 						message: 'Invalid riot',
@@ -506,21 +506,21 @@ const IdentityForm = ({
 								callback();
 							}
 						} }]}>
-						<Input name='riot' value={riot} placeholder='@Yourname.matrix.org' className='h-10 rounded-[4px] text-bodyBlue' onChange={(e) => {onChangeSocials({ ...socials, riot: e.target.value }); handleInfo({ riotVal: e.target.value });}}/>
+						<Input name='riot' value={riot} placeholder='@Yourname.matrix.org' className='h-10 rounded-[4px] text-bodyBlue dark:text-white' onChange={(e) => {onChangeSocials({ ...socials, riot: e.target.value }); handleInfo({ riotVal: e.target.value });}}/>
 					</Form.Item>
 				</div> */}
 				</div>
 			</Form>
 			{!alreadyVerifiedfields?.alreadyVerified && !alreadyVerifiedfields.isIdentitySet && (
 				<div className='mt-6 flex items-center gap-4 text-sm'>
-					<span className='font-medium text-lightBlue'>
+					<span className='font-medium text-lightBlue dark:text-blue-dark-medium'>
 						Min Deposit{' '}
 						<HelperTooltip
 							className='ml-1'
 							text='Amount that needs held in an address for a verified account.'
 						/>
 					</span>
-					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue'>
+					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue dark:text-white'>
 						{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
 					</span>
 				</div>
@@ -532,7 +532,7 @@ const IdentityForm = ({
 						type='info'
 						showIcon
 						message={
-							<span className='text-sm font-medium text-bodyBlue '>
+							<span className='text-sm font-medium text-bodyBlue dark:text-white '>
 								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
@@ -548,38 +548,38 @@ const IdentityForm = ({
 							) : (
 								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue'>Gas Fee</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
+										<span className='font-medium text-bodyBlue dark:text-white'>
 											{formatedBalance(gasFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue'>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>
 											Bond{' '}
 											<HelperTooltip
 												className='ml-1'
 												text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='font-medium text-bodyBlue dark:text-white'>
 											{formatedBalance(bondFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue'>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>
 											Registrar fees{' '}
 											<HelperTooltip
 												text='Costs of development & maintenance are funded by the treasury.'
 												className='ml-1'
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='font-medium text-bodyBlue dark:text-white'>
 											{formatedBalance(registerarFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue'>Total</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
+										<span className='font-medium text-bodyBlue dark:text-white'>
 											{formatedBalance(totalFee.toString(), unit, 2)} {unit}
 										</span>
 									</span>

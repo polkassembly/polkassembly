@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Card = ({ className, children }: Props) => {
-	return <div className={`${className} mb-[1rem] rounded-md bg-white px-[2rem] py-[2rem] text-sm drop-shadow-md md:px-[3rem]`}>{children}</div>;
+	return <div className={`${className} mb-[1rem] rounded-md bg-white dark:bg-section-dark-overlay px-[2rem] py-[2rem] text-sm drop-shadow-md md:px-[3rem]`}>{children}</div>;
 };
 
 export default Card;

@@ -7,8 +7,6 @@ import { Alert, Button, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
-import { useUserDetailsContext } from '~src/context';
-import { NetworkContext } from '~src/context/NetworkContext';
 import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
@@ -34,6 +32,9 @@ import ArrowLeft from '~assets/icons/arrow-left.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	className?: string;
@@ -66,10 +67,11 @@ const AddressConnectModal = ({
 	accountAlertTitle = 'Wallet extension not detected.',
 	accountSelectionFormTitle = 'Select an address'
 }: Props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
-	const currentUser = useUserDetailsContext();
-	const { loginWallet, setUserDetailsContextState, loginAddress, addresses } = currentUser;
+	const currentUser = useUserDetailsSelector();
+	const { loginWallet, loginAddress, addresses } = currentUser;
+	const dispatch = useDispatch();
 	const [address, setAddress] = useState<string>('');
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -188,7 +190,7 @@ const AddressConnectModal = ({
 						}
 
 						if (confirmData?.token) {
-							handleTokenChange(confirmData.token, currentUser);
+							handleTokenChange(confirmData.token, currentUser, dispatch);
 							queueNotification({
 								header: 'Success!',
 								message: confirmData.message || '',
@@ -224,7 +226,7 @@ const AddressConnectModal = ({
 					}
 
 					if (confirmData?.token) {
-						handleTokenChange(confirmData.token, currentUser);
+						handleTokenChange(confirmData.token, currentUser, dispatch);
 						queueNotification({
 							header: 'Success!',
 							message: confirmData.message || '',
@@ -251,12 +253,10 @@ const AddressConnectModal = ({
 		} else {
 			setLoading(true);
 			localStorage.setItem(localStorageWalletKeyName, String(wallet));
-			localStorage.setItem(localStorageAddressKeyName, address);
-			localStorage.setItem('delegationDashboardAddress', multisig || address);
+			localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
+			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('multisigDelegationAssociatedAddress', address);
-			setUserDetailsContextState((prev) => {
-				return { ...prev, delegationDashboardAddress: multisig || address, loginWallet: wallet || null };
-			});
+			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
 			onConfirm && onConfirm(address);
@@ -358,7 +358,7 @@ const AddressConnectModal = ({
 			className={`${poppins.className} ${poppins.variable} radius`}
 			open={open}
 			title={
-				<div className='text-center text-[20px] font-semibold text-bodyBlue'>
+				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:text-white'>
 					{showMultisig && (
 						<ArrowLeft
 							className='absolute left-[24px] mt-1 cursor-pointer'
@@ -374,7 +374,7 @@ const AddressConnectModal = ({
 			footer={
 				<Button
 					onClick={handleSubmit}
-					disabled={accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
+					disabled={!accounts || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
 					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
 						accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit) && 'opacity-50')
 					}`}
@@ -391,15 +391,15 @@ const AddressConnectModal = ({
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex flex-col'>
-					{linkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && (
+					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
 							<ConnectAddressIcon />
-							<span className='mt-6 text-center text-sm text-bodyBlue'>
+							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-white'>
 								Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
 							</span>
 						</div>
 					)}
-					<h3 className='text-center text-sm font-normal text-lightBlue'>Select a wallet</h3>
+					<h3 className='text-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</h3>
 					<div className={`flex items-center justify-center gap-x-4 ${showMultisig ? 'mb-6' : ''}`}>
 						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
 							<>
@@ -542,7 +542,7 @@ const AddressConnectModal = ({
 									<Divider className='m-0'>OR</Divider>
 									<div className='flex w-full justify-center'>
 										<WalletButton
-											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue'
+											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-white'
 											onClick={() => {
 												setShowMultisig(!showMultisig);
 											}}
@@ -573,7 +573,7 @@ const AddressConnectModal = ({
 						</div>
 					)}
 
-					{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0 && !loading && (
+					{Object.keys(availableWallets || {})?.length !== 0 && !accounts && wallet && wallet?.length !== 0 && !loading && (
 						<Alert
 							message={`For using ${walletAlertTitle}:`}
 							description={
@@ -597,7 +597,7 @@ const AddressConnectModal = ({
 							}`}
 							type='info'
 							showIcon
-							className='changeColor text-md text-bodyBlue'
+							className='changeColor text-md text-bodyBlue dark:text-white'
 						/>
 					)}
 
@@ -620,7 +620,7 @@ const AddressConnectModal = ({
 											setMultisig('');
 										}}
 										onBalanceChange={handleOnBalanceChange}
-										className='text-sm text-lightBlue'
+										className='text-sm text-lightBlue dark:text-blue-dark-medium'
 										walletAddress={multisig}
 										setWalletAddress={setMultisig}
 										containerClassName='gap-[20px]'
@@ -636,7 +636,7 @@ const AddressConnectModal = ({
 										withBalance={true}
 										onAccountChange={(address) => setAddress(address)}
 										onBalanceChange={handleOnBalanceChange}
-										className='mt-4 text-sm text-lightBlue'
+										className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
 									/>
 								)
 							) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (

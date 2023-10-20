@@ -7,7 +7,7 @@ import { stringToHex } from '@polkadot/util';
 import { Button, Divider, Modal, Spin, Tooltip } from 'antd';
 import React, { FC, useState } from 'react';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useApiContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { NotificationStatus, Wallet } from 'src/types';
 import AddressComponent from 'src/ui-components/Address';
@@ -21,6 +21,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import { poppins } from 'pages/_app';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	open?: boolean;
@@ -45,14 +47,15 @@ const WalletIconAndTitle: FC<{
 };
 
 const Address: FC<Props> = ({ dismissModal, open }) => {
-	const currentUser = useUserDetailsContext();
-	const { network } = useNetworkContext();
+	const currentUser = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [fetchAccountsInfo, setFetchAccountsInfo] = useState(true);
 
 	const [accountsInfo, setAccountsInfo] = useState(initResponse);
 	const { accounts, accountsMap, noExtension, signersMap } = accountsInfo;
 	const [loading, setLoading] = useState<boolean>(false);
+	const dispatch = useDispatch();
 
 	interface AccountsDetails {
 		accounts: InjectedAccount[];
@@ -91,7 +94,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				message: data.message || '',
 				status: NotificationStatus.SUCCESS
 			});
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			setLoading(false);
 			dismissModal && dismissModal();
 		}
@@ -165,7 +168,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 					}
 
 					if (confirmData?.token) {
-						handleTokenChange(confirmData.token, currentUser);
+						handleTokenChange(confirmData.token, currentUser, dispatch);
 						queueNotification({
 							header: 'Success!',
 							message: confirmData.message || '',
@@ -203,7 +206,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				}
 
 				if (confirmData?.token) {
-					handleTokenChange(confirmData.token, currentUser);
+					handleTokenChange(confirmData.token, currentUser, dispatch);
 					queueNotification({
 						header: 'Success!',
 						message: confirmData.message || '',
@@ -239,7 +242,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 			dismissModal && dismissModal();
 		}
 		if (data?.token) {
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			queueNotification({
 				header: 'Success!',
 				message: data.message || '',
@@ -460,7 +463,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						<Button
 							key='cancel'
 							onClick={dismissModal}
-							className='flex items-center justify-center rounded-[4px] border border-solid border-pink_primary bg-white px-7 py-3 text-sm font-medium tracking-wide text-pink_primary outline-none'
+							className='flex items-center justify-center rounded-[4px] border border-solid border-pink_primary bg-white px-7 py-3 text-sm font-medium tracking-wide text-pink_primary outline-none dark:bg-section-dark-overlay'
 						>
 							Cancel
 						</Button>
@@ -481,7 +484,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						<ExtensionNotDetected />
 					</div>
 				) : (
-					<section className='flex flex-col gap-y-8 text-bodyBlue'>
+					<section className='flex flex-col gap-y-8 text-bodyBlue dark:text-white'>
 						{currentUser?.addresses &&
 							currentUser?.addresses?.length > 0 &&
 							addressList({

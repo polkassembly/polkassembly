@@ -11,7 +11,7 @@ import { LoadingStatusType } from 'src/types';
 import Address from 'src/ui-components/Address';
 // import formatBnBalance from 'src/util/formatBnBalance';
 
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { LISTING_LIMIT, VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortOptions, votesSortValues } from '~src/global/sortOptions';
@@ -22,6 +22,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import classNames from 'classnames';
 import { IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
 import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IVotersListProps {
 	className?: string;
@@ -34,7 +35,7 @@ interface IVotersListProps {
 type DecisionType = 'yes' | 'no' | 'abstain';
 
 const VotersList: FC<IVotersListProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const firstRef = useRef(true);
 	const { api, apiReady } = useApiContext();
 
@@ -258,7 +259,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				spinning={loadingStatus.isLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<div className='z-10 mb-6 flex justify-between bg-white'>
+				<div className='z-10 mb-6 flex justify-between bg-white dark:bg-section-dark-overlay'>
 					<h6 className='dashboard-heading'>Votes</h6>
 					{![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) && <div>{sortByDropdown}</div>}
 				</div>
@@ -376,7 +377,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					)}
 				</div>
 
-				<div className='z-10 flex justify-center bg-white pt-6'>
+				<div className='z-10 flex justify-center bg-white pt-6 dark:bg-section-dark-overlay'>
 					<Pagination
 						size='small'
 						defaultCurrent={1}

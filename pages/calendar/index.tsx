@@ -8,10 +8,9 @@ import { Badge, Button, Col, Divider, Dropdown, Row, Space } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Calendar, DateHeaderProps, dayjsLocalizer, View } from 'react-big-calendar';
 import SidebarRight from 'src/components/SidebarRight';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { approvalStatus } from 'src/global/statuses';
 import { NetworkEvent, NotificationStatus } from 'src/types';
 import { Role } from 'src/types';
@@ -20,7 +19,7 @@ import styled from 'styled-components';
 
 import chainLink from '~assets/chain-link.png';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -44,6 +43,9 @@ import {
 } from '~src/util/getCalendarEvents';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -83,7 +85,7 @@ const initCategories = ['Staking', 'Council', 'Schedule', 'Treasury', 'Democracy
 
 const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCalendarEvents = undefined, network }) => {
 	const { api, apiReady } = useApiContext();
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [width, setWidth] = useState(0);
 	const [calLeftPanelWidth, setCalLeftPanelWidth] = useState<any>(0);
 	const [error, setError] = useState('');
@@ -101,7 +103,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	const [eventApprovalStatus, setEventApprovalStatus] = useState<string>(queryApprovalStatus);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		if (window) {
 			const width = window.innerWidth > 0 ? window.innerWidth : screen.width;
 			setWidth(width);
@@ -316,7 +318,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 	const utcDate = new Date(new Date().toISOString().slice(0, -1));
 
-	const { id, allowed_roles } = useContext(UserDetailsContext);
+	const { id, allowed_roles } = useUserDetailsSelector();
 	let accessible = false;
 	if (allowed_roles && allowed_roles?.length > 0 && allowed_roles.includes(ALLOWED_ROLE)) {
 		accessible = true;
@@ -484,7 +486,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 	return (
 		<>
-			<div className={`${className} rounded-xl bg-white p-3 drop-shadow-md`}>
+			<div className={`${className} rounded-xl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay`}>
 				{error && <ErrorAlert errorMsg={error} />}
 
 				{accessible && (

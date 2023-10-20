@@ -12,8 +12,7 @@ import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
 import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
-
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { IPreimagesListing } from '~src/types';
 
 interface IPreImagesTableProps {
@@ -21,7 +20,7 @@ interface IPreImagesTableProps {
 }
 
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const { preimages } = props;
 	const [modalArgs, setModalArgs] = useState<any>(null);

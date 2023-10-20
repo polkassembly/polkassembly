@@ -40,7 +40,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 				<Modal
 					className='min-w-[648px]'
 					title={<h3 className='text-xl font-semibold text-[#1D2632]'>On-chain identity</h3>}
-					closeIcon={<CloseOutlined className='text-sm text-bodyBlue' />}
+					closeIcon={<CloseOutlined className='text-sm text-bodyBlue dark:text-white' />}
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}
@@ -51,7 +51,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 								{onChainIdentity && (
 									<Row gutter={[8, 40]}>
 										<Col span={8}>
-											<div className='text-sm font-medium text-bodyBlue'>Account</div>
+											<div className='text-sm font-medium text-bodyBlue dark:text-white'>Account</div>
 											<Address
 												className='mt-1'
 												usernameClassName='text-xs'
@@ -62,13 +62,13 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										</Col>
 										{onChainIdentity?.legal && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>Legal</div>
+												<div className='text-sm font-medium text-bodyBlue dark:text-white'>Legal</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>{onChainIdentity.legal}</p>
 											</Col>
 										)}
 										{onChainIdentity?.email && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>
+												<div className='text-sm font-medium text-bodyBlue dark:text-white'>
 													<EmailIcon className='mr-1' />
 													<span>Email</span>
 												</div>
@@ -84,7 +84,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										)}
 										{onChainIdentity?.riot && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>
+												<div className='text-sm font-medium text-bodyBlue dark:text-white'>
 													<RiotIcon className='mr-1' />
 													<span>Riot</span>
 												</div>
@@ -100,7 +100,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										)}
 										{onChainIdentity?.twitter && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>
+												<div className='text-sm font-medium text-bodyBlue dark:text-white'>
 													<TwitterIcon className='mr-1' />
 													<span>Twitter</span>
 												</div>
@@ -116,7 +116,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										)}
 										{judgements?.length > 0 && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>Judgements</div>
+												<div className='text-sm font-medium text-bodyBlue dark:text-white'>Judgements</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>
 													{icon} {displayJudgements}
 												</p>
@@ -124,7 +124,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										)}
 										{onChainIdentity?.web && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>Web</div>
+												<div className='text-sm font-medium text-bodyBlue dark:text-white'>Web</div>
 												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>{onChainIdentity.web}</p>
 											</Col>
 										)}

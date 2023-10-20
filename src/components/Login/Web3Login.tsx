@@ -10,7 +10,6 @@ import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -31,6 +30,8 @@ import WalletButtons from './WalletButtons';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import TFALoginForm from './TFALoginForm';
 import BN from 'bn.js';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -53,10 +54,11 @@ const initAuthResponse: IAuthResponse = {
 };
 
 const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, isModal, setLoginOpen, setSignupOpen, withPolkasafe, setChosenWallet, onWalletUpdate }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const router = useRouter();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -256,17 +258,18 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						}
 
 						if (confirmData.token) {
-							currentUser.loginWallet = chosenWallet;
-							currentUser.loginAddress = multisigAddress || address;
-							currentUser.multisigAssociatedAddress = address;
-							currentUser.delegationDashboardAddress = multisigAddress || address;
+							const user: any = {};
+							user.loginWallet = chosenWallet;
+							user.loginAddress = multisigAddress || address;
+							user.multisigAssociatedAddress = address;
+							user.delegationDashboardAddress = multisigAddress || address;
 							localStorage.setItem('delegationWallet', chosenWallet);
 							localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 							localStorage.setItem('multisigDelegationAssociatedAddress', address);
 							localStorage.setItem('loginWallet', chosenWallet);
 							localStorage.setItem('loginAddress', address);
 							localStorage.setItem('multisigAssociatedAddress', address);
-							handleTokenChange(confirmData.token, currentUser);
+							handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 							if (isModal) {
 								setLoginOpen && setLoginOpen(false);
 								setLoading(false);
@@ -286,10 +289,11 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 			}
 
 			if (addressLoginData?.token) {
-				currentUser.loginWallet = chosenWallet;
-				currentUser.loginAddress = multisigAddress || address;
-				currentUser.delegationDashboardAddress = multisigAddress || address;
-				currentUser.multisigAssociatedAddress = address;
+				const user: any = {};
+				user.loginWallet = chosenWallet;
+				user.loginAddress = multisigAddress || address;
+				user.delegationDashboardAddress = multisigAddress || address;
+				user.multisigAssociatedAddress = address;
 				localStorage.setItem('delegationWallet', chosenWallet);
 				localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 				localStorage.setItem('multisigDelegationAssociatedAddress', address);
@@ -297,7 +301,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				localStorage.setItem('loginAddress', address);
 
 				localStorage.setItem('multisigAssociatedAddress', address);
-				handleTokenChange(addressLoginData.token, currentUser);
+				handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
 				if (isModal) {
 					setLoginOpen?.(false);
 					setLoading(false);
@@ -341,7 +345,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 		if (data?.token) {
 			setError('');
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			if (isModal) {
 				setLoading(false);
 				setAuthResponse(initAuthResponse);
@@ -378,17 +382,17 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 		<>
 			<div className='flex items-center'>
 				<LoginLogo className='ml-6 mr-2' />
-				<h3 className='mt-3 text-xl font-semibold text-bodyBlue'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
+				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-white'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />
-			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md'>
+			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
 				<h3 className='flex flex-col gap-y-2 text-2xl font-semibold text-[#1E232C]'>
 					{!withPolkasafe && (
 						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
 							<span className='mt-2'>
 								<WalletIcon which={chosenWallet} />
 							</span>
-							<span className='text-lg text-bodyBlue sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+							<span className='text-lg text-bodyBlue dark:text-white sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
 						</p>
 					)}
 					{withPolkasafe && (
@@ -403,7 +407,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				</h3>
 				{fetchAccounts ? (
 					<div className='flex flex-col items-center justify-center'>
-						<p className='text-base text-bodyBlue'>
+						<p className='text-base text-bodyBlue dark:text-white'>
 							{withPolkasafe
 								? 'To fetch your Multisig details, please select a wallet extension'
 								: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
@@ -565,7 +569,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					</>
 				)}
 				<div className='mt-6 flex items-center justify-center pb-5 font-medium'>
-					<label className='text-lg text-bodyBlue'>Don&apos;t have an account?</label>
+					<label className='text-lg text-bodyBlue dark:text-white'>Don&apos;t have an account?</label>
 					<div
 						onClick={handleClick}
 						className='cursor-pointer text-lg text-pink_primary'

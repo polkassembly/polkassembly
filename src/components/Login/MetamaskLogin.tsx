@@ -9,7 +9,6 @@ import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -31,6 +30,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import addEthereumChain from '~src/util/addEthereumChain';
 import TFALoginForm from './TFALoginForm';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -79,9 +80,9 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 
 const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLoginOpen, setSignupOpen, onWalletUpdate }) => {
 	const router = useRouter();
-	const currentUser = useUserDetailsContext();
-	const { network } = useNetworkContext();
-
+	const currentUser = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
+	const dispatch = useDispatch();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -259,14 +260,15 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 										}
 
 										if (confirmData.token) {
-											currentUser.loginWallet = Wallet.METAMASK;
-											currentUser.loginAddress = address;
-											currentUser.delegationDashboardAddress = address;
+											const user: any = {};
+											user.loginWallet = Wallet.METAMASK;
+											user.loginAddress = address;
+											user.delegationDashboardAddress = address;
 											localStorage.setItem('delegationWallet', Wallet.METAMASK);
 											localStorage.setItem('delegationDashboardAddress', address);
 											localStorage.setItem('loginWallet', Wallet.METAMASK);
 											localStorage.setItem('loginAddress', address);
-											handleTokenChange(confirmData.token, currentUser);
+											handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 											if (isModal) {
 												setLoginOpen && setLoginOpen(false);
 												setLoading(false);
@@ -287,15 +289,16 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 					}
 
 					if (addressLoginData?.token) {
-						currentUser.loginWallet = Wallet.METAMASK;
-						currentUser.loginAddress = address;
-						currentUser.delegationDashboardAddress = address;
+						const user: any = {};
+						user.loginWallet = Wallet.METAMASK;
+						user.loginAddress = address;
+						user.delegationDashboardAddress = address;
 						localStorage.setItem('delegationWallet', Wallet.METAMASK);
 						localStorage.setItem('delegationDashboardAddress', address);
 						localStorage.setItem('loginWallet', Wallet.METAMASK);
 						localStorage.setItem('loginAddress', address);
 
-						handleTokenChange(addressLoginData.token, currentUser);
+						handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
 						if (isModal) {
 							setLoginOpen?.(false);
 							setLoading(false);
@@ -341,16 +344,16 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 
 		if (data?.token) {
 			setError('');
-
-			currentUser.loginWallet = Wallet.METAMASK;
-			currentUser.loginAddress = address;
-			currentUser.delegationDashboardAddress = address;
+			const user: any = {};
+			user.loginWallet = Wallet.METAMASK;
+			user.loginAddress = address;
+			user.delegationDashboardAddress = address;
 			localStorage.setItem('delegationWallet', Wallet.METAMASK);
 			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('loginWallet', Wallet.METAMASK);
 			localStorage.setItem('loginAddress', address);
 
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, { ...currentUser, ...user }, dispatch);
 			if (isModal) {
 				setLoading(false);
 				setAuthResponse(initAuthResponse);
@@ -368,7 +371,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 	};
 
 	return (
-		<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md'>
+		<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
 			<h3 className='flex flex-col gap-y-4 text-2xl font-semibold text-[#1E232C]'>
 				<span>Login</span>
 				<p className='flex items-center justify-center gap-x-2'>

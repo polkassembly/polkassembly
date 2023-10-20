@@ -10,16 +10,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 
-import { NetworkContext } from '~src/context/NetworkContext';
-
 import WhitelistMembersListing from './WhitelistMembersListing';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export type WhitelistMember = { accountId: string; rank?: number };
 
 const WhitelistMembersContainer = ({ className, membersType }: { className?: string; membersType: EMembersType }) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useContext(ApiContext);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -137,7 +136,7 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 
 	if (noMembers) {
 		return (
-			<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
+			<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
 				<PostEmptyState />
 			</div>
 		);
@@ -146,7 +145,7 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 	if (members.length) {
 		return (
 			<>
-				<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
+				<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
 					<div className='flex items-center justify-between'>
 						<div>
 							<h1 className='dashboard-heading'>{members.length} Members</h1>

@@ -5,8 +5,7 @@
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
 import { Divider, Modal, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
-import React, { FC, useContext, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
@@ -14,6 +13,7 @@ import TagsIcon from '~assets/icons/tags-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import TopicTag from '~src/ui-components/TopicTag';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 export interface IDiscussionProps {
 	created_at: Date;
@@ -34,7 +34,7 @@ export interface IDiscussionProps {
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
 	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count, className } = props;
-	const currentUser = useContext(UserDetailsContext);
+	const currentUser = useUserDetailsSelector();
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
@@ -46,7 +46,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					ownPost && 'border-l-4 border-l-pink_primary'
 				} min-h-[120px] border-2 border-solid border-[#DCDFE350] p-3 transition-all duration-200 hover:border-pink_primary hover:shadow-xl xs:hidden sm:flex md:p-4 ${className}`}
 			>
-				<span className='flex-none text-center font-medium text-bodyBlue sm:mt-2 sm:w-[120px]'>#{post_id}</span>
+				<span className='flex-none text-center font-medium text-bodyBlue dark:text-white sm:mt-2 sm:w-[120px]'>#{post_id}</span>
 				<div className='flex-1 flex-col sm:mt-[6px] sm:flex sm:justify-between'>
 					<OnchainCreationLabel
 						address={address}
@@ -56,7 +56,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					/>
 					<div className='hidden sm:mb-1 sm:mt-2 sm:flex sm:flex-row sm:items-start sm:justify-between'>
 						<div className='mt-3 lg:mt-1'>
-							<h1 className='flex text-sm font-medium text-bodyBlue'>
+							<h1 className='flex text-sm font-medium text-bodyBlue dark:text-white'>
 								{title}
 								{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
 									<div className='ml-5 hidden items-center justify-center lg:flex'>
@@ -71,16 +71,16 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</h1>
 						</div>
 					</div>
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:flex lg:flex-row lg:items-center'>
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-white xs:hidden sm:flex lg:flex-row lg:items-center'>
 						<div className='flex items-center gap-x-2'>
 							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 
 							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 								<DislikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 
 							<div className='items-center xs:hidden sm:flex'>
@@ -88,7 +88,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 									className='mr-1'
 									style={{ color: '#485F7D' }}
 								/>
-								<span className=' text-lightBlue'>{commentsCount}</span>
+								<span className=' text-lightBlue dark:text-blue-dark-medium'>{commentsCount}</span>
 							</div>
 							<Divider
 								type='vertical'
@@ -101,14 +101,14 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 										<div
 											key={index}
 											style={{ fontSize: '10px' }}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue'
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
 									))}
 									{tags.length > 2 && (
 										<span
-											className='text-bodyBlue'
+											className='text-bodyBlue dark:text-white'
 											style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -130,7 +130,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							)}
 							{relativeCreatedAt && (
 								<>
-									<div className='hidden items-center text-lightBlue sm:flex'>
+									<div className='hidden items-center text-lightBlue dark:text-blue-dark-medium sm:flex'>
 										<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 									</div>
 								</>
@@ -162,7 +162,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%]`}
 				>
 					<div className='flex'>
-						<h2 className='mb-2 text-lg font-medium tracking-wide text-bodyBlue'>
+						<h2 className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-white'>
 							<TagsIcon className='mr-2' />
 							Tags
 						</h2>
@@ -174,7 +174,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								{tags?.map((tag, index) => (
 									<div
 										key={index}
-										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue'
+										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:text-blue-dark-medium'
 									>
 										{tag}
 									</div>
@@ -199,7 +199,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							/>
 						</div>
 					)}
-					<div className='max-xs-hidden m-2.5 text-sm font-medium text-bodyBlue'>
+					<div className='max-xs-hidden m-2.5 text-sm font-medium text-bodyBlue dark:text-white'>
 						#{post_id} {title}
 						<div className='flex items-center justify-between'>
 							{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
@@ -224,7 +224,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-white xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
 						<div className='xs:flex xs:justify-start sm:hidden'>
 							<OnchainCreationLabel
 								address={address}
@@ -237,7 +237,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							/>
 							{relativeCreatedAt && (
 								<>
-									<div className='mt-0 items-center text-sm xs:-mt-0.5 xs:flex xs:text-lightBlue lg:flex'>
+									<div className='mt-0 items-center text-sm xs:-mt-0.5 xs:flex xs:text-lightBlue dark:text-blue-dark-medium lg:flex'>
 										<ClockCircleOutlined className='mr-1 mt-0' /> {relativeCreatedAt}
 									</div>
 								</>
@@ -258,14 +258,14 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 										<div
 											key={index}
 											style={{ fontSize: '10px' }}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue'
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
 									))}
 									{tags.length > 2 && (
 										<span
-											className='text-bodyBlue'
+											className='text-bodyBlue dark:text-white'
 											style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -293,7 +293,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 				>
 					<div className='flex'>
 						<TagsIcon className='mr-2 mt-1.5' />
-						<h2 className='mb-2 text-lg font-semibold tracking-wide text-bodyBlue'>Tags</h2>
+						<h2 className='mb-2 text-lg font-semibold tracking-wide text-bodyBlue dark:text-white'>Tags</h2>
 					</div>
 					<div className='h-[1px] w-full bg-[#D2D8E0]' />
 					<div className='mt-4 flex flex-wrap gap-2'>
@@ -302,7 +302,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								{tags?.map((tag, index) => (
 									<div
 										key={index}
-										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue'
+										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:text-blue-dark-medium'
 									>
 										{tag}
 									</div>

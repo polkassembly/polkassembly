@@ -7,10 +7,12 @@ import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import Address from 'src/ui-components/Address';
-import { useUserDetailsContext } from '~src/context';
 import DownIcon from '~assets/icons/down-icon.svg';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { EAddressOtherTextType } from '~src/types';
+import { useDispatch } from 'react-redux';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -49,7 +51,9 @@ const AddressDropdown = ({
 	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
 	const dropdownList: { [index: string]: string } = {};
 	const addressItems: ItemType[] = [];
-	const { setUserDetailsContextState, addresses } = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const { addresses } = currentUser;
+	const dispatch = useDispatch();
 	const substrate_address = getSubstrateAddress(selectedAddress || '');
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 
@@ -78,7 +82,7 @@ const AddressDropdown = ({
 				<Address
 					className={`flex items-center ${poppins.className} ${poppins.className}`}
 					addressOtherTextType={getOtherTextType(account)}
-					addressClassName='text-lightBlue'
+					addressClassName='text-lightBlue dark:text-blue-dark-medium'
 					extensionName={account.name}
 					address={account.address}
 					disableAddressClick
@@ -119,10 +123,7 @@ const AddressDropdown = ({
 					if (e.key !== '1') {
 						setSelectedAddress(e.key);
 						onAccountChange(e.key);
-						setSwitchModalOpen &&
-							setUserDetailsContextState((prev) => {
-								return { ...prev, delegationDashboardAddress: e.key };
-							});
+						setSwitchModalOpen && dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: e.key }));
 					}
 				}
 			}}
@@ -146,7 +147,7 @@ const AddressDropdown = ({
 						)
 					)}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
-					addressClassName='text-lightBlue'
+					addressClassName='text-lightBlue dark:text-blue-dark-medium'
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
 				/>

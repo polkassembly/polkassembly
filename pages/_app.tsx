@@ -11,14 +11,19 @@ import NextNProgress from 'nextjs-progressbar';
 import { useEffect, useState } from 'react';
 import AppLayout from 'src/components/AppLayout';
 import CMDK from 'src/components/CMDK';
-import { UserDetailsProvider } from 'src/context/UserDetailsContext';
 import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
-import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 import { initGA, logPageView } from '../analytics';
+import 'antd/dist/reset.css';
+import '../styles/globals.css';
+import ErrorBoundary from '~src/ui-components/ErrorBoundary';
+import { PersistGate } from 'redux-persist/integration/react';
+import { wrapper } from '~src/redux/store';
+import { useStore } from 'react-redux';
+import { chainProperties } from '~src/global/networkConstants';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -39,13 +44,9 @@ const workSans = Work_Sans({
 	subsets: ['latin']
 });
 
-import 'antd/dist/reset.css';
-import '../styles/globals.css';
-import ErrorBoundary from '~src/ui-components/ErrorBoundary';
-import { ThemeProvider } from 'next-themes';
-
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
+	const store: any = useStore();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
 
@@ -54,15 +55,16 @@ export default function App({ Component, pageProps }: AppProps) {
 	}, [router.isReady]);
 
 	useEffect(() => {
-		if (!global?.window) return;
 		const networkStr = getNetwork();
+		if (!global?.window || !chainProperties[networkStr].gTag) return;
 		setNetwork(networkStr);
 
 		if (!window.GA_INITIALIZED) {
-			initGA();
+			initGA(networkStr);
 			// @ts-ignore
 			window.GA_INITIALIZED = true;
 		}
+		setNetwork(networkStr);
 		logPageView();
 	}, []);
 
@@ -79,33 +81,28 @@ export default function App({ Component, pageProps }: AppProps) {
 	);
 
 	return (
-		<ConfigProvider theme={antdTheme}>
-			<ThemeProvider
-				attribute='class'
-				enableSystem
-			>
+		<PersistGate persistor={store.__persistor}>
+			<ConfigProvider theme={antdTheme}>
 				<ModalProvider>
 					<ErrorBoundary>
-						<UserDetailsProvider>
-							<ApiContextProvider network={network}>
-								<NetworkContextProvider initialNetwork={network}>
-									<>
-										{showSplashScreen && <SplashLoader />}
-										<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-											<NextNProgress color='#E5007A' />
-											<CMDK />
-											<AppLayout
-												Component={Component}
-												pageProps={pageProps}
-											/>
-										</main>
-									</>
-								</NetworkContextProvider>
-							</ApiContextProvider>
-						</UserDetailsProvider>
+						<ApiContextProvider network={network}>
+							<>
+								{showSplashScreen && <SplashLoader />}
+								<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+									<NextNProgress color='#E5007A' />
+									<CMDK />
+									<AppLayout
+										Component={Component}
+										pageProps={pageProps}
+									/>
+								</main>
+							</>
+						</ApiContextProvider>
 					</ErrorBoundary>
 				</ModalProvider>
-			</ThemeProvider>
-		</ConfigProvider>
+			</ConfigProvider>
+		</PersistGate>
 	);
 }
+
+export default wrapper.withRedux(App);

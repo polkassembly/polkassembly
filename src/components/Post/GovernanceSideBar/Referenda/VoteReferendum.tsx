@@ -13,7 +13,7 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -43,6 +43,8 @@ import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import VotingForm, { EFormType } from './VotingFrom';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 
@@ -70,7 +72,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			if (days && !isNaN(Number(days))) {
 				return [
 					<Select.Option
-						className={`text-bodyBlue ${poppins.variable}`}
+						className={`text-bodyBlue dark:text-white ${poppins.variable}`}
 						key={0}
 						value={0}
 					>
@@ -78,7 +80,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</Select.Option>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<Select.Option
-							className={`text-bodyBlue ${poppins.variable}`}
+							className={`text-bodyBlue dark:text-white ${poppins.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
@@ -89,7 +91,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<Select.Option
-			className={`text-bodyBlue ${poppins.variable}`}
+			className={`text-bodyBlue dark:text-white ${poppins.variable}`}
 			key={0}
 			value={0}
 		>
@@ -97,7 +99,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<Select.Option
-				className={`text-bodyBlue ${poppins.variable}`}
+				className={`text-bodyBlue dark:text-white ${poppins.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
@@ -106,15 +108,15 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 };
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
-	const userDetails = useUserDetailsContext();
-	const { addresses, isLoggedOut, loginAddress, loginWallet } = userDetails;
+	const userDetails = useUserDetailsSelector();
+	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);
 	const [fetchingFellowship, setFetchingFellowship] = useState(true);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -303,7 +305,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, api, availableWallets]);
 
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToVote />;
 	}
 	const handleModalReset = () => {
@@ -328,6 +330,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		handleModalReset();
 	};
 	const handleSubmit = async () => {
+		trackEvent('vote', 'vote_click', 'cast_vote');
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
 			return;
@@ -562,13 +565,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								/>
 								<div className='flex items-center gap-[8px]'>
 									<PolkasafeIcon className='ml-14' />
-									<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Cast Vote with Polkasafe Multisig</span>
+									<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Cast Vote with Polkasafe Multisig</span>
 								</div>
 							</div>
 						) : (
 							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0]'>
 								<CastVoteIcon className='ml-6' />
-								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Cast Your Vote</span>
+								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Cast Your Vote</span>
 							</div>
 						)
 					}
@@ -581,7 +584,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						>
 							<>
 								<div className='mb-6'>
-									<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue'>Select a wallet</div>
+									<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
 									<div className='mt-1 flex items-center justify-center gap-x-5'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
@@ -673,7 +676,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											<Divider className='m-0'>OR</Divider>
 											<div className='flex w-full justify-center'>
 												<WalletButton
-													className='!border-[#D2D8E0] text-sm font-semibold text-bodyBlue'
+													className='!border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-white'
 													onClick={() => {
 														setShowMultisig(!showMultisig);
 													}}
@@ -740,7 +743,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue`}
+											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 											walletAddress={multisig}
 											setWalletAddress={setMultisig}
 											containerClassName='gap-5'
@@ -758,7 +761,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue`}
+											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 										/>
@@ -775,7 +778,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<h3 className='inner-headings mb-[2px] mt-[24px]'>Choose your vote</h3>
 								<Segmented
 									block
-									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white`}
+									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-section-dark-overlay`}
 									size='large'
 									value={vote}
 									onChange={(value) => {

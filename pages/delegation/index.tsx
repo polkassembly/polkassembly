@@ -10,10 +10,11 @@ import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.
 import CopyContentIcon from '~assets/icons/content-copy.svg';
 import copyToClipboard from 'src/util/copyToClipboard';
 import { message } from 'antd';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -21,11 +22,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
+	if (!['kusama', 'polkadot'].includes(network)) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/'
+			}
+		};
+	}
 	return { props: { network } };
 };
 
 const Delegation = (props: { network: string }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const { asPath } = useRouter();
 
 	const handleCopylink = () => {
@@ -37,7 +46,7 @@ const Delegation = (props: { network: string }) => {
 	};
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -51,12 +60,12 @@ const Delegation = (props: { network: string }) => {
 				<DelegationDashboard />
 			</div>
 			<div className='w-full sm:hidden'>
-				<h1 className='text-center text-2xl font-semibold text-bodyBlue'>Delegation Dashboard</h1>
+				<h1 className='text-center text-2xl font-semibold text-bodyBlue dark:text-white'>Delegation Dashboard</h1>
 				<div className='mt-12 flex flex-col items-center justify-center'>
 					<DelegationDashboardEmptyState />
-					<p className='mt-6 text-center text-base text-bodyBlue'>Please visit Delegation Dashboard from your Dekstop computer</p>
+					<p className='mt-6 text-center text-base text-bodyBlue dark:text-white'>Please visit Delegation Dashboard from your Dekstop computer</p>
 					<button
-						className='mt-5 flex items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent px-3.5 py-1.5 text-bodyBlue'
+						className='mt-5 flex items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent px-3.5 py-1.5 text-bodyBlue dark:text-white'
 						onClick={() => {
 							handleCopylink();
 						}}

@@ -7,7 +7,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Pagination, Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
-import { useNetworkContext, usePostDataContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -15,6 +15,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import VoterRow from './VoterRow';
 import { votesSortValues } from '~src/global/sortOptions';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IVotersListProps {
 	className?: string;
@@ -41,7 +42,7 @@ const sortedCheck = {
 };
 
 const DelegationVotersList: FC<IVotersListProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const {
 		postData: { postType }
 	} = usePostDataContext();
@@ -99,9 +100,9 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 					<div className='overflow-x-auto md:overflow-visible'>
 						<div className='flex flex-col overflow-x-auto px-0 text-xs text-sidebarBlue'>
 							<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-								<div className={'w-[190px] text-sm font-medium text-lightBlue'}>Delegator</div>
+								<div className={'w-[190px] text-sm font-medium text-lightBlue dark:text-blue-dark-medium'}>Delegator</div>
 								<div
-									className={'flex w-[110px] items-center gap-1 text-lightBlue'}
+									className={'flex w-[110px] items-center gap-1 text-lightBlue dark:text-blue-dark-medium'}
 									onClick={() => {
 										handleSortByClick({
 											key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -114,7 +115,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 								</div>
 								{network !== AllNetworks.COLLECTIVES ? (
 									<div
-										className={'flex w-[110px] items-center gap-1 text-lightBlue'}
+										className={'flex w-[110px] items-center gap-1 text-lightBlue dark:text-blue-dark-medium'}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -128,7 +129,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 								) : null}
 
 								<div
-									className='flex w-[110px] items-center gap-1 whitespace-nowrap text-lightBlue'
+									className='flex w-[110px] items-center gap-1 whitespace-nowrap text-lightBlue dark:text-blue-dark-medium'
 									onClick={() => {
 										handleSortByClick({
 											key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
@@ -158,7 +159,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 							)}
 						</div>
 
-						<div className='z-10 flex items-center justify-between bg-white pt-6'>
+						<div className='z-10 flex items-center justify-between bg-white pt-6 dark:bg-section-dark-overlay'>
 							<Pagination
 								size='small'
 								defaultCurrent={1}

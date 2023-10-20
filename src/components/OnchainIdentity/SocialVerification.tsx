@@ -50,12 +50,12 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 			spinning={loading}
 			className='-mt-4'
 		>
-			<div className='ml-2 flex h-[70px] gap-5 text-lightBlue'>
+			<div className='ml-2 flex h-[70px] gap-5 text-lightBlue dark:text-blue-dark-medium'>
 				<span className='w-[60px] py-1.5 text-sm'>{title}</span>
 				<div className='w-full'>
 					<div
 						className={`flex h-[40px]  items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] pl-3 pr-2 tracking-wide ${
-							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue'
+							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue dark:text-white'
 						}`}
 					>
 						<span>{value}</span>

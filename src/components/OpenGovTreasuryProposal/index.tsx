@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
@@ -18,9 +18,9 @@ import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import { BN_HUNDRED } from '@polkadot/util';
 import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import userProfileBalances from '~src/util/userProfieBalances';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -57,7 +57,7 @@ export interface IPreimage {
 const ZERO_BN = new BN(0);
 const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
@@ -80,7 +80,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
 	const [postId, setPostId] = useState<number>(0);
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
@@ -132,7 +132,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue'
+				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue dark:text-blue-dark-medium transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-white'
 				onClick={handleClick}
 			>
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
@@ -164,13 +164,13 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				wrapClassName={className}
 				closable={false}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-white'>
 						Exit Treasury Proposal Creation
 					</div>
 				}
 			>
 				<div className='mt-6 px-6'>
-					<span className='text-sm text-bodyBlue'>
+					<span className='text-sm text-bodyBlue dark:text-white'>
 						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
 					</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
@@ -219,7 +219,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				wrapClassName={className}
 				closeIcon={<CloseIcon />}
 				title={
-					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>
+					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-white'>
 						<CreateProposalIcon />
 						Create Treasury Proposal
 					</div>
@@ -227,7 +227,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			>
 				<div className='mt-6 px-6'>
 					<Steps
-						className='font-medium text-bodyBlue'
+						className='font-medium text-bodyBlue dark:text-white'
 						percent={steps.percent}
 						current={steps.step}
 						size='default'

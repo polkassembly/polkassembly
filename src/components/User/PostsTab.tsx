@@ -37,7 +37,7 @@ const PostsTab: FC<IPostsTabProps> = (props) => {
 					};
 				});
 	return (
-		<div className={`${className} h-full bg-white`}>
+		<div className={`${className} h-full bg-white dark:bg-section-dark-overlay`}>
 			{Array.isArray(posts) ? (
 				<PostTab posts={posts} />
 			) : (

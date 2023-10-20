@@ -16,7 +16,7 @@ import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -29,6 +29,9 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -113,13 +116,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
-	const { id: userId } = useUserDetailsContext();
+	const { id: userId } = useUserDetailsSelector();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		if (!api || !apiReady) return;
 
 		let unsubscribe: () => void;
@@ -156,7 +159,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				network={network}
 			/>
 			<div className='mr-2 flex justify-between'>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>Overview</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-white'>Overview</h1>
 				{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
 					<div className='flex items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
 						<IdentityCaution />

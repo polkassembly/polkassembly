@@ -39,7 +39,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 						<span className='relative top-[3px]'>
 							<VoteDataIcon />
 						</span>
-						<span className='text-xl font-semibold text-bodyBlue'>Voting Data</span>
+						<span className='text-xl font-semibold text-bodyBlue dark:text-white'>Voting Data</span>
 					</h3>
 					<Divider className='my-2 mb-5 text-[#D2D8E0]' />
 				</div>

@@ -28,7 +28,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { MessageType, ProfileDetails } from '~src/auth/types';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -47,7 +47,7 @@ const SetOnChainIdentityButton = dynamic(() => import('src/components/Settings/s
 });
 
 const Profile = ({ className, profileDetails }: Props): JSX.Element => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const router = useRouter();
 	const { address, username, membersType } = router.query;
@@ -395,13 +395,13 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			<BackToListingView postCategory={membersType as EMembersType} />
 
 			<div className='mb-4 mt-6 flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-6 text-sm font-medium text-sidebarBlue shadow-md md:mb-0 md:mr-4 md:text-base'>
+				<p className='mb-4 w-full rounded-md bg-white dark:bg-section-dark-overlay p-6 text-sm font-medium text-sidebarBlue shadow-md md:mb-0 md:mr-4 md:text-base'>
 					<Markdown md={profileDetails?.bio || noDescription} />
 				</p>
 				<SetOnChainIdentityButton />
 			</div>
 
-			<div className='w-full rounded-md bg-white p-3 drop-shadow-md lg:p-6'>
+			<div className='w-full rounded-md bg-white dark:bg-section-dark-overlay p-3 drop-shadow-md lg:p-6'>
 				<h2 className='dashboard-heading mb-4'>{profileDetails?.title || 'Untitled'}</h2>
 				<Tabs
 					type='card'

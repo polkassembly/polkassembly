@@ -35,7 +35,7 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 		>
 			<div className='-mt-[110px] flex flex-col items-center justify-center'>
 				<SuccessIcon />
-				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue'>{social} verified successfully</label>
+				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue dark:text-white'>{social} verified successfully</label>
 				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}
 				<Button
 					className='mt-6 h-[40px] rounded-[4px] border-none bg-pink_primary text-sm text-white'

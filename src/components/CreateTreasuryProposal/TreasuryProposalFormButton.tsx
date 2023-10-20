@@ -20,7 +20,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 import { CreatePostResponseType } from '~src/auth/types';
 
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -28,6 +28,7 @@ import AddressComponent from '../../ui-components/Address';
 import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
 import executeTx from '~src/util/executeTx';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -42,7 +43,7 @@ enum AvailableAccountsInput {
 const TreasuryProposalFormButton = ({
 	className // setTipModalOpen,
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const [extensionNotAvailable, setExtensionNotAvailable] = useState(false);
@@ -70,7 +71,7 @@ const TreasuryProposalFormButton = ({
 		minBond: ''
 	});
 
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];
@@ -338,7 +339,7 @@ const TreasuryProposalFormButton = ({
 	);
 	return loadingStatus.isLoading ? (
 		<Spin indicator={<LoadingOutlined />}>
-			<div className='flex h-[75px] min-w-[226px] cursor-not-allowed items-center justify-center rounded-[4px] border-none bg-white px-[19x] py-6 text-sm font-medium leading-[27px] text-pink_primary shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'>
+			<div className='flex h-[75px] min-w-[226px] cursor-not-allowed items-center justify-center rounded-[4px] border-none bg-white dark:bg-section-dark-overlay px-[19x] py-6 text-sm font-medium leading-[27px] text-pink_primary shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'>
 				{loadingStatus.message}
 			</div>
 		</Spin>

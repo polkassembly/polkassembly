@@ -10,11 +10,12 @@ import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
-import { usePostDataContext, useUserDetailsContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IComment } from '../../Comment/Comment';
 import { deleteContentByMod } from '~src/util/deleteContentByMod';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IReportButtonProps {
 	type: string;
@@ -31,7 +32,7 @@ const reasons = ["It's suspicious or spam", "It's abusive or harmful", 'It expre
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
 	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess } = props;
-	const { allowed_roles } = useUserDetailsContext();
+	const { allowed_roles } = useUserDetailsSelector();
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);

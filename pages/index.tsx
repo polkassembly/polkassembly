@@ -15,7 +15,7 @@ import AboutNetwork from '~src/components/Home/AboutNetwork';
 import LatestActivity from '~src/components/Home/LatestActivity';
 import News from '~src/components/Home/News';
 import UpcomingEvents from '~src/components/Home/UpcomingEvents';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -39,6 +39,10 @@ import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useRouter } from 'next/router';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { setNetwork } from '~src/redux/network';
+import { useDispatch } from 'react-redux';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -183,15 +187,16 @@ const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOver
 });
 
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
-	const { setNetwork } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
-	const { id: userId } = useUserDetailsContext();
+	const { id: userId } = useUserDetailsSelector();
 	const router = useRouter();
+	const dispatch = useDispatch();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
 	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(Boolean(router.query.identityVerification) || false);
-
+	const { resolvedTheme: theme } = useTheme();
+	console.log(theme, 'Current theme on App');
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 		if (!api || !apiReady) return;
 		let unsubscribe: () => void;
 		const address = localStorage.getItem('identityAddress');
@@ -248,7 +253,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 			/>
 			<main>
 				<div className='mr-2 flex justify-between'>
-					<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>Overview</h1>
+					<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-white'>Overview</h1>
 					{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
 						<div className='flex  items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
 							<IdentityCaution />
@@ -264,7 +269,10 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				)}
 				<div className='mx-1 mt-8'>
 					{network !== AllNetworks.COLLECTIVES ? (
-						<LatestActivity latestPosts={latestPosts} />
+						<LatestActivity
+							latestPosts={latestPosts}
+							theme={theme}
+						/>
 					) : (
 						<Gov2LatestActivity
 							gov2LatestPosts={{
@@ -272,6 +280,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 								discussionPosts: latestPosts.discussions,
 								...latestPosts
 							}}
+							theme={theme}
 						/>
 					)}
 				</div>
@@ -293,5 +302,3 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 		</>
 	);
 };
-
-export default Home;

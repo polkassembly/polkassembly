@@ -51,7 +51,7 @@ const AllianceMembers = ({ className }: { className?: string }) => {
 
 	return (
 		<>
-			<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
+			<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>Fellow</h1>
 				</div>
@@ -63,7 +63,7 @@ const AllianceMembers = ({ className }: { className?: string }) => {
 				/>
 			</div>
 
-			<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
+			<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>Ally</h1>
 				</div>
@@ -75,7 +75,7 @@ const AllianceMembers = ({ className }: { className?: string }) => {
 				/>
 			</div>
 
-			<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
+			<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>Retiring</h1>
 				</div>

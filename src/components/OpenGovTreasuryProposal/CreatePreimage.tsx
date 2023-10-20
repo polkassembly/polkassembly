@@ -9,7 +9,7 @@ import BN from 'bn.js';
 import dynamic from 'next/dynamic';
 import SelectTracks from './SelectTracks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import AddressInput from '~src/ui-components/AddressInput';
 import Web3 from 'web3';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -39,6 +39,7 @@ import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -101,7 +102,7 @@ const CreatePreimage = ({
 	form
 }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [preimageCreated, setPreimageCreated] = useState<boolean>(false);
 	const [preimageLinked, setPreimageLinked] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -604,7 +605,7 @@ const CreatePreimage = ({
 		>
 			<div className={`${className} create-preimage`}>
 				<div className='my-8 flex flex-col'>
-					<label className='text-sm text-lightBlue'>Do you have an existing preimage? </label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Do you have an existing preimage? </label>
 					<Radio.Group
 						onChange={(e) => {
 							setIsPreimage(e.target.value);
@@ -617,13 +618,13 @@ const CreatePreimage = ({
 					>
 						<Radio
 							value={true}
-							className='text-sm font-normal text-bodyBlue'
+							className='text-sm font-normal text-bodyBlue dark:text-white'
 						>
 							Yes
 						</Radio>
 						<Radio
 							value={false}
-							className='text-sm font-normal text-bodyBlue'
+							className='text-sm font-normal text-bodyBlue dark:text-white'
 						>
 							No
 						</Radio>
@@ -646,7 +647,7 @@ const CreatePreimage = ({
 					{isPreimage && (
 						<>
 							<div className='preimage mt-6'>
-								<label className='text-sm text-lightBlue'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 									Preimage Hash{' '}
 									<span>
 										<HelperTooltip
@@ -666,7 +667,7 @@ const CreatePreimage = ({
 								{invalidPreimageHash() && !loading && <span className='text-sm text-[#ff4d4f]'>Invalid Preimage hash</span>}
 							</div>
 							<div className='mt-6'>
-								<label className='text-sm text-lightBlue'>Preimage Length</label>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Preimage Length</label>
 								<Form.Item name='preimage_length'>
 									<Input
 										name='preimage_length'
@@ -686,13 +687,13 @@ const CreatePreimage = ({
 							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
-									className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:text-white ${poppins.variable} ${poppins.className}`}
 									showIcon
 									message='Insufficient available balance.'
 								/>
 							)}
 							<div className='mt-6'>
-								<div className='mt-6 flex items-center justify-between text-lightBlue'>
+								<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 									Proposer Address
 									<span>
 										<Balance
@@ -706,7 +707,7 @@ const CreatePreimage = ({
 									defaultAddress={proposerAddress}
 									onChange={() => setLoading(false)}
 									inputClassName={' font-normal text-sm h-[40px]'}
-									className='-mt-6 text-sm font-normal text-lightBlue'
+									className='-mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									disabled
 									size='large'
 									identiconSize={30}
@@ -716,7 +717,7 @@ const CreatePreimage = ({
 								defaultAddress={beneficiaryAddress}
 								label={'Beneficiary Address'}
 								placeholder='Add beneficiary address'
-								className='text-sm font-normal text-lightBlue'
+								className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 								onChange={(address) => handleBeneficiaryAddresschange(address)}
 								helpText='The amount requested in the proposal will be received in this address.'
 								size='large'
@@ -740,7 +741,7 @@ const CreatePreimage = ({
 								/>
 							)}
 							<div className='-mb-6 mt-6'>
-								<div className='mb-[2px] flex items-center justify-between text-sm text-lightBlue'>
+								<div className='mb-[2px] flex items-center justify-between text-sm text-lightBlue dark:text-blue-dark-medium'>
 									<label>
 										Funding Amount{' '}
 										<span>
@@ -750,7 +751,7 @@ const CreatePreimage = ({
 											/>
 										</span>
 									</label>
-									<span className='text-xs text-bodyBlue'>
+									<span className='text-xs text-bodyBlue dark:text-white'>
 										Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice.value) || 0)} USD</span>
 									</span>
 								</div>
@@ -767,7 +768,7 @@ const CreatePreimage = ({
 								/>
 							</div>
 							<div className='mt-6'>
-								<label className='text-sm text-lightBlue'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 									Select Track{' '}
 									<span>
 										<HelperTooltip
@@ -801,7 +802,7 @@ const CreatePreimage = ({
 					)}
 					{openAdvanced && (
 						<div className='preimage mt-3 flex flex-col'>
-							<label className='text-sm text-lightBlue'>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 								Enactment{' '}
 								<span>
 									<HelperTooltip
@@ -823,7 +824,7 @@ const CreatePreimage = ({
 							>
 								<Radio
 									value={EEnactment.At_Block_No}
-									className='text-sm font-normal text-bodyBlue'
+									className='text-sm font-normal text-bodyBlue dark:text-white'
 								>
 									<div className='flex h-[40px] items-center gap-2'>
 										<span className='w-[150px]'>
@@ -865,7 +866,7 @@ const CreatePreimage = ({
 								</Radio>
 								<Radio
 									value={EEnactment.After_No_Of_Blocks}
-									className='text-sm font-normal text-bodyBlue'
+									className='text-sm font-normal text-bodyBlue dark:text-white'
 								>
 									<div className='flex h-[30px] items-center gap-2'>
 										<span className='w-[150px]'>
@@ -909,7 +910,7 @@ const CreatePreimage = ({
 					{showAlert && !isPreimage && !txFee.eq(ZERO_BN) && (
 						<Alert
 							type='info'
-							className='mt-6 rounded-[4px] text-bodyBlue'
+							className='mt-6 rounded-[4px] text-bodyBlue dark:text-white'
 							showIcon
 							description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
 							message={`${formatedBalance(String(baseDeposit.toString()), unit)} ${unit} Base deposit is required to create a preimage.`}

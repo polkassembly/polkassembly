@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
@@ -29,6 +29,7 @@ import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
 import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -94,7 +95,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
@@ -268,7 +269,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						height={20}
 						alt={''}
 					/>
-					<div className='text-sm font-medium text-bodyBlue'>
+					<div className='text-sm font-medium text-bodyBlue dark:text-white'>
 						Please{' '}
 						<span
 							className='cursor-pointer text-pink_primary'
@@ -284,7 +285,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			)}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div className='tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-					<span className='text-lg font-medium text-bodyBlue'>
+					<span className='text-lg font-medium text-bodyBlue dark:text-white'>
 						{allComments.length || 0}
 						<span className='ml-1'>Comments</span>
 					</span>
@@ -334,7 +335,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											<AnchorLink
 												href={`#${comments[`${timeline.index}_${timeline.type}`]?.[0]?.id}`}
 												title={
-													<div className='sticky top-10 flex flex-col text-lightBlue'>
+													<div className='sticky top-10 flex flex-col text-lightBlue dark:text-blue-dark-medium'>
 														<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
 														<div className='text-xs'>({comments[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
@@ -342,7 +343,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 												}
 											/>
 										) : (
-											<div className='sticky top-10 ml-5 flex cursor-pointer flex-col text-lightBlue'>
+											<div className='sticky top-10 ml-5 flex cursor-pointer flex-col text-lightBlue dark:text-blue-dark-medium'>
 												<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 												<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
 												<div className='text-xs'>({timeline.commentsCount})</div>
@@ -352,7 +353,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								) : (
 									<div
 										key={timeline.id}
-										className='sticky top-10 ml-5 flex cursor-default flex-col text-lightBlue'
+										className='sticky top-10 ml-5 flex cursor-default flex-col text-lightBlue dark:text-blue-dark-medium'
 									>
 										<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 										<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>

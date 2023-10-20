@@ -13,12 +13,10 @@ import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useUserDetailsContext } from '~src/context';
 import CloseIcon from '~assets/icons/close.svg';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -37,6 +35,7 @@ import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
 import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import LockIcon from '~assets/icons/lock.svg';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -51,10 +50,10 @@ interface Props {
 
 const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress } = useUserDetailsContext();
+	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [target, setTarget] = useState<string>('');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
@@ -316,7 +315,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 					?.filter((item) => item?.trackId !== trackNum)
 					?.map((track, index) => (
 						<div
-							className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue`}
+							className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-white`}
 							key={index}
 						>
 							<Checkbox
@@ -349,7 +348,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full`}
 				wrapClassName={className}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
 						<DelegateProfileGreyIcon className='mr-2' />
 						Delegate
 					</div>
@@ -422,13 +421,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									/>
 								)}
 								<div className=''>
-									<label className='mb-[2px] text-sm text-lightBlue'>Your Address</label>
+									<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 									<AddressInput
 										name='dashboardAddress'
 										defaultAddress={delegationDashboardAddress}
 										onChange={() => setLoading(false)}
-										inputClassName={' font-normal text-sm h-[40px] text-lightBlue'}
-										className='-mt-6 text-sm font-normal text-bodyBlue'
+										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium'}
+										className='-mt-6 text-sm font-normal text-bodyBlue dark:text-white'
 										disabled
 										size='large'
 										identiconSize={30}
@@ -440,7 +439,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									defaultAddress={defaultTarget}
 									label={'Beneficiary Address'}
 									placeholder='Add beneficiary address'
-									className='text-sm font-normal text-lightBlue'
+									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									onChange={(address) => {
 										setTarget(address);
 										handleSubstrateAddressChangeAlert(address);
@@ -467,7 +466,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									/>
 								)}
 
-								<div className='mt-6 flex cursor-pointer items-center justify-between text-lightBlue'>
+								<div className='mt-6 flex cursor-pointer items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 									Balance
 									<span
 										onClick={() => {
@@ -485,7 +484,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								<BalanceInput
 									onBlur={getTxFee}
 									placeholder={'Enter balance'}
-									className='text-sm font-normal text-lightBlue'
+									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									address={delegationDashboardAddress}
 									onAccountBalanceChange={handleOnBalanceChange}
 									onChange={(balance) => setBnBalance(balance)}
@@ -493,7 +492,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									inputClassName='text-[#7c899b] text-sm'
 								/>
 								<div className='mb-2 mt-4 border-solid border-white'>
-									<label className='flex items-center text-sm text-lightBlue'>
+									<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
 										Conviction
 										<span>
 											<HelperTooltip
@@ -526,16 +525,16 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									</div>
 								</div>
 								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px]'>
-									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue'>
+									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue dark:text-blue-dark-medium'>
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
-									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue'>
+									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-white'>
 										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance, locked for ${lock} enactment period`}
 									</div>
 								</div>
 								<div className='mb-2 mt-6 flex items-center justify-between'>
-									<span className='text-sm text-lightBlue'>Selected track(s)</span>
+									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
 									<Popover
 										content={content}
 										placement='topLeft'

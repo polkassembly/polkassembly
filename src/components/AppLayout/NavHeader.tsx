@@ -71,7 +71,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		router.replace(router.asPath);
 		if (!router.query?.username) return;
 		if (router.query?.username.includes(username)) {
-			router.replace('/');
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 	};
 	const setGovTypeToContext = (govType: EGovType) => {

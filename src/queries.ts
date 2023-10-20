@@ -1725,7 +1725,7 @@ export const GET_PROPOSAL_BY_STATUS_AND_TYPE = `query ProposalByStatusAndType($t
 }`;
 
 export const GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT = `query getAllianceAnnouncements( $limit: Int = 50, $offset: Int = 0, $type_in:[AnnouncementType!] ) {
-  announcements(limit: $limit, offset: $offset, where:{status_in:[Rejected,Executed,TimedOut, Approved, Cancelled,ConfirmStarted, ConfirmAborted], type_in: $type_in}) {
+  announcements(limit: $limit, offset: $offset, where:{status_not_in:[Rejected,Executed,TimedOut, Approved, Cancelled,ConfirmStarted, ConfirmAborted], type_in: $type_in}) {
     id
     code
     codec

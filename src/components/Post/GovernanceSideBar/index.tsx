@@ -71,6 +71,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
+import Web3 from 'web3';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -92,6 +93,8 @@ interface IGovernanceSidebarProps {
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
+const abi = require('src/moonbeamConvictionVoting.json');
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
 	let height = 0;
@@ -668,9 +671,38 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const handleRemoveVote = async () => {
 		if (!api || !apiReady || !track_number) return;
-		const tx = api.tx.convictionVoting.removeVote(track_number, postIndex);
+		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
+			const web3 = new Web3((window as any).ethereum);
 
-		await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: 'Transactions failed!', network, onFailed, onSuccess, tx });
+			const chainId = await web3.eth.net.getId();
+
+			if (chainId !== chainProperties[network].chainId) {
+				queueNotification({
+					header: 'Wrong Network!',
+					message: `Please change to ${network} network`,
+					status: NotificationStatus.ERROR
+				});
+				return;
+			}
+			const contract = new web3.eth.Contract(abi, contractAddress);
+			contract.methods
+				.removeVote(postIndex)
+				.send({
+					from: address,
+					to: contractAddress
+				})
+				.then((result: any) => {
+					console.log(result);
+					onSuccess();
+				})
+				.catch((error: any) => {
+					console.error('ERROR:', error);
+					onFailed('Failed!');
+				});
+		} else {
+			const tx = api.tx.convictionVoting.removeVote(track_number, postIndex);
+			await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: 'Transactions failed!', network, onFailed, onSuccess, tx });
+		}
 	};
 	useEffect(() => {
 		if (!api || !apiReady) return;

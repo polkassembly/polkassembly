@@ -310,7 +310,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		contract.methods
-			.removeVoteForTrack(vote.refIndex, vote.trackId)
+			.removeVote(vote.refIndex)
 			.send({
 				from: address,
 				to: contractAddress

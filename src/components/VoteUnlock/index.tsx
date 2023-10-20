@@ -68,6 +68,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		const lockPeriod = api?.consts?.convictionVoting?.voteLockingPeriod as BN;
 		const locks: ILockData[] = [];
 
+		const convictionMultipliers = [0, 1, 2, 4, 8, 16, 32];
 		for (let i = 0, voteCount = votes.length; i < voteCount; i++) {
 			const [track, , casting] = votes[i];
 
@@ -111,7 +112,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					} else if (tally.isCancelled || tally.isTimedOut) {
 						endBlock = tally.isCancelled ? tally.asCancelled[0] : tally.asTimedOut[0];
 					} else if (tally.isApproved || tally.isRejected) {
-						endBlock = lockPeriod.muln(conviction).add(tally.isApproved ? tally.asApproved[0] : tally.asRejected[0]);
+						endBlock = lockPeriod.muln(convictionMultipliers[conviction]).add(tally.isApproved ? tally.asApproved[0] : tally.asRejected[0]);
 					} else {
 						console.error(`Unable to handle ${tally.type}`);
 					}
@@ -211,12 +212,11 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		const currentBlockNumber = await api.derive.chain.bestNumber();
 		handleLockUnlockData(data, currentBlockNumber);
 	};
-	const getClearReferendaTx = (api: ApiPromise, address: string, ids: [BN, BN][], palletReferenda = 'convictionVoting'): SubmittableExtrinsic<'promise'> | null => {
-		if (!api.tx.utility || !ids.length) {
-			return null;
-		}
 
-		const variables = ids.map(([track, refId]) => api.tx[palletReferenda].removeVote(track, refId));
+	const getClearReferendaTx = (api: ApiPromise, address: string, ids: [BN, BN][]): SubmittableExtrinsic<'promise'> | null => {
+		if (!api || !apiReady || !ids.length) return null;
+
+		const variables = ids.map(([track, refId]) => api.tx.convictionVoting.removeVote(track.toNumber(), refId.toNumber()));
 
 		ids
 			.reduce((all: BN[], [track]) => {
@@ -227,7 +227,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				return all;
 			}, [])
 			.forEach((track): void => {
-				variables.push(api.tx[palletReferenda].unlock(track, address));
+				variables.push(api.tx.convictionVoting.unlock(track.toNumber(), address));
 			});
 
 		return api.tx.utility.batch(variables);
@@ -236,7 +236,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
-			message: 'Delegation successful.',
+			message: 'Tokens Unlock successfully.',
 			status: NotificationStatus.SUCCESS
 		});
 		setOpenSuccessState(true);
@@ -286,7 +286,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		getLockData(address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
-
+	console.log(totalLockData, totalOngoingData, totalUnlockableData);
 	return (
 		<>
 			<div className='boder-solid flex items-start justify-start'>

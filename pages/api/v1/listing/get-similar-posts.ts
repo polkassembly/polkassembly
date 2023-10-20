@@ -50,13 +50,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		variables: postsVariables
 	});
 	let posts: any;
-	const subsquidData = subsquidRes.data.proposals;
+	const subsquidData = subsquidRes?.data?.proposals;
 	const activePostIds = subsquidData.map((proposal: any) => proposal.index);
 	let onChainCollRef;
 	if (tags && activePostIds && topicId) {
 		onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 		let postsSnapshotArr;
-		if (tags.lenght > 0) {
+		if (tags.length > 0) {
 			postsSnapshotArr = await onChainCollRef.where('tags', 'array-contains-any', tags).get();
 		} else {
 			postsSnapshotArr = await onChainCollRef.get();

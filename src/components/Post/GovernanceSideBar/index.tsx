@@ -359,9 +359,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		setIsLastVoteLoading(true);
 		const encoded = getEncodedAddress(address || loginAddress || defaultAddress || '', network);
 
-		const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>(
-			`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`
-		);
+		const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>('api/v1/votes/history', {
+			proposalIndex: onchainId,
+			proposalType,
+			voterAddress: encoded
+		});
+
 		if (error || !data) {
 			console.error('Error in fetching votes history: ', error);
 			setIsLastVoteLoading(false);
@@ -642,7 +645,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	useEffect(() => {
 		getVotingHistory();
-	}, [getVotingHistory]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, address]);
 
 	const onSuccess = () => {
 		queueNotification({
@@ -737,17 +741,19 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						</span>
 					</Tooltip>
 
-					<Tooltip
-						placement='bottom'
-						title='Conviction'
-						color={'#E5007A'}
-						className='ml-[-5px]'
-					>
-						<span title='Conviction'>
-							<ConvictionIcon className='mr-1' />
-							{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x
-						</span>
-					</Tooltip>
+					{!isNaN(Number(lockPeriod)) && (
+						<Tooltip
+							placement='bottom'
+							title='Conviction'
+							color={'#E5007A'}
+							className='ml-[-5px]'
+						>
+							<span title='Conviction'>
+								<ConvictionIcon className='mr-1' />
+								{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x
+							</span>
+						</Tooltip>
+					)}
 				</div>
 			</Spin>
 		);
@@ -818,17 +824,19 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						</Tooltip>
 					)}
 
-					<Tooltip
-						placement='bottom'
-						title='Conviction'
-						color={'#E5007A'}
-						className='ml-[-5px]'
-					>
-						<span title='Conviction'>
-							<ConvictionIcon className='mr-1' />
-							{Number(conviction) === 0 ? '0.1' : conviction}x
-						</span>
-					</Tooltip>
+					{!isNaN(Number(conviction)) && (
+						<Tooltip
+							placement='bottom'
+							title='Conviction'
+							color={'#E5007A'}
+							className='ml-[-5px]'
+						>
+							<span title='Conviction'>
+								<ConvictionIcon className='mr-1' />
+								{Number(conviction) === 0 ? '0.1' : conviction}x
+							</span>
+						</Tooltip>
+					)}
 				</div>
 			</div>
 		);

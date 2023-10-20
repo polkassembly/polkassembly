@@ -32,6 +32,7 @@ import addEthereumChain from '~src/util/addEthereumChain';
 import TFALoginForm from './TFALoginForm';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -274,7 +275,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 												setLoading(false);
 												return;
 											}
-											router.push('/');
+											router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 										} else {
 											throw new Error('Web3 Login failed');
 										}
@@ -304,7 +305,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 							setLoading(false);
 							return;
 						}
-						router.push('/');
+						router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 					} else if (addressLoginData?.isTFAEnabled) {
 						if (!addressLoginData?.tfa_token) {
 							setError(error || 'TFA token missing. Please try again.');
@@ -360,7 +361,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 				setLoginOpen?.(false);
 				return;
 			}
-			router.push('/');
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 	};
 

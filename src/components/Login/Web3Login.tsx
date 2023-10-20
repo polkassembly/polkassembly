@@ -32,6 +32,7 @@ import TFALoginForm from './TFALoginForm';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -275,7 +276,9 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 								setLoading(false);
 								return;
 							}
-							router.push('/');
+							{
+								router.push(isOpenGovSupported(network) ? '/opengov' : '/');
+							}
 						} else {
 							throw new Error('Web3 Login failed');
 						}
@@ -307,7 +310,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					setLoading(false);
 					return;
 				}
-				router.push('/');
+				router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 			} else if (addressLoginData?.isTFAEnabled) {
 				if (!addressLoginData?.tfa_token) {
 					setError(error || 'TFA token missing. Please try again.');

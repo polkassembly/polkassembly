@@ -1013,17 +1013,18 @@ query MoonbeamVotingHistoryByVoterAddressAndProposalTypeAndProposalIndex($offset
 `;
 
 export const VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM = `
-query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $voter_eq: String) {
-  votes(limit: $limit, offset: $offset, orderBy: proposal_index_DESC, where: {voter_eq: $voter_eq, removedAtBlock_isNull: true}) {
+query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $voter_eq: String, $index_eq: Int, $type_eq: ProposalType) {
+  convictionVotes(limit: $limit, offset: $offset, orderBy: proposal_index_DESC, where: {voter_eq: $voter_eq, removedAtBlock_isNull: true, proposal:{index_eq:$index_eq, type_eq:$type_eq } }) {
     decision
     type
-    blockNumber
+    createdAtBlock
+    createdAt
     proposal {
       index
       type
     }
   }
-  votesConnection(where: {voter_eq: $voter_eq, removedAtBlock_isNull: true}, orderBy: proposal_index_DESC) {
+  convictionVotesConnection(where: {voter_eq: $voter_eq, removedAtBlock_isNull: true, proposal:{index_eq: $index_eq, type_eq:$type_eq}}, orderBy: proposal_index_DESC) {
     totalCount
   }
 }

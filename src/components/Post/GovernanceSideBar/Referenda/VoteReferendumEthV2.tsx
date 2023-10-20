@@ -42,6 +42,7 @@ const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
+	address: string;
 	referendumId?: number | null | undefined;
 	onAccountChange: (address: string) => void;
 	lastVote: ILastVote | undefined;
@@ -52,13 +53,12 @@ const abi = require('../../../../moonbeamConvictionVoting.json');
 
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
-const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
+const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote, address }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const { walletConnectProvider, id, loginAddress, loginWallet } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { apiReady, api } = useApiContext();
-	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const { network } = useNetworkSelector();
@@ -123,7 +123,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		if (accountsData) {
 			setAccounts(accountsData?.accounts || []);
 			onAccountChange(accountsData?.account || '');
-			setAddress(accountsData.account);
 			setIsTalismanEthereum(accountsData?.isTalismanEthereum);
 			setLoadingStatus({ isLoading: false, message: 'Getting accounts' });
 		}
@@ -219,7 +218,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		);
 
 		if (checksumAddresses.length > 0) {
-			setAddress(checksumAddresses[0]);
+			onAccountChange(checksumAddresses[0]);
 		}
 
 		setIsAccountLoading(false);
@@ -331,7 +330,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			});
 			return;
 		}
-		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
+		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const voteContract = new web3.eth.Contract(abi, contractAddress);
 
@@ -391,11 +390,10 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		event.preventDefault();
 		setWallet(wallet);
 		setAccounts([]);
-		setAddress('');
+		onAccountChange('');
 		const accountsData = await getMetamaskAccounts({ chosenWallet: wallet, loginAddress, network });
 		if (accountsData) {
 			setAccounts(accountsData?.accounts || []);
-			setAddress(accountsData.account);
 			onAccountChange(accountsData?.account || '');
 			setIsTalismanEthereum(accountsData?.isTalismanEthereum);
 		}

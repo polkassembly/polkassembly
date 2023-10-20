@@ -670,6 +670,14 @@ query TotalVotesCount($index_eq: Int = 0, $type_eq: VoteType = Referendum) {
 }
 `;
 
+export const GET_TOTAL_CONVICTION_VOTES_COUNT = `
+query TotalConvictionVotesCount($index_eq: Int = 50, $type_eq: VoteType = Referendum) {
+  convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}}) {
+    totalCount
+  }
+}
+`;
+
 export const GET_VOTES_WITH_LIMIT = `
 query VotesWithLimit($index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 100) {
   votes(where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}}, limit: $limit, offset: 0) {
@@ -693,6 +701,26 @@ query VotesWithLimit($index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit
 export const GET_VOTES_WITH_LIMIT_IS_NULL_TRUE = `
 query VotesWithLimit($index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 100) {
   votes(where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, limit: $limit, offset: 0) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}
+`;
+
+export const GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL = `
+query ConvictionVotesWithRemovedIsNull($index_eq: Int = 0, $type_eq: VoteType = Referendum) {
+  convictionVotes(where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, offset: 0) {
     decision
     voter
     balance {

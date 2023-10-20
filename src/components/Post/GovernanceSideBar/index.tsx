@@ -976,6 +976,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	onAccountChange={onAccountChange}
 																	setLastVote={setLastVote}
 																	lastVote={lastVote}
+																	address={address}
 																/>
 
 																{RenderLastVote}

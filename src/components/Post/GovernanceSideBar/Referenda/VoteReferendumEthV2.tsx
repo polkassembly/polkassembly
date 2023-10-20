@@ -251,7 +251,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			case EVoteDecisionType.AYE:
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -259,7 +258,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			case EVoteDecisionType.NAY:
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -272,7 +270,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				}));
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -286,7 +283,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				}));
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -650,7 +646,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				setOpen={setSuccessModal}
 				address={address}
 				isDelegate={true}
-				conviction={conviction}
 				votedAt={dayjs().format('HH:mm, Do MMMM YYYY')}
 				ayeVoteValue={voteValues.ayeVoteValue}
 				nayVoteValue={voteValues.nayVoteValue}

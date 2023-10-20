@@ -818,26 +818,23 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						</Tooltip>
 					)}
 
-					{conviction && (
-						<Tooltip
-							placement='bottom'
-							title='Conviction'
-							color={'#E5007A'}
-							className='ml-[-5px]'
-						>
-							<span title='Conviction'>
-								<ConvictionIcon className='mr-1' />
-								{Number(conviction) === 0 ? '0.1' : conviction}x
-							</span>
-						</Tooltip>
-					)}
+					<Tooltip
+						placement='bottom'
+						title='Conviction'
+						color={'#E5007A'}
+						className='ml-[-5px]'
+					>
+						<span title='Conviction'>
+							<ConvictionIcon className='mr-1' />
+							{Number(conviction) === 0 ? '0.1' : conviction}x
+						</span>
+					</Tooltip>
 				</div>
 			</div>
 		);
 	};
 
 	const RenderLastVote = lastVote ? <LastVoteInfoLocalState {...lastVote} /> : onChainLastVote !== null ? <LastVoteInfoOnChain {...onChainLastVote} /> : null;
-
 	return (
 		<>
 			{

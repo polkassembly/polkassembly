@@ -70,6 +70,7 @@ import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -127,12 +128,12 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters } = props;
-	const [lastVote, setLastVote] = useState<ILastVote>();
+	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
-	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsSelector();
+	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet } = useUserDetailsSelector();
 	const {
 		postData: { created_at, track_number, post_link, statusHistory, postIndex }
 	} = usePostDataContext();
@@ -651,9 +652,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
-			message: 'Vote Clear successfully.',
+			message: 'Your Vote has been Cleared successfully.',
 			status: NotificationStatus.SUCCESS
 		});
+		setLastVote(null);
+		getVotingHistory();
 	};
 	const onFailed = (message: string) => {
 		queueNotification({
@@ -669,6 +672,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 		await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: 'Transactions failed!', network, onFailed, onSuccess, tx });
 	};
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		//for setting signer by login address
+		(async () => {
+			await getAccountsFromWallet({ api, apiReady, chosenAddress: loginAddress, chosenWallet: loginWallet as Wallet, loginAddress, network });
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, network, apiReady]);
 
 	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod }) => {
 		const unit = `${chainProperties[network]?.tokenSymbol}`;

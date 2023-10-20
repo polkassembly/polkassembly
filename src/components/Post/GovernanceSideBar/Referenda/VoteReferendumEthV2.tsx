@@ -45,7 +45,7 @@ interface Props {
 	address: string;
 	referendumId?: number | null | undefined;
 	onAccountChange: (address: string) => void;
-	lastVote: ILastVote | undefined;
+	lastVote: ILastVote | null;
 	setLastVote: (pre: ILastVote) => void;
 }
 

@@ -14,6 +14,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import BN from 'bn.js';
 import { ILockData } from '~src/types';
 import blockToTime from '~src/util/blockToTime';
+import { Empty } from 'antd';
 
 interface Props {
 	totalUnlockableBalance: BN;
@@ -67,56 +68,60 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, totalLockData, t
 						</span>
 					</div>
 				)}
-				<div className='mt-3'>
-					<div className='flex items-start justify-between pb-1 text-sm tracking-[0.25%] text-lightBlue'>
-						<div className='mt-1 flex gap-1'>
-							<UnlockIcon />
-							<span className='flex flex-col gap-0.5'>
-								{totalLockData.length ? `Next unlock in ${blockToTime(totalLockData[0]?.endBlock, network).time}` : `Ongoing: #${totalOngoingData[0]?.refId}`}
+				{totalLockData.concat(totalOngoingData).length > 0 ? (
+					<div className='mt-3'>
+						<div className='flex items-start justify-between pb-1 text-sm tracking-[0.25%] text-lightBlue'>
+							<div className='mt-1 flex gap-1'>
+								<UnlockIcon />
+								<span className='flex flex-col gap-0.5'>
+									{totalLockData.length ? `Next unlock in ${blockToTime(totalLockData[0]?.endBlock, network).time}` : `Ongoing: #${totalOngoingData[0]?.refId}`}
+								</span>
+							</div>
+							<span
+								className='flex items-center text-base font-semibold text-bodyBlue'
+								onClick={() => setExpandUnlocks(!expandUnlocks)}
+							>
+								<span className='flex flex-col items-end'>
+									<span className={`flex flex-col items-end justify-end ${totalUnlockableData.concat(totalOngoingData).length <= 1 && 'pr-[27px]'}`}>
+										{totalLockData.length
+											? `${formatedBalance((totalLockData[0]?.total.toString() || '0').toString(), unit, 2)} `
+											: `${formatedBalance((totalOngoingData[0]?.total.toString() || '0').toString(), unit, 2)} `}
+										{unit}
+									</span>
+									{totalUnlockableData.concat(totalOngoingData).length > 1 && (
+										<span className='flex justify-end text-xs font-normal text-pink_primary'>{expandUnlocks ? 'Hide All Unlocks' : 'View All Unlocks'}</span>
+									)}
+								</span>
+								{totalUnlockableData.concat(totalOngoingData).length > 1 && <DownArrowIcon className={`cursor-pointer ${expandUnlocks && 'pink-color rotate-180'} -mt-4 ml-1`} />}
 							</span>
 						</div>
-						<span
-							className='flex items-center text-base font-semibold text-bodyBlue'
-							onClick={() => setExpandUnlocks(!expandUnlocks)}
-						>
-							<span className='flex flex-col items-end'>
-								<span className={`flex flex-col items-end justify-end ${totalUnlockableData.concat(totalOngoingData).length <= 1 && 'pr-[27px]'}`}>
-									{totalLockData.length
-										? `${formatedBalance((totalLockData[0]?.total.toString() || '0').toString(), unit, 2)} `
-										: `${formatedBalance((totalOngoingData[0]?.total.toString() || '0').toString(), unit, 2)} `}
-									{unit}
-								</span>
-								{totalUnlockableData.concat(totalOngoingData).length > 1 && (
-									<span className='flex justify-end text-xs font-normal text-pink_primary'>{expandUnlocks ? 'Hide All Unlocks' : 'View All Unlocks'}</span>
-								)}
-							</span>
-							{totalUnlockableData.concat(totalOngoingData).length > 1 && <DownArrowIcon className={`cursor-pointer ${expandUnlocks && 'pink-color rotate-180'} -mt-4 ml-1`} />}
-						</span>
-					</div>
-					{expandUnlocks && (
-						<div className='max-h-[150px] overflow-y-auto'>
-							{totalLockData
-								.concat(totalOngoingData)
-								.slice(1)
-								.map((lock, index) => (
-									<div
-										className='borer-[#D2D8E0] flex items-center justify-between border-0 border-t-[1px] border-dotted border-[#D2D8E0] py-3 text-sm tracking-[0.25%] text-lightBlue'
-										key={index}
-									>
-										<div className='flex items-center gap-1'>
-											<UnlockIcon />
-											<span className='flex flex-col gap-0.5'>
-												{lock.endBlock.eq(BN_MAX_INTEGER) ? `Ongoing: #${lock?.refId}` : `Next unlock in ${blockToTime(lock?.endBlock, network).time}`}
+						{expandUnlocks && (
+							<div className='max-h-[150px] overflow-y-auto'>
+								{totalLockData
+									.concat(totalOngoingData)
+									.slice(1)
+									.map((lock, index) => (
+										<div
+											className='borer-[#D2D8E0] flex items-center justify-between border-0 border-t-[1px] border-dotted border-[#D2D8E0] py-3 text-sm tracking-[0.25%] text-lightBlue'
+											key={index}
+										>
+											<div className='flex items-center gap-1'>
+												<UnlockIcon />
+												<span className='flex flex-col gap-0.5'>
+													{lock.endBlock.eq(BN_MAX_INTEGER) ? `Ongoing: #${lock?.refId}` : `Next unlock in ${blockToTime(lock?.endBlock, network).time}`}
+												</span>
+											</div>
+											<span className='mr-[27px] flex items-center text-base font-semibold text-bodyBlue'>
+												{formatedBalance((lock?.total.toString() || '0').toString(), unit, 2)} {unit}
 											</span>
 										</div>
-										<span className='mr-[27px] flex items-center text-base font-semibold text-bodyBlue'>
-											{formatedBalance((lock?.total.toString() || '0').toString(), unit, 2)} {unit}
-										</span>
-									</div>
-								))}
-						</div>
-					)}
-				</div>
+									))}
+							</div>
+						)}
+					</div>
+				) : (
+					<Empty className='py-6' />
+				)}
 			</div>
 		</div>
 	);

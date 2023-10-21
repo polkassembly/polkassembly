@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import { ILockData } from '~src/types';
 import LockVotesList from './LockVotesList';
 import { Empty, Modal } from 'antd';
 import { poppins } from 'pages/_app';
@@ -11,9 +10,10 @@ import CloseIcon from '~assets/icons/close.svg';
 import UnlockSuccessIcon from '~assets/icons/unlock-success-box.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserUnlockTokensDataSelector } from '~src/redux/selectors';
 import { useEffect } from 'react';
 import { formatBalance } from '@polkadot/util';
+import { handlePrevData } from '.';
 
 interface Props {
 	className?: string;
@@ -21,15 +21,15 @@ interface Props {
 	setOpen: (pre: boolean) => void;
 	totalUnlockableBalance: BN;
 	lockedBalance: BN;
-	totalLockData: ILockData[];
-	totalOngoingData: ILockData[];
-	totalUnlockableData: ILockData[];
 }
 
 const ZERO_BN = new BN(0);
-const VoteUnlockSuccessState = ({ className, open, setOpen, totalLockData, lockedBalance, totalOngoingData, totalUnlockableBalance, totalUnlockableData }: Props) => {
+const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, totalUnlockableBalance }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties[network]?.tokenSymbol;
+	const { data } = useUserUnlockTokensDataSelector();
+	const totalLockData = handlePrevData(data?.totalLockData);
+	const totalOngoingData = handlePrevData(data?.totalOngoingData);
 
 	useEffect(() => {
 		if (!network) return;
@@ -61,9 +61,6 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, totalLockData, locke
 					<LockVotesList
 						lockedBalance={lockedBalance}
 						totalUnlockableBalance={totalUnlockableBalance}
-						totalLockData={totalLockData}
-						totalOngoingData={totalOngoingData}
-						totalUnlockableData={totalUnlockableData}
 						showBalances={false}
 						votesCollapsed={true}
 					/>

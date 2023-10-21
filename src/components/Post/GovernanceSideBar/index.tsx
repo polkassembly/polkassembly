@@ -659,7 +659,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			status: NotificationStatus.SUCCESS
 		});
 		setLastVote(null);
-		getVotingHistory();
+		setOnChainLastVote(null);
 	};
 	const onFailed = (message: string) => {
 		queueNotification({

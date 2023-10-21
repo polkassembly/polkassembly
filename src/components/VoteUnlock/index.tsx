@@ -2,51 +2,66 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Button, Empty, Modal, Spin } from 'antd';
+import { Button, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import userProfileBalances from '~src/util/userProfieBalances';
 import BN from 'bn.js';
 import { BN_MAX_INTEGER, formatBalance } from '@polkadot/util';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import UnlockBoxIcon from '~assets/icons/unlock-box.svg';
-import CloseIcon from '~assets/icons/close.svg';
+import { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector } from '~src/redux/selectors';
 
-import WhiteUnlockIcon from '~assets/icons/white-lock.svg';
 import { ApiPromise } from '@polkadot/api';
 import blockToTime from '~src/util/blockToTime';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { ILockData, LoadingStatusType, NotificationStatus, Wallet } from '~src/types';
+import { LoadingStatusType, NotificationStatus, Wallet } from '~src/types';
 import Address from '~src/ui-components/Address';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import styled from 'styled-components';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import LockVotesList from './LockVotesList';
 import VoteUnlockSuccessState from './VoteUnlockSuccessState';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
+import UnlockBoxIcon from '~assets/icons/unlock-box.svg';
+import CloseIcon from '~assets/icons/close.svg';
+import WhiteUnlockIcon from '~assets/icons/white-lock.svg';
+import { setUserUnlockTokensData } from '~src/redux/tokenUnlocksData';
+import { useDispatch } from 'react-redux';
+import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
 interface Props {
 	className?: string;
 	addresses: string[];
 }
 
 const ZERO_BN = new BN(0);
+export const handlePrevData = (data: IUnlockTokenskData[]) => {
+	const newData = data.map((item) => {
+		const endBlock = item ? new BN(item?.endBlock || '0') : ZERO_BN;
+		const refId = item ? new BN(item?.refId || '0') : ZERO_BN;
 
+		const total = item ? new BN(item?.total || '0') : ZERO_BN;
+
+		return { ...item, endBlock, refId, total };
+	});
+	return newData;
+};
 const VoteUnlock = ({ className, addresses }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress, loginWallet } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const {
+		data: { totalLockData, totalUnlockableData }
+	} = useUserUnlockTokensDataSelector();
+	const dispatch = useDispatch();
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [totalUnlockableBalance, setTotalUnlockableBalance] = useState<BN>(ZERO_BN);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const [open, setOpen] = useState<boolean>(false);
-	const [totalLockData, setTotalLockData] = useState<ILockData[]>([]);
-	const [totalOngoingData, setTotalOngoingData] = useState<ILockData[]>([]);
-	const [totalUnlockableData, setTotalUnlockableData] = useState<ILockData[]>([]);
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [address, setAddress] = useState<string>(addresses[0]);
+	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: '' });
 	const [openChangeAddressModal, setOpenChangeAddressModal] = useState<boolean>(false);
 	const [openSuccessState, setOpenSuccessState] = useState<boolean>(false);
 
@@ -64,9 +79,9 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		})();
 	}, [network, loginAddress, loginWallet, unit, api, apiReady]);
 
-	const getAllLockData = (api: ApiPromise, votes: [track: BN, refIds: BN[], casting: any][], referenda: [BN, any][]): ILockData[] => {
+	const getAllLockData = (api: ApiPromise, votes: [track: BN, refIds: BN[], casting: any][], referenda: [BN, any][]): IUnlockTokenskData[] => {
 		const lockPeriod = api?.consts?.convictionVoting?.voteLockingPeriod as BN;
-		const locks: ILockData[] = [];
+		const locks: IUnlockTokenskData[] = [];
 
 		const convictionMultipliers = [0, 1, 2, 4, 8, 16, 32];
 		for (let i = 0, voteCount = votes.length; i < voteCount; i++) {
@@ -146,7 +161,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		return undefined;
 	};
 
-	const handleSetUnlockableBalance = (totalUnlockableData: ILockData[]) => {
+	const handleSetUnlockableBalance = (totalUnlockableData: IUnlockTokenskData[]) => {
 		if (!api || !apiReady) return;
 		let balance: BN = ZERO_BN;
 
@@ -158,7 +173,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		setTotalUnlockableBalance(balance);
 	};
 
-	const handleLockUnlockData = async (data: ILockData[] | null, currentBlockNumber: BN) => {
+	const handleLockUnlockData = async (data: IUnlockTokenskData[] | null, currentBlockNumber: BN) => {
 		if (!data) return;
 		const locksData = data
 			?.filter((unlock) => unlock.endBlock.gt(currentBlockNumber) && !unlock.endBlock.eq(BN_MAX_INTEGER))
@@ -169,18 +184,40 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 
 		const UnlockableData = data?.filter((unlock) => unlock.endBlock.lte(currentBlockNumber));
 
-		setTotalLockData(locksData);
-		setTotalOngoingData(data.filter((lock) => lock.endBlock.eq(BN_MAX_INTEGER)));
-		setTotalUnlockableData(UnlockableData);
 		handleSetUnlockableBalance(UnlockableData);
+		dispatch(
+			setUserUnlockTokensData({
+				address,
+				data: {
+					totalLockData: locksData.map((item) => {
+						return { ...item, endBlock: item.endBlock.toString(), refId: item.refId.toString(), total: item?.total?.toString() };
+					}),
+					totalOngoingData: data
+						.filter((lock) => lock.endBlock.eq(BN_MAX_INTEGER))
+						.map((item) => {
+							return { ...item, endBlock: item.endBlock.toString(), refId: item.refId.toString(), total: item?.total?.toString() };
+						}),
+					totalUnlockableData: UnlockableData.map((item) => {
+						return { ...item, endBlock: item.endBlock.toString(), refId: item.refId.toString(), total: item?.total?.toString() };
+					})
+				}
+			})
+		);
 	};
-
 	const getLockData = async (address: string) => {
 		if (!api || !apiReady) return;
-		setTotalLockData([]);
-		setTotalOngoingData([]);
-		setTotalUnlockableData([]);
 		setTotalUnlockableBalance(ZERO_BN);
+		setLoadingStatus({ isLoading: true, message: '' });
+		dispatch(
+			setUserUnlockTokensData({
+				address,
+				data: {
+					totalLockData: [],
+					totalOngoingData: [],
+					totalUnlockableData: []
+				}
+			})
+		);
 
 		const lockClasses = await api?.query?.convictionVoting?.classLocksFor(address)?.then((e) => e.toHuman());
 		const unlockParams = getUnlockParams(address, lockClasses as unknown as BN[])?.filter((param) => !!param);
@@ -210,13 +247,14 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 
 		const data = customizeReferenda ? getAllLockData(api, customizeVotes as any[], customizeReferenda as [BN, any][]) : null;
 		const currentBlockNumber = await api.derive.chain.bestNumber();
-		handleLockUnlockData(data, currentBlockNumber);
+		await handleLockUnlockData(data, currentBlockNumber);
+		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
-	const getClearReferendaTx = (api: ApiPromise, address: string, ids: [BN, BN][]): SubmittableExtrinsic<'promise'> | null => {
+	const getClearReferendaTx = (api: ApiPromise, address: string, ids: [BN, BN][], palletReferenda = 'convictionVoting'): SubmittableExtrinsic<'promise'> | null => {
 		if (!api || !apiReady || !ids.length) return null;
 
-		const variables = ids.map(([track, refId]) => api.tx.convictionVoting.removeVote(track.toNumber(), refId.toNumber()));
+		const variables = ids.map(([track, refId]) => api.tx[palletReferenda].removeVote(track, refId));
 
 		ids
 			.reduce((all: BN[], [track]) => {
@@ -227,7 +265,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				return all;
 			}, [])
 			.forEach((track): void => {
-				variables.push(api.tx.convictionVoting.unlock(track.toNumber(), address));
+				variables.push(api.tx[palletReferenda].unlock(track, address));
 			});
 
 		return api.tx.utility.batch(variables);
@@ -251,6 +289,10 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 			status: NotificationStatus.ERROR
 		});
 		setLoadingStatus({ isLoading: false, message: 'Failed!' });
+
+		setOpenSuccessState(true);
+		setLoadingStatus({ isLoading: false, message: 'Success!' });
+		setOpen(false);
 	};
 
 	const handleUnlock = async () => {
@@ -286,20 +328,20 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		getLockData(address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
-	console.log(totalLockData, totalOngoingData, totalUnlockableData);
 	return (
 		<>
-			<div className='boder-solid flex items-start justify-start'>
+			<div className={`boder-solid flex items-start justify-start ${className}`}>
 				<Button
+					loading={loadingStatus.isLoading}
 					onClick={() => setOpen(true)}
 					className={`text-sm ${
-						!totalUnlockableBalance.eq(ZERO_BN) ? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] ' : 'cursor-not-allowed border-pink_primary bg-[#fdedf7] text-pink_primary '
-					} h-[40px] rounded-[4px]`}
+						totalUnlockableBalance.eq(ZERO_BN) ? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] ' : 'border-pink_primary bg-[#fdedf7] text-pink_primary '
+					} h-[32px] rounded-[8px]`}
 				>
 					{!totalUnlockableBalance.eq(ZERO_BN)
 						? 'Unlock Your Tokens'
-						: totalLockData.length
-						? `Next Unlock in ${blockToTime(totalLockData[0]?.endBlock, network).time}`
+						: handlePrevData(totalLockData).length
+						? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
 						: 'Unlock Your Tokens'}
 				</Button>
 			</div>
@@ -307,13 +349,13 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={false}
-				className={`${className} ${poppins.className} ${poppins.variable}`}
+				className={`${poppins.className} ${poppins.variable} ${className}`}
 				closeIcon={<CloseIcon />}
 			>
 				<Spin
 					spinning={loadingStatus.isLoading}
 					tip={loadingStatus.message}
-					className='mt-[150px]'
+					className='mt-[100px]'
 				>
 					<div className='-mt-[100px] flex items-center justify-center'>
 						<UnlockBoxIcon />
@@ -334,29 +376,25 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 							Change
 						</Button>
 					</div>
-					{!totalUnlockableBalance.eq(ZERO_BN) || totalLockData.length !== 0 || totalOngoingData.length !== 0 ? (
-						<LockVotesList
-							lockedBalance={lockedBalance}
-							totalUnlockableBalance={totalUnlockableBalance}
-							totalLockData={totalLockData}
-							totalOngoingData={totalOngoingData}
-							totalUnlockableData={totalUnlockableData}
-						/>
-					) : (
-						<Empty className='mt-4' />
+
+					<LockVotesList
+						lockedBalance={lockedBalance}
+						totalUnlockableBalance={totalUnlockableBalance}
+					/>
+					{![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network) && (
+						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6'>
+							<Button
+								onClick={() => handleUnlock()}
+								disabled={totalUnlockableBalance.eq(ZERO_BN)}
+								className={`mt-4 flex h-[40px] w-[100%] items-center justify-center rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${
+									totalUnlockableBalance.eq(ZERO_BN) && 'opacity-50'
+								}`}
+							>
+								<WhiteUnlockIcon className='mr-1' />
+								Unlock Tokens
+							</Button>
+						</div>
 					)}
-					<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6'>
-						<Button
-							onClick={() => handleUnlock()}
-							disabled={totalUnlockableBalance.eq(ZERO_BN)}
-							className={`mt-4 flex h-[40px] w-[100%] items-center justify-center rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${
-								totalUnlockableBalance.eq(ZERO_BN) && 'opacity-50'
-							}`}
-						>
-							<WhiteUnlockIcon className='mr-1' />
-							Unlock Tokens
-						</Button>
-					</div>
 				</Spin>
 			</Modal>
 			<AddressConnectModal
@@ -376,9 +414,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				setOpen={setOpenSuccessState}
 				lockedBalance={lockedBalance}
 				totalUnlockableBalance={totalUnlockableBalance}
-				totalLockData={totalLockData}
-				totalOngoingData={totalOngoingData}
-				totalUnlockableData={totalUnlockableData}
 			/>
 		</>
 	);

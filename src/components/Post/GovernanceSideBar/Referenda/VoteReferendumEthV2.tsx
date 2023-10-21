@@ -649,6 +649,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				open={successModal}
 				setOpen={setSuccessModal}
 				address={address}
+				conviction={conviction}
 				isDelegate={true}
 				votedAt={dayjs().format('HH:mm, Do MMMM YYYY')}
 				ayeVoteValue={voteValues.ayeVoteValue}

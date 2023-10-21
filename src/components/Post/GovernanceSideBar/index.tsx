@@ -141,6 +141,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		postData: { created_at, track_number, post_link, statusHistory, postIndex }
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -659,6 +660,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			status: NotificationStatus.SUCCESS
 		});
 		setLastVote(null);
+		setLoading(false);
 		setOnChainLastVote(null);
 	};
 	const onFailed = (message: string) => {
@@ -667,10 +669,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			message,
 			status: NotificationStatus.ERROR
 		});
+		setLoading(false);
 	};
 
 	const handleRemoveVote = async () => {
 		if (!api || !apiReady || !track_number) return;
+		setLoading(true);
 		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
 			const web3 = new Web3((window as any).ethereum);
 
@@ -682,6 +686,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					message: `Please change to ${network} network`,
 					status: NotificationStatus.ERROR
 				});
+
+				setLoading(false);
 				return;
 			}
 			const contract = new web3.eth.Contract(abi, contractAddress);
@@ -723,6 +729,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				<div className='mb-1.5 flex items-center justify-between'>
 					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue'>Last Vote:</span>
 					<Button
+						loading={loading}
 						onClick={handleRemoveVote}
 						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
 					>
@@ -808,6 +815,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				<div className='mb-1.5 flex items-center justify-between'>
 					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue'>Last Vote:</span>
 					<Button
+						loading={loading}
 						onClick={handleRemoveVote}
 						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
 					>

@@ -644,6 +644,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				balance={voteValues.totalVoteValue}
 				open={successModal}
 				setOpen={setSuccessModal}
+				conviction={conviction}
 				address={address}
 				isDelegate={true}
 				votedAt={dayjs().format('HH:mm, Do MMMM YYYY')}

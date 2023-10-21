@@ -49,7 +49,13 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if (error) return <ErrorState errorMessage={error} />;
+	if (error)
+		return (
+			<ErrorState
+				errorMessage={error}
+				isRefreshBtnVisible={!error.includes('not found')}
+			/>
+		);
 
 	if (post)
 		return (

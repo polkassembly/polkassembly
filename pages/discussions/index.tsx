@@ -27,6 +27,7 @@ interface IDiscussionsProps {
 	data?: IPostsListingResponse;
 	error?: string;
 	network: string;
+	page?: number;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -68,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		sortBy: String(sortBy)
 	});
 
-	const props = { data, error, network };
+	const props = { data, error, network, page };
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		await redisSet(redisKey, JSON.stringify(props));
@@ -78,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 const Discussions: FC<IDiscussionsProps> = (props) => {
-	const { data, error, network } = props;
+	const { data, error, network, page } = props;
 	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 	const router = useRouter();
@@ -130,6 +131,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			<OffChainPostsContainer
 				proposalType={OffChainProposalType.DISCUSSIONS}
 				posts={posts}
+				defaultPage={page || 1}
 				count={count}
 				className='mt-6'
 			/>

@@ -46,7 +46,7 @@ import BN from 'bn.js';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
+import { EVoteDecisionType, ILastVote, NotificationStatus, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -68,6 +68,10 @@ import VotersList from './Referenda/VotersList';
 import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
 import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import queueNotification from '~src/ui-components/QueueNotification';
+import executeTx from '~src/util/executeTx';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
+import Web3 from 'web3';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -89,6 +93,8 @@ interface IGovernanceSidebarProps {
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
+const abi = require('src/moonbeamConvictionVoting.json');
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
 	let height = 0;
@@ -125,16 +131,17 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters } = props;
-	const [lastVote, setLastVote] = useState<ILastVote>();
+	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
-	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsSelector();
+	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet } = useUserDetailsSelector();
 	const {
-		postData: { created_at, track_number, post_link, statusHistory }
+		postData: { created_at, track_number, post_link, statusHistory, postIndex }
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -357,9 +364,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		setIsLastVoteLoading(true);
 		const encoded = getEncodedAddress(address || loginAddress || defaultAddress || '', network);
 
-		const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>(
-			`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`
-		);
+		const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>('api/v1/votes/history', {
+			proposalIndex: onchainId,
+			proposalType,
+			voterAddress: encoded
+		});
+
 		if (error || !data) {
 			console.error('Error in fetching votes history: ', error);
 			setIsLastVoteLoading(false);
@@ -640,7 +650,74 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	useEffect(() => {
 		getVotingHistory();
-	}, [getVotingHistory]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, address]);
+
+	const onSuccess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'Your Vote has been Cleared successfully.',
+			status: NotificationStatus.SUCCESS
+		});
+		setLastVote(null);
+		setLoading(false);
+		setOnChainLastVote(null);
+	};
+	const onFailed = (message: string) => {
+		queueNotification({
+			header: 'Failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+		setLoading(false);
+	};
+
+	const handleRemoveVote = async () => {
+		if (!api || !apiReady || !track_number) return;
+		setLoading(true);
+		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
+			const web3 = new Web3((window as any).ethereum);
+
+			const chainId = await web3.eth.net.getId();
+
+			if (chainId !== chainProperties[network].chainId) {
+				queueNotification({
+					header: 'Wrong Network!',
+					message: `Please change to ${network} network`,
+					status: NotificationStatus.ERROR
+				});
+
+				setLoading(false);
+				return;
+			}
+			const contract = new web3.eth.Contract(abi, contractAddress);
+			contract.methods
+				.removeVote(postIndex)
+				.send({
+					from: address,
+					to: contractAddress
+				})
+				.then((result: any) => {
+					console.log(result);
+					onSuccess();
+				})
+				.catch((error: any) => {
+					console.error('ERROR:', error);
+					onFailed('Failed!');
+				});
+		} else {
+			const tx = api.tx.convictionVoting.removeVote(track_number, postIndex);
+			await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: 'Transactions failed!', network, onFailed, onSuccess, tx });
+		}
+	};
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		//for setting signer by login address
+		(async () => {
+			await getAccountsFromWallet({ api, apiReady, chosenAddress: loginAddress, chosenWallet: loginWallet as Wallet, loginAddress, network });
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, network, apiReady]);
 
 	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod }) => {
 		const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -649,7 +726,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				spinning={isLastVoteLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
+				<div className='mb-1.5 flex items-center justify-between'>
+					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue'>Last Vote:</span>
+					<Button
+						loading={loading}
+						onClick={handleRemoveVote}
+						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
+					>
+						Remove Vote
+					</Button>
+				</div>
 
 				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
 					<Tooltip
@@ -705,17 +791,19 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						</span>
 					</Tooltip>
 
-					<Tooltip
-						placement='bottom'
-						title='Conviction'
-						color={'#E5007A'}
-						className='ml-[-5px]'
-					>
-						<span title='Conviction'>
-							<ConvictionIcon className='mr-1' />
-							{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x
-						</span>
-					</Tooltip>
+					{!isNaN(Number(lockPeriod)) && (
+						<Tooltip
+							placement='bottom'
+							title='Conviction'
+							color={'#E5007A'}
+							className='ml-[-5px]'
+						>
+							<span title='Conviction'>
+								<ConvictionIcon className='mr-1' />
+								{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x
+							</span>
+						</Tooltip>
+					)}
 				</div>
 			</Spin>
 		);
@@ -724,7 +812,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoLocalState: FC<ILastVote> = ({ balance, conviction, decision }) => {
 		return (
 			<div>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue'>Last Vote:</p>
+				<div className='mb-1.5 flex items-center justify-between'>
+					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue'>Last Vote:</span>
+					<Button
+						loading={loading}
+						onClick={handleRemoveVote}
+						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
+					>
+						Remove Vote
+					</Button>
+				</div>
 				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
 					<Tooltip
 						placement='bottom'
@@ -778,7 +875,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						</Tooltip>
 					)}
 
-					{conviction && (
+					{!isNaN(Number(conviction)) && (
 						<Tooltip
 							placement='bottom'
 							title='Conviction'
@@ -797,7 +894,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	};
 
 	const RenderLastVote = lastVote ? <LastVoteInfoLocalState {...lastVote} /> : onChainLastVote !== null ? <LastVoteInfoOnChain {...onChainLastVote} /> : null;
-
 	return (
 		<>
 			{
@@ -976,6 +1072,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	onAccountChange={onAccountChange}
 																	setLastVote={setLastVote}
 																	lastVote={lastVote}
+																	address={address}
 																/>
 
 																{RenderLastVote}

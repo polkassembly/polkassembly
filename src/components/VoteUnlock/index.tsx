@@ -79,22 +79,23 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		})();
 	}, [network, loginAddress, loginWallet, unit, api, apiReady]);
 
-	const getAllLockData = (api: ApiPromise, votes: [track: BN, refIds: BN[], casting: any][], referenda: [BN, any][]): IUnlockTokenskData[] => {
+	const getAllLockData = (api: ApiPromise, votes: [track: BN, refIds: BN[], casting: any][], referendas: [BN, any][]): IUnlockTokenskData[] => {
+		const convictionMultipliers = [0, 1, 2, 4, 8, 16, 32];
+
 		const lockPeriod = api?.consts?.convictionVoting?.voteLockingPeriod as BN;
 		const locks: IUnlockTokenskData[] = [];
 
-		const convictionMultipliers = [0, 1, 2, 4, 8, 16, 32];
 		for (let i = 0, voteCount = votes.length; i < voteCount; i++) {
 			const [track, , casting] = votes[i];
 
 			for (let i = 0, castCount = casting.votes.length; i < castCount; i++) {
 				const [refId, accountVote] = casting.votes[i];
-				const refInfo = referenda.find(([id]) => Number(id) === Number(refId));
+				const referendaInfo = referendas.find(([id]) => Number(id) === Number(refId));
 
-				if (refInfo) {
-					const [, tally] = refInfo;
+				if (referendaInfo) {
+					const [, tally] = referendaInfo;
 
-					let total: BN | undefined;
+					let totalBalance: BN | undefined;
 					let endBlock: BN | undefined;
 					let conviction = 0;
 					let locked = 'None';
@@ -102,20 +103,20 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					if (accountVote.isStandard) {
 						const { balance, vote } = accountVote.asStandard;
 
-						total = balance;
+						totalBalance = balance;
 
 						if ((tally.isApproved && vote.isAye) || (tally.isRejected && vote.isNay)) {
 							conviction = vote.conviction.index;
 							locked = vote.conviction.type;
 						}
-					} else if (accountVote.isSplit) {
-						const { aye, nay } = accountVote.asSplit;
-
-						total = aye.add(nay);
 					} else if (accountVote.isSplitAbstain) {
 						const { abstain, aye, nay } = accountVote.asSplitAbstain;
 
-						total = aye.add(nay).add(abstain);
+						totalBalance = aye.add(nay).add(abstain);
+					} else if (accountVote.isSplit) {
+						const { aye, nay } = accountVote.asSplit;
+
+						totalBalance = aye.add(nay);
 					} else {
 						console.error(`Unable to handle ${accountVote.type}`);
 					}
@@ -132,8 +133,8 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 						console.error(`Unable to handle ${tally.type}`);
 					}
 
-					if (total && endBlock) {
-						locks.push({ endBlock, locked, refId, total, track });
+					if (totalBalance && endBlock) {
+						locks.push({ endBlock, locked, refId, total: totalBalance, track });
 					}
 				}
 			}
@@ -142,11 +143,10 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		return locks;
 	};
 
-	const getUnlockParams = (address: string, lockClasses?: any[]): [address: string, track: BN][] | undefined => {
-		if (lockClasses) {
-			return lockClasses.map((track) => [address, track[0]]);
+	const getUnlocks = (address: string, locks?: any[]): [address: string, track: BN][] | undefined => {
+		if (locks) {
+			return locks.map((track) => [address, track[0]]);
 		}
-		return undefined;
 	};
 
 	const getReferendaParams = (votes?: [track: BN, refIds: BN[], casting: any][]): BN[] | undefined => {
@@ -157,8 +157,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				return refIds;
 			}
 		}
-
-		return undefined;
 	};
 
 	const handleSetUnlockableBalance = (totalUnlockableData: IUnlockTokenskData[]) => {
@@ -220,8 +218,8 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		);
 
 		const lockClasses = await api?.query?.convictionVoting?.classLocksFor(address)?.then((e) => e.toHuman());
-		const unlockParams = getUnlockParams(address, lockClasses as unknown as BN[])?.filter((param) => !!param);
-		const votes = unlockParams ? await api?.query?.convictionVoting?.votingFor?.multi(unlockParams as any[]) : null;
+		const unlocks = getUnlocks(address, lockClasses as unknown as BN[])?.filter((param) => !!param);
+		const votes = unlocks ? await api?.query?.convictionVoting?.votingFor?.multi(unlocks as any[]) : null;
 		const customizeVotes = votes
 			? votes
 					.map((vote, index) => {
@@ -231,14 +229,14 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 
 						const casting = vote.asCasting;
 
-						return [unlockParams?.[index][1], casting.votes.map(([refId]) => refId), casting];
+						return [unlocks?.[index][1], casting.votes.map(([refId]) => refId), casting];
 					})
 					.filter((vote) => !!vote)
 			: null;
 		const refParams = customizeVotes ? getReferendaParams(customizeVotes as any[]) : null;
-		const referenda = refParams ? await api?.query?.referenda?.referendumInfoFor?.multi(refParams as BN[]) : null;
-		const customizeReferenda = referenda
-			? referenda
+		const referendas = refParams ? await api?.query?.referenda?.referendumInfoFor?.multi(refParams as BN[]) : null;
+		const customizeReferenda = referendas
+			? referendas
 					?.map((ref, index) => {
 						return ref?.isSome ? [refParams?.[index], ref.unwrap()] : null;
 					})

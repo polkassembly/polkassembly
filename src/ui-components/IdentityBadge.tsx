@@ -4,13 +4,10 @@
 
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { Button, Modal, Tooltip } from 'antd';
-import React, { useState } from 'react';
+import { Tooltip } from 'antd';
+import React from 'react';
 import styled from 'styled-components';
 import VerifiedIcon from '~assets/icons/verified-icon.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
-import { poppins } from 'pages/_app';
-import DollarIcon from '~assets/icons/dollar-icon.svg';
 import { useRouter } from 'next/router';
 import EmailIcon from '~assets/icons/email-icon.svg';
 import LegalIcon from '~assets/icons/legal-icon.svg';
@@ -27,6 +24,7 @@ interface Props {
 	identity?: DeriveAccountRegistration | null;
 	flags?: DeriveAccountFlags;
 	web3Name?: string;
+	addressPrefix?: string;
 }
 
 export interface INetworkWalletErr {
@@ -55,11 +53,10 @@ const StyledPopup = styled.div`
 	}
 `;
 
-const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
+const IdentityBadge = ({ className, address, identity, flags, web3Name, addressPrefix }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
-	const [showModal, setShowModal] = useState(false);
 	const router = useRouter();
 	const identityArr = [
 		{ key: 'Email', value: identity?.email },
@@ -115,7 +112,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		<>
 			<StyledPopup>
 				<div className='flex items-center'>
-					<h3 className='mb-px inline whitespace-pre text-lg text-sm font-semibold text-bodyBlue'>Hannah Baker</h3>
+					<h3 className='mb-px inline whitespace-pre text-lg text-sm font-semibold text-bodyBlue'>{addressPrefix}</h3>
 					{isGood ? (
 						<VerifiedIcon className='ml-1.5' />
 					) : (
@@ -140,7 +137,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 				</div>
 				<div className='my-1 text-xs text-bodyBlue'>{address}</div>
 				<p className='mb-0.5 text-xs text-[#7C899A]'>Since: Jul 27, 2023</p>
-				<div className='flex items-center justify-around'>
+				<div className='flex items-center justify-between'>
 					<p className='mb-0 text-xs text-[#7C899A]'>Last Seen: 5 days ago</p>
 					<div className='flex items-center'>
 						{identityArr.map((item, index) => {
@@ -170,36 +167,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 						<div className='ml-1 mt-0.5'>{judgements?.map(([, jud]) => jud.toString()).join(', ') || 'None'}</div>
 					</div>
 				</article>
-				<div className='flex justify-end'>
-					<Button
-						className='mt-2 h-[30px] w-[110px] border-pink_primary bg-[#FFEAF4] px-4 py-0.5 text-pink_primary text-pink_primary'
-						size='small'
-						onClick={(e) => {
-							setShowModal(true);
-							e.stopPropagation();
-							e.preventDefault();
-						}}
-					>
-						Tip
-					</Button>
-				</div>
 			</StyledPopup>
-
-			<Modal
-				open={showModal}
-				onCancel={() => {
-					setShowModal(false);
-				}}
-				footer={false}
-				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable}`}
-				closeIcon={<CloseCross />}
-				title={
-					<div className='flex h-10 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0]'>
-						<DollarIcon />
-						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Give a tip</span>
-					</div>
-				}
-			></Modal>
 		</>
 	);
 

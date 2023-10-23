@@ -261,6 +261,7 @@ const Address = (props: Props) => {
 									identity={identity}
 									flags={flags}
 									className='text-navBlue'
+									addressPrefix={addressPrefix}
 								/>
 							))}
 

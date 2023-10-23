@@ -1597,6 +1597,7 @@ query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOr
       }
     }
     lockPeriod
+    createdAt
   }
 }
 `;

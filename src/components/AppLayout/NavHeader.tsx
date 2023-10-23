@@ -6,7 +6,8 @@
 import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Dropdown, Skeleton, Space } from 'antd';
+import { Button, Divider, Skeleton, Space } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -34,6 +35,7 @@ import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
+import { useTheme } from 'next-themes';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -65,6 +67,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -114,7 +117,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex text-sm font-medium text-bodyBlue dark:text-white hover:text-pink_primary '>
+					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high '>
 						<TownHall />
 						<div className='ml-2 '> TownHall </div>
 					</span>
@@ -131,7 +134,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex text-sm font-medium text-bodyBlue dark:text-white hover:text-pink_primary'>
+					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'>
 						<PolkaSafe />
 						<span className='ml-2'>Polkasafe</span>
 					</span>
@@ -145,7 +148,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue dark:text-white hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -157,7 +160,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue dark:text-white hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
 					href='/settings?tab=account'
 				>
 					<IconSettings className='userdropdown-icon text-2xl' />
@@ -169,7 +172,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'logout',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue dark:text-white hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
 					onClick={() => handleLogout(username || '')}
 					href='/'
 				>
@@ -185,7 +188,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'set on-chain identity',
 			label: (
 				<Link
-					className={`flex items-center gap-x-2 font-medium text-bodyBlue dark:text-white hover:text-pink_primary ${className}`}
+					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
 					href={''}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -212,6 +215,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			menu={{ items: dropdownMenuItems }}
 			trigger={['click']}
 			overlayClassName='navbar-dropdowns'
+			theme={theme}
 		>
 			{children}
 		</Dropdown>
@@ -222,6 +226,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			menu={{ items: menudropDownItems }}
 			trigger={['click']}
 			overlayClassName='navbar-dropdowns'
+			theme={theme}
 		>
 			{children}
 		</Dropdown>
@@ -254,7 +259,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 					<div className='type-container flex items-center'>
 						<span className='line-container ml-[16px] mr-[8px] h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
-						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:text-white lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:text-blue-dark-high lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>

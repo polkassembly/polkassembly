@@ -52,7 +52,7 @@ const Addresses: FC<IAddressesProps> = (props) => {
 				</div>
 				<Modal
 					title={<h3 className='text-xl font-semibold text-[#1D2632]'>Addresses</h3>}
-					closeIcon={<CloseOutlined className='text-sm text-bodyBlue dark:text-white' />}
+					closeIcon={<CloseOutlined className='text-sm text-bodyBlue dark:text-blue-dark-high' />}
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}

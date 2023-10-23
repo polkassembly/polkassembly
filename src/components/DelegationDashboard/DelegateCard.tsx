@@ -23,6 +23,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import CloseIcon from '~assets/icons/close.svg';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	delegate: IDelegate;
@@ -41,6 +42,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [social_links, setSocial_links] = useState<any[]>([]);
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		if (!network) return;
@@ -73,21 +75,21 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 	return (
 		<div
-			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0]  ${
+			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0]  dark:border-separatorDark  ${
 				delegate?.dataSource === 'nova' ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
 			} ${className}`}
 		>
 			{delegate?.dataSource === 'nova' && (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5'>
+				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
 					<NovaWalletIcon />
-					<span className='text-xs font-normal text-bodyBlue dark:text-white'>Nova Wallet Delegate</span>
+					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet Delegate</span>
 				</div>
 			)}
 
 			{delegate?.dataSource === 'parity' && (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5'>
+				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary  px-5 dark:bg-[#141C2D]'>
 					<ParityTechIcon />
-					<span className='text-xs font-normal text-bodyBlue dark:text-white'>Polkadot Delegate</span>
+					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
 				</div>
 			)}
 
@@ -108,12 +110,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
 								return (
 									<SocialLink
-										className='mt-4 flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-xl text-[#96A4B6] hover:text-[#576D8B]'
+										className='mt-4 flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-xl text-[#96A4B6] hover:text-[#576D8B] dark:bg-inactiveIconDark'
 										key={index}
 										link={link}
 										disable={!link}
 										type={social}
-										iconClassName={`text-[20px] ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
+										iconClassName={`text-[20px] ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6]'}`}
 									/>
 								);
 							})}
@@ -131,7 +133,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				</Button>
 			</div>
 
-			<div className={'mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm tracking-[0.015em] text-[#576D8B]'}>
+			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-medium'}>
 				<p className='bio w-[80%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
 				{delegate?.bio.length > 100 && (
 					<span
@@ -142,22 +144,22 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</span>
 				)}
 			</div>
-			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] '>
-				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
+			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0]  dark:border-separatorDark '>
+				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 					<div className='flex items-end justify-center gap-1'>
 						{formatedBalance(balance.toString(), unit, 2)}
-						<span className='text-sm font-normal text-bodyBlue dark:text-white'>{unit}</span>
+						<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 					</div>
-					<div className='mt-[4px] text-xs font-normal text-[#576D8B]'>Voting power</div>
+					<div className='font-normaltext-[#576D8B] mt-[4px] text-xs dark:text-blue-dark-medium'>Voting power</div>
 				</div>
-				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
+				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0]  pt-4 text-[20px] font-semibold text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 					{delegate?.voted_proposals_count}
-					<span className='mb-[2px] mt-1 text-xs font-normal text-[#576D8B]'>Voted proposals </span>
-					<span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
+					<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-xs dark:text-blue-dark-medium'>Voted proposals </span>
+					<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>(Past 30 days)</span>
 				</div>
-				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
+				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 					{delegate?.active_delegation_count}
-					<span className='mb-[2px] mt-1 text-center text-xs font-normal text-[#576D8B]'>Received Delegation</span>
+					<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-center text-xs dark:text-blue-dark-medium'>Received Delegation</span>
 				</div>
 			</div>
 			<DelegateModal
@@ -169,7 +171,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			<Modal
 				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
-				className='modal w-[725px] max-md:w-full'
+				className={`modal w-[725px] max-md:w-full ${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 				footer={false}
 				wrapClassName={className}
 				closeIcon={<CloseIcon />}
@@ -190,12 +192,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 									const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
 									return (
 										<SocialLink
-											className='mt-4 flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-xl text-[#96A4B6] hover:text-[#576D8B]'
+											className='mt-4 flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-xl text-[#96A4B6] hover:text-[#576D8B] dark:bg-inactiveIconDark'
 											key={index}
 											link={link}
 											disable={!link}
 											type={social}
-											iconClassName={`text-[20px] ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
+											iconClassName={`text-[20px] ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6]'}`}
 										/>
 									);
 								})}
@@ -203,25 +205,25 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						</div>
 					</div>
 
-					<div className={'mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm tracking-[0.015em] text-[#576D8B] '}>
+					<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-medium '}>
 						<p className='w-[90%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
 					</div>
-					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] '>
-						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
+					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0]  dark:border-separatorDark '>
+						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							<div className='flex items-end justify-center gap-1'>
 								{formatedBalance(balance.toString(), unit, 2)}
-								<span className='text-sm font-normal text-bodyBlue dark:text-white'>{unit}</span>
+								<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 							</div>
-							<div className='mt-[4px] text-xs font-normal text-[#576D8B]'>Voting power</div>
+							<div className='font-normaltext-[#576D8B] mt-[4px] text-xs dark:text-blue-dark-medium'>Voting power</div>
 						</div>
-						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
+						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0]  pt-4 text-[20px] font-semibold text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 							{delegate?.voted_proposals_count}
-							<span className='mb-[2px] mt-1 text-xs font-normal text-[#576D8B]'>Voted proposals </span>
-							<span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
+							<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-xs dark:text-blue-dark-medium'>Voted proposals </span>
+							<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>(Past 30 days)</span>
 						</div>
-						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
+						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							{delegate?.active_delegation_count}
-							<span className='mb-[2px] mt-1 text-center text-xs font-normal text-[#576D8B]'>Received Delegation</span>
+							<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-center text-xs dark:text-blue-dark-medium'>Received Delegation</span>
 						</div>
 					</div>
 				</div>

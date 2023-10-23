@@ -38,7 +38,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 		<>
 			<GovSidebarCard className={className}>
 				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Voting Details</h6>
+					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Voting Details</h6>
 					<div className='flex items-center gap-x-2'>
 						<button
 							onClick={() => {
@@ -72,13 +72,13 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 							<div className='flex justify-center'>
 								<div className='flex justify-between gap-5 md:w-[350px]'>
 									<div className='mt-4 flex flex-col gap-x-5'>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-white'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<span>
 												<AyeApprovalIcon />
 											</span>
 											Current Approval
 										</span>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-white'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<span>
 												<AyeThresholdIcon />
 											</span>
@@ -86,13 +86,13 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 										</span>
 									</div>
 									<div className='mt-4 flex flex-col gap-x-5'>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-white'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<span>
 												<NayApprovalIcon />
 											</span>
 											Current Support
 										</span>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-white'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<span>
 												<NayThresholdIcon />
 											</span>
@@ -113,7 +113,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				footer={[]}
 				className='md:min-w-[700px]'
 				closeIcon={<CloseIcon />}
-				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:text-white'>Threshold Curves</h2>}
+				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>Threshold Curves</h2>}
 			>
 				<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>
 					{isCurvesRender ? (

@@ -324,7 +324,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</VoteContainer>
 						</div>
 						<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
-							<p className='m-0 text-xs text-bodyBlue dark:text-white'>d: Delegation s: Split sa: Split Abstain</p>
+							<p className='m-0 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
 							<Pagination
 								size='small'
 								defaultCurrent={1}
@@ -363,7 +363,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</p>
 								</p>
 							) : (
-								<p className='row m-0 flex gap-1 text-sm font-medium text-bodyBlue dark:text-white'>
+								<p className='row m-0 flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 									<span>
 										<ChartIcon />
 									</span>
@@ -395,7 +395,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								<span className='relative top-[3px]'>
 									<VoteDataIcon />
 								</span>
-								<span className='text-xl font-semibold text-bodyBlue dark:text-white'>Delegation Data</span>
+								<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Data</span>
 							</h3>
 							<Divider className='my-2 mb-5 text-[#D2D8E0]' />
 						</div>

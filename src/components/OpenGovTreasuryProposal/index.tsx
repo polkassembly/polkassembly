@@ -132,7 +132,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue dark:text-blue-dark-medium transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-white'
+				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue dark:text-blue-dark-medium transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high'
 				onClick={handleClick}
 			>
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
@@ -164,13 +164,13 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				wrapClassName={className}
 				closable={false}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-white'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						Exit Treasury Proposal Creation
 					</div>
 				}
 			>
 				<div className='mt-6 px-6'>
-					<span className='text-sm text-bodyBlue dark:text-white'>
+					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
 					</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
@@ -219,7 +219,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				wrapClassName={className}
 				closeIcon={<CloseIcon />}
 				title={
-					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-white'>
+					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<CreateProposalIcon />
 						Create Treasury Proposal
 					</div>
@@ -227,7 +227,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			>
 				<div className='mt-6 px-6'>
 					<Steps
-						className='font-medium text-bodyBlue dark:text-white'
+						className='font-medium text-bodyBlue dark:text-blue-dark-high'
 						percent={steps.percent}
 						current={steps.step}
 						size='default'

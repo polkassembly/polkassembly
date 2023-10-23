@@ -484,7 +484,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						<ExtensionNotDetected />
 					</div>
 				) : (
-					<section className='flex flex-col gap-y-8 text-bodyBlue dark:text-white'>
+					<section className='flex flex-col gap-y-8 text-bodyBlue dark:text-blue-dark-high'>
 						{currentUser?.addresses &&
 							currentUser?.addresses?.length > 0 &&
 							addressList({

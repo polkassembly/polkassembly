@@ -59,7 +59,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 	return (
 		<div className={className}>
 			<div className='relative z-50 flex items-center justify-between'>
-				<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Voting</h6>
+				<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Voting</h6>
 				<div className='flex items-center gap-x-2'>
 					<StatusTag status={status} />
 				</div>

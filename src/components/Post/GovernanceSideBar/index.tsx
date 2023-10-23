@@ -649,9 +649,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				spinning={isLastVoteLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-white'>Last Vote:</p>
+				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</p>
 
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-white'>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -674,7 +674,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							) : decision == 'abstain' && (balance as any).abstain ? (
 								<p className='flex justify-center align-middle'>
 									<AbstainGray className='mb-[-8px] mr-1' />
-									<span className='font-medium capitalize  text-bodyBlue dark:text-white'>{'Abstain'}</span>
+									<span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -724,8 +724,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoLocalState: FC<ILastVote> = ({ balance, conviction, decision }) => {
 		return (
 			<div>
-				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-white'>Last Vote:</p>
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-white'>
+				<p className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</p>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -747,7 +747,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								</p>
 							) : decision === EVoteDecisionType.ABSTAIN ? (
 								<p className='flex justify-center align-middle'>
-									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-white'>{'Abstain'}</span>
+									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -921,7 +921,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
 															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Cast your Vote!</h6>
+																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
 																<VoteReferendumEth
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -934,7 +934,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</>
 												) : (
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Cast your Vote!</h6>
+														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -970,7 +970,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
 															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Cast your Vote!</h6>
+																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
 																<VoteReferendumEthV2
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -985,7 +985,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</>
 												) : (
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-white'>Cast your Vote!</h6>
+														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
 														{['polymesh'].includes(network) ? (
 															<PIPsVote
 																address={address}
@@ -1137,7 +1137,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							proposalType === ProposalType.TECHNICAL_PIPS || proposalType === ProposalType.UPGRADE_PIPS ? (
 								<GovSidebarCard>
 									<div className='mt-1 flex gap-2'>
-										<span className='text-sm tracking-wide text-bodyBlue dark:text-white'>
+										<span className='text-sm tracking-wide text-bodyBlue dark:text-blue-dark-high'>
 											This PIP is proposed via
 											{proposalType === ProposalType.TECHNICAL_PIPS ? ' Technical Committee ' : ' Upgrade Committee '}& is not open to community voting
 										</span>

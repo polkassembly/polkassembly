@@ -252,7 +252,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				closeIcon={<CloseIcon />}
 				onCancel={() => setOpenModal(false)}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-white'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						Pay Decision Deposit
 					</div>
 				}
@@ -421,7 +421,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							<Alert
 								showIcon
 								type='error'
-								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:text-white'
+								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
 								message='Insufficient available balance.'
 							/>
 						)}
@@ -480,7 +480,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 											Decision Deposit
 											<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.' />
 										</span>
-										<span className='rounded-[16px] bg-[#EDEFF3] px-3 py-0.5 text-sm font-semibold tracking-wide text-bodyBlue dark:text-white'>
+										<span className='rounded-[16px] bg-[#EDEFF3] px-3 py-0.5 text-sm font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(balance.toString(), unit)} {unit}
 										</span>
 									</div>

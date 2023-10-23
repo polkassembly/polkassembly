@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Segmented, Select, Tabs } from 'antd';
+import { Segmented, Select, Tabs as AntdTabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -24,6 +24,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { useTheme } from 'next-themes';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -109,11 +110,31 @@ export enum EProfileHistory {
 	POSTS = 'Posts'
 }
 
+const Tabs = styled(AntdTabs)`
+	.ant-tabs-tab-active > .ant-tabs-tab-btn {
+		color: ${(props) => (props.theme === 'dark' ? '#FF60B5' : '')} !important;
+	}
+	.ant-tabs-tab {
+		border: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important;
+		font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+		color: ${(props) => (props.theme == 'dark' ? '#FFFFFF' : '')} !important;
+	}
+	.ant-tabs-nav::before {
+		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '')} !important;
+	}
+	.ant-tabs-tab-active {
+		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+		border: ${(props) => (props.theme == 'dark' ? '1 px solid #4B4B4B' : '')} !important;
+		border-bottom: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important;
+	}
+`;
+
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
 	const dispatch = useDispatch();
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(!votesHistoryUnavailableNetworks.includes(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -149,7 +170,12 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			});
 		}
 		return {
-			children: <PostsTab posts={value} />,
+			children: (
+				<PostsTab
+					posts={value}
+					theme={theme}
+				/>
+			),
 			key: key,
 			label: (
 				<CountBadgePill
@@ -216,6 +242,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 					) : (
 						<div className='fullHeight'>
 							<Tabs
+								theme={theme}
 								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
 								type='card'
 								items={tabItems as any}

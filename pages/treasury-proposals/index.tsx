@@ -93,7 +93,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			/>
 
 			<div className='mt-3 flex w-full flex-col sm:flex-row sm:items-center'>
-				<h1 className='mx-2 mb-2 flex flex-1 text-2xl font-semibold leading-9 text-bodyBlue dark:text-white'>
+				<h1 className='mx-2 mb-2 flex flex-1 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
 					<DiamondIcon className='mr-2 justify-self-center' />
 					Treasury Proposals ({count})
 				</h1>
@@ -102,7 +102,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-8'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue dark:text-white shadow-md dark:bg-section-dark-overlay md:p-8'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
 					This is the place to discuss on-chain treasury proposals. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able
 					to edit them.
 					{['moonbeam', 'moonriver', 'moonbase'].includes(network) ? (

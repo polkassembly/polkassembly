@@ -170,7 +170,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{submitted_amount && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Submitted</h6>
-								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{formatBnBalance(String(submitted_amount), { numberAfterComma: 2, withUnit: true }, network)}
 								</div>
 							</li>
@@ -178,13 +178,13 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{origin && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Origin</h6>
-								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>{origin.split(/(?=[A-Z])/).join(' ')}</div>
+								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{origin.split(/(?=[A-Z])/).join(' ')}</div>
 							</li>
 						)}
 						{enactment_after_block && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Enactment After</h6>
-								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{String(enactment_after_block).length < 8 ? (
 										enactment_after_block
 									) : (
@@ -206,7 +206,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{enactment_at_block && (
 							<li className='grid grid-cols-6 gap-x-5 border-b py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Enactment At</h6>
-								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{String(enactment_at_block).length < 8 ? (
 										enactment_at_block
 									) : (
@@ -228,7 +228,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{deciding && deciding.since && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Deciding Since</h6>
-								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{`${deciding.since}`.length < 8 ? (
 										deciding.since
 									) : (
@@ -250,7 +250,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{deciding && deciding.confirming && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Confirm Started</h6>
-								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{`${deciding.confirming}`.length < 8 ? (
 										deciding.confirming
 									) : (
@@ -272,7 +272,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{decision_deposit_amount && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Decision Deposit</h6>
-								<div className='col-span-4 overflow-hidden text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 overflow-hidden text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{formatBnBalance(String(decision_deposit_amount), { numberAfterComma: 2, withUnit: true }, network)}
 								</div>
 							</li>
@@ -280,7 +280,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{submission_deposit_amount && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Submission Deposit</h6>
-								<div className='col-span-4 overflow-hidden text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 overflow-hidden text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{formatBnBalance(String(submission_deposit_amount), { numberAfterComma: 2, withUnit: true }, network)}
 								</div>
 							</li>
@@ -297,12 +297,14 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								) : status === tipStatus.CLOSED ? (
 									<>
 										<h6 className='col-span-2 pt-1.5 font-medium text-lightBlue dark:text-blue-dark-medium'>Closed</h6>
-										<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}</div>
+										<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
+											{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}
+										</div>
 									</>
 								) : (
 									<>
 										<h6 className='col-span-2 pt-1.5 font-medium text-lightBlue dark:text-blue-dark-medium'>Status</h6>
-										<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>{status}</div>
+										<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{status}</div>
 									</>
 								)}
 							</li>
@@ -310,7 +312,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{deposit && network && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Deposit</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{(typeof deposit === 'string' ? parseInt(deposit) : deposit) / Math.pow(10, chainProperties[network]?.tokenDecimals) +
 										' ' +
 										chainProperties[network]?.tokenSymbol}
@@ -320,7 +322,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{method && method !== motion_method && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Method</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>{method}</div>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{method}</div>
 							</li>
 						)}
 						{end && (
@@ -330,7 +332,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>End</h6>
 										<div className='col-span-4 md:col-span-6'>
 											<BlockCountdown
-												className='text-bodyBlue dark:text-white'
+												className='text-bodyBlue dark:text-blue-dark-high'
 												endBlock={end}
 											/>
 										</div>
@@ -338,7 +340,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								) : (
 									<>
 										<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Ended</h6>
-										<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}</div>
+										<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{dayjs.utc(ended_at).format('DD MMM YYYY, HH:mm:ss')}</div>
 									</>
 								)}
 							</li>
@@ -346,7 +348,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{(delay || delay === 0) && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Delay</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									<BlocksToTime blocks={delay} />
 								</div>
 							</li>
@@ -354,25 +356,25 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{vote_threshold && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Vote threshold</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>{vote_threshold}</div>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{vote_threshold}</div>
 							</li>
 						)}
 						{member_count && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Member count</h6>
-								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>{member_count}</div>
+								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{member_count}</div>
 							</li>
 						)}
 						{hash && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Proposal Hash</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>{hash}</div>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{hash}</div>
 							</li>
 						)}
 						{curator && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Curator</h6>
-								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									<Address
 										displayInline
 										address={curator}
@@ -383,7 +385,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{reward && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Reward</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{(typeof reward === 'string' ? parseInt(reward) : reward) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 								</div>
 							</li>
@@ -391,7 +393,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{fee && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Fee</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{(typeof fee === 'string' ? parseInt(fee) : fee) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 								</div>
 							</li>
@@ -399,7 +401,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{curator_deposit && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Curator Deposit</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{(typeof curator_deposit === 'string' ? parseInt(curator_deposit) : curator_deposit) / Math.pow(10, chainProperties[network]?.tokenDecimals) +
 										' ' +
 										chainProperties[network]?.tokenSymbol}
@@ -409,7 +411,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{bond && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 font-medium text-lightBlue dark:text-blue-dark-medium'>Bond</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									{(typeof bond === 'string' ? parseInt(bond) : bond) / Math.pow(10, chainProperties[network]?.tokenDecimals) + ' ' + chainProperties[network]?.tokenSymbol}
 								</div>
 							</li>
@@ -428,7 +430,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{motion_method && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Motion&apos;s method</h6>
-								<div className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'font-medium text-bodyBlue dark:text-white'}`}>
+								<div className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'font-medium text-bodyBlue dark:text-blue-dark-high'}`}>
 									{motion_method}
 								</div>
 							</li>
@@ -436,7 +438,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{cid && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>IPFS</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>
 									<Link
 										href={`https://ipfs.io/ipfs/${cid}`}
 										target='_blank'
@@ -447,32 +449,32 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 						{cid && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 text-base font-medium text-lightBlue dark:text-blue-dark-medium'>CID</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>{cid}</div>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{cid}</div>
 							</li>
 						)}
 						{code && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Code</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>{code}</div>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{code}</div>
 							</li>
 						)}
 						{codec && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Codec</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>{codec}</div>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{codec}</div>
 							</li>
 						)}
 						{version && (
 							<li className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] py-1.5 md:grid-cols-8'>
 								<h6 className='col-span-2 flex items-center text-base font-medium text-lightBlue dark:text-blue-dark-medium'>Version</h6>
-								<div className='col-span-4 font-medium text-bodyBlue dark:text-white md:col-span-6'>{version}</div>
+								<div className='col-span-4 font-medium text-bodyBlue dark:text-blue-dark-high md:col-span-6'>{version}</div>
 							</li>
 						)}
 					</ul>
 					{description && network === 'polymesh' ? (
 						<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
 							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:text-blue-dark-medium md:col-span-2'>Description</h6>
-							<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-white'>{description}</p>
+							<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{description}</p>
 						</div>
 					) : null}
 					{proposal_arguments && (
@@ -481,7 +483,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							{proposal_arguments?.description ? (
 								<div className='mt-5 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] md:grid-cols-8'>
 									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:text-blue-dark-medium md:col-span-2'>Description</h6>
-									<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-white'>{proposal_arguments?.description}</p>
+									<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{proposal_arguments?.description}</p>
 								</div>
 							) : null}
 							{proposal_arguments?.args ? (
@@ -505,7 +507,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 					{description && network !== 'polymesh' ? (
 						<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
 							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:text-blue-dark-medium md:col-span-2'>Description</h6>
-							<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-white'>{description}</p>
+							<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{description}</p>
 						</div>
 					) : null}
 					{
@@ -541,19 +543,19 @@ const ProposalInfo: React.FC<IProposalInfoProps> = (props) => {
 			{proposed_call?.method !== method && (
 				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] md:grid-cols-8'>
 					<h6 className='col-span-6 font-medium text-lightBlue dark:text-blue-dark-medium md:col-span-2'>Method</h6>
-					<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-white'>{proposed_call.method}</p>
+					<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{proposed_call.method}</p>
 				</div>
 			)}
 			{proposed_call?.section && (
 				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] md:grid-cols-8'>
 					<h6 className='col-span-6 font-medium text-lightBlue dark:text-blue-dark-medium md:col-span-2'>Section</h6>
-					<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-white'>{proposed_call.section}</p>
+					<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{proposed_call.section}</p>
 				</div>
 			)}
 			{proposed_call?.description && (
 				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] md:grid-cols-8'>
 					<h6 className='col-span-6 font-medium text-lightBlue dark:text-blue-dark-medium md:col-span-2'>Description</h6>
-					<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-white'>{proposed_call.description}</p>
+					<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{proposed_call.description}</p>
 				</div>
 			)}
 			{proposed_call?.args ? (

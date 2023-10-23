@@ -336,7 +336,9 @@ const Post: FC<IPostProps> = (props) => {
 					<div className='audit flex items-center justify-center gap-2'>
 						Audit
 						{totalAuditCount + totalVideoCount > 0 && (
-							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:text-white'>{totalAuditCount + totalVideoCount}</span>
+							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+								{totalAuditCount + totalVideoCount}
+							</span>
 						)}{' '}
 					</div>
 				)
@@ -500,7 +502,7 @@ const Post: FC<IPostProps> = (props) => {
 									<PostHeading className='mb-5' />
 									<Tabs
 										type='card'
-										className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-white'
+										className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-blue-dark-high'
 										items={tabItems}
 									/>
 								</>

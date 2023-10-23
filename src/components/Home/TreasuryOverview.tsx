@@ -339,8 +339,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								</div>
 								<div className='flex justify-between font-medium'>
 									{available.value ? (
-										<span className='text-lg font-medium text-bodyBlue dark:text-white'>
-											{available.value} <span className='text-sm text-lightBlue dark:text-white'>{chainProperties[network]?.tokenSymbol}</span>
+										<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+											{available.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
 										</span>
 									) : (
 										<span>N/A</span>
@@ -349,14 +349,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							</div>
 							{!['polymesh', 'polymesh-test'].includes(network) && (
 								<>
-									<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-white'>
+									<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<Divider
 											style={{
 												background: '#D2D8E0'
 											}}
 											className='m-0 p-0'
 										/>
-										<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-white'>
+										<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
 											{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
 										</span>
 									</div>
@@ -395,20 +395,20 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											<span>N/A</span>
 										) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
 											<>
-												<span className='text-lightBlue dark:text-white'>$ </span>
-												<span className='text-bodyBlue dark:text-white'>{currentTokenPrice.value}</span>
+												<span className='text-lightBlue dark:text-blue-dark-high'>$ </span>
+												<span className='text-bodyBlue dark:text-blue-dark-high'>{currentTokenPrice.value}</span>
 											</>
 										) : null}
 									</div>
 								</div>
-								<div className='flex flex-col justify-center gap-y-3 overflow-hidden font-medium text-bodyBlue dark:text-white'>
+								<div className='flex flex-col justify-center gap-y-3 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high'>
 									<Divider
 										style={{
 											background: '#D2D8E0'
 										}}
 										className='m-0 p-0'
 									/>
-									<div className='flex items-center text-xs text-lightBlue dark:text-white md:whitespace-pre'>
+									<div className='flex items-center text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre'>
 										{priceWeeklyChange.value === 'N/A' ? (
 											'N/A'
 										) : priceWeeklyChange.value ? (
@@ -455,10 +455,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										<HelperTooltip text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.' />
 									</div>
 
-									<div className='flex justify-between text-lg font-medium text-bodyBlue dark:text-white'>
+									<div className='flex justify-between text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{nextBurn.value ? (
 											<span>
-												{nextBurn.value} <span className='text-sm text-lightBlue dark:text-white'>{chainProperties[network]?.tokenSymbol}</span>
+												{nextBurn.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
 											</span>
 										) : null}
 									</div>
@@ -470,7 +470,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										}}
 										className='m-0 p-0'
 									/>
-									<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-white'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
+									<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
 								</div>
 							</>
 						) : (
@@ -506,7 +506,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												/>
 											</div>
 
-											<div className='mt-1 flex items-baseline whitespace-pre font-medium text-bodyBlue dark:text-white sm:mt-0'>
+											<div className='mt-1 flex items-baseline whitespace-pre font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0'>
 												{spendPeriod.value?.total ? (
 													<>
 														{spendPeriod.value?.days ? (

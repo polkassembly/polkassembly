@@ -199,7 +199,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] `}
 				wrapClassName={className}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<UndelegateProfileIcon className='mr-2' />
 						Undelegate
 					</div>
@@ -262,7 +262,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Delegated to</label>
-								<div className='h-10 rounded-[6px] px-0 py-[px] text-bodyBlue dark:text-white'>
+								<div className='h-10 rounded-[6px] px-0 py-[px] text-bodyBlue dark:text-blue-dark-high'>
 									<Address
 										isTruncateUsername={false}
 										address={defaultTarget}

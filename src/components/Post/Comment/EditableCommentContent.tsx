@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
+import { Button, Form, MenuProps, Tooltip } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -53,6 +54,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { checkIsProposer } from '../utils/checkIsProposer';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import { useTheme } from 'next-themes';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -83,6 +85,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme: theme } = useTheme();
 
 	const [replyForm] = Form.useForm();
 	const [form] = Form.useForm();
@@ -721,6 +724,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									</Button>
 								))}
 							<Dropdown
+								theme={theme}
 								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
 								overlayClassName='sentiment-dropdown z-[1056]'
 								placement='bottomRight'

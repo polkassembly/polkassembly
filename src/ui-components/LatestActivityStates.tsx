@@ -86,7 +86,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 					onClick={() => onClick(rowData)}
 				>
 					{/* Meta Data Row */}
-					<div className='m-2.5 flex items-center justify-between text-bodyBlue dark:text-white'>
+					<div className='m-2.5 flex items-center justify-between text-bodyBlue dark:text-blue-dark-high'>
 						<div className='max-xs-hidden'>
 							#{rowData.tip_id ? rowData.tip_id : rowData.post_id} {rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
 						</div>
@@ -96,7 +96,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 					<div className='mt-2 flex'>
 						<span>
 							{!rowData.proposer ? (
-								<span className='username mx-2 font-semibold text-bodyBlue dark:text-white'> {rowData.username} </span>
+								<span className='username mx-2 font-semibold text-bodyBlue dark:text-blue-dark-high'> {rowData.username} </span>
 							) : (
 								<Address
 									address={rowData.proposer}
@@ -146,17 +146,17 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 					onClick={() => onClick(rowData)}
 				>
 					{/* Meta Data Row */}
-					<div className='m-2.5 flex items-center justify-between text-bodyBlue dark:text-white'>
+					<div className='m-2.5 flex items-center justify-between text-bodyBlue dark:text-blue-dark-high'>
 						<div className='max-xs-hidden'>
 							#{rowData.post_id} {rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
-							{rowData.sub_title && <div className='text-sm text-bodyBlue dark:text-white'>{rowData.sub_title}</div>}
+							{rowData.sub_title && <div className='text-sm text-bodyBlue dark:text-blue-dark-high'>{rowData.sub_title}</div>}
 						</div>
 					</div>
 					{/* Created by and on */}
 					<div className='mt-2 flex'>
 						<span>
 							{!rowData.proposer ? (
-								<span className='username mx-2 font-semibold text-bodyBlue dark:text-white'> {rowData.username} </span>
+								<span className='username mx-2 font-semibold text-bodyBlue dark:text-blue-dark-high'> {rowData.username} </span>
 							) : (
 								<Address
 									address={rowData.proposer}

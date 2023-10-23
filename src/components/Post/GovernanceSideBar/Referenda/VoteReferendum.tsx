@@ -72,7 +72,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			if (days && !isNaN(Number(days))) {
 				return [
 					<Select.Option
-						className={`text-bodyBlue dark:text-white ${poppins.variable}`}
+						className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`}
 						key={0}
 						value={0}
 					>
@@ -80,7 +80,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</Select.Option>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<Select.Option
-							className={`text-bodyBlue dark:text-white ${poppins.variable}`}
+							className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
@@ -91,7 +91,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<Select.Option
-			className={`text-bodyBlue dark:text-white ${poppins.variable}`}
+			className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`}
 			key={0}
 			value={0}
 		>
@@ -99,7 +99,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<Select.Option
-				className={`text-bodyBlue dark:text-white ${poppins.variable}`}
+				className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
@@ -565,13 +565,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								/>
 								<div className='flex items-center gap-[8px]'>
 									<PolkasafeIcon className='ml-14' />
-									<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Cast Vote with Polkasafe Multisig</span>
+									<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Vote with Polkasafe Multisig</span>
 								</div>
 							</div>
 						) : (
 							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0]'>
 								<CastVoteIcon className='ml-6' />
-								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Cast Your Vote</span>
+								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 							</div>
 						)
 					}
@@ -676,7 +676,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											<Divider className='m-0'>OR</Divider>
 											<div className='flex w-full justify-center'>
 												<WalletButton
-													className='!border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-white'
+													className='!border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'
 													onClick={() => {
 														setShowMultisig(!showMultisig);
 													}}

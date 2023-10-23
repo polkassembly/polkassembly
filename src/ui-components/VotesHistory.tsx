@@ -72,7 +72,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 			>
 				{userAddresses?.map((address, index) => (
 					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-white`}
+						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={index}
 					>
 						<Checkbox
@@ -212,19 +212,19 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 							{votesData &&
 								votesData?.map((data, index) => (
 									<div
-										className={`border-[#DCDFE3] text-sm text-bodyBlue dark:text-white max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid ${data?.expand && 'max-md:bg-[#fbfbfc]'}`}
+										className={`border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid ${data?.expand && 'max-md:bg-[#fbfbfc]'}`}
 										key={index}
 									>
-										<div className={`border-0 ${!data?.expand && !loading && 'border-b-[1px]'} border-solid border-[#DCDFE3] text-sm text-bodyBlue dark:text-white max-md:border-none `}>
+										<div className={`border-0 ${!data?.expand && !loading && 'border-b-[1px]'} border-solid border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:border-none `}>
 											<div className='flex h-14 items-center justify-between gap-2 border-0 px-3 max-md:border-b-[1px] max-md:border-solid max-md:border-[#DCDFE3]'>
 												<Link
 													target='_blank'
 													href={`https:${network}.polkassembly.io/${govType === EGovType.OPEN_GOV ? 'referenda' : 'referendum'}/${data?.proposal?.id}`}
-													className='flex w-[45%] truncate font-medium text-bodyBlue dark:text-white hover:text-bodyBlue dark:text-white max-md:w-[95%]'
+													className='flex w-[45%] truncate font-medium text-bodyBlue dark:text-blue-dark-high hover:text-bodyBlue dark:text-blue-dark-high max-md:w-[95%]'
 												>
 													<span className='flex w-[60px] items-center gap-1 '>
 														{`#${data?.proposal?.id}`}
-														<span className='text-[9px] text-bodyBlue dark:text-white'>&#9679;</span>
+														<span className='text-[9px] text-bodyBlue dark:text-blue-dark-high'>&#9679;</span>
 													</span>
 													<span className='w-[100%] truncate hover:underline '>{data?.proposal?.title || noTitle}</span>
 												</Link>
@@ -337,7 +337,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<VoterIcon /> Votes
 																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-white'>
+																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 																			{Number(formatedBalance((data?.balance.toString() || '0').toString(), unit, 2).replaceAll(',', '')) * Number(data?.lockPeriod || 0.1)} {unit}
 																		</span>
 																	</div>
@@ -345,7 +345,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<ConvictionIcon /> Conviction
 																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-white'>
+																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 																			{data?.lockPeriod || 0.1}x{data.isDelegatedVote && '/d'}
 																		</span>
 																	</div>
@@ -353,7 +353,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<CapitalIcon /> Capital
 																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-white'>
+																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 																			{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
 																		</span>
 																	</div>
@@ -366,7 +366,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<VoterIcon /> Votes
 																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-white'>
+																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 																			{formatedBalance((data?.delegatedVotingPower || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
 																		</span>
 																	</div>
@@ -374,13 +374,13 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<EmailIcon /> Delegators
 																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-white'>{data?.delegatorsCount || 0}</span>
+																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>{data?.delegatorsCount || 0}</span>
 																	</div>
 																	<div className='flex justify-between'>
 																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
 																			<CapitalIcon /> Capital
 																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-white'>
+																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 																			{formatedBalance((data?.delegateCapital || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
 																		</span>
 																	</div>

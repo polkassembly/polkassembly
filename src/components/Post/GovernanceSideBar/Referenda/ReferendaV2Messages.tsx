@@ -17,6 +17,7 @@ import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import ConfirmationAttemptsRow from '~src/ui-components/ConfirmationAttemptsRow';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -54,6 +55,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		postData: { track_name, track_number, created_at, status, timeline, requested }
 	} = usePostDataContext();
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const trackData = getTrackData(network, track_name, track_number);
 	const proposalCreatedAt = dayjs(created_at);
@@ -142,7 +144,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{!decidingStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-white'>Prepare Period</h3>
+						<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Prepare Period</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
 							<p
 								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
@@ -159,13 +161,13 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							showInfo={false}
 							percent={prepare.periodPercent}
 							strokeColor='#E5007A'
-							trailColor='#FEF2F8'
 							size='small'
+							trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-white'>Prepare Period</span>
+							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Prepare Period</span>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}
 							</span>
@@ -177,7 +179,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-white'>Voting has Started</h3>
+						<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Voting has Started</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
 							<p
 								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
@@ -194,12 +196,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							showInfo={false}
 							percent={decision.periodPercent}
 							strokeColor='#E5007A'
-							trailColor='#FEF2F8'
+							trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 							size='small'
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-						<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-white'>Decision Period</span>
+						<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Decision Period</span>
 						<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 							{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}
 						</span>
@@ -210,13 +212,13 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							showInfo={false}
 							percent={confirm.periodPercent}
 							strokeColor='#E5007A'
-							trailColor='#FEF2F8'
+							trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 							size='small'
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-white'>Confirmation Period</span>
+							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Confirmation Period</span>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}
 							</span>
@@ -230,7 +232,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					{isDisbursalPeriodCardVisible || minEnactment.periodCardVisible ? (
 						<GovSidebarCard>
 							<div className='flex items-center justify-between'>
-								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-white'>Proposal Passed</h3>
+								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
 								<div className='w-13 flex h-[33px] gap-1'>
 									<p
 										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
@@ -247,12 +249,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									showInfo={false}
 									percent={minEnactment.periodPercent}
 									strokeColor='#E5007A'
-									trailColor='#FEF2F8'
+									trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 									size='small'
 								/>
 							</div>
 							<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-white'>Enactment Period</span>
+								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Enactment Period</span>
 								<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 									{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}
 								</span>
@@ -264,13 +266,13 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 											className='m-0 flex items-center p-0'
 											percent={spend.periodPercent}
 											strokeColor='#E5007A'
-											trailColor='#FEF2F8'
+											trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 											size='small'
 										/>
 									</div>
 									<p className='m-0 mt-2 flex items-center justify-between p-0 leading-[22px]'>
 										<>
-											<span className='text-sm font-normal text-bodyBlue dark:text-white'>Funds Disbursal Period</span>
+											<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
 											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{spend.period}</span>
 										</>
 									</p>
@@ -281,7 +283,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					) : (
 						<GovSidebarCard>
 							<div className='flex items-center justify-between'>
-								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-white'>Proposal Passed</h3>
+								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
 								<div className='w-13 flex h-[33px] gap-1'>
 									<p
 										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
@@ -300,12 +302,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-xl font-medium leading-6 tracking-[0.0015em] text-bodyBlue dark:text-white'>
+							<h3 className='m-0 text-xl font-medium leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 								Proposal {status === 'Cancelled' ? 'Cancelled' : status === 'Killed' ? 'Killer' : status === 'TimedOut' ? 'Timed Out' : 'Failed'}
 							</h3>
 							<Button>3</Button>
 						</div>
-						<div className='mt-[18px] text-sm font-normal leading-[22px] tracking-[0.01em] text-bodyBlue dark:text-white'>
+						<div className='mt-[18px] text-sm font-normal leading-[22px] tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 							<FailedReferendaText
 								progress={progress}
 								network={network}
@@ -322,7 +324,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				open={open}
 				title={
 					<div className='flex items-center justify-between gap-x-5 px-2 py-3'>
-						<h3 className='m-0 p-0 text-xl font-medium leading-[24px] tracking-[0.0015em] text-bodyBlue dark:text-white'>Status</h3>
+						<h3 className='m-0 p-0 text-xl font-medium leading-[24px] tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Status</h3>
 						<button
 							onClick={() => setOpen(false)}
 							className='flex cursor-pointer items-center justify-center border-none bg-transparent outline-none'
@@ -334,6 +336,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				onCancel={() => setOpen(false)}
 				closable={false}
 				footer={[]}
+				className={`${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 			>
 				<section className='mt-[24px] pl-[21px] text-sidebarBlue'>
 					<article className='flex gap-x-[23px]'>
@@ -427,7 +430,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	);
 };
 
-export default ReferendaV2Messages;
+export default styled(ReferendaV2Messages)`
+	.ant-modal .ant-modal-header {
+		background-color: ${({ theme }) => (theme === 'dark' ? '#1E1E1E' : '#fff')};
+	}
+`;
 
 const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[]; progress: IProgress }> = (props) => {
 	const { status, timeline, network, progress } = props;

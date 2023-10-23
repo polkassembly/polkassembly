@@ -81,7 +81,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				<Alert
 					showIcon
 					type='info'
-					className='mt-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:text-white'
+					className='mt-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
 					message='No identity request found for judgment.'
 				/>
 			)}
@@ -89,7 +89,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				<Alert
 					showIcon
 					type='info'
-					className='mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-white'
+					className='mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
 					description='To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.'
 				/>
 			)}
@@ -97,7 +97,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			<span className='-mt-6 flex items-center justify-center text-[350px]'>
 				<AmountBreakdownModalIcon />
 			</span>
-			<ul className='-mt-6 flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-white'>
+			<ul className='-mt-6 flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>
 				<li>Polkadot offers on-chain identities that verify users&apos;s credentials through appointed registrars, instilling greater trust and support. </li>
 				<li>
 					Once successfully verified, users receive a green checkmark, symbolising their trusted status. This verified status symbol enhances trustworthiness when requesting funds
@@ -115,7 +115,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			<div className='min-h-[60px] rounded-lg bg-[#F6F7F9] px-3 py-[14px]'>
 				<div className={`flex justify-between ${amountBreakup && 'border-0 border-b-[1px] border-solid border-[#E1E6EB] pb-3'}`}>
 					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Total Amount Required</span>
-					<div className='flex cursor-pointer flex-col text-base font-semibold text-bodyBlue dark:text-white'>
+					<div className='flex cursor-pointer flex-col text-base font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<span
 							className='flex justify-end'
 							onClick={() => setAmountBreakup(!amountBreakup)}
@@ -130,7 +130,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					<div className='mt-3 flex flex-col gap-2'>
 						<span className='flex justify-between text-sm'>
 							<span className='text-lightBlue dark:text-blue-dark-medium'>Bond</span>
-							<span className='font-medium text-bodyBlue dark:text-white'>
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{formatedBalance(perSocialBondFee.toString(), unit)} {unit} per social field
 							</span>
 						</span>
@@ -142,7 +142,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 									text='Amount that needs held in an address for a verified account.'
 								/>
 							</span>
-							<span className='font-medium text-bodyBlue dark:text-white'>
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
 							</span>
 						</span>
@@ -154,7 +154,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 									className='ml-1'
 								/>
 							</span>
-							<span className='font-medium text-bodyBlue dark:text-white'>
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{formatedBalance(registerarFee.toString(), unit)} {unit}
 							</span>
 						</span>

@@ -4,7 +4,8 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined, SwapOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Dropdown, Pagination, PaginationProps, Segmented, Spin } from 'antd';
+import { Pagination, PaginationProps, Segmented, Spin } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
@@ -23,6 +24,7 @@ import classNames from 'classnames';
 import { IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
 import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface IVotersListProps {
 	className?: string;
@@ -38,7 +40,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const firstRef = useRef(true);
 	const { api, apiReady } = useApiContext();
-
+	const { resolvedTheme: theme } = useTheme();
 	const { className, referendumId, voteType, pipsVoters, proposalType } = props;
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: 'Loading votes' });
@@ -228,6 +230,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	};
 	const sortByDropdown = (
 		<Dropdown
+			theme={theme}
 			overlayClassName='z-[1056]'
 			menu={{
 				defaultSelectedKeys: [votesSortValues.TIME_DESC],

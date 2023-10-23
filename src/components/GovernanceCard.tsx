@@ -197,7 +197,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
-							<span className='flex-none text-center font-medium text-bodyBlue dark:text-white sm:w-[120px]'>#{isTip ? tip_index : onchainId}</span>
+							<span className='flex-none text-center font-medium text-bodyBlue dark:text-blue-dark-high sm:w-[120px]'>#{isTip ? tip_index : onchainId}</span>
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
 								username={username}
@@ -215,10 +215,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 					<div className='mt-1 flex items-center justify-between'>
 						<div className='ml-[120px] flex flex-grow'>
-							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue dark:text-white lg:max-w-none'>
-								<span className='break-all text-sm font-medium text-bodyBlue dark:text-white'>{mainTitle}</span>
+							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue dark:text-blue-dark-high lg:max-w-none'>
+								<span className='break-all text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{mainTitle}</span>
 							</h1>
-							<h2 className='text-sm font-medium text-bodyBlue dark:text-white'>{subTitle}</h2>
+							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
 						</div>
 						{requestedAmount && (
 							<div className='flex items-center justify-center'>
@@ -234,7 +234,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						)}
 					</div>
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-white xs:hidden sm:mb-1 sm:ml-[120px] sm:mt-0 sm:flex lg:flex-row lg:items-center'>
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:hidden sm:mb-1 sm:ml-[120px] sm:mt-0 sm:flex lg:flex-row lg:items-center'>
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
 							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
@@ -274,7 +274,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									))}
 									{tags.length > 2 && (
 										<span
-											className='text-bodyBlue dark:text-white'
+											className='text-bodyBlue dark:text-blue-dark-high'
 											style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -436,11 +436,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue dark:text-white'>
+					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 						#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue dark:text-white xs:flex sm:hidden lg:flex-row lg:items-center'>
+					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:flex sm:hidden lg:flex-row lg:items-center'>
 						<div className='h-[30px] flex-shrink-0 items-center xs:flex xs:justify-start sm:hidden'>
 							<OnchainCreationLabel
 								address={address}
@@ -517,7 +517,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										))}
 										{tags.length > 2 && (
 											<span
-												className='text-bodyBlue dark:text-white'
+												className='text-bodyBlue dark:text-blue-dark-high'
 												style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
 												onClick={(e) => {
 													e.stopPropagation();
@@ -547,7 +547,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%]`}
 				title={
 					<>
-						<label className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-white'>
+						<label className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
 							<TagsIcon className='mr-2' />
 							Tags
 						</label>

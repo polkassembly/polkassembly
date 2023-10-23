@@ -382,7 +382,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 		<>
 			<div className='flex items-center'>
 				<LoginLogo className='ml-6 mr-2' />
-				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-white'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
+				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />
 			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
@@ -392,7 +392,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 							<span className='mt-2'>
 								<WalletIcon which={chosenWallet} />
 							</span>
-							<span className='text-lg text-bodyBlue dark:text-white sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+							<span className='text-lg text-bodyBlue dark:text-blue-dark-high sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
 						</p>
 					)}
 					{withPolkasafe && (
@@ -407,7 +407,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				</h3>
 				{fetchAccounts ? (
 					<div className='flex flex-col items-center justify-center'>
-						<p className='text-base text-bodyBlue dark:text-white'>
+						<p className='text-base text-bodyBlue dark:text-blue-dark-high'>
 							{withPolkasafe
 								? 'To fetch your Multisig details, please select a wallet extension'
 								: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
@@ -569,7 +569,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					</>
 				)}
 				<div className='mt-6 flex items-center justify-center pb-5 font-medium'>
-					<label className='text-lg text-bodyBlue dark:text-white'>Don&apos;t have an account?</label>
+					<label className='text-lg text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 					<div
 						onClick={handleClick}
 						className='cursor-pointer text-lg text-pink_primary'

@@ -273,7 +273,7 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='error'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-white'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
 						message={`Minimum Balance of ${formatedBalance(totalFee.toString(), unit, 2)} ${unit} is required to proceed`}
 					/>
 				)}
@@ -281,7 +281,7 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-white'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
 						message='Your identity has already been set. Please edit a field to proceed.'
 					/>
 				)}
@@ -340,7 +340,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='displayName'
-							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:text-white'
+							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
@@ -371,7 +371,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='legalName'
-							className='h-10 rounded-[4px] text-bodyBlue dark:text-white'
+							className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
@@ -406,7 +406,7 @@ const IdentityForm = ({
 								callback();
 							}
 						} }]}>
-						<Input name='web' value={web} placeholder='Enter your website address' className='h-10 rounded-[4px] text-bodyBlue dark:text-white' onChange={(e) => {onChangeSocials({ ...socials, web: e.target.value }); handleInfo({ webVal: e.target.value });}}/>
+						<Input name='web' value={web} placeholder='Enter your website address' className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high' onChange={(e) => {onChangeSocials({ ...socials, web: e.target.value }); handleInfo({ webVal: e.target.value });}}/>
 					</Form.Item>
 				</div> */}
 
@@ -443,7 +443,7 @@ const IdentityForm = ({
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
-								className='h-10 rounded-[4px] text-bodyBlue dark:text-white'
+								className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 									handleInfo();
@@ -482,7 +482,7 @@ const IdentityForm = ({
 								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
 								value={twitter?.value}
 								placeholder='Enter your twitter name'
-								className='h-10 rounded-[4px] text-bodyBlue dark:text-white'
+								className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
 									handleInfo();
@@ -506,7 +506,7 @@ const IdentityForm = ({
 								callback();
 							}
 						} }]}>
-						<Input name='riot' value={riot} placeholder='@Yourname.matrix.org' className='h-10 rounded-[4px] text-bodyBlue dark:text-white' onChange={(e) => {onChangeSocials({ ...socials, riot: e.target.value }); handleInfo({ riotVal: e.target.value });}}/>
+						<Input name='riot' value={riot} placeholder='@Yourname.matrix.org' className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high' onChange={(e) => {onChangeSocials({ ...socials, riot: e.target.value }); handleInfo({ riotVal: e.target.value });}}/>
 					</Form.Item>
 				</div> */}
 				</div>
@@ -520,7 +520,7 @@ const IdentityForm = ({
 							text='Amount that needs held in an address for a verified account.'
 						/>
 					</span>
-					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue dark:text-white'>
+					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue dark:text-blue-dark-high'>
 						{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
 					</span>
 				</div>
@@ -532,7 +532,7 @@ const IdentityForm = ({
 						type='info'
 						showIcon
 						message={
-							<span className='text-sm font-medium text-bodyBlue dark:text-white '>
+							<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high '>
 								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
@@ -549,7 +549,7 @@ const IdentityForm = ({
 								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
 									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
-										<span className='font-medium text-bodyBlue dark:text-white'>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(gasFee.toString(), unit)} {unit}
 										</span>
 									</span>
@@ -561,7 +561,7 @@ const IdentityForm = ({
 												text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue dark:text-white'>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(bondFee.toString(), unit)} {unit}
 										</span>
 									</span>
@@ -573,13 +573,13 @@ const IdentityForm = ({
 												className='ml-1'
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue dark:text-white'>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(registerarFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
-										<span className='font-medium text-bodyBlue dark:text-white'>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(totalFee.toString(), unit, 2)} {unit}
 										</span>
 									</span>

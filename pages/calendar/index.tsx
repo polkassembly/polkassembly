@@ -4,7 +4,8 @@
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Checkbox, MenuProps, Skeleton, Spin } from 'antd';
-import { Badge, Button, Col, Divider, Dropdown, Row, Space } from 'antd';
+import { Badge, Button, Col, Divider, Row, Space } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
@@ -46,6 +47,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -101,6 +103,8 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 	const [queryApprovalStatus, setQueryApprovalStatus] = useState<string>(approvalStatus.APPROVED);
 	const [eventApprovalStatus, setEventApprovalStatus] = useState<string>(queryApprovalStatus);
+
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -675,6 +679,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								<Dropdown
 									// value={eventApprovalStatus}
 									menu={{ items: approvalStatusDropdown, onClick: onApprovalStatusChange }}
+									theme={theme}
 									// disabled={loadingUpdate}
 								>
 									{eventApprovalStatus}

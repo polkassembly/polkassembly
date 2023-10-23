@@ -315,7 +315,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 					?.filter((item) => item?.trackId !== trackNum)
 					?.map((track, index) => (
 						<div
-							className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-white`}
+							className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 							key={index}
 						>
 							<Checkbox
@@ -348,7 +348,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full`}
 				wrapClassName={className}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-white'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<DelegateProfileGreyIcon className='mr-2' />
 						Delegate
 					</div>
@@ -427,7 +427,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										defaultAddress={delegationDashboardAddress}
 										onChange={() => setLoading(false)}
 										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium'}
-										className='-mt-6 text-sm font-normal text-bodyBlue dark:text-white'
+										className='-mt-6 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 										disabled
 										size='large'
 										identiconSize={30}
@@ -529,7 +529,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
-									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-white'>
+									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance, locked for ${lock} enactment period`}
 									</div>
 								</div>

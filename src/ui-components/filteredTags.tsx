@@ -21,7 +21,7 @@ const FilteredTags = () => {
 
 	return tags.length > 0 ? (
 		<div className='flex flex-wrap items-center xs:px-1 sm:px-2 sm:pb-4'>
-			<span className='rounded-xl text-sm font-medium text-bodyBlue dark:text-white'>Filters: &nbsp;</span>
+			<span className='rounded-xl text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Filters: &nbsp;</span>
 			{tags.map((tag, index) => (
 				<div
 					className='rounded-xl text-sm font-normal text-lightBlue dark:text-blue-dark-medium xs:flex xs:flex-wrap'

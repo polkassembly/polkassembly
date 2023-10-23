@@ -358,7 +358,7 @@ const AddressConnectModal = ({
 			className={`${poppins.className} ${poppins.variable} radius`}
 			open={open}
 			title={
-				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:text-white'>
+				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 					{showMultisig && (
 						<ArrowLeft
 							className='absolute left-[24px] mt-1 cursor-pointer'
@@ -394,7 +394,7 @@ const AddressConnectModal = ({
 					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
 							<ConnectAddressIcon />
-							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-white'>
+							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 								Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
 							</span>
 						</div>
@@ -542,7 +542,7 @@ const AddressConnectModal = ({
 									<Divider className='m-0'>OR</Divider>
 									<div className='flex w-full justify-center'>
 										<WalletButton
-											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-white'
+											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'
 											onClick={() => {
 												setShowMultisig(!showMultisig);
 											}}
@@ -597,7 +597,7 @@ const AddressConnectModal = ({
 							}`}
 							type='info'
 							showIcon
-							className='changeColor text-md text-bodyBlue dark:text-white'
+							className='changeColor text-md text-bodyBlue dark:text-blue-dark-high'
 						/>
 					)}
 

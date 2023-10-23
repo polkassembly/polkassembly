@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Card, Col, Dropdown, Row } from 'antd';
+import { Card, Col, Row } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
 import { chainProperties, network } from 'src/global/networkConstants';
@@ -13,6 +14,7 @@ import DownOutlined from '~assets/search/dropdown-down.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -47,7 +49,7 @@ for (const key of Object.keys(network)) {
 					src={chainProperties[keyVal]?.logo ? chainProperties[keyVal].logo : chainLogo}
 					alt='Logo'
 				/>
-				<span className='text-sm font-medium capitalize text-bodyBlue dark:text-white hover:text-pink_primary'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
+				<span className='text-sm font-medium capitalize text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
 			</div>
 		),
 		link
@@ -82,7 +84,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	const { network } = useNetworkSelector();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const router = useRouter();
-
+	const { resolvedTheme: theme } = useTheme();
 	const handleLink = (option: DropdownMenuItemType) => {
 		setOpenFilter(false);
 		if (isSearch && setSelectedNetworks && selectedNetworks) {
@@ -100,6 +102,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 
 	return (
 		<Dropdown
+			theme={theme}
 			open={openFilter}
 			overlayClassName='z-[1056]'
 			onOpenChange={() => setOpenFilter(!openFilter)}
@@ -110,7 +113,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				return (
 					<Card className='mt-3 max-h-[52vh] max-w-[356px] overflow-y-auto'>
 						<>
-							<div className='font-medium text-bodyBlue dark:text-white'>Polkadot &amp; Parachains</div>
+							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>Polkadot &amp; Parachains</div>
 							<Row className='mt-2'>
 								{polkadotChains.map((optionObj) => (
 									<Col
@@ -126,7 +129,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								))}
 							</Row>
 
-							<div className='mt-4 font-medium text-bodyBlue dark:text-white'>Kusama &amp; Parachains</div>
+							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>Kusama &amp; Parachains</div>
 							<Row className='mt-2'>
 								{kusamaChains.map((optionObj) => (
 									<Col
@@ -142,7 +145,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								))}
 							</Row>
 
-							<div className='mt-4 font-medium text-bodyBlue dark:text-white'>Solo Chains</div>
+							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>Solo Chains</div>
 							<Row className='mt-2'>
 								{soloChains.map((optionObj) => (
 									<Col
@@ -158,7 +161,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								))}
 							</Row>
 
-							<div className='mt-4 font-medium text-bodyBlue dark:text-white'>Test Chains</div>
+							<div className='mt-4 font-medium text-bodyBlue dark:text-blue-dark-high'>Test Chains</div>
 							<Row className='mt-2'>
 								{testChains.map((optionObj) => (
 									<Col
@@ -207,7 +210,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				</a>
 			) : (
 				<a
-					className='flex items-center justify-between text-bodyBlue dark:text-white hover:text-pink_primary lg:h-8 lg:min-w-[133px] lg:rounded-[26px] lg:border lg:border-solid lg:border-[#D2D8E0] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]'
+					className='flex items-center justify-between text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high lg:h-8 lg:min-w-[133px] lg:rounded-[26px] lg:border lg:border-solid lg:border-[#D2D8E0] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]'
 					onClick={(e) => {
 						e.preventDefault();
 						setSidedrawer(false);

@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Button, Dropdown, Tag } from 'antd';
+import { Button, Tag } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
@@ -13,6 +14,7 @@ import { EAddressOtherTextType } from '~src/types';
 import { useDispatch } from 'react-redux';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -56,7 +58,7 @@ const AddressDropdown = ({
 	const dispatch = useDispatch();
 	const substrate_address = getSubstrateAddress(selectedAddress || '');
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
-
+	const { resolvedTheme: theme } = useTheme();
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
 		if (linkAddressTextDisabled) return;
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
@@ -113,13 +115,14 @@ const AddressDropdown = ({
 		});
 	return (
 		<Dropdown
+			theme={theme}
 			trigger={['click']}
 			className={className}
 			disabled={isDisabled}
 			overlayClassName='z-[1056]'
 			menu={{
 				items: addressItems,
-				onClick: (e) => {
+				onClick: (e: any) => {
 					if (e.key !== '1') {
 						setSelectedAddress(e.key);
 						onAccountChange(e.key);

@@ -74,7 +74,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw]'>
 				<ProfileBalances />
 			</div>
-			<h2 className=' mb-6 mt-5 text-[24px] font-semibold text-bodyBlue dark:text-white max-lg:pt-[60px] md:mb-5'>Delegation dashboard</h2>
+			<h2 className=' mb-6 mt-5 text-[24px] font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation dashboard</h2>
 			<DelegationProfile
 				address={userDetails?.delegationDashboardAddress}
 				username={userDetails?.username || ''}

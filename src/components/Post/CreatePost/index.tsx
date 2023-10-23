@@ -165,7 +165,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			<BackToListingView postCategory={proposalType === ProposalType.DISCUSSIONS ? PostCategory.DISCUSSION : PostCategory.GRANT} />
 
 			<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
-				<h2 className='dashboard-heading mb-8 text-bodyBlue dark:text-white'>New Post</h2>
+				<h2 className='dashboard-heading mb-8 text-bodyBlue dark:text-blue-dark-high'>New Post</h2>
 				{error && (
 					<ErrorAlert
 						errorMsg={error}
@@ -193,7 +193,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							name='title'
 							autoFocus
 							placeholder='Enter Title'
-							className='text-bodyBlue dark:text-white'
+							className='text-bodyBlue dark:text-blue-dark-high'
 						/>
 					</Form.Item>
 					<ContentForm onChange={(v) => savePostFormCacheValue('content', v)} />

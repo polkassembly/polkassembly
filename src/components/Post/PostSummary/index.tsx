@@ -59,11 +59,11 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 								<span className='flex items-center justify-center text-2xl text-lightBlue dark:text-blue-dark-medium'>
 									<AiStarIcon />
 								</span>
-								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue dark:text-white md:text-xl md:leading-6'>AI Summary</span>
+								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue dark:text-blue-dark-high md:text-xl md:leading-6'>AI Summary</span>
 							</h3>
 							<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.20)] py-1 pl-[6px] pr-[8px] md:py-[6px] md:pl-[10px] md:pr-3'>
 								<OpenAiIcon className='text-base md:text-2xl' />
-								<p className='m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue dark:text-white md:text-xs'>Powered by OpenAI</p>
+								<p className='m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue dark:text-blue-dark-high md:text-xs'>Powered by OpenAI</p>
 							</div>
 						</article>
 						<button
@@ -79,7 +79,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				<Divider className='m-0 bg-[#e1e6eb] p-0' />
 				<div className='p-4 px-5 md:p-6'>
 					<Markdown
-						className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-white'
+						className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-blue-dark-high'
 						md={sanitizeSummary(summary || '')}
 					/>
 				</div>

@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { InputRef, MenuProps, Tag, Dropdown, Input } from 'antd';
+import { InputRef, MenuProps, Tag, Input } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useEffect, useRef, useState } from 'react';
 import { IPostTag } from '~src/types';
 import { PlusOutlined } from '@ant-design/icons';
@@ -10,6 +11,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	tags: string[];
@@ -27,7 +29,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 	const [filteredTags, setFilteredTags] = useState<IPostTag[]>([]);
 	const selectedTag = useRef<string | null>(null);
 	const [charLimitReached, setCharLimitReached] = useState<boolean>(false);
-
+	const { resolvedTheme: theme } = useTheme();
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
 		if (error) console.error('Error in getting all-tags', error);
@@ -135,6 +137,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 				}`}
 			>
 				<Dropdown
+					theme={theme}
 					disabled={tags.length === 5 || disabled}
 					overlayClassName='ml-[-10px] min-w-[104px] rounded create-post z-[1056]'
 					menu={{ items }}
@@ -153,14 +156,16 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 										value={inputValue}
 										onChange={handleInputChange}
 										onPressEnter={handleInputConfirm}
-										className={`text-normal  mr-2 flex items-center rounded-xl bg-white dark:bg-section-dark-overlay px-[16px] py-[4px] text-xs text-[#90A0B7] ${charLimitReached && 'border-red-500'}`}
+										className={`text-normal  mr-2 flex items-center rounded-xl bg-white px-[16px] py-[4px] text-xs text-[#90A0B7] dark:bg-section-dark-overlay ${
+											charLimitReached && 'border-red-500'
+										}`}
 									/>
 							  )
 							: tags.length < 5 &&
 							  !disabled && (
 									<Tag
 										onClick={showInput}
-										className='flex cursor-pointer items-center rounded-xl border-pink_primary bg-white dark:bg-section-dark-overlay px-[16px] py-[4px] text-xs text-pink_primary'
+										className='flex cursor-pointer items-center rounded-xl border-pink_primary bg-white px-[16px] py-[4px] text-xs text-pink_primary dark:bg-section-dark-overlay'
 									>
 										<PlusOutlined className='mr-1' />
 										Add new tag
@@ -170,7 +175,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 							{tags.map((tag, index) => (
 								<Tag
 									key={index}
-									className={`text-normal mt-1 rounded-xl border-[#90A0B7] bg-white dark:bg-section-dark-overlay px-[16px] py-[4px] text-xs tracking-wide text-[#90A0B7] ${
+									className={`text-normal mt-1 rounded-xl border-[#90A0B7] bg-white px-[16px] py-[4px] text-xs tracking-wide text-[#90A0B7] dark:bg-section-dark-overlay ${
 										disabled ? 'bg-[#F5F5F5]' : 'hover:border-pink_primary'
 									}`}
 									closable={!disabled}

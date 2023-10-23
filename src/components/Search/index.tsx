@@ -459,7 +459,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	return (
 		<Modal
 			title={
-				<label className={'search flex flex-wrap gap-1 text-xl font-semibold text-bodyBlue dark:text-white'}>
+				<label className={'search flex flex-wrap gap-1 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'}>
 					{isSuperSearch ? (
 						<span
 							className='flex cursor-pointer items-center'
@@ -488,7 +488,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input
-					className='placeholderColor mt-2 h-[40px] rounded-[4px] border-pink_primary text-bodyBlue dark:text-white'
+					className='placeholderColor mt-2 h-[40px] rounded-[4px] border-pink_primary text-bodyBlue dark:text-blue-dark-high'
 					type='search'
 					value={searchInput}
 					onChange={(e) => handleSearchOnChange(e.target.value)}
@@ -554,7 +554,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<Radio
 							value={finalSearchInput.length > 0 && EFilterBy.Referenda}
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
-								filterBy === EFilterBy.Referenda && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue dark:text-white md:px-2' : 'text-[#667589]'
+								filterBy === EFilterBy.Referenda && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue dark:text-blue-dark-high md:px-2' : 'text-[#667589]'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
 							Referenda {finalSearchInput.length > 0 && `(${onchainPostResults?.total || 0})`}
@@ -562,7 +562,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<Radio
 							value={EFilterBy.People}
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
-								filterBy === EFilterBy.People && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue dark:text-white md:px-2' : 'text-[#667589]'
+								filterBy === EFilterBy.People && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue dark:text-blue-dark-high md:px-2' : 'text-[#667589]'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
 							People {finalSearchInput.length > 0 && `(${peoplePage.totalPeople || 0})`}
@@ -570,7 +570,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<Radio
 							value={EFilterBy.Discussions}
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
-								filterBy === EFilterBy.Discussions && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue dark:text-white md:px-2' : 'text-[#667589]'
+								filterBy === EFilterBy.Discussions && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue dark:text-blue-dark-high md:px-2' : 'text-[#667589]'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
 							Discussions {finalSearchInput.length > 0 && `(${offchainPostResults?.total || 0})`}
@@ -603,31 +603,31 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 										>
 											<Radio
 												value={EDateFilter.Today}
-												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Today ? 'text-bodyBlue dark:text-white' : 'text-[#667589]'}`}
+												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Today ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
 											>
 												Today
 											</Radio>
 											<Radio
 												value={EDateFilter.Last_7_days}
-												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_7_days ? 'text-bodyBlue dark:text-white' : 'text-[#667589]'}`}
+												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_7_days ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
 											>
 												Last 7 days
 											</Radio>
 											<Radio
 												value={EDateFilter.Last_30_days}
-												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_30_days ? 'text-bodyBlue dark:text-white' : 'text-[#667589]'}`}
+												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_30_days ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
 											>
 												Last 30 days
 											</Radio>
 											<Radio
 												value={EDateFilter.Last_3_months}
-												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_3_months ? 'text-bodyBlue dark:text-white' : 'text-[#667589]'}`}
+												className={`py-1.5 text-xs font-normal ${dateFilter === EDateFilter.Last_3_months ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
 											>
 												Last 3 months
 											</Radio>
 											<Radio
 												value={null}
-												className={`py-1.5 text-xs font-normal ${!dateFilter ? 'text-bodyBlue dark:text-white' : 'text-[#667589]'}`}
+												className={`py-1.5 text-xs font-normal ${!dateFilter ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
 											>
 												All time
 											</Radio>
@@ -681,7 +681,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 															<Checkbox
 																key={track}
 																value={track}
-																className={`ml-0 py-1.5 text-xs font-normal ${selectedGov1Tracks.includes(track) ? 'text-bodyBlue dark:text-white' : 'text-[#667589]'}`}
+																className={`ml-0 py-1.5 text-xs font-normal ${selectedGov1Tracks.includes(track) ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
 															>
 																<div className='mt-[2px] capitalize'>{track?.split('_')?.join(' ')}</div>
 															</Checkbox>
@@ -704,7 +704,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 																<Checkbox
 																	key={track?.name}
 																	value={track?.trackId}
-																	className={`ml-0 py-1.5 text-xs font-normal ${selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue dark:text-white' : 'text-[#667589]'}`}
+																	className={`ml-0 py-1.5 text-xs font-normal ${selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
 																>
 																	<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
 																</Checkbox>
@@ -744,7 +744,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 												<Checkbox
 													key={topic}
 													value={topic}
-													className={`ml-0 py-1.5 text-xs font-normal ${selectedTopics.includes(topic) ? 'text-bodyBlue dark:text-white' : 'text-[#667589]'}`}
+													className={`ml-0 py-1.5 text-xs font-normal ${selectedTopics.includes(topic) ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
 												>
 													<div className='mt-[2px]'>{topic}</div>
 												</Checkbox>
@@ -769,7 +769,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				</div>
 
 				{filterBy !== EFilterBy.People && isFilter && (
-					<div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue dark:text-white max-xs:flex-wrap'>
+					<div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue dark:text-blue-dark-high max-xs:flex-wrap'>
 						<div className='flex gap-1 max-sm:mb-2 max-sm:flex-wrap'>
 							{isSuperSearch && selectedNetworks.length > 0 && (
 								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1'>
@@ -901,13 +901,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						height={150}
 						width={150}
 					/>
-					<span className='text-center text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-white'>
+					<span className='text-center text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 						{isSuperSearch ? 'Looking for results across the Polkassembly Universe.' : 'Looking for results.'}
 					</span>
 				</div>
 
 				{finalSearchInput.length === 0 && justStart && (
-					<div className='flex h-[360px] flex-col items-center justify-center text-sm font-medium text-bodyBlue dark:text-white'>
+					<div className='flex h-[360px] flex-col items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 						<StartSearchIcon />
 						<span className='mt-8 text-center tracking-[0.01em]'>Welcome to the all new & supercharged search!</span>
 						<div className='mt-2 flex items-center gap-1 text-xs font-medium tracking-[0.01em]'>

@@ -37,7 +37,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 		<GovSidebarCard>
 			<div className='flex flex-col items-center py-3'>
 				<div>{isEditCTA ? <PostEditIcon /> : <PostLinkingIcon />}</div>
-				<span className='mt-4 text-center text-sm text-bodyBlue dark:text-white'>Please add contextual information for voters to make an informed decision.</span>
+				<span className='mt-4 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>Please add contextual information for voters to make an informed decision.</span>
 				<button
 					className='mt-5 flex h-[40px] w-full cursor-pointer items-center justify-center gap-x-2 rounded-[4px] border-none bg-pink_primary px-9 py-1 text-lg leading-[27px] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'
 					onClick={() => {

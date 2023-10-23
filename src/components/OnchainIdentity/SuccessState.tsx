@@ -56,7 +56,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 			<>
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
 					<SuccessIcon />
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>On-chain identity registration initiated</label>
+					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>On-chain identity registration initiated</label>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>{displayName}</div>
 					<div className='mt-4 flex flex-col gap-2'>
 						<span className='flex items-center gap-1'>
@@ -72,25 +72,25 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 						{email?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
 								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Email:</span>
-								<span className='text-sm font-medium text-bodyBlue dark:text-white'>{email?.value}</span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{email?.value}</span>
 							</span>
 						)}
 						{web?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
 								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Web: </span>
-								<span className='text-sm font-medium text-bodyBlue dark:text-white'>{web?.value?.slice(0, 15)}...</span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{web?.value?.slice(0, 15)}...</span>
 							</span>
 						)}
 						{twitter?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
 								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Twitter:</span>
-								<span className='text-sm font-medium text-bodyBlue dark:text-white'>{twitter?.value}</span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{twitter?.value}</span>
 							</span>
 						)}
 						{riot?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
 								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Riot: </span>
-								<span className='text-sm font-medium text-bodyBlue dark:text-white'>{riot?.value}</span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{riot?.value}</span>
 							</span>
 						)}
 					</div>

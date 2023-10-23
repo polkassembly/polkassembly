@@ -156,7 +156,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 		<Container className={`flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay ${className} `}>
 			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
 				<LoginLogo className='mr-3' />
-				<span className='text-[20px] font-semibold text-bodyBlue dark:text-white'>Login</span>
+				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>Login</span>
 			</div>
 			<Divider
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -168,7 +168,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 					type='info'
 					showIcon
-					className='changeColor  mx-8 mb-5 text-bodyBlue dark:text-white'
+					className='changeColor  mx-8 mb-5 text-bodyBlue dark:text-blue-dark-high'
 				/>
 			)}
 
@@ -281,7 +281,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					{error && <FilteredError text={error} />}
 
 					<div className='mb-5 mt-2 flex items-center justify-center gap-x-2 font-semibold'>
-						<label className='text-md text-bodyBlue dark:text-white'>Don&apos;t have an account?</label>
+						<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 						<div
 							onClick={handleClick}
 							className='text-md cursor-pointer text-pink_primary'

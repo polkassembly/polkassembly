@@ -90,7 +90,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							title
 						)}
 					</div>
-					<div className='mt-1 pr-2 text-sm font-normal leading-6 tracking-[0.01em] text-bodyBlue dark:text-white'>
+					<div className='mt-1 pr-2 text-sm font-normal leading-6 tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 						{/* {historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content} */}
 						<Markdown
 							className='text-sm'

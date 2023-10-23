@@ -115,7 +115,7 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText }: { className
 		</div>
 
 		<div className='flex flex-col justify-between'>
-			<div className='text-sm font-semibold leading-[150%] text-bodyBlue group-hover:text-pink_secondary dark:text-white'>{text}</div>
+			<div className='text-sm font-semibold leading-[150%] text-bodyBlue group-hover:text-pink_secondary dark:text-blue-dark-high'>{text}</div>
 			<div className='text-xs font-medium text-lightBlue group-hover:text-pink_secondary dark:text-blue-dark-medium'>{subText}</div>
 		</div>
 	</a>
@@ -125,11 +125,11 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 	return (
 		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-white'>About</h2>
+				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high'>About</h2>
 				<div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 			</div>
 
-			<p className='medium mt-1.5 text-sm text-bodyBlue dark:text-white'>Join our Community to discuss, contribute and get regular updates from us!</p>
+			<p className='medium mt-1.5 text-sm text-bodyBlue dark:text-blue-dark-high'>Join our Community to discuss, contribute and get regular updates from us!</p>
 
 			<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 

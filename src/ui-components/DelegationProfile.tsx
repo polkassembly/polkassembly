@@ -80,8 +80,8 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
 					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 				/>
-				<div className='text-bodyBlue dark:text-white'>
-					<span className='mb-4 text-lg font-semibold tracking-wide text-bodyBlue dark:text-white'>{username || userName}</span>
+				<div className='text-bodyBlue dark:text-blue-dark-high'>
+					<span className='mb-4 text-lg font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username || userName}</span>
 					{address && address.length > 0 && (
 						<div className='flex items-center gap-2'>
 							<Address
@@ -113,13 +113,13 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					) : (
 						<h2
 							onClick={() => setOpenEditModal(true)}
-							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
+							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${username === userProfile.username && 'cursor-pointer'}`}
 						>
 							{bio}
 						</h2>
 					)}
 
-					<div className={`mt-[10px] flex flex-wrap items-center gap-x-5 text-xl text-bodyBlue dark:text-white md:gap-x-3 ${isSearch && 'mt-0'}`}>
+					<div className={`mt-[10px] flex flex-wrap items-center gap-x-5 text-xl text-bodyBlue dark:text-blue-dark-high md:gap-x-3 ${isSearch && 'mt-0'}`}>
 						{socialLinks?.map((social: any, index: number) => {
 							const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
 							return (

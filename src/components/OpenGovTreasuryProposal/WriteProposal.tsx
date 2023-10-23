@@ -184,13 +184,13 @@ const WriteProposal = ({
 					>
 						<Radio
 							value={true}
-							className='text-sm font-normal text-bodyBlue dark:text-white'
+							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
 							Yes
 						</Radio>
 						<Radio
 							value={false}
-							className='text-sm font-normal text-bodyBlue dark:text-white'
+							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
 							No
 						</Radio>
@@ -237,7 +237,7 @@ const WriteProposal = ({
 							className='icon-alert'
 							showIcon
 							message={
-								<span className='text-sm font-medium text-bodyBlue dark:text-white'>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 									Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
 									<a
 										className='ml-1 text-xs text-pink_primary'

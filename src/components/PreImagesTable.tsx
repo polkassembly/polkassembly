@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
-import { Button, Modal, Table } from 'antd';
+import { Button, Modal, Table as AntdTable } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -12,17 +12,42 @@ import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
 import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
+import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IPreimagesListing } from '~src/types';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
+	theme?: string;
 }
+
+const Table = styled(AntdTable)`
+	.ant-table-thead > tr > th {
+		background: ${(props) => (props.theme === 'dark' ? '#1C1D1F' : 'white')} !important;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')} !important;
+		font-weight: 500 !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+	.ant-table-thead > tr > th::before {
+		background: none !important;
+	}
+	.ant-table-tbody > tr {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+	}
+	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
+	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+		background-color: none !important;
+	}
+	td {
+		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+`;
 
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const router = useRouter();
-	const { preimages } = props;
+	const { preimages, theme } = props;
 	const [modalArgs, setModalArgs] = useState<any>(null);
 
 	useEffect(() => {
@@ -105,6 +130,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 		return (
 			<div>
 				<Table
+					theme={theme}
 					columns={columns}
 					dataSource={tableData}
 					pagination={false}
@@ -113,9 +139,10 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 
 				<Modal
 					open={Boolean(modalArgs)}
-					title={'Arguments'}
+					title={<div className='dark:bg-section-dark-overlay dark:text-blue-dark-high'>Arguments</div>}
 					onOk={() => setModalArgs(null)}
 					onCancel={() => setModalArgs(null)}
+					className={`${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
 					footer={[
 						<Button
 							key='back'
@@ -129,6 +156,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					{modalArgs && (
 						<div className='max-h-[60vh] w-full overflow-auto'>
 							<ReactJson
+								theme={theme === 'dark' ? 'monokai' : 'rjv-default'}
 								src={modalArgs}
 								iconStyle='circle'
 								enableClipboard={false}
@@ -145,4 +173,12 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	return <LoadingState />;
 };
 
-export default React.memo(PreImagesTable);
+export default styled(React.memo(PreImagesTable))`
+	.ant-table-wrapper .ant-table-thead > tr > th,
+	.ant-table-wrapper .ant-table-thead > tr > td {
+		background: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+	}
+	.ant-table-row .ant-table-row-level-0 {
+		background: ${(props) => (props.theme === 'dark' ? '#1E1E1E' : 'white')} !important;
+	}
+`;

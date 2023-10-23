@@ -105,7 +105,7 @@ const DelegationSuccessPopup = ({
 							</div>
 						)}
 						{vote === EVoteDecisionType.SPLIT && (
-							<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-white'>
+							<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 								{' '}
 								<span className='mr-3'>
 									<span className='font-semibold'> Aye: </span>
@@ -124,7 +124,7 @@ const DelegationSuccessPopup = ({
 							</div>
 						)}
 						{vote === EVoteDecisionType.ABSTAIN && (
-							<div className='flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-white'>
+							<div className='flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 								{' '}
 								<span className='mr-3'>
 									<span className='font-semibold'> Abstain:</span>{' '}
@@ -153,7 +153,7 @@ const DelegationSuccessPopup = ({
 						)}
 						<div className='flex flex-col items-start justify-center gap-[10px]'>
 							{address && (
-								<div className='flex gap-3 text-sm font-normal text-bodyBlue dark:text-white'>
+								<div className='flex gap-3 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 									{isVote ? 'With' : 'To'} {isMultisig ? ' multisig' : 'address'}:
 									<span className='font-medium'>
 										<Address
@@ -166,34 +166,34 @@ const DelegationSuccessPopup = ({
 								</div>
 							)}
 							{vote && (
-								<div className='flex h-[21px] gap-[70px] text-sm font-normal text-bodyBlue dark:text-white'>
+								<div className='flex h-[21px] gap-[70px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 									Vote :
 									{vote === EVoteDecisionType.AYE ? (
 										<p>
-											<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-white'>{vote}</span>
+											<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
 										</p>
 									) : vote === EVoteDecisionType.NAY ? (
 										<div>
-											<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-bodyBlue dark:text-white'>{vote}</span>
+											<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
 										</div>
 									) : vote === EVoteDecisionType.SPLIT ? (
 										<p>
-											<SplitYellow /> <span className='font-medium capitalize text-bodyBlue dark:text-white'>{vote}</span>
+											<SplitYellow /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
 										</p>
 									) : vote === EVoteDecisionType.ABSTAIN ? (
 										<p className='flex align-middle'>
-											<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-white'>{vote}</span>
+											<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
 										</p>
 									) : null}
 								</div>
 							)}
-							<div className='flex gap-[30px] text-sm font-normal text-bodyBlue dark:text-white'>
-								Conviction:<span className='font-medium text-bodyBlue dark:text-white'>{conviction === 0 ? 0.1 : conviction}x</span>
+							<div className='flex gap-[30px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
+								Conviction:<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction === 0 ? 0.1 : conviction}x</span>
 							</div>
 							{isMultisig && (
 								<div className='flex h-[21px] gap-[35px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 									Vote Link:{' '}
-									<span className='font-medium text-bodyBlue dark:text-white'>
+									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<a
 											className='text-pink_primary'
 											href='https://app.polkasafe.xyz/transactions'
@@ -206,10 +206,10 @@ const DelegationSuccessPopup = ({
 								</div>
 							)}
 							{tracks && (
-								<div className='flex gap-[35px] text-sm text-bodyBlue dark:text-white'>
+								<div className='flex gap-[35px] text-sm text-bodyBlue dark:text-blue-dark-high'>
 									Track(s):
 									<span>
-										<div className={`flex max-h-[100px] min-h-[50px] flex-col gap-1 pr-2 font-medium text-bodyBlue dark:text-white ${tracks.length > 4 && 'overflow-y-scroll'}`}>
+										<div className={`flex max-h-[100px] min-h-[50px] flex-col gap-1 pr-2 font-medium text-bodyBlue dark:text-blue-dark-high ${tracks.length > 4 && 'overflow-y-scroll'}`}>
 											{tracks.map((track, index) => (
 												<div key={index}>
 													{track} #{networkTrackInfo[network][track.toString()].trackId}
@@ -220,8 +220,8 @@ const DelegationSuccessPopup = ({
 								</div>
 							)}
 							{votedAt && (
-								<div className='flex h-[21px] gap-[14px] text-sm font-normal text-bodyBlue dark:text-white'>
-									Time of Vote : <span className='font-medium text-bodyBlue dark:text-white'>{votedAt}</span>
+								<div className='flex h-[21px] gap-[14px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
+									Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
 								</div>
 							)}
 						</div>

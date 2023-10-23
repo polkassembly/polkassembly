@@ -269,7 +269,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						height={20}
 						alt={''}
 					/>
-					<div className='text-sm font-medium text-bodyBlue dark:text-white'>
+					<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 						Please{' '}
 						<span
 							className='cursor-pointer text-pink_primary'
@@ -285,7 +285,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			)}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div className='tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-					<span className='text-lg font-medium text-bodyBlue dark:text-white'>
+					<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
 						{allComments.length || 0}
 						<span className='ml-1'>Comments</span>
 					</span>

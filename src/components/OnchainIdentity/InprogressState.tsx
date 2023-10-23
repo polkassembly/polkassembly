@@ -58,7 +58,7 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 			<>
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
 					<SuccessIcon />
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Email verification in progress</label>
+					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Email verification in progress</label>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>Check your email!</div>
 					<div className=' mt-4 flex w-full shrink-0 flex-col items-center justify-center text-center text-sm tracking-wide '>
 						<span className='flex shrink-0'>A verification link has been sent to your mail address</span>

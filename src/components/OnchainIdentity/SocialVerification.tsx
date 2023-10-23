@@ -55,7 +55,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 				<div className='w-full'>
 					<div
 						className={`flex h-[40px]  items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] pl-3 pr-2 tracking-wide ${
-							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue dark:text-white'
+							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue dark:text-blue-dark-high'
 						}`}
 					>
 						<span>{value}</span>

@@ -33,7 +33,7 @@ const NameLabel = ({
 		>
 			{!defaultAddress ? (
 				<span
-					className={`username mr-1.5 font-semibold text-bodyBlue dark:text-white ${!disableAddressClick ? 'cursor-pointer hover:underline' : 'cursor-not-allowed'}`}
+					className={`username mr-1.5 font-semibold text-bodyBlue dark:text-blue-dark-high ${!disableAddressClick ? 'cursor-pointer hover:underline' : 'cursor-not-allowed'}`}
 					onClick={(e) => {
 						e.stopPropagation();
 						e.preventDefault();

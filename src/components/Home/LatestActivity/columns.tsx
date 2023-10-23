@@ -36,7 +36,7 @@ const Description: any = {
 	dataIndex: 'description',
 	fixed: 'left',
 	key: 'description',
-	render: (description: any) => <div className='truncate font-medium text-bodyBlue dark:text-white'>{description || noTitle}</div>,
+	render: (description: any) => <div className='truncate font-medium text-bodyBlue dark:text-blue-dark-high'>{description || noTitle}</div>,
 	title: 'Description',
 	width: 320
 };

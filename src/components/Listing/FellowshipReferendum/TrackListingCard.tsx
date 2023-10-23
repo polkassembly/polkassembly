@@ -107,7 +107,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 				onChange={(v) => {
 					setTrackName(v);
 				}}
-				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-white'
+				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-blue-dark-high'
 			/>
 			{(posts?.[activeTab]?.data?.count || 0) > 0 && (posts as any)[activeTab].data.count > LISTING_LIMIT && (
 				<Pagination

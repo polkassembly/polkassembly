@@ -46,7 +46,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					ownPost && 'border-l-4 border-l-pink_primary'
 				} min-h-[120px] border-2 border-solid border-[#DCDFE350] p-3 transition-all duration-200 hover:border-pink_primary hover:shadow-xl xs:hidden sm:flex md:p-4 ${className}`}
 			>
-				<span className='flex-none text-center font-medium text-bodyBlue dark:text-white sm:mt-2 sm:w-[120px]'>#{post_id}</span>
+				<span className='flex-none text-center font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-2 sm:w-[120px]'>#{post_id}</span>
 				<div className='flex-1 flex-col sm:mt-[6px] sm:flex sm:justify-between'>
 					<OnchainCreationLabel
 						address={address}
@@ -56,7 +56,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					/>
 					<div className='hidden sm:mb-1 sm:mt-2 sm:flex sm:flex-row sm:items-start sm:justify-between'>
 						<div className='mt-3 lg:mt-1'>
-							<h1 className='flex text-sm font-medium text-bodyBlue dark:text-white'>
+							<h1 className='flex text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{title}
 								{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
 									<div className='ml-5 hidden items-center justify-center lg:flex'>
@@ -71,7 +71,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</h1>
 						</div>
 					</div>
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-white xs:hidden sm:flex lg:flex-row lg:items-center'>
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:hidden sm:flex lg:flex-row lg:items-center'>
 						<div className='flex items-center gap-x-2'>
 							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
@@ -108,7 +108,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 									))}
 									{tags.length > 2 && (
 										<span
-											className='text-bodyBlue dark:text-white'
+											className='text-bodyBlue dark:text-blue-dark-high'
 											style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -162,7 +162,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%]`}
 				>
 					<div className='flex'>
-						<h2 className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-white'>
+						<h2 className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
 							<TagsIcon className='mr-2' />
 							Tags
 						</h2>
@@ -199,7 +199,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							/>
 						</div>
 					)}
-					<div className='max-xs-hidden m-2.5 text-sm font-medium text-bodyBlue dark:text-white'>
+					<div className='max-xs-hidden m-2.5 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 						#{post_id} {title}
 						<div className='flex items-center justify-between'>
 							{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
@@ -224,7 +224,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-white xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
 						<div className='xs:flex xs:justify-start sm:hidden'>
 							<OnchainCreationLabel
 								address={address}
@@ -265,7 +265,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 									))}
 									{tags.length > 2 && (
 										<span
-											className='text-bodyBlue dark:text-white'
+											className='text-bodyBlue dark:text-blue-dark-high'
 											style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -293,7 +293,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 				>
 					<div className='flex'>
 						<TagsIcon className='mr-2 mt-1.5' />
-						<h2 className='mb-2 text-lg font-semibold tracking-wide text-bodyBlue dark:text-white'>Tags</h2>
+						<h2 className='mb-2 text-lg font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>Tags</h2>
 					</div>
 					<div className='h-[1px] w-full bg-[#D2D8E0]' />
 					<div className='mt-4 flex flex-wrap gap-2'>

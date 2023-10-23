@@ -149,7 +149,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 				items={items}
 				onTabClick={onTabClick}
 				type='card'
-				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-white'
+				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-blue-dark-high'
 			/>
 			{((posts?.all?.data?.count || 0) > 10 && activeTab === 'All') ||
 			((posts?.submitted?.data?.count || 0) > 10 && activeTab === 'Submitted') ||

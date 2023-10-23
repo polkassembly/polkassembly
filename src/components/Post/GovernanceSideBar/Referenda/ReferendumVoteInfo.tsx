@@ -257,11 +257,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							indicator={<LoadingOutlined />}
 						>
 							<div className='flex items-center justify-between gap-x-2'>
-								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue dark:text-white'>Voting</h6>
+								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue dark:text-blue-dark-high'>Voting</h6>
 								<div className='flex items-center justify-center gap-x-2'>
 									<div
 										className={
-											'h-min truncate whitespace-nowrap rounded-full border border-solid border-bodyBlue px-3 py-1 text-xs text-bodyBlue dark:text-white xl:max-w-[120px] 2xl:max-w-[100%]'
+											'h-min truncate whitespace-nowrap rounded-full border border-solid border-bodyBlue px-3 py-1 text-xs text-bodyBlue dark:text-blue-dark-high xl:max-w-[120px] 2xl:max-w-[100%]'
 										}
 									>
 										{voteInfo?.voteThreshold}
@@ -334,12 +334,12 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							indicator={<LoadingOutlined />}
 						>
 							<div className='flex items-center justify-between gap-x-2'>
-								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue dark:text-white'>Voting</h6>
+								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue dark:text-blue-dark-high'>Voting</h6>
 								<div className='relative z-50 flex items-center justify-center gap-x-2'>
 									<div
 										title={voteInfo?.voteThreshold}
 										className={
-											'h-min truncate whitespace-nowrap rounded-full border border-solid border-navBlue px-3 py-1 text-xs text-bodyBlue dark:text-white xl:max-w-[120px] 2xl:max-w-[100%]'
+											'h-min truncate whitespace-nowrap rounded-full border border-solid border-navBlue px-3 py-1 text-xs text-bodyBlue dark:text-blue-dark-high xl:max-w-[120px] 2xl:max-w-[100%]'
 										}
 									>
 										{voteInfo?.voteThreshold}

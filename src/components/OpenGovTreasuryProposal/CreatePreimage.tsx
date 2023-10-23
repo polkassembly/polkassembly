@@ -618,13 +618,13 @@ const CreatePreimage = ({
 					>
 						<Radio
 							value={true}
-							className='text-sm font-normal text-bodyBlue dark:text-white'
+							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
 							Yes
 						</Radio>
 						<Radio
 							value={false}
-							className='text-sm font-normal text-bodyBlue dark:text-white'
+							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
 							No
 						</Radio>
@@ -687,7 +687,7 @@ const CreatePreimage = ({
 							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
-									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:text-white ${poppins.variable} ${poppins.className}`}
+									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
 									showIcon
 									message='Insufficient available balance.'
 								/>
@@ -751,7 +751,7 @@ const CreatePreimage = ({
 											/>
 										</span>
 									</label>
-									<span className='text-xs text-bodyBlue dark:text-white'>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 										Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice.value) || 0)} USD</span>
 									</span>
 								</div>
@@ -824,7 +824,7 @@ const CreatePreimage = ({
 							>
 								<Radio
 									value={EEnactment.At_Block_No}
-									className='text-sm font-normal text-bodyBlue dark:text-white'
+									className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 								>
 									<div className='flex h-[40px] items-center gap-2'>
 										<span className='w-[150px]'>
@@ -866,7 +866,7 @@ const CreatePreimage = ({
 								</Radio>
 								<Radio
 									value={EEnactment.After_No_Of_Blocks}
-									className='text-sm font-normal text-bodyBlue dark:text-white'
+									className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 								>
 									<div className='flex h-[30px] items-center gap-2'>
 										<span className='w-[150px]'>
@@ -910,7 +910,7 @@ const CreatePreimage = ({
 					{showAlert && !isPreimage && !txFee.eq(ZERO_BN) && (
 						<Alert
 							type='info'
-							className='mt-6 rounded-[4px] text-bodyBlue dark:text-white'
+							className='mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
 							showIcon
 							description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
 							message={`${formatedBalance(String(baseDeposit.toString()), unit)} ${unit} Base deposit is required to create a preimage.`}

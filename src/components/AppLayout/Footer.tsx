@@ -82,7 +82,7 @@ const Footer = ({ className }: { className?: string }) => {
 					{/* Terms Links */}
 					<div className='mx-auto mt-8 flex flex-col justify-center md:mx-0 md:ml-auto md:mt-0 md:flex-row md:justify-end'>
 						<div className='text-center sm:text-left md:ml-10 lg:ml-14'>
-							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-white max-[650px]:mt-[-15px] '>Help Center</p>
+							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px] '>Help Center</p>
 
 							<nav
 								aria-label='Footer About Nav'
@@ -127,7 +127,7 @@ const Footer = ({ className }: { className?: string }) => {
 						</div>
 
 						<div className='mt-8 text-center font-normal text-lightBlue dark:text-blue-dark-medium sm:text-left md:ml-10 md:mt-0 lg:ml-14'>
-							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-white max-[650px]:mt-[-15px] '>Our Services</p>
+							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px] '>Our Services</p>
 
 							<nav
 								aria-label='Footer Services Nav'

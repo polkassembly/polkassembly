@@ -62,8 +62,8 @@ export default styled(StatusTag).attrs(({ status }: Props) => ({
 
 	&.${gov2ReferendumStatus.DECIDING}, &.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED}, &.${bountyStatus.ACTIVE}, &.${bountyStatus.EXTENDED}, &.${tipStatus.CLOSING} {
 		color: #fff;
-		border: 2px solid #ff6700;
-		background: #ff6700;
+		border: ${(props) => (props.theme === 'dark' ? '2px solid #D05704' : '2px solid #FF6700')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#D05704' : '#FF6700')} !important;
 
 		&.inverted {
 			color: #ca5cdd;
@@ -82,8 +82,8 @@ export default styled(StatusTag).attrs(({ status }: Props) => ({
 		&.${tipStatus.OPENED},
 		&.${childBountyStatus.ADDED} {
 		color: #fff;
-		border: 2px solid #407afc;
-		background: #407afc;
+		border: ${(props) => (props.theme === 'dark' ? '2px solid #3866CE' : '2px solid #407AFC')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#3866CE' : '#407AFC')} !important;
 
 		&.inverted {
 			color: #6495ed;
@@ -104,8 +104,8 @@ export default styled(StatusTag).attrs(({ status }: Props) => ({
 		&.${childBountyStatus.CANCELED},
 		&.${gov2ReferendumStatus.CONFIRM_ABORTED} {
 		color: #fff;
-		border: 2px solid #ff0000 !important;
-		background: #ff0000 !important;
+		border: ${(props) => (props.theme === 'dark' ? '2px solid #BD2020' : '2px solid #FF0000 ')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#BD2020' : '#FF0000 ')} !important;
 
 		&.inverted {
 			color: #ff0000;
@@ -134,8 +134,8 @@ export default styled(StatusTag).attrs(({ status }: Props) => ({
 		&.${bountyStatus.AWARDED},
 		&.${announcementStatus.Announced} {
 		color: #fff;
-		border: 2px solid #5bc044;
-		background: #5bc044;
+		border: ${(props) => (props.theme === 'dark' ? '2px solid #478F37' : '2px solid #5BC044')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#478F37' : '#5BC044')} !important;
 
 		&.inverted {
 			color: #5bc044;

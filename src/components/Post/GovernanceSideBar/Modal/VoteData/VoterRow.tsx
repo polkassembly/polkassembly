@@ -144,23 +144,23 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
-						<div className={`w-[120px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[160px]' : ''} text-bodyBlue dark:text-white`}>
+						<div className={`w-[120px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[160px]' : ''} text-bodyBlue dark:text-blue-dark-high`}>
 							{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{voteData?.decision !== 'abstain' && (
-							<div className={'w-[105px] overflow-ellipsis text-bodyBlue dark:text-white'}>
+							<div className={'w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'}>
 								{`${voteData.lockPeriod === 0 ? '0.1' : voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}`}
 							</div>
 						)}
 					</>
 				) : (
-					<div className={'w-[120px] overflow-ellipsis text-bodyBlue dark:text-white'}>
+					<div className={'w-[120px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'}>
 						{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 					</div>
 				)}
 
 				{(voteData.totalVotingPower || voteData.votingPower) && (
-					<div className='w-[90px] overflow-ellipsis text-bodyBlue dark:text-white'>
+					<div className='w-[90px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'>
 						{parseBalance(
 							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (Number(voteData?.balance?.abstain) || 0) * 0.1,
 							2,
@@ -185,13 +185,13 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 			onChange={() => setActiveKey(currentKey === index ? null : index)}
 		>
 			<StyledCollapse.Panel
-				className={`rounded-none p-0 ${active ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''} gap-[0px] text-bodyBlue dark:text-white`}
+				className={`rounded-none p-0 ${active ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''} gap-[0px] text-bodyBlue dark:text-blue-dark-high`}
 				key={1}
 				header={<Title />}
 			>
 				<div className='flex flex-col gap-4'>
 					<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4'>
-						<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-white'>
+						<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 							<CalenderIcon />{' '}
 							{dayjs(voteData.createdAt.toDate?.())
 								.format('MM/DD/YYYY, h:mm A')
@@ -201,14 +201,14 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 							<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>
 								<PowerIcon />
 								Voting Power:{' '}
-								<span className='text-bodyBlue dark:text-white'>
+								<span className='text-bodyBlue dark:text-blue-dark-high'>
 									{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
 								</span>
 							</span>
 						)}
 					</div>
 					<div>
-						<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-white'>Vote Breakdown</p>
+						<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
 						<div className='flex justify-between'>
 							<div className='flex w-[200px] flex-col gap-1'>
 								<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
@@ -216,13 +216,13 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 										<VoterIcon /> Voting Power
 									</span>
-									<span className='text-xs text-bodyBlue dark:text-white'>{parseBalance((voteData.selfVotingPower || 0).toString(), 2, true, network)}</span>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData.selfVotingPower || 0).toString(), 2, true, network)}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 										<ConvictionIcon /> Conviction
 									</span>
-									<span className='text-xs text-bodyBlue dark:text-white'>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 										{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}` : '0.1x'}
 									</span>
 								</div>
@@ -230,7 +230,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 										<CapitalIcon /> Capital
 									</span>
-									<span className='text-xs text-bodyBlue dark:text-white'>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 										{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 									</span>
 								</div>
@@ -242,19 +242,19 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 										<VoterIcon /> Voting Power
 									</span>
-									<span className='text-xs text-bodyBlue dark:text-white'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 										<EmailIcon /> Delegators
 									</span>
-									<span className='text-xs text-bodyBlue dark:text-white'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 										<CapitalIcon /> Capital
 									</span>
-									<span className='text-xs text-bodyBlue dark:text-white'>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 										{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
 									</span>
 								</div>
@@ -266,7 +266,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 						className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-[#D2D8E0]'
 					/>
 					<div>
-						<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-white'>Delegation list</p>
+						<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
 						<div className='mb-2 flex items-center text-xs font-semibold'>
 							<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
 							<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
@@ -299,7 +299,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 			</StyledCollapse.Panel>
 		</StyledCollapse>
 	) : (
-		<div className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:text-white ${className}`}>
+		<div className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:text-blue-dark-high ${className}`}>
 			<Title />
 		</div>
 	);

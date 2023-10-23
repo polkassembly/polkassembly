@@ -251,7 +251,7 @@ const Address = (props: Props) => {
 						theme={'polkadot'}
 					/>
 				))}
-			<div className='flex items-center text-bodyBlue dark:text-white'>
+			<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 				{displayInline ? (
 					<div className='inline-address flex items-center'>
 						{!!kiltName ||
@@ -264,13 +264,13 @@ const Address = (props: Props) => {
 								/>
 							))}
 
-						<div className={`flex items-center font-semibold text-bodyBlue dark:text-white ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
+						<div className={`flex items-center font-semibold text-bodyBlue dark:text-blue-dark-high ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
 							<Link
 								href={handleRedirectLink()}
 								target='_blank'
 								onClick={(e) => handleClick(e)}
 								title={mainDisplay || encodedAddr}
-								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-white'} hover:text-bodyBlue dark:text-white`}
+								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-blue-dark-high'} hover:text-bodyBlue dark:text-blue-dark-high`}
 							>
 								{!!addressPrefix && (
 									<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -282,7 +282,7 @@ const Address = (props: Props) => {
 						</div>
 					</div>
 				) : !!extensionName || !!mainDisplay ? (
-					<div className='ml-0.5 font-semibold text-bodyBlue dark:text-white'>
+					<div className='ml-0.5 font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						{!disableHeader && (
 							<div>
 								<div className='flex items-center'>
@@ -300,7 +300,7 @@ const Address = (props: Props) => {
 											href={handleRedirectLink()}
 											target='_blank'
 											onClick={(e) => handleClick(e)}
-											className={`flex flex-col font-semibold text-bodyBlue dark:text-white  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue dark:text-white`}
+											className={`flex flex-col font-semibold text-bodyBlue dark:text-blue-dark-high  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue dark:text-blue-dark-high`}
 										>
 											{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 											{!extensionName && sub && isSubVisible && (

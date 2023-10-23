@@ -159,7 +159,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				network={network}
 			/>
 			<div className='mr-2 flex justify-between'>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-white'>Overview</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
 				{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
 					<div className='flex items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
 						<IdentityCaution />

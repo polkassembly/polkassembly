@@ -5,7 +5,8 @@
 import { DownOutlined, EditOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import type { DatePickerProps } from 'antd';
-import { Button, DatePicker, Dropdown, Form, Modal, Space } from 'antd';
+import { Button, DatePicker, Form, Modal, Space } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
 import React, { useCallback, useEffect, useState } from 'react';
 import { NetworkEvent, NotificationStatus } from 'src/types';
@@ -16,6 +17,7 @@ import styled from 'styled-components';
 
 import { ChallengeMessage } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	canEdit?: boolean | '' | undefined;
@@ -37,7 +39,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 	const [errorsFound, setErrorsFound] = useState<string[]>([]);
 	const [isUpdate, setIsUpdate] = useState<boolean>(false);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
-
+	const { resolvedTheme: theme } = useTheme();
 	const getProposalStatus = useCallback(async () => {
 		const { data, error } = await nextApiClientFetch<NetworkEvent>('api/v1/events/getEventByPostId', {
 			post_id: Number(proposalId)
@@ -240,6 +242,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 								// eslint-disable-next-line sort-keys
 								<>
 									<Dropdown
+										theme={theme}
 										className='status-dropdown'
 										overlayClassName='z-[1056]'
 										disabled={loading}

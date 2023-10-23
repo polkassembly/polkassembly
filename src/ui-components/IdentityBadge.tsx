@@ -4,7 +4,7 @@
 
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { Tooltip } from 'antd';
+import { Tooltip, Skeleton } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import VerifiedIcon from '~assets/icons/verified-icon.svg';
@@ -17,7 +17,11 @@ import WebIcon from '~assets/icons/web-icon.svg';
 import RiotIcon from '~assets/icons/riot-icon.svg';
 import ShareScreenIcon from '~assets/icons/screen-share-icon.svg';
 import PgpIcon from '~assets/icons/pgp-icon.svg';
-
+import dynamic from 'next/dynamic';
+const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
+	loading: () => <Skeleton.Avatar active />,
+	ssr: false
+});
 interface Props {
 	className?: string;
 	address: string;
@@ -25,6 +29,7 @@ interface Props {
 	flags?: DeriveAccountFlags;
 	web3Name?: string;
 	addressPrefix?: string;
+	imgUrl?: string;
 }
 
 export interface INetworkWalletErr {
@@ -53,7 +58,7 @@ const StyledPopup = styled.div`
 	}
 `;
 
-const IdentityBadge = ({ className, address, identity, flags, web3Name, addressPrefix }: Props) => {
+const IdentityBadge = ({ className, address, identity, flags, web3Name, addressPrefix, imgUrl }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
@@ -106,12 +111,19 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name, addressP
 	};
 
 	console.log(identityArr);
+	console.log(imgUrl);
 
 	// const displayJudgements = JSON.stringify(judgements?.map(([, jud]) => jud.toString()));
 	const popupContent = (
 		<>
 			<StyledPopup>
-				<div className='flex items-center'>
+				<ImageComponent
+					src={imgUrl}
+					alt='User Picture'
+					className='absolute left-[25%] top-[-5%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 bg-transparent'
+					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
+				/>
+				<div className='mt-5 flex items-center'>
 					<h3 className='mb-px inline whitespace-pre text-lg text-sm font-semibold text-bodyBlue'>{addressPrefix}</h3>
 					{isGood ? (
 						<VerifiedIcon className='ml-1.5' />

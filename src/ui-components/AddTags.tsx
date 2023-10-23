@@ -9,7 +9,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
-import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
+import { NoTagFoundIcon } from './CustomIcons';
 
 interface Props {
 	tags: string[];
@@ -102,9 +102,12 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 			? {
 					key: 1,
 					label: (
-						<div className='flex h-[100%] flex-col items-center justify-center gap-2'>
-							<NoTagsFoundIcon />
+						<div className='flex flex-col items-center justify-center gap-1 py-2'>
+							<span className='text-3xl'>
+								<NoTagFoundIcon />
+							</span>
 							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${poppins.className} ${poppins.variable} `}>No tag found.</span>
+							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${poppins.className} ${poppins.variable} `}>Press enter to add new tag.</span>
 						</div>
 					)
 			  }
@@ -154,6 +157,14 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 										onChange={handleInputChange}
 										onPressEnter={handleInputConfirm}
 										className={`text-normal  mr-2 flex items-center rounded-xl bg-white px-[16px] py-[4px] text-xs text-[#90A0B7] ${charLimitReached && 'border-red-500'}`}
+										suffix={
+											<span
+												className='cursor-pointer'
+												onClick={handleInputConfirm}
+											>
+												<PlusOutlined />
+											</span>
+										}
 									/>
 							  )
 							: tags.length < 5 &&

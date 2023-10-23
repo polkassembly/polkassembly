@@ -12,7 +12,6 @@ import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useNetworkContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -23,6 +22,7 @@ import { EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -64,7 +64,7 @@ const DelegationSuccessPopup = ({
 	redirect = false,
 	isVote
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
 	useEffect(() => {
@@ -187,9 +187,11 @@ const DelegationSuccessPopup = ({
 									) : null}
 								</div>
 							)}
-							<div className='flex gap-[30px] text-sm font-normal text-bodyBlue'>
-								Conviction:<span className='font-medium text-bodyBlue'>{conviction === 0 ? 0.1 : 0}x</span>{' '}
-							</div>
+							{!isNaN(Number(conviction)) && (
+								<div className='flex gap-[30px] text-sm font-normal text-bodyBlue'>
+									Conviction:<span className='font-medium text-bodyBlue'>{conviction === 0 ? 0.1 : conviction}x</span>
+								</div>
+							)}
 							{isMultisig && (
 								<div className='flex h-[21px] gap-[35px] text-sm font-normal text-lightBlue'>
 									Vote Link:{' '}

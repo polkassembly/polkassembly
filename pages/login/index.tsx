@@ -7,11 +7,14 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Web2Login from 'src/components/Login/Web2Login';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
@@ -46,15 +49,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(setNetwork(network));
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
@@ -81,7 +84,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 
 	useEffect(() => {
 		if (id && !isModal) {
-			router.push('/');
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id, router]);

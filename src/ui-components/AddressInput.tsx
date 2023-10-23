@@ -4,15 +4,14 @@
 import Identicon from '@polkadot/react-identicon';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Form, Input } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { addressPrefix } from 'src/global/networkConstants';
 import Web3 from 'web3';
-
-import { NetworkContext } from '~src/context/NetworkContext';
 
 import EthIdenticon from './EthIdenticon';
 import HelperTooltip from './HelperTooltip';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -49,7 +48,7 @@ const AddressInput = ({
 	name,
 	onBlur
 }: Props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
 

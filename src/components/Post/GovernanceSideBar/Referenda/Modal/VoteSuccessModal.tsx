@@ -8,7 +8,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useCommentDataContext, useNetworkContext } from '~src/context';
+import { useCommentDataContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,6 +25,7 @@ import LeftQuote from '~assets/icons/chatbox-icons/icon-left-quote.svg';
 import RightQuote from '~assets/icons/chatbox-icons/icon-right-quote.svg';
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -59,7 +60,7 @@ const VoteInitiatedModal = ({
 	abstainVoteValue,
 	icon
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 	const [posted, setPosted] = useState(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -199,9 +200,8 @@ const VoteInitiatedModal = ({
 							) : null}
 						</div>
 						<div className='flex gap-[30px] text-sm font-normal text-lightBlue'>
-							{' '}
 							Conviction:
-							<span className='font-medium text-bodyBlue'>{conviction || '0.1'}x</span>{' '}
+							<span className='font-medium text-bodyBlue'>{conviction || '0.1'}x</span>
 						</div>
 						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue'>
 							Time of Vote : <span className='font-medium text-bodyBlue'>{votedAt}</span>

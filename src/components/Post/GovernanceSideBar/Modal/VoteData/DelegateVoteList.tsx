@@ -7,7 +7,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Pagination, Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
-import { useNetworkContext, usePostDataContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -15,6 +15,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import VoterRow from './VoterRow';
 import { votesSortValues } from '~src/global/sortOptions';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IVotersListProps {
 	className?: string;
@@ -41,7 +42,7 @@ const sortedCheck = {
 };
 
 const DelegationVotersList: FC<IVotersListProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const {
 		postData: { postType }
 	} = usePostDataContext();

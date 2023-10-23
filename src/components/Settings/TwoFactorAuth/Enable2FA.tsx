@@ -13,8 +13,9 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 
 import { poppins } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
-import { useUserDetailsContext } from '~src/context';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 const Title = (
 	<>
@@ -33,7 +34,8 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [tfaResponse, setTfaResponse] = useState<I2FAGenerateResponse>(init2FARes);
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 
 	const [form] = Form.useForm();
 
@@ -56,7 +58,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 				return;
 			}
 
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 
 			queueNotification({
 				header: 'Success',

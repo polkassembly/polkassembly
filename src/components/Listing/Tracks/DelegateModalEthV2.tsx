@@ -9,6 +9,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Button, Form, Modal, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { ApiContext } from 'src/context/ApiContext';
 import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -19,9 +20,9 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
 import Web3 from 'web3';
 
-import { NetworkContext } from '~src/context/NetworkContext';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setWalletConnectProvider } from '~src/redux/userDetails';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
 
@@ -33,12 +34,13 @@ const ZERO_BN = new BN(0);
 
 const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
 
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider } = useContext(UserDetailsContext);
+	const { walletConnectProvider } = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -136,7 +138,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 			}
 		});
 		await wcPprovider.wc.createSession();
-		setWalletConnectProvider(wcPprovider);
+		dispatch(setWalletConnectProvider(wcPprovider));
 	};
 
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {

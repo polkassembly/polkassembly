@@ -5,9 +5,8 @@
 import BN from 'bn.js';
 import React from 'react';
 import blockToTime from 'src/util/blockToTime';
-
-import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	blocks: number | BN;
@@ -15,7 +14,7 @@ interface Props {
 }
 
 const BlocksToTime = ({ blocks, className }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const blocktime: number = chainProperties?.[network]?.blockTime;
 
 	return (

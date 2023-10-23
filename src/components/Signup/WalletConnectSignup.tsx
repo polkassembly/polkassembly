@@ -9,7 +9,6 @@ import { Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
-// import { useForm } from 'react-hook-form';
 import { chainProperties } from 'src/global/networkConstants';
 import Loader from 'src/ui-components/Loader';
 import styled from 'styled-components';
@@ -19,11 +18,13 @@ import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import { ModalContext } from '../../context/ModalContext';
-import { UserDetailsContext } from '../../context/UserDetailsContext';
 import { handleTokenChange } from '../../services/auth.service';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
 import FilteredError from '../../ui-components/FilteredError';
 import getNetwork from '../../util/getNetwork';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setWalletConnectProvider } from '~src/redux/userDetails';
 
 const NETWORK = getNetwork();
 
@@ -42,12 +43,11 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const currentUser = useContext(UserDetailsContext);
+	const currentUser = useUserDetailsSelector();
 	const { setModal } = useContext(ModalContext);
 	const [provider, setProvider] = useState<WalletConnectProvider | null>(null);
 	const router = useRouter();
-
-	const { setWalletConnectProvider } = currentUser;
+	const dispatch = useDispatch();
 
 	const connect = async () => {
 		setIsAccountLoading(true);
@@ -217,14 +217,15 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 					});
 
 					if (confirmData?.token) {
-						setWalletConnectProvider(provider);
-						currentUser.loginWallet = Wallet.WALLETCONNECT;
-						currentUser.loginAddress = address;
-						currentUser.delegationDashboardAddress = address;
+						dispatch(setWalletConnectProvider(provider));
+						const user: any = {};
+						user.loginWallet = Wallet.WALLETCONNECT;
+						user.loginAddress = address;
+						user.delegationDashboardAddress = address;
 						localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 						localStorage.setItem('delegationDashboardAddress', address);
 						localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
-						handleTokenChange(confirmData.token, currentUser);
+						handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 
 						setModal({
 							content: 'Add an email in settings if you want to be able to recover your account!',

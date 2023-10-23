@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { Divider } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
@@ -18,6 +18,9 @@ import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import BN from 'bn.js';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setUserDetailsState } from '~src/redux/userDetails';
 
 interface Props {
 	className?: string;
@@ -30,14 +33,16 @@ const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConn
 const ZERO_BN = new BN(0);
 const ProfileBalances = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const { loginWallet, setUserDetailsContextState, delegationDashboardAddress, loginAddress } = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const { loginWallet, delegationDashboardAddress, loginAddress } = currentUser;
+	const dispatch = useDispatch();
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
 
 	useEffect(() => {
@@ -62,9 +67,7 @@ const ProfileBalances = ({ className }: Props) => {
 		if (loginWallet && defaultAddress) {
 			localStorage.setItem('delegationWallet', loginWallet);
 			localStorage.setItem('delegationDashboardAddress', defaultAddress || delegationDashboardAddress);
-			setUserDetailsContextState((prev) => {
-				return { ...prev, delegationDashboardAddress: defaultAddress || delegationDashboardAddress };
-			});
+			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: defaultAddress || delegationDashboardAddress }));
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,7 +127,7 @@ const ProfileBalances = ({ className }: Props) => {
 				</div>
 			</div>
 			<div className='-mt-6 mr-6 w-[200px]'>
-				{accounts.length > 0 && (
+				{accounts && accounts?.length > 0 && (
 					<AccountSelectionForm
 						linkAddressTextDisabled
 						addressTextClassName='text-white'
@@ -137,7 +140,7 @@ const ProfileBalances = ({ className }: Props) => {
 						isSwitchButton={true}
 						setSwitchModalOpen={setOpenModal}
 						withoutInfo={true}
-						isTruncateUsername={false}
+						isTruncateUsername
 					/>
 				)}
 			</div>
@@ -147,6 +150,7 @@ const ProfileBalances = ({ className }: Props) => {
 				localStorageAddressKeyName='delegationDashboardAddress'
 				open={openModal}
 				setOpen={setOpenModal}
+				walletAlertTitle={'Delegation'}
 				closable={true}
 			/>
 		</div>

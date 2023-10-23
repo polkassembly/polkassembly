@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -32,6 +32,9 @@ import LikeGray from '~assets/icons/like-gray.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setWalletConnectProvider } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 const ZERO_BN = new BN(0);
 
@@ -39,7 +42,7 @@ interface Props {
 	className?: string;
 	referendumId?: number | null | undefined;
 	onAccountChange: (address: string) => void;
-	lastVote: ILastVote | undefined;
+	lastVote: ILastVote | null;
 	setLastVote: (pre: ILastVote) => void;
 }
 
@@ -49,8 +52,8 @@ const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const userDetails = useUserDetailsContext();
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress, loginWallet } = userDetails;
+	const userDetails = useUserDetailsSelector();
+	const { walletConnectProvider, id, loginAddress, loginWallet } = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -60,7 +63,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setPostData,
 		postData: { postType: proposalType }
 	} = usePostDataContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
@@ -68,6 +71,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [ayeNayForm] = Form.useForm();
+	const dispatch = useDispatch();
 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
@@ -158,7 +162,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			}
 		});
 		await wcPprovider.wc.createSession();
-		setWalletConnectProvider(wcPprovider);
+		dispatch(setWalletConnectProvider(wcPprovider));
 	};
 
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
@@ -312,7 +316,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			});
 	};
 
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToVote />;
 	}
 

@@ -6,13 +6,13 @@ import { Card, Col, Dropdown, Row } from 'antd';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
 import { chainProperties, network } from 'src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
 import { ArrowDownIcon } from './CustomIcons';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useRouter } from 'next/router';
 import DownOutlined from '~assets/search/dropdown-down.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -36,7 +36,7 @@ for (const key of Object.keys(network)) {
 		: `https://${key === 'POLYMESHTEST' ? 'polymesh-test' : keyVal}.polkassembly.io`;
 
 	if (isOpenGovSupported(keyVal)) {
-		link = `${link}`;
+		link = `${link}/opengov`;
 	}
 	const optionObj: DropdownMenuItemType = {
 		key,
@@ -79,7 +79,7 @@ interface INetworkDropdown {
 
 const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	const { isSmallScreen, setSidedrawer, isSearch, setSelectedNetworks, selectedNetworks = [], allowedNetwork } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const router = useRouter();
 
@@ -101,6 +101,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	return (
 		<Dropdown
 			open={openFilter}
+			overlayClassName='z-[1056]'
 			onOpenChange={() => setOpenFilter(!openFilter)}
 			placement={'bottomLeft'}
 			className='navbar-dropdowns'

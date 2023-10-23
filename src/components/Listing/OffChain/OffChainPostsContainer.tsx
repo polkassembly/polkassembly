@@ -19,6 +19,7 @@ interface IOffChainContainerProps {
 	className?: string;
 	count: number;
 	proposalType: OffChainProposalType;
+	defaultPage?: number;
 }
 
 export function getTitle(proposalType: OffChainProposalType): string {
@@ -31,7 +32,7 @@ export function getTitle(proposalType: OffChainProposalType): string {
 	return '';
 }
 
-const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType }) => {
+const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType, defaultPage }) => {
 	const router = useRouter();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 
@@ -53,6 +54,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 				selectable: true
 			}}
 			trigger={['click']}
+			overlayClassName='z-[1056]'
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-pink_primary hover:text-pink_primary'>
 				<span className='font-normal sm:mr-1 sm:mt-0.5'>Sort By</span>
@@ -81,6 +83,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 				count={count}
 				posts={posts}
 				className=''
+				defaultPage={defaultPage}
 			/>
 		</div>
 	);

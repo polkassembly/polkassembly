@@ -4,22 +4,22 @@
 
 import { Tabs } from 'antd';
 import Link from 'next/link';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
 import CountBadgePill from 'src/ui-components/CountBadgePill';
 import styled from 'styled-components';
 
 import { getColumns } from '~src/components/Home/LatestActivity/columns';
 import PostsTable from '~src/components/Home/LatestActivity/PostsTable';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 
 import AllGov2PostsTable from './AllGov2PostsTable';
 import TrackPostsTable from './TrackPostsTable';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string; gov2LatestPosts: any }) => {
 	const [currentTab, setCurrentTab] = useState('all');
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const tabItems = [
 		{

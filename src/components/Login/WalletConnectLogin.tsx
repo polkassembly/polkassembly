@@ -7,8 +7,7 @@ import { stringToHex } from '@polkadot/util';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { handleTokenChange } from 'src/services/auth.service';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -21,6 +20,9 @@ import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
 import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setWalletConnectProvider } from '~src/redux/userDetails';
 
 interface Props {
 	className?: string;
@@ -40,8 +42,8 @@ const initAuthResponse: IAuthResponse = {
 const NETWORK = getNetwork();
 
 const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isModal, setLoginOpen }: Props): JSX.Element => {
-	const currentUser = useContext(UserDetailsContext);
-	const { setWalletConnectProvider } = currentUser;
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 
 	const [error, setError] = useState('');
 	const [address, setAddress] = useState<string>('');
@@ -275,15 +277,16 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 												}
 
 												if (confirmData.token) {
-													currentUser.loginWallet = Wallet.WALLETCONNECT;
-													currentUser.loginAddress = address;
-													currentUser.delegationDashboardAddress = address;
+													const user: any = {};
+													user.loginWallet = Wallet.WALLETCONNECT;
+													user.loginAddress = address;
+													user.delegationDashboardAddress = address;
 													localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 													localStorage.setItem('delegationDashboardAddress', address);
 													localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
 													localStorage.setItem('loginAddress', address);
 
-													handleTokenChange(confirmData.token, currentUser);
+													handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 													if (isModal) {
 														setLoginOpen && setLoginOpen(false);
 														setLoading(false);
@@ -305,16 +308,17 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 						}
 
 						if (addressLoginData?.token) {
-							setWalletConnectProvider(provider);
-							currentUser.loginWallet = Wallet.WALLETCONNECT;
-							currentUser.loginAddress = address;
-							currentUser.delegationDashboardAddress = address;
+							dispatch(setWalletConnectProvider(provider));
+							const user: any = {};
+							user.loginWallet = Wallet.WALLETCONNECT;
+							user.loginAddress = address;
+							user.delegationDashboardAddress = address;
 							localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 							localStorage.setItem('delegationDashboardAddress', address);
 							localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
 							localStorage.setItem('loginAddress', address);
 
-							handleTokenChange(addressLoginData.token, currentUser);
+							handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
 							if (isModal) {
 								setLoginOpen?.(false);
 								setLoading(false);
@@ -373,15 +377,16 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 			setError('');
 
 			setWalletConnectProvider(provider);
-			currentUser.loginWallet = Wallet.WALLETCONNECT;
-			currentUser.loginAddress = address;
-			currentUser.delegationDashboardAddress = address;
+			const user: any = {};
+			user.loginWallet = Wallet.WALLETCONNECT;
+			user.loginAddress = address;
+			user.delegationDashboardAddress = address;
 			localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
 			localStorage.setItem('loginAddress', address);
 
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, { ...currentUser, ...user }, dispatch);
 			if (isModal) {
 				setLoginOpen?.(false);
 				setLoading(false);

@@ -10,10 +10,11 @@ import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.
 import CopyContentIcon from '~assets/icons/content-copy.svg';
 import copyToClipboard from 'src/util/copyToClipboard';
 import { message } from 'antd';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -21,11 +22,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
+	if (!['kusama', 'polkadot'].includes(network)) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/'
+			}
+		};
+	}
 	return { props: { network } };
 };
 
 const Delegation = (props: { network: string }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const { asPath } = useRouter();
 
 	const handleCopylink = () => {
@@ -37,7 +46,7 @@ const Delegation = (props: { network: string }) => {
 	};
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

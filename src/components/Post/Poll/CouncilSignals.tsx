@@ -12,11 +12,10 @@ import { CouncilVote, IPollVote, Vote } from 'src/types';
 import Address from 'src/ui-components/Address';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
-
-import { useNetworkContext } from '~src/context';
 import { ApiContext } from '~src/context/ApiContext';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -25,7 +24,7 @@ interface Props {
 
 const CouncilSignals = ({ className, votes }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [ayes, setAyes] = useState(0);
 	const [nays, setNays] = useState(0);

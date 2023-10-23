@@ -7,8 +7,6 @@ import { Alert, Button, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
-import { useUserDetailsContext } from '~src/context';
-import { NetworkContext } from '~src/context/NetworkContext';
 import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
@@ -34,6 +32,9 @@ import ArrowLeft from '~assets/icons/arrow-left.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	className?: string;
@@ -66,10 +67,11 @@ const AddressConnectModal = ({
 	accountAlertTitle = 'Wallet extension not detected.',
 	accountSelectionFormTitle = 'Select an address'
 }: Props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
-	const currentUser = useUserDetailsContext();
-	const { loginWallet, setUserDetailsContextState, loginAddress, addresses } = currentUser;
+	const currentUser = useUserDetailsSelector();
+	const { loginWallet, loginAddress, addresses } = currentUser;
+	const dispatch = useDispatch();
 	const [address, setAddress] = useState<string>('');
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -106,7 +108,8 @@ const AddressConnectModal = ({
 		}
 	};
 
-	const isUnlinkedAddress = getAddressType(accounts?.filter((account) => account.address === address)?.[0]) === EAddressOtherTextType.UNLINKED_ADDRESS;
+	const isUnlinkedAddress =
+		getAddressType(accounts?.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(address))?.[0]) === EAddressOtherTextType.UNLINKED_ADDRESS;
 
 	const handleAddressLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
 		setLoading(true);
@@ -187,7 +190,7 @@ const AddressConnectModal = ({
 						}
 
 						if (confirmData?.token) {
-							handleTokenChange(confirmData.token, currentUser);
+							handleTokenChange(confirmData.token, currentUser, dispatch);
 							queueNotification({
 								header: 'Success!',
 								message: confirmData.message || '',
@@ -223,7 +226,7 @@ const AddressConnectModal = ({
 					}
 
 					if (confirmData?.token) {
-						handleTokenChange(confirmData.token, currentUser);
+						handleTokenChange(confirmData.token, currentUser, dispatch);
 						queueNotification({
 							header: 'Success!',
 							message: confirmData.message || '',
@@ -250,12 +253,10 @@ const AddressConnectModal = ({
 		} else {
 			setLoading(true);
 			localStorage.setItem(localStorageWalletKeyName, String(wallet));
-			localStorage.setItem(localStorageAddressKeyName, address);
-			localStorage.setItem('delegationDashboardAddress', multisig || address);
+			localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
+			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('multisigDelegationAssociatedAddress', address);
-			setUserDetailsContextState((prev) => {
-				return { ...prev, delegationDashboardAddress: multisig || address, loginWallet: wallet || null };
-			});
+			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
 			onConfirm && onConfirm(address);
@@ -373,7 +374,7 @@ const AddressConnectModal = ({
 			footer={
 				<Button
 					onClick={handleSubmit}
-					disabled={accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
+					disabled={!accounts || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
 					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
 						accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit) && 'opacity-50')
 					}`}
@@ -390,7 +391,7 @@ const AddressConnectModal = ({
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex flex-col'>
-					{linkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && (
+					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
 							<ConnectAddressIcon />
 							<span className='mt-6 text-center text-sm text-bodyBlue'>
@@ -572,7 +573,7 @@ const AddressConnectModal = ({
 						</div>
 					)}
 
-					{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0 && !loading && (
+					{Object.keys(availableWallets || {})?.length !== 0 && !accounts && wallet && wallet?.length !== 0 && !loading && (
 						<Alert
 							message={`For using ${walletAlertTitle}:`}
 							description={

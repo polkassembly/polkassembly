@@ -7,7 +7,7 @@ import { Calendar, List, Spin, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { NetworkEvent } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
@@ -25,6 +25,7 @@ import {
 	fetchTreasurySpend
 } from '~src/util/getCalendarEvents';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 dayjs.extend(localizedFormat);
 interface Props {
@@ -33,7 +34,7 @@ interface Props {
 
 const UpcomingEvents = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [showCalendar, setShowCalendar] = useState<boolean>(false);
 	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
@@ -398,7 +399,7 @@ const UpcomingEvents = ({ className }: Props) => {
 			<List
 				className='h-[100%] overflow-y-auto'
 				itemLayout='horizontal'
-				dataSource={calendarEvents.sort((a, b) => (a?.end_time?.getTime() || a?.start_time?.getTime()) - (b?.end_time?.getTime() || b?.start_time?.getTime()))}
+				dataSource={calendarEvents.sort((a, b) => (a?.end_time?.getTime() || a?.start_time?.getTime()) - (b?.end_time?.getTime() || b?.start_time?.getTime())).reverse()}
 				renderItem={(item) => {
 					return (
 						<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>

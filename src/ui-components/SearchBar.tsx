@@ -5,12 +5,12 @@
 import { SearchOutlined } from '@ant-design/icons';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
 import ClientOnly, { Search } from './ClientOnly';
 import NewSearch from 'src/components/Search';
 import { Modal } from 'antd';
 import { allowedNetwork } from '~src/components/Search';
 import { poppins } from 'pages/_app';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface ISearchBarProps {
 	className?: string;
@@ -19,7 +19,7 @@ interface ISearchBarProps {
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
 	const { className, isSmallScreen } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
 

@@ -11,9 +11,8 @@ import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CautionIcon from '~assets/icons/grey-caution.svg';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { APPNAME } from '~src/global/appName';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { NotificationStatus, Wallet } from '~src/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -29,6 +28,8 @@ import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import { gov2ReferendumStatus } from '~src/global/statuses';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 
 const ZERO_BN = new BN(0);
 
@@ -36,12 +37,13 @@ interface Props {
 	className?: string;
 	trackName: string;
 }
+
 const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
-	const { loginWallet, loginAddress } = useUserDetailsContext();
+	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const [address, setAddress] = useState<string>('');
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -50,11 +52,17 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const [wallet, setWallet] = useState<Wallet>();
 	const [extensionOpen, setExtensionOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
-	const balance = networkTrackInfo?.[network]?.[trackName]?.decisionDeposit || ZERO_BN;
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [amount, setAmount] = useState<BN>(ZERO_BN);
+	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const { setPostData } = usePostDataContext();
+
+	useEffect(() => {
+		const trackData = getTrackData(network, trackName);
+		const decisionDeposit = trackData.decisionDeposit.toString();
+		setBalance(new BN(decisionDeposit.startsWith('0x') ? new BN(`${decisionDeposit}`.slice(2), 'hex') : decisionDeposit));
+	}, [network, trackName]);
 
 	const handleOnBalanceChange = (balanceStr: string) => {
 		setAvailableBalance(new BN(balanceStr.toString() || ZERO_BN));

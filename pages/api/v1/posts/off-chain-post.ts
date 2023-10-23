@@ -71,7 +71,11 @@ export async function getOffChainPost(params: IGetOffChainPostParams): Promise<I
 		const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 		const discussionPostDoc = await postDocRef.get();
 		if (!(discussionPostDoc && discussionPostDoc.exists)) {
-			throw apiErrorWithStatusCode(`The Post with id "${postId}" is not found.`, 400);
+			throw apiErrorWithStatusCode(`The Post with id "${postId}" is not found.`, 404);
+		}
+
+		if (discussionPostDoc.get('isDeleted')) {
+			throw apiErrorWithStatusCode(`Post "${postId}" not found or has been deleted.`, 404);
 		}
 
 		// Post Reactions

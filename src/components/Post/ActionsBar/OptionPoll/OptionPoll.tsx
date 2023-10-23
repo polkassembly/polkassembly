@@ -9,9 +9,10 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 
 import { MessageType } from '~src/auth/types';
-import { usePostDataContext, useUserDetailsContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { IOptionPollVote } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -34,7 +35,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 	const [addPollVoteErr, setAddPollVoteErr] = useState('');
 	const [deletePollVoteErr, setDeletePollVoteErr] = useState('');
 	const [loading, setLoading] = useState<boolean>(false);
-	const { id } = useUserDetailsContext();
+	const { id } = useUserDetailsSelector();
 	const [totalVotes, setTotalVotes] = useState(0);
 
 	const [optionMap, setOptionMap] = useState<any>({});

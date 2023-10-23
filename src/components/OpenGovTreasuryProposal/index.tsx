@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
@@ -18,9 +18,9 @@ import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import { BN_HUNDRED } from '@polkadot/util';
 import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import userProfileBalances from '~src/util/userProfieBalances';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -57,7 +57,7 @@ export interface IPreimage {
 const ZERO_BN = new BN(0);
 const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
@@ -80,7 +80,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
 	const [postId, setPostId] = useState<number>(0);
-	const { id } = useContext(UserDetailsContext);
+	const { id } = useUserDetailsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 

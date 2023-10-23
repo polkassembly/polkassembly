@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -34,14 +34,18 @@ import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setWalletConnectProvider } from '~src/redux/userDetails';
 
 const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
+	address: string;
 	referendumId?: number | null | undefined;
 	onAccountChange: (address: string) => void;
-	lastVote: ILastVote | undefined;
+	lastVote: ILastVote | null;
 	setLastVote: (pre: ILastVote) => void;
 }
 
@@ -49,15 +53,15 @@ const abi = require('../../../../moonbeamConvictionVoting.json');
 
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
-const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
+const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote, address }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress, loginWallet } = useUserDetailsContext();
+	const { walletConnectProvider, id, loginAddress, loginWallet } = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { apiReady, api } = useApiContext();
-	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const {
 		setPostData,
 		postData: { postType: proposalType }
@@ -119,7 +123,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		if (accountsData) {
 			setAccounts(accountsData?.accounts || []);
 			onAccountChange(accountsData?.account || '');
-			setAddress(accountsData.account);
 			setIsTalismanEthereum(accountsData?.isTalismanEthereum);
 			setLoadingStatus({ isLoading: false, message: 'Getting accounts' });
 		}
@@ -180,7 +183,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			}
 		});
 		await wcPprovider.wc.createSession();
-		setWalletConnectProvider(wcPprovider);
+		dispatch(setWalletConnectProvider(wcPprovider));
 	};
 
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
@@ -215,7 +218,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		);
 
 		if (checksumAddresses.length > 0) {
-			setAddress(checksumAddresses[0]);
+			onAccountChange(checksumAddresses[0]);
 		}
 
 		setIsAccountLoading(false);
@@ -248,7 +251,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			case EVoteDecisionType.AYE:
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -256,7 +259,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			case EVoteDecisionType.NAY:
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -269,7 +272,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				}));
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -283,7 +286,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				}));
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -327,7 +330,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			});
 			return;
 		}
-		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
+		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const voteContract = new web3.eth.Contract(abi, contractAddress);
 
@@ -375,7 +378,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			});
 	};
 
-	if (isLoggedOut()) {
+	if (!id) {
 		return <LoginToVote />;
 	}
 	const openModal = () => {
@@ -387,11 +390,10 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		event.preventDefault();
 		setWallet(wallet);
 		setAccounts([]);
-		setAddress('');
+		onAccountChange('');
 		const accountsData = await getMetamaskAccounts({ chosenWallet: wallet, loginAddress, network });
 		if (accountsData) {
 			setAccounts(accountsData?.accounts || []);
-			setAddress(accountsData.account);
 			onAccountChange(accountsData?.account || '');
 			setIsTalismanEthereum(accountsData?.isTalismanEthereum);
 		}
@@ -646,9 +648,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				balance={voteValues.totalVoteValue}
 				open={successModal}
 				setOpen={setSuccessModal}
+				conviction={conviction}
 				address={address}
 				isDelegate={true}
-				conviction={conviction}
 				votedAt={dayjs().format('HH:mm, Do MMMM YYYY')}
 				ayeVoteValue={voteValues.ayeVoteValue}
 				nayVoteValue={voteValues.nayVoteValue}

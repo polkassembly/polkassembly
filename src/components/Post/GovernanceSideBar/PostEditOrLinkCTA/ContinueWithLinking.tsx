@@ -5,13 +5,14 @@ import { Button, Form, Input, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart';
 import React, { FC, useState } from 'react';
-import { useNetworkContext, usePostDataContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeFromSinglePostLink } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import LinkPostPreview from './LinkPostPreview';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IContinueWithLinking {
 	setLinkingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -60,7 +61,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const {
 		postData: { postIndex, postType },
 		setPostData

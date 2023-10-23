@@ -5,7 +5,6 @@ import { dayjs } from 'dayjs-init';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
-import { useNetworkContext } from '~src/context';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { getBlockLink } from '~src/util/subscanCheck';
 import DemocracyReferendaIcon from '~assets/icons/Democracy-Referenda.svg';
@@ -28,6 +27,7 @@ import DownArrow from '~assets/icons/down-icon.svg';
 import UpArrow from '~assets/icons/up-arrow.svg';
 import styled from 'styled-components';
 import StatusTag from '~src/ui-components/StatusTag';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface BlockStatus {
 	block: number;
@@ -58,7 +58,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const PostType = postType.replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase()).replace(/s$/, '');
 	let activeColor;
 	PostType === timeline.type ? (activeColor = '#485F7D') : (activeColor = '#E5007A');
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	if (!timeline) return null;
 	const { statuses, type } = timeline;
 
@@ -240,6 +240,25 @@ export default styled(TimelineContainer)`
 
 	.status-update {
 		width: 98px;
+	}
+
+	@media (max-width: 1500px) and (min-width: 1320px) {
+		.content-container {
+			width: 580px;
+		}
+
+		.timeline-dropdown {
+			margin-left: 586px;
+		}
+	}
+	@media (max-width: 1320px) and (min-width: 1280px) {
+		.content-container {
+			width: 540px;
+		}
+
+		.timeline-dropdown {
+			margin-left: 544px;
+		}
 	}
 
 	@media (min-width: 1100px) and (max-width: 1280px) {

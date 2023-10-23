@@ -5,16 +5,16 @@
 import BN from 'bn.js';
 
 import { poppins } from 'pages/_app';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	address: string;
@@ -28,7 +28,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);

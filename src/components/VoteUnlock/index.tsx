@@ -203,7 +203,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		);
 	};
 
-	// logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-accounts/src/Accounts/Account.tsx
+	// logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
 	const getLockData = async (address: string) => {
 		if (!api || !apiReady) return;
 		setTotalUnlockableBalance(ZERO_BN);

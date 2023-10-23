@@ -193,6 +193,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 					<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4'>
 						<span className='flex items-center gap-1 text-xs text-bodyBlue'>
 							<CalenderIcon />
+
 							{dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
 						</span>
 						{voteData?.decision !== 'abstain' && isReferendum2 && (

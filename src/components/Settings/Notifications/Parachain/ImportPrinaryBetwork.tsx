@@ -20,6 +20,7 @@ const ImportPrimaryNetworkSettingModal = ({
 }) => {
 	return (
 		<Modal
+			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			title='Import Primary Network Settings'
 			titleIcon={<DisabledImportIcon />}
 			open={open}

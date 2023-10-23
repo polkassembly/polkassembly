@@ -336,11 +336,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`w-[400px] ${poppins.variable} ${poppins.className} max-h-[675px] rounded-[6px] max-md:w-full ${
-									theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''
-								}`}
+								className={`w-[400px] ${poppins.variable} ${poppins.className} max-h-[675px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseCross />}
-								wrapClassName={className}
+								wrapClassName={`${className} dark:bg-modalOverlayDark`}
 								title={
 									<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
 										<span className='ml-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Votes</span>

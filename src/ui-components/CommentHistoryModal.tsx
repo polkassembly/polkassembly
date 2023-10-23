@@ -168,8 +168,8 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 		<Modal
 			open={open}
 			onCancel={() => setOpen(false)}
-			wrapClassName={className}
-			className={`closeIcon ${poppins.variable} ${poppins.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			className={`closeIcon ${poppins.variable} ${poppins.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={false}
 			closeIcon={<CloseIcon />}
 			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] '>Comment Edit History</label>}

@@ -62,10 +62,11 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 				</button>
 			</div>
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={[]}
-				className={`${poppins.className} ${poppins.variable}`}
+				className={`${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseIcon />}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>

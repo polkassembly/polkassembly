@@ -138,11 +138,12 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 				/>
 
 				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
 					open={Boolean(modalArgs)}
 					title={<div className='dark:bg-section-dark-overlay dark:text-blue-dark-high'>Arguments</div>}
 					onOk={() => setModalArgs(null)}
 					onCancel={() => setModalArgs(null)}
-					className={`${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
+					className={'dark:[&>.ant-modal-content]:bg-section-dark-overlay '}
 					footer={[
 						<Button
 							key='back'

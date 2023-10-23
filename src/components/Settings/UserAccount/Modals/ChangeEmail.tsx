@@ -50,6 +50,7 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 	};
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			title={
 				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
 					<h3 className='md:text-md mb-0 ml-[24px] flex items-center gap-2 text-base'>
@@ -60,7 +61,7 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 			}
 			open={open}
 			closable
-			className='min-w-[350px] md:min-w-[600px]'
+			className='min-w-[350px] md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}

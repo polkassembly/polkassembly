@@ -122,7 +122,8 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 			onFinish={handleSubmit}
 		>
 			<Modal
-				className={`${className} ${poppins.variable} ${poppins.className}`}
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={`${className} ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={Title}
 				open={showModal}

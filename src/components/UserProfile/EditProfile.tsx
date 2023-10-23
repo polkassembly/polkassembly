@@ -193,7 +193,8 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	return (
 		<div>
 			<Modal
-				className={`h-full max-h-[774px] w-full max-w-[648px] ${poppins.variable} ${poppins.className}`}
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={`h-full max-h-[774px] w-full max-w-[648px] ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);

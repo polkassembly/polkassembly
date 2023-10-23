@@ -350,6 +350,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				/>
 			)}
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				maskClosable={false}
 				open={isExitModal}
 				onCancel={() => {
@@ -357,10 +358,12 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					setIsExitModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px]`}
+				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={
-					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>Exit Verification</div>
+					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
+						Exit Verification
+					</div>
 				}
 			>
 				<div className='mt-6'>
@@ -391,12 +394,13 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			</Modal>
 
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				footer={false}
 				open={open}
 				onCancel={handleCancel}
 				maskClosable={false}
 				closeIcon={<CloseIcon />}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
 					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (

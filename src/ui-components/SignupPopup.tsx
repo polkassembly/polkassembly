@@ -27,8 +27,8 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 			footer={false}
 			closable={closable}
 			maskClosable={closable}
-			wrapClassName={className}
-			className={`${poppins.variable} ${poppins.className} padding-0 max-w-full  shrink-0`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			className={`${poppins.variable} ${poppins.className} padding-0 max-w-full  shrink-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => setModalOpen(false)}
 			closeIcon={<CloseIcon />}
 		>

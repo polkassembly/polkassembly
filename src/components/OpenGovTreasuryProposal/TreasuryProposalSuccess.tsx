@@ -77,8 +77,8 @@ const TreasuryProposalSuccessPopup = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full`}
-			wrapClassName={className}
+			className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon />}
 			onCancel={onCancel}
 			footer={

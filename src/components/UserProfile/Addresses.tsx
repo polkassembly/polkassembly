@@ -51,11 +51,13 @@ const Addresses: FC<IAddressesProps> = (props) => {
 						})}
 				</div>
 				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
 					title={<h3 className='text-xl font-semibold text-[#1D2632]'>Addresses</h3>}
 					closeIcon={<CloseOutlined className='text-sm text-bodyBlue dark:text-blue-dark-high' />}
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}
+					className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				>
 					<div>
 						<p className='mt-4'>Accounts</p>

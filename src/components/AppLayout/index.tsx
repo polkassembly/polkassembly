@@ -795,12 +795,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 			<Footer theme={theme} />
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				zIndex={100}
 				open={identityMobileModal}
 				footer={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>

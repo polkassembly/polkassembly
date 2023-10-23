@@ -536,6 +536,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				</div>
 			</div>
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				open={tagsModal}
 				onCancel={(e) => {
 					e.stopPropagation();
@@ -544,7 +545,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				}}
 				footer={false}
 				closeIcon={<CloseIcon />}
-				className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%]`}
+				className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
 					<>
 						<label className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>

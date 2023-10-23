@@ -458,8 +458,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<label className={'search flex flex-wrap gap-1 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'}>
+				<label className={'search flex flex-wrap gap-1 text-xl font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'}>
 					{isSuperSearch ? (
 						<span
 							className='flex cursor-pointer items-center'
@@ -483,8 +484,8 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			open={openModal}
 			onCancel={() => handleClearFilters(true)}
 			footer={false}
-			className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} `}
-			closeIcon={<CloseIcon />}
+			className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input
@@ -704,7 +705,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 																<Checkbox
 																	key={track?.name}
 																	value={track?.trackId}
-																	className={`ml-0 py-1.5 text-xs font-normal ${selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'}`}
+																	className={`ml-0 py-1.5 text-xs font-normal ${
+																		selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue dark:text-blue-dark-high' : 'text-[#667589]'
+																	}`}
 																>
 																	<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
 																</Checkbox>

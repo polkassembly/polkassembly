@@ -214,6 +214,8 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			</Button>
 
 			<Modal
+				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				wrapClassName='dark:bg-modalOverlayDark'
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={null}

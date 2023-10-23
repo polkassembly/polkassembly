@@ -132,7 +132,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue dark:text-blue-dark-medium transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high'
+				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
 				onClick={handleClick}
 			>
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
@@ -160,8 +160,8 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px]`}
-				wrapClassName={className}
+				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
 					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
@@ -215,8 +215,8 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px]`}
-				wrapClassName={className}
+				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon />}
 				title={
 					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>

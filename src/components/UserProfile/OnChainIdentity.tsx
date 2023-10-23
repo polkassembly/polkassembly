@@ -38,7 +38,8 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 					<RightOutlined className='ml-auto text-base text-[#D6DBE2]' />
 				</button>
 				<Modal
-					className='min-w-[648px]'
+					wrapClassName='dark:bg-modalOverlayDark'
+					className='min-w-[648px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 					title={<h3 className='text-xl font-semibold text-[#1D2632]'>On-chain identity</h3>}
 					closeIcon={<CloseOutlined className='text-sm text-bodyBlue dark:text-blue-dark-high' />}
 					onCancel={toggleOpen}

@@ -1062,6 +1062,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											/>
 										) : (
 											<Modal
+												className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+												wrapClassName='dark:bg-modalOverlayDark'
 												closeIcon={false}
 												onCancel={() => {
 													setOpen(false);

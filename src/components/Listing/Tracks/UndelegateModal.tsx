@@ -196,8 +196,8 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		<>
 			<Modal
 				closeIcon={<CloseIcon />}
-				className={`${poppins.variable} ${poppins.className} padding w-[600px] `}
-				wrapClassName={className}
+				className={`${poppins.variable} ${poppins.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<UndelegateProfileIcon className='mr-2' />

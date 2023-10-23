@@ -424,6 +424,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
 				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
@@ -432,7 +433,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				</div>
 			}
 			open={open}
-			className={`mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className}`}
+			className={`mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{[

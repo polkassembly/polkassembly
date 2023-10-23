@@ -152,6 +152,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					</div>
 				</div>
 				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
 					open={tagsModal}
 					onCancel={(e) => {
 						e.stopPropagation();
@@ -159,7 +160,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						setTagsModal(false);
 					}}
 					footer={false}
-					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%]`}
+					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				>
 					<div className='flex'>
 						<h2 className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
@@ -237,7 +238,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							/>
 							{relativeCreatedAt && (
 								<>
-									<div className='mt-0 items-center text-sm xs:-mt-0.5 xs:flex xs:text-lightBlue dark:text-blue-dark-medium lg:flex'>
+									<div className='mt-0 items-center text-sm dark:text-blue-dark-medium xs:-mt-0.5 xs:flex xs:text-lightBlue lg:flex'>
 										<ClockCircleOutlined className='mr-1 mt-0' /> {relativeCreatedAt}
 									</div>
 								</>
@@ -282,6 +283,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					</div>
 				</div>
 				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
 					open={tagsModal}
 					onCancel={(e) => {
 						e.stopPropagation();
@@ -289,7 +291,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						setTagsModal(false);
 					}}
 					footer={false}
-					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%]`}
+					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				>
 					<div className='flex'>
 						<TagsIcon className='mr-2 mt-1.5' />

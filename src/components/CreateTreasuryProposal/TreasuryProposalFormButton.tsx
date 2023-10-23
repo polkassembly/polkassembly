@@ -339,7 +339,7 @@ const TreasuryProposalFormButton = ({
 	);
 	return loadingStatus.isLoading ? (
 		<Spin indicator={<LoadingOutlined />}>
-			<div className='flex h-[75px] min-w-[226px] cursor-not-allowed items-center justify-center rounded-[4px] border-none bg-white dark:bg-section-dark-overlay px-[19x] py-6 text-sm font-medium leading-[27px] text-pink_primary shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'>
+			<div className='flex h-[75px] min-w-[226px] cursor-not-allowed items-center justify-center rounded-[4px] border-none bg-white px-[19x] py-6 text-sm font-medium leading-[27px] text-pink_primary shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none dark:bg-section-dark-overlay'>
 				{loadingStatus.message}
 			</div>
 		</Spin>
@@ -348,10 +348,10 @@ const TreasuryProposalFormButton = ({
 			{!id ? triggerBtnLoginDisabled : triggerBtn}
 
 			<Modal
-				className={className}
+				wrapClassName='dark:bg-modalOverlayDark p-5 before:h-0 md:p-10'
+				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => setModalOpen(false)}
 				centered
-				wrapClassName='p-5 before:h-0 md:p-10'
 				zIndex={1002}
 				title='Create Treasury Proposal'
 				footer={[

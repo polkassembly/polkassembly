@@ -350,7 +350,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				</div>
 			</AuthForm>
 			<Modal
-				className='rounded-md'
+				wrapClassName='dark:bg-modalOverlayDark'
+				className='rounded-md dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				centered={true}
 				title={"You've got some mail"}
 				open={open}

@@ -66,6 +66,7 @@ const AddNetworkModal = ({
 	return (
 		<>
 			<Modal
+				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				title='Add Networks'
 				titleIcon={<PlusCircleOutlined />}
 				open={open}

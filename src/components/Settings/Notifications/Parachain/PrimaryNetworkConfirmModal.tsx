@@ -24,6 +24,7 @@ const StyledAlert = styled(Alert)`
 const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: { open: boolean; onConfirm: () => void; onCancel: () => void; network: string }) => {
 	return (
 		<Modal
+			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			title='Confirmation'
 			titleIcon={<CheckOutlineIcon />}
 			open={open}

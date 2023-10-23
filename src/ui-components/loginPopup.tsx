@@ -28,8 +28,8 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 			closable={closable}
 			maskClosable={closable}
 			zIndex={1008}
-			wrapClassName={className}
-			className={`${poppins.variable} ${poppins.className} padding-0 `}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			className={`${poppins.variable} ${poppins.className} padding-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => setModalOpen && setModalOpen(false)}
 			closeIcon={<CloseIcon />}
 		>

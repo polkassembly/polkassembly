@@ -41,7 +41,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
 						onClick={() => setOpen(true)}
 					>
-						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue dark:text-blue-dark-medium outline-none'>
+						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none dark:text-blue-dark-medium'>
 							<SearchOutlined />
 						</button>
 					</div>
@@ -66,18 +66,19 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 			) : (
 				<>
 					<button
-						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue dark:text-blue-dark-medium outline-none'
+						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none dark:text-blue-dark-medium'
 						onClick={() => setOpen(true)}
 					>
 						<SearchOutlined />
 					</button>
 					<Modal
+						wrapClassName='dark:bg-modalOverlayDark [&>.ant-modal-content]:bg-section-dark-overlay'
 						title='Search'
 						closable={false}
 						open={open}
 						onCancel={() => setOpen(false)}
 						footer={[]}
-						className={`${className} ${poppins.className} ${poppins.variable}`}
+						className={`${className} ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						<div className='client'>
 							<ClientOnly>

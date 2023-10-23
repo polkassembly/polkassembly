@@ -106,12 +106,13 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				</div>
 			</GovSidebarCard>
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				onCancel={() => {
 					setThresholdOpen(false);
 				}}
 				open={thresholdOpen}
 				footer={[]}
-				className='md:min-w-[700px]'
+				className='md:min-w-[700px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				closeIcon={<CloseIcon />}
 				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>Threshold Curves</h2>}
 			>

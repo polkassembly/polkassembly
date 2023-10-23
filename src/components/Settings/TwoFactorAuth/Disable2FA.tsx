@@ -69,7 +69,8 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 	return (
 		<>
 			<Modal
-				className={`${className} ${poppins.variable} ${poppins.className}`}
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={`${className} ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={Title}
 				open={showModal}

@@ -90,6 +90,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 				>
 					<p className='text-[14px] text-[#243A57]'>Please note that this action is irreversible and all the data associated with your account will be permanently deleted.</p>
 					<Modal
+						wrapClassName='dark:bg-modalOverlayDark'
 						closable={false}
 						title={Title}
 						open={showModal}
@@ -113,7 +114,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								Cancel
 							</Button>
 						]}
-						className={className}
+						className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						{error && (
 							<div className='mb-4'>

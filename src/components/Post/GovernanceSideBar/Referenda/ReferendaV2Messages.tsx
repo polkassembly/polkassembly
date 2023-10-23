@@ -18,6 +18,7 @@ import { getStatusBlock } from '~src/util/getStatusBlock';
 import ConfirmationAttemptsRow from '~src/ui-components/ConfirmationAttemptsRow';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -179,7 +180,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Voting has Started</h3>
+						<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
+							Voting has Started
+						</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
 							<p
 								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
@@ -321,6 +324,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			)}
 
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
 				title={
 					<div className='flex items-center justify-between gap-x-5 px-2 py-3'>
@@ -336,7 +340,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				onCancel={() => setOpen(false)}
 				closable={false}
 				footer={[]}
-				className={`${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
+				className={'dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 			>
 				<section className='mt-[24px] pl-[21px] text-sidebarBlue'>
 					<article className='flex gap-x-[23px]'>

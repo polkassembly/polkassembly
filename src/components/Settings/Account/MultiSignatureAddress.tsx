@@ -267,6 +267,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
 				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
@@ -275,7 +276,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 				</div>
 			}
 			open={open}
-			className='mb-8 md:min-w-[600px]'
+			className='mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			footer={
 				<div className='flex items-center justify-end'>
 					{[
@@ -293,7 +294,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						<Button
 							key='cancel'
 							onClick={dismissModal}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white dark:bg-section-dark-overlay px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none'
+							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none dark:bg-section-dark-overlay'
 						>
 							Cancel
 						</Button>

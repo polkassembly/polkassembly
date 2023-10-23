@@ -48,7 +48,8 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				</p>
 			</button>
 			<Modal
-				className={classNames(className, 'ml-0 ml-4 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px]')}
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={classNames(className, 'ml-0 ml-4 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}

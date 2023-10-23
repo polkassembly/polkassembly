@@ -23,7 +23,6 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import CloseIcon from '~assets/icons/close.svg';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
 
 interface Props {
 	delegate: IDelegate;
@@ -42,7 +41,6 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [social_links, setSocial_links] = useState<any[]>([]);
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
-	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		if (!network) return;
@@ -171,9 +169,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			<Modal
 				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
-				className={`modal w-[725px] max-md:w-full ${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
+				className={'modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 				footer={false}
-				wrapClassName={className}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon />}
 			>
 				<div className={'pt-[20px]'}>

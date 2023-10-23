@@ -276,6 +276,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 			</Button>
 
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				title={<h2 className='text-lg font-medium leading-7 text-sidebarBlue'>{data ? 'Confirm Details of Post ID to Link' : 'Post ID to Link'}</h2>}
 				open={showModal}
 				onOk={handleSubmit}
@@ -286,7 +287,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					setData(undefined);
 					setPostId(undefined);
 				}}
-				className={className}
+				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				footer={footer}
 			>
 				<Spin
@@ -308,7 +309,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 								Enter post id
 							</label>
 							<Input
-								className='disabled: rounded-md bg-white dark:bg-section-dark-overlay px-2.5 py-2 text-sm font-medium leading-6'
+								className='disabled: rounded-md bg-white px-2.5 py-2 text-sm font-medium leading-6 dark:bg-section-dark-overlay'
 								id='postId'
 								disabled={!!data}
 								value={postId}

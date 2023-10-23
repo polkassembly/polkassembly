@@ -180,6 +180,8 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				)}
 			</button>
 			<Modal
+				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				wrapClassName='dark:bg-modalOverlayDark'
 				title={isDeleteModal ? 'Delete' : 'Report'}
 				open={showModal}
 				onOk={isDeleteModal ? handleDelete : handleReport}

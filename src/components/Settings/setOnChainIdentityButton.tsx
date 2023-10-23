@@ -411,7 +411,8 @@ const SetOnChainIdentityButton = ({
 			{!id ? triggerBtnLoginDisabled : triggerBtn}
 
 			<Modal
-				className={className}
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={'Set On-Chain Identity'}
 				open={modalOpen}
 				centered

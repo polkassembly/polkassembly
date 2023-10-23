@@ -126,10 +126,12 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					)}
 
 					<Modal
+						wrapClassName='dark:bg-modalOverlayDark'
 						open={isModalVisible}
 						onCancel={() => setIsModalVisible(false)}
 						title='Select Gif'
 						footer={null}
+						className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 					>
 						<Gif
 							onClick={(url, title) => {

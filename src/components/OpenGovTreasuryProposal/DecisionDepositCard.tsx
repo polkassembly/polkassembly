@@ -246,8 +246,8 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				Pay Decision Deposit
 			</Button>
 			<Modal
-				wrapClassName={className}
-				className={`${poppins.className} ${poppins.variable} pay-decision-deposite `}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
+				className={`${poppins.className} ${poppins.variable} pay-decision-deposite dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				open={openModal}
 				closeIcon={<CloseIcon />}
 				onCancel={() => setOpenModal(false)}

@@ -19,7 +19,6 @@ import CloseIcon from 'public/assets/icons/close.svg';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 
 interface IReferendumV2VoteInfoProps {
@@ -39,7 +38,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	const { api, apiReady } = useApiContext();
 	const [activeIssuance, setActiveIssuance] = useState<BN | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
-	const { resolvedTheme: theme } = useTheme();
 
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO || 0,
@@ -170,6 +168,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						) : null}
 					</section>
 					<Modal
+						wrapClassName='dark:bg-modalOverlayDark'
 						onCancel={() => {
 							setVoteCalculationModalOpen(false);
 						}}
@@ -190,7 +189,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</div>
 						]}
-						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full ${theme === 'dark' ? '[&>.ant-modal-content]:bg-section-dark-overlay' : ''}`}
+						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 						closeIcon={<CloseIcon className='mt-2' />}
 						title={
 							<label className={`${poppins.variable} ${poppins.className} text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}>

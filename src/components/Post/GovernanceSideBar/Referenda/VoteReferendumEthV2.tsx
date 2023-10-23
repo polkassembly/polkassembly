@@ -483,9 +483,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					handleModalReset();
 				}}
 				footer={false}
-				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable}`}
+				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseCross />}
-				wrapClassName={className}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0]'>
 						<CastVoteIcon className='mt-1' />

@@ -41,60 +41,60 @@ module.exports = {
 				separatorDark: 'var(--separatorDark)',
 				inactiveIconDark: 'var(--inactiveIconDark)',
 				modalOverlayDark: 'var(--modalOverlayDark)',
-				blue:{
-					light:{
-						disabled:'#96A4B6',
-						helper:'#576D8B',
-						medium:'#485F7D',
-						high:'#243A57'
+				blue: {
+					light: {
+						disabled: '#96A4B6',
+						helper: '#576D8B',
+						medium: '#485F7D',
+						high: '#243A57'
 					},
-					dark:{
-						helper:'#FF60B5',
-						medium:'#909090',
-						high:'#FFFFFF'
+					dark: {
+						helper: '#FF60B5',
+						medium: '#909090',
+						high: '#FFFFFF'
 					}
 				},
-				red:{
-					light:{
-						text:'#A8071A',
-						medium:'#E91C26',
-						high:'#CF1322'
+				red: {
+					light: {
+						text: '#A8071A',
+						medium: '#E91C26',
+						high: '#CF1322'
 					},
-					dark:{
-						text:'#A8071A',
-						medium:'#E91C26',
-						high:'#CF1322'
+					dark: {
+						text: '#A8071A',
+						medium: '#E91C26',
+						high: '#CF1322'
 					}
 				},
-				icon:{
-					light:{
-						active:'#243A57',
-						inactive:'#485F7D',
-						disabled:'#96A4B6'
+				icon: {
+					light: {
+						active: '#243A57',
+						inactive: '#485F7D',
+						disabled: '#96A4B6'
 					},
-					dark:{
-						active:'#FF0088',
-						inactive:'#9E9E9E'
+					dark: {
+						active: '#FF0088',
+						inactive: '#9E9E9E'
 					}
 				},
-				section:{
-					light:{
-						container:'#D2D8E0',
-						background:'#F5F6F8',
-						overlay:'#0000004D'
+				section: {
+					light: {
+						container: '#D2D8E0',
+						background: '#F5F6F8',
+						overlay: '#0000004D'
 					},
-					dark:{
-						container:'#3B444F',
-						background:'#1C1D1F',
-						overlay:'#0D0D0D'
+					dark: {
+						container: '#3B444F',
+						background: '#1C1D1F',
+						overlay: '#0D0D0D'
 					}
 				}
 			},
 			screens: {
-				'xs': '320px'
+				xs: '320px'
 			},
 			borderRadius: {
-				'xxl': '0.875rem'
+				xxl: '0.875rem'
 			}
 		}
 	},

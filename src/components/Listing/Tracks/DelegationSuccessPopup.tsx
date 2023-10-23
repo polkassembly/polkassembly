@@ -80,8 +80,8 @@ const DelegationSuccessPopup = ({
 		<Modal
 			zIndex={100000}
 			open={open}
-			className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
-			wrapClassName={className}
+			className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={isDelegate ? <CloseIcon /> : <UndelegateCloseIcon />}
 			onCancel={() => {
 				redirect && router.reload();
@@ -209,7 +209,11 @@ const DelegationSuccessPopup = ({
 								<div className='flex gap-[35px] text-sm text-bodyBlue dark:text-blue-dark-high'>
 									Track(s):
 									<span>
-										<div className={`flex max-h-[100px] min-h-[50px] flex-col gap-1 pr-2 font-medium text-bodyBlue dark:text-blue-dark-high ${tracks.length > 4 && 'overflow-y-scroll'}`}>
+										<div
+											className={`flex max-h-[100px] min-h-[50px] flex-col gap-1 pr-2 font-medium text-bodyBlue dark:text-blue-dark-high ${
+												tracks.length > 4 && 'overflow-y-scroll'
+											}`}
+										>
 											{tracks.map((track, index) => (
 												<div key={index}>
 													{track} #{networkTrackInfo[network][track.toString()].trackId}

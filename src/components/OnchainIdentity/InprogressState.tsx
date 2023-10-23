@@ -44,8 +44,8 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 		<Modal
 			centered
 			open={open}
-			className={`${poppins.variable} ${poppins.className} w-[650px] max-sm:w-full`}
-			wrapClassName={className}
+			className={`${poppins.variable} ${poppins.className} w-[650px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon />}
 			onCancel={() => {
 				close(true);

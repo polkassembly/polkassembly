@@ -39,6 +39,7 @@ const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, className,
 			closable
 			closeIcon={<CloseIcon />}
 			className={`min-w-[350px] md:min-w-[600px] ${className}`}
+			wrapClassName='dark:bg-modalOverlayDark'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={footer || null}

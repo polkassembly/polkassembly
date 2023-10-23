@@ -325,7 +325,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								}
 								isClicked.current = false;
 							}}
-							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none md:hidden'
+							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:bg-section-dark-overlay md:hidden'
 						>
 							<CloseOutlined className='h-[15px] w-[15px]' />
 							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>

@@ -23,8 +23,8 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 		<Modal
 			zIndex={100000}
 			open={open}
-			className={`${poppins.variable} ${poppins.className} h-[300px] w-[600px] max-sm:w-full`}
-			wrapClassName={className}
+			className={`${poppins.variable} ${poppins.className} h-[300px] w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon />}
 			onCancel={() => {
 				onClose(false);

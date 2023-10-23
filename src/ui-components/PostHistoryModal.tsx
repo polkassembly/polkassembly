@@ -53,7 +53,11 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 					</div>
 				</div>
 			) : (
-				<div className={`ml-3 mt-1 rounded-[4px] border-[0.5px] border-solid border-[#D2D8E0] bg-white dark:bg-section-dark-overlay px-3 py-3 max-sm:ml-0 max-sm:w-full ${item?.expanded && 'active-timeline'}`}>
+				<div
+					className={`ml-3 mt-1 rounded-[4px] border-[0.5px] border-solid border-[#D2D8E0] bg-white px-3 py-3 dark:bg-section-dark-overlay max-sm:ml-0 max-sm:w-full ${
+						item?.expanded && 'active-timeline'
+					}`}
+				>
 					<div className='flex items-center max-sm:flex-col max-sm:items-start max-sm:justify-start  max-sm:gap-2'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
@@ -166,8 +170,8 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 		<Modal
 			open={open}
 			onCancel={() => setOpen(false)}
-			wrapClassName={className}
-			className={`closeIcon  shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full ${poppins.variable} ${poppins.className}`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			className={`closeIcon  shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={false}
 			closeIcon={<CloseIcon />}
 			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] '>Proposal Edit History</label>}

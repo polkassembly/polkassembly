@@ -104,7 +104,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 		});
 		handleLoading(index, false);
 	};
-	const handleRemoveOrUnlockVote = async (removing: boolean, refId: BN, trackId: BN | number, index: number) => {
+	const handleRemoveOrUnlockVote = async (isVoteRemoving: boolean, refId: BN, trackId: BN | number, index: number) => {
 		if (!api || !apiReady) return;
 		handleLoading(index, true);
 
@@ -124,10 +124,8 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 			handleLoading(index, false);
 			return;
 		}
-		let tx = contract.methods.unlock(trackId, address);
-		if (removing) {
-			tx = contract.methods.removeVote(refId);
-		}
+		const unlockTx = contract.methods.unlock(trackId, address);
+		const tx = contract.methods.removeVote(refId);
 
 		tx.send({
 			from: address,
@@ -135,12 +133,30 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 		})
 			.then((result: any) => {
 				console.log(result);
-				onSuccess(index, refId);
+				if (isVoteRemoving) {
+					onSuccess(index, refId);
+				}
 			})
 			.catch((error: any) => {
 				console.error('ERROR:', error);
 				onFailed('Failed!', index);
 			});
+		if (!isVoteRemoving) {
+			handleLoading(index, true);
+			unlockTx
+				.send({
+					from: address,
+					to: contractAddress
+				})
+				.then((result: any) => {
+					console.log(result);
+					onSuccess(index, refId);
+				})
+				.catch((error: any) => {
+					console.error('ERROR:', error);
+					onFailed('Failed!', index);
+				});
+		}
 	};
 
 	useEffect(() => {
@@ -208,7 +224,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 										className='flex items-center justify-start rounded-[4px] border-none bg-transparent text-xs font-medium text-pink_primary shadow-none hover:underline'
 									>
 										<PinkLockIcon className='mr-1' />
-										{tokensData?.[0].endBlock?.lt(currentBlockNumber || ZERO_BN) ? 'Unlock Vote' : tokensData?.[0].endBlock?.eq(BN_MAX_INTEGER) ? 'Remove Vote' : null}
+										{tokensData?.[0].endBlock?.lt(currentBlockNumber || ZERO_BN) ? 'Unlock Tokens' : tokensData?.[0].endBlock?.eq(BN_MAX_INTEGER) ? 'Remove Vote' : null}
 									</Button>
 									<span
 										className='flex w-[150px] items-center justify-end text-base font-semibold text-bodyBlue'
@@ -253,7 +269,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 													className='flex items-center justify-start rounded-[4px] border-none bg-transparent text-xs font-medium text-pink_primary shadow-none hover:underline'
 												>
 													<PinkLockIcon className='mr-1' />
-													{lock.endBlock.lt(currentBlockNumber || ZERO_BN) ? 'Unlock Vote' : lock.endBlock.eq(BN_MAX_INTEGER) ? 'Remove Vote' : null}
+													{lock.endBlock.lt(currentBlockNumber || ZERO_BN) ? 'Unlock Tokens' : lock.endBlock.eq(BN_MAX_INTEGER) ? 'Remove Vote' : null}
 												</Button>
 												<span className='flex w-[150px] items-center justify-end pr-[27px] text-base font-semibold text-bodyBlue'>
 													{formatedBalance((lock?.total.toString() || '0').toString(), unit, 2)} {unit}

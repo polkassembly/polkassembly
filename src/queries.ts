@@ -1019,6 +1019,7 @@ query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $v
     type
     createdAtBlock
     createdAt
+    isDelegated
     lockPeriod
     proposal {
       index

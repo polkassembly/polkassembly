@@ -115,6 +115,7 @@ import logoutSVG from '~assets/icons/userDropdown/logout.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
 import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 import ArchivedSVG from '~assets/icons/archived.svg';
+import NoTagsFoundSVG from '~assets/icons/no-tag.svg';
 
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -844,6 +845,13 @@ export const ApplayoutIdentityIcon = (props: Partial<CustomIconComponentProps>) 
 export const ArchivedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ArchivedSVG}
+		{...props}
+	/>
+);
+
+export const NoTagFoundIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={NoTagsFoundSVG}
 		{...props}
 	/>
 );

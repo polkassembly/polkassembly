@@ -49,11 +49,11 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 							target='_blank'
 						>
 							<div
-								className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] min-h-[200px] cursor-pointer flex-col rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-8 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 ${
+								className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] min-h-[150px] cursor-pointer flex-col rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-6 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 ${
 									index % 2 === 1 && 'bg-[#fafafb]'
 								} ${index === postsData.length - 1 && 'border-b-[1px]'} max-md:flex-wrap`}
 							>
-								<div className='flex items-center gap-2'>
+								<div className='flex items-center gap-2 '>
 									{post?.proposer_address ? (
 										<Address
 											address={post?.proposer_address}
@@ -72,7 +72,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 										{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 									</div>
 								</div>
-								<span className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</span>
+								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</div>
 								<Markdown
 									imgHidden={true}
 									md={post?.content?.slice(0, 250) + ' .....'}

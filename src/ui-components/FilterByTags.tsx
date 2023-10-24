@@ -11,10 +11,9 @@ import { IPostTag } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
-import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
-import { FilterIcon, SearchIcon, TrendingIcon } from './CustomIcons';
+import { FilterIcon, NoTagFoundIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
 import { useTheme } from 'next-themes';
 
@@ -151,7 +150,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 
 			{searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0 ? (
 				<div className='flex-col'>
-					{isSearch && <div className={`mt-1 text-[10px] font-normal text-blue-light-high dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
+					{isSearch && <div className={`mt-1 text-[10px] font-normal text-[#243A57] ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
 
 					{trendingTags.slice(0, 5).map((tag, index) => (
 						<div
@@ -172,9 +171,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 					{displayTags.map((item, index) => (
 						<Checkbox
 							onClick={() => (handleExits(item) ? handleRemoveTag(item) : handleSetTags(item))}
-							className={`ml-0 text-xs font-normal ${tags.includes(item) ? 'text-blue-light-high dark:text-blue-dark-high' : 'text-[#667589]'} ${
-								index !== 0 ? 'py-1.5' : 'pb-1.5'
-							}`}
+							className={`ml-0 text-xs font-normal ${tags.includes(item) ? 'text-[#243A57]' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'}`}
 							key={index}
 							value={item}
 						>
@@ -184,8 +181,8 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 				</Checkbox.Group>
 			)}
 			{filteredTags.length === 0 && searchInput.length > 0 ? (
-				<div className='mt-2 flex h-[100%] flex-col items-center justify-center gap-2'>
-					<NoTagsFoundIcon />
+				<div className='mt-2 flex h-[100%] flex-col items-center justify-center gap-2 text-[50px]'>
+					<NoTagFoundIcon />
 					<span className={`text-[10px] tracking-wide text-navBlue ${poppins.className} ${poppins.variable} `}>No tag found.</span>
 				</div>
 			) : null}

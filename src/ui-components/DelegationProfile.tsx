@@ -113,7 +113,9 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					) : (
 						<h2
 							onClick={() => setOpenEditModal(true)}
-							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${username === userProfile.username && 'cursor-pointer'}`}
+							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
+								username === userProfile.username && 'cursor-pointer'
+							}`}
 						>
 							{bio}
 						</h2>

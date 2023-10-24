@@ -108,7 +108,9 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 									{getIdentityIcons(item?.key)}
 									{item?.key}:
 								</span>
-								<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}</span>
+								<span className='truncate pt-0.5 text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
+									{(item?.key === 'Judgements' ? displayJudgements : item?.value) as string}
+								</span>
 							</li>
 						)
 					);

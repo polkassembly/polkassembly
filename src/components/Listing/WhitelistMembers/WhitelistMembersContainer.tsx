@@ -136,7 +136,7 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 
 	if (noMembers) {
 		return (
-			<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
+			<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
 				<PostEmptyState />
 			</div>
 		);
@@ -145,7 +145,7 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 	if (members.length) {
 		return (
 			<>
-				<div className={`${className} rounded-md bg-white dark:bg-section-dark-overlay p-3 shadow-md md:p-8`}>
+				<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
 					<div className='flex items-center justify-between'>
 						<div>
 							<h1 className='dashboard-heading'>{members.length} Members</h1>

@@ -270,7 +270,9 @@ const Address = (props: Props) => {
 								target='_blank'
 								onClick={(e) => handleClick(e)}
 								title={mainDisplay || encodedAddr}
-								className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-blue-dark-high'} hover:text-bodyBlue dark:text-blue-dark-high`}
+								className={`flex gap-x-1 ${
+									usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-blue-dark-high'
+								} hover:text-bodyBlue dark:text-blue-dark-high`}
 							>
 								{!!addressPrefix && (
 									<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -300,7 +302,9 @@ const Address = (props: Props) => {
 											href={handleRedirectLink()}
 											target='_blank'
 											onClick={(e) => handleClick(e)}
-											className={`flex flex-col font-semibold text-bodyBlue dark:text-blue-dark-high  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue dark:text-blue-dark-high`}
+											className={`flex flex-col font-semibold text-bodyBlue dark:text-blue-dark-high  ${
+												!disableAddressClick ? 'hover:underline' : 'cursor-pointer'
+											} hover:text-bodyBlue dark:text-blue-dark-high`}
 										>
 											{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 											{!extensionName && sub && isSubVisible && (

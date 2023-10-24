@@ -61,7 +61,9 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 				</>
 			)}
 
-			{voteData.votingPower && <div className='w-[80px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'>{parseBalance(voteData.votingPower.toString(), 2, true, network)}</div>}
+			{voteData.votingPower && (
+				<div className='w-[80px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'>{parseBalance(voteData.votingPower.toString(), 2, true, network)}</div>
+			)}
 		</div>
 	);
 };

@@ -171,7 +171,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				</Button>
 				<button
 					onClick={handleRequestJudgement}
-					className='mt-2 h-[40px] w-full cursor-pointer rounded-[4px] bg-white dark:bg-section-dark-overlay text-sm tracking-wide text-pink_primary'
+					className='mt-2 h-[40px] w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay'
 				>
 					Request Judgement
 					<HelperTooltip

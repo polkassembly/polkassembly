@@ -138,7 +138,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 	if (!fellowshipReferendumPostOrigins.includes(trackName)) {
 		return (
-			<div className={`${className} rounded-xxl bg-white dark:bg-section-dark-overlay p-4 drop-shadow-md md:p-8`}>
+			<div className={`${className} rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay md:p-8`}>
 				<h2 className='text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>Member Referenda</h2>
 				<p className='mt-5 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Aggregation of data across all membership referenda</p>
 			</div>
@@ -146,7 +146,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	}
 
 	return (
-		<section className={`${className} rounded-xxl bg-white dark:bg-section-dark-overlay drop-shadow-md md:p-4`}>
+		<section className={`${className} rounded-xxl bg-white drop-shadow-md dark:bg-section-dark-overlay md:p-4`}>
 			<article className='flex justify-between px-4 xs:py-3 md:py-0'>
 				<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>About {trackName.split(/(?=[A-Z])/).join(' ')}</h2>
 
@@ -167,20 +167,26 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
 							<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Confirm Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{blocksToRelevantTime(Number(trackMetaData.confirmPeriod))}</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+								{blocksToRelevantTime(Number(trackMetaData.confirmPeriod))}
+							</span>
 						</div>
 					</article>
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
 							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Min. Enactment Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+								{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}
+							</span>
 						</div>
 					</article>
 
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
 							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+								{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}
+							</span>
 						</div>
 					</article>
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
@@ -202,7 +208,9 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
 							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Prepare Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{blocksToRelevantTime(Number(trackMetaData.preparePeriod))}</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+								{blocksToRelevantTime(Number(trackMetaData.preparePeriod))}
+							</span>
 						</div>
 					</article>
 				</section>

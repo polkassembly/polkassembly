@@ -191,7 +191,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	}, [api, apiReady, network, track_number]);
 
 	return (
-		<section className={`${className} rounded-xxl bg-white dark:bg-section-dark-overlay drop-shadow-md md:p-4`}>
+		<section className={`${className} rounded-xxl bg-white drop-shadow-md dark:bg-section-dark-overlay md:p-4`}>
 			<article className='flex justify-between px-4 xs:py-2 md:py-0'>
 				<div className='flex items-center gap-x-2 xs:mt-2 xs:flex-wrap md:mt-0'>
 					<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>About {trackName.split(/(?=[A-Z])/).join(' ')}</h2>
@@ -222,21 +222,27 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
 							<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Confirm Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+								{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}
+							</span>
 						</div>
 					</article>
 
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
 							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Min. Enactment Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+								{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}
+							</span>
 						</div>
 					</article>
 
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
 							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+								{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}
+							</span>
 						</div>
 					</article>
 
@@ -260,7 +266,9 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 						<div className='flex flex-col'>
 							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Prepare Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</span>
+							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+								{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}
+							</span>
 						</div>
 					</article>
 				</section>

@@ -47,7 +47,7 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 				</Button>
 			]}
 		>
-			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-[#243A57]'>
+			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
 				{`Are you sure you want ${network} as your Primary Network for
                 settings?`}
 			</p>

@@ -57,7 +57,7 @@ const TitleForm = ({ className, onChange, value = '' }: Props): JSX.Element => {
 					help={validationStatus.errorMsg}
 				>
 					<Input
-						className='text-sm text-sidebarBlue'
+						className='text-sm text-sidebarBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						name={'title'}
 						onChange={onChangeWrapper}
 						placeholder='Your title...'

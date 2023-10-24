@@ -23,6 +23,7 @@ import { parseBalance } from './utils/parseBalaceToReadable';
 import Loader from '~src/ui-components/Loader';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface IVoterRow {
 	className?: string;
@@ -39,6 +40,7 @@ interface IVoterRow {
 }
 
 const StyledCollapse = styled(Collapse)`
+	background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
 	.ant-collapse-item {
 		border-bottom: none;
 	}
@@ -87,6 +89,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 	const { network } = useNetworkSelector();
 	const [delegatorLoading, setDelegatorLoading] = useState(true);
 	const [delegatedData, setDelegatedData] = useState<any>(null);
+	const { resolvedTheme: theme } = useTheme();
 	useEffect(() => {
 		if (!active) {
 			return;
@@ -183,13 +186,16 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 			}}
 			activeKey={currentKey === index ? 1 : 0}
 			onChange={() => setActiveKey(currentKey === index ? null : index)}
+			theme={theme}
 		>
 			<StyledCollapse.Panel
-				className={`rounded-none p-0 ${active ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''} gap-[0px] text-bodyBlue dark:text-blue-dark-high`}
+				className={`rounded-none p-0 ${
+					active ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''
+				} gap-[0px] text-bodyBlue dark:text-blue-dark-high dark:[&>.ant-collapse-content]:bg-section-dark-overlay`}
 				key={1}
 				header={<Title />}
 			>
-				<div className='flex flex-col gap-4'>
+				<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
 					<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4'>
 						<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 							<CalenderIcon />{' '}
@@ -299,7 +305,9 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 			</StyledCollapse.Panel>
 		</StyledCollapse>
 	) : (
-		<div className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:text-blue-dark-high ${className}`}>
+		<div
+			className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:text-blue-dark-high ${className} dark:bg-section-dark-overlay`}
+		>
 			<Title />
 		</div>
 	);

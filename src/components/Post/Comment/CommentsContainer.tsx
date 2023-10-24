@@ -30,6 +30,7 @@ import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
 import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -99,6 +100,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
+	const { resolvedTheme: theme } = useTheme();
 
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -262,7 +264,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					)}
 				</>
 			) : (
-				<div className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md'>
+				<div className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md dark:bg-[#141C2D]'>
 					<Image
 						src='/assets/icons/alert-login.svg'
 						width={20}
@@ -285,7 +287,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			)}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div className='tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-					<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+					<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
 						{allComments.length || 0}
 						<span className='ml-1'>Comments</span>
 					</span>
@@ -304,12 +306,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								>
 									<div
 										onClick={() => getFilteredComments(data.sentiment)}
-										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8] ${
-											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary'
-										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none' : ''}`}
+										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8] dark:bg-[#33071E] ${
+											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary dark:bg-[#33071E]'
+										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} ${
+											overallSentiments[data.sentiment] == 0 ? 'pointer-events-none' : ''
+										} dark:hover:bg-[#33071E]`}
 									>
 										{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
-										<span className={'flex justify-center font-medium'}>{data.percentage}%</span>
+										<span className={'flex justify-center font-medium dark:font-normal dark:text-[#ffffff99]'}>{data.percentage}%</span>
 									</div>
 								</Tooltip>
 							))}
@@ -381,6 +385,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					)}
 					{
 						<RefendaLoginPrompts
+							theme={theme}
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
 							image='/assets/post-comment.png'

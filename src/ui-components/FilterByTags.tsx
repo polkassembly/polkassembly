@@ -16,6 +16,7 @@ import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
 import { FilterIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -35,7 +36,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 	const [trendingTags, setTrendingTags] = useState<IPostTag[]>([]);
 	const router = useRouter();
 	const [displayTags, setDisplayTags] = useState<string[]>([]);
-
+	const { resolvedTheme: theme } = useTheme();
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
 		if (error) console.error('Error in getting all-tags', error);
@@ -142,7 +143,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			<Input
 				allowClear={{ clearIcon: <ClearIcon /> }}
 				type='search'
-				className='mt-[4px]'
+				className='mt-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 				value={searchInput}
 				onChange={(e) => setSearchInput(e.target.value)}
 				prefix={<SearchIcon />}
@@ -150,7 +151,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 
 			{searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0 ? (
 				<div className='flex-col'>
-					{isSearch && <div className={`mt-1 text-[10px] font-normal text-[#243A57] ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
+					{isSearch && <div className={`mt-1 text-[10px] font-normal text-blue-light-high dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
 
 					{trendingTags.slice(0, 5).map((tag, index) => (
 						<div
@@ -171,7 +172,9 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 					{displayTags.map((item, index) => (
 						<Checkbox
 							onClick={() => (handleExits(item) ? handleRemoveTag(item) : handleSetTags(item))}
-							className={`ml-0 text-xs font-normal ${tags.includes(item) ? 'text-[#243A57]' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'}`}
+							className={`ml-0 text-xs font-normal ${tags.includes(item) ? 'text-blue-light-high dark:text-blue-dark-high' : 'text-[#667589]'} ${
+								index !== 0 ? 'py-1.5' : 'pb-1.5'
+							}`}
 							key={index}
 							value={item}
 						>
@@ -198,6 +201,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			onOpenChange={() => !disabled && setOpenFilter(!openFilter)}
 			placement='bottom'
 			arrow={isSearch}
+			overlayClassName={`dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
 		>
 			{!isSearch ? (
 				<div className={'mt-[3.5px] flex cursor-pointer items-center text-base font-normal tracking-wide text-pink_primary'}>

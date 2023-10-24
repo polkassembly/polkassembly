@@ -46,7 +46,7 @@ const ImportPrimaryNetworkSettingModal = ({
 			<div className='mb-6 flex flex-wrap items-center gap-[10px]'>
 				<Tag
 					className={
-						'max-w-[200px] cursor-pointer items-center rounded-[34px] border border-solid border-[#E5007A] bg-[#FEF2F8] px-[12px] py-[8px] pb-[5px] text-navBlue hover:bg-[#FEF2F8]'
+						'max-w-[200px] cursor-pointer items-center rounded-[34px] border border-solid border-[#E5007A] bg-[#FEF2F8] px-[12px] py-[8px] pb-[5px] text-navBlue hover:bg-[#FEF2F8] dark:bg-[#33071E] dark:bg-[#33071E]'
 					}
 				>
 					<Image
@@ -54,13 +54,15 @@ const ImportPrimaryNetworkSettingModal = ({
 						src={chainProperties[primaryNetwork].logo.src}
 						alt='Logo'
 					/>
-					<span className={'ml-[10px] mr-[12px] items-center justify-center text-sm font-medium leading-[18px] tracking-[0.02em] text-[#243A57]'}>
+					<span className={'ml-[10px] mr-[12px] items-center justify-center text-sm font-medium leading-[18px] tracking-[0.02em] text-blue-light-high dark:text-blue-dark-high'}>
 						<span className='m-0 inline-block max-w-[100px] overflow-hidden text-ellipsis capitalize'>{primaryNetwork}</span>
 					</span>
 				</Tag>
-				<p className='m-0 text-[16px] font-medium text-[#243A57]'>is set as your Primary Network.</p>
+				<p className='m-0 text-[16px] font-medium text-blue-light-high dark:text-blue-dark-high'>is set as your Primary Network.</p>
 			</div>
-			<p className='text-[16px] font-medium text-[#243A57]'>Are you sure you want to import your primary network settings to all selected networks?</p>
+			<p className='text-[16px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+				Are you sure you want to import your primary network settings to all selected networks?
+			</p>
 			<div className='ml-[-24px] mr-[-24px]'>
 				<Divider className='my-4' />
 			</div>

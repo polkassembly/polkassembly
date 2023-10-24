@@ -75,14 +75,14 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	}, [address, delegationDashboardAddress, api, apiReady]);
 
 	return (
-		<div className={`${className} mt-[22px] rounded-[14px] bg-white dark:bg-section-dark-overlay px-[37px] py-6`}>
+		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6 dark:bg-section-dark-overlay`}>
 			<div
 				onClick={() => setExpandProposals(!expandProposals)}
 				className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex cursor-pointer items-center justify-between'
 			>
 				<div className='jutify-center flex items-center gap-2'>
 					<DelegatedIcon className='mr-[4px]' />
-					<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>Delegate</span>
+					<span className='text-[24px] font-semibold tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Delegate</span>
 				</div>
 				<div className='p-2'>{!expandProposals ? <ExpandIcon /> : <CollapseIcon />}</div>
 			</div>
@@ -91,12 +91,12 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 				<div className='mt-[24px]'>
 					{disabled && (
 						<Alert
-							className='text-sm font-normal text-[#243A57]'
+							className='text-sm font-normal text-blue-light-high dark:text-blue-dark-high'
 							showIcon
 							message='You have already delegated for this track.'
 						/>
 					)}
-					<h4 className={`mb-4 mt-4 text-sm font-normal text-[#243A57] ${disabled && 'opacity-50'}`}>
+					<h4 className={`mb-4 mt-4 text-sm font-normal text-blue-light-high dark:text-blue-dark-high ${disabled && 'opacity-50'}`}>
 						Enter an address or Select from the list below to delegate your voting power
 					</h4>
 
@@ -107,7 +107,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 								placeholder='Enter address to Delegate vote'
 								onChange={(e) => setAddress(e.target.value)}
 								value={address}
-								className='h-[44px] border-none'
+								className='h-[44px] border-none dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							/>
 
 							<Button
@@ -133,13 +133,13 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 							// onClick={() => { setSelectedWallet('nova-wallet');filterByWallet('nova-wallet');}}
 						>
 							<NovaWalletIcon/>
-							<span className='text-sm text-[#243A57]'>Nova Wallet Delegates</span>
+							<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>Nova Wallet Delegates</span>
 						</div>
 						<div className='py-1 flex items-center gap-[11px] cursor-pointer'
 							//  onClick={() => { setSelectedWallet('others');filterByWallet('others');}}
 						>
 							<ProfileIcon/>
-							<span className='text-sm text-[#243A57]'>Others</span>
+							<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>Others</span>
 						</div>
 					</>}>
 					<DelegateMenuIcon/>

@@ -270,7 +270,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:text-blue-dark-high'>
 					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Multisig address</span>
 					<Divider />
 				</div>
@@ -337,7 +337,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 									value={signatories[i]}
 									onChange={onSignatoriesAddressChange}
 									placeholder='Enter signatory addresses'
-									className='rounded-md border-grey_border px-4 py-3'
+									className='rounded-md border-grey_border px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								/>
 								<button
 									type='button'
@@ -391,7 +391,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						<Input
 							placeholder='Enter a valid multisig address'
 							className='rounded-md border-grey_border px-4 py-3'
-							id='multisigAddress'
+							id='multisigAddress dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 				</section>
@@ -418,7 +418,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							min={1}
 							max={100}
 							placeholder='Enter threshold'
-							className='w-full rounded-md border-grey_border px-3 py-2'
+							className='w-full rounded-md border-grey_border px-3 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							id='threshold'
 						/>
 					</Form.Item>

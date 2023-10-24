@@ -353,7 +353,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								className='vote-progress'
 								nayVotes={voteInfo?.nay_amount}
 							/>
-							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D]'>
+							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] dark:text-blue-dark-medium'>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
 										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>

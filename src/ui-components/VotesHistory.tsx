@@ -192,7 +192,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 			>
 				{votesData && votesData?.length > 0 && !loading ? (
 					<div className={`flex min-w-[100%] flex-shrink-0 flex-col overflow-x-auto overflow-y-hidden ${className}`}>
-						<div className='flex h-14 items-center justify-between gap-2 border-0 border-y-[1px] border-solid border-[#DCDFE3] bg-[#fbfbfc] px-3 max-md:hidden'>
+						<div className='flex h-14 items-center justify-between gap-2 border-0 border-y-[1px] border-solid border-[#DCDFE3] bg-[#FBFBFC] px-3 dark:bg-[#161616] max-md:hidden'>
 							{headings.map((heading, index) => (
 								<span
 									onClick={() => handleSortingClick(heading as EHeading)}
@@ -212,15 +212,21 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 							{votesData &&
 								votesData?.map((data, index) => (
 									<div
-										className={`border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid ${data?.expand && 'max-md:bg-[#fbfbfc]'}`}
+										className={`border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid ${
+											data?.expand && 'dark:bg-[#161616] max-md:bg-[#FBFBFC]'
+										}`}
 										key={index}
 									>
-										<div className={`border-0 ${!data?.expand && !loading && 'border-b-[1px]'} border-solid border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:border-none `}>
+										<div
+											className={`border-0 ${
+												!data?.expand && !loading && 'border-b-[1px]'
+											} border-solid border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:border-none `}
+										>
 											<div className='flex h-14 items-center justify-between gap-2 border-0 px-3 max-md:border-b-[1px] max-md:border-solid max-md:border-[#DCDFE3]'>
 												<Link
 													target='_blank'
 													href={`https:${network}.polkassembly.io/${govType === EGovType.OPEN_GOV ? 'referenda' : 'referendum'}/${data?.proposal?.id}`}
-													className='flex w-[45%] truncate font-medium text-bodyBlue dark:text-blue-dark-high hover:text-bodyBlue dark:text-blue-dark-high max-md:w-[95%]'
+													className='flex w-[45%] truncate font-medium text-bodyBlue hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-high max-md:w-[95%]'
 												>
 													<span className='flex w-[60px] items-center gap-1 '>
 														{`#${data?.proposal?.id}`}
@@ -294,7 +300,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 										</div>
 										{data?.expand && (
 											<Spin spinning={delegatorsLoading.isLoading && delegatorsLoading?.index === index}>
-												<div className='border-0 border-t-[1px] border-dashed border-[#DCDFE3] bg-[#fbfbfc] px-3 py-4 text-sm text-lightBlue dark:text-blue-dark-medium max-md:bg-transparent'>
+												<div className='border-0 border-t-[1px] border-dashed border-[#DCDFE3] bg-[#FBFBFC] px-3 py-4 text-sm text-lightBlue dark:bg-[#161616] dark:text-blue-dark-medium max-md:bg-transparent'>
 													<div className='flex flex-col gap-4'>
 														<div className=' flex items-center gap-2 max-md:flex-col max-md:items-start'>
 															<label className='flex items-center gap-2 font-medium'>Vote Details:</label>

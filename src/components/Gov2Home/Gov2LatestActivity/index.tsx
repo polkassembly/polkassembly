@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Tabs } from 'antd';
+// import { Tabs } from 'antd';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
@@ -17,6 +17,7 @@ import AllGov2PostsTable from './AllGov2PostsTable';
 import TrackPostsTable from './TrackPostsTable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { Tabs } from '~src/ui-components/Tabs';
 
 const Container = styled.div`
 	th {
@@ -64,14 +65,6 @@ const Container = styled.div`
 		font-weight: 400 !important;
 		cursor: pointer !important;
 		white-space: nowrap;
-	}
-
-	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {
-		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
-		border-top-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
-		border-left-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
-		border-right-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
-		border-bottom-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '#e1e6eb')} !important;
 	}
 
 	.ant-tabs-tab-bg-white .ant-tabs-tab-active {
@@ -204,7 +197,8 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 				type='card'
 				items={tabItems}
 				className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
-				onChange={(key) => setCurrentTab(key)}
+				onChange={(key: any) => setCurrentTab(key)}
+				theme={theme}
 			/>
 		</Container>
 	);

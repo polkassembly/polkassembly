@@ -116,10 +116,10 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 		<span className={className}>
 			<Button
 				disabled={reactionsDisabled}
-				className={'border-none px-2 shadow-none disabled:bg-transparent disabled:opacity-[0.5]'}
+				className={'border-none px-2 shadow-none disabled:bg-transparent disabled:opacity-[0.5] dark:bg-transparent'}
 				onClick={handleReact}
 			>
-				<span className='flex items-center text-pink_primary'>
+				<span className='flex items-center text-pink_primary dark:text-blue-dark-helper'>
 					{getReactionIcon(reaction, reacted)}
 					<span className='ml-2 text-xs'>{reactions?.[reaction as IReaction].count}</span>
 				</span>

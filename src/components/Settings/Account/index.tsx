@@ -77,8 +77,8 @@ const Account: FC<Props> = ({ className }) => {
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<AccountIcon />
-						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>
-							Account Settings {active && <span className='text-sm font-normal text-[#243A57]'>Update your account settings here</span>}
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
+							Account Settings {active && <span className='text-sm font-normal text-blue-light-high dark:text-blue-dark-high'>Update your account settings here</span>}
 						</h3>
 					</div>
 				}

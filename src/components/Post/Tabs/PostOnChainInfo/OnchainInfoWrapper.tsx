@@ -15,7 +15,7 @@ const OnchainInfoWrapper = ({ children, className }: Props) => {
 };
 
 export default styled(OnchainInfoWrapper)`
-	background-color: white;
+	background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 	font-size: sm;
 	overflow-wrap: break-word;
 	margin-bottom: 1rem;

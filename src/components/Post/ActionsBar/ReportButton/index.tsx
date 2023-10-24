@@ -255,6 +255,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							showCount
 							rows={4}
 							maxLength={300}
+							className='dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 				</Form>

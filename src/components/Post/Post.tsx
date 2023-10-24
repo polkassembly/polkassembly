@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton, Tabs } from 'antd';
+import { Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
@@ -31,6 +31,8 @@ import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import { Tabs } from '~src/ui-components/Tabs';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -90,7 +92,7 @@ function formatDuration(duration: any) {
 
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
-
+	const { resolvedTheme: theme } = useTheme();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
@@ -470,8 +472,8 @@ const Post: FC<IPostProps> = (props) => {
 					)}
 				{proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) && (
 					<Link href={`/bounty/${post.parent_bounty_index}`}>
-						<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
-							This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
+						<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:font-normal dark:text-white md:p-6'>
+							This is a child bounty of <span className='text-pink_primary dark:text-blue-dark-helper'>Bounty #{post.parent_bounty_index}</span>
 						</div>
 					</Link>
 				)}
@@ -501,8 +503,9 @@ const Post: FC<IPostProps> = (props) => {
 								<>
 									<PostHeading className='mb-5' />
 									<Tabs
+										theme={theme}
 										type='card'
-										className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-blue-dark-high'
+										className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 										items={tabItems}
 									/>
 								</>

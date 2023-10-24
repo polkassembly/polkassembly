@@ -60,7 +60,8 @@ export default styled(Markdown)`
 		table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
-			color: var(--bodyBlue) !important;
+			color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+			font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
 		}
 
 		h1 {
@@ -71,21 +72,25 @@ export default styled(Markdown)`
 		h2 {
 			font-size: 1.3rem;
 			margin: 2rem 0 1rem 0;
+			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
 		}
 
 		h3,
 		h4 {
 			font-size: 1.2rem;
 			margin-bottom: 0.8rem;
+			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
 		}
 
 		ul,
 		ol {
 			padding-left: 2rem;
+			font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
 
 			li {
 				padding-left: 0.8rem;
 				margin-bottom: 1.2rem;
+				font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
 			}
 
 			li > input {
@@ -94,11 +99,11 @@ export default styled(Markdown)`
 		}
 
 		a {
-			color: pink_primary !important;
+			color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
 
 			&:hover {
 				text-decoration: none;
-				color: pink_secondary;
+				color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#c40061')} !important;
 			}
 		}
 
@@ -124,7 +129,7 @@ export default styled(Markdown)`
 		}
 
 		pre {
-			background-color: grey_light;
+			background-color: ${(props) => (props.theme === 'dark' ? '#2c2f32' : '#ebf0f5')} !important;
 			overflow: auto;
 			border-radius: 0.3rem;
 		}
@@ -141,7 +146,8 @@ export default styled(Markdown)`
 
 			padding-left: 4px;
 			padding-right: 4px;
-			background-color: #fbfbfd;
+			background-color: ${(props) => (props.theme === 'dark' ? '#222' : '#fbfbfd')} !important;
+			color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
 		}
 	}
 

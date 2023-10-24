@@ -400,7 +400,9 @@ const TreasuryProposalFormButton = ({
 											{errorsFound.includes('submitWithAccount') && <span className='text-red-800'>Please select an address</span>}
 											<Input
 												value={submitWithAccount}
-												className={`${submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'}`}
+												className={`${
+													submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'
+												} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 												onChange={(e) => setSubmitWithAccount(e.target.value)}
 												placeholder='Account Address'
 											/>
@@ -455,7 +457,9 @@ const TreasuryProposalFormButton = ({
 												{errorsFound.includes('beneficiaryAccount') && <span className='text-red-800'>Please select an address</span>}
 												<Input
 													value={beneficiaryAccount}
-													className={`${beneficiaryAccount === '' ? 'px-[0.5em]' : 'pl-10'}`}
+													className={`${
+														beneficiaryAccount === '' ? 'px-[0.5em]' : 'pl-10'
+													} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 													onChange={(e) => setBeneficiaryAccount(e.target.value)}
 													placeholder='Account Address'
 												/>
@@ -501,7 +505,7 @@ const TreasuryProposalFormButton = ({
 										</label>
 
 										<Input
-											className=' hide-pointer'
+											className=' hide-pointer dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 											value={treasuryProposal.bondPercent}
 										/>
 									</div>
@@ -519,7 +523,7 @@ const TreasuryProposalFormButton = ({
 										</label>
 
 										<Input
-											className=' hide-pointer'
+											className='hide-pointer dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 											value={minimumBond}
 										/>
 									</div>

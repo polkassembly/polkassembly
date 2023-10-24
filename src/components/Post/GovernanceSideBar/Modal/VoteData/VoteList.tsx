@@ -4,7 +4,7 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Divider, Modal as AntdModal, Pagination, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
+import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 import { LoadingStatusType } from 'src/types';
@@ -26,21 +26,18 @@ import DelegationVotersList from './DelegateVoteList';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { Pagination } from '~src/components/Pagination';
+import { useTheme } from 'next-themes';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
 
 const StyledSegmented = styled(Segmented)`
+	background-color: ${(props) => (props.theme == 'dark' ? '#1C1D1F' : '')} !important;
 	.ant-segmented-group > label {
 		border-radius: 20px !important;
 	}
 `;
-
-// const Container = styled.div`
-// @media (max-width: 1024px) {
-// display: none !important;
-// }
-// `;
 
 const VoteContainer = styled.div`
 	@media (max-width: 640px) {
@@ -77,6 +74,7 @@ const sortedCheck = {
 
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const firstRef = useRef(true);
 	const {
 		postData: { postType }
@@ -244,6 +242,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										setCurrentPage(1);
 									}}
 									options={decisionOptions}
+									theme={theme}
 								/>
 							</div>
 							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
@@ -305,7 +304,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										!!votesRes[decision]?.votes?.length &&
 										votesRes[decision]?.votes.map((voteData: any, index: number) => (
 											<VoterRow
-												className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
+												className={`${index % 2 == 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
 												key={`${voteData.voter}_${index}`}
 												currentKey={activeKey}
 												voteType={voteType}
@@ -391,8 +390,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				<Modal
 					wrapClassName='dark:bg-modalOverlayDark'
 					title={
-						<div className='ml-[-24px] mr-[-24px] text-[18px]'>
-							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>
+						<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
+							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 								<span className='relative top-[3px]'>
 									<VoteDataIcon />
 								</span>

@@ -206,7 +206,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 							name='question'
 							autoFocus
 							placeholder='Ask a question...'
-							className='text-black'
+							className='text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 
@@ -245,7 +245,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 											<Input
 												placeholder={`Option ${index + 1}`}
 												name='linkPostId'
-												className='w-[90%] text-black'
+												className='w-[90%] text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 											/>
 										</Form.Item>
 										{fields.length > 2 ? (

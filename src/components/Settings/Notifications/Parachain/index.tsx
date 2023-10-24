@@ -79,7 +79,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 					<div className='flex items-center justify-between gap-[8px]'>
 						<div className='channel-header flex items-center gap-[6px]'>
 							<ParachainNotification />
-							<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Parachains</h3>
+							<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Parachains</h3>
 						</div>
 						{!!active && (
 							<div className='hidden gap-2 md:flex'>

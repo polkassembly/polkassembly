@@ -230,7 +230,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 									<Input
 										placeholder='Auth Code'
 										name='authCode'
-										className='w-[60%] text-black'
+										className='w-[60%] text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									/>
 								</Form.Item>
 							</div>
@@ -244,7 +244,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 			<Button
 				onClick={handleModalOpen}
 				htmlType='submit'
-				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-[#243A57]'
+				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-blue-light-high dark:text-blue-dark-high'
 			>
 				<span className='align-center flex text-[16px] font-medium '>
 					Enable Two Factor Authentication <KeyboardDownIcon />

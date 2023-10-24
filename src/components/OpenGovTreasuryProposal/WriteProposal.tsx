@@ -225,7 +225,7 @@ const WriteProposal = ({
 									name='discussion_link'
 									value={discussionLink}
 									onChange={(e) => handleChangeDiscussionLink(e.target.value, Boolean(isDiscussionLinked))}
-									className='h-[40px] rounded-[4px]'
+									className='h-[40px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									placeholder='https://'
 								/>
 							</Form.Item>
@@ -262,7 +262,7 @@ const WriteProposal = ({
 								<Form.Item name='title'>
 									<Input
 										name='title'
-										className='h-[40px] rounded-[4px]'
+										className='h-[40px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										onChange={(e) => {
 											setTitle(e.target.value);
 											onChangeLocalStorageSet({ title: e.target.value }, Boolean(isDiscussionLinked));

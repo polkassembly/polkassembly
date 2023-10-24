@@ -42,12 +42,12 @@ function CustomToolbarMini(props: any) {
 			<div className='mb-3 flex items-center justify-between px-3 '>
 				<LeftOutlined
 					onClick={goToBack}
-					className='text-md cursor-pointer font-medium hover:font-bold hover:text-sidebarBlue'
+					className='text-md cursor-pointer font-medium hover:font-bold hover:text-sidebarBlue dark:text-icon-dark-inactive'
 				/>
-				<span className=' mx-3 font-medium text-sidebarBlue'>{dayjs(props.date).format('MMMM YYYY')}</span>
+				<span className=' mx-3 font-medium text-sidebarBlue dark:text-blue-dark-medium'>{dayjs(props.date).format('MMMM YYYY')}</span>
 				<RightOutlined
 					onClick={goToNext}
-					className='text-md cursor-pointer font-medium hover:font-bold hover:text-sidebarBlue'
+					className='text-md cursor-pointer font-medium hover:font-bold  hover:text-sidebarBlue dark:text-icon-dark-inactive'
 				/>
 			</div>
 		)

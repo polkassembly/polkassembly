@@ -427,7 +427,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:text-blue-dark-high'>
 					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Address</span>
 					<Divider />
 				</div>

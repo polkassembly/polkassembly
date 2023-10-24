@@ -175,7 +175,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				</div>
 			</div>
 
-			<h3 className='text-2xl font-semibold text-[#1E232C]'>{isPassword ? 'Set Password' : 'Sign Up'}</h3>
+			<h3 className='text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>{isPassword ? 'Set Password' : 'Sign Up'}</h3>
 
 			{defaultWallets.length === 0 && isDelegation && (
 				<Alert
@@ -183,7 +183,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 					type='info'
 					showIcon
-					className='changeColor text-[#243A57]'
+					className='changeColor text-blue-light-high dark:text-blue-dark-high'
 				/>
 			)}
 			{walletError && (
@@ -200,7 +200,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<>
 						<div className='flex flex-col gap-y-1'>
 							<label
-								className='text-base text-[#485F7D]'
+								className='text-base text-[#485F7D] dark:text-blue-dark-medium'
 								htmlFor='first_password'
 							>
 								Set Password
@@ -223,14 +223,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 										setFirstPassword(e.target.value);
 									}}
 									placeholder='Password'
-									className='rounded-md px-4 py-2'
+									className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 									id='first_password'
 								/>
 							</Form.Item>
 						</div>
 						<div className='-mt-6 flex flex-col gap-y-1'>
 							<label
-								className='text-base text-[#485F7D] '
+								className='text-base text-[#485F7D] dark:text-blue-dark-medium '
 								htmlFor='second_password'
 							>
 								Re-enter Password
@@ -252,7 +252,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							>
 								<Input.Password
 									placeholder='Password'
-									className='rounded-md px-4 py-2'
+									className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 									id='second_password'
 								/>
 							</Form.Item>
@@ -262,7 +262,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<>
 						<div className='flex flex-col gap-y-1'>
 							<label
-								className='text-base tracking-wide  text-[#485F7D]'
+								className='text-base tracking-wide  text-[#485F7D] dark:text-blue-dark-medium'
 								htmlFor='username'
 							>
 								Username
@@ -290,7 +290,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							>
 								<Input
 									placeholder='John'
-									className='rounded-md px-4 py-2'
+									className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									id='username'
 								/>
 							</Form.Item>
@@ -298,7 +298,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						<div className='-mt-6 flex flex-col gap-y-1'>
 							<label
 								htmlFor='email'
-								className='text-base tracking-wide text-[#485F7D]'
+								className='text-base tracking-wide text-[#485F7D] dark:text-blue-dark-medium'
 							>
 								Email
 							</label>
@@ -313,7 +313,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							>
 								<Input
 									placeholder='email@example.com'
-									className='rounded-md px-4 py-2'
+									className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									id='email'
 								/>
 							</Form.Item>
@@ -340,7 +340,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				</div>
 				{error && <FilteredError text={error} />}
 				<div className='flex items-center justify-center gap-x-2 font-semibold'>
-					<label className='text-md text-[#243A57]'>Already have an account?</label>
+					<label className='text-md text-blue-light-high dark:text-blue-dark-high'>Already have an account?</label>
 					<div
 						onClick={() => handleClick()}
 						className='text-md cursor-pointer text-pink_primary'

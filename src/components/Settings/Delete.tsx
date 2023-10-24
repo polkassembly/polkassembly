@@ -78,7 +78,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<DeleteIcon />
-						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Delete Account</h3>
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Delete Account</h3>
 					</div>
 				}
 				key='1'
@@ -88,7 +88,9 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 					form={form}
 					onFinish={handleSubmit}
 				>
-					<p className='text-[14px] text-[#243A57]'>Please note that this action is irreversible and all the data associated with your account will be permanently deleted.</p>
+					<p className='text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+						Please note that this action is irreversible and all the data associated with your account will be permanently deleted.
+					</p>
 					<Modal
 						wrapClassName='dark:bg-modalOverlayDark'
 						closable={false}
@@ -165,6 +167,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									<Input.TextArea
 										placeholder='Other reason'
 										id='other'
+										className='dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									/>
 								</Form.Item>
 							) : null}
@@ -182,7 +185,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							>
 								<Input.Password
 									placeholder='Password'
-									className='rounded-md border-grey_border px-4 py-3'
+									className='rounded-md border-grey_border px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									id='password'
 								/>
 							</Form.Item>

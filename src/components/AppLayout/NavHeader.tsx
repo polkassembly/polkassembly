@@ -74,7 +74,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		router.replace(router.asPath);
 		if (!router.query?.username) return;
 		if (router.query?.username.includes(username)) {
-			router.replace('/');
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 	};
 	const setGovTypeToContext = (govType: EGovType) => {
@@ -276,7 +276,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							<div className='flex items-center lg:gap-x-2'>
 								<Button
 									id='login-btn'
-									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
+									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white dark:border-none md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
 										setSidedrawer(false);
 										setLoginOpen(true);

@@ -79,12 +79,12 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 		<div className={`${className} relative -mt-7 flex items-end justify-center gap-x-2`}>
 			<div className='mb-10 flex flex-col justify-center'>
 				<span className='text-[20px] font-semibold leading-6 text-[#2ED47A]'>{isAyeNaN ? 50 : ayePercent.toFixed(1)}%</span>
-				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D]'>Aye</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Aye</span>
 			</div>
 			{/* {
 				turnoutPercentage?
 					<div className='absolute top-6 z-50 w-full flex items-center justify-center flex-col'>
-						<p className='m-0 p-0 text-[#485F7D] font-medium text-xs leading-[22px]'>
+						<p className='m-0 p-0 text-[#485F7D] dark:text-blue-dark-medium font-medium text-xs leading-[22px]'>
 					Threshold {turnoutPercentage?.toFixed(1)}%
 						</p>
 						<div className='h-[43px] border border-dashed border-navBlue'></div>
@@ -107,7 +107,7 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 			</>
 			<div className='mb-10 flex flex-col justify-center'>
 				<span className='text-[20px] font-semibold leading-6 text-[#E84865]'>{isNayNaN ? 50 : nayPercent.toFixed(1)}%</span>
-				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D]'>Nay</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Nay</span>
 			</div>
 		</div>
 	);

@@ -18,6 +18,7 @@ interface Props {
 	modalOpen: boolean;
 	setModalOpen: (pre: boolean) => void;
 	className?: string;
+	theme?: string;
 }
 
 const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen, className }: Props) => {
@@ -90,5 +91,6 @@ export default styled(ReferendaLoginPrompts)`
 	.text .ant-modal-content {
 		color: var(--bodyBlue) !important;
 		border-radius: 4px !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 	}
 `;

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CloseOutlined } from '@ant-design/icons';
-import { Button, Divider, Modal, Tabs } from 'antd';
+import { Button, Divider, Modal } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
@@ -21,6 +21,8 @@ import { poppins } from 'pages/_app';
 import validator from 'validator';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import { Tabs } from '~src/ui-components/Tabs';
 
 interface IEditProfileModalProps {
 	id?: number | null;
@@ -41,6 +43,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 };
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const { data, id, setProfileDetails, openModal, setOpenModal } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
@@ -200,7 +203,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					setOpenModal && setOpenModal(false);
 				}}
 				title={<h3 className='text-xl font-semibold text-[#1D2632]'>Edit Profile</h3>}
-				closeIcon={<CloseOutlined className='text-sm text-[#485F7D]' />}
+				closeIcon={<CloseOutlined className='text-sm text-[#485F7D] dark:text-blue-dark-medium' />}
 				footer={
 					<div className='-mx-6 -mb-5 px-6 pb-4'>
 						<Divider className='mb-4 mt-6' />
@@ -244,6 +247,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				open={openModal ? openModal : open}
 			>
 				<Tabs
+					theme={theme}
 					type='card'
 					className='ant-tabs-tab-bg-white mt-4 font-medium text-sidebarBlue'
 					items={[

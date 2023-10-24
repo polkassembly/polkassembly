@@ -232,16 +232,18 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	};
 	return (
 		<GovSidebarCard className='overflow-y-hidden'>
-			<h2 className='text-xl font-medium tracking-[0.015em]'>Decision Deposit</h2>
+			<h2 className='text-xl font-medium tracking-[0.015em] dark:text-blue-dark-high'>Decision Deposit</h2>
 			<div className='mt-6 flex gap-2'>
 				<span>
 					<CautionIcon />
 				</span>
-				<span className='text-sm tracking-wide'>This should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.</span>
+				<span className='text-sm tracking-wide dark:text-blue-dark-high'>
+					This should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.
+				</span>
 			</div>
 			<Button
 				onClick={() => setOpenModal(true)}
-				className='mt-4 h-[40px] w-full rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white'
+				className='mt-4 h-[40px] w-full rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white dark:border-none dark:text-blue-dark-high'
 			>
 				Pay Decision Deposit
 			</Button>
@@ -252,7 +254,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				closeIcon={<CloseIcon />}
 				onCancel={() => setOpenModal(false)}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Pay Decision Deposit
 					</div>
 				}
@@ -260,7 +262,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 					<div className='border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
 						<Button
 							onClick={() => setOpenModal(false)}
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary text-sm font-medium tracking-wider text-pink_primary'
+							className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm  font-medium tracking-wider text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
@@ -269,7 +271,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							disabled={!accounts.length || availableBalance.lte(amount)}
 							className={`h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wider text-white ${
 								!accounts.length || (availableBalance.lte(amount) && 'opacity-50')
-							}`}
+							} dark:border-none dark:text-blue-dark-high`}
 						>
 							Continue
 						</Button>
@@ -281,7 +283,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 					indicator={<LoadingOutlined />}
 				>
 					<div className='flex flex-col px-6'>
-						<h3 className='text-center text-sm font-normal text-[#485F7D]'>Select a wallet</h3>
+						<h3 className='text-center text-sm font-normal text-[#485F7D] dark:text-blue-dark-medium'>Select a wallet</h3>
 						<div className='mb-6 flex items-center justify-center gap-x-4'>
 							{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
 								<>
@@ -446,7 +448,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 								description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 								type='info'
 								showIcon
-								className='changeColor text-[#243A57]'
+								className='changeColor text-blue-light-high dark:text-blue-dark-high'
 							/>
 						)}
 
@@ -465,7 +467,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 											withBalance={true}
 											onAccountChange={(address) => setAddress(address)}
 											onBalanceChange={handleOnBalanceChange}
-											className='text-sm text-[#485F7D]'
+											className='text-sm text-[#485F7D] dark:text-blue-dark-medium'
 										/>
 									) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 										<Alert

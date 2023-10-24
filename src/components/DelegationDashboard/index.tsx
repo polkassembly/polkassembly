@@ -14,6 +14,7 @@ import { Wallet } from '~src/types';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -32,7 +33,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const isLoggedOut = !userDetails.id;
-
+	const { resolvedTheme: theme } = useTheme();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
@@ -83,6 +84,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			<div>
 				{userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (
 					<DashboardTrackListing
+						theme={theme}
 						className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] mt-8 rounded-[14px] bg-white dark:bg-section-dark-overlay'
 						address={String(userDetails.delegationDashboardAddress)}
 					/>

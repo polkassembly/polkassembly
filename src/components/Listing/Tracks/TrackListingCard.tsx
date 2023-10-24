@@ -5,7 +5,6 @@
 /* eslint-disable sort-keys */
 import { Pagination } from 'antd';
 import { useRouter } from 'next/router';
-import { Tabs } from 'antd';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { useState } from 'react';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
@@ -16,6 +15,8 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
+import { Tabs } from '~src/ui-components/Tabs';
 
 interface Props {
 	className?: string;
@@ -31,6 +32,7 @@ export enum CustomStatus {
 }
 
 const TrackListingCard = ({ className, posts, trackName }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const items = [
 		{
 			label: (
@@ -140,16 +142,17 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} rounded-xxl bg-white dark:bg-section-dark-overlay px-0 drop-shadow-md xs:py-4 sm:py-8`}>
+		<div className={`${className} rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
 			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:px-4 xs:pt-2 sm:hidden'>
 				<FilterByTags className='xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden' />
 			</div>
 			<Tabs
+				theme={theme}
 				activeKey={activeTab}
 				items={items}
 				onTabClick={onTabClick}
 				type='card'
-				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-blue-dark-high'
+				className='px-0 md:px-0'
 			/>
 			{((posts?.all?.data?.count || 0) > 10 && activeTab === 'All') ||
 			((posts?.submitted?.data?.count || 0) > 10 && activeTab === 'Submitted') ||

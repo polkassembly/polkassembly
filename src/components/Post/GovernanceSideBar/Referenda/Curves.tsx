@@ -299,7 +299,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 						</div>
 						<div className='w-full rounded-[5px] border border-solid border-[#E5007A] bg-[#FFF5FB] px-3 py-2 shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
 							<p className='m-0 flex items-center justify-between gap-x-2 text-[10px] leading-3 text-[#334D6E]'>
-								<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue dark:text-[#E5007A]'>
 									<span>
 										<NayApprovalIcon />
 									</span>
@@ -308,7 +308,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 								<span className='flex items-center gap-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>{progress.support}%</span>
 							</p>
 							<p className='m-0 flex items-center justify-between gap-x-2 p-0 text-[10px] leading-3 text-[#334D6E]'>
-								<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span className='flex items-center gap-[6px] text-xs font-medium text-bodyBlue dark:text-[#E5007A]'>
 									<span>
 										<NayThresholdIcon />
 									</span>

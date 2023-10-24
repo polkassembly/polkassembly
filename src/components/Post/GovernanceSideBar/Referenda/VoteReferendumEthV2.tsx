@@ -45,7 +45,7 @@ interface Props {
 	address: string;
 	referendumId?: number | null | undefined;
 	onAccountChange: (address: string) => void;
-	lastVote: ILastVote | undefined;
+	lastVote: ILastVote | null;
 	setLastVote: (pre: ILastVote) => void;
 }
 
@@ -251,7 +251,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			case EVoteDecisionType.AYE:
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -259,7 +259,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			case EVoteDecisionType.NAY:
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -272,7 +272,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				}));
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -286,7 +286,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				}));
 				setLastVote({
 					balance: totalVoteValue,
-					conviction: conviction,
+					conviction,
 					decision: vote,
 					time: new Date()
 				});
@@ -648,9 +648,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				balance={voteValues.totalVoteValue}
 				open={successModal}
 				setOpen={setSuccessModal}
+				conviction={conviction}
 				address={address}
 				isDelegate={true}
-				conviction={conviction}
 				votedAt={dayjs().format('HH:mm, Do MMMM YYYY')}
 				ayeVoteValue={voteValues.ayeVoteValue}
 				nayVoteValue={voteValues.nayVoteValue}

@@ -30,6 +30,7 @@ interface ITextEditorProps {
 	isDisabled?: boolean;
 	name: string;
 	autofocus?: boolean;
+	theme?: string;
 }
 
 const gifSVGData = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512.000000 512.000000">
@@ -75,8 +76,31 @@ img {
 }
 `;
 
+const editorContentStyleDark = `
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+body {
+	font-family: "Poppins", sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+}
+th, td {
+	border: 1px solid #243A57;
+	padding: 0.5rem;
+}
+img {
+	max-width: 100%;
+}
+#tinymce {
+	background-color: #0D0D0D !important;
+	color: #fff !important;
+}
+.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before{
+	color: #fff !important;
+}
+`;
+
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, height, onChange, isDisabled, value, name, autofocus = false } = props;
+	const { className, height, onChange, isDisabled, value, name, autofocus = false, theme } = props;
 
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
@@ -185,7 +209,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								init={{
 									block_unsupported_drop: false,
 									branding: false,
-									content_style: editorContentStyle,
+									content_style: theme === 'dark' ? editorContentStyleDark : editorContentStyle,
 									height: height || 400,
 									icons: 'thin',
 									images_file_types: 'jpg,png,jpeg,gif,svg',
@@ -356,7 +380,8 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										{ start: '--', replacement: '—' },
 										{ start: '-', replacement: '—' },
 										{ start: '(c)', replacement: '©' }
-									]
+									],
+									skin: theme === 'dark' ? 'oxide-dark' : 'oxide'
 								}}
 							/>
 						</div>
@@ -365,7 +390,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 			)}
 
 			<Button
-				className='ml-auto mt-1'
+				className='ml-auto mt-1 dark:text-white'
 				size='small'
 				type='text'
 				onClick={() => handleEditorChange()}

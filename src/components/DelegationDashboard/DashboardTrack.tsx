@@ -217,7 +217,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 				</span>
 			</div>
 			{status ? (
-				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-section-dark-overlay px-9 py-6'>
+				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6 dark:bg-section-dark-overlay'>
 					<div className='flex items-center gap-3 text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 						{handleTracksIcon(handleTrack(String(track)), 28)}
 						<span>{handleTrack(String(track))}</span>
@@ -226,7 +226,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 								<span
 									key={index}
 									className={`text-sm ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${
-										item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'
+										item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'
 									} rounded-[26px] px-[12px] py-[6px] text-center`}
 								>
 									{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
@@ -244,7 +244,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 									<span className='ml-[1px] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>
 										{item === ETrackDelegationStatus.Received_Delegation ? 'Received Delegation(s)' : 'Delegated'}
 									</span>
-									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white dark:bg-section-dark-overlay pl-[3px] pr-[3px]'>
+									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white pl-[3px] pr-[3px] dark:bg-section-dark-overlay'>
 										<Table
 											className='column'
 											columns={GetTracksColumns(item, setOpenUndelegateModal)}
@@ -269,7 +269,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 							))}
 					</div>
 					{status.includes(ETrackDelegationStatus.Undelegated) && (
-						<div className='flex flex-col items-center rounded-b-[14px] bg-white dark:bg-section-dark-overlay pb-[33px] pt-[24px] text-[169px]'>
+						<div className='flex flex-col items-center rounded-b-[14px] bg-white pb-[33px] pt-[24px] text-[169px] dark:bg-section-dark-overlay'>
 							<DelegateDelegationIcon />
 							<div className='mt-[18px] text-center text-bodyBlue dark:text-blue-dark-high'>
 								<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>

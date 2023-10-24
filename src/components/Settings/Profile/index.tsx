@@ -51,7 +51,7 @@ const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) =>
 				<Input.Password
 					onChange={onChange}
 					placeholder={placeholder}
-					className='rounded-md border-grey_border px-4 py-2 md:min-w-[250px]'
+					className='rounded-md border-grey_border px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] md:min-w-[250px]'
 					id={name}
 				/>
 			</Form.Item>
@@ -78,7 +78,7 @@ const ChangeEmail: FC<IEmailProps> = ({ disabled, value, name, label, rules, onC
 					value={value}
 					onChange={onChange}
 					placeholder='email@example.com'
-					className='w-[320px] rounded-md px-4 py-3'
+					className='w-[320px] rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					id='email'
 					type='email'
 				/>

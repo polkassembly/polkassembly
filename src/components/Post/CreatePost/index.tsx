@@ -193,7 +193,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							name='title'
 							autoFocus
 							placeholder='Enter Title'
-							className='text-bodyBlue dark:text-blue-dark-high'
+							className='text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<ContentForm onChange={(v) => savePostFormCacheValue('content', v)} />

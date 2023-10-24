@@ -130,7 +130,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 							name='title'
 							autoFocus
 							placeholder='Add your title here'
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE]'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<div className='mt-[30px]'>

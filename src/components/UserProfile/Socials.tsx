@@ -25,14 +25,14 @@ const Socials: FC<ISocialsProps> = (props) => {
 				return (
 					<article key={strLink}>
 						<label
-							className='flex cursor-pointer items-center gap-x-[6px] text-base font-normal text-[#485F7D]'
+							className='flex cursor-pointer items-center gap-x-[6px] text-base font-normal text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor={strLink}
 						>
 							<SocialIcon type={socialLink} />
 							<span>{strLink}</span>
 						</label>
 						<Input
-							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632]'
+							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							size='large'
 							type='url'
 							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)]' />}

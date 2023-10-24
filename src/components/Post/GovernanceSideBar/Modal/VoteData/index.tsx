@@ -35,8 +35,8 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[18px]'>
-					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>
+				<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
+					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						<span className='relative top-[3px]'>
 							<VoteDataIcon />
 						</span>
@@ -48,7 +48,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 			open={open}
 			closable
 			closeIcon={<CloseIcon />}
-			className={'sm:w-[600px]'}
+			className={'sm:w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 			onCancel={() => {
 				setOpen(false);
 			}}

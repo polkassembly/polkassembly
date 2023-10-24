@@ -309,7 +309,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 								Enter post id
 							</label>
 							<Input
-								className='disabled: rounded-md bg-white px-2.5 py-2 text-sm font-medium leading-6 dark:bg-section-dark-overlay'
+								className='disabled: rounded-md bg-white px-2.5 py-2 text-sm font-medium leading-6 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								id='postId'
 								disabled={!!data}
 								value={postId}

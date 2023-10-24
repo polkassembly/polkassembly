@@ -68,7 +68,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:text-blue-dark-high'>
 					<h3 className='md:text-md mb-0 ml-[24px] flex items-center gap-2 text-base'>
 						<ChangePasswordIcon /> Change your username
 					</h3>
@@ -106,7 +106,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter current password'
 							/>
 						</Form.Item>
@@ -129,7 +129,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter new password'
 							/>
 						</Form.Item>
@@ -156,7 +156,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Confirm new password'
 							/>
 						</Form.Item>

@@ -469,7 +469,9 @@ const SetOnChainIdentityButton = ({
 									>
 										<Input
 											value={submitWithAccount}
-											className={`${submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'}`}
+											className={`${
+												submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'
+											} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 											onChange={(e) => onSubmitWithAccountChange(e.target.value)}
 											placeholder='Account Address'
 										/>
@@ -502,7 +504,7 @@ const SetOnChainIdentityButton = ({
 									validateStatus={!okDisplay ? 'error' : ''}
 								>
 									<Input
-										className='px-[0.5em]'
+										className='px-[0.5em] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={displayName}
 										placeholder='My On-Chain Name'
 										onChange={(e) => setDisplayName(e.target.value)}
@@ -523,7 +525,7 @@ const SetOnChainIdentityButton = ({
 									validateStatus={!okLegal ? 'error' : ''}
 								>
 									<Input
-										className='px-[0.5em]'
+										className='px-[0.5em] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										placeholder='Full Legal Name'
 										value={legalName}
 										onChange={(e) => setLegalName(e.target.value)}
@@ -543,7 +545,7 @@ const SetOnChainIdentityButton = ({
 									validateStatus={!okEmail ? 'error' : ''}
 								>
 									<Input
-										className='px-[0.5em]'
+										className='px-[0.5em] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={email}
 										placeholder='somebody@example.com'
 										onChange={(e) => setEmail(e.target.value.toLowerCase())}
@@ -563,7 +565,7 @@ const SetOnChainIdentityButton = ({
 									validateStatus={!okWeb ? 'error' : ''}
 								>
 									<Input
-										className='px-[0.5em]'
+										className='px-[0.5em] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={website}
 										placeholder='https://example.com'
 										onChange={(e) => setWebsite(e.target.value)}
@@ -584,7 +586,7 @@ const SetOnChainIdentityButton = ({
 									validateStatus={!okTwitter ? 'error' : ''}
 								>
 									<Input
-										className='px-[0.5em]'
+										className='px-[0.5em] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={twitter}
 										placeholder='@YourTwitterName'
 										onChange={(e) => setTwitter(e.target.value)}
@@ -604,7 +606,7 @@ const SetOnChainIdentityButton = ({
 									validateStatus={!okRiot ? 'error' : ''}
 								>
 									<Input
-										className='px-[0.5em]'
+										className='px-[0.5em] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={riotName}
 										placeholder='@yourname:matrix.org'
 										onChange={(e) => setRiotName(e.target.value)}
@@ -627,7 +629,7 @@ const SetOnChainIdentityButton = ({
 										<Input
 											type='number'
 											placeholder={'0'}
-											className='px-[0.5em]'
+											className='px-[0.5em] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 											// onChange={onBalanceChange}
 											value={DEPOSIT[network]}
 										/>

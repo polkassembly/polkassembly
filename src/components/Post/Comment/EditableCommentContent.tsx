@@ -668,7 +668,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									<Button
 										htmlType='button'
 										onClick={handleCancel}
-										className='mr-2 flex h-[26px] items-center'
+										className='mr-2 flex h-[26px] items-center dark:bg-transparent dark:text-white'
 									>
 										<CloseOutlined />
 									</Button>
@@ -685,8 +685,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				) : (
 					<>
 						<Markdown
+							theme={theme}
 							md={content}
-							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm md:px-4'
+							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 						/>
 
 						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>
@@ -706,10 +707,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											disabled={props.disableEdit}
 											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
 												props.isSubsquareUser ? 'disabled-reply' : ''
-											}`}
+											} dark:bg-transparent dark:text-blue-dark-helper`}
 											onClick={props.isSubsquareUser ? () => {} : toggleReply}
 										>
-											<ReplyIcon className='mr-1' /> Reply
+											<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper' /> Reply
 										</Button>
 									</Tooltip>
 								) : (
@@ -717,10 +718,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 										disabled={props.disableEdit}
 										className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
 											props.isSubsquareUser ? 'disabled-reply' : ''
-										}`}
+										} dark:bg-transparent dark:text-blue-dark-helper`}
 										onClick={props.isSubsquareUser ? () => {} : toggleReply}
 									>
-										<ReplyIcon className='mr-1' /> Reply
+										<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper' /> Reply
 									</Button>
 								))}
 							<Dropdown
@@ -730,7 +731,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								placement='bottomRight'
 								menu={{ items }}
 							>
-								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100 dark:text-blue-dark-helper' />
 							</Dropdown>
 							{comment.isError && (
 								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
@@ -774,7 +775,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											htmlType='button'
 											disabled={loadingReply}
 											onClick={handleReplyCancel}
-											className='mr-2 flex items-center'
+											className='mr-2 flex items-center dark:bg-transparent dark:text-white'
 										>
 											<CloseOutlined /> Cancel
 										</Button>

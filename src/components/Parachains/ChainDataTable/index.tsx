@@ -42,7 +42,7 @@ const columns: ColumnsType<ParachainRowData> = [
 		dataIndex: 'index',
 		fixed: 'left',
 		key: 'index',
-		render: (index) => <div className='text-[#243A57]'>#{index}</div>,
+		render: (index) => <div className='text-blue-light-high dark:text-blue-dark-high'>#{index}</div>,
 		title: 'Index',
 		width: 75
 	},
@@ -60,7 +60,7 @@ const columns: ColumnsType<ParachainRowData> = [
 					alt={`${name} logo`}
 				/>
 				<div
-					className='text-[#243A57]'
+					className='text-blue-light-high dark:text-blue-dark-high'
 					style={{ marginRight: '16px' }}
 				>
 					{name}
@@ -85,7 +85,7 @@ const columns: ColumnsType<ParachainRowData> = [
 		render: (status) => (
 			<>
 				{status.search('auction') !== -1 ? (
-					<span className='flex items-center gap-4 text-[#243A57]'>
+					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
 						<Image
 							src={auctionIcon}
 							height={16}
@@ -95,7 +95,7 @@ const columns: ColumnsType<ParachainRowData> = [
 						In Auction
 					</span>
 				) : status.search('Testing') !== -1 ? (
-					<span className='flex items-center gap-4 text-[#243A57]'>
+					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
 						<Image
 							src={testingIcon}
 							height={16}
@@ -105,7 +105,7 @@ const columns: ColumnsType<ParachainRowData> = [
 						Testing
 					</span>
 				) : status.search('announced') !== -1 ? (
-					<span className='flex items-center gap-4 text-[#243A57]'>
+					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
 						<Image
 							src={announcedIcon}
 							height={16}
@@ -115,7 +115,7 @@ const columns: ColumnsType<ParachainRowData> = [
 						Announced
 					</span>
 				) : status.search('live') !== -1 ? (
-					<span className='flex items-center gap-4 text-[#243A57]'>
+					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
 						<Image
 							src={liveIcon}
 							height={16}
@@ -132,7 +132,7 @@ const columns: ColumnsType<ParachainRowData> = [
 	{
 		dataIndex: 'token',
 		key: 'token',
-		render: (token) => <div className='text-[#243A57]'>{token}</div>,
+		render: (token) => <div className='text-blue-light-high dark:text-blue-dark-high'>{token}</div>,
 		title: 'Token'
 	},
 	{
@@ -190,7 +190,7 @@ const columns: ColumnsType<ParachainRowData> = [
 	{
 		dataIndex: 'investors',
 		key: 'investors',
-		render: (investors) => <div className='text-[#243A57]'>{!!investors && investors}</div>,
+		render: (investors) => <div className='text-blue-light-high dark:text-blue-dark-high'>{!!investors && investors}</div>,
 		title: 'Investors',
 		width: 'auto'
 	},

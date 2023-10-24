@@ -183,8 +183,8 @@ const MetamaskSignup: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setS
 	const handleToggle = () => setDisplayWeb2();
 
 	return (
-		<article className='flex flex-col gap-y-6 rounded-md bg-white dark:bg-section-dark-overlay p-8 shadow-md'>
-			<h3 className='flex flex-col gap-y-4 text-2xl font-semibold text-[#1E232C]'>
+		<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
+			<h3 className='flex flex-col gap-y-4 text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>
 				<span>Sign Up</span>
 				<p className='flex items-center justify-center gap-x-2'>
 					<span>

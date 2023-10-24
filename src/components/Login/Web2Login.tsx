@@ -160,7 +160,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			</div>
 			<Divider
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
-				className='mt-1 px-0'
+				className='mt-1 px-0 dark:bg-separatorDark'
 			/>
 			{defaultWallets.length === 0 && isDelegation && (
 				<Alert
@@ -221,7 +221,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<Input
 								disabled={loading}
 								placeholder='Type here'
-								className='rounded-md px-4 py-3'
+								className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								id='username'
 							/>
 						</Form.Item>
@@ -241,11 +241,11 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<Input.Password
 								disabled={loading}
 								placeholder='Type here'
-								className='rounded-md px-4 py-3'
+								className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 								id='password'
 							/>
 						</Form.Item>
-						<div className='mt-[-20px] text-right text-pink_primary'>
+						<div className='mt-[-20px] text-right text-pink_primary dark:text-blue-dark-helper'>
 							<div
 								className='cursor-pointer'
 								onClick={() => {
@@ -280,11 +280,11 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 					{error && <FilteredError text={error} />}
 
-					<div className='mb-5 mt-2 flex items-center justify-center gap-x-2 font-semibold'>
+					<div className='mb-5 mt-2 flex items-center justify-center gap-x-2 font-semibold dark:font-medium'>
 						<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 						<div
 							onClick={handleClick}
-							className='text-md cursor-pointer text-pink_primary'
+							className='text-md cursor-pointer text-pink_primary dark:text-blue-dark-helper'
 						>
 							{' '}
 							Sign Up{' '}

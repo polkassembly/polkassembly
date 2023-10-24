@@ -41,7 +41,7 @@ interface Props {
 	className?: string;
 	referendumId?: number | null | undefined;
 	onAccountChange: (address: string) => void;
-	lastVote: ILastVote | undefined;
+	lastVote: ILastVote | null;
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
 	address: string;
@@ -337,7 +337,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 						>
 							<>
 								<div className='mb-6'>
-									<div className='mt-3 flex items-center justify-center text-sm font-normal text-[#485F7D]'>Select a wallet</div>
+									<div className='mt-3 flex items-center justify-center text-sm font-normal text-[#485F7D] dark:text-blue-dark-medium'>Select a wallet</div>
 									<div className='mt-1 flex items-center justify-center gap-x-5'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton

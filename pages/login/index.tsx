@@ -12,6 +12,7 @@ import Web2Login from 'src/components/Login/Web2Login';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -83,7 +84,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 
 	useEffect(() => {
 		if (id && !isModal) {
-			router.push('/');
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id, router]);

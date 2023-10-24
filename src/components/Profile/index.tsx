@@ -7,7 +7,8 @@ import { DeriveAccountFlags, DeriveAccountInfo, DeriveAccountRegistration } from
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Button, Col, Form, Row, Skeleton, Tabs } from 'antd';
+import { Button, Col, Form, Row, Skeleton } from 'antd';
+import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { EMembersType } from 'pages/members';
@@ -29,6 +30,7 @@ import styled from 'styled-components';
 
 import { MessageType, ProfileDetails } from '~src/auth/types';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -48,6 +50,7 @@ const SetOnChainIdentityButton = dynamic(() => import('src/components/Settings/s
 
 const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const router = useRouter();
 	const { address, username, membersType } = router.query;
@@ -395,15 +398,16 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			<BackToListingView postCategory={membersType as EMembersType} />
 
 			<div className='mb-4 mt-6 flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white dark:bg-section-dark-overlay p-6 text-sm font-medium text-sidebarBlue shadow-md md:mb-0 md:mr-4 md:text-base'>
+				<p className='mb-4 w-full rounded-md bg-white p-6 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:mb-0 md:mr-4 md:text-base'>
 					<Markdown md={profileDetails?.bio || noDescription} />
 				</p>
 				<SetOnChainIdentityButton />
 			</div>
 
-			<div className='w-full rounded-md bg-white dark:bg-section-dark-overlay p-3 drop-shadow-md lg:p-6'>
+			<div className='w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay lg:p-6'>
 				<h2 className='dashboard-heading mb-4'>{profileDetails?.title || 'Untitled'}</h2>
 				<Tabs
+					theme={theme}
 					type='card'
 					className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
 					items={tabItems}

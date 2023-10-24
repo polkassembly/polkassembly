@@ -152,7 +152,9 @@ const AddressInput = ({
 						value={address}
 						disabled={disabled}
 						name={name || 'address'}
-						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} h-[40px] w-full rounded-[4px] border-[1px] text-sm ${inputClassName}`}
+						className={`${
+							!isValid ? 'px-[0.5em]' : 'pl-[46px]'
+						} h-[40px] w-full rounded-[4px] border-[1px] text-sm ${inputClassName} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 						onChange={(e) => {
 							handleAddressChange(e.target.value);
 							onChange(e.target.value);

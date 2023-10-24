@@ -7,6 +7,8 @@ import SuperSearchIcon from '~assets/icons/super-search.svg';
 import EmptyResultsIcon from '~assets/search/empty-search.svg';
 import { EFilterBy } from '.';
 import { useRouter } from 'next/router';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	setIsSuperSearch: (pre: boolean) => void;
@@ -34,6 +36,7 @@ const SearchErrorsCard = ({
 	setPeoplePage
 }: Props) => {
 	const router = useRouter();
+	const { network } = useNetworkSelector();
 
 	return ((filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && postResultsCounts === 0) || (filterBy === EFilterBy.People && peopleResultsCounts === 0) ? (
 		<div className='mb-5 mt-6 flex flex-col items-center justify-center'>
@@ -68,7 +71,7 @@ const SearchErrorsCard = ({
 				<span>See </span>
 				<span
 					onClick={() => {
-						router.push('/');
+						router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 						setOpenModal(false);
 					}}
 					className='mx-[2px] cursor-pointer border-[0px] border-b-[1px] border-solid leading-[-8px] text-pink_primary'

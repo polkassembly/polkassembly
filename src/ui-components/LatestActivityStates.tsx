@@ -13,6 +13,7 @@ import Address from './Address';
 import StatusTag from './StatusTag';
 import { ErrorState, LoadingState, PostEmptyState } from './UIStates';
 import { poppins } from 'pages/_app';
+import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 
 const LatestActivityWrapper = ({ children }: { children: ReactNode }) => <div className='flex h-[500px] items-center justify-center overflow-y-auto'>{children}</div>;
 
@@ -79,7 +80,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 				<div
 					key={rowData.key}
 					className={`${
-						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''
+						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : ''
 					} h-auto min-h-[140px] border-2 border-solid border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl ${poppins.variable} ${
 						poppins.className
 					}`}
@@ -139,7 +140,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 				<div
 					key={rowData.key}
 					className={`${
-						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''
+						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : ''
 					} h-auto min-h-[140px] border-2 border-solid border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl ${poppins.variable} ${
 						poppins.className
 					}`}
@@ -171,11 +172,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 							style={{ borderLeft: '1px solid #485F7D' }}
 						/>
 						<span className='mx-1.5 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
-							{rowData.created_at
-								? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w'))
-									? dayjs(rowData.created_at).startOf('day').fromNow()
-									: dayjs(rowData.created_at).format("Do MMM 'YY")
-								: null}
+							{rowData.created_at ? getRelativeCreatedAt(rowData.created_at as any) : null}
 						</span>
 					</div>
 					{rowData.status !== '-' && (

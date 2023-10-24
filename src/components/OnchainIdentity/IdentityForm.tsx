@@ -340,7 +340,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='displayName'
-							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
@@ -371,7 +371,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='legalName'
-							className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+							className='h-10 rounded-[4px] text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
@@ -443,7 +443,7 @@ const IdentityForm = ({
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
-								className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+								className='h-10 rounded-[4px] text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 									handleInfo();
@@ -482,7 +482,7 @@ const IdentityForm = ({
 								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
 								value={twitter?.value}
 								placeholder='Enter your twitter name'
-								className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+								className='h-10 rounded-[4px] text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
 									handleInfo();

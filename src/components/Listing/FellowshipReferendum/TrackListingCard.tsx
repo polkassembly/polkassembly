@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Pagination, Tabs } from 'antd';
+import { Pagination } from 'antd';
 import React, { FC, useState } from 'react';
 
 import TrackListingAllTabContent from './TrackListingAllTabContent';
@@ -13,6 +13,8 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { IFellowshipReferendumPostsByTrackName } from 'pages/member-referenda';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
+import { useTheme } from 'next-themes';
+import { Tabs } from '~src/ui-components/Tabs';
 
 interface ITrackListingCardProps {
 	className?: string;
@@ -23,6 +25,7 @@ interface ITrackListingCardProps {
 
 const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 	const { posts, className, setTrackName, fellowshipReferendumPostOrigins } = props;
+	const { resolvedTheme: theme } = useTheme();
 	const items = [
 		{
 			children: (
@@ -95,7 +98,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 	};
 
 	return (
-		<div className={`${className} rounded-xxl bg-white dark:bg-section-dark-overlay px-0 drop-shadow-md xs:py-4 sm:py-8`}>
+		<div className={`${className} rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
 			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:px-4 xs:pt-2 sm:hidden'>
 				<FilterByTags className='xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden' />
 			</div>
@@ -104,10 +107,11 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 				items={items}
 				onTabClick={onTabClick}
 				type='card'
-				onChange={(v) => {
+				onChange={(v: any) => {
 					setTrackName(v);
 				}}
 				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-blue-dark-high'
+				theme={theme}
 			/>
 			{(posts?.[activeTab]?.data?.count || 0) > 0 && (posts as any)[activeTab].data.count > LISTING_LIMIT && (
 				<Pagination

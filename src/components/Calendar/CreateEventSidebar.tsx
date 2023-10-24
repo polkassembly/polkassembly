@@ -149,7 +149,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						<Form.Item validateStatus={errorsFound.includes('eventTitle') ? 'error' : ''}>
 							<Input
 								type='text'
-								className='text-input'
+								className='text-input dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								value={eventTitle}
 								onChange={(e) => setEventTitle(e.target.value)}
 								disabled={loading}
@@ -162,7 +162,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						<Form.Item validateStatus={errorsFound.includes('eventDescription') ? 'error' : ''}>
 							<Input
 								type='text'
-								className='text-input'
+								className='text-input dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								value={eventDescription}
 								onChange={(e) => setEventDescription(e.target.value)}
 								disabled={loading}
@@ -228,7 +228,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<Form.Item validateStatus={errorsFound.includes('eventJoiningLink') ? 'error' : ''}>
 								<Input
 									type='text'
-									className='text-input'
+									className='text-input dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									value={eventJoiningLink}
 									onChange={(e) => setEventJoiningLink(e.target.value)}
 									disabled={loading}
@@ -241,7 +241,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<Form.Item validateStatus={errorsFound.includes('eventLocation') ? 'error' : ''}>
 								<Input
 									type='text'
-									className='text-input'
+									className='text-input dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									value={eventLocation}
 									onChange={(e) => setEventLocation(e.target.value)}
 									disabled={loading}

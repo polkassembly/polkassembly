@@ -146,7 +146,9 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<OverallPostsNotification />
-						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>OpenGov Notifications</h3>
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
+							OpenGov Notifications
+						</h3>
 						{!!active && (
 							<>
 								<span className='flex items-center gap-[8px]'>
@@ -159,7 +161,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D]'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
 								</span>
 							</>
 						)}

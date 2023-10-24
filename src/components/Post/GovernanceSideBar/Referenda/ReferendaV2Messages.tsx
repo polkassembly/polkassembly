@@ -80,7 +80,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		return (
 			<button
 				onClick={() => setOpen(true)}
-				className={`flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-[#FEF2F8] text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue outline-none dark:text-blue-dark-medium ${className}`}
+				className={`flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-[#FEF2F8] text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue outline-none dark:bg-[#33071E] dark:text-blue-dark-medium ${className}`}
 			>
 				{children}
 			</button>

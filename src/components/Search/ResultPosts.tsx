@@ -72,7 +72,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 										{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 									</div>
 								</div>
-								<span className='mt-2 text-sm font-medium text-[#243A57]'>{titleString}</span>
+								<span className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</span>
 								<Markdown
 									imgHidden={true}
 									md={post?.content?.slice(0, 250) + ' .....'}
@@ -107,7 +107,11 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 													{tag}
 												</div>
 											))}
-											{post?.tags.length > 2 && <span className='rounded-[50px] bg-[#e7e9ee] px-2 py-1 text-[10px] font-medium text-[#243A57]'>+{post?.tags.length - 2}</span>}
+											{post?.tags.length > 2 && (
+												<span className='rounded-[50px] bg-[#e7e9ee] px-2 py-1 text-[10px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+													+{post?.tags.length - 2}
+												</span>
+											)}
 											<Divider
 												style={{ border: '1px solid var(--lightBlue)' }}
 												type='vertical'

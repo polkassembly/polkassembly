@@ -145,7 +145,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 							{votesRes && decision && !!votesRes?.votes?.length ? (
 								votesRes?.votes.map((voteData: any, index: number) => (
 									<VoterRow
-										className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes?.votes.length - 1 ? 'border-b' : ''}`}
+										className={`${index % 2 == 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'bg-white'} ${index === votesRes?.votes.length - 1 ? 'border-b' : ''}`}
 										key={index}
 										voteType={voteType}
 										voteData={voteData}

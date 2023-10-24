@@ -137,7 +137,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:text-blue-dark-high'>
 					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Proxy address</span>
 					<Divider />
 				</div>
@@ -207,7 +207,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 								>
 									<Input
 										placeholder='Enter a valid proxy address'
-										className='rounded-md border-grey_border px-4 py-3'
+										className='rounded-md border-grey_border px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										id='proxiedAccount'
 									/>
 								</Form.Item>

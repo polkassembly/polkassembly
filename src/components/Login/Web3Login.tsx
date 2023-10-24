@@ -32,6 +32,7 @@ import TFALoginForm from './TFALoginForm';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -275,7 +276,9 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 								setLoading(false);
 								return;
 							}
-							router.push('/');
+							{
+								router.push(isOpenGovSupported(network) ? '/opengov' : '/');
+							}
 						} else {
 							throw new Error('Web3 Login failed');
 						}
@@ -307,7 +310,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					setLoading(false);
 					return;
 				}
-				router.push('/');
+				router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 			} else if (addressLoginData?.isTFAEnabled) {
 				if (!addressLoginData?.tfa_token) {
 					setError(error || 'TFA token missing. Please try again.');
@@ -386,7 +389,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 			</div>
 			<hr className='text-[#D2D8E0] ' />
 			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
-				<h3 className='flex flex-col gap-y-2 text-2xl font-semibold text-[#1E232C]'>
+				<h3 className='flex flex-col gap-y-2 text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>
 					{!withPolkasafe && (
 						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
 							<span className='mt-2'>
@@ -414,7 +417,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						</p>
 						<div className='flex'>
 							<Button
-								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 								onClick={() => handleBackToLogin()}
 							>
 								Go Back
@@ -540,7 +543,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 													<div className='flex items-center gap-x-2'>
 														<span className='text-md text-grey_primary'>Or</span>
 														<Button
-															className='text-md border-none p-0 font-semibold text-pink_primary outline-none'
+															className='text-md border-none p-0 font-semibold text-pink_primary outline-none dark:bg-transparent'
 															disabled={loading}
 															onClick={handleToggle}
 														>
@@ -559,7 +562,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						{!authResponse.isTFAEnabled && (
 							<div className='flex items-center justify-center'>
 								<Button
-									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 									onClick={() => handleBackToLogin()}
 								>
 									Go Back

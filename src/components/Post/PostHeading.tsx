@@ -130,7 +130,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			<div className='mb-3'>
 				<>
 					<CreationLabel
-						className='md post-user-container'
+						className='md post-user-container  dark:bg-section-dark-overlay'
 						created_at={dayjs(created_at).toDate()}
 						defaultAddress={proposer || curator || polkadotProposer}
 						username={username}

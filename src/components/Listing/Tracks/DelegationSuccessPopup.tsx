@@ -187,9 +187,11 @@ const DelegationSuccessPopup = ({
 									) : null}
 								</div>
 							)}
-							<div className='flex gap-[30px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
-								Conviction:<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction === 0 ? 0.1 : conviction}x</span>
-							</div>
+							{!isNaN(Number(conviction)) && (
+								<div className='flex gap-[30px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
+									Conviction:<span className='font-medium text-bodyBlue'>{conviction === 0 ? 0.1 : conviction}x</span>
+								</div>
+							)}
 							{isMultisig && (
 								<div className='flex h-[21px] gap-[35px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 									Vote Link:{' '}

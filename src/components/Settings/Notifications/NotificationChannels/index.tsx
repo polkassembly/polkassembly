@@ -95,7 +95,9 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					<div className='flex items-center justify-between gap-[8px]'>
 						<div className='channel-header flex items-center gap-[6px]'>
 							<NotificationChannelsIcon />
-							<h3 className='mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Notification Channels</h3>
+							<h3 className='mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
+								Notification Channels
+							</h3>
 						</div>
 						{!!active && (
 							<div className='hidden items-center gap-4 md:flex'>
@@ -117,7 +119,9 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-[#243A57]'>Please select the socials where you would like to receive notifications:</p>
+					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
+						Please select the socials where you would like to receive notifications:
+					</p>
 					<EmailNotificationCard
 						verifiedEmail={networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.handle || email || ''}
 						verified={email_verified || false}

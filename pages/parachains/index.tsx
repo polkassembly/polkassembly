@@ -2,20 +2,22 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Col, Row, Tabs } from 'antd';
+import { Col, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ParachainInfoCard from '~src/components/Parachains/ParachainInfoCard';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
-import ChainDataTable from '../../src/components/Parachains/ChainDataTable';
-import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import ChainData from '../../src/components/Parachains/ChainDataTable';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { Tabs } from '~src/ui-components/Tabs';
 
 interface Props {
 	className?: string;
@@ -31,8 +33,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
+const ChainDataTable = styled(ChainData)`
+	.ant-table-thead > tr > th,
+	.ant-table-tbody > tr {
+		background-color: ${(props) => (props.theme === 'dark' ? 'blue' : 'white')} !important;
+	}
+	td {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
+		font-weight: 500;
+		background-color: ${(props) => (props.theme === 'dark' ? 'blue' : 'white')} !important;
+	}
+`;
+
 const Parachains = ({ className, network }: Props) => {
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -57,6 +72,7 @@ const Parachains = ({ className, network }: Props) => {
 		{
 			children: (
 				<ChainDataTable
+					theme={theme}
 					data={parachainsData}
 					chain='polkadot'
 				/>
@@ -73,6 +89,7 @@ const Parachains = ({ className, network }: Props) => {
 		{
 			children: (
 				<ChainDataTable
+					theme={theme}
 					data={parachainsData}
 					chain='kusama'
 				/>
@@ -94,7 +111,7 @@ const Parachains = ({ className, network }: Props) => {
 				network={network}
 			/>
 			<div className={className}>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Polkadot and Kusama ecosystem and directory</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-blue-light-high dark:text-blue-dark-high'>Polkadot and Kusama ecosystem and directory</h1>
 
 				<Row
 					gutter={[{ lg: 16 }, 16]}
@@ -106,6 +123,7 @@ const Parachains = ({ className, network }: Props) => {
 					>
 						<ParachainInfoCard
 							projects={polkadotProjects}
+							theme={theme}
 							network='polkadot'
 						/>
 					</Col>
@@ -115,16 +133,18 @@ const Parachains = ({ className, network }: Props) => {
 					>
 						<ParachainInfoCard
 							projects={kusamaProjects}
+							theme={theme}
 							network='kusama'
 						/>
 					</Col>
 				</Row>
 
 				<div className={`${className} h-[650px] rounded-xxl bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}>
-					<h2 className='mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high sm:mt-0'>Projects</h2>
+					<h2 className='mb-6 mt-6 text-xl font-medium leading-8 text-blue-light-high dark:text-blue-dark-high sm:mt-0'>Projects</h2>
 					<Tabs
+						theme={theme}
 						type='card'
-						className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:text-blue-dark-high'
+						className='ant-tabs-tab-bg-white font-medium text-blue-light-high dark:bg-section-dark-overlay dark:font-normal dark:text-blue-dark-high'
 						items={tabItems}
 					/>
 				</div>
@@ -172,11 +192,11 @@ export default styled(Parachains)`
 	}
 
 	.ant-table-thead {
-		color: var(--bodyBlue) !important;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
 		font-weight: 500;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
 		background-color: white;
 		border-top-color: white;
 		border-left-color: white;
@@ -184,14 +204,14 @@ export default styled(Parachains)`
 		border-bottom-color: #e1e6eb;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-tab-active {
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab-active {
 		border-top-color: #e1e6eb;
 		border-left-color: #e1e6eb;
 		border-right-color: #e1e6eb;
 		border-radius: 6px 6px 0 0 !important;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-nav:before {
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-nav:before {
 		border-bottom: 1px solid #e1e6eb;
 	}
 `;

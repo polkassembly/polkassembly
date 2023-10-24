@@ -659,7 +659,7 @@ const CreatePreimage = ({
 								<Form.Item name='preimage_hash'>
 									<Input
 										name='preimage_hash'
-										className='h-[40px] rounded-[4px]'
+										className='h-[40px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={preimageHash}
 										onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}
 									/>
@@ -671,7 +671,7 @@ const CreatePreimage = ({
 								<Form.Item name='preimage_length'>
 									<Input
 										name='preimage_length'
-										className='h-[40px] rounded-[4px]'
+										className='h-[40px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										onChange={(e) => {
 											setPreimageLength(Number(e.target.value));
 											onChangeLocalStorageSet({ preimageLength: e.target.value }, isPreimage);
@@ -856,7 +856,7 @@ const CreatePreimage = ({
 													<Input
 														name='at_block'
 														value={String(advancedDetails.atBlockNo?.toString())}
-														className='w-[100px] rounded-[4px]'
+														className='w-[100px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 														onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
 													/>
 												</Form.Item>
@@ -896,7 +896,7 @@ const CreatePreimage = ({
 												>
 													<Input
 														name='after_blocks'
-														className='w-[100px] rounded-[4px]'
+														className='w-[100px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 														onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
 													/>
 												</Form.Item>

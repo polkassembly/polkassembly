@@ -205,7 +205,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 
 	const VotingForm = () => (
 		<GovSidebarCard>
-			<h3 className='mb-6 text-xl font-semibold leading-6 tracking-[0.0015em] text-[#243A57]'>Cast your Vote!</h3>
+			<h3 className='mb-6 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Cast your Vote!</h3>
 			<Button
 				className='mx-auto my-3 flex w-[95%] items-center justify-center rounded-lg border-pink_primary bg-pink_primary p-7 text-lg text-white hover:border-pink_primary hover:bg-pink_secondary'
 				onClick={openModal}
@@ -224,7 +224,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 					spinning={loadingStatus.isLoading}
 					indicator={<LoadingOutlined />}
 				>
-					<h4 className='mb-7 text-xl font-semibold leading-6 tracking-[0.0015em] text-[#243A57]'>Cast Your Vote</h4>
+					<h4 className='mb-7 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Cast Your Vote</h4>
 
 					<AccountSelectionForm
 						title='Vote with Account'
@@ -245,8 +245,8 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			</Modal>
 			{voteCount ? (
 				<div>
-					<p className='mb-[5px] text-[12px] font-medium leading-6 text-[#243A57]'>Last Vote:</p>
-					<div className='mb-[-5px] flex text-[12px] font-normal leading-6 text-[#243A57]'>
+					<p className='mb-[5px] text-[12px] font-medium leading-6 text-blue-light-high dark:text-blue-dark-high'>Last Vote:</p>
+					<div className='mb-[-5px] flex text-[12px] font-normal leading-6 text-blue-light-high dark:text-blue-dark-high'>
 						<Tooltip
 							placement='bottom'
 							title='Decision'

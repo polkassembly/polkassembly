@@ -17,7 +17,9 @@ interface Props {
 const WalletButton = ({ disabled, onClick, icon, className, text, name }: Props) => {
 	return (
 		<Button
-			className={`flex items-center justify-center rounded-[7px] border-[#F8E3EE] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
+			className={`flex items-center justify-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${
+				name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'
+			} ${className}`}
 			onClick={onClick}
 			disabled={disabled}
 		>

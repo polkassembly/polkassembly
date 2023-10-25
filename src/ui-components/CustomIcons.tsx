@@ -22,7 +22,6 @@ import WalletSVG from '~assets/icons/wallet.svg';
 import IdentitySVG from '~assets/icons/identity.svg';
 import ProfileSVG from '~assets/icons/profile.svg';
 import EmailSVG from '~assets/icons/email.svg';
-import RiotSVG from '~assets/icons/riot.svg';
 import SignalTowerSVG from '~assets/icons/signal-tower.svg';
 import EditSVG from '~assets/icons/edit.svg';
 import SyncSVG from '~assets/icons/sync.svg';
@@ -99,7 +98,6 @@ import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
 import Dislike from '~assets/icons/dislike.svg';
-import WebSVG from '~assets/icons/website-icon.svg';
 import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
 import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 import CopySVG from '~assets/icons/content-copy.svg';
@@ -116,6 +114,13 @@ import VoteHistoryIcon from '~assets/icons/history.svg';
 import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 import ArchivedSVG from '~assets/icons/archived.svg';
 import NoTagsFoundSVG from '~assets/icons/no-tag.svg';
+import Comments from '~assets/icons/chat-icon.svg';
+import RiotSVG from '~assets/icons/riot.svg';
+import LegalSVG from '~assets/icons/legal-icon.svg';
+import JudgementSVG from '~assets/icons/judgement-icon.svg';
+import WebSVG from '~assets/icons/web-icon.svg';
+import ShareScreenSVG from '~assets/icons/screen-share-icon.svg';
+import PgpSVG from '~assets/icons/pgp-icon.svg';
 
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -155,6 +160,34 @@ export const OptionMenu = (props: Partial<CustomIconComponentProps>) => (
 export const PolkassemblyIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={PolkassemblyLogo}
+		{...props}
+	/>
+);
+
+export const JudgementIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={JudgementSVG}
+		{...props}
+	/>
+);
+
+export const PgpIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={PgpSVG}
+		{...props}
+	/>
+);
+
+export const ShareScreenIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ShareScreenSVG}
+		{...props}
+	/>
+);
+
+export const LegalIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={LegalSVG}
 		{...props}
 	/>
 );
@@ -477,6 +510,13 @@ export const ConvictionPeriodIcon = (props: Partial<CustomIconComponentProps>) =
 export const LikeDislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={LikeDislikeSVG}
+		{...props}
+	/>
+);
+
+export const CommentsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={Comments}
 		{...props}
 	/>
 );

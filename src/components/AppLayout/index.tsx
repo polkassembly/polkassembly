@@ -455,7 +455,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (network === AllNetworks.COLLECTIVES) {
 		const fellowshipItems = [
 			getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)
+			getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />)
 		];
 		items = [
 			...gov1Items.overviewItems,
@@ -581,8 +581,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		// Tracks Heading
 		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.governanceItems]),
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.fellowshipItems])
 	];
 
 	let gov2CollapsedItems: MenuProps['items'] = [
@@ -596,7 +596,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2Items.splice(
 			gov2Items.length - 1,
 			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='mt-1 text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
+			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='mt-1 text-lightBlue dark:text-icon-dark-inactive' />, [
+				...gov2TrackItems.fellowshipItems
+			])
 		);
 	}
 
@@ -606,7 +608,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			if (isOpenGovSupported(network)) {
 				items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
 			}
-			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [...items]));
+			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...items]));
 		} else {
 			gov2Items.splice(gov2Items.length - 2, 1);
 		}
@@ -659,8 +661,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 	if (network === AllNetworks.MOONBEAM) {
-		gov2Items = gov2Items.concat(getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, gov1Items.treasuryItems));
-		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, gov1Items.treasuryItems)];
+		gov2Items = gov2Items.concat(
+			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
+		);
+		gov2CollapsedItems = [
+			...gov2CollapsedItems,
+			getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
+		];
 	}
 
 	if (network !== AllNetworks.POLYMESH) {
@@ -872,8 +879,6 @@ export default styled(AppLayout)`
 	}
 
 	.ant-menu-item-selected {
-		background: #fff !important;
-
 		.ant-menu-title-content {
 			color: var(--pink_primary) !important;
 		}

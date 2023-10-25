@@ -172,12 +172,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		}
 
 		if (!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
-		if (post) {
-			created_at = post?.created_at?.toDate();
-			topic_id = post?.topic_id;
-			post_link = post?.post_link;
-			proposer_address = post?.proposer_address;
-		}
+		created_at = post?.created_at?.toDate() || created_at;
+		topic_id = post?.topic_id || topic_id;
+		post_link = post?.post_link || post_link;
+		proposer_address = post?.proposer_address || proposer_address;
 	} else {
 		const defaultUserAddress = await getDefaultUserAddressFromId(user.id);
 		proposer_address = defaultUserAddress?.address || '';

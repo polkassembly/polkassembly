@@ -211,8 +211,15 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				} else {
 					timeline = getTimeline(post?.group?.proposals, isStatus) || [];
 				}
-				if (post.status === 'DecisionDepositPlaced') {
-					post.status = 'Deciding';
+
+				let status = post.status;
+				if (status === 'DecisionDepositPlaced') {
+					const statuses = (post?.statusHistory || []) as { status: string }[];
+					statuses.forEach((obj) => {
+						if (obj.status === 'Deciding') {
+							status = 'Deciding';
+						}
+					});
 				}
 
 				return {
@@ -224,7 +231,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					hash: post?.hash,
 					post_id: id,
 					proposer: post?.proposer,
-					status: post?.status,
+					status: status,
 					status_history: post?.statusHistory,
 					tags: postData?.tags || [],
 					tally: post?.tally,

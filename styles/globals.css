@@ -555,3 +555,6 @@ z-index: 1050 !important;
     margin-right: 4px !important;
   }
 }
+.hide-image img {
+  display: none !important;
+}

@@ -74,7 +74,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 								</div>
 								<div className='mt-2 text-sm font-medium text-bodyBlue'>{titleString}</div>
 								<Markdown
-									imgHidden={true}
+									imgHidden
 									md={post?.content?.slice(0, 250) + ' .....'}
 									className='expand-content my-2 text-sm font-normal tracking-[0.01em] text-[#8696a9]'
 								/>

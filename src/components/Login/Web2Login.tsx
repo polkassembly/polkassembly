@@ -154,6 +154,11 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 		isDelegation && getWallet();
 	}, [isDelegation]);
 
+	useEffect(() => {
+		setWeb3Login(true);
+		setWeb2LoginClicked(false);
+	}, [onWalletSelect, walletError, isModal, setLoginOpen, isDelegation, setSignupOpen, className, setWithPolkasafe]);
+
 	return (
 		<Container className={`flex flex-col rounded-md bg-white shadow-md ${className} `}>
 			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
@@ -167,7 +172,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			{web3Login && (
 				<AuthForm
 					onSubmit={handleSubmitForm}
-					className='flex flex-col px-20'
+					className='web3-login-container flex flex-col px-20'
 				>
 					<p className='my-0 text-center text-base text-lightBlue'>Select a wallet</p>
 					<div>

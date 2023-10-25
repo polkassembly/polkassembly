@@ -555,3 +555,10 @@ z-index: 1050 !important;
     margin-right: 4px !important;
   }
 }
+
+@media (max-width: 365px) and (min-width: 319px) {
+  .web3-login-container {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+}

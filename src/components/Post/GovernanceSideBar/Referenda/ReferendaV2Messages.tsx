@@ -80,7 +80,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		return (
 			<button
 				onClick={() => setOpen(true)}
-				className={`dark:text-blue-dark-medium flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-[#FEF2F8] text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue outline-none dark:bg-[#33071E] ${className}`}
+				className={`flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-[#FEF2F8] text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue outline-none dark:bg-[#33071E] dark:text-blue-dark-medium ${className}`}
 			>
 				{children}
 			</button>
@@ -145,10 +145,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{!decidingStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='dark:text-blue-dark-high m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>Prepare Period</h3>
+						<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Prepare Period</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
 							<p
-								className='dark:text-blue-dark-medium m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 								style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 							>
 								<Button className='-ml-[3px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>1</Button>
@@ -168,8 +168,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue dark:text-blue-dark-high text-sm font-normal text-bodyBlue'>Prepare Period</span>
-							<span className='dark:text-blue-dark-medium text-xs text-lightBlue'>
+							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Prepare Period</span>
+							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}
 							</span>
 						</>
@@ -180,12 +180,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='dark:text-blue-dark-high m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>
+						<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 							Voting has Started
 						</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
 							<p
-								className='dark:text-blue-dark-medium m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 								style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 							>
 								<Button className='-ml-[3px] mr-[2px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>2</Button>
@@ -204,8 +204,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-						<span className='text-bodyblue dark:text-blue-dark-high text-sm font-normal text-bodyBlue'>Decision Period</span>
-						<span className='dark:text-blue-dark-medium text-xs text-lightBlue'>
+						<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Decision Period</span>
+						<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 							{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}
 						</span>
 					</p>
@@ -221,8 +221,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue dark:text-blue-dark-high text-sm font-normal text-bodyBlue'>Confirmation Period</span>
-							<span className='dark:text-blue-dark-medium text-xs text-lightBlue'>
+							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Confirmation Period</span>
+							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}
 							</span>
 						</>
@@ -235,10 +235,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					{isDisbursalPeriodCardVisible || minEnactment.periodCardVisible ? (
 						<GovSidebarCard>
 							<div className='flex items-center justify-between'>
-								<h3 className='dark:text-blue-dark-high m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>Proposal Passed</h3>
+								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
 								<div className='w-13 flex h-[33px] gap-1'>
 									<p
-										className='dark:text-blue-dark-medium m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 										style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 									>
 										<Button className='-ml-[3px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>3</Button>
@@ -257,8 +257,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								/>
 							</div>
 							<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-								<span className='text-bodyblue dark:text-blue-dark-high text-sm font-normal text-bodyBlue'>Enactment Period</span>
-								<span className='dark:text-blue-dark-medium text-xs text-lightBlue'>
+								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Enactment Period</span>
+								<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 									{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}
 								</span>
 							</p>
@@ -275,8 +275,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									</div>
 									<p className='m-0 mt-2 flex items-center justify-between p-0 leading-[22px]'>
 										<>
-											<span className='dark:text-blue-dark-high text-sm font-normal text-bodyBlue'>Funds Disbursal Period</span>
-											<span className='dark:text-blue-dark-medium text-xs text-lightBlue'>{spend.period}</span>
+											<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
+											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{spend.period}</span>
 										</>
 									</p>
 								</>
@@ -286,10 +286,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					) : (
 						<GovSidebarCard>
 							<div className='flex items-center justify-between'>
-								<h3 className='dark:text-blue-dark-high m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>Proposal Passed</h3>
+								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
 								<div className='w-13 flex h-[33px] gap-1'>
 									<p
-										className='dark:text-blue-dark-medium m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 										style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 									>
 										<Button className='-ml-[3px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>3</Button>
@@ -305,12 +305,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='dark:text-blue-dark-high m-0 text-xl font-medium leading-6 tracking-[0.0015em] text-bodyBlue'>
+							<h3 className='m-0 text-xl font-medium leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 								Proposal {status === 'Cancelled' ? 'Cancelled' : status === 'Killed' ? 'Killer' : status === 'TimedOut' ? 'Timed Out' : 'Failed'}
 							</h3>
 							<Button>3</Button>
 						</div>
-						<div className='dark:text-blue-dark-high mt-[18px] text-sm font-normal leading-[22px] tracking-[0.01em] text-bodyBlue'>
+						<div className='mt-[18px] text-sm font-normal leading-[22px] tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 							<FailedReferendaText
 								progress={progress}
 								network={network}
@@ -327,8 +327,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
 				title={
-					<div className='dark:bg-section-dark-overlay flex items-center justify-between gap-x-5 px-2 py-3'>
-						<h3 className='dark:text-blue-dark-high m-0 p-0 text-xl font-medium leading-[24px] tracking-[0.0015em] text-bodyBlue'>Status</h3>
+					<div className='flex items-center justify-between gap-x-5 px-2 py-3 dark:bg-section-dark-overlay'>
+						<h3 className='m-0 p-0 text-xl font-medium leading-[24px] tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Status</h3>
 						<button
 							onClick={() => setOpen(false)}
 							className='flex cursor-pointer items-center justify-center border-none bg-transparent outline-none'

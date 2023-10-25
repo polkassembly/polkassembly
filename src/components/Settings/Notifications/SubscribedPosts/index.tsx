@@ -81,7 +81,7 @@ export default function SubscribedPosts({ onSetNotification, dispatch, options, 
 	return (
 		<Collapse
 			size='large'
-			className={'dark:border-separatorDark dark:bg-section-dark-overlay bg-white'}
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -93,7 +93,7 @@ export default function SubscribedPosts({ onSetNotification, dispatch, options, 
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<SubscribedPostsNotification />
-						<h3 className='text-blue-light-high dark:text-blue-dark-high mb-0 text-[16px] font-semibold leading-[21px] tracking-wide md:text-[18px]'>
+						<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 							Subscribed Posts <span className='hidden md:inline'>(Others proposals)</span>
 						</h3>
 						{!!active && (
@@ -108,7 +108,7 @@ export default function SubscribedPosts({ onSetNotification, dispatch, options, 
 										}}
 										checked={all}
 									/>
-									<p className='dark:text-blue-dark-medium m-0 text-[#485F7D]'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
 								</span>
 							</>
 						)}

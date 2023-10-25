@@ -104,7 +104,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		<>
 			<GovSidebarCard className={className}>
 				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className='dark:text-blue-dark-high m-0 p-0 text-xl font-medium leading-6 text-bodyBlue'>Summary</h6>
+					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Summary</h6>
 					<div className='flex items-center gap-x-2'>
 						{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && (
 							<PassingInfoTag
@@ -131,7 +131,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							nayVotes={tallyData.nays}
 						/>
 					</div>
-					<section className='dark:text-blue-dark-medium -mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue'>
+					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
 								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:font-normal'>Ayes</span>
@@ -189,11 +189,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</div>
 						]}
-						className={`${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay w-[584px] max-sm:w-full`}
+						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 						closeIcon={<CloseIcon className='mt-2' />}
 						title={
 							<div
-								className={`${poppins.variable} ${poppins.className} dark:text-blue-dark-high dark:bg-section-dark-overlay text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue`}
+								className={`${poppins.variable} ${poppins.className} text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}
 							>
 								<InfoCircleOutlined className='mr-2 h-6 w-6' />
 								<span className='font-semibold dark:text-white'>How are votes calculated</span>
@@ -205,7 +205,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								className='-mx-6 mt-3'
 								style={{ borderTop: '1px solid #E1E6EB' }}
 							>
-								<p className='dark:text-blue-dark-high m-0 mt-5 p-0 px-6 text-sm font-normal leading-[18px] text-bodyBlue'>
+								<p className='m-0 mt-5 p-0 px-6 text-sm font-normal leading-[18px] text-bodyBlue dark:text-blue-dark-high'>
 									Votes are calculated by multiplying the votes casted by a user with the conviction period.
 								</p>
 							</div>
@@ -213,7 +213,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							<article className='my-2 flex items-center justify-between md:gap-x-2'>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<CastVoteIcon className='text-4xl' />
-									<p className='dark:text-blue-dark-high m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue'>
+									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex flex-col items-center gap-x-1 whitespace-nowrap md:flex-row'>
 											<span>User wants to</span>
 										</span>
@@ -225,11 +225,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<VoteAmountIcon className='text-4xl' />
-									<p className='dark:text-blue-dark-high m-0 hidden flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue md:flex'>
+									<p className='m-0 hidden flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue dark:text-blue-dark-high md:flex'>
 										<span className='whitespace-nowrap'>Chooses vote amount</span>
 										<span>and type (Aye/Nay)</span>
 									</p>
-									<p className='dark:text-blue-dark-high m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue md:hidden'>
+									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue dark:text-blue-dark-high md:hidden'>
 										<span className='whitespace-nowrap'>Chooses vote</span>
 										<span>amount and</span>
 										<span className='whitespace-nowrap'>type (Aye/Nay)</span>
@@ -240,7 +240,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<ConvictionPeriodIcon className='text-4xl' />
-									<p className='dark:text-blue-dark-high m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue'>
+									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex flex-col items-center gap-x-1 whitespace-nowrap md:flex-row'>
 											<span>Sets a</span>
 											<a
@@ -260,7 +260,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<LikeDislikeIcon className='text-4xl' />
-									<p className='dark:text-blue-dark-high m-0 hidden flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue md:flex'>
+									<p className='m-0 hidden flex-col items-center p-0 text-xs font-normal leading-4 text-bodyBlue dark:text-blue-dark-high md:flex'>
 										<span className='whitespace-nowrap'>User casts their</span>
 										<span>vote</span>
 									</p>
@@ -273,14 +273,14 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</article>
 							<div className='flex flex-col'>
 								<div style={{ borderTop: '1.5px dashed #D2D8E0' }}>
-									<p className='dark:text-blue-dark-high m-0 mt-5 p-0 text-sm font-medium leading-[18px] text-bodyBlue'>Here,</p>
+									<p className='m-0 mt-5 p-0 text-sm font-medium leading-[18px] text-bodyBlue dark:text-blue-dark-high'>Here,</p>
 								</div>
 								<article
 									className='mt-[12px] flex max-w-[400px] items-start justify-between rounded-lg p-3'
 									style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}
 								>
 									<div className='flex flex-col items-center justify-center'>
-										<p className='dark:text-blue-dark-high m-0 mt-[2px] flex flex-col p-0 text-sm font-normal text-bodyBlue'>
+										<p className='m-0 mt-[2px] flex flex-col p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 											<p className='font-semibold leading-3'>Voter</p>
 											<div className='flex items-center justify-start leading-6'>
 												<DefaultProfile style={{ height: '20px', width: '20px' }} />
@@ -289,19 +289,19 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
-										<p className='dark:text-blue-dark-high m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue'>
+										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 											<p className='font-semibold leading-5'>Amount</p>
 											<span className='item-start text-xs leading-6 text-navBlue'>11.27 KSM</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
-										<p className='dark:text-blue-dark-high m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue'>
+										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 											<p className='font-semibold leading-5'>Conviction</p>
 											<span className='text-xs leading-6 text-navBlue'>4x</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
-										<p className='dark:text-blue-dark-high m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue'>
+										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 											<p className='font-semibold leading-5'>Vote</p>
 											<DislikeFilled
 												className='text-xl leading-6'

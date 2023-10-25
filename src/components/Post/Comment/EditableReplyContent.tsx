@@ -560,10 +560,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 							md={content}
 						/>
-						<div className='dark:bg-section-dark-overlay flex flex-wrap items-center gap-3 bg-[#ebf0f5]'>
+						<div className='flex flex-wrap items-center gap-3 bg-[#ebf0f5] dark:bg-section-dark-overlay'>
 							{isEditable && (
 								<Button
-									className={'dark:text-blue-dark-helper flex items-center border-none p-0 text-pink_primary shadow-none dark:bg-transparent'}
+									className={'flex items-center border-none p-0 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
 									disabled={loading}
 									onClick={toggleEdit}
 								>
@@ -573,14 +573,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										</span>
 									) : (
 										<span className='flex items-center text-xs'>
-											<FormOutlined className='dark:text-blue-dark-helper mr-1' /> Edit
+											<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> Edit
 										</span>
 									)}
 								</Button>
 							)}
 							{id === userId ? (
 								<Button
-									className={'dark:text-blue-dark-helper flex items-center border-none pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:bg-transparent'}
+									className={'flex items-center border-none pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
 									onClick={deleteReply}
 								>
 									<DeleteOutlined />
@@ -592,7 +592,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 									<ReportButton
 										isDeleteModal={true}
 										proposalType={(reply.post_type as any) || postType}
-										className={`dark:text-blue-dark-helper flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
+										className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${poppins.variable} ${poppins.className}`}
 										type={EReportType.REPLY}
 										onSuccess={removeReplyContent}
 										commentId={commentId}
@@ -603,7 +603,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							)}
 							{id && !isEditing && (
 								<ReportButton
-									className='dark:text-blue-dark-helper text-xs text-pink_primary'
+									className='text-xs text-pink_primary dark:text-blue-dark-helper'
 									proposalType={postType}
 									postId={postIndex}
 									commentId={commentId}
@@ -619,7 +619,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										color='#E5007A'
 									>
 										<Button
-											className={`dark:text-blue-dark-helper mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent ${
+											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper ${
 												reply.reply_source ? 'disabled-reply' : ''
 											}`}
 										>
@@ -629,7 +629,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								) : (
 									!isReplying && (
 										<Button
-											className={'dark:text-blue-dark-helper flex items-center border-none p-0 text-xs text-pink_primary shadow-none dark:bg-transparent'}
+											className={'flex items-center border-none p-0 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
 											onClick={() => setIsReplying(!isReplying)}
 										>
 											<ReplyIcon className='mr-1' />
@@ -639,7 +639,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								)
 							) : null}
 							{reply.isReplyError && (
-								<div className='dark:text-blue-dark-medium ml-auto flex text-xs text-lightBlue'>
+								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
 									<Caution className='icon-container relative top-[4px] text-2xl' />
 									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
 									<div

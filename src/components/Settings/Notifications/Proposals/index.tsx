@@ -108,7 +108,7 @@ export default function Proposals({ onSetNotification, dispatch, options, userNo
 	return (
 		<Collapse
 			size='large'
-			className={'dark:border-separatorDark dark:bg-section-dark-overlay bg-white'}
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -120,7 +120,7 @@ export default function Proposals({ onSetNotification, dispatch, options, userNo
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<ChatActive />
-						<h3 className='text-blue-light-high dark:text-blue-dark-high mb-0 text-[16px] font-semibold leading-[21px] tracking-wide md:text-[18px]'>My Proposals</h3>
+						<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>My Proposals</h3>
 						{!!active && (
 							<>
 								<span className='flex items-center gap-[8px]'>
@@ -133,7 +133,7 @@ export default function Proposals({ onSetNotification, dispatch, options, userNo
 										}}
 										checked={all}
 									/>
-									<p className='dark:text-blue-dark-medium m-0 text-[#485F7D]'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
 								</span>
 							</>
 						)}

@@ -250,7 +250,7 @@ export default function Notifications({ network }: { network: string }) {
 	return loading ? (
 		<Loader />
 	) : (
-		<div className='text-blue-light-high dark:text-blue-dark-high flex flex-col gap-[24px]'>
+		<div className='flex flex-col gap-[24px] text-blue-light-high dark:text-blue-dark-high'>
 			<NotificationChannels
 				handleEnableDisabled={handleEnableDisabled}
 				handleReset={handleReset}

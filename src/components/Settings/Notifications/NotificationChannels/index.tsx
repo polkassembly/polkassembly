@@ -85,7 +85,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	return (
 		<Collapse
 			size='large'
-			className={'dark:border-separatorDark dark:bg-section-dark-overlay bg-white'}
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -98,7 +98,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					<div className='flex items-center justify-between gap-[8px]'>
 						<div className='channel-header flex items-center gap-[6px]'>
 							<NotificationChannelsIcon />
-							<h3 className='text-blue-light-high dark:text-blue-dark-high mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide md:text-[18px]'>
+							<h3 className='mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 								Notification Channels
 							</h3>
 						</div>
@@ -122,7 +122,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<p className='text-blue-light-high dark:text-blue-dark-high mb-[22px] text-[16px] font-medium leading-[21px]'>
+					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
 						Please select the socials where you would like to receive notifications:
 					</p>
 					<EmailNotificationCard

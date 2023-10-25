@@ -7,6 +7,7 @@ import { TAppState } from './store';
 // import { IModalStore } from './modal/@types';
 import { INetworkStore } from './network/@types';
 import { IUserDetailsStore } from './userDetails/@types';
+import { IUnlockTokenskDataStore } from './tokenUnlocksData/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -16,4 +17,8 @@ const useUserDetailsSelector = () => {
 	return useSelector<TAppState, IUserDetailsStore>((state) => state.userDetails);
 };
 
-export { useNetworkSelector, useUserDetailsSelector };
+const useUserUnlockTokensDataSelector = () => {
+	return useSelector<TAppState, IUnlockTokenskDataStore>((state) => state.userUnlockTokensData);
+};
+
+export { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector };

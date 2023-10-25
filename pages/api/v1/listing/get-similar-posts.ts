@@ -58,48 +58,46 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		let postsSnapshotArr;
 		if (tags.length > 0) {
 			postsSnapshotArr = await onChainCollRef.where('tags', 'array-contains-any', tags).get();
-		} else {
-			postsSnapshotArr = await onChainCollRef.get();
 		}
-		const postsPromise = postsSnapshotArr.docs.map(async (doc: any) => {
-			if (doc && doc.exists) {
-				const docData = doc.data();
-				if (docData) {
-					let subsquareTitle = '';
-					if (docData?.title === '' || docData?.title === undefined) {
-						const res = await getSubSquareContentAndTitle(strProposalType, network, docData.id);
-						subsquareTitle = res?.title;
+		if (postsSnapshotArr) {
+			const postsPromise = postsSnapshotArr.docs.map(async (doc: any) => {
+				if (doc && doc.exists) {
+					const docData = doc.data();
+					if (docData) {
+						let subsquareTitle = '';
+						if (docData?.title === '' || docData?.title === undefined) {
+							const res = await getSubSquareContentAndTitle(strProposalType, network, docData.id);
+							subsquareTitle = res?.title;
+						}
+						const created_at = docData.created_at;
+						const { topic, topic_id } = docData;
+						return {
+							created_at: created_at?.toDate ? created_at?.toDate() : created_at,
+							gov_type: docData?.gov_type,
+							isSpam: docData?.isSpam || false,
+							isSpamReportInvalid: docData?.isSpamReportInvalid || false,
+							post_id: docData.id,
+							proposer: getProposerAddressFromFirestorePostData(docData, network),
+							spam_users_count:
+								docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
+							tags: docData?.tags || [],
+							title: docData?.title || subsquareTitle || null,
+							topic: topic
+								? topic
+								: isTopicIdValid(topic_id)
+								? {
+										id: topic_id,
+										name: getTopicNameFromTopicId(topic_id)
+								  }
+								: getTopicFromType(strProposalType as ProposalType),
+							user_id: docData?.user_id || 1,
+							username: docData?.username
+						};
 					}
-					const created_at = docData.created_at;
-					const { topic, topic_id } = docData;
-
-					return {
-						created_at: created_at?.toDate ? created_at?.toDate() : created_at,
-						gov_type: docData?.gov_type,
-						isSpam: docData?.isSpam || false,
-						isSpamReportInvalid: docData?.isSpamReportInvalid || false,
-						post_id: docData.id,
-						proposer: getProposerAddressFromFirestorePostData(docData, network),
-						spam_users_count:
-							docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
-						tags: docData?.tags || [],
-						title: docData?.title || subsquareTitle || null,
-						topic: topic
-							? topic
-							: isTopicIdValid(topic_id)
-							? {
-									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id)
-							  }
-							: getTopicFromType(strProposalType as ProposalType),
-						user_id: docData?.user_id || 1,
-						username: docData?.username
-					};
 				}
-			}
-		});
-
-		posts = await Promise.all(postsPromise);
+			});
+			posts = await Promise.all(postsPromise);
+		}
 	}
 
 	let result: any = [];

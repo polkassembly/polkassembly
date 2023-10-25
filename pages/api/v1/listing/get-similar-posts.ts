@@ -211,6 +211,9 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				} else {
 					timeline = getTimeline(post?.group?.proposals, isStatus) || [];
 				}
+				if (post.status === 'DecisionDepositPlaced') {
+					post.status = 'Deciding';
+				}
 
 				return {
 					...postData,

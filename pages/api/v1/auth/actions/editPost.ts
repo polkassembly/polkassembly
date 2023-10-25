@@ -172,10 +172,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		}
 
 		if (!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
-		created_at = post?.created_at?.toDate();
-		topic_id = post?.topic_id;
-		post_link = post?.post_link;
-		proposer_address = post?.proposer_address;
+		if (post) {
+			created_at = post?.created_at?.toDate();
+			topic_id = post?.topic_id;
+			post_link = post?.post_link;
+			proposer_address = post?.proposer_address;
+		}
 	} else {
 		const defaultUserAddress = await getDefaultUserAddressFromId(user.id);
 		proposer_address = defaultUserAddress?.address || '';
@@ -264,10 +266,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const last_comment_at = new Date();
 
 	const summary = (await fetchContentSummary(content, proposalType)) || '';
-	let defaultProposerAddress: any = '';
-	if (!proposer_address) {
-		defaultProposerAddress = await getDefaultUserAddressFromId(user.id);
-	}
 	const { data: postUser } = await getUserWithAddress(proposer_address);
 
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
@@ -278,7 +276,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		isDeleted: false,
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
-		proposer_address: proposer_address || defaultProposerAddress, // postAddress
+		proposer_address: proposer_address, // postAddress
 		summary: summary,
 		tags: tags || [],
 		title,

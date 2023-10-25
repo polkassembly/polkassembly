@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { Pagination } from 'antd';
 import { useRouter } from 'next/router';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { useState } from 'react';
@@ -17,6 +16,7 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
+import { Pagination } from '~src/ui-components/Pagination';
 
 interface Props {
 	className?: string;
@@ -142,7 +142,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
+		<div className={`${className} dark:bg-section-dark-overlay rounded-xxl bg-white px-0 drop-shadow-md xs:py-4 sm:py-8`}>
 			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:px-4 xs:pt-2 sm:hidden'>
 				<FilterByTags className='xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden' />
 			</div>
@@ -159,6 +159,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			((posts?.voting?.data?.count || 0) > 10 && activeTab === 'Voting') ||
 			((posts?.closed?.data?.count || 0) > 10 && activeTab === 'Closed') ? (
 				<Pagination
+					theme={theme}
 					className='mb-2 mt-4 flex justify-end sm:mt-6'
 					defaultCurrent={1}
 					current={router.query.page ? parseInt(router.query.page as string, 10) : 1}

@@ -12,17 +12,18 @@ interface Props {
 	disabled?: boolean;
 	className?: string;
 	text?: string;
+	optionalLogin?: boolean;
 }
 
-const WalletButton = ({ disabled, onClick, icon, className, text, name }: Props) => {
+const WalletButton = ({ disabled, onClick, icon, className, text, name, optionalLogin }: Props) => {
 	return (
 		<Button
-			className={`flex items-center justify-center rounded-[7px] border-[#F8E3EE] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
+			className={`flex ${optionalLogin ? 'w-full' : 'justify-center'} items-center rounded-[7px] border-[#F8E3EE] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 			onClick={onClick}
 			disabled={disabled}
 		>
 			<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
-			{text && <p className='m-0 p-0'>{text}</p>}
+			{text && optionalLogin && <p className='m-0 ml-4 p-0'>{text}</p>}
 		</Button>
 	);
 };

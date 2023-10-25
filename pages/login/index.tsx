@@ -101,15 +101,17 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 			>
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (
-						<Web2Login
-							isModal={isModal}
-							setLoginOpen={setLoginOpen}
-							isDelegation={isDelegation}
-							setSignupOpen={setSignupOpen}
-							onWalletSelect={onWalletSelect}
-							walletError={walletError}
-							setWithPolkasafe={setWithPolkasafe}
-						/>
+						<>
+							<Web2Login
+								isModal={isModal}
+								setLoginOpen={setLoginOpen}
+								isDelegation={isDelegation}
+								setSignupOpen={setSignupOpen}
+								onWalletSelect={onWalletSelect}
+								walletError={walletError}
+								setWithPolkasafe={setWithPolkasafe}
+							/>
+						</>
 					) : null}
 
 					{displayWeb === 3 && chosenWallet && (

@@ -219,12 +219,6 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && <VoteUnlock addresses={userProfile.data.addresses} />}
 						</div>
 					)}
-					{votesHistoryUnavailableNetworks.includes(network) && profileHistory === EProfileHistory.POSTS && userId === id && addresses.length > 0 && (
-						<VoteUnlock
-							addresses={userProfile.data.addresses}
-							className='pb-4'
-						/>
-					)}
 
 					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>

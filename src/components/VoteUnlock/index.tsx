@@ -289,10 +289,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 			status: NotificationStatus.ERROR
 		});
 		setLoadingStatus({ isLoading: false, message: 'Failed!' });
-
-		setOpenSuccessState(true);
-		setLoadingStatus({ isLoading: false, message: 'Success!' });
-		setOpen(false);
 	};
 
 	const handleUnlock = async () => {

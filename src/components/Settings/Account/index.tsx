@@ -40,7 +40,7 @@ interface IAddressHeaderProps {
 const AddressHeader: FC<IAddressHeaderProps> = ({ checked, header, id, onChange, modal, subHeading }) => {
 	return (
 		<>
-			<article className='align-center dark:bg-section-dark-overlay flex items-center gap-1 text-xs font-normal leading-6 tracking-wide dark:text-white'>
+			<article className='align-center flex items-center gap-1 text-xs font-normal leading-6 tracking-wide dark:bg-section-dark-overlay dark:text-white'>
 				<label
 					className='cursor-pointer text-sm font-medium text-pink_primary'
 					htmlFor={id}
@@ -68,7 +68,7 @@ const Account: FC<Props> = ({ className }) => {
 	return (
 		<Collapse
 			size='large'
-			className='dark:bg-section-dark-overlay dark:border-separatorDark bg-white'
+			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -80,15 +80,15 @@ const Account: FC<Props> = ({ className }) => {
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<AccountIcon />
-						<h3 className='text-blue-light-high dark:text-blue-dark-high mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide md:text-[18px]'>
-							Account Settings {active && <span className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>Update your account settings here</span>}
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
+							Account Settings {active && <span className='text-sm font-normal text-blue-light-high dark:text-blue-dark-high'>Update your account settings here</span>}
 						</h3>
 					</div>
 				}
 				key='1'
 			>
 				<Row className={`${className} flex w-full flex-col`}>
-					<div className='dark:text-blue-dark-high flex flex-col gap-4'>
+					<div className='flex flex-col gap-4 dark:text-blue-dark-high'>
 						<section>
 							<AddressHeader
 								checked={isLinkAddress}
@@ -104,7 +104,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='dark:border-separatorDark m-0 border-[#D2D8E0]' />
+						<Divider className='m-0 border-[#D2D8E0] dark:border-separatorDark' />
 						<section>
 							<AddressHeader
 								checked={isMultiSigAddress}
@@ -120,7 +120,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='dark:border-separatorDark m-0 border-[#D2D8E0]' />
+						<Divider className='m-0 border-[#D2D8E0] dark:border-separatorDark' />
 						<section>
 							<AddressHeader
 								checked={isLinkProxy}

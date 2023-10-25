@@ -19,8 +19,8 @@ import { useDispatch } from 'react-redux';
 
 const Title = (
 	<>
-		<div className='dark:bg-section-dark-overlay text-lg font-bold tracking-wide text-sidebarBlue dark:text-white'>Two Factor Authentication</div>
-		<Divider className='dark:border-separatorDark mb-0 mt-0' />
+		<div className='text-lg font-bold tracking-wide text-sidebarBlue dark:bg-section-dark-overlay dark:text-white'>Two Factor Authentication</div>
+		<Divider className='mb-0 mt-0 dark:border-separatorDark' />
 	</>
 );
 
@@ -131,7 +131,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 					<Button
 						key='cancel'
 						onClick={dismissModal}
-						className='text-md dark:bg-section-dark-overlay inline-flex items-center justify-center rounded-lg border-solid border-pink_primary bg-white px-7 py-5 font-semibold leading-7 text-pink_primary outline-none'
+						className='text-md inline-flex items-center justify-center rounded-lg border-solid border-pink_primary bg-white px-7 py-5 font-semibold leading-7 text-pink_primary outline-none dark:bg-section-dark-overlay'
 						disabled={loading}
 					>
 						Cancel
@@ -230,7 +230,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 									<Input
 										placeholder='Auth Code'
 										name='authCode'
-										className='dark:text-blue-dark-high w-[60%] text-black dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+										className='w-[60%] text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									/>
 								</Form.Item>
 							</div>
@@ -244,7 +244,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 			<Button
 				onClick={handleModalOpen}
 				htmlType='submit'
-				className='text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-container dark:border-separatorDark dark:text-blue-dark-high h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left'
+				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-blue-light-high dark:border-separatorDark dark:bg-section-dark-container dark:text-blue-dark-high dark:text-blue-dark-high'
 			>
 				<span className='align-center flex text-[16px] font-medium '>
 					Enable Two Factor Authentication <KeyboardDownIcon />

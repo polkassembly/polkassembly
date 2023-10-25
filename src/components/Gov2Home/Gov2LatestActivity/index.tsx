@@ -179,14 +179,14 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 
 	return (
 		<Container
-			className={`${className} dark:bg-section-dark-overlay rounded-xxl bg-white p-0 drop-shadow-md lg:p-6`}
+			className={`${className} rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}
 			theme={theme}
 		>
 			<div className='flex items-center justify-between pl-1 pr-4'>
-				<h2 className='dark:text-blue-dark-high mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue lg:mx-0 lg:mt-0'>Latest Activity</h2>
+				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>
 				{currentTab !== 'all' && (
 					<Link
-						className='dark:text-blue-dark-high rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary'
+						className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
 						href={`/${currentTab}`}
 					>
 						View all
@@ -196,7 +196,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 			<Tabs
 				type='card'
 				items={tabItems}
-				className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay dark:text-blue-dark-high text-sm font-medium text-bodyBlue md:px-2'
+				className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
 				onChange={(key: any) => setCurrentTab(key)}
 				theme={theme}
 			/>

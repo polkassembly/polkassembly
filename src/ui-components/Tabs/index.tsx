@@ -35,7 +35,7 @@ export const Tabs = (props: any) => {
 	return (
 		<StyledTabs
 			{...props}
-			className={`ant-tabs-tab-bg-white text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high text-sm font-medium md:px-2 dark:[&<.ant-tabs-tab-bg-white.ant-tabs-tab:not(.ant-tabs-tab-active)]:bg-transparent ${props.className}`}
+			className={`ant-tabs-tab-bg-white text-sm font-medium text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2 dark:[&<.ant-tabs-tab-bg-white.ant-tabs-tab:not(.ant-tabs-tab-active)]:bg-transparent ${props.className}`}
 		>
 			{props.children}
 		</StyledTabs>

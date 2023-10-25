@@ -60,7 +60,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<div className='text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay ml-[-24px] mr-[-24px]'>
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					<h3 className='md:text-md mb-0 ml-[24px] flex items-center gap-2 text-base'>
 						<ChangeUserIcon /> Change your username
 					</h3>
@@ -69,7 +69,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 			}
 			open={open}
 			closable
-			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay dark:bg-section-dark-overlay min-w-[350px] md:min-w-[600px]'
+			className='min-w-[350px] dark:bg-section-dark-overlay md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
@@ -91,7 +91,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 							Old Username
 						</label>
 						<Input
-							className='dark:text-blue-dark-high p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+							className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							value={username}
 							disabled
 						/>
@@ -123,7 +123,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 						>
 							<Input
 								disabled={loading}
-								className='dark:text-blue-dark-high p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter your username'
 							/>
 						</Form.Item>
@@ -136,7 +136,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 							<Button
 								key='1'
 								onClick={onCancel}
-								className='dark:bg-section-dark-overlay h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
+								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
 							>
 								Cancel
 							</Button>

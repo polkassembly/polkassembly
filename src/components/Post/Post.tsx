@@ -338,7 +338,7 @@ const Post: FC<IPostProps> = (props) => {
 					<div className='audit flex items-center justify-center gap-2'>
 						Audit
 						{totalAuditCount + totalVideoCount > 0 && (
-							<span className='card-bg dark:text-blue-dark-high rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue'>
+							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{totalAuditCount + totalVideoCount}
 							</span>
 						)}{' '}
@@ -472,13 +472,13 @@ const Post: FC<IPostProps> = (props) => {
 					)}
 				{proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) && (
 					<Link href={`/bounty/${post.parent_bounty_index}`}>
-						<div className='dashboard-heading dark:bg-section-dark-overlay mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:font-normal dark:text-white md:p-6'>
-							This is a child bounty of <span className='dark:text-blue-dark-helper text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
+						<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:font-normal dark:text-white md:p-6'>
+							This is a child bounty of <span className='text-pink_primary dark:text-blue-dark-helper'>Bounty #{post.parent_bounty_index}</span>
 						</div>
 					</Link>
 				)}
 				{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-					<div className='dashboard-heading dark:bg-section-dark-overlay mb-6 flex w-full  items-center gap-x-2 rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+					<div className='dashboard-heading mb-6 flex w-full items-center  gap-x-2 rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 						<span>The child bounty payout is ready to be claimed</span>
 						<ClaimPayoutModal
 							parentBountyId={post?.parentBountyId}
@@ -490,13 +490,13 @@ const Post: FC<IPostProps> = (props) => {
 				<div className={`${className} grid grid-cols-1 gap-9 xl:grid-cols-12`}>
 					<div className='xl:col-span-8'>
 						{proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) && (
-							<div className='dashboard-heading dark:bg-section-dark-overlay mb-6 w-full rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 								This grant will be closed in <span className='text-pink_primary'>{formatDuration(duration)}</span>
 							</div>
 						)}
 
 						{/* Post Content */}
-						<div className='dark:bg-section-dark-overlay mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md md:p-4 lg:p-6 '>
+						<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
 							{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && (
@@ -505,7 +505,7 @@ const Post: FC<IPostProps> = (props) => {
 									<Tabs
 										theme={theme}
 										type='card'
-										className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay dark:text-blue-dark-high font-medium text-bodyBlue'
+										className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 										items={tabItems}
 									/>
 								</>

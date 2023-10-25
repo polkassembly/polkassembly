@@ -68,7 +68,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<div className='text-blue-light-high dark:text-blue-dark-high dark:bg-section-dark-overlay ml-[-24px] mr-[-24px]'>
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					<h3 className='md:text-md mb-0 ml-[24px] flex items-center gap-2 text-base'>
 						<ChangePasswordIcon /> Change your username
 					</h3>
@@ -77,7 +77,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 			}
 			open={open}
 			closable
-			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay min-w-[350px] md:min-w-[600px]'
+			className='min-w-[350px] md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
@@ -106,7 +106,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='dark:text-blue-dark-high p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter current password'
 							/>
 						</Form.Item>
@@ -129,7 +129,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='dark:text-blue-dark-high p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter new password'
 							/>
 						</Form.Item>
@@ -156,7 +156,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='dark:text-blue-dark-high p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Confirm new password'
 							/>
 						</Form.Item>

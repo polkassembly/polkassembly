@@ -132,7 +132,7 @@ export default function PipNotification({ onSetNotification, userNotification, d
 	return (
 		<Collapse
 			size='large'
-			className={'dark:bg-section-dark-overlay dark:border-separatorDark bg-white'}
+			className={'dark:border-separatorDark dark:bg-section-dark-overlay bg-white'}
 			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {

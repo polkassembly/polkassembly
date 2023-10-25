@@ -199,7 +199,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
-							<span className='dark:text-blue-dark-high flex-none text-center font-medium text-bodyBlue sm:w-[120px]'>#{isTip ? tip_index : onchainId}</span>
+							<span className='flex-none text-center font-medium text-bodyBlue dark:text-blue-dark-high sm:w-[120px]'>#{isTip ? tip_index : onchainId}</span>
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
 								username={username}
@@ -218,43 +218,43 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 					<div className='mt-1 flex items-center justify-between'>
 						<div className='ml-[120px] flex flex-grow'>
-							<h1 className='dark:text-blue-dark-high mt-0.5 flex overflow-hidden text-sm text-bodyBlue lg:max-w-none'>
-								<span className='dark:text-blue-dark-high break-all text-sm font-medium text-bodyBlue'>{mainTitle}</span>
+							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue dark:text-blue-dark-high lg:max-w-none'>
+								<span className='break-all text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{mainTitle}</span>
 							</h1>
-							<h2 className='dark:text-blue-dark-high text-sm font-medium text-bodyBlue'>{subTitle}</h2>
+							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
 						</div>
 						{requestedAmount && (
 							<div className='flex items-center justify-center'>
 								{requestedAmount > 100 ? (
-									<span className='dark:text-blue-dark-high whitespace-pre text-sm font-medium text-lightBlue sm:mr-[2.63rem]'>
+									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
 										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
 									</span>
 								) : (
-									<span className='dark:text-blue-dark-high whitespace-pre text-sm font-medium text-lightBlue sm:mr-[2.65rem]'>
+									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.65rem]'>
 										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
 									</span>
 								)}
 							</div>
 						)}
 					</div>
-					<div className='dark:text-blue-dark-high flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:mb-1 sm:ml-[120px] sm:mt-0 sm:flex lg:flex-row lg:items-center'>
+					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:hidden sm:mb-1 sm:ml-[120px] sm:mt-0 sm:flex lg:flex-row lg:items-center'>
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
 							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
-								<span className='dark:text-blue-dark-medium text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 							<div className='mr-0.5 items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 								<DislikeOutlined style={{ color: '#485F7D' }} />
-								<span className='dark:text-blue-dark-medium text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 							{isCommentsVisible ? (
 								<>
-									<div className='dark:text-blue-dark-medium items-center text-lightBlue xs:hidden sm:flex'>
+									<div className='items-center text-lightBlue dark:text-blue-dark-medium xs:hidden sm:flex'>
 										<NewChatIcon
 											style={{
 												color: '#485F7D'
 											}}
-											className='dark:text-blue-dark-medium mr-1 text-lightBlue'
+											className='mr-1 text-lightBlue dark:text-blue-dark-medium'
 										/>{' '}
 										{commentsCount}
 									</div>
@@ -270,14 +270,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
-											className='dark:text-blue-dark-medium rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue'
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
 									))}
 									{tags.length > 2 && (
 										<span
-											className='dark:text-blue-dark-high text-bodyBlue'
+											className='text-bodyBlue dark:text-blue-dark-high'
 											style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -312,7 +312,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							) : null}
 							{relativeCreatedAt && (
 								<>
-									<div className='dark:text-blue-dark-medium flex items-center text-lightBlue sm:mt-0'>
+									<div className='flex items-center text-lightBlue dark:text-blue-dark-medium sm:mt-0'>
 										<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
 									</div>
 								</>
@@ -378,7 +378,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 
 						{!!end && !!currentBlock && (
-							<div className='dark:text-blue-dark-medium flex items-center text-lightBlue'>
+							<div className='flex items-center text-lightBlue dark:text-blue-dark-medium'>
 								<Divider
 									className='hidden lg:inline-block'
 									type='vertical'
@@ -418,11 +418,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						{requestedAmount && (
 							<div className='xs:mr-5 sm:m-0'>
 								{requestedAmount > 100 ? (
-									<span className='dark:text-blue-dark-high text-sm font-medium text-lightBlue'>
+									<span className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
 										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
 									</span>
 								) : (
-									<span className='dark:text-blue-dark-high text-sm font-medium text-lightBlue'>
+									<span className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
 										{requestedAmount} {chainProperties[network]?.tokenSymbol}
 									</span>
 								)}
@@ -441,11 +441,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='max-xs-hidden dark:text-blue-dark-high mx-1 my-3 text-sm font-medium text-bodyBlue'>
+					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 						#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className='dark:text-blue-dark-high flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue xs:flex sm:hidden lg:flex-row lg:items-center'>
+					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:flex sm:hidden lg:flex-row lg:items-center'>
 						<div className='h-[30px] flex-shrink-0 items-center xs:flex xs:justify-start sm:hidden'>
 							<OnchainCreationLabel
 								address={address}
@@ -459,7 +459,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							/>
 							{relativeCreatedAt && (
 								<>
-									<div className='dark:text-blue-dark-medium mt-0 flex items-center text-lightBlue'>
+									<div className='mt-0 flex items-center text-lightBlue dark:text-blue-dark-medium'>
 										<ClockCircleOutlined className='mr-1' /> <span> {relativeCreatedAt}</span>
 									</div>
 								</>
@@ -515,14 +515,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										{tags?.slice(0, 2).map((tag, index) => (
 											<div
 												key={index}
-												className='dark:text-blue-dark-medium rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue'
+												className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:text-blue-dark-medium'
 											>
 												{tag}
 											</div>
 										))}
 										{tags.length > 2 && (
 											<span
-												className='dark:text-blue-dark-high text-bodyBlue'
+												className='text-bodyBlue dark:text-blue-dark-high'
 												style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
 												onClick={(e) => {
 													e.stopPropagation();
@@ -550,10 +550,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				}}
 				footer={false}
 				closeIcon={<CloseIcon />}
-				className={`${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay h-[120px]  max-w-full shrink-0 max-sm:w-[100%]`}
+				className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
 					<>
-						<label className='dark:text-blue-dark-high mb-2 text-lg font-medium tracking-wide text-bodyBlue'>
+						<label className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
 							<TagsIcon className='mr-2' />
 							Tags
 						</label>
@@ -570,7 +570,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{tags?.map((tag, index) => (
 								<div
 									key={index}
-									className='dark:text-blue-dark-medium rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-1 text-xs font-normal text-lightBlue'
+									className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'
 								>
 									{tag}
 								</div>

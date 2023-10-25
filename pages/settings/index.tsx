@@ -95,7 +95,7 @@ const Settings: FC<Props> = (props) => {
 			)}
 
 			<Col className='h-full w-full'>
-				<div className='dark:bg-section-dark-overlay mt-6 w-full rounded-md bg-white p-8 shadow-md'>
+				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
 					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue dark:text-white'>Settings</h3>
 					<Tabs
 						className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'

@@ -68,7 +68,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 
 	return (
 		<Collapse
-			className={'dark:bg-section-dark-overlay dark:border-separatorDark bg-white'}
+			className={'dark:border-separatorDark dark:bg-section-dark-overlay bg-white'}
 			theme={theme}
 			size='large'
 			expandIconPosition='end'

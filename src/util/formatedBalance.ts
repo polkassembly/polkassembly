@@ -9,6 +9,6 @@ export const formatedBalance = (balance: string, unit: string, withDecimalAfter?
 	if (Number(formated?.[0][0]) > 0) {
 		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0, withDecimalAfter || 1)}` : `${formated[0]}`;
 	} else {
-		return formated.join('.');
+		return Number(formated?.[1]) === 0 ? formated[0] : formated.join('.');
 	}
 };

@@ -562,3 +562,7 @@ z-index: 1050 !important;
     padding-right: 40px !important;
   }
 }
+
+.hide-image img {
+  display: none !important;
+}

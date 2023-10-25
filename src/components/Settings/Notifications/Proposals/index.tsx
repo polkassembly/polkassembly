@@ -10,6 +10,7 @@ import GroupCheckbox from '../common-ui/GroupCheckbox';
 import { ACTIONS } from '../Reducer/action';
 import { EMentionType, INotificationObject } from '../types';
 import { Collapse } from '../common-ui/Collapse';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 
@@ -23,6 +24,7 @@ type Props = {
 export default function Proposals({ onSetNotification, dispatch, options, userNotification }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 	useEffect(() => {
 		setAll(options.every((category: any) => category.selected));
 	}, [options]);
@@ -106,7 +108,8 @@ export default function Proposals({ onSetNotification, dispatch, options, userNo
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'dark:bg-section-dark-overlay dark:border-separatorDark bg-white'}
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -117,7 +120,7 @@ export default function Proposals({ onSetNotification, dispatch, options, userNo
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<ChatActive />
-						<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>My Proposals</h3>
+						<h3 className='text-blue-light-high dark:text-blue-dark-high mb-0 text-[16px] font-semibold leading-[21px] tracking-wide md:text-[18px]'>My Proposals</h3>
 						{!!active && (
 							<>
 								<span className='flex items-center gap-[8px]'>
@@ -130,7 +133,7 @@ export default function Proposals({ onSetNotification, dispatch, options, userNo
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
+									<p className='dark:text-blue-dark-medium m-0 text-[#485F7D]'>All</p>
 								</span>
 							</>
 						)}

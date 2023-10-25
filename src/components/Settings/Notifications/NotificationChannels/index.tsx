@@ -21,6 +21,7 @@ import MailFilled from '~assets/icons/email-notification.svg';
 import TelegramIcon from '~assets/icons/telegram-notification.svg';
 import DiscordIcon from '~assets/icons/discord-notification.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = { handleEnableDisabled: any; handleReset: any };
@@ -42,6 +43,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	const handleClick = (channelName: CHANNEL) => {
 		setShowModal(channelName);
 	};
+	const { resolvedTheme: theme } = useTheme();
 
 	const getVerifyToken = async (channel: CHANNEL) => {
 		try {
@@ -83,7 +85,8 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'dark:bg-section-dark-overlay dark:border-separatorDark bg-white'}
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -95,7 +98,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					<div className='flex items-center justify-between gap-[8px]'>
 						<div className='channel-header flex items-center gap-[6px]'>
 							<NotificationChannelsIcon />
-							<h3 className='mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide md:text-[18px]'>
 								Notification Channels
 							</h3>
 						</div>
@@ -119,7 +122,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
+					<p className='text-blue-light-high dark:text-blue-dark-high mb-[22px] text-[16px] font-medium leading-[21px]'>
 						Please select the socials where you would like to receive notifications:
 					</p>
 					<EmailNotificationCard

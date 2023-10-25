@@ -9,6 +9,7 @@ import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import AccountIcon from '~assets/icons/account-icon.svg';
 import { Collapse } from '../Notifications/common-ui/Collapse';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 
@@ -39,7 +40,7 @@ interface IAddressHeaderProps {
 const AddressHeader: FC<IAddressHeaderProps> = ({ checked, header, id, onChange, modal, subHeading }) => {
 	return (
 		<>
-			<article className='align-center flex items-center gap-1 text-xs font-normal leading-6 tracking-wide'>
+			<article className='align-center dark:bg-section-dark-overlay flex items-center gap-1 text-xs font-normal leading-6 tracking-wide dark:text-white'>
 				<label
 					className='cursor-pointer text-sm font-medium text-pink_primary'
 					htmlFor={id}
@@ -63,10 +64,12 @@ const Account: FC<Props> = ({ className }) => {
 	const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
 	const [isLinkProxy, setIsLinkProxy] = useState(false);
 	const [active, setActive] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className='dark:bg-section-dark-overlay dark:border-separatorDark bg-white'
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive || false);
@@ -77,15 +80,15 @@ const Account: FC<Props> = ({ className }) => {
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<AccountIcon />
-						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
-							Account Settings {active && <span className='text-sm font-normal text-blue-light-high dark:text-blue-dark-high'>Update your account settings here</span>}
+						<h3 className='text-blue-light-high dark:text-blue-dark-high mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide md:text-[18px]'>
+							Account Settings {active && <span className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>Update your account settings here</span>}
 						</h3>
 					</div>
 				}
 				key='1'
 			>
 				<Row className={`${className} flex w-full flex-col`}>
-					<div className='flex flex-col gap-4'>
+					<div className='dark:text-blue-dark-high flex flex-col gap-4'>
 						<section>
 							<AddressHeader
 								checked={isLinkAddress}
@@ -101,7 +104,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0 text-[#D2D8E0]' />
+						<Divider className='dark:border-separatorDark m-0 border-[#D2D8E0]' />
 						<section>
 							<AddressHeader
 								checked={isMultiSigAddress}
@@ -117,7 +120,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0 text-[#D2D8E0]' />
+						<Divider className='dark:border-separatorDark m-0 border-[#D2D8E0]' />
 						<section>
 							<AddressHeader
 								checked={isLinkProxy}

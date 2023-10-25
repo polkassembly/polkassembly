@@ -13,6 +13,7 @@ import { ACTIONS } from '../Reducer/action';
 import { INotificationObject } from '../types';
 import { Collapse } from '../common-ui/Collapse';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = {
@@ -38,6 +39,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkSelector();
 	const [all, setAll] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 	const openGovTwoOptions = getConsecutiveKeys(networkTrackInfo[network] || {});
 
 	const handleAllClick = (checked: boolean) => {
@@ -135,7 +137,8 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'dark:bg-section-dark-overlay dark:border-separatorDark bg-white'}
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -146,7 +149,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<OverallPostsNotification />
-						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
+						<h3 className='text-blue-light-high dark:text-blue-dark-high mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide md:text-[18px]'>
 							OpenGov Notifications
 						</h3>
 						{!!active && (
@@ -161,7 +164,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
+									<p className='dark:text-blue-dark-medium m-0 text-[#485F7D]'>All</p>
 								</span>
 							</>
 						)}

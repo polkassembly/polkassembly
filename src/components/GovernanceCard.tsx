@@ -137,10 +137,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	const [showMore, setShowMore] = useState(false);
 
-	const toggleShowMore = () => {
-		setShowMore(!showMore);
-	};
-
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
@@ -263,7 +259,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</h1>
 							{content && content.length > 120 && (
 								<p
-									onClick={toggleShowMore}
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										setShowMore(!showMore);
+									}}
 									className='m-0 p-0 text-xs text-pink_primary'
 								>
 									{showMore ? 'See Less' : 'See More'}
@@ -577,7 +577,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</h1>
 								{content && content.length > 120 && (
 									<p
-										onClick={toggleShowMore}
+										onClick={(e) => {
+											e.stopPropagation();
+											e.preventDefault();
+											setTagsModal(true);
+										}}
 										className='m-0 p-0 text-xs text-pink_primary'
 									>
 										{showMore ? 'See Less' : 'See More'}

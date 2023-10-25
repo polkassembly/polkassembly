@@ -8,13 +8,15 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistReducer, pers
 import storage from 'redux-persist/lib/storage';
 import { networkStore } from './network';
 import { userDetailsStore } from './userDetails';
+import { userUnlockTokensDataStore } from './tokenUnlocksData';
 
 export const makeStore = () => {
 	const isServer = typeof window === 'undefined';
 
 	const rootReducer = combineReducers({
 		[networkStore.name]: networkStore.reducer,
-		[userDetailsStore.name]: userDetailsStore.reducer
+		[userDetailsStore.name]: userDetailsStore.reducer,
+		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer
 	});
 
 	if (isServer) {
@@ -33,7 +35,7 @@ export const makeStore = () => {
 		const persistConfig = {
 			key: 'polkassembly',
 			storage,
-			whitelist: ['userDetails'] // make sure it does not clash with server keys
+			whitelist: ['userDetails', 'userUnlockTokensData'] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

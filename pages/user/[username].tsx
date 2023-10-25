@@ -24,6 +24,12 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import dynamic from 'next/dynamic';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+
+const VoteUnlock = dynamic(() => import('~src/components/VoteUnlock'), {
+	ssr: false
+});
 
 interface IUserProfileProps {
 	userPosts: {
@@ -111,6 +117,10 @@ export enum EProfileHistory {
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
+	const {
+		data: { addresses, user_id: userId }
+	} = userProfile;
+	const { id } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(!votesHistoryUnavailableNetworks.includes(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
@@ -196,20 +206,30 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							/>
 						)}
 					</div>
-					{!votesHistoryUnavailableNetworks.includes(network) && (
-						<div className='mb-6'>
-							<Segmented
-								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
-								onChange={(e) => setProfileHistory(e as EProfileHistory)}
-								value={profileHistory}
-							/>
+					{(profileHistory === EProfileHistory.POSTS || !votesHistoryUnavailableNetworks.includes(network)) && (
+						<div className='mb-2 flex justify-between'>
+							{!votesHistoryUnavailableNetworks.includes(network) && (
+								<Segmented
+									className='mb-4 h-[36px] w-[130px]'
+									options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
+									onChange={(e) => setProfileHistory(e as EProfileHistory)}
+									value={profileHistory}
+								/>
+							)}
+							{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && <VoteUnlock addresses={userProfile.data.addresses} />}
 						</div>
+					)}
+					{votesHistoryUnavailableNetworks.includes(network) && profileHistory === EProfileHistory.POSTS && userId === id && addresses.length > 0 && (
+						<VoteUnlock
+							addresses={userProfile.data.addresses}
+							className='pb-4'
+						/>
 					)}
 
 					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
 							<VotesHistory
-								userAddresses={userProfile?.data?.addresses || []}
+								userAddresses={addresses || []}
 								govType={selectedGov}
 							/>
 						</div>

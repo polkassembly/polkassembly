@@ -11,6 +11,7 @@ import { usePostDataContext } from '~src/context';
 
 interface IPostSummaryProps {
 	className?: string;
+	theme?: string;
 }
 
 const sanitizeSummary = (md: string) => {
@@ -24,7 +25,8 @@ const sanitizeSummary = (md: string) => {
 };
 
 const PostSummary: FC<IPostSummaryProps> = (props) => {
-	const { className } = props;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { className, theme } = props;
 	const {
 		postData: { summary }
 	} = usePostDataContext();
@@ -38,10 +40,10 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			/>
 			<button
 				onClick={() => setOpen(true)}
-				className='ai-btn-border flex cursor-pointer items-center justify-center gap-x-1 bg-white p-[1.5px] text-xs font-medium leading-[18px] text-lightBlue outline-none dark:bg-section-dark-overlay dark:text-blue-dark-medium'
+				className='ai-btn-border dark:bg-section-dark-overlay dark:text-blue-dark-medium flex cursor-pointer items-center justify-center gap-x-1 bg-white p-[1.5px] text-xs font-medium leading-[18px] text-lightBlue outline-none'
 			>
-				<p className='m-0 flex items-center justify-center rounded-[5px] bg-white px-2 py-1 dark:bg-section-dark-overlay'>
-					<span className='flex items-center justify-center text-lg text-lightBlue dark:text-blue-dark-medium'>
+				<p className='dark:bg-inactiveIconDark m-0 flex items-center justify-center rounded-[5px] bg-white px-2 py-1'>
+					<span className='dark:text-blue-dark-medium flex items-center justify-center text-lg text-lightBlue'>
 						<AiStarIcon />
 					</span>
 					<span className='text-xs font-medium leading-[18px] tracking-[0.048px]'>AI Summary</span>
@@ -49,38 +51,38 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			</button>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(className, 'ml-0 ml-4 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
+				className={classNames(className, 'dark:[&>.ant-modal-content]:bg-section-dark-overlay ml-0 ml-4 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px]')}
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}
 				title={
-					<div className='m-0 flex items-start justify-between rounded-[14px] p-5 pb-4 md:items-center md:p-6 md:pb-4'>
+					<div className='dark:bg-section-dark-overlay m-0 flex items-start justify-between rounded-[14px] p-5 pb-4 md:items-center md:p-6 md:pb-4'>
 						<article className='flex flex-col gap-x-[6px] md:flex-row md:items-center'>
 							<h3 className='m-0 flex items-center gap-x-2 p-0'>
-								<span className='flex items-center justify-center text-2xl text-lightBlue dark:text-blue-dark-medium'>
+								<span className='dark:text-blue-dark-medium flex items-center justify-center text-2xl text-lightBlue'>
 									<AiStarIcon />
 								</span>
-								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue dark:text-blue-dark-high md:text-xl md:leading-6'>AI Summary</span>
+								<span className='dark:text-blue-dark-high text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue md:text-xl md:leading-6'>AI Summary</span>
 							</h3>
 							<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.20)] py-1 pl-[6px] pr-[8px] md:py-[6px] md:pl-[10px] md:pr-3'>
 								<OpenAiIcon className='text-base md:text-2xl' />
-								<p className='m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue dark:text-blue-dark-high md:text-xs'>Powered by OpenAI</p>
+								<p className='dark:text-blue-dark-high m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue md:text-xs'>Powered by OpenAI</p>
 							</div>
 						</article>
 						<button
 							onClick={() => setOpen(false)}
 							className='mt-2 flex cursor-pointer items-center justify-center border-none bg-transparent outline-none md:mt-0'
 						>
-							<SummaryModalClose className='text-sm text-lightBlue dark:text-blue-dark-medium' />
+							<SummaryModalClose className='dark:text-blue-dark-medium text-sm text-lightBlue' />
 						</button>
 					</div>
 				}
 				footer={null}
 			>
-				<Divider className='m-0 bg-[#e1e6eb] p-0' />
+				<Divider className='dark:bg-separatorDark m-0 bg-[#e1e6eb] p-0' />
 				<div className='p-4 px-5 md:p-6'>
 					<Markdown
-						className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-blue-dark-high'
+						className='md dark:text-blue-dark-high text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue'
 						md={sanitizeSummary(summary || '')}
 					/>
 				</div>
@@ -101,6 +103,16 @@ export default styled(PostSummary)`
 	}
 	.md > p {
 		margin: 0 !important;
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
+		font-weight: 400 !important;
+	}
+	.md > ul {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
+		font-weight: 400 !important;
+	}
+	.md > ul > li {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
+		font-weight: 400 !important;
 	}
 	.ai-btn-border {
 		background-image: linear-gradient(95.24deg, #cf2dab -3.77%, #40e8ff 11.75%, rgba(106, 65, 221, 0.72) 65.2%, #b62e76 89.54%, rgba(0, 0, 0, 0) 102.72%) !important;

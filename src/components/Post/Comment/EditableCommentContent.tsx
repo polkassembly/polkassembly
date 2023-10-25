@@ -690,7 +690,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 						/>
 
-						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>
+						<div className='dark:bg-section-dark-overlay flex flex-row flex-wrap items-center gap-[1px] bg-white'>
 							<CommentReactionBar
 								className='reactions mr-0'
 								commentId={commentId}
@@ -707,10 +707,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											disabled={props.disableEdit}
 											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
 												props.isSubsquareUser ? 'disabled-reply' : ''
-											} dark:bg-transparent dark:text-blue-dark-helper`}
+											} dark:text-blue-dark-helper dark:bg-transparent`}
 											onClick={props.isSubsquareUser ? () => {} : toggleReply}
 										>
-											<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper' /> Reply
+											<ReplyIcon className='dark:text-blue-dark-helper mr-1 text-pink_primary' /> Reply
 										</Button>
 									</Tooltip>
 								) : (
@@ -718,10 +718,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 										disabled={props.disableEdit}
 										className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
 											props.isSubsquareUser ? 'disabled-reply' : ''
-										} dark:bg-transparent dark:text-blue-dark-helper`}
+										} dark:text-blue-dark-helper dark:bg-transparent`}
 										onClick={props.isSubsquareUser ? () => {} : toggleReply}
 									>
-										<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper' /> Reply
+										<ReplyIcon className='dark:text-blue-dark-helper mr-1 text-pink_primary' /> Reply
 									</Button>
 								))}
 							<Dropdown
@@ -731,10 +731,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								placement='bottomRight'
 								menu={{ items }}
 							>
-								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100 dark:text-blue-dark-helper' />
+								<ThreeDotsIcon className=' dark:text-blue-dark-helper ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
 							</Dropdown>
 							{comment.isError && (
-								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+								<div className='dark:text-blue-dark-medium ml-auto flex text-xs text-lightBlue'>
 									<Caution className='icon-container relative top-[4px] text-2xl' />
 									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
 									<div

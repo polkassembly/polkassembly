@@ -28,6 +28,7 @@ import UpArrow from '~assets/icons/up-arrow.svg';
 import styled from 'styled-components';
 import StatusTag from '~src/ui-components/StatusTag';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface BlockStatus {
 	block: number;
@@ -51,6 +52,7 @@ function sortfunc(a: BlockStatus, b: BlockStatus) {
 
 const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 	const { timeline, className } = props;
 	const {
 		postData: { postType }
@@ -107,6 +109,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		return (
 			<div className='status-tag my-1 items-center rounded-[50px] px-[15px] py-[5px] text-xs text-white'>
 				<StatusTag
+					theme={theme}
 					className='max-w-[86px] overflow-hidden text-ellipsis text-white md:max-w-full'
 					colorInverted={false}
 					status={status}
@@ -131,7 +134,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 								<article className='py-[8px]'>
 									<div className='flex items-center'>
 										<div className='flex items-center'>
-											<p className='info-container mb-0 whitespace-nowrap text-xs font-normal text-sidebarBlue'>{blockDate.format("Do MMM 'YY, h:mm a")}</p>
+											<p className='info-container mb-0 whitespace-nowrap text-xs font-normal text-sidebarBlue dark:text-white'>{blockDate.format("Do MMM 'YY, h:mm a")}</p>
 											{type !== 'Discussions' && (
 												<a
 													className='font-medium'

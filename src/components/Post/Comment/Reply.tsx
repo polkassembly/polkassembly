@@ -75,7 +75,6 @@ export default styled(Reply)`
 	margin-top: 1rem;
 
 	.comment-box {
-		background-color: white;
 		border-radius: 3px;
 		box-shadow: box_shadow_card;
 		margin-bottom: 1rem;

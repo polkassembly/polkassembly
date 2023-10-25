@@ -14,9 +14,11 @@ interface Props {
 	isAutoComplete?: boolean;
 	md: string;
 	imgHidden?: boolean;
+	theme?: string;
 }
 
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, theme }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 
 	return (

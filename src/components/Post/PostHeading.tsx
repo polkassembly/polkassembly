@@ -19,6 +19,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -36,6 +37,8 @@ interface IPostHeadingProps {
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router = useRouter();
 	const { className } = props;
+	const { resolvedTheme: theme } = useTheme();
+
 	const {
 		postData: {
 			created_at,
@@ -110,12 +113,12 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					/>
 				)}
 				{requestedAmt && (
-					<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+					<h5 className='dark:text-blue-dark-high text-sm font-medium text-bodyBlue'>
 						Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
 					</h5>
 				)}
 			</div>
-			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
+			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} dark:text-blue-dark-high mb-3 text-lg font-medium leading-7 text-bodyBlue`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')
@@ -158,7 +161,10 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 									type='vertical'
 									style={{ borderLeft: '1px solid #485F7D' }}
 								/>
-								<PostSummary className='flex xs:mt-2 md:mt-0' />
+								<PostSummary
+									theme={theme}
+									className='flex xs:mt-2 md:mt-0'
+								/>
 							</>
 						) : null}
 					</CreationLabel>

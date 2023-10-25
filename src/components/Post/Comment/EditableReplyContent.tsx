@@ -16,6 +16,7 @@ import { Caution } from '~src/ui-components/CustomIcons';
 import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTheme } from 'next-themes';
 
 import ReportButton from '../ActionsBar/ReportButton';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
@@ -47,6 +48,7 @@ const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.l
 const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const { comments, setComments } = useCommentDataContext();
 
@@ -554,13 +556,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				) : (
 					<>
 						<Markdown
-							className='bg-blue-grey rounded-b-md px-2 py-2 text-sm md:px-4'
+							theme={theme}
+							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 							md={content}
 						/>
-						<div className='flex flex-wrap items-center gap-3'>
+						<div className='dark:bg-section-dark-overlay flex flex-wrap items-center gap-3 bg-[#ebf0f5]'>
 							{isEditable && (
 								<Button
-									className={'flex items-center border-none p-0 text-pink_primary shadow-none'}
+									className={'dark:text-blue-dark-helper flex items-center border-none p-0 text-pink_primary shadow-none dark:bg-transparent'}
 									disabled={loading}
 									onClick={toggleEdit}
 								>
@@ -570,14 +573,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										</span>
 									) : (
 										<span className='flex items-center text-xs'>
-											<FormOutlined className='mr-1' /> Edit
+											<FormOutlined className='dark:text-blue-dark-helper mr-1' /> Edit
 										</span>
 									)}
 								</Button>
 							)}
 							{id === userId ? (
 								<Button
-									className={'flex items-center border-none pl-1.5 pr-0 text-xs text-pink_primary shadow-none'}
+									className={'dark:text-blue-dark-helper flex items-center border-none pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:bg-transparent'}
 									onClick={deleteReply}
 								>
 									<DeleteOutlined />
@@ -589,7 +592,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 									<ReportButton
 										isDeleteModal={true}
 										proposalType={(reply.post_type as any) || postType}
-										className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
+										className={`dark:text-blue-dark-helper flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
 										type={EReportType.REPLY}
 										onSuccess={removeReplyContent}
 										commentId={commentId}
@@ -600,7 +603,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							)}
 							{id && !isEditing && (
 								<ReportButton
-									className='text-xs text-pink_primary'
+									className='dark:text-blue-dark-helper text-xs text-pink_primary'
 									proposalType={postType}
 									postId={postIndex}
 									commentId={commentId}
@@ -616,7 +619,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										color='#E5007A'
 									>
 										<Button
-											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
+											className={`dark:text-blue-dark-helper mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent ${
 												reply.reply_source ? 'disabled-reply' : ''
 											}`}
 										>
@@ -626,7 +629,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								) : (
 									!isReplying && (
 										<Button
-											className={'flex items-center border-none p-0 text-xs text-pink_primary shadow-none'}
+											className={'dark:text-blue-dark-helper flex items-center border-none p-0 text-xs text-pink_primary shadow-none dark:bg-transparent'}
 											onClick={() => setIsReplying(!isReplying)}
 										>
 											<ReplyIcon className='mr-1' />
@@ -636,7 +639,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								)
 							) : null}
 							{reply.isReplyError && (
-								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+								<div className='dark:text-blue-dark-medium ml-auto flex text-xs text-lightBlue'>
 									<Caution className='icon-container relative top-[4px] text-2xl' />
 									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
 									<div

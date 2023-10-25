@@ -8,7 +8,6 @@ import { Tooltip, Skeleton } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import VerifiedIcon from '~assets/icons/verified-icon.svg';
-import { useRouter } from 'next/router';
 import EmailIcon from '~assets/icons/email-icon.svg';
 import LegalIcon from '~assets/icons/legal-icon.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
@@ -30,6 +29,7 @@ interface Props {
 	web3Name?: string;
 	addressPrefix?: string;
 	imgUrl?: string;
+	sinceDate?: Date;
 }
 
 export interface INetworkWalletErr {
@@ -58,11 +58,10 @@ const StyledPopup = styled.div`
 	}
 `;
 
-const IdentityBadge = ({ className, address, identity, flags, web3Name, addressPrefix, imgUrl }: Props) => {
+const IdentityBadge = ({ className, address, identity, flags, addressPrefix, imgUrl, sinceDate }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
-	const router = useRouter();
 	const identityArr = [
 		{ key: 'Email', value: identity?.email },
 		{ key: 'Judgements', value: identity?.judgements || [] },
@@ -134,23 +133,22 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name, addressP
 						/>
 					)}
 					<a
-						href={`https://w3n.id/${web3Name}`}
+						href={`https://polkaverse.com/accounts/${address}`}
 						target='_blank'
 						rel='noreferrer'
 						className='flex text-pink-500'
 						onClick={(e) => {
 							e.stopPropagation();
 							e.preventDefault();
-							router.push(`https://w3n.id/${web3Name}`);
+							window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
 						}}
 					>
 						<ShareScreenIcon className='ml-1 mr-2' />
 					</a>
 				</div>
 				<div className='my-1 text-xs text-bodyBlue'>{address}</div>
-				<p className='mb-0.5 text-xs text-[#7C899A]'>Since: Jul 27, 2023</p>
 				<div className='flex items-center justify-between'>
-					<p className='mb-0 text-xs text-[#7C899A]'>Last Seen: 5 days ago</p>
+					<p className='mb-0.5 text-xs text-[#7C899A]'>Since: {sinceDate?.toLocaleDateString()}</p>
 					<div className='flex items-center'>
 						{identityArr.map((item, index) => {
 							return (

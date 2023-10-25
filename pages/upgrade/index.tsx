@@ -6,24 +6,30 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Listing from '~src/components/Listing';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import { setNetwork } from '~src/redux/network';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.UPGRADE_PIPS;
-	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
-		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -40,12 +46,12 @@ interface ITechCommProposalsProps {
 }
 
 const UpgradePIPs: FC<ITechCommProposalsProps> = (props) => {
-	const { data, error,network } = props;
-	const { setNetwork } = useNetworkContext();
+	const { data, error, network } = props;
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		dispatch(setNetwork(props.network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -54,9 +60,9 @@ const UpgradePIPs: FC<ITechCommProposalsProps> = (props) => {
 	if (!data) return null;
 	const { posts, count } = data;
 
-	const onPaginationChange = (page:number) => {
+	const onPaginationChange = (page: number) => {
 		router.push({
-			query:{
+			query: {
 				page
 			}
 		});
@@ -65,28 +71,34 @@ const UpgradePIPs: FC<ITechCommProposalsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Tech Committee Proposals' network={network}/>
-			<div className='flex sm:items-center mt-3'>
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On-chain Upgrade PIPs</h1>
+			<SEOHead
+				title='Tech Committee Proposals'
+				network={network}
+			/>
+			<div className='mt-3 flex sm:items-center'>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>On-chain Upgrade PIPs</h1>
 			</div>
 			{/* Intro and Create Post Button */}
-			<div className="flex flex-col md:flex-row">
-				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
-				This is the place to discuss on-chain Upgrade PIPs. Upgrade Committee PIPs are proposed by the Upgrade Committee and approved by the Polymesh Governance Council. Only the Upgrade Committee can amend these PIPs
+			<div className='flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+					This is the place to discuss on-chain Upgrade PIPs. Upgrade Committee PIPs are proposed by the Upgrade Committee and approved by the Polymesh Governance Council. Only the
+					Upgrade Committee can amend these PIPs
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
+			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md'>
 				<div className='flex items-center justify-between'>
-					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
-						<FilteredTags/>
+					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
+						<FilteredTags />
 					</div>
-					<FilterByTags className='my-6 sm:mr-14 xs:mx-6 xs:my-2'/>
+					<FilterByTags className='my-6 xs:mx-6 xs:my-2 sm:mr-14' />
 				</div>
-				<Listing posts={posts} proposalType={ProposalType.UPGRADE_PIPS} />
-				<div className='flex justify-end mt-6'>
-					{
-						!!count && count > 0 && count > LISTING_LIMIT &&
+				<Listing
+					posts={posts}
+					proposalType={ProposalType.UPGRADE_PIPS}
+				/>
+				<div className='mt-6 flex justify-end'>
+					{!!count && count > 0 && count > LISTING_LIMIT && (
 						<Pagination
 							defaultCurrent={1}
 							pageSize={LISTING_LIMIT}
@@ -96,7 +108,7 @@ const UpgradePIPs: FC<ITechCommProposalsProps> = (props) => {
 							onChange={onPaginationChange}
 							responsive={true}
 						/>
-					}
+					)}
 				</div>
 			</div>
 		</>

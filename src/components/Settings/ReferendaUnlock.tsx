@@ -8,7 +8,7 @@ import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from 'src/types';
+import { EVoteDecisionType, NotificationStatus } from 'src/types';
 import { Button, Divider, Form, Spin } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import Web3 from 'web3';
@@ -17,9 +17,10 @@ import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
 import formatBnBalance from '../../util/formatBnBalance';
 import getNetwork from '../../util/getNetwork';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const abi = require('../../moonbeamConvictionVoting.json');
 
@@ -37,7 +38,7 @@ export const getTrackName = (network: string, trackId: number) => {
 	}
 	return name;
 };
-
+const ZERO_BN = new BN(0);
 interface IReferendaUnlockProps {
 	className?: string;
 	isBalanceUpdated: boolean;
@@ -51,6 +52,10 @@ interface Vote {
 	trackId: number;
 	unlocksAt: string;
 	conviction: number;
+	ayeBalance: BN;
+	nayBalance: BN;
+	abstainBalance: BN;
+	voteType: EVoteDecisionType | null;
 }
 
 interface Unlock {
@@ -62,15 +67,67 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 interface IReferendaUnlockStatus {
 	remove: {
-		[key: string]: { isLoading: boolean, message: string };
+		[key: string]: { isLoading: boolean; message: string };
 	};
 	unlock: {
-		[key: string]: { isLoading: boolean, message: string };
+		[key: string]: { isLoading: boolean; message: string };
 	};
 }
+export const getUnlockVotesDetails = (vote: any) => {
+	let ayeBalance = ZERO_BN;
+	let nayBalance = ZERO_BN;
+	let abstainBalance = ZERO_BN;
+	let balance = ZERO_BN;
+	let voteType = null;
+	let conviction = 0;
+	if (vote?.isSplit) {
+		conviction = 0.1;
+		ayeBalance = vote?.asSplit.aye || '0';
+		nayBalance = vote?.asSplit.nay || '0';
+		voteType = EVoteDecisionType.SPLIT;
+	} else if (vote?.isSplitAbstain) {
+		conviction = 0.1;
+		ayeBalance = vote?.asSplitAbstain.aye || '0';
+		nayBalance = vote?.asSplitAbstain.nay || '0';
+		abstainBalance = vote?.asSplitAbstain.abstain || '0';
+		voteType = EVoteDecisionType.ABSTAIN;
+	} else if (vote?.asStandard !== undefined) {
+		balance = vote?.asStandard.balance;
+		if (vote?.asStandard.vote.isAye) {
+			voteType = EVoteDecisionType.AYE;
+		} else {
+			voteType = EVoteDecisionType.NAY;
+		}
+
+		if (vote?.asStandard.vote.conviction.isLocked1x) {
+			conviction = 1;
+		} else if (vote?.asStandard.vote.conviction.isLocked2x) {
+			conviction = 2;
+		} else if (vote?.asStandard.vote.conviction.isLocked3x) {
+			conviction = 3;
+		} else if (vote?.asStandard.vote.conviction.isLocked4x) {
+			conviction = 4;
+		} else if (vote?.asStandard.vote.conviction.isLocked5x) {
+			conviction = 5;
+		} else if (vote?.asStandard.vote.conviction.isLocked6x) {
+			conviction = 6;
+		} else {
+			conviction = 0.1;
+		}
+	}
+	return {
+		abstainBalance,
+		amount: balance,
+		ayeBalance,
+		conviction: conviction,
+		nayBalance,
+		vote: !!voteType,
+		voteType
+	};
+};
 
 const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [address, setAddress] = useState<string>('');
 	const [votes, setVotes] = useState<Vote[]>([]);
 	const [unlocks, setUnlocks] = useState<Unlock[]>([]);
@@ -87,14 +144,14 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		if (!accounts.length) {
 			getAccounts();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [accounts.length]);
 
 	useEffect(() => {
 		if (address) {
 			getLockedBalance();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, address]);
 
 	const getLockedBalance = async () => {
@@ -119,42 +176,22 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 
 		const votes: Vote[] = [];
 		const votingInfoEntries = await api.query.convictionVoting.votingFor.entries(address);
-		votingInfoEntries.forEach((([keys, votingInfo]) => {
+		votingInfoEntries.forEach(([keys, votingInfo]) => {
 			const arr = keys.toHuman() as [string, number];
-			votes.push(...votingInfo.asCasting.votes.map((vote) => {
-				const refIndex = vote[0];
-				let conviction = 0;
-				if(vote[1].asStandard.vote.conviction.isLocked1x){
-					conviction = 1;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked2x){
-					conviction = 2;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked3x){
-					conviction = 3;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked4x){
-					conviction = 4;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked5x){
-					conviction = 5;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked6x){
-					conviction = 6;
-				}
-				else{
-					conviction = 0;
-				}
-				return {
-					amount: vote[1].asStandard.balance,
-					conviction: conviction,
-					refIndex,
-					trackId: Number(arr[1]),
-					unlocksAt: votingInfo.asCasting.prior[0].toString(),
-					vote: vote[1].asStandard.vote.isAye
-				};
-			}));
-		}));
+			votes.push(
+				...votingInfo.asCasting.votes.map((vote) => {
+					const refIndex = vote[0];
+					const details = getUnlockVotesDetails(vote[1]);
+
+					return {
+						...details,
+						refIndex,
+						trackId: Number(arr[1]),
+						unlocksAt: votingInfo.asCasting.prior[0].toString()
+					};
+				})
+			);
+		});
 
 		setVotes(votes);
 		votes.forEach((vote) => {
@@ -212,18 +249,20 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 			return;
 		}
 
-		setAccounts(addresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address,
-				meta: {
-					genesisHash: null,
-					name: 'metamask',
-					source: 'metamask'
-				}
-			};
+		setAccounts(
+			addresses.map((address: string): InjectedAccountWithMeta => {
+				const account = {
+					address,
+					meta: {
+						genesisHash: null,
+						name: 'metamask',
+						source: 'metamask'
+					}
+				};
 
-			return account;
-		}));
+				return account;
+			})
+		);
 
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);
@@ -271,7 +310,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		contract.methods
-			.removeVoteForTrack(vote.refIndex, vote.trackId)
+			.removeVote(vote.refIndex)
 			.send({
 				from: address,
 				to: contractAddress
@@ -388,142 +427,160 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 			});
 	};
 
-	const GetAccountsButton = () =>
+	const GetAccountsButton = () => (
 		<Form>
 			<Form.Item className='button-container'>
 				<Button
-					className='bg-pink_primary rounded-md outline-none border-none text-white mt-2'
+					className='mt-2 rounded-md border-none bg-pink_primary text-white outline-none'
 					onClick={getAccounts}
 					size={'large'}
 				>
 					Vote
 				</Button>
 			</Form.Item>
-		</Form>;
+		</Form>
+	);
 
 	const noAccount = accounts.length === 0;
 
 	return (
-		<Spin spinning={!api || !apiReady} indicator={<LoadingOutlined />}>
+		<Spin
+			spinning={!api || !apiReady}
+			indicator={<LoadingOutlined />}
+		>
 			<div className={className}>
-				{noAccount
-					? <GetAccountsButton />
-					: null
-				}
+				{noAccount ? <GetAccountsButton /> : null}
 				<Form id='referendaUnlock'>
 					<div>
 						<Form.Item>
-							<h1 className='dashboard-heading' >Unlock Opengov locks</h1>
-							{ accounts.length > 0 ? <AccountSelectionForm
-								title='Choose account'
-								accounts={accounts}
-								address={address}
-								onAccountChange={onAccountChange}
-								withBalance
-								isBalanceUpdated={isBalanceUpdated}
-							/> :
-								<span className='text-sidebarBlue'>No accounts found, Please approve request from your wallet and/or <a href="javascript:window.location.reload(true)">refresh</a> and try again! </span>
-							}
+							<h1 className='dashboard-heading'>Unlock Opengov locks</h1>
+							{accounts.length > 0 ? (
+								<AccountSelectionForm
+									title='Choose account'
+									accounts={accounts}
+									address={address}
+									onAccountChange={onAccountChange}
+									withBalance
+									isBalanceUpdated={isBalanceUpdated}
+								/>
+							) : (
+								<span className='text-sidebarBlue'>
+									No accounts found, Please approve request from your wallet and/or <a href='javascript:window.location.reload(true)'>refresh</a> and try again!{' '}
+								</span>
+							)}
 						</Form.Item>
 					</div>
 					<div>
 						<Form.Item>
-							{lockedBalance.isZero()
-								? <div className='text-sidebarBlue'>You currently have no referenda locks.</div>
-								: <div className='text-sidebarBlue'>Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span></div>
-							}
-							{
-								votes.length ?
-									<>
-										<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
-											<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
-												<span className='col-span-2'>Referendums</span>
-												<span className='col-span-2'>Locked</span>
-												<span className='col-span-2'>Unlocks At</span>
-												<span className='col-span-2'></span>
-											</li>
-											<Divider className='my-1'/>
-											{votes.map((vote) => (
-												<>
-													<li key={vote.refIndex.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
+							{lockedBalance.isZero() ? (
+								<div className='text-sidebarBlue'>You currently have no referenda locks.</div>
+							) : (
+								<div className='text-sidebarBlue'>
+									Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>
+								</div>
+							)}
+							{votes.length ? (
+								<>
+									<ul className='mt-3 flex list-none flex-col text-sidebarBlue'>
+										<li className='grid grid-cols-6 gap-x-5 py-1 font-medium md:grid-cols-8'>
+											<span className='col-span-2'>Referendums</span>
+											<span className='col-span-2'>Locked</span>
+											<span className='col-span-2'>Unlocks At</span>
+											<span className='col-span-2'></span>
+										</li>
+										<Divider className='my-1' />
+										{votes.map((vote) => (
+											<>
+												<li
+													key={vote.refIndex.toString()}
+													className='grid grid-cols-6 items-center gap-x-5 py-1 md:grid-cols-8'
+												>
+													<span className='col-span-2'>
+														<Link href={`/referenda/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
+													</span>
+													{vote.voteType === EVoteDecisionType.AYE || vote?.voteType === EVoteDecisionType.NAY ? (
 														<span className='col-span-2'>
-															<Link href={`/referendum/${vote.refIndex.toString()}`}>
-															Referendum #{vote.refIndex.toString()}
-															</Link>
-														</span>
-														<span className='col-span-2'>
+															{vote.voteType === EVoteDecisionType.AYE ? 'Aye' : 'Nay'}
+															{': '}
 															{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
 														</span>
-														<span className='col-span-2'>{vote.unlocksAt}</span>
+													) : (
+														<div className='col-span-2 flex flex-col'>
+															<span className='col-span-2'> Aye: {formatBnBalance(String(vote.ayeBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+															<span className='col-span-2'> Nay: {formatBnBalance(String(vote.nayBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+															{vote.voteType === EVoteDecisionType.ABSTAIN && (
+																<span className='col-span-2'> Abstain: {formatBnBalance(String(vote.abstainBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+															)}
+														</div>
+													)}
+													<span className='col-span-2'>{vote.unlocksAt}</span>
+													<span className='col-span-2'>
+														<Button
+															size='small'
+															className='rounded-md border-none bg-pink_primary text-white outline-none'
+															onClick={() => handleRemove(vote)}
+															loading={loadingStatus?.remove?.[vote?.refIndex?.toString()]?.isLoading}
+														>
+															Remove
+														</Button>
+													</span>
+												</li>
+												<Divider className='my-1' />
+											</>
+										))}
+									</ul>
+									{/* <div>{unlocking ? <>Please Confirm to Unlock.</> : <>*Remove Votes will also call Unlock.</>}</div> */}
+								</>
+							) : null}
+							{unlocks.length ? (
+								<>
+									<ul className='mt-3 flex list-none flex-col text-sidebarBlue'>
+										<li className='grid grid-cols-6 gap-x-5 py-1 font-medium md:grid-cols-8'>
+											<span className='col-span-2'>Tracks</span>
+											<span className='col-span-2'>Locked</span>
+											<span className='col-span-2'></span>
+										</li>
+										<Divider className='my-1' />
+										{unlocks.map((unlock) => {
+											const { amount, trackId } = unlock;
+											const name = getTrackName(network, trackId);
+											return (
+												<>
+													<li
+														key={unlock.trackId.toString()}
+														className='grid grid-cols-6 gap-x-5 py-1 md:grid-cols-8'
+													>
+														<span className='col-span-2'>
+															<Link
+																className='capitalize'
+																href={`/${name.split('_').join('-')}`}
+															>
+																{name.split('_').join(' ')}
+															</Link>
+														</span>
+														<span className='col-span-2'>{formatBnBalance(String(amount), { numberAfterComma: 2, withUnit: true }, network)}</span>
 														<span className='col-span-2'>
 															<Button
 																size='small'
-																className='bg-pink_primary rounded-md outline-none border-none text-white'
-																onClick={() => handleRemove(vote)}
-																loading={loadingStatus?.remove?.[vote?.refIndex?.toString()]?.isLoading}
+																className='rounded-md border-none bg-pink_primary text-white outline-none'
+																onClick={() => handleUnlock(unlock)}
+																loading={loadingStatus?.unlock?.[unlock?.trackId?.toString()]?.isLoading}
 															>
-																Remove
+																Unlock
 															</Button>
 														</span>
 													</li>
-													<Divider className='my-1'/>
+													<Divider className='my-1' />
 												</>
-											))}
-										</ul>
-										{/* <div>{unlocking ? <>Please Confirm to Unlock.</> : <>*Remove Votes will also call Unlock.</>}</div> */}
-									</>
-									: null
-							}
-							{
-								unlocks.length ?
-									<>
-										<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
-											<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
-												<span className='col-span-2'>Tracks</span>
-												<span className='col-span-2'>Locked</span>
-												<span className='col-span-2'></span>
-											</li>
-											<Divider className='my-1'/>
-											{unlocks.map((unlock) => {
-												const { amount, trackId } = unlock;
-												const name = getTrackName(network, trackId);
-												return (
-													<>
-														<li key={unlock.trackId.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
-															<span className='col-span-2'>
-																<Link className='capitalize' href={`/${name.split('_').join('-')}`}>
-																	{name.split('_').join(' ')}
-																</Link>
-															</span>
-															<span className='col-span-2'>
-																{formatBnBalance(String(amount), { numberAfterComma: 2, withUnit: true }, network)}
-															</span>
-															<span className='col-span-2'>
-																<Button
-																	size='small'
-																	className='bg-pink_primary rounded-md outline-none border-none text-white'
-																	onClick={() => handleUnlock(unlock)}
-																	loading={loadingStatus?.unlock?.[unlock?.trackId?.toString()]?.isLoading}
-																>
-																	Unlock
-																</Button>
-															</span>
-														</li>
-														<Divider className='my-1'/>
-													</>
-												);
-											})}
-										</ul>
-									</>
-									: null
-							}
+											);
+										})}
+									</ul>
+								</>
+							) : null}
 						</Form.Item>
 					</div>
 				</Form>
-				{isAccountLoading
-					? <Loader className='loader-wrapper' />
-					: null
-				}
+				{isAccountLoading ? <Loader className='loader-wrapper' /> : null}
 			</div>
 		</Spin>
 	);

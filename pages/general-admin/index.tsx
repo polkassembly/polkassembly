@@ -7,21 +7,28 @@ import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { redisGet, redisSet } from '~src/auth/redis';
 import TrackListing from '~src/components/Listing/Tracks/TrackListing';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import { setNetwork } from '~src/redux/network';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { generateKey } from '~src/util/getRedisKeys';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
 	if (!trackStatus && !filterBy) {
 		return {
@@ -31,9 +38,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-	const network = getNetworkFromReqHeaders(req.headers);
 
-	if(!networkTrackInfo[network][PostOrigin.GENERAL_ADMIN]) {
+	if (!networkTrackInfo[network][PostOrigin.GENERAL_ADMIN]) {
 		return { props: { error: `Invalid track for ${network}` } };
 	}
 
@@ -44,11 +50,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const redisKey = generateKey({ filterBy, keyType: 'trackId', network, page, sortBy, subsquidProposalType, trackId, trackStatus });
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
+	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(redisKey);
-		if (redisData){
+		if (redisData) {
 			const props = JSON.parse(redisData);
-			if(!props.error){
+			if (!props.error) {
 				return { props };
 			}
 		}
@@ -57,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		const strTrackStatus = trackStatus ? String(trackStatus) : 'all';
 		if (status.toLowerCase().includes(strTrackStatus)) {
 			prev[strTrackStatus] = getOnChainPosts({
-				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
@@ -98,7 +104,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		(props.posts as any)[key] = results[index];
 	});
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
+	if (process.env.IS_CACHING_ALLOWED == '1') {
 		await redisSet(redisKey, JSON.stringify(props));
 	}
 
@@ -112,23 +118,28 @@ interface IGeneralAdminProps {
 
 const GeneralAdmin: FC<IGeneralAdminProps> = (props) => {
 	const { posts, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		dispatch(setNetwork(props.network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
-	return <>
-		<SEOHead title={PostOrigin.GENERAL_ADMIN.split(/(?=[A-Z])/).join(' ')} network={network}/>
-		<TrackListing
-			trackName={PostOrigin.GENERAL_ADMIN}
-			posts={posts}
-		/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={PostOrigin.GENERAL_ADMIN.split(/(?=[A-Z])/).join(' ')}
+				network={network}
+			/>
+			<TrackListing
+				trackName={PostOrigin.GENERAL_ADMIN}
+				posts={posts}
+			/>
+		</>
+	);
 };
 
 export default GeneralAdmin;

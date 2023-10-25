@@ -10,56 +10,58 @@ export interface ICommentsDataContextProviderProps extends PropsWithChildren {
 	initialCommentsData: ICommentsData;
 }
 export interface ICommentsData {
-    timelines: Array<ITimeline>;
-    comments:{[index:string]:Array<IComment>};
-    currentTimeline:ITimeline | null;
-	overallSentiments:{
-        [index:string]: number;
-    }
+	timelines: Array<ITimeline>;
+	comments: { [index: string]: Array<IComment> };
+	currentTimeline: ITimeline | null;
+	overallSentiments: {
+		[index: string]: number;
+	};
 }
 
 export interface ICommentsDataContext {
-    timelines: Array<ITimeline>;
-    setTimelines: React.Dispatch<React.SetStateAction<ITimeline[]>>;
-    comments:{[index:string]:Array<IComment>};
-    setComments: React.Dispatch<React.SetStateAction<{
-        [index: string]: IComment[];
-    }>>;
-    currentTimeline:ITimeline | null;
-    setCurrentTimeline:React.Dispatch<React.SetStateAction<ITimeline | null>>;
-	overallSentiments:{
-        [index:string]: number;
-    },
-	setOverallSentiments:React.Dispatch<React.SetStateAction<{[index:string]: number}>>;
+	timelines: Array<ITimeline>;
+	setTimelines: React.Dispatch<React.SetStateAction<ITimeline[]>>;
+	comments: { [index: string]: Array<IComment> };
+	setComments: React.Dispatch<
+		React.SetStateAction<{
+			[index: string]: IComment[];
+		}>
+	>;
+	currentTimeline: ITimeline | null;
+	setCurrentTimeline: React.Dispatch<React.SetStateAction<ITimeline | null>>;
+	overallSentiments: {
+		[index: string]: number;
+	};
+	setOverallSentiments: React.Dispatch<React.SetStateAction<{ [index: string]: number }>>;
 }
 
-export const CommentsDataContext: React.Context<ICommentsDataContext> = createContext(
-	{} as ICommentsDataContext
-);
+export const CommentsDataContext: React.Context<ICommentsDataContext> = createContext({} as ICommentsDataContext);
 
 const CommentsDataContextProvider: FC<ICommentsDataContextProviderProps> = (props) => {
 	const { initialCommentsData, children } = props;
 	const [timelines, setTimelines] = useState<ITimeline[]>(initialCommentsData.timelines);
-	const [comments, setComments] = useState<{[index:string]:Array<IComment>}>(initialCommentsData.comments);
+	const [comments, setComments] = useState<{ [index: string]: Array<IComment> }>(initialCommentsData.comments);
 	const [currentTimeline, setCurrentTimeline] = useState<ITimeline | null>(initialCommentsData.currentTimeline || null);
-	const [overallSentiments, setOverallSentiments] =useState<{[index:string]: number}>({
-		[ESentiments.Against]:0,
-		[ESentiments.SlightlyAgainst]:0,
-		[ESentiments.Neutral]:0,
-		[ESentiments.SlightlyFor]:0,
-		[ESentiments.For]:0
+	const [overallSentiments, setOverallSentiments] = useState<{ [index: string]: number }>({
+		[ESentiments.Against]: 0,
+		[ESentiments.SlightlyAgainst]: 0,
+		[ESentiments.Neutral]: 0,
+		[ESentiments.SlightlyFor]: 0,
+		[ESentiments.For]: 0
 	});
 	return (
-		<CommentsDataContext.Provider value={{
-			comments,
-			currentTimeline,
-			overallSentiments,
-			setComments,
-			setCurrentTimeline,
-			setOverallSentiments,
-			setTimelines,
-			timelines
-		}}>
+		<CommentsDataContext.Provider
+			value={{
+				comments,
+				currentTimeline,
+				overallSentiments,
+				setComments,
+				setCurrentTimeline,
+				setOverallSentiments,
+				setTimelines,
+				timelines
+			}}
+		>
 			{children}
 		</CommentsDataContext.Provider>
 	);

@@ -8,7 +8,6 @@ import dynamic from 'next/dynamic';
 // import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -22,18 +21,26 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
 import { trackEvent } from 'analytics';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
-	loading: () => <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-		<Skeleton className='mt-8' active />
-	</div>,
+	loading: () => (
+		<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
+			<Skeleton
+				className='mt-8'
+				active
+			/>
+		</div>
+	),
 	ssr: false
 });
 
 const Container = styled.article`
-.changeColor .ant-alert-message{
-	color:var(--bodyBlue);
-}`;
+	.changeColor .ant-alert-message {
+		color: var(--bodyBlue);
+	}
+`;
 
 const initAuthResponse: IAuthResponse = {
 	isTFAEnabled: false,
@@ -46,22 +53,23 @@ interface Props {
 	onWalletSelect: (wallet: Wallet) => void;
 	walletError: string | undefined;
 	isModal?: boolean;
-	setLoginOpen?: (pre: boolean)=> void
-	setSignupOpen?: (pre: boolean)=> void;
-  isDelegation?: boolean;
-  className?: string;
-  setWithPolkasafe?: any;
+	setLoginOpen?: (pre: boolean) => void;
+	setSignupOpen?: (pre: boolean) => void;
+	isDelegation?: boolean;
+	className?: string;
+	setWithPolkasafe?: any;
 }
-const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe  }) => {
+const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { username } = validation;
+	const dispatch = useDispatch();
 	const router = useRouter();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
-	const { network } = useNetworkContext();
-	const getWallet=() => {
+	const { network } = useNetworkSelector();
+	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
 	};
@@ -80,7 +88,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			}
 
 			if (data?.token) {
-				handleTokenChange(data.token, currentUser);
+				handleTokenChange(data.token, currentUser, dispatch);
 				if (isModal) {
 					setLoading(false);
 					setLoginOpen && setLoginOpen(false);
@@ -120,7 +128,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 		if (data?.token) {
 			setError('');
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 			if (isModal) {
 				setLoading(false);
 				setAuthResponse(initAuthResponse);
@@ -135,8 +143,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 		if (isModal && setSignupOpen && setLoginOpen) {
 			setSignupOpen(true);
 			setLoginOpen(false);
-		}
-		else {
+		} else {
 			router.push('/signup');
 		}
 	};
@@ -146,35 +153,55 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	}, [isDelegation]);
 
 	return (
-		<Container className={`bg-white shadow-md rounded-md flex flex-col ${className} `}>
-			<div className='flex items-center justify-start px-8 pt-4 pb-2'>
+		<Container className={`flex flex-col rounded-md bg-white shadow-md ${className} `}>
+			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
 				<LoginLogo className='mr-3' />
-				<span className="text-[20px] font-semibold text-bodyBlue">Login</span>
+				<span className='text-[20px] font-semibold text-bodyBlue'>Login</span>
 			</div>
-			<Divider style={{ background: '#D2D8E0', flexGrow: 1 }} className='mt-1 px-0' />
-			{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-bodyBlue changeColor' />}
+			<Divider
+				style={{ background: '#D2D8E0', flexGrow: 1 }}
+				className='mt-1 px-0'
+			/>
+			{defaultWallets.length === 0 && isDelegation && (
+				<Alert
+					message='Wallet extension not detected.'
+					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
+					type='info'
+					showIcon
+					className='changeColor  mx-8 mb-5 text-bodyBlue'
+				/>
+			)}
 
-			{walletError && <Alert message={walletError} type="error" />}
-			{authResponse.isTFAEnabled ?
+			{walletError && (
+				<Alert
+					message={walletError}
+					type='error'
+				/>
+			)}
+			{authResponse.isTFAEnabled ? (
 				<TFALoginForm
-					onBack={() => {setAuthResponse(initAuthResponse); setError(''); }}
+					onBack={() => {
+						setAuthResponse(initAuthResponse);
+						setError('');
+					}}
 					onSubmit={handleSubmitAuthCode}
 					error={error || ''}
 					loading={loading}
-				/> :
+				/>
+			) : (
 				<AuthForm
 					onSubmit={handleSubmitForm}
-					className="flex flex-col gap-y-3 px-8"
+					className='flex flex-col gap-y-3 px-8'
 				>
-					<div className="flex flex-col gap-y-1">
+					<div className='flex flex-col gap-y-1'>
 						<label
-							className="text-base text-lightBlue "
-							htmlFor="username"
+							className='text-base text-lightBlue '
+							htmlFor='username'
 						>
 							Enter Username or Email
 						</label>
 						<Form.Item
-							name="username"
+							name='username'
 							rules={[
 								{
 									message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
@@ -189,60 +216,82 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 									min: username.minLength
 								}
 							]}
-							validateTrigger="onSubmit"
+							validateTrigger='onSubmit'
 						>
 							<Input
 								disabled={loading}
-								placeholder="Type here"
-								className="rounded-md py-3 px-4"
-								id="username" />
+								placeholder='Type here'
+								className='rounded-md px-4 py-3'
+								id='username'
+							/>
 						</Form.Item>
 					</div>
 
-					<div className="flex flex-col gap-y-1 -mt-4">
+					<div className='-mt-4 flex flex-col gap-y-1'>
 						<label
-							className="text-base text-lightBlue"
-							htmlFor="password"
+							className='text-base text-lightBlue'
+							htmlFor='password'
 						>
 							Enter Password
 						</label>
 						<Form.Item
-							name="password"
-							validateTrigger="onSubmit"
+							name='password'
+							validateTrigger='onSubmit'
 						>
 							<Input.Password
 								disabled={loading}
-								placeholder="Type here"
-								className="rounded-md py-3 px-4"
-								id="password" />
+								placeholder='Type here'
+								className='rounded-md px-4 py-3'
+								id='password'
+							/>
 						</Form.Item>
-						<div className="text-right text-pink_primary mt-[-20px]">
-							<div className='cursor-pointer' onClick={() => {isModal && setLoginOpen && setLoginOpen(false); router.push('/request-reset-password');}}>Forgot Password?</div>
+						<div className='mt-[-20px] text-right text-pink_primary'>
+							<div
+								className='cursor-pointer'
+								onClick={() => {
+									isModal && setLoginOpen && setLoginOpen(false);
+									router.push('/request-reset-password');
+								}}
+							>
+								Forgot Password?
+							</div>
 						</div>
 					</div>
 
-					<div className="flex justify-center items-center">
+					<div className='flex items-center justify-center'>
 						<Button
 							loading={loading}
-							htmlType="submit"
-							size="large"
-							className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
+							htmlType='submit'
+							size='large'
+							className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
 						>
 							Login
 						</Button>
 					</div>
 
 					<div>
-						<WalletButtons disabled={loading} onWalletSelect={onWalletSelect} showPolkasafe={canUsePolkasafe(network)} onPolkasafeSelect={setWithPolkasafe}/>
+						<WalletButtons
+							disabled={loading}
+							onWalletSelect={onWalletSelect}
+							showPolkasafe={canUsePolkasafe(network)}
+							onPolkasafeSelect={setWithPolkasafe}
+						/>
 					</div>
 
 					{error && <FilteredError text={error} />}
 
-					<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-semibold'>
+					<div className='mb-5 mt-2 flex items-center justify-center gap-x-2 font-semibold'>
 						<label className='text-md text-bodyBlue'>Don&apos;t have an account?</label>
-						<div onClick={handleClick} className='text-md text-pink_primary cursor-pointer'> Sign Up </div>
+						<div
+							onClick={handleClick}
+							className='text-md cursor-pointer text-pink_primary'
+						>
+							{' '}
+							Sign Up{' '}
+						</div>
 					</div>
-				</AuthForm>}
+				</AuthForm>
+			)}
 		</Container>
 	);
 };

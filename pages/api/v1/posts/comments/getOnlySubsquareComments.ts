@@ -10,13 +10,11 @@ import { ProposalType } from '~src/global/proposalType';
 import messages from '~src/util/messages';
 import { MessageType } from '~src/auth/types';
 
-export const getSubsquareCommentsFromFirebase = async ({ postId, network, postType }: {
-	postId: string, network: string, postType: ProposalType
-}) => {
+export const getSubsquareCommentsFromFirebase = async ({ postId, network, postType }: { postId: string; network: string; postType: ProposalType }) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
-		const commentsSnapshot = await postRef.collection('comments').where('comment_source','==' ,'subsquare').get();
-		const commentId = commentsSnapshot.docs.map(doc => doc.id);
+		const commentsSnapshot = await postRef.collection('comments').where('comment_source', '==', 'subsquare').get();
+		const commentId = commentsSnapshot.docs.map((doc) => doc.id);
 		return {
 			data: commentId,
 			error: null,
@@ -34,7 +32,7 @@ export const getSubsquareCommentsFromFirebase = async ({ postId, network, postTy
 const handler: NextApiHandler<Array<string> | { error: MessageType | string }> = async (req, res) => {
 	const { postId = 0, postType } = req.body;
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
 	const { data, error, status } = await getSubsquareCommentsFromFirebase({
 		network,
 		postId: postId.toString(),
@@ -42,9 +40,9 @@ const handler: NextApiHandler<Array<string> | { error: MessageType | string }> =
 	});
 
 	if (error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	} else {
-		res.status(status).json(data);
+		return res.status(status).json(data);
 	}
 };
 

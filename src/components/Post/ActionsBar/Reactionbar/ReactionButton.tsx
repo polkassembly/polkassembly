@@ -5,24 +5,24 @@
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useContext } from 'react';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import React, { FC } from 'react';
 
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 export interface IReactionButtonProps {
 	className?: string;
 	reaction: IReaction | string;
-	reactions:  IReactions;
+	reactions: IReactions;
 	commentId?: string;
 	reactionsDisabled: boolean;
 	setReactionsDisabled: React.Dispatch<React.SetStateAction<boolean>>;
-	setReactions: React.Dispatch<React.SetStateAction<IReactions>>
-    setLikeModalOpen?:(pre:boolean)=>void;
-    setDislikeModalOpen?:(pre:boolean)=>void;
-    importedReactions?:boolean;
+	setReactions: React.Dispatch<React.SetStateAction<IReactions>>;
+	setLikeModalOpen?: (pre: boolean) => void;
+	setDislikeModalOpen?: (pre: boolean) => void;
+	importedReactions?: boolean;
 }
 
 type IReaction = '👍' | '👎';
@@ -35,24 +35,37 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	reactions,
 	setReactions,
 	reactionsDisabled,
-	setReactionsDisabled,
 	setLikeModalOpen,
 	setDislikeModalOpen,
 	importedReactions = false
 }) => {
-	const { postData: { postIndex, postType, track_number } } = usePostDataContext();
-	const { id, username } = useContext(UserDetailsContext);
+	const {
+		postData: { postIndex, postType, track_number }
+	} = usePostDataContext();
+	const { id, username } = useUserDetailsSelector();
 
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const reacted = username && usernames?.includes(username);
 
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
-		if(reaction == '👍') {
-			return reacted ? <LikeFilled /> : <div onClick={() => !id && setLikeModalOpen && setLikeModalOpen(true)}><LikeOutlined /></div>;
+		if (reaction == '👍') {
+			return reacted ? (
+				<LikeFilled />
+			) : (
+				<div onClick={() => !id && setLikeModalOpen && setLikeModalOpen(true)}>
+					<LikeOutlined />
+				</div>
+			);
 		}
 
-		if(reaction == '👎') {
-			return reacted ? <LikeFilled rotate={180} /> : <div onClick={() => !id && setDislikeModalOpen && setDislikeModalOpen(true)}><LikeOutlined rotate={180} /></div>;
+		if (reaction == '👎') {
+			return reacted ? (
+				<LikeFilled rotate={180} />
+			) : (
+				<div onClick={() => !id && setDislikeModalOpen && setDislikeModalOpen(true)}>
+					<LikeOutlined rotate={180} />
+				</div>
+			);
 		}
 
 		return reaction;
@@ -60,17 +73,31 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const handleReact = async () => {
 		if (!id || !username) {
-			if(reaction == '👍') {
+			if (reaction == '👍') {
 				setLikeModalOpen && setLikeModalOpen(true);
-			}
-			else{
+			} else {
 				setDislikeModalOpen && setDislikeModalOpen(true);
 			}
 			return;
-		}else{
-			setReactionsDisabled(true);
-			const actionName  =`${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
-			const { data , error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
+		} else {
+			const newReactions = { ...reactions };
+			if (reacted) {
+				newReactions[reaction as IReaction].count--;
+				newReactions[reaction as IReaction].usernames = newReactions[reaction as IReaction].usernames?.filter((name) => name !== username);
+			} else {
+				newReactions[reaction as IReaction].count++;
+				newReactions[reaction as IReaction].usernames?.push(username || '');
+
+				Object.keys(newReactions).forEach((key) => {
+					if (key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
+						newReactions[key as IReaction].count--;
+						newReactions[key as IReaction].usernames = newReactions[key as IReaction].usernames?.filter((name) => name !== username);
+					}
+				});
+			}
+			setReactions(newReactions);
+			const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
+			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
 				commentId: commentId || null,
 				postId: postIndex,
 				postType,
@@ -82,59 +109,43 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			if (error || !data) {
 				console.error('Error while reacting', error);
 			}
+		}
+	};
 
-			if(data) {
-				const newReactions = { ...reactions };
-				if(reacted) {
-					newReactions[reaction as IReaction].count--;
-					newReactions[reaction as IReaction].usernames = newReactions[reaction as IReaction].usernames?.filter(name => name !== username);
-				}else {
-					newReactions[reaction as IReaction].count++;
-					newReactions[reaction as IReaction].usernames?.push(username || '');
-
-					//remove username from other reactions
-					Object.keys(newReactions).forEach(key => {
-						if(key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
-							newReactions[key as IReaction].count--;
-							newReactions[key as IReaction].usernames = newReactions[key as IReaction].usernames?.filter(name => name !== username);
-						}
-					});
-				}
-				setReactions(newReactions);
-			}
-
-			setReactionsDisabled(false);
-		}};
-
-	const button =  <span className={className}>
-		<Button
-			disabled={reactionsDisabled}
-			className={'border-none px-2 shadow-none disabled:opacity-[0.5] disabled:bg-transparent'}
-			onClick={handleReact}
-		>
-			<span className="flex items-center text-pink_primary">
-				{getReactionIcon(reaction, reacted)}
-				<span className="ml-2 text-xs">
-					{reactions?.[reaction as IReaction].count}
+	const button = (
+		<span className={className}>
+			<Button
+				disabled={reactionsDisabled}
+				className={'border-none px-2 shadow-none disabled:bg-transparent disabled:opacity-[0.5]'}
+				onClick={handleReact}
+			>
+				<span className='flex items-center text-pink_primary'>
+					{getReactionIcon(reaction, reacted)}
+					<span className='ml-2 text-xs'>{reactions?.[reaction as IReaction].count}</span>
 				</span>
-			</span>
-		</Button>
-	</span>;
+			</Button>
+		</span>
+	);
 
 	let popupContent = '';
-	if(importedReactions){
+	if (importedReactions) {
 		popupContent = 'Likes are disabled for imported comments.';
-	}
-	else if (usernames?.length > 10) {
+	} else if (usernames?.length > 10) {
 		popupContent = `${usernames.slice(0, 10).join(', ')} and ${usernames.length - 10} others`;
 	} else {
 		popupContent = usernames?.join(', ');
 	}
 
-	return usernames?.length > 0 ?
-		<Tooltip color='#E5007A' title={popupContent}>
+	return usernames?.length > 0 ? (
+		<Tooltip
+			color='#E5007A'
+			title={popupContent}
+		>
 			{button}
-		</Tooltip> : button;
+		</Tooltip>
+	) : (
+		button
+	);
 };
 
 export default ReactionButton;

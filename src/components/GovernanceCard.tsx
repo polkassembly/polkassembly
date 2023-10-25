@@ -17,7 +17,7 @@ import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TopicTag from '~src/ui-components/TopicTag';
 import BN from 'bn.js';
 import { chainProperties } from 'src/global/networkConstants';
-import NewChatIcon from '~assets/icons/chat-icon.svg';
+import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import { useApiContext } from '~src/context';
@@ -194,7 +194,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			<div
 				className={`${className} ${
 					ownProposal && 'border-l-4 border-l-pink_primary'
-				} min-h-[120px] border-2 border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl xs:hidden sm:flex sm:p-3`}
+				} min-h-[120px] border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark xs:hidden sm:flex sm:p-3`}
 			>
 				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
@@ -240,23 +240,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:hidden sm:mb-1 sm:ml-[120px] sm:mt-0 sm:flex lg:flex-row lg:items-center'>
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
 							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-								<LikeOutlined style={{ color: '#485F7D' }} />
+								<LikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
 								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 							<div className='mr-0.5 items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-								<DislikeOutlined style={{ color: '#485F7D' }} />
+								<DislikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
 								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 							{isCommentsVisible ? (
 								<>
 									<div className='items-center text-lightBlue dark:text-blue-dark-medium xs:hidden sm:flex'>
-										<NewChatIcon
-											style={{
-												color: '#485F7D'
-											}}
-											className='mr-1 text-lightBlue dark:text-blue-dark-medium'
-										/>{' '}
-										{commentsCount}
+										<CommentsIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' /> {commentsCount}
 									</div>
 								</>
 							) : null}
@@ -264,8 +258,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<>
 									<Divider
 										type='vertical'
-										className='max-lg:hidden'
-										style={{ borderLeft: '1px solid #90A0B7' }}
+										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 									/>
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
@@ -293,7 +286,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 							<Divider
 								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
+								className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 							/>
 							{cid ? (
 								<>
@@ -306,13 +299,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</Link>
 									<Divider
 										type='vertical'
-										style={{ borderLeft: '1px solid #485F7D' }}
+										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 									/>
 								</>
 							) : null}
 							{relativeCreatedAt && (
 								<>
-									<div className='flex items-center text-lightBlue dark:text-blue-dark-medium sm:mt-0'>
+									<div className='flex items-center text-lightBlue dark:text-icon-dark-inactive sm:mt-0'>
 										<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
 									</div>
 								</>
@@ -321,8 +314,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<>
 									<Divider
 										type='vertical'
-										className='max-sm:hidden'
-										style={{ borderLeft: '1px solid #90A0B7' }}
+										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 									/>
 									<Tooltip
 										overlayClassName='max-w-none'
@@ -348,8 +340,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<>
 									<Divider
 										type='vertical'
-										className='max-sm:hidden'
-										style={{ borderLeft: '1px solid #90A0B7' }}
+										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
 									/>
 									<VotesProgressInListing
 										index={index}
@@ -365,8 +356,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<div className='flex items-center sm:-mt-1'>
 									<Divider
 										type='vertical'
-										className='sm:mt-1'
-										style={{ borderLeft: '1px solid #485F7D' }}
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 									/>
 									<TopicTag
 										theme={theme}
@@ -378,11 +368,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 
 						{!!end && !!currentBlock && (
-							<div className='flex items-center text-lightBlue dark:text-blue-dark-medium'>
+							<div className='flex items-center text-lightBlue dark:text-icon-dark-inactive'>
 								<Divider
-									className='hidden lg:inline-block'
+									className='border-l-1 hidden border-lightBlue dark:border-icon-dark-inactive lg:inline-block'
 									type='vertical'
-									style={{ borderLeft: '1px solid #485F7D' }}
 								/>
 								<ClockCircleOutlined className='mr-1' />
 								{end > currentBlock ? (
@@ -454,12 +443,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							/>
 							<Divider
 								type='vertical'
-								className='max-lg:hidden xs:mt-0.5 xs:inline-block'
-								style={{ borderLeft: '1px solid #485F7D' }}
+								className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
 							/>
 							{relativeCreatedAt && (
 								<>
-									<div className='mt-0 flex items-center text-lightBlue dark:text-blue-dark-medium'>
+									<div className='mt-0 flex items-center text-lightBlue dark:text-icon-dark-inactive'>
 										<ClockCircleOutlined className='mr-1' /> <span> {relativeCreatedAt}</span>
 									</div>
 								</>
@@ -468,8 +456,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<div className='flex items-center'>
 									<Divider
 										type='vertical'
-										className='max-lg:hidden xs:mt-0.5 xs:inline-block'
-										style={{ borderLeft: '1px solid #90A0B7' }}
+										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
 									/>
 									<div className='mt-2 min-w-[30px]'>
 										<Progress
@@ -485,8 +472,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<div className='flex items-center'>
 									<Divider
 										type='vertical'
-										className='max-lg:hidden xs:mt-0.5 xs:inline-block'
-										style={{ borderLeft: '1px solid #90A0B7' }}
+										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
 									/>
 									<div>
 										<VotesProgressInListing
@@ -508,8 +494,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<div className='flex'>
 									<Divider
 										type='vertical'
-										className='max-lg:hidden'
-										style={{ borderLeft: '1px solid #90A0B7' }}
+										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden'
 									/>
 									<div className='flex gap-1'>
 										{tags?.slice(0, 2).map((tag, index) => (
@@ -559,7 +544,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</label>
 						<Divider
 							type='horizontal'
-							style={{ borderLeft: '2px solid #D2D8E0' }}
+							className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive'
 						/>
 					</>
 				}

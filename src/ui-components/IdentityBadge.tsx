@@ -7,14 +7,7 @@ import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-der
 import { Tooltip } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import EmailIcon from '~assets/icons/email-icon.svg';
-import LegalIcon from '~assets/icons/legal-icon.svg';
-import JudgementIcon from '~assets/icons/judgement-icon.svg';
-import TwitterIcon from '~assets/icons/twitter-icon.svg';
-import WebIcon from '~assets/icons/web-icon.svg';
-import RiotIcon from '~assets/icons/riot-icon.svg';
-import ShareScreenIcon from '~assets/icons/screen-share-icon.svg';
-import PgpIcon from '~assets/icons/pgp-icon.svg';
+import { EmailIcon, JudgementIcon, LegalIcon, PgpIcon, RiotIcon, ShareScreenIcon, TwitterIcon, WebIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -22,6 +15,7 @@ interface Props {
 	identity?: DeriveAccountRegistration | null;
 	flags?: DeriveAccountFlags;
 	web3Name?: string;
+	theme?: string;
 }
 
 const StyledPopup = styled.div`
@@ -46,22 +40,23 @@ const StyledPopup = styled.div`
 const getIdentityIcons = (key: string) => {
 	switch (key) {
 		case 'Legal':
-			return <LegalIcon className='mr-1.5' />;
+			return <LegalIcon className='mr-1.5 text-lightBlue dark:text-icon-dark-inactive' />;
 		case 'Email':
-			return <EmailIcon className='mr-2' />;
+			return <EmailIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive' />;
 		case 'Judgements':
-			return <JudgementIcon className='mr-1.5' />;
+			return <JudgementIcon className='mr-1.5 text-lightBlue dark:text-icon-dark-inactive' />;
 		case 'Pgp':
-			return <PgpIcon className='mr-1' />;
+			return <PgpIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' />;
 		case 'Riot':
-			return <RiotIcon className='mr-1.5' />;
+			return <RiotIcon className='mr-1.5 text-lightBlue dark:text-icon-dark-inactive' />;
 		case 'Twitter':
-			return <TwitterIcon className='mr-1.5 mt-1' />;
+			return <TwitterIcon className='mr-1.5 mt-1 text-lightBlue dark:text-icon-dark-inactive' />;
 		case 'Web':
-			return <WebIcon />;
+			return <WebIcon className='text-lightBlue dark:text-icon-dark-inactive' />;
 	}
 };
-const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const IdentityBadge = ({ className, address, identity, flags, web3Name, theme }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
@@ -95,7 +90,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 
 	const displayJudgements = JSON.stringify(judgements?.map(([, jud]) => jud.toString()));
 	const popupContent = (
-		<StyledPopup>
+		<StyledPopup className='dark:bg-section-dark-overlay'>
 			{identityArr.map((item, index) => {
 				{
 					return (
@@ -170,7 +165,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	return (
 		<div className={className}>
 			<Tooltip
-				color='#fff'
+				color={theme === 'dark' ? '#0D0D0D' : 'white'}
 				title={popupContent}
 			>
 				{infoElem}

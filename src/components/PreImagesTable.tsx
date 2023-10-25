@@ -62,7 +62,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'hash',
 			key: 'hash',
 			width: 350,
-			render: (hash) => <span className='font-medium text-sidebarBlue'>{hash}</span>
+			render: (hash) => <span className='font-medium text-sidebarBlue dark:text-white'>{hash}</span>
 		},
 		{
 			title: 'Author',
@@ -77,7 +77,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			key: 'deposit',
 			width: 120,
 			render: (deposit) => (
-				<span className='whitespace-pre font-medium text-sidebarBlue'>{deposit && formatBnBalance(deposit, { numberAfterComma: 2, withUnit: true }, network)}</span>
+				<span className='whitespace-pre font-medium text-sidebarBlue dark:text-white'>{deposit && formatBnBalance(deposit, { numberAfterComma: 2, withUnit: true }, network)}</span>
 			)
 		},
 		{
@@ -90,12 +90,12 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 				proposedCall.section &&
 				proposedCall.method && (
 					<div className='flex items-center'>
-						<code className='rounded-md px-2'>
+						<code className='rounded-md px-2 dark:bg-slate-200'>
 							{proposedCall.section}.{proposedCall.method}
 						</code>
 						{proposedCall.args && (
 							<ProfileOutlined
-								className='ml-2 cursor-pointer rounded-md p-1 text-base hover:text-pink_primary'
+								className='ml-2 cursor-pointer rounded-md p-1 text-base hover:text-pink_primary dark:font-normal dark:text-white dark:hover:text-blue-dark-helper'
 								onClick={() => setModalArgs(proposedCall.args)}
 							/>
 						)}
@@ -107,14 +107,14 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'length',
 			key: 'length',
 			width: 65,
-			render: (length) => <span className='font-medium text-sidebarBlue'>{length}</span>
+			render: (length) => <span className='font-medium text-sidebarBlue dark:text-white'>{length}</span>
 		},
 		{
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
 			width: 135,
-			render: (status) => <span className='font-medium text-sidebarBlue'>{status}</span>
+			render: (status) => <span className='font-medium text-sidebarBlue dark:text-white'>{status}</span>
 		}
 	];
 
@@ -146,6 +146,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					className={'dark:[&>.ant-modal-content]:bg-section-dark-overlay '}
 					footer={[
 						<Button
+							className='dark:bg-transparent dark:text-white'
 							key='back'
 							onClick={() => setModalArgs(null)}
 						>

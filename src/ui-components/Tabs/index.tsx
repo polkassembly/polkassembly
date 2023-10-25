@@ -23,10 +23,15 @@ const StyledTabs = styled(AntdTabs)`
 		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '')} !important;
 		border-bottom: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important;
+		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
 		// background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
 		// border-bottom-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
 	}
 	.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
+	}
+	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active,
+	.ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab-active {
 		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
 	}
 `;

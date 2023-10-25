@@ -124,8 +124,11 @@ const Tabs = styled(AntdTabs)`
 	}
 	.ant-tabs-tab-active {
 		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
-		border: ${(props) => (props.theme == 'dark' ? '1 px solid #4B4B4B' : '')} !important;
+		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '')} !important;
 		border-bottom: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important;
+	}
+	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {
+		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 	}
 `;
 
@@ -192,14 +195,14 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				title='User Profile'
 				network={network}
 			/>
-			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 md:bg-white md:pb-0 md:shadow-md ${className}`}>
+			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 dark:bg-section-dark-overlay md:bg-white md:pb-0 md:shadow-md ${className}`}>
 				<Details
 					userPosts={userPosts.data}
 					userProfile={userProfile}
 				/>
-				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 md:flex'>
+				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 dark:bg-section-dark-overlay md:flex'>
 					<div className='flex items-start justify-between'>
-						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue '>Activity</h2>
+						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue dark:text-white'>Activity</h2>
 						{isOpenGovSupported(network) && (
 							<Select
 								value={selectedGov}
@@ -243,7 +246,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						<div className='fullHeight'>
 							<Tabs
 								theme={theme}
-								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue dark:bg-section-dark-overlay'
 								type='card'
 								items={tabItems as any}
 							/>

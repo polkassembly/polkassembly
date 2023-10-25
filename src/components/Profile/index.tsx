@@ -418,7 +418,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 };
 
 export default styled(Profile)`
-	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
 		background-color: white;
 		border-top-color: white;
 		border-left-color: white;
@@ -426,14 +426,14 @@ export default styled(Profile)`
 		border-bottom-color: #e1e6eb;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-tab-active {
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab-active {
 		border-top-color: #e1e6eb;
 		border-left-color: #e1e6eb;
 		border-right-color: #e1e6eb;
 		border-radius: 6px 6px 0 0 !important;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-nav:before {
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-nav:before {
 		border-bottom: 1px solid #e1e6eb;
 	}
 `;

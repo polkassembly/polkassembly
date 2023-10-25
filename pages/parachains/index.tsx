@@ -13,7 +13,7 @@ import ParachainInfoCard from '~src/components/Parachains/ParachainInfoCard';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
-import ChainData from '../../src/components/Parachains/ChainDataTable';
+import ChainDataTable from '../../src/components/Parachains/ChainDataTable';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -32,18 +32,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 	return { props: { network } };
 };
-
-const ChainDataTable = styled(ChainData)`
-	.ant-table-thead > tr > th,
-	.ant-table-tbody > tr {
-		background-color: ${(props) => (props.theme === 'dark' ? 'blue' : 'white')} !important;
-	}
-	td {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
-		font-weight: 500;
-		background-color: ${(props) => (props.theme === 'dark' ? 'blue' : 'white')} !important;
-	}
-`;
 
 const Parachains = ({ className, network }: Props) => {
 	const dispatch = useDispatch();
@@ -72,7 +60,6 @@ const Parachains = ({ className, network }: Props) => {
 		{
 			children: (
 				<ChainDataTable
-					theme={theme}
 					data={parachainsData}
 					chain='polkadot'
 				/>
@@ -89,7 +76,6 @@ const Parachains = ({ className, network }: Props) => {
 		{
 			children: (
 				<ChainDataTable
-					theme={theme}
 					data={parachainsData}
 					chain='kusama'
 				/>

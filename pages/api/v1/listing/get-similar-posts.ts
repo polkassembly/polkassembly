@@ -101,7 +101,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	}
 
 	let result: any = [];
-	if (subsquidRes['data'].proposal && posts) {
+	if (subsquidData && posts) {
 		result = subsquidData
 			.map((proposal: any) => posts.filter((post: any) => proposal.index === post?.post_id))
 			.flat()
@@ -163,7 +163,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			}
 		});
 		postTopics = await Promise.all(postsTopicPromise);
-		if (subsquidRes['data'].proposal && postTopics) {
+		if (subsquidData && postTopics) {
 			result = subsquidData
 				.map((proposal: any) => postTopics.filter((postTopic: any) => proposal.index === postTopic?.post_id))
 				.flat()

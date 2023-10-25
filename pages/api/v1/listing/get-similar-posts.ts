@@ -103,7 +103,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	let result: any = [];
 	if (subsquidData && posts) {
 		result = subsquidData
-			.map((proposal: any) => posts.filter((post: any) => proposal.index === post?.post_id))
+			.map((proposal: any) => posts.filter((post: any) => proposal.index === post?.post_id && proposal.index !== postId))
 			.flat()
 			.map((match: any) => {
 				// console.log(`ids from active tags -> ${match}`);
@@ -113,7 +113,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 	if (result.length < 3) {
 		result = subsquidData
-			.filter((proposal: any) => proposal.trackNumber === trackNumber && proposal.trackNumber !== null)
+			.filter((proposal: any) => proposal.trackNumber === trackNumber && proposal.trackNumber !== null && proposal.index !== postId)
 			.map((proposal: any) => {
 				// console.log(`ids from active tracks -> ${proposal.index}`);
 				return proposal.index;
@@ -175,12 +175,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	}
 
 	if (result.length < 3) {
-		result = subsquidData.map((proposal: any) => {
-			// console.log(`ids from non matches -> ${proposal.index}`);
-			return proposal.index;
-		});
+		result = subsquidData
+			.filter((proposal: any) => proposal.index !== postId)
+			.map((proposal: any) => {
+				// console.log(`ids from non matches -> ${proposal.index}`);
+				return proposal.index;
+			});
 	}
-	result = result.filter((number: any) => number !== postId);
 	result = result.slice(0, 3);
 
 	const postDataPromise = result.map(async (id: any) => {

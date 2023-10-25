@@ -264,8 +264,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const last_comment_at = new Date();
 
 	const summary = (await fetchContentSummary(content, proposalType)) || '';
-
+	let defaultProposerAddress: any = '';
+	if (!proposer_address) {
+		defaultProposerAddress = await getDefaultUserAddressFromId(user.id);
+	}
 	const { data: postUser } = await getUserWithAddress(proposer_address);
+
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		content,
 		created_at,
@@ -274,7 +278,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		isDeleted: false,
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
-		proposer_address: proposer_address, // postAddress
+		proposer_address: proposer_address || defaultProposerAddress, // postAddress
 		summary: summary,
 		tags: tags || [],
 		title,

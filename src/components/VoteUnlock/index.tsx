@@ -1,6 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+// logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
+
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
@@ -203,7 +206,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		);
 	};
 
-	// logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
 	const getLockData = async (address: string) => {
 		if (!api || !apiReady) return;
 		setTotalUnlockableBalance(ZERO_BN);
@@ -251,10 +253,10 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
-	const getClearReferendaTx = (api: ApiPromise, address: string, ids: [BN, BN][], palletReferenda = 'convictionVoting'): SubmittableExtrinsic<'promise'> | null => {
+	const getClearReferendaTx = (api: ApiPromise, address: string, ids: [BN, BN][]): SubmittableExtrinsic<'promise'> | null => {
 		if (!api || !apiReady || !ids.length) return null;
 
-		const variables = ids.map(([track, refId]) => api.tx[palletReferenda].removeVote(track, refId));
+		const variables = ids.map(([track, refId]) => api.tx.convictionVoting.removeVote(track as any, refId as any));
 
 		ids
 			.reduce((all: BN[], [track]) => {
@@ -265,7 +267,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				return all;
 			}, [])
 			.forEach((track): void => {
-				variables.push(api.tx[palletReferenda].unlock(track, address));
+				variables.push(api.tx?.convictionVoting?.unlock(track as any, address));
 			});
 
 		return api.tx.utility.batch(variables);

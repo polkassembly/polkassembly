@@ -121,6 +121,7 @@ import JudgementSVG from '~assets/icons/judgement-icon.svg';
 import WebSVG from '~assets/icons/web-icon.svg';
 import ShareScreenSVG from '~assets/icons/screen-share-icon.svg';
 import PgpSVG from '~assets/icons/pgp-icon.svg';
+import RedirectSVG from '~assets/icons/redirect-icon.svg';
 
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -251,6 +252,13 @@ export const SummaryModalClose = (props: Partial<CustomIconComponentProps>) => (
 export const OpenGovBannerIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={OpenGovBannerSVG}
+		{...props}
+	/>
+);
+
+export const RedirectIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={RedirectSVG}
 		{...props}
 	/>
 );

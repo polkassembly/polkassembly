@@ -550,17 +550,17 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 													disabled={withPolkasafe && !multisigAddress}
 													htmlType='submit'
 													size='large'
-													className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
+													className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
 												>
 													Login
 												</Button>
 											</div>
 											<div>
-												<Divider>
+												<Divider style={{ color: '#90A0B7' }}>
 													<div className='flex items-center gap-x-2'>
 														<span className='text-md text-grey_primary'>Or</span>
 														<Button
-															className='text-md border-none p-0 font-semibold text-pink_primary outline-none'
+															className='text-md border-none p-0 font-normal text-pink_primary outline-none'
 															disabled={loading}
 															onClick={handleToggle}
 														>
@@ -569,22 +569,20 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 													</div>
 												</Divider>
 											</div>
+											<div className='-mt-2 flex justify-center pb-5 font-normal'>
+												<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
+												<div
+													onClick={handleClick}
+													className='cursor-pointer text-base text-pink_primary'
+												>
+													&nbsp; Sign Up{' '}
+												</div>
+											</div>
 										</>
 									)
 								)}
 								<div>{error && <FilteredError text={error} />}</div>
 							</AuthForm>
-						)}
-
-						{!authResponse.isTFAEnabled && (
-							<div className='flex items-center justify-center'>
-								<Button
-									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
-									onClick={() => handleBackToLogin()}
-								>
-									Go Back
-								</Button>
-							</div>
 						)}
 					</>
 				)}

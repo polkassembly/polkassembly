@@ -114,7 +114,7 @@ const AddressDropdown = ({
 	return (
 		<Dropdown
 			trigger={['click']}
-			className={className}
+			className={`${className} -mx-[18px]`}
 			disabled={isDisabled}
 			overlayClassName='z-[1056]'
 			menu={{

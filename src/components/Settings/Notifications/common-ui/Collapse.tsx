@@ -29,7 +29,7 @@ export const Collapse = styled(AntDCollapse)`
 
 	.ant-collapse .ant-collapse-content {
 		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
-		border-top: ${(props) => (props.theme === 'dark' ? '1px solid #90909060' : '')} !important;
+		border-top: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 
 	@media (max-width: 768px) {

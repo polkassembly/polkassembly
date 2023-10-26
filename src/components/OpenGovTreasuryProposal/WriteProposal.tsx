@@ -174,7 +174,7 @@ const WriteProposal = ({
 				indicator={<LoadingOutlined />}
 			>
 				<div className='write-proposal my-8 flex flex-col'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Have you initiated a discussion post for your proposal already? </label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>Have you initiated a discussion post for your proposal already? </label>
 					<Radio.Group
 						disabled={loading}
 						onChange={(e) => handleIsDiscussionLinkedChange(e.target.value)}
@@ -205,7 +205,7 @@ const WriteProposal = ({
 				>
 					{isDiscussionLinked && (
 						<>
-							<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>Link Discussion Post</label>
+							<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>Link Discussion Post</label>
 							<Form.Item
 								name='discussion_link'
 								rules={[
@@ -225,7 +225,7 @@ const WriteProposal = ({
 									name='discussion_link'
 									value={discussionLink}
 									onChange={(e) => handleChangeDiscussionLink(e.target.value, Boolean(isDiscussionLinked))}
-									className='h-[40px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:placeholder-white dark:focus:border-[#91054F]'
 									placeholder='https://'
 								/>
 							</Form.Item>
@@ -253,7 +253,7 @@ const WriteProposal = ({
 					)}
 
 					{isDiscussionLinked !== null && (isDiscussionLinked ? discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound : true) && (
-						<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+						<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
 							<label className='font-medium'>Write a proposal :</label>
 							<div className='mt-4'>
 								<label className='mb-0.5'>
@@ -262,7 +262,7 @@ const WriteProposal = ({
 								<Form.Item name='title'>
 									<Input
 										name='title'
-										className='h-[40px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										onChange={(e) => {
 											setTitle(e.target.value);
 											onChangeLocalStorageSet({ title: e.target.value }, Boolean(isDiscussionLinked));
@@ -309,7 +309,7 @@ const WriteProposal = ({
 							</div>
 						</div>
 					)}
-					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
+					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-separatorDark'>
 						<Button
 							htmlType='submit'
 							className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white ${

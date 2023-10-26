@@ -310,14 +310,14 @@ export default styled(DashboardTrackListing)`
 		font-weight: ${(props) => (props.theme === 'dark' ? '500' : '600')} !important;
 		line-height: 21px;
 		white-space: nowrap;
-		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #90909060' : '')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 	.column .ant-table-thead > tr > th:nth-child(1) {
 		text-align: center;
 	}
 	.ant-table-cell {
 		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
-		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #90909060' : '')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
 	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {

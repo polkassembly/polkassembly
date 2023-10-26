@@ -18,6 +18,7 @@ import FabButton from '~assets/icons/fab-icon.svg';
 import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -47,6 +48,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const { id } = useUserDetailsSelector();
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	// useEffect(() => {
 	// if (!isAIChatBotOpen) return;
@@ -130,7 +132,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	if (treasuryProposalCreationAllowedNetwork.includes(network?.toUpperCase())) {
 		data.splice(0, 0, {
-			component: <OpenGovTreasuryProposal />
+			component: <OpenGovTreasuryProposal theme={theme} />
 		});
 	}
 

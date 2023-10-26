@@ -137,7 +137,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 
 	return (
 		<Link href={`/referenda/${proposal?.post_id}`}>
-			<div className={'rounded-[6px] rounded-t-[6px] border-[1px] border-solid border-[#D2D8E0] hover:border-[#E5007A]'}>
+			<div className={'rounded-[6px] rounded-t-[6px] border-[1px] border-solid border-[#D2D8E0] hover:border-[#E5007A] dark:border-separatorDark'}>
 				<div className='flex justify-between border-[1px] px-6 py-6 hover:border-pink_primary max-sm:flex-col max-sm:items-start max-sm:gap-2'>
 					<div className='flex flex-col '>
 						<h2 className='text-medium text-sm text-blue-light-high dark:text-blue-dark-high'>{mainTitle}</h2>
@@ -158,7 +158,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							<div className='flex items-center justify-center gap-2'>
 								<Divider
 									type='vertical'
-									style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}
+									className='border-l-1 ml-[4px] mr-[4px] border-lightBlue dark:border-icon-dark-inactive'
 								/>
 								{relativeCreatedAt && (
 									<>

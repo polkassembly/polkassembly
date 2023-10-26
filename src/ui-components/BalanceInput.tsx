@@ -129,7 +129,7 @@ const BalanceInput = ({
 					onBlur={() => onBlur?.()}
 					addonAfter={chainProperties[network]?.tokenSymbol}
 					name={formItemName || 'balance'}
-					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
+					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 					onChange={(e) => onBalanceChange(e.target.value)}
 					placeholder={placeholder}
 					value={formatedBalance(String(balance || ZERO_BN), unit)}
@@ -148,6 +148,7 @@ export default styled(BalanceInput)`
 		border-radius: 0px 4px 4px 0px !important ;
 	}
 	.suffixColor .ant-input {
+		background-color: '#0D0D0D' !important;
 		color: var(--bodyBlue) !important;
 		border-radius: 4px 0px 0px 4px !important;
 		height: 40px !important;

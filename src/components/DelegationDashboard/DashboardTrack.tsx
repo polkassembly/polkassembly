@@ -217,7 +217,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 				</span>
 			</div>
 			{status ? (
-				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6 dark:bg-section-dark-overlay'>
+				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6 dark:border-separatorDark dark:bg-section-dark-overlay'>
 					<div className='flex items-center gap-3 text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 						{handleTracksIcon(handleTrack(String(track)), 28)}
 						<span>{handleTrack(String(track))}</span>
@@ -276,7 +276,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 									Voting power for this track has not been delegated yet
 									<Button
 										onClick={() => setOpenDelegateModal(true)}
-										className='ml-1 flex items-center justify-center border-none text-sm font-normal tracking-wide text-pink_primary shadow-none max-md:mt-[10px]'
+										className='ml-1 flex items-center justify-center border-none text-sm font-normal tracking-wide text-pink_primary shadow-none dark:bg-transparent max-md:mt-[10px]'
 									>
 										<DelegatedProfileIcon className='mr-[7px]' />
 										<span className='mt-[1px]'>Delegate</span>

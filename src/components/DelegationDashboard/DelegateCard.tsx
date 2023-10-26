@@ -85,7 +85,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			)}
 
 			{delegate?.dataSource === 'parity' && (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary  px-5 dark:bg-[#141C2D]'>
+				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary px-5 dark:bg-[#33071E]'>
 					<ParityTechIcon />
 					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
 				</div>
@@ -203,7 +203,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						</div>
 					</div>
 
-					<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-medium '}>
+					<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
 						<p className='w-[90%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
 					</div>
 					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0]  dark:border-separatorDark '>

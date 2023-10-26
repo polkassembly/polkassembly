@@ -286,7 +286,7 @@ const IdentityForm = ({
 					/>
 				)}
 				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
 						Your Address{' '}
 						<HelperTooltip
 							className='ml-1'
@@ -319,7 +319,7 @@ const IdentityForm = ({
 					</div>
 				</div>
 				<div className='mt-6'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
 						Display Name <span className='text-[#FF3C5F]'>*</span>
 					</label>
 					<Form.Item
@@ -352,7 +352,7 @@ const IdentityForm = ({
 					</Form.Item>
 				</div>
 				<div className='mt-6'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Legal Name</label>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>Legal Name</label>
 					<Form.Item
 						name='legalName'
 						rules={[
@@ -395,7 +395,7 @@ const IdentityForm = ({
 					{/* <div className='flex items-center mt-4'>
 					<span className='flex gap-2 w-[150px] items-center mb-6'>
 						<WebIcon className='bg-[#edeff3] rounded-full text-2xl p-2.5'/>
-						<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Web</span>
+						<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Web</span>
 					</span>
 					<Form.Item className='w-full' name='web' rules={[{
 						message: 'Invalid web',
@@ -413,7 +413,7 @@ const IdentityForm = ({
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B]' />
-							<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
 								Email<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
 						</span>
@@ -456,7 +456,7 @@ const IdentityForm = ({
 					<div className='mt-1 flex items-center'>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<TwitterIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B]' />
-							<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
 								Twitter<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
 						</span>
@@ -495,7 +495,7 @@ const IdentityForm = ({
 					{/* <div className='flex items-center mt-1'>
 					<span className='flex gap-2 items-center w-[150px] mb-6'>
 						<RiotIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
-						<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Riot</span>
+						<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Riot</span>
 					</span>
 					<Form.Item name='riot' className='w-full' rules={[{
 						message: 'Invalid riot',
@@ -643,6 +643,5 @@ export default styled(IdentityForm)`
 	.ant-input-group .ant-input-group-addon {
 		border-radius: 0px 4px 4px 0px !important;
 		background: white !important;
-		border
 	}
 `;

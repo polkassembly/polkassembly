@@ -58,7 +58,7 @@ const AccountSelectionForm = ({
 	return (
 		<article className={`flex w-full flex-col ${className}`}>
 			<div className='ml-[-6px] flex items-center gap-x-2'>
-				<h3 className='inner-headings mb-[2px] ml-1.5'>{title}</h3>
+				<h3 className='inner-headings mb-[2px] ml-1.5 dark:text-white'>{title}</h3>
 				{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
 				{address && withBalance && (
 					<Balance

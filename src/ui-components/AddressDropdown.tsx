@@ -37,7 +37,7 @@ interface Props {
 
 const AddressDropdown = ({
 	defaultAddress,
-	className = 'px-3 py-1 border-solid border-gray-300 border-[1px] rounded-md h-[48px]',
+	className = 'px-3 py-1 border-solid border-gray-300 dark:border-separatorDark border-[1px] rounded-md h-[48px]',
 	accounts,
 	filterAccounts,
 	isDisabled,

@@ -359,7 +359,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					<div className='-mt-[100px] flex items-center justify-center'>
 						<UnlockBoxIcon />
 					</div>
-					<div className='mt-6 flex h-10 w-full items-center justify-between rounded-[4px] border-none bg-[#F6F7F9] px-3'>
+					<div className='mt-6 flex h-10 w-full items-center justify-between rounded-[4px] border-none bg-[#F6F7F9] px-3 dark:bg-inactiveIconDark'>
 						<Address
 							address={address}
 							isTruncateUsername={false}
@@ -381,7 +381,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 						totalUnlockableBalance={totalUnlockableBalance}
 					/>
 					{![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network) && (
-						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6'>
+						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 dark:border-separatorDark'>
 							<Button
 								onClick={() => handleUnlock()}
 								disabled={totalUnlockableBalance.eq(ZERO_BN)}

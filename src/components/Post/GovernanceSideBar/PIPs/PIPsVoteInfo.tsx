@@ -13,6 +13,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import { Divider } from 'antd';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -27,6 +28,7 @@ const ZERO_BN = new BN(0);
 const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const [voteInfo, setVoteInfo] = useState({
 		ayes: ZERO_BN,
@@ -61,7 +63,10 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 			<div className='relative z-50 flex items-center justify-between'>
 				<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Voting</h6>
 				<div className='flex items-center gap-x-2'>
-					<StatusTag status={status} />
+					<StatusTag
+						theme={theme}
+						status={status}
+					/>
 				</div>
 			</div>
 			{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) ? (

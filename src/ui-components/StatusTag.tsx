@@ -25,6 +25,7 @@ interface Props {
 	status: string | undefined;
 	colorInverted?: boolean;
 	type?: string;
+	theme?: string;
 }
 
 const StatusTag = ({ className, content, status, colorInverted, type }: Props) => {
@@ -47,9 +48,10 @@ const StatusTag = ({ className, content, status, colorInverted, type }: Props) =
 	);
 };
 
-export default styled(StatusTag).attrs(({ status }: Props) => ({
+export default styled(StatusTag).attrs(({ status, theme }: Props) => ({
 	className: status,
-	content: status
+	content: status,
+	theme
 }))`
 	max-width: min-content;
 	background: #666;

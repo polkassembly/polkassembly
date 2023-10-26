@@ -108,6 +108,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			<div className='flex items-center justify-between'>
 				{status && (
 					<StatusTag
+						theme={theme}
 						className='mb-3'
 						status={status}
 					/>

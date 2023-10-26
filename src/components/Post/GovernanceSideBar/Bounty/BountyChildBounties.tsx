@@ -14,6 +14,7 @@ import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { PostEmptyState } from '~src/ui-components/UIStates';
+import { useTheme } from 'next-themes';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -24,6 +25,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [bountiesRes, setBountiesRes] = useState<IChildBountiesResponse>();
 	const [loading, setLoading] = useState(true);
+	const { resolvedTheme: theme } = useTheme();
 
 	const handlePageChange = (pageNumber: any) => {
 		setCurrentPage(pageNumber);
@@ -67,6 +69,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 											</div>
 											{childBounty.status && (
 												<StatusTag
+													theme={theme}
 													className='statusTag m-auto'
 													status={childBounty.status}
 												/>

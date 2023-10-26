@@ -5,8 +5,10 @@
 import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
-
+import MailIcon from '~assets/icons/mailIcon.svg';
+import BlueCaution from '~assets/icons/CautionBlue.svg';
 import CautionIcon from '~assets/icons/Caution 2.svg';
+import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 import RetrySVG from '~assets/icons/Refresh.svg';
 import OpenAiSVG from '~assets/icons/openai.svg';
 import AiStarSVG from '~assets/icons/ai-star.svg';
@@ -117,9 +119,30 @@ import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg
 import ArchivedSVG from '~assets/icons/archived.svg';
 import NoTagsFoundSVG from '~assets/icons/no-tag.svg';
 
+export const IconMail = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={MailIcon}
+		{...props}
+	/>
+);
+
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={CautionIcon}
+		{...props}
+	/>
+);
+
+export const BlueCautionIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BlueCaution}
+		{...props}
+	/>
+);
+
+export const IconConfirmation = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ConfirmationIcon}
 		{...props}
 	/>
 );

@@ -6,7 +6,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider } from 'antd';
+import { Alert, Button, Divider, Form, Input } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -33,6 +33,10 @@ import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { IconConfirmation, BlueCautionIcon, IconMail } from '~src/ui-components/CustomIcons';
+import messages from '~src/util/messages';
+import { password, username } from '~src/util/validation';
+import * as validation from 'src/util/validation';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -73,6 +77,12 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 	const [isSignUp, setIsSignUp] = useState(false);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
+	const [showOptionalFields, setShowOptionalFields] = useState(false);
+	const [optionalUsername, setOptionalUsername] = useState('');
+	const [showSuccessModal, setShowSuccessModal] = useState(true);
+	const [isError, setIsError] = useState(false);
+	const [firstPassword, setFirstPassword] = useState('');
+	const [email, setEmail] = useState('');
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -306,7 +316,8 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				localStorage.setItem('multisigAssociatedAddress', address);
 				handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
 				if (isModal) {
-					setLoginOpen?.(false);
+					setLoginOpen?.(true);
+					setShowOptionalFields(true);
 					setLoading(false);
 					return;
 				}
@@ -324,6 +335,26 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 		} catch (error) {
 			setError(error.message);
 			setLoading(false);
+		}
+
+		console.log(showOptionalFields);
+	};
+
+	const handleOptionalUsername = () => {
+		if (optionalUsername && optionalUsername.trim() !== '') {
+			// Username is not empty, set user to true
+			console.log(optionalUsername);
+			setShowSuccessModal(false);
+			setIsError(false);
+		} else {
+			setIsError(true);
+			// Username is empty, handle accordingly
+		}
+	};
+
+	const handleOptionalDetails = () => {
+		if (email && email.trim() !== '' && firstPassword && firstPassword.trim() !== '') {
+			console.log(email, firstPassword);
 		}
 	};
 
@@ -383,210 +414,416 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 	return (
 		<>
-			<div className='flex items-center'>
-				<LoginLogo className='ml-6 mr-2' />
-				<h3 className='mt-3 text-xl font-semibold text-bodyBlue'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
-			</div>
-			<hr className='text-[#D2D8E0] ' />
-			<article className='flex flex-col gap-y-3 rounded-md bg-white px-8 py-4 shadow-md'>
-				<h3 className='flex flex-col gap-y-2'>
-					{!withPolkasafe && (
-						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
-							<span className='-ml-2 mt-2 scale-75'>
-								<WalletIcon which={chosenWallet} />
-							</span>
-							<span className='text-xl text-bodyBlue sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
-						</p>
-					)}
-					{withPolkasafe && (
-						<WalletButtons
-							disabled={loading}
-							onWalletSelect={handleChangeWalletWithPolkasafe}
-							showPolkasafe={false}
-							noHeader={true}
-							selectedWallet={chosenWallet}
-						/>
-					)}
-				</h3>
-				{fetchAccounts ? (
-					<div className='-mt-3 flex flex-col items-center justify-center'>
-						<p className='m-0 p-0 text-base text-bodyBlue'>
-							{withPolkasafe
-								? 'To fetch your Multisig details, please select a wallet extension'
-								: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
-						</p>
-						<Divider
-							className='m-0 mt-5 p-0 '
-							style={{ borderTop: '1px dashed #D2D8E0' }}
-						></Divider>
-						<div className='-ml-[300px] mt-4 flex pb-5 font-normal'>
-							<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
-							<div
-								onClick={handleClick}
-								className='cursor-pointer text-base text-pink_primary'
-							>
-								&nbsp; Sign Up{' '}
+			{!showOptionalFields && (
+				<div className='flex items-center'>
+					<LoginLogo className='ml-6 mr-2' />
+					<h3 className='mt-3 text-xl font-semibold text-bodyBlue'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
+				</div>
+			)}
+			{!showOptionalFields && <hr className='text-[#D2D8E0] ' />}
+			{!showOptionalFields && (
+				<article className='flex flex-col gap-y-3 rounded-md bg-white px-8 py-4 shadow-md'>
+					<h3 className='flex flex-col gap-y-2'>
+						{!withPolkasafe && (
+							<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
+								<span className='-ml-2 mt-2 scale-75'>
+									<WalletIcon which={chosenWallet} />
+								</span>
+								<span className='text-xl text-bodyBlue sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+							</p>
+						)}
+						{withPolkasafe && (
+							<WalletButtons
+								disabled={loading}
+								onWalletSelect={handleChangeWalletWithPolkasafe}
+								showPolkasafe={false}
+								noHeader={true}
+								selectedWallet={chosenWallet}
+							/>
+						)}
+					</h3>
+					{fetchAccounts ? (
+						<div className='-mt-3 flex flex-col items-center justify-center'>
+							<p className='m-0 p-0 text-base text-bodyBlue'>
+								{withPolkasafe
+									? 'To fetch your Multisig details, please select a wallet extension'
+									: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
+							</p>
+							<Divider
+								className='m-0 mt-5 p-0 '
+								style={{ borderTop: '1px dashed #D2D8E0' }}
+							></Divider>
+							<div className='-ml-[300px] mt-4 flex pb-5 font-normal'>
+								<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
+								<div
+									onClick={handleClick}
+									className='cursor-pointer text-base text-pink_primary'
+								>
+									&nbsp; Sign Up{' '}
+								</div>
+							</div>
+							<Divider
+								className='m-0 mb-4 p-0 '
+								style={{ borderTop: '1px solid #E1E6EB' }}
+							></Divider>
+							<div className='ml-auto flex'>
+								<Button
+									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+									onClick={() => handleBackToLogin()}
+								>
+									Go Back
+								</Button>
+								{!withPolkasafe && (
+									<Button
+										key='got-it'
+										icon={<CheckOutlined />}
+										className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
+										onClick={() => {
+											getAccounts(chosenWallet)
+												.then(() => {
+													setFetchAccounts(false);
+												})
+												.catch((err) => {
+													console.error(err);
+												});
+										}}
+									>
+										Got it!
+									</Button>
+								)}
 							</div>
 						</div>
-						<Divider
-							className='m-0 mb-4 p-0 '
-							style={{ borderTop: '1px solid #E1E6EB' }}
-						></Divider>
-						<div className='ml-auto flex'>
-							<Button
-								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
-								onClick={() => handleBackToLogin()}
-							>
-								Go Back
-							</Button>
-							{!withPolkasafe && (
-								<Button
-									key='got-it'
-									icon={<CheckOutlined />}
-									className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
-									onClick={() => {
-										getAccounts(chosenWallet)
-											.then(() => {
-												setFetchAccounts(false);
-											})
-											.catch((err) => {
-												console.error(err);
-											});
+					) : (
+						<>
+							{authResponse.isTFAEnabled ? (
+								<TFALoginForm
+									onBack={() => {
+										setAuthResponse(initAuthResponse);
+										setError('');
 									}}
+									onSubmit={handleSubmitAuthCode}
+									error={error || ''}
+									loading={loading}
+								/>
+							) : (
+								<AuthForm
+									onSubmit={handleLogin}
+									className='flex flex-col px-4'
 								>
-									Got it!
-								</Button>
-							)}
-						</div>
-					</div>
-				) : (
-					<>
-						{authResponse.isTFAEnabled ? (
-							<TFALoginForm
-								onBack={() => {
-									setAuthResponse(initAuthResponse);
-									setError('');
-								}}
-								onSubmit={handleSubmitAuthCode}
-								error={error || ''}
-								loading={loading}
-							/>
-						) : (
-							<AuthForm
-								onSubmit={handleLogin}
-								className='flex flex-col px-4'
-							>
-								{extensionNotFound ? (
-									<div className='my-5 flex items-center justify-center'>
-										<ExtensionNotDetected chosenWallet={chosenWallet} />
-									</div>
-								) : null}
-								{accountsNotFound && (
-									<div className='my-5 flex items-center justify-center'>
-										<Alert
-											message='You need at least one account in Polkadot-js extension to login.'
-											description='Please reload this page after adding accounts.'
-											type='info'
-											showIcon
-										/>
-									</div>
-								)}
-								{isAccountLoading ? (
-									<div className='my-5'>
-										<Loader
-											size='large'
-											timeout={3000}
-											text='Requesting Web3 accounts'
-										/>
-									</div>
-								) : (
-									accounts.length > 0 && (
-										<>
-											<div className='my-5 flex items-center justify-center'>
-												{withPolkasafe ? (
-													<MultisigAccountSelectionForm
-														multisigBalance={multisigBalance}
-														setMultisigBalance={setMultisigBalance}
-														title='Choose linked account'
-														accounts={accounts}
-														address={address}
-														onAccountChange={onAccountChange}
-														walletAddress={multisigAddress}
-														setWalletAddress={setMultisigAddress}
-													/>
-												) : (
-													<AccountSelectionForm
-														isTruncateUsername={false}
-														title='Choose linked account'
-														accounts={accounts}
-														address={address}
-														onAccountChange={onAccountChange}
-														linkAddressTextDisabled
+									{extensionNotFound ? (
+										<div className='my-5 flex items-center justify-center'>
+											<ExtensionNotDetected chosenWallet={chosenWallet} />
+										</div>
+									) : null}
+									{accountsNotFound && (
+										<div className='my-5 flex items-center justify-center'>
+											<Alert
+												message='You need at least one account in Polkadot-js extension to login.'
+												description='Please reload this page after adding accounts.'
+												type='info'
+												showIcon
+											/>
+										</div>
+									)}
+									{isAccountLoading ? (
+										<div className='my-5'>
+											<Loader
+												size='large'
+												timeout={3000}
+												text='Requesting Web3 accounts'
+											/>
+										</div>
+									) : (
+										accounts.length > 0 && (
+											<>
+												<div className='my-5 flex items-center justify-center'>
+													{withPolkasafe ? (
+														<MultisigAccountSelectionForm
+															multisigBalance={multisigBalance}
+															setMultisigBalance={setMultisigBalance}
+															title='Choose linked account'
+															accounts={accounts}
+															address={address}
+															onAccountChange={onAccountChange}
+															walletAddress={multisigAddress}
+															setWalletAddress={setMultisigAddress}
+														/>
+													) : (
+														<AccountSelectionForm
+															isTruncateUsername={false}
+															title='Choose linked account'
+															accounts={accounts}
+															address={address}
+															onAccountChange={onAccountChange}
+															linkAddressTextDisabled
+														/>
+													)}
+												</div>
+												{isSignUp && (
+													<Alert
+														showIcon
+														className='mb-2'
+														type='info'
+														message={
+															<>
+																By Signing up you agree to the terms of the{' '}
+																<Link
+																	href='/terms-and-conditions'
+																	className='text-pink_primary'
+																>
+																	Polkassembly end user agreement
+																</Link>
+																.
+															</>
+														}
 													/>
 												)}
-											</div>
-											{isSignUp && (
-												<Alert
-													showIcon
-													className='mb-2'
-													type='info'
-													message={
-														<>
-															By Signing up you agree to the terms of the{' '}
-															<Link
-																href='/terms-and-conditions'
-																className='text-pink_primary'
-															>
-																Polkassembly end user agreement
-															</Link>
-															.
-														</>
-													}
-												/>
-											)}
-											<div className='flex items-center justify-center'>
-												<Button
-													loading={loading}
-													disabled={withPolkasafe && !multisigAddress}
-													htmlType='submit'
-													size='large'
-													className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
-												>
-													Login
-												</Button>
-											</div>
-											<div>
-												<Divider style={{ color: '#90A0B7' }}>
-													<div className='flex items-center gap-x-2'>
-														<span className='text-md text-grey_primary'>Or</span>
-														<Button
-															className='text-md border-none p-0 font-normal text-pink_primary outline-none'
-															disabled={loading}
-															onClick={handleToggle}
-														>
-															Login with Username
-														</Button>
-													</div>
-												</Divider>
-											</div>
-											<div className='-mt-2 flex justify-center pb-5 font-normal'>
-												<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
-												<div
-													onClick={handleClick}
-													className='cursor-pointer text-base text-pink_primary'
-												>
-													&nbsp; Sign Up{' '}
+												<div className='flex items-center justify-center'>
+													<Button
+														loading={loading}
+														disabled={withPolkasafe && !multisigAddress}
+														htmlType='submit'
+														size='large'
+														className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+													>
+														Login
+													</Button>
 												</div>
-											</div>
-										</>
-									)
-								)}
-								<div>{error && <FilteredError text={error} />}</div>
-							</AuthForm>
-						)}
-					</>
-				)}
-			</article>
+												<div>
+													<Divider style={{ color: '#90A0B7' }}>
+														<div className='flex items-center gap-x-2'>
+															<span className='text-md text-grey_primary'>Or</span>
+															<Button
+																className='text-md border-none p-0 font-normal text-pink_primary outline-none'
+																disabled={loading}
+																onClick={handleToggle}
+															>
+																Login with Username
+															</Button>
+														</div>
+													</Divider>
+												</div>
+												<div className='-mt-2 flex justify-center pb-5 font-normal'>
+													<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
+													<div
+														onClick={handleClick}
+														className='cursor-pointer text-base text-pink_primary'
+													>
+														&nbsp; Sign Up{' '}
+													</div>
+												</div>
+											</>
+										)
+									)}
+									<div>{error && <FilteredError text={error} />}</div>
+								</AuthForm>
+							)}
+						</>
+					)}
+				</article>
+			)}
+			{showOptionalFields && (
+				<div>
+					{showSuccessModal && (
+						<AuthForm onSubmit={handleOptionalUsername}>
+							<div>
+								<div className='px-8 pb-2 pt-8'>
+									<IconConfirmation className='confirm-logo-conatiner text-2xl' />
+									<p className='mt-8 justify-center text-center text-xl font-semibold text-bodyBlue'>You are successfully logged in</p>
+									<p className='mt-4 justify-center text-center text-sm font-normal text-bodyBlue'>Please add your username to personalise your experience.</p>
+									<div className='flex flex-col gap-y-1'>
+										<label
+											className='text-sm text-lightBlue '
+											htmlFor='username'
+										>
+											Enter Username
+											<span className='text-red'>*</span>
+										</label>
+										<Form.Item
+											name='username'
+											rules={[
+												{
+													message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
+													required: username.required
+												},
+												{
+													max: username.maxLength,
+													message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
+												},
+												{
+													message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
+													min: username.minLength
+												}
+											]}
+											validateTrigger='onSubmit'
+										>
+											<Input
+												disabled={loading}
+												onChange={(e) => setOptionalUsername(e.target.value)}
+												placeholder='Type here'
+												className='rounded-md px-4 py-3'
+												id='username'
+											/>
+										</Form.Item>
+									</div>
+									{!isError && (
+										<div
+											className='mb-5 mt-1 flex justify-center p-3 text-center'
+											style={{ backgroundColor: '#E6F4FF', border: '1px solid #91CAFF', borderRadius: '6px' }}
+										>
+											<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
+											<p className='m-0 p-0 text-sm text-bodyBlue'>You can update your username from the settings page.</p>
+										</div>
+									)}
+									{/* {isError && (
+								<div
+									className='-mt-1 mb-5 flex justify-center p-3 text-center'
+									style={{ backgroundColor: '#FFF1F4', border: '1px solid #FF3C5F', borderRadius: '6px' }}
+								>
+									<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
+									<p className='m-0 p-0 text-sm text-bodyBlue'>Adding a username is a mandatory field.</p>
+								</div>
+							)} */}
+								</div>
+								<Divider
+									className='-mt-2'
+									style={{ borderTop: '1px solid #E1E6EB' }}
+								></Divider>
+								<div className='mb-6 flex px-8'>
+									<Button
+										size='large'
+										htmlType='submit'
+										className='ml-auto w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+									>
+										Next
+									</Button>
+								</div>
+							</div>
+						</AuthForm>
+					)}
+					{!showSuccessModal && (
+						<AuthForm onSubmit={handleOptionalDetails}>
+							<div>
+								<div className='my-4 ml-6 flex'>
+									<IconMail className='mr-2 text-2xl' />
+									<p className='m-0 p-0 text-xl font-semibold text-bodyBlue'>Add your email</p>
+								</div>
+								<Divider
+									className='-mt-1 mb-5'
+									style={{ borderTop: '1px solid #E1E6EB' }}
+								></Divider>
+								<div className='p-8'>
+									<div className='flex flex-col gap-y-1'>
+										<label
+											htmlFor='email'
+											className='text-base tracking-wide text-[#485F7D]'
+										>
+											Email
+										</label>
+										<Form.Item
+											name='email'
+											rules={[
+												{
+													message: messages.VALIDATION_EMAIL_ERROR,
+													pattern: validation.email.pattern
+												}
+											]}
+										>
+											<Input
+												onChange={(e) => {
+													setEmail(e.target.value);
+												}}
+												placeholder='email@example.com'
+												className='rounded-md px-4 py-2'
+												id='email'
+											/>
+										</Form.Item>
+									</div>
+									<div className='flex flex-col gap-y-1'>
+										<label
+											className='text-base text-[#485F7D]'
+											htmlFor='first_password'
+										>
+											Set Password
+										</label>
+										<Form.Item
+											name='first_password'
+											rules={[
+												{
+													message: messages.VALIDATION_PASSWORD_ERROR,
+													required: password.required
+												},
+												{
+													message: messages.VALIDATION_PASSWORD_ERROR,
+													min: password.minLength
+												}
+											]}
+										>
+											<Input.Password
+												onChange={(e) => {
+													setFirstPassword(e.target.value);
+												}}
+												placeholder='Password'
+												className='rounded-md px-4 py-2'
+												id='first_password'
+											/>
+										</Form.Item>
+									</div>
+									<div className='flex flex-col gap-y-1'>
+										<label
+											className='text-base text-[#485F7D] '
+											htmlFor='second_password'
+										>
+											Re-enter Password
+										</label>
+										<Form.Item
+											name='second_password'
+											rules={[
+												{
+													message: "Password don't match",
+													validator(rule, value, callback) {
+														if (callback && value !== firstPassword) {
+															callback(rule?.message?.toString());
+														} else {
+															callback();
+														}
+													}
+												}
+											]}
+										>
+											<Input.Password
+												placeholder='Password'
+												className='rounded-md px-4 py-2'
+												id='second_password'
+											/>
+										</Form.Item>
+									</div>
+									<div
+										className='mb-5 mt-2 flex justify-center p-3 text-center'
+										style={{ backgroundColor: '#E6F4FF', border: '1px solid #91CAFF', borderRadius: '6px' }}
+									>
+										<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
+										<p className='m-0 p-0 text-sm text-bodyBlue'>You can set your email and password later from the settings page.</p>
+									</div>
+								</div>
+								<Divider
+									className='-mt-6 mb-5'
+									style={{ borderTop: '1px solid #E1E6EB' }}
+								></Divider>
+								<div className='mb-6 flex px-8'>
+									<Button
+										size='large'
+										htmlType='submit'
+										className='ml-auto w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+									>
+										Skip
+									</Button>
+								</div>
+							</div>
+						</AuthForm>
+					)}
+				</div>
+			)}
 		</>
 	);
 };

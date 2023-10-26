@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import StatusTag from './StatusTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IProfileVoteHistoryRespose } from 'pages/api/v1/votesHistory/getVotesByVoter';
-import { Empty, Pagination, Popover, Spin, Checkbox } from 'antd';
+import { Empty, Popover, Spin, Checkbox, Pagination as AntdPagination } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -27,6 +27,7 @@ import { EGovType } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -38,6 +39,22 @@ interface IVotesData extends IProfileVoteHistoryRespose {
 	delegatorsCount?: number;
 	delegateCapital?: string;
 }
+
+const Pagination = styled(AntdPagination)`
+	a {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#212121')} !important;
+	}
+	.ant-pagination-item-active {
+		background-color: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+	}
+	.anticon-right {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+	}
+	.anticon-left {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+	}
+`;
+
 const getOrderBy = (sortByPostIndex: boolean) => {
 	const orderBy = [];
 	orderBy.push(!sortByPostIndex ? 'proposalIndex_DESC' : 'proposalIndex_ASC');
@@ -51,6 +68,7 @@ enum EHeading {
 }
 
 const VotesHistory = ({ className, userAddresses, govType }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS];
 	const [votesData, setVotesData] = useState<IVotesData[] | null>(null);
@@ -224,7 +242,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 										<div
 											className={`border-0 ${
 												!data?.expand && !loading && 'border-b-[1px]'
-											} border-solid border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:border-none `}
+											} border-solid border-[#DCDFE3] text-sm text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-md:border-none `}
 										>
 											<div className='flex h-14 items-center justify-between gap-2 border-0 px-3 max-md:border-b-[1px] max-md:border-solid max-md:border-[#DCDFE3]'>
 												<Link
@@ -263,6 +281,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 												</div>
 												<span className='flex w-[20%] justify-end max-md:hidden'>
 													<StatusTag
+														theme={theme}
 														status={data?.proposal?.status}
 														className='truncate max-lg:w-[80px]'
 													/>
@@ -297,6 +316,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 													</span>
 												</div>
 												<StatusTag
+													theme={theme}
 													status={data?.proposal?.status}
 													className='truncate max-sm:w-[90px] max-xs:w-[70px]'
 												/>
@@ -340,11 +360,11 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 															</div>
 														)}
 														<div className='flex justify-between max-md:flex-col max-md:gap-2'>
-															<div className='w-[50%] border-0 border-r-[1px] border-dashed border-[#DCDFE3] max-md:w-[100%] max-md:border-0 max-md:border-b-[1px] max-md:pb-2'>
+															<div className='w-[50%] border-0 border-r-[1px] border-dashed border-[#DCDFE3] dark:border-separatorDark max-md:w-[100%] max-md:border-0 max-md:border-b-[1px] max-md:pb-2'>
 																<label className='font-semibold'>Self Votes</label>
 																<div className='mt-2 flex flex-col gap-2 pr-6 max-md:pr-0'>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<VoterIcon /> Votes
 																		</span>
 																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
@@ -352,7 +372,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<ConvictionIcon /> Conviction
 																		</span>
 																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
@@ -360,7 +380,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<CapitalIcon /> Capital
 																		</span>
 																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
@@ -373,7 +393,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																<label className='font-semibold'>Delegation Votes</label>
 																<div className='mt-2 flex flex-col gap-2 lg:pr-4'>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<VoterIcon /> Votes
 																		</span>
 																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
@@ -381,13 +401,13 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<EmailIcon /> Delegators
 																		</span>
 																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>{data?.delegatorsCount || 0}</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B]'>
+																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<CapitalIcon /> Capital
 																		</span>
 																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
@@ -406,6 +426,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 						</div>
 						<div className='mt-4 flex w-full items-center justify-center'>
 							<Pagination
+								theme={theme}
 								defaultCurrent={1}
 								current={page}
 								pageSize={LISTING_LIMIT}

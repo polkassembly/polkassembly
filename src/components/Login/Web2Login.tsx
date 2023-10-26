@@ -172,7 +172,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			{web3Login && (
 				<AuthForm
 					onSubmit={handleSubmitForm}
-					className='web3-login-container flex flex-col px-20'
+					className='web3-login-container flex flex-col px-24'
 				>
 					<p className='my-0 text-center text-base text-lightBlue'>Select a wallet</p>
 					<div>

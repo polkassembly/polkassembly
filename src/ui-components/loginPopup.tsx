@@ -29,7 +29,7 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 			maskClosable={closable}
 			zIndex={1008}
 			wrapClassName={className}
-			className={`${poppins.variable} ${poppins.className} padding-0 `}
+			className={`${poppins.variable} ${poppins.className} padding-0 w-[620px]`}
 			onCancel={() => setModalOpen && setModalOpen(false)}
 			closeIcon={<CloseIcon />}
 		>

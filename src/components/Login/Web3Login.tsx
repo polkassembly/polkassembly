@@ -419,7 +419,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 							className='m-0 mt-5 p-0 '
 							style={{ borderTop: '1px dashed #D2D8E0' }}
 						></Divider>
-						<div className='-ml-[196px] mt-4 flex pb-5 font-normal'>
+						<div className='-ml-[300px] mt-4 flex pb-5 font-normal'>
 							<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
 							<div
 								onClick={handleClick}

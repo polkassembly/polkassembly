@@ -423,4 +423,7 @@ export default styled(VoteUnlock)`
 	.ant-spin-nested-loading .ant-spin-blur::after {
 		opacity: 0 !important;
 	}
+	.ant-spin-nested-loading .ant-spin-blur {
+		opacity: 1 !important;
+	}
 `;

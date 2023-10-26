@@ -4,10 +4,12 @@
 
 import { Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
+import { IReferendumV2PostsByStatus } from 'pages/root';
+
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { PostEmptyState } from 'src/ui-components/UIStates';
+import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
@@ -30,9 +32,11 @@ import styled from 'styled-components';
 import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
+import TrackListingAllTabContent from '../Listing/Tracks/TrackListingAllTabContent';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
+import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -77,6 +81,7 @@ const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
 interface IPostProps {
 	className?: string;
 	post: IPostResponse;
+	posts?: IReferendumV2PostsByStatus;
 	trackName?: string;
 	proposalType: ProposalType;
 }
@@ -106,6 +111,8 @@ const Post: FC<IPostProps> = (props) => {
 	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const [data, setData] = useState<IPostResponse[]>([]);
+	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
@@ -149,6 +156,7 @@ const Post: FC<IPostProps> = (props) => {
 	useEffect(() => {
 		if (!post) return;
 		handleCanEdit();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [handleCanEdit, post]);
 
 	useEffect(() => {
@@ -253,6 +261,32 @@ const Post: FC<IPostProps> = (props) => {
 		videosData().then(() => {});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
+	const fetchData = async (trackGroup: number[]) => {
+		setIsSimilarLoading(true);
+		const { data, error } = await nextApiClientFetch<IPostResponse[]>('/api/v1/listing/get-similar-posts', {
+			postId: post?.post_id,
+			proposalType,
+			tags: post?.tags || [],
+			trackGroup,
+			trackNumber: post?.track_number
+		});
+		if (data) {
+			setData(data);
+			setIsSimilarLoading(false);
+		} else {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		const trackData = getTrackData(network, trackName);
+		const trackGroup = trackData?.trackGroup;
+		fetchData(trackGroup);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, trackName]);
+
+	// console.log(data);
 
 	if (!post) {
 		return (
@@ -511,6 +545,38 @@ const Post: FC<IPostProps> = (props) => {
 								</>
 							)}
 						</div>
+						{isSimilarLoading && (
+							<>
+								<div className='flex items-center'>
+									<hr className='seperation-border mr-2 flex-grow' />
+									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
+									<hr className='seperation-border ml-2 flex-grow' />
+								</div>
+								<div>
+									<LoadingState />{' '}
+								</div>
+							</>
+						)}
+						{data.length > 0 && (
+							<div>
+								{/* seperation-line */}
+								<div className='flex items-center'>
+									<hr className='seperation-border mr-2 flex-grow' />
+									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
+									<hr className='seperation-border ml-2 flex-grow' />
+								</div>
+
+								{/* main content */}
+								<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
+									<TrackListingAllTabContent
+										posts={data}
+										// error={error}
+										count={data?.length || 0}
+										showSimilarPost={true}
+									/>
+								</div>
+							</div>
+						)}
 					</div>
 
 					{!isEditing ? <Sidebar className='hidden xl:block' /> : null}
@@ -530,5 +596,9 @@ export default styled(Post)`
 	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn .audit .card-bg {
 		background-color: var(--pink_primary) !important;
 		color: white !important;
+	}
+
+	.seperation-border {
+		border-top: 1px solid #90a0b7;
 	}
 `;

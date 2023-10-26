@@ -301,15 +301,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										/>{' '}
 										{commentsCount}
 									</div>
-								</>
-							) : null}
-							{tags && tags.length > 0 && (
-								<>
 									<Divider
 										type='vertical'
 										className='max-lg:hidden'
 										style={{ borderLeft: '1px solid #90A0B7' }}
 									/>
+								</>
+							) : null}
+							{tags && tags.length > 0 && (
+								<>
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
@@ -432,7 +432,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='max-sm:hidden'
 										style={{ borderLeft: '1px solid #90A0B7' }}
 									/>
-									<p className='m-0 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
+									<p className='m-0 w-[60px] truncate p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
 								</>
 							) : null}
 						</div>
@@ -466,27 +466,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					<div className='justify-between xs:flex sm:my-0 sm:hidden'>
-						{topic && (
-							<div>
-								<TopicTag
-									className='xs:mx-1'
-									topic={topic}
-								/>
-							</div>
-						)}
-						{requestedAmount && (
-							<div className='xs:mr-5 sm:m-0'>
-								{requestedAmount > 100 ? (
-									<span className='text-sm font-medium text-lightBlue'>
-										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
-									</span>
-								) : (
-									<span className='text-sm font-medium text-lightBlue'>
-										{requestedAmount} {chainProperties[network]?.tokenSymbol}
-									</span>
-								)}
-							</div>
-						)}
+						<OnchainCreationLabel
+							address={address}
+							truncateUsername
+							username={username}
+						/>
 					</div>
 					<div className='items-center justify-between gap-x-2 xs:flex sm:hidden'>
 						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
@@ -500,27 +484,34 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='flex'>
-						<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
-							#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
-						</div>
-						{showSimilarPost && (
-							<Divider
-								type='vertical'
-								className='my-4'
-								style={{ borderLeft: '1px solid #485F7D' }}
-							/>
-						)}
-						{showSimilarPost && <p className='m-0 my-[14px] ml-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
+					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
+						#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
 					</div>
+					{showSimilarPost && <p className='m-0 mx-1 my-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
 
 					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue xs:flex sm:hidden lg:flex-row lg:items-center'>
 						<div className='h-[30px] flex-shrink-0 items-center xs:flex xs:justify-start sm:hidden'>
-							<OnchainCreationLabel
-								address={address}
-								truncateUsername
-								username={username}
-							/>
+							{topic && (
+								<div>
+									<TopicTag
+										className='xs:mx-1'
+										topic={topic}
+									/>
+								</div>
+							)}
+							{requestedAmount && (
+								<div className='xs:mr-5 sm:m-0'>
+									{requestedAmount > 100 ? (
+										<span className='text-sm font-medium text-lightBlue'>
+											{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
+										</span>
+									) : (
+										<span className='text-sm font-medium text-lightBlue'>
+											{requestedAmount} {chainProperties[network]?.tokenSymbol}
+										</span>
+									)}
+								</div>
+							)}
 							<Divider
 								type='vertical'
 								className='max-lg:hidden xs:mt-0.5 xs:inline-block'
@@ -591,15 +582,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						)}
 
-						<div className='mb-1 items-center justify-between xs:flex xs:gap-x-2'>
+						<div className='mb-1 items-center gap-x-4 xs:flex xs:gap-x-2'>
 							{status && <StatusTag status={status} />}
+							<Divider
+								type='vertical'
+								className='max-lg:hidden xs:mt-0.5 xs:inline-block'
+								style={{ borderLeft: '1px solid #90A0B7' }}
+							/>
 							{tags && tags.length > 0 && (
 								<div className='flex'>
-									<Divider
-										type='vertical'
-										className='max-lg:hidden'
-										style={{ borderLeft: '1px solid #90A0B7' }}
-									/>
 									<div className='flex gap-1'>
 										{tags?.slice(0, 2).map((tag, index) => (
 											<div

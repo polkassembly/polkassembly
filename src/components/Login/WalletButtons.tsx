@@ -71,7 +71,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					icon={
 						<WalletIcon
 							which={Wallet.SUBWALLET}
-							className='h-6 w-6'
+							className='h-8 w-8'
 						/>
 					}
 					optionalLogin={optionalLogin}
@@ -85,7 +85,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					icon={
 						<WalletIcon
 							which={Wallet.POLKAGATE}
-							className='h-6 w-6'
+							className='h-8 w-8'
 						/>
 					}
 					optionalLogin={optionalLogin}
@@ -103,7 +103,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						icon={
 							<WalletIcon
 								which={Wallet.POLKASAFE}
-								className='!mt-1 h-7 w-6'
+								className='!mt-1 h-9 w-8'
 							/>
 						}
 						optionalLogin={optionalLogin}

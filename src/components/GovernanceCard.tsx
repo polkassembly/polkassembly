@@ -215,14 +215,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
-							<span className={`flex-none text-center font-medium text-bodyBlue ${showSimilarPost ? 'ml-5 w-[76px]' : 'sm:w-[120px]'}`}>#{isTip ? tip_index : onchainId}</span>
+							<span className={`flex-none text-center font-medium text-bodyBlue ${showSimilarPost ? 'w-[76px]' : 'sm:w-[120px]'}`}>#{isTip ? tip_index : onchainId}</span>
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
 								username={username}
 								truncateUsername={truncateUsername}
 							/>
 						</div>
-						<div className='flex items-center justify-end'>
+						<div className='-mr-5 flex items-center justify-end'>
 							{status && (
 								<StatusTag
 									className='sm:mr-10'
@@ -232,7 +232,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 					<div className='mt-1 flex items-center justify-between'>
-						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'} flex flex-grow`}>
+						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'} flex flex-grow`}>
 							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue lg:max-w-none'>
 								<span className='break-all text-sm font-medium text-bodyBlue'>{mainTitle}</span>
 							</h1>
@@ -253,7 +253,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						)}
 					</div>
 					{showSimilarPost && content && (
-						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'}`}>
+						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'}`}>
 							<h1 className='desc-container mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
 								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 150)}...`}</p>
 							</h1>
@@ -277,7 +277,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							showSimilarPost ? 'ml-[96px]' : 'sm:ml-[120px]'
 						} sm:mt-0 sm:flex lg:flex-row lg:items-center`}
 					>
-						<div className='flex items-center gap-x-2 lg:h-[32px]'>
+						<div className={`${showSimilarPost ? '-ml-5' : ''} flex items-center gap-x-2 lg:h-[32px]`}>
 							{postReactionCount && (
 								<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 									<LikeOutlined style={{ color: '#485F7D' }} />
@@ -331,15 +331,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 											+{tags.length - 2}
 										</span>
 									)}
-
-									<Divider
-										type='vertical'
-										style={{ borderLeft: '1px solid #485F7D' }}
-									/>
 								</>
 							)}
 
-							{!showSimilarPost && (
+							{showSimilarPost && (
 								<Divider
 									type='vertical'
 									style={{ borderLeft: '1px solid #485F7D' }}
@@ -432,7 +427,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='max-sm:hidden'
 										style={{ borderLeft: '1px solid #90A0B7' }}
 									/>
-									<p className='m-0 w-[60px] truncate p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
+									<p className='m-0 w-[86px] truncate p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
 								</>
 							) : null}
 						</div>
@@ -503,7 +498,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
 						#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
 					</div>
-					{showSimilarPost && <p className='m-0 mx-1 my-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
+					{showSimilarPost && <p className='m-0 mx-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
 
 					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue xs:flex sm:hidden lg:flex-row lg:items-center'>
 						<div className='h-[30px] flex-shrink-0 items-center xs:flex xs:justify-start sm:hidden'>

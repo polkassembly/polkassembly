@@ -9,7 +9,7 @@ import { IReferendumV2PostsByStatus } from 'pages/root';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { PostEmptyState } from 'src/ui-components/UIStates';
+import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
@@ -34,6 +34,7 @@ import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 import TrackListingAllTabContent from '../Listing/Tracks/TrackListingAllTabContent';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -93,7 +94,7 @@ function formatDuration(duration: any) {
 }
 
 const Post: FC<IPostProps> = (props) => {
-	const { className, post, trackName, proposalType, posts } = props;
+	const { className, post, trackName, proposalType } = props;
 
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
@@ -109,8 +110,7 @@ const Post: FC<IPostProps> = (props) => {
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
 	const [data, setData] = useState<IPostResponse[]>([]);
-	// const [loading, setLoading] = useState(true);
-	// const [error, setError] = useState('');
+	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
@@ -260,25 +260,29 @@ const Post: FC<IPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
-	const fetchData = async () => {
+	const fetchData = async (trackGroup: number[]) => {
+		setIsSimilarLoading(true);
 		const { data, error } = await nextApiClientFetch<IPostResponse[]>('/api/v1/listing/get-similar-posts', {
 			postId: post?.post_id,
 			proposalType,
 			tags: post?.tags || [],
-			topicId: post?.topic?.id,
+			trackGroup,
 			trackNumber: post?.track_number
 		});
 		if (data) {
 			setData(data);
+			setIsSimilarLoading(false);
 		} else {
 			console.log(error);
 		}
 	};
 
 	useEffect(() => {
-		fetchData();
+		const trackData = getTrackData(network, trackName);
+		const trackGroup = trackData?.trackGroup;
+		fetchData(trackGroup);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network, trackName]);
 
 	// console.log(data);
 
@@ -536,7 +540,19 @@ const Post: FC<IPostProps> = (props) => {
 								</>
 							)}
 						</div>
-						{data && (
+						{isSimilarLoading && (
+							<>
+								<div className='flex items-center'>
+									<hr className='seperation-border mr-2 flex-grow' />
+									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
+									<hr className='seperation-border ml-2 flex-grow' />
+								</div>
+								<div>
+									<LoadingState />{' '}
+								</div>
+							</>
+						)}
+						{data.length > 0 && (
 							<div>
 								{/* seperation-line */}
 								<div className='flex items-center'>
@@ -547,14 +563,12 @@ const Post: FC<IPostProps> = (props) => {
 
 								{/* main content */}
 								<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
-									{data && (
-										<TrackListingAllTabContent
-											posts={data}
-											// error={error}
-											count={posts?.all?.data?.count || 0}
-											showSimilarPost={true}
-										/>
-									)}
+									<TrackListingAllTabContent
+										posts={data}
+										// error={error}
+										count={data?.length || 0}
+										showSimilarPost={true}
+									/>
 								</div>
 							</div>
 						)}

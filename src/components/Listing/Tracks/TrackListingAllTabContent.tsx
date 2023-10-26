@@ -38,22 +38,17 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 		url = 'referenda';
 	}
 
+	const noPosts = count === 0 || isNaN(Number(count));
+
 	if (error) return <ErrorState errorMessage={error} />;
-	if (posts.length <= 0)
+
+	if (noPosts) {
 		return (
-			<>
-				{!showSimilarPost && (
-					<div className={className}>
-						<PostEmptyState />
-					</div>
-				)}
-				{showSimilarPost && (
-					<div className='mt-12'>
-						<LoadingState />
-					</div>
-				)}
-			</>
+			<div className={className}>
+				<PostEmptyState />
+			</div>
 		);
+	}
 
 	if (posts && posts.length > 0)
 		return (

@@ -1724,8 +1724,8 @@ export const GET_PROPOSAL_BY_STATUS_AND_TYPE = `query ProposalByStatusAndType($t
   }
 }`;
 
-export const GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT = `query getAllianceAnnouncements( $limit: Int = 50, $offset: Int = 0, $type_in:[AnnouncementType!] ) {
-  announcements(limit: $limit, offset: $offset, where:{status_not_in:[Rejected,Executed,TimedOut, Approved, Cancelled,ConfirmStarted, ConfirmAborted], type_in: $type_in}) {
+export const GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT = `query getAllianceAnnouncements( $limit: Int = 50, $offset: Int = 0, $type_eq: AnnouncementType!, $index_not_eq: Int) {
+  announcements(limit: $limit, offset: $offset, where:{status_not_in:[Rejected,Executed,TimedOut, Approved, Cancelled,ConfirmStarted, ConfirmAborted], type_eq: $type_eq, index_not_eq: $index_not_eq }, orderBy: createdAtBlock_DESC) {
     id
     code
     codec
@@ -1746,8 +1746,8 @@ export const GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT = `query getAllianceAnnouncement
   }
 }`;
 
-export const GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE = `query ProposalsListingByType($limit: Int = 50, $offset: Int = 0,  $type_in:[ProposalType!]) {
-  proposals(limit: $limit, offset: $offset, where: {status_not_in:[Rejected,Executed,TimedOut, Approved], type_in: $type_in}) {
+export const GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE = `query ProposalsListingByType($limit: Int = 50, $offset: Int = 0,  $type_eq: ProposalType!, $index_not_eq: Int) {
+  proposals(limit: $limit, offset: $offset, where: {status_not_in:[Rejected,Executed,TimedOut, Approved], type_deq: $type_eq, index_not_eq: $index_not_eq}, orderBy: createdAtBlock_DESC) {
     proposer
     curator
     createdAt
@@ -1786,8 +1786,8 @@ export const GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE = `query ProposalsListingB
   }
 }`;
 
-export const GET_POSTS_LISTING_BY_TYPE = `query ProposalsListingByType( $limit: Int = 50, $type_in:[ProposalType!]) {
-  proposals(limit: $limit, where:{status_in:[Started,Submitted,Deciding, DecisionDepositPlaced, ConfirmStarted, ConfirmAborted], type_in:$type_in}) {
+export const GET_POSTS_LISTING_BY_TYPE = `query ProposalsListingByType( $limit: Int = 50, $type_eq: ProposalType!, $index_not_eq: Int) {
+  proposals(limit: $limit, where:{status_in:[Started,Submitted,Deciding, DecisionDepositPlaced, ConfirmStarted, ConfirmAborted], type_eq:$type_eq, index_not_eq: $index_not_eq}, orderBy: createdAtBlock_DESC) {
     proposer
     curator
     createdAt
@@ -1830,8 +1830,8 @@ export const GET_POSTS_LISTING_BY_TYPE = `query ProposalsListingByType( $limit: 
   }
 }`;
 
-export const GET_POSTS_LISTING_FOR_POLYMESH = `query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 50) {
-  proposals(limit: $limit, where:{type_in:$type_in, status_in:[Proposed, Scheduled]}) {
+export const GET_POSTS_LISTING_FOR_POLYMESH = `query PolymeshPrposalsQuery($type_eq: ProposalType, $limit: Int = 50, $index_not_eq: Int) {
+  proposals(limit: $limit, where:{type_eq:$type_eq, status_in:[Proposed, Scheduled], index_not_eq: $index_not_eq}, orderBy: createdAtBlock_DESC) {
     createdAt
     createdAtBlock
     deposit

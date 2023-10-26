@@ -8,40 +8,22 @@ import { isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType';
-import { GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT, GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE, GET_POSTS_LISTING_BY_TYPE, GET_POSTS_LISTING_FOR_POLYMESH } from '~src/queries';
-import { network as AllNetworks } from '~src/global/networkConstants';
 
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
-import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
-import { getProposerAddressFromFirestorePostData } from './on-chain-posts';
-import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
-import { IProfileVoteHistoryRespose } from '../votesHistory/getVotesByVoter';
-import { noTitle } from '~src/global/noTitle';
-import { getTimeline } from '../posts/on-chain-post';
+import { getNetworkBasedSubsquidQuery, getResults } from '../utils/similar-proposals';
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
-	const { postId, proposalType, tags, topicId, trackNumber } = req.body;
+	const { postId, proposalType, tags, trackNumber, trackGroup } = req.body;
 	const network = String(req.headers['x-network']);
-	let query;
-	if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
-		if (proposalType === ProposalType.ANNOUNCEMENT) {
-			query = GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT;
-		} else {
-			query = GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE;
-		}
-	} else {
-		query = GET_POSTS_LISTING_BY_TYPE;
-	}
-	if (network === AllNetworks.POLYMESH) {
-		query = GET_POSTS_LISTING_FOR_POLYMESH;
-	}
+	const query = getNetworkBasedSubsquidQuery(network, proposalType);
 
 	const strProposalType = String(proposalType);
 	if (!isProposalTypeValid(strProposalType)) {
 		return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
 	}
 	const postsVariables: any = {
+		index_not_eq: postId,
 		type_eq: getSubsquidProposalType(proposalType as any)
 	};
 	const subsquidRes = await fetchSubsquid({
@@ -49,218 +31,33 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		query,
 		variables: postsVariables
 	});
-	let posts: any;
+	let results: any = [];
 	const subsquidData = subsquidRes?.data?.proposals;
-	const activePostIds = subsquidData.map((proposal: any) => proposal.index);
-	let onChainCollRef;
-	if (tags && activePostIds && topicId) {
-		onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
-		let postsSnapshotArr;
-		if (tags.length > 0) {
-			postsSnapshotArr = await onChainCollRef.where('tags', 'array-contains-any', tags).get();
-		}
-		if (postsSnapshotArr) {
-			const postsPromise = postsSnapshotArr.docs.map(async (doc: any) => {
-				if (doc && doc.exists) {
-					const docData = doc.data();
-					if (docData) {
-						let subsquareTitle = '';
-						if (docData?.title === '' || docData?.title === undefined) {
-							const res = await getSubSquareContentAndTitle(strProposalType, network, docData.id);
-							subsquareTitle = res?.title;
-						}
-						const created_at = docData.created_at;
-						const { topic, topic_id } = docData;
-						return {
-							created_at: created_at?.toDate ? created_at?.toDate() : created_at,
-							gov_type: docData?.gov_type,
-							isSpam: docData?.isSpam || false,
-							isSpamReportInvalid: docData?.isSpamReportInvalid || false,
-							post_id: docData.id,
-							proposer: getProposerAddressFromFirestorePostData(docData, network),
-							spam_users_count:
-								docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
-							tags: docData?.tags || [],
-							title: docData?.title || subsquareTitle || null,
-							topic: topic
-								? topic
-								: isTopicIdValid(topic_id)
-								? {
-										id: topic_id,
-										name: getTopicNameFromTopicId(topic_id)
-								  }
-								: getTopicFromType(strProposalType as ProposalType),
-							user_id: docData?.user_id || 1,
-							username: docData?.username
-						};
-					}
-				}
-			});
-			posts = await Promise.all(postsPromise);
-		}
+	if (!subsquidData) {
+		return res.status(400).json({ message: 'error' || messages.NO_ACTIVE_PROPOSALS });
+	}
+	const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
+	if (tags && tags?.length > 0) {
+		results = await getResults(tags, subsquidData, onChainCollRef, results);
 	}
 
-	let result: any = [];
-	if (subsquidData && posts) {
-		result = subsquidData
-			.map((proposal: any) => posts.filter((post: any) => proposal.index === post?.post_id && proposal.index !== postId))
-			.flat()
-			.map((match: any) => {
-				// console.log(`ids from active tags -> ${match}`);
-				return match;
-			});
+	if (results.length < 3 && trackNumber) {
+		const filteredData = subsquidData.filter((proposal: any) => proposal.trackNumber === trackNumber);
+		results = await getResults(null, filteredData, onChainCollRef, results);
 	}
 
-	if (result.length < 3) {
-		result = subsquidData
-			.filter((proposal: any) => proposal.trackNumber === trackNumber && proposal.trackNumber !== null && proposal.index !== postId)
-			.map((proposal: any) => {
-				// console.log(`ids from active tracks -> ${proposal.index}`);
-				return proposal.index;
-			});
+	if (results.length < 3 && trackGroup) {
+		const filteredData = subsquidData.filter((proposal: any) => trackGroup.includes(proposal.trackNumber));
+		results = await getResults(null, filteredData, onChainCollRef, results);
 	}
 
-	// for categories (start)
-	let postTopics: any;
-	if (result.length > 3) {
-		onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
-		const postSnapshottopic = await onChainCollRef.where('topic.id', '==', topicId).get();
-		const postsTopicPromise = postSnapshottopic.docs.map(async (doc: any) => {
-			if (doc && doc.exists) {
-				const docData = doc.data();
-				if (docData) {
-					let subsquareTitle = '';
-					if (docData?.title === '' || docData?.title === undefined) {
-						const res = await getSubSquareContentAndTitle(strProposalType, network, docData.id);
-						subsquareTitle = res?.title;
-					}
-					const created_at = docData.created_at;
-					const { topic, topic_id } = docData;
-
-					return {
-						created_at: created_at?.toDate ? created_at?.toDate() : created_at,
-						gov_type: docData?.gov_type,
-						isSpam: docData?.isSpam || false,
-						isSpamReportInvalid: docData?.isSpamReportInvalid || false,
-						post_id: docData.id,
-						proposer: getProposerAddressFromFirestorePostData(docData, network),
-						spam_users_count:
-							docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
-						tags: docData?.tags || [],
-						title: docData?.title || subsquareTitle || null,
-						topic: topic
-							? topic
-							: isTopicIdValid(topic_id)
-							? {
-									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id)
-							  }
-							: getTopicFromType(strProposalType as ProposalType),
-						user_id: docData?.user_id || 1,
-						username: docData?.username
-					};
-				}
-			}
-		});
-		postTopics = await Promise.all(postsTopicPromise);
-		if (subsquidData && postTopics) {
-			result = subsquidData
-				.map((proposal: any) => postTopics.filter((postTopic: any) => proposal.index === postTopic?.post_id))
-				.flat()
-				.map((match: any) => {
-					// console.log(`ids from active subtracks -> ${match}`);
-					return match;
-				});
-		}
+	if (results.length < 3) {
+		results = await getResults(null, subsquidData, onChainCollRef, results);
 	}
-
-	if (result.length < 3) {
-		result = subsquidData
-			.filter((proposal: any) => proposal.index !== postId)
-			.map((proposal: any) => {
-				// console.log(`ids from non matches -> ${proposal.index}`);
-				return proposal.index;
-			});
-	}
-	result = result.slice(0, 3);
-
-	const postDataPromise = result.map(async (id: any) => {
-		const postRef = postsByTypeRef(network, proposalType).doc(String(id));
-		const postData = (await postRef.get()).data();
-		const subsquidDatas = subsquidData.map((post: any) => {
-			const { createdAt, hash, index, statusHistory, type } = post;
-			if (post.index == id) {
-				let timeline = [];
-				const isStatus = {
-					swap: false
-				};
-
-				if (!post?.group?.proposals) {
-					timeline = getTimeline(
-						[
-							{
-								createdAt,
-								hash,
-								index,
-								statusHistory,
-								type
-							}
-						],
-						isStatus
-					);
-				} else {
-					timeline = getTimeline(post?.group?.proposals, isStatus) || [];
-				}
-
-				let status = post.status;
-				if (status === 'DecisionDepositPlaced') {
-					const statuses = (post?.statusHistory || []) as { status: string }[];
-					statuses.forEach((obj) => {
-						if (obj.status === 'Deciding') {
-							status = 'Deciding';
-						}
-					});
-				}
-
-				return {
-					...postData,
-					created_at: post?.createdAt,
-					curator: post?.curator,
-					description: postData?.description || '',
-					end: post?.end,
-					hash: post?.hash,
-					post_id: id,
-					proposer: post?.proposer,
-					status: status,
-					status_history: post?.statusHistory,
-					tags: postData?.tags || [],
-					tally: post?.tally,
-					timeline,
-					title: postData?.title || noTitle,
-					topic: postData?.topic || postData?.topicId,
-					trackNumber: post?.trackNumber,
-					type: postData?.type || getSubsquidProposalType(proposalType as any),
-					username: postData?.username
-				};
-			}
-			return null;
-		});
-		return subsquidDatas;
-	});
-	const resultArray = await Promise.allSettled(postDataPromise);
-
-	let data = resultArray.reduce((prev, post) => {
-		if (post && post.status === 'fulfilled') {
-			prev.push(post.value);
-		}
-		return prev;
-	}, [] as IProfileVoteHistoryRespose[]);
-	data = data.flat();
-	const filteredArray = data.filter((item) => item !== null);
-	if (!subsquidRes) {
-		return res.status(400).json({ message: 'error' || messages.API_FETCH_ERROR });
+	if (results) {
+		return res.status(200).json(results || []);
 	} else {
-		return res.status(200).json(filteredArray || []);
+		return res.status(400).json([]);
 	}
 };
 

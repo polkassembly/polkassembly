@@ -63,7 +63,7 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, total
 						lockedBalance={lockedBalance}
 						totalUnlockableBalance={totalUnlockableBalance}
 						showBalances={false}
-						votesCollapsed={true}
+						votesCollapsed
 					/>
 				) : (
 					<Empty className='mt-4' />

@@ -67,6 +67,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: '' });
 	const [openChangeAddressModal, setOpenChangeAddressModal] = useState<boolean>(false);
 	const [openSuccessState, setOpenSuccessState] = useState<boolean>(false);
+	const [isReferesh, setIsReferesh] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!network) return;
@@ -280,6 +281,8 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 			status: NotificationStatus.SUCCESS
 		});
 		setOpenSuccessState(true);
+		setTotalUnlockableBalance(ZERO_BN);
+		setIsReferesh(true);
 		setLoadingStatus({ isLoading: false, message: 'Success!' });
 		setOpen(false);
 	};
@@ -325,7 +328,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		})();
 		getLockData(address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady]);
+	}, [address, api, apiReady, isReferesh]);
 	return (
 		<>
 			<div className={`boder-solid flex items-start justify-start ${className}`}>
@@ -340,7 +343,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 						? 'Unlock Your Tokens'
 						: handlePrevData(totalLockData).length
 						? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
-						: 'Unlock Your Tokens'}
+						: 'No Unlocks Available'}
 				</Button>
 			</div>
 			<Modal
@@ -366,7 +369,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 							displayInline
 						/>
 						<Button
-							className='flex h-[26px] w-[70px] items-center justify-center rounded-[4px] border-none bg-pink_primary text-xs text-white'
+							className='mr-[27px] flex h-[26px] w-[70px] items-center justify-center rounded-[4px] border-none bg-pink_primary text-xs text-white'
 							onClick={() => {
 								setOpenChangeAddressModal(true);
 								setOpen(false);

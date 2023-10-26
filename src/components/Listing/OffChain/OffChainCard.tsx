@@ -7,13 +7,13 @@ import { Divider, Modal, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
 import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
-import NewChatIcon from '~assets/icons/chat-icon.svg';
+import { CommentsIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import TopicTag from '~src/ui-components/TopicTag';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 export interface IDiscussionProps {
 	created_at: Date;
@@ -38,13 +38,14 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	return (
 		<>
 			<div
 				className={`${
 					ownPost && 'border-l-4 border-l-pink_primary'
-				} min-h-[120px] border-2 border-solid border-[#DCDFE350] p-3 transition-all duration-200 hover:border-pink_primary hover:shadow-xl xs:hidden sm:flex md:p-4 ${className}`}
+				} min-h-[120px] border-2 border-[#DCDFE350] p-3 transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:hidden sm:flex md:p-4 ${className}`}
 			>
 				<span className='flex-none text-center font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-2 sm:w-[120px]'>#{post_id}</span>
 				<div className='flex-1 flex-col sm:mt-[6px] sm:flex sm:justify-between'>
@@ -74,25 +75,22 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:hidden sm:flex lg:flex-row lg:items-center'>
 						<div className='flex items-center gap-x-2'>
 							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-								<LikeOutlined style={{ color: '#485F7D' }} />
+								<LikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
 								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 
 							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-								<DislikeOutlined style={{ color: '#485F7D' }} />
+								<DislikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
 								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 
 							<div className='items-center xs:hidden sm:flex'>
-								<NewChatIcon
-									className='mr-1'
-									style={{ color: '#485F7D' }}
-								/>
+								<CommentsIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' />
 								<span className=' text-lightBlue dark:text-blue-dark-medium'>{commentsCount}</span>
 							</div>
 							<Divider
 								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
+								className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 							/>
 
 							{tags && tags.length > 0 && (
@@ -101,7 +99,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 										<div
 											key={index}
 											style={{ fontSize: '10px' }}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
@@ -124,13 +122,12 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							{tags && tags.length > 0 && (
 								<Divider
 									type='vertical'
-									className='max-sm:hidden'
-									style={{ borderLeft: '1px solid #485F7D' }}
+									className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 								/>
 							)}
 							{relativeCreatedAt && (
 								<>
-									<div className='hidden items-center text-lightBlue dark:text-blue-dark-medium sm:flex'>
+									<div className='hidden items-center text-lightBlue dark:text-icon-dark-inactive sm:flex'>
 										<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 									</div>
 								</>
@@ -139,10 +136,10 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								<div className='flex items-center sm:-mt-1'>
 									<Divider
 										type='vertical'
-										className='max-sm:hidden sm:mt-1'
-										style={{ borderLeft: '1px solid #485F7D' }}
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 									/>
 									<TopicTag
+										theme={theme}
 										className='sm:mx-2 sm:mt-0'
 										topic={topic}
 									/>
@@ -189,12 +186,13 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 			<div
 				className={`${
 					ownPost && 'border-l-4 border-l-pink_primary'
-				} h-auto min-h-[150px] border-2 border-solid border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl xs:flex xs:p-2 sm:hidden md:p-4 ${className}`}
+				} h-auto min-h-[150px] border-2 border-solid border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:flex xs:p-2 sm:hidden md:p-4 ${className}`}
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					{topic && (
 						<div className='flex justify-start'>
 							<TopicTag
+								theme={theme}
 								className='xs:mx-2 xs:my-0.5'
 								topic={topic}
 							/>

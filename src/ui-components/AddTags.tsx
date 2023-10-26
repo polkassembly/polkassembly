@@ -135,7 +135,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className={`flex min-h-[40px] items-center justify-between rounded border border-solid border-gray-300 p-[10px] text-[#90A0B7] max-lg:h-auto ${
+				className={`flex min-h-[40px] items-center justify-between rounded border border-solid border-gray-300 p-[10px] text-[#90A0B7] dark:border-separatorDark max-lg:h-auto ${
 					disabled && 'cursor-not-allowed bg-[#F5F5F5]'
 				}`}
 			>

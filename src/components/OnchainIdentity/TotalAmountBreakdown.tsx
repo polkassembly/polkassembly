@@ -112,9 +112,9 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					</u>
 				</li>
 			</ul>
-			<div className='min-h-[60px] rounded-lg bg-[#F6F7F9] px-3 py-[14px]'>
-				<div className={`flex justify-between ${amountBreakup && 'border-0 border-b-[1px] border-solid border-[#E1E6EB] pb-3'}`}>
-					<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Total Amount Required</span>
+			<div className='min-h-[60px] rounded-lg bg-[#F6F7F9] px-3 py-[14px] dark:bg-[#1D1D1D]'>
+				<div className={`flex justify-between ${amountBreakup && 'border-0 border-b-[1px] border-solid border-[#E1E6EB] pb-3 dark:border-separatorDark'}`}>
+					<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Total Amount Required</span>
 					<div className='flex cursor-pointer flex-col text-base font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<span
 							className='flex justify-end'
@@ -161,7 +161,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					</div>
 				)}
 			</div>
-			<div className='-mx-6 mt-6 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5'>
+			<div className='-mx-6 mt-6 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<Button
 					loading={loading}
 					onClick={() => changeStep(ESetIdentitySteps.SET_IDENTITY_FORM)}

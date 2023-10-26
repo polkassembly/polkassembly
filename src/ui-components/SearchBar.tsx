@@ -12,6 +12,7 @@ import { allowedNetwork } from '~src/components/Search';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from './CustomIcons';
+import { useTheme } from 'next-themes';
 
 interface ISearchBarProps {
 	className?: string;
@@ -23,6 +24,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	return allowedNetwork.includes(network?.toUpperCase()) ? (
 		<div className={className}>
@@ -47,6 +49,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						</button>
 					</div>
 					<NewSearch
+						theme={theme}
 						openModal={open}
 						setOpenModal={setOpen}
 						isSuperSearch={isSuperSearch}

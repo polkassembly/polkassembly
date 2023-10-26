@@ -60,6 +60,7 @@ interface Props {
 	setOpenModal: (pre: boolean) => void;
 	isSuperSearch: boolean;
 	setIsSuperSearch: (pre: boolean) => void;
+	theme?: string;
 }
 
 export enum EFilterBy {
@@ -84,7 +85,8 @@ export enum EDateFilter {
 
 const gov1Tracks = ['tips', 'council_motions', 'bounties', 'child_bounties', 'treasury_proposals', 'democracy_proposals', 'tech_committee_proposals', 'referendums'];
 
-const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperSearch }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperSearch, theme }: Props) => {
 	const userIndex = algolia_client.initIndex('polkassembly_users');
 	const postIndex = algolia_client.initIndex('polkassembly_posts');
 	const addressIndex = algolia_client?.initIndex('polkassembly_addresses');
@@ -480,7 +482,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input
-					className='placeholderColor mt-2 h-[40px] rounded-[4px] border-pink_primary text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+					className='placeholderColor mt-2 h-[40px] rounded-[4px] border-pink_primary text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					type='search'
 					value={searchInput}
 					onChange={(e) => handleSearchOnChange(e.target.value)}
@@ -936,16 +938,18 @@ export default styled(NewSearch)`
 		border: 1px solid var(--pink_primary);
 		height: 38px !important;
 		color: red !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 	}
 	.ant-input {
-		color: #7788a0 !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
 	}
 	input::placeholder {
 		font-weight: 400 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: #7788a0 !important;
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
 	}
 	.listing .ant-spin-nested-loading .ant-spin-container .ant-list-items .ant-list-item {
 		padding: 0px 18px !important;

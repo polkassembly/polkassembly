@@ -301,7 +301,7 @@ const IdentityForm = ({
 					)}
 				</div>
 				<div className='flex w-full items-end gap-2 text-sm '>
-					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
+					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-separatorDark dark:bg-[#1D1D1D]'>
 						<Address
 							address={address}
 							isTruncateUsername={false}
@@ -340,7 +340,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='displayName'
-							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:placeholder-[#909090] dark:focus:border-[#91054F]'
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
@@ -371,7 +371,7 @@ const IdentityForm = ({
 						<Input
 							onBlur={() => getGasFee()}
 							name='legalName'
-							className='h-10 rounded-[4px] text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
@@ -384,7 +384,7 @@ const IdentityForm = ({
 				</div>
 				<Divider />
 				<div>
-					<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
+					<label className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
 						Socials{' '}
 						<HelperTooltip
 							className='ml-1'
@@ -412,7 +412,7 @@ const IdentityForm = ({
 
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
-							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B]' />
+							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
 							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
 								Email<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
@@ -443,7 +443,7 @@ const IdentityForm = ({
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
-								className='h-10 rounded-[4px] text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className='h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 									handleInfo();
@@ -455,7 +455,7 @@ const IdentityForm = ({
 
 					<div className='mt-1 flex items-center'>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
-							<TwitterIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B]' />
+							<TwitterIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
 							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
 								Twitter<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
@@ -482,7 +482,7 @@ const IdentityForm = ({
 								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
 								value={twitter?.value}
 								placeholder='Enter your twitter name'
-								className='h-10 rounded-[4px] text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className='h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
 									handleInfo();
@@ -513,14 +513,14 @@ const IdentityForm = ({
 			</Form>
 			{!alreadyVerifiedfields?.alreadyVerified && !alreadyVerifiedfields.isIdentitySet && (
 				<div className='mt-6 flex items-center gap-4 text-sm'>
-					<span className='font-medium text-lightBlue dark:text-blue-dark-medium'>
+					<span className='font-medium text-lightBlue dark:text-blue-dark-high'>
 						Min Deposit{' '}
 						<HelperTooltip
 							className='ml-1'
 							text='Amount that needs held in an address for a verified account.'
 						/>
 					</span>
-					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue dark:text-blue-dark-high'>
+					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue dark:border-separatorDark dark:bg-[#1D1D1D] dark:text-blue-dark-high'>
 						{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
 					</span>
 				</div>
@@ -589,10 +589,10 @@ const IdentityForm = ({
 					/>
 				</Spin>
 			)}
-			<div className='-mx-6 mt-6 flex justify-end gap-4 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5'>
+			<div className='-mx-6 mt-6 flex justify-end gap-4 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<Button
 					onClick={onCancel}
-					className='h-10 w-[134px] rounded-[4px]  border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary'
+					className='h-10 w-[134px] rounded-[4px]  border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary dark:bg-transparent'
 				>
 					Cancel
 				</Button>

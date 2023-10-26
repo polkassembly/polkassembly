@@ -9,11 +9,11 @@ import useCurrentBlock from 'src/hooks/useCurrentBlock';
 import blockToTime from 'src/util/blockToTime';
 import styled from 'styled-components';
 
-import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
-	className?: string
+	className?: string;
 	endBlock: number;
 }
 
@@ -22,21 +22,20 @@ const SpanContent = styled.span`
 	color: black_text;
 `;
 
-const BlockCountdown = ({ className, endBlock }:Props ) => {
-	const { network } = useNetworkContext();
+const BlockCountdown = ({ className, endBlock }: Props) => {
+	const { network } = useNetworkSelector();
 
 	const ZERO = new BN(0);
 	const currentBlock = useCurrentBlock() || ZERO;
 	const blocksRemaining = endBlock - currentBlock.toNumber();
-	const blocktime:number = chainProperties?.[network]?.blockTime;
+	const blocktime: number = chainProperties?.[network]?.blockTime;
 
-	return (
-		blocksRemaining !== endBlock && blocksRemaining > 0
-			?
-			<Tooltip title={<SpanContent>{`#${endBlock}`}</SpanContent>}>
-				<span className={`${className} blockCountdown`}>{ blockToTime(blocksRemaining, network, blocktime)['time']}</span>
-			</Tooltip>
-			: <>#{endBlock}</>
+	return blocksRemaining !== endBlock && blocksRemaining > 0 ? (
+		<Tooltip title={<SpanContent>{`#${endBlock}`}</SpanContent>}>
+			<span className={`${className} blockCountdown`}>{blockToTime(blocksRemaining, network, blocktime)['time']}</span>
+		</Tooltip>
+	) : (
+		<>#{endBlock}</>
 	);
 };
 

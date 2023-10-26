@@ -9,7 +9,6 @@ import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Listing from '~src/components/Listing';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -19,13 +18,20 @@ import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import MotionsIcon from '~assets/icons/motions-icon.svg';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { setNetwork } from '~src/redux/network';
+import { useDispatch } from 'react-redux';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.COUNCIL_MOTIONS;
-	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
-		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -42,11 +48,11 @@ interface IMotionsProps {
 }
 const Motions: FC<IMotionsProps> = (props) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		dispatch(setNetwork(props.network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -54,9 +60,9 @@ const Motions: FC<IMotionsProps> = (props) => {
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
 	const { posts, count } = data;
-	const onPaginationChange = (page:number) => {
+	const onPaginationChange = (page: number) => {
 		router.push({
-			query:{
+			query: {
 				page
 			}
 		});
@@ -65,43 +71,48 @@ const Motions: FC<IMotionsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Motions' network={network}/>
-			<div className='flex sm:items-center mt-3'>
-				<MotionsIcon className='sm:-mt-3.5 xs:mt-0.5'/>
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On Chain Motions ({count})</h1>
+			<SEOHead
+				title='Motions'
+				network={network}
+			/>
+			<div className='mt-3 flex sm:items-center'>
+				<MotionsIcon className='xs:mt-0.5 sm:-mt-3.5' />
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>On Chain Motions ({count})</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
-			<div className="flex flex-col md:flex-row">
-				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
-					This is the place to discuss on-chain motions. On-chain posts are automatically generated as soon as they are created on the chain.
-					Only the proposer is able to edit them.
+			<div className='flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+					This is the place to discuss on-chain motions. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able to edit
+					them.
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
+			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md'>
 				<div className='flex items-center justify-between'>
-					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
-						<FilteredTags/>
+					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
+						<FilteredTags />
 					</div>
-					<FilterByTags className='my-6 sm:mr-14 xs:mx-6 xs:my-2'/>
+					<FilterByTags className='my-6 xs:mx-6 xs:my-2 sm:mr-14' />
 				</div>
 
 				<div>
-					<Listing posts={posts} proposalType={ProposalType.COUNCIL_MOTIONS} />
-					<div className='flex justify-end mt-6'>
-						{
-							!!count && count > 0 && count > LISTING_LIMIT &&
-						<Pagination
-							defaultCurrent={1}
-							pageSize={LISTING_LIMIT}
-							total={count}
-							showSizeChanger={false}
-							hideOnSinglePage={true}
-							onChange={onPaginationChange}
-							responsive={true}
-						/>
-						}
+					<Listing
+						posts={posts}
+						proposalType={ProposalType.COUNCIL_MOTIONS}
+					/>
+					<div className='mt-6 flex justify-end'>
+						{!!count && count > 0 && count > LISTING_LIMIT && (
+							<Pagination
+								defaultCurrent={1}
+								pageSize={LISTING_LIMIT}
+								total={count}
+								showSizeChanger={false}
+								hideOnSinglePage={true}
+								onChange={onPaginationChange}
+								responsive={true}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

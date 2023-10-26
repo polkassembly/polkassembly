@@ -17,10 +17,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const { network, trigger_name, trigger_preferences } = req.body;
 	if (!network || !trigger_name || !trigger_preferences) return res.status(400).json({ message: 'Missing parameters in request body' });
-	if (!(trigger_preferences instanceof Object) ||
-		Array.isArray(trigger_preferences) ||
-		!('name' in trigger_preferences) ||
-		!('enabled' in trigger_preferences)) {
+	if (!(trigger_preferences instanceof Object) || Array.isArray(trigger_preferences) || !('name' in trigger_preferences) || !('enabled' in trigger_preferences)) {
 		return res.status(400).json({ message: 'Invalid trigger_preferences' });
 	}
 
@@ -36,23 +33,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const userData = userDoc.data();
 
-	await userRef.update({
-		notification_preferences: {
-			...(userData?.notification_preferences || {}),
-			triggerPreferences: {
-				...(userData?.notification_preferences?.triggerPreferences || {}),
-				[network]: {
-					...(userData?.notification_preferences?.triggerPreferences?.[network] || {}),
-					[trigger_name]: trigger_preferences
+	await userRef
+		.update({
+			notification_preferences: {
+				...(userData?.notification_preferences || {}),
+				triggerPreferences: {
+					...(userData?.notification_preferences?.triggerPreferences || {}),
+					[network]: {
+						...(userData?.notification_preferences?.triggerPreferences?.[network] || {}),
+						[trigger_name]: trigger_preferences
+					}
 				}
 			}
-		}
-	}).then(() => {
-		return res.status(200).json({ message: 'Success' });
-	}).catch((error) => {
-		console.error('Error updating primary network: ', error);
-		return res.status(500).json({ message: 'Error updating  primary network' });
-	});
+		})
+		.then(() => {
+			return res.status(200).json({ message: 'Success' });
+		})
+		.catch((error) => {
+			console.error('Error updating primary network: ', error);
+			return res.status(500).json({ message: 'Error updating  primary network' });
+		});
 }
 
 export default withErrorHandling(handler);

@@ -11,17 +11,24 @@ import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext,useApiContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 const proposalType = ProposalType.REFERENDUMS;
-export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
@@ -38,50 +45,71 @@ interface IReferendumPostProps {
 }
 
 const ReferendumPost: FC<IReferendumPostProps> = (props) => {
-
-	const { post, error , status, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const { post, error, status, network } = props;
+	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
 	const { id } = router.query;
-	const [isUnfinalized,setIsUnFinalized] = useState(false);
+	const [isUnfinalized, setIsUnFinalized] = useState(false);
 
 	useEffect(() => {
-
-		if(!api || !apiReady || !error || !status || !id || status !== 404 ){
+		if (!api || !apiReady || !error || !status || !id || status !== 404) {
 			return;
 		}
-		(async() => {
-			setIsUnFinalized( Boolean(await checkIsOnChain(String(id),proposalType, api)));
+		(async () => {
+			setIsUnFinalized(Boolean(await checkIsOnChain(String(id), proposalType, api)));
 		})();
-
-	}, [api, apiReady, error, status,id]);
+	}, [api, apiReady, error, status, id]);
 
 	useEffect(() => {
-		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+		dispatch(setNetwork(props.network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-	if(isUnfinalized){
-		return <PostEmptyState image={<EmptyIcon/>} description={<div className='p-5'><b className='text-xl my-4'>Waiting for Block Confirmation</b><p>Usually its done within a few seconds</p></div>} imageStyle={ { height:300  } }/>;
+	if (isUnfinalized) {
+		return (
+			<PostEmptyState
+				image={<EmptyIcon />}
+				description={
+					<div className='p-5'>
+						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
+						<p>Usually its done within a few seconds</p>
+					</div>
+				}
+				imageStyle={{ height: 300 }}
+			/>
+		);
 	}
-	if (error ){
+	if (error) {
 		return <ErrorState errorMessage={error} />;
 	}
 	if (!post) return null;
 
-	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Referendum`} desc={post.content} network={network}/>
+	if (post)
+		return (
+			<>
+				<SEOHead
+					title={post.title || `${noTitle} - Referendum`}
+					desc={post.content}
+					network={network}
+				/>
 
-		<BackToListingView postCategory={PostCategory.REFERENDA} />
+				<BackToListingView postCategory={PostCategory.REFERENDA} />
 
-		<div className='mt-6'>
-			<Post post={post} proposalType={proposalType} />
+				<div className='mt-6'>
+					<Post
+						post={post}
+						proposalType={proposalType}
+					/>
+				</div>
+			</>
+		);
+
+	return (
+		<div className='mt-16'>
+			<LoadingState />
 		</div>
-	</>);
-
-	return <div className='mt-16'><LoadingState /></div>;
-
+	);
 };
 
 export default ReferendumPost;

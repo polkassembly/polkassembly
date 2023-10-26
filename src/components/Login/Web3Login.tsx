@@ -388,14 +388,14 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				<h3 className='mt-3 text-xl font-semibold text-bodyBlue'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />
-			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md'>
-				<h3 className='flex flex-col gap-y-2 text-2xl font-semibold text-[#1E232C]'>
+			<article className='flex flex-col gap-y-3 rounded-md bg-white px-8 py-4 shadow-md'>
+				<h3 className='flex flex-col gap-y-2'>
 					{!withPolkasafe && (
 						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
-							<span className='mt-2'>
+							<span className='-ml-2 mt-2 scale-75'>
 								<WalletIcon which={chosenWallet} />
 							</span>
-							<span className='text-lg text-bodyBlue sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+							<span className='text-xl text-bodyBlue sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
 						</p>
 					)}
 					{withPolkasafe && (
@@ -409,13 +409,30 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					)}
 				</h3>
 				{fetchAccounts ? (
-					<div className='flex flex-col items-center justify-center'>
-						<p className='text-base text-bodyBlue'>
+					<div className='-mt-3 flex flex-col items-center justify-center'>
+						<p className='m-0 p-0 text-base text-bodyBlue'>
 							{withPolkasafe
 								? 'To fetch your Multisig details, please select a wallet extension'
 								: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 						</p>
-						<div className='flex'>
+						<Divider
+							className='m-0 mt-5 p-0 '
+							style={{ borderTop: '1px dashed #D2D8E0' }}
+						></Divider>
+						<div className='-ml-[196px] mt-4 flex pb-5 font-normal'>
+							<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
+							<div
+								onClick={handleClick}
+								className='cursor-pointer text-base text-pink_primary'
+							>
+								&nbsp; Sign Up{' '}
+							</div>
+						</div>
+						<Divider
+							className='m-0 mb-4 p-0 '
+							style={{ borderTop: '1px solid #E1E6EB' }}
+						></Divider>
+						<div className='ml-auto flex'>
 							<Button
 								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
 								onClick={() => handleBackToLogin()}
@@ -571,15 +588,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						)}
 					</>
 				)}
-				<div className='mt-6 flex items-center justify-center pb-5 font-medium'>
-					<label className='text-lg text-bodyBlue'>Don&apos;t have an account?</label>
-					<div
-						onClick={handleClick}
-						className='cursor-pointer text-lg text-pink_primary'
-					>
-						&nbsp; Sign Up{' '}
-					</div>
-				</div>
 			</article>
 		</>
 	);

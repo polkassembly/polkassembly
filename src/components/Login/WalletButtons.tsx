@@ -107,7 +107,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 							/>
 						}
 						optionalLogin={optionalLogin}
-						text='polkasafe'
+						text='Polkasafe'
 					/>
 				)}
 				{['polymesh'].includes(network) ? (

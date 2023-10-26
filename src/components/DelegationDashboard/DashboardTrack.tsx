@@ -24,7 +24,6 @@ import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
-
 interface Props {
 	className?: string;
 	posts: any[];
@@ -155,9 +154,8 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 
 	useEffect(() => {
 		getData();
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
+	}, [address, network]);
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`);
@@ -248,7 +246,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white pl-[3px] pr-[3px]'>
 										<Table
 											className='column'
-											columns={GetTracksColumns(item, setOpenUndelegateModal)}
+											columns={GetTracksColumns(item, setOpenUndelegateModal, network)}
 											dataSource={
 												item === ETrackDelegationStatus.Received_Delegation
 													? rowData

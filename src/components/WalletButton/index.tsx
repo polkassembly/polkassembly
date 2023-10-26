@@ -26,7 +26,7 @@ const WalletButton = ({ disabled, onClick, icon, className, text, name, optional
 		>
 			<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 			{text && optionalLogin && <p className='m-0 ml-4 p-0'>{text}</p>}
-			<p className='m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>
+			{optionalLogin && <p className='m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
 		</Button>
 	);
 };

@@ -53,7 +53,7 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 							Login
 						</Button>
 						<Button
-							className='-ml-0 flex h-[40px] w-[60%] items-center justify-center rounded border-pink_primary p-5 text-sm font-medium leading-5 text-pink_primary hover:border-pink_primary hover:bg-pink_secondary hover:text-white'
+							className='-ml-0 flex h-[40px] w-[60%] items-center justify-center rounded border-pink_primary p-5 text-sm font-medium leading-5 text-pink_primary hover:border-pink_primary hover:bg-pink_secondary hover:text-white dark:bg-transparent'
 							onClick={() => handleClick('signup')}
 						>
 							Signup
@@ -68,8 +68,8 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 						src={`${image}`}
 						alt=''
 					/>
-					<h5 className='leading-24 traking-normal mt-8 text-center text-xl font-semibold max-sm:text-base'>{title}</h5>
-					<h5 className='leading-21 text-center font-poppins text-sm font-medium tracking-normal max-sm:text-xs'>{subtitle}</h5>
+					<h5 className='leading-24 traking-normal mt-8 text-center text-xl font-semibold dark:text-white max-sm:text-base'>{title}</h5>
+					<h5 className='leading-21 text-center font-poppins text-sm font-medium tracking-normal dark:text-white max-sm:text-xs'>{subtitle}</h5>
 				</div>
 			</Modal>
 			<SignupPopup

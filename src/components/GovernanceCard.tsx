@@ -332,7 +332,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 									<Divider
 										type='vertical'
-										style={{ borderLeft: '1px solid #485F7D' }}
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive'
 									/>
 								</>
 							)}
@@ -584,7 +584,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						)}
 
 						<div className='mb-1 items-center justify-between xs:flex xs:gap-x-2'>
-							{status && <StatusTag status={status} />}
+							{status && (
+								<StatusTag
+									theme={theme}
+									status={status}
+								/>
+							)}
 							{tags && tags.length > 0 && (
 								<div className='flex'>
 									<Divider

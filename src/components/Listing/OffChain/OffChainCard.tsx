@@ -187,7 +187,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 			<div
 				className={`${
 					ownPost && 'border-l-4 border-l-pink_primary'
-				} h-auto min-h-[150px] border-2 border-solid border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:flex xs:p-2 sm:hidden md:p-4 ${className}`}
+				} h-auto min-h-[150px] border-2 border-grey_light transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-[1px] dark:border-separatorDark xs:flex xs:p-2 sm:hidden md:p-4 ${className}`}
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					{topic && (
@@ -232,12 +232,11 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							/>
 							<Divider
 								type='vertical'
-								className='max-lg:hidden xs:mt-0.5 xs:inline-block'
-								style={{ borderLeft: '1px solid #485F7D' }}
+								className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
 							/>
 							{relativeCreatedAt && (
 								<>
-									<div className='mt-0 items-center text-sm dark:text-blue-dark-medium xs:-mt-0.5 xs:flex xs:text-lightBlue lg:flex'>
+									<div className='mt-0 items-center text-sm xs:-mt-0.5 xs:flex xs:text-lightBlue xs:dark:text-icon-dark-inactive lg:flex'>
 										<ClockCircleOutlined className='mr-1 mt-0' /> {relativeCreatedAt}
 									</div>
 								</>
@@ -248,8 +247,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							{tags && tags.length > 0 && (
 								<Divider
 									type='vertical'
-									className='max-lg:hidden'
-									style={{ borderLeft: '1px solid #90A0B7' }}
+									className='border-l-1 my-4 border-lightBlue dark:border-icon-dark-inactive max-lg:hidden'
 								/>
 							)}
 							{tags && tags.length > 0 && (
@@ -258,7 +256,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 										<div
 											key={index}
 											style={{ fontSize: '10px' }}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:border-separatorDark dark:text-blue-dark-high'
 										>
 											{tag}
 										</div>
@@ -304,7 +302,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								{tags?.map((tag, index) => (
 									<div
 										key={index}
-										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:text-blue-dark-medium'
+										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'
 									>
 										{tag}
 									</div>

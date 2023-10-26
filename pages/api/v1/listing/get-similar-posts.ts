@@ -54,11 +54,8 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	if (results.length < 3) {
 		results = await getResults(null, subsquidData, onChainCollRef, results);
 	}
-	if (results) {
-		return res.status(200).json(results || []);
-	} else {
-		return res.status(400).json([]);
-	}
+
+	return res.status(200).json(results || []);
 };
 
 export default withErrorHandling(handler);

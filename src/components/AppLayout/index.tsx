@@ -59,7 +59,7 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import CloseIcon from '~assets/icons/close-icon.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
@@ -799,7 +799,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				zIndex={100}
 				open={identityMobileModal}
 				footer={false}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
 				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
 				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}

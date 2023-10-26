@@ -6,8 +6,8 @@ import { Button, Modal, Slider } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
-import CloseIcon from 'public/assets/icons/sentiment-close.svg';
 import { ESentiment } from '~src/types';
+import { CloseIcon } from './CustomIcons';
 
 interface Props {
 	setIsComment: (pre: boolean) => void;
@@ -69,7 +69,7 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 					</Button>
 				</div>
 			]}
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			zIndex={1002}
 		>
 			<div className='center-aligned flex flex-col items-center justify-center pl-5 pr-5 text-base font-medium text-[#334D6E]'>

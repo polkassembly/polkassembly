@@ -38,7 +38,7 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<h3 className='mb-5 flex items-center gap-3'>
+				<h3 className='mb-5 flex items-center gap-3 dark:bg-section-dark-overlay'>
 					{icon} {title}
 				</h3>
 			}

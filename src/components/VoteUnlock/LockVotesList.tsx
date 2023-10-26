@@ -50,7 +50,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 	return (
 		<div>
 			{showBalances && (
-				<div className='mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] p-3 text-sm tracking-[0.25%] text-lightBlue'>
+				<div className='dark:separatorDark mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] p-3 text-sm tracking-[0.25%] text-lightBlue dark:text-white'>
 					<span className='flex gap-2'>
 						<CheckCircleFilled
 							style={{ color: '#51D36E' }}
@@ -58,7 +58,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 						/>
 						Total Unlockable Balance
 					</span>
-					<span className='pr-[27px] text-base font-semibold text-bodyBlue'>
+					<span className='pr-[27px] text-base font-semibold text-bodyBlue dark:text-white'>
 						{formatedBalance((totalUnlockableBalance.toString() || '0').toString(), unit, 2)} {unit}
 					</span>
 				</div>
@@ -110,7 +110,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 							<div className='max-h-[150px] overflow-y-auto'>
 								{tokensData.slice(1).map((lock, index) => (
 									<div
-										className='borer-[#D2D8E0] flex items-center justify-between border-0 border-t-[1px] border-dotted border-[#D2D8E0] py-3 text-sm tracking-[0.25%] text-lightBlue'
+										className='flex items-center justify-between border-0 border-t-[1px] border-dotted border-[#D2D8E0] border-[#D2D8E0] py-3 text-sm tracking-[0.25%] text-lightBlue'
 										key={index}
 									>
 										<div className='flex items-center gap-2'>

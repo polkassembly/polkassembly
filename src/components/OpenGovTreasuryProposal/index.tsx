@@ -13,10 +13,9 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import CloseIcon from '~assets/icons/close.svg';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import { BN_HUNDRED } from '@polkadot/util';
-import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { useApiContext } from '~src/context';
@@ -164,7 +163,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Exit Treasury Proposal Creation
 					</div>
 				}
@@ -217,7 +216,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				footer={false}
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
 					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<CreateProposalIcon />

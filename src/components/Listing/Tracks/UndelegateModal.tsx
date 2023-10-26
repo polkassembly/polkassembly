@@ -13,7 +13,6 @@ import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 
-import CloseIcon from '~assets/icons/close.svg';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
@@ -29,6 +28,7 @@ import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -195,11 +195,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	return (
 		<>
 			<Modal
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						<UndelegateProfileIcon className='mr-2' />
 						Undelegate
 					</div>

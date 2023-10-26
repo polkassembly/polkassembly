@@ -254,7 +254,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 		>
 			<section className='flex flex-col'>
-				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue'>Edit Proposal Details</h2>
+				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue dark:text-white'>Edit Proposal Details</h2>
 				<Form
 					form={form}
 					name='edit-post-form'

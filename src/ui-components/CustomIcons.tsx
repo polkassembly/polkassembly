@@ -11,6 +11,7 @@ import RetrySVG from '~assets/icons/Refresh.svg';
 import OpenAiSVG from '~assets/icons/openai.svg';
 import AiStarSVG from '~assets/icons/ai-star.svg';
 import SummaryModalCloseSVG from '~assets/icons/summary-modal-close.svg';
+import CloseSVG from '~assets/icons/close.svg';
 import OpenGovBannerSVG from '~assets/icons/opengov_banner.svg';
 import CubeSVG from '~assets/icons/cube.svg';
 import DiscordSVG from '~assets/icons/discord.svg';
@@ -122,6 +123,8 @@ import WebSVG from '~assets/icons/web-icon.svg';
 import ShareScreenSVG from '~assets/icons/screen-share-icon.svg';
 import PgpSVG from '~assets/icons/pgp-icon.svg';
 import RedirectSVG from '~assets/icons/redirect-icon.svg';
+import ProposalsIconSVG from '~assets/icons/proposals-icon.svg';
+import TechComIconSVG from '~assets/icons/tech-com-icon.svg';
 
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -133,6 +136,27 @@ export const Caution = (props: Partial<CustomIconComponentProps>) => (
 export const IconLogout = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={logoutSVG}
+		{...props}
+	/>
+);
+
+export const ProposalsIconListing = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ProposalsIconSVG}
+		{...props}
+	/>
+);
+
+export const TechComIconListing = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={TechComIconSVG}
+		{...props}
+	/>
+);
+
+export const CloseIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CloseSVG}
 		{...props}
 	/>
 );

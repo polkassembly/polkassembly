@@ -24,7 +24,6 @@ import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
 import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import dayjs from 'dayjs';
@@ -45,6 +44,7 @@ import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -551,7 +551,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					}}
 					footer={false}
 					className={`w-[550px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[675px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-					closeIcon={<CloseCross />}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
 						showMultisig ? (

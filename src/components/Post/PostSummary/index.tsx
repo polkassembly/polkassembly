@@ -73,7 +73,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 							onClick={() => setOpen(false)}
 							className='mt-2 flex cursor-pointer items-center justify-center border-none bg-transparent outline-none md:mt-0'
 						>
-							<SummaryModalClose className='text-sm text-lightBlue dark:text-blue-dark-medium' />
+							<SummaryModalClose className='text-sm text-lightBlue dark:text-icon-dark-inactive' />
 						</button>
 					</div>
 				}

@@ -48,7 +48,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 				indicator={<LoadingOutlined />}
 				spinning={loading}
 			>
-				<h4 className='dashboard-heading mb-6'>{bountiesRes?.child_bounties_count} Child Bounties</h4>
+				<h4 className='dashboard-heading mb-6 dark:text-white'>{bountiesRes?.child_bounties_count} Child Bounties</h4>
 				{bountiesRes && bountiesRes.child_bounties_count > 0 ? (
 					bountiesRes?.child_bounties.map(
 						(childBounty) =>

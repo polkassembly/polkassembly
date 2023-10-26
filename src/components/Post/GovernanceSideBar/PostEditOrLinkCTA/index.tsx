@@ -6,7 +6,7 @@ import { LinkOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 import { usePostDataContext } from '~src/context';
-import { EditIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, EditIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import PostEditIcon from 'public/assets/icons/post-edit.svg';
 import PostLinkingIcon from 'public/assets/icons/post-linking.svg';
@@ -17,7 +17,6 @@ import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';
-import CloseIcon from '~assets/icons/close-icon.svg';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
@@ -67,7 +66,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 				onCancel={() => setOpen(false)}
 				footer={[]}
 				className={`${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
 					<PostEditLinkingIcon />

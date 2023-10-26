@@ -7,7 +7,7 @@ import { Divider, Modal, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
 import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { CommentsIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, CommentsIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
@@ -156,6 +156,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						e.preventDefault();
 						setTagsModal(false);
 					}}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					footer={false}
 					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				>
@@ -288,6 +289,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						e.preventDefault();
 						setTagsModal(false);
 					}}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					footer={false}
 					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				>

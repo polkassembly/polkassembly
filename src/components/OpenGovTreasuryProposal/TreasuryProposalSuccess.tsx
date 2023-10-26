@@ -13,10 +13,10 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
-import CloseIcon from '~assets/icons/close.svg';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import Link from 'next/link';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -79,7 +79,7 @@ const TreasuryProposalSuccessPopup = ({
 			open={open}
 			className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={onCancel}
 			footer={
 				<Link

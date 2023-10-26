@@ -89,7 +89,12 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 					className='flex w-full flex-col gap-6'
 				>
 					<div>
-						<label htmlFor='currentPassword'>Current Password</label>
+						<label
+							className='dark:text-white'
+							htmlFor='currentPassword'
+						>
+							Current Password
+						</label>
 						<Form.Item
 							name='currentPassword'
 							className='m-0 w-full min-w-[250px]'
@@ -106,7 +111,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter current password'
 							/>
 						</Form.Item>
@@ -129,13 +134,18 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter new password'
 							/>
 						</Form.Item>
 					</div>
 					<div>
-						<label htmlFor='confirmPassword'>Confirm New Password</label>
+						<label
+							className='dark:text-white'
+							htmlFor='confirmPassword'
+						>
+							Confirm New Password
+						</label>
 						<Form.Item
 							name='confirmPassword'
 							className='m-0 w-full min-w-[250px]'
@@ -156,7 +166,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Confirm new password'
 							/>
 						</Form.Item>

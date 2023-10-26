@@ -9,7 +9,7 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import TotalAmountBreakdown from './TotalAmountBreakdown';
-import CloseIcon from '~assets/icons/close-icon.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import OnChainIdentityIcon from '~assets/icons/onchain-identity.svg';
 import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
@@ -361,7 +361,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={
-					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Exit Verification
 					</div>
 				}
@@ -399,7 +399,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				open={open}
 				onCancel={handleCancel}
 				maskClosable={false}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
 					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>

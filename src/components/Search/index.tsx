@@ -30,10 +30,10 @@ import StartSearchIcon from '~assets/search/search-start.svg';
 import DownOutlined from '~assets/search/dropdown-down.svg';
 import HighlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import InputClearIcon from '~assets/icons/close-tags.svg';
-import CloseIcon from '~assets/icons/close.svg';
 import LeftArrow from '~assets/icons/arrow-left.svg';
 import PaLogo from '../AppLayout/PaLogo';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;

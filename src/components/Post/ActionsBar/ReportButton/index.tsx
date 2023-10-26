@@ -182,7 +182,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			<Modal
 				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'
-				title={isDeleteModal ? 'Delete' : 'Report'}
+				title={isDeleteModal ? <span className='dark:text-white'>Delete</span> : <span className='dark:text-white'>Report</span>}
 				open={showModal}
 				onOk={isDeleteModal ? handleDelete : handleReport}
 				confirmLoading={loading}

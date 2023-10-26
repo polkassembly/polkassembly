@@ -14,6 +14,7 @@ import Gif from './Gif';
 import { algolia_client } from '~src/components/Search';
 import MarkdownEditor from './MarkdownEditor';
 import { SwapOutlined } from '@ant-design/icons';
+import { CloseIcon } from './CustomIcons';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -155,6 +156,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						onCancel={() => setIsModalVisible(false)}
 						title='Select Gif'
 						footer={null}
+						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 					>
 						<Gif

@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CloseOutlined, RightOutlined, CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
+import { RightOutlined, CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import { Col, Modal, Row } from 'antd';
 import React, { FC, useState } from 'react';
 import Address from '~src/ui-components/Address';
-import { EmailIcon, IdentityIcon, RiotIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, EmailIcon, IdentityIcon, RiotIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { TOnChainIdentity } from './Details';
 
 interface IOnChainIdentityProps {
@@ -41,7 +41,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 					wrapClassName='dark:bg-modalOverlayDark'
 					className='min-w-[648px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 					title={<h3 className='text-xl font-semibold text-[#1D2632]'>On-chain identity</h3>}
-					closeIcon={<CloseOutlined className='text-sm text-bodyBlue dark:text-blue-dark-high' />}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}

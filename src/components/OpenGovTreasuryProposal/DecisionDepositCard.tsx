@@ -24,12 +24,12 @@ import { WalletIcon } from '../Login/MetamaskLogin';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { formatBalance } from '@polkadot/util';
-import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import { gov2ReferendumStatus } from '~src/global/statuses';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -251,7 +251,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				className={`${poppins.className} ${poppins.variable} pay-decision-deposite dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				open={openModal}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => setOpenModal(false)}
 				title={
 					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>

@@ -313,7 +313,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'
 				title={
-					<div className='flex items-center'>
+					<div className='flex items-center dark:bg-section-dark-overlay'>
 						Delegate
 						<span className='ml-2 rounded-md border border-pink_secondary px-2 py-0.5 text-xs text-pink_secondary'>Delegation dashboard coming soon 🚀</span>
 					</div>

@@ -478,7 +478,7 @@ const Post: FC<IPostProps> = (props) => {
 					</Link>
 				)}
 				{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-					<div className='dashboard-heading mb-6 flex w-full items-center  gap-x-2 rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
+					<div className='dashboard-heading mb-6 flex w-full items-center gap-x-2 rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
 						<span>The child bounty payout is ready to be claimed</span>
 						<ClaimPayoutModal
 							parentBountyId={post?.parentBountyId}
@@ -490,7 +490,7 @@ const Post: FC<IPostProps> = (props) => {
 				<div className={`${className} grid grid-cols-1 gap-9 xl:grid-cols-12`}>
 					<div className='xl:col-span-8'>
 						{proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) && (
-							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
+							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
 								This grant will be closed in <span className='text-pink_primary'>{formatDuration(duration)}</span>
 							</div>
 						)}

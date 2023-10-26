@@ -153,7 +153,7 @@ const Footer = ({ className }: { className?: string }) => {
 							</nav>
 						</div>
 
-						<div className='mt-8 text-center font-normal text-lightBlue dark:text-blue-dark-medium sm:text-left md:ml-10 md:mt-0 lg:ml-14'>
+						<div className='mt-8 text-center font-normal text-lightBlue dark:text-blue-dark-high sm:text-left md:ml-10 md:mt-0 lg:ml-14'>
 							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px] '>Our Services</p>
 
 							<nav

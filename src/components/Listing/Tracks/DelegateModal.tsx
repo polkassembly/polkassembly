@@ -17,7 +17,6 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import CloseIcon from '~assets/icons/close.svg';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
@@ -36,6 +35,7 @@ import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
 import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -344,7 +344,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			)}
 			<Modal
 				maskClosable={false}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={

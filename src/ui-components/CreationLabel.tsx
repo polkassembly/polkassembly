@@ -14,7 +14,7 @@ import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 // import dayjs from 'dayjs';
 import { getSentimentIcon, getSentimentTitle } from './CommentHistoryModal';
-import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
@@ -22,7 +22,6 @@ import { ESentiment, EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -241,7 +240,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							<>
 								<Divider
 									type='vertical'
-									style={{ borderLeft: '1px solid #485F7D' }}
+									className='border-l-1 border-lightBlue dark:border-icon-dark-inactive md:inline-block'
 								/>
 								<Link
 									href={`https://ipfs.io/ipfs/${cid}`}
@@ -258,9 +257,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						<>
 							&nbsp;
 							<Divider
-								className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} max-sm:hidden`}
+								className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
 								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 						</>
 					)}
@@ -275,9 +273,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					{vote && (
 						<div className='flex items-center justify-center'>
 							<Divider
-								className='mb-[-1px] ml-1 hidden md:inline-block'
+								className='mb-[-1px] ml-1 hidden border-lightBlue dark:border-icon-dark-inactive md:inline-block'
 								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 							{vote === EVoteDecisionType.AYE ? (
 								<p className='mb-[-1px]'>
@@ -308,9 +305,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							}}
 						>
 							<Divider
-								className='mb-[-1px] ml-1 mr-3 hidden md:inline-block'
+								className='mb-[-1px] ml-1 mr-3 hidden border-lightBlue dark:border-icon-dark-inactive md:inline-block'
 								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
 							/>
 							{votesArr[0].decision == 'yes' ? (
 								<p className='aye-voted-icon voted-icon mb-[-1px]'>
@@ -335,7 +331,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
 								className={`w-[400px] ${poppins.variable} ${poppins.className} max-h-[675px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-								closeIcon={<CloseCross />}
+								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 								wrapClassName={`${className} dark:bg-modalOverlayDark`}
 								title={
 									<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>

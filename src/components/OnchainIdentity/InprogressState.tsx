@@ -5,12 +5,12 @@ import React, { useEffect } from 'react';
 import { ESetIdentitySteps, ISocials } from '.';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
-import CloseIcon from '~assets/icons/close-icon.svg';
 import SuccessIcon from '~assets/icons/identity-success.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { ESocials } from '~src/types';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -46,7 +46,7 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 			open={open}
 			className={`${poppins.variable} ${poppins.className} w-[650px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
 				close(true);
 				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);

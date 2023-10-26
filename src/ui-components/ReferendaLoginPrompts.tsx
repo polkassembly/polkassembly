@@ -4,12 +4,12 @@
 
 import { Button, Modal } from 'antd';
 import React, { useState } from 'react';
-import CloseIcon from 'public/assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import SignupPopup from './SignupPopup';
 import LoginPopup from './loginPopup';
 import Image from 'next/image';
 import styled from 'styled-components';
+import { CloseIcon } from './CustomIcons';
 
 interface Props {
 	image: String;
@@ -40,7 +40,7 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 				open={modalOpen}
 				className={`${poppins.variable} ${poppins.className} text w-[570px] max-w-full shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => setModalOpen(false)}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				centered
 				zIndex={1002}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}

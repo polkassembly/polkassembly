@@ -4,7 +4,7 @@
 
 import React, { FC, useState, useEffect } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
-import { IconVoteHistory } from '~src/ui-components/CustomIcons';
+import { CloseIcon, IconVoteHistory } from '~src/ui-components/CustomIcons';
 import ThresholdGraph from '../Modal/VoteData/ThresholdGraph';
 import GraphExpandIcon from '~assets/graph-expand.svg';
 import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
@@ -12,7 +12,6 @@ import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
 import { Modal } from 'antd';
-import CloseIcon from '~assets/icons/close.svg';
 import Curves from './Curves';
 import Loader from '~src/ui-components/Loader';
 
@@ -113,7 +112,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				open={thresholdOpen}
 				footer={[]}
 				className='md:min-w-[700px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>Threshold Curves</h2>}
 			>
 				<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>

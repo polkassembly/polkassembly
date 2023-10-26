@@ -358,7 +358,7 @@ const AddressConnectModal = ({
 			className={`${poppins.className} ${poppins.variable} radius dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={open}
 			title={
-				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					{showMultisig && (
 						<ArrowLeft
 							className='absolute left-[24px] mt-1 cursor-pointer'

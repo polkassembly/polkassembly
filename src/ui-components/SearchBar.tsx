@@ -11,6 +11,7 @@ import { Modal } from 'antd';
 import { allowedNetwork } from '~src/components/Search';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from './CustomIcons';
 
 interface ISearchBarProps {
 	className?: string;
@@ -75,6 +76,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						wrapClassName='dark:bg-modalOverlayDark [&>.ant-modal-content]:bg-section-dark-overlay'
 						title='Search'
 						closable={false}
+						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						open={open}
 						onCancel={() => setOpen(false)}
 						footer={[]}

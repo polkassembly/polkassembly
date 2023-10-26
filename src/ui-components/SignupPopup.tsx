@@ -4,10 +4,10 @@
 
 import { Modal } from 'antd';
 import Signup from 'pages/signup';
-import CloseIcon from 'public/assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from './CustomIcons';
 
 interface Props {
 	modalOpen: boolean;
@@ -30,7 +30,7 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			className={`${poppins.variable} ${poppins.className} padding-0 max-w-full  shrink-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => setModalOpen(false)}
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<Signup
 				network={network}

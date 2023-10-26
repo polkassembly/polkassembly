@@ -5,7 +5,6 @@
 import React, { useEffect } from 'react';
 import { Modal } from 'antd';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import CloseIcon from '~assets/icons/close.svg';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
@@ -23,6 +22,7 @@ import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -82,7 +82,7 @@ const DelegationSuccessPopup = ({
 			open={open}
 			className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={isDelegate ? <CloseIcon /> : <UndelegateCloseIcon />}
+			closeIcon={isDelegate ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : <UndelegateCloseIcon />}
 			onCancel={() => {
 				redirect && router.reload();
 				setOpen(false);

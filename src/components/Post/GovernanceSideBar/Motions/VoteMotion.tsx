@@ -284,7 +284,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 
 	const NotCouncil = () => (
 		<GovSidebarCard>
-			<h3 className='dashboard-heading mb-6'>Cast your Vote!</h3>
+			<h3 className='dashboard-heading mb-6 dark:text-white'>Cast your Vote!</h3>
 			<Alert
 				className='mb-6'
 				type='warning'

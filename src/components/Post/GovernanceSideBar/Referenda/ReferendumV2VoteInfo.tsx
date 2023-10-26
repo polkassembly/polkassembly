@@ -13,9 +13,8 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, VoteAmountIcon } from '~src/ui-components/CustomIcons';
+import { CastVoteIcon, CloseIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, VoteAmountIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
-import CloseIcon from 'public/assets/icons/close.svg';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -190,7 +189,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</div>
 						]}
 						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-						closeIcon={<CloseIcon className='mt-2' />}
+						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						title={
 							<div
 								className={`${poppins.variable} ${poppins.className} text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}

@@ -63,7 +63,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 		setError('');
 		setShowModal(false);
 	};
-	const Title = <span className='text-lg font-medium tracking-wide text-sidebarBlue'>Delete Account</span>;
+	const Title = <div className='text-lg font-medium tracking-wide text-sidebarBlue dark:bg-section-dark-overlay dark:text-white'>Delete Account</div>;
 	const { Option } = Select;
 	return (
 		<Collapse
@@ -125,7 +125,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						)}
 						<article>
 							<label
-								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'
 								htmlFor='reason'
 							>
 								Why are you deleting your account?
@@ -167,14 +167,14 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									<Input.TextArea
 										placeholder='Other reason'
 										id='other'
-										className='dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										className='dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									/>
 								</Form.Item>
 							) : null}
 						</article>
 						<article className='mt-12'>
 							<label
-								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'
 								htmlFor='password'
 							>
 								To continue, re-enter your password
@@ -185,7 +185,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							>
 								<Input.Password
 									placeholder='Password'
-									className='rounded-md border-grey_border px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									className='rounded-md border-grey_border px-4 py-3 dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									id='password'
 								/>
 							</Form.Item>

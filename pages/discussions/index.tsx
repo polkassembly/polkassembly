@@ -15,7 +15,7 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
-import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
+import { DiscussionsIcon } from '~src/ui-components/CustomIcons';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -111,7 +111,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
 				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
-					<DiscussionsIcon className='mt-2 xs:mr-3 sm:mr-2 sm:mt-1.5' />
+					<DiscussionsIcon className='text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-1.5' />
 					Latest Discussions({count})
 				</div>
 				<button

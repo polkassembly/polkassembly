@@ -6,7 +6,6 @@ import BN from 'bn.js';
 import LockVotesList from './LockVotesList';
 import { Empty, Modal } from 'antd';
 import { poppins } from 'pages/_app';
-import CloseIcon from '~assets/icons/close.svg';
 import UnlockSuccessIcon from '~assets/icons/unlock-success-box.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -14,6 +13,7 @@ import { useNetworkSelector, useUserUnlockTokensDataSelector } from '~src/redux/
 import { useEffect } from 'react';
 import { formatBalance } from '@polkadot/util';
 import { handlePrevData } from '.';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -45,16 +45,17 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, total
 			open={open}
 			onCancel={() => setOpen(false)}
 			footer={false}
-			className={`${className} ${poppins.className} ${poppins.variable}`}
-			closeIcon={<CloseIcon />}
+			className={`${className} ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			centered
 		>
 			<div className='mb-6'>
 				<div className='-mt-[150px] flex items-center justify-center'>
 					<UnlockSuccessIcon />
 				</div>
-				<div className='my-4 flex items-center justify-center text-xl font-semibold tracking-[0.15%]'>Tokens unlocked successfully</div>
-				<div className='mb-6 flex items-center justify-center text-2xl font-semibold tracking-[0.15%] text-pink_primary'>
+				<div className='my-4 flex items-center justify-center text-xl font-semibold tracking-[0.15%] dark:text-white'>Tokens unlocked successfully</div>
+				<div className='mb-6 flex items-center justify-center text-2xl font-semibold tracking-[0.15%] text-pink_primary dark:text-blue-dark-helper'>
 					{formatedBalance((totalUnlockableBalance.toString() || '0').toString(), unit, 2)} {unit}
 				</div>
 				{!totalUnlockableBalance.eq(ZERO_BN) || totalLockData.length !== 0 || totalOngoingData.length !== 0 ? (

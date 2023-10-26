@@ -31,10 +31,10 @@ import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -375,7 +375,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				}}
 				footer={false}
 				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				closeIcon={<CloseCross />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
 					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
 						<CastVoteIcon className='mt-1' />

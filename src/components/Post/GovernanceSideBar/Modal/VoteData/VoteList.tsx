@@ -20,7 +20,6 @@ import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 // import ChartIcon from '~assets/chart-icon.svg';
 // import ThresholdGraph from './ThresholdGraph';
 import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
-import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationVotersList from './DelegateVoteList';
 // import GraphExpandIcon from '~assets/graph-expand.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -28,6 +27,7 @@ import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/components/Pagination';
 import { useTheme } from 'next-themes';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -397,12 +397,12 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</span>
 								<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Data</span>
 							</h3>
-							<Divider className='my-2 mb-5 text-[#D2D8E0]' />
+							<Divider className='my-2 mb-5 text-[#D2D8E0] dark:text-separatorDark' />
 						</div>
 					}
 					open={delegationVoteModal.isOpen}
 					closable
-					closeIcon={<CloseIcon />}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					className={'sm:w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 					onCancel={() => {
 						setDelegationVoteModal({ isOpen: false, voter: null });

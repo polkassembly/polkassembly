@@ -23,7 +23,6 @@ import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
-import CloseCross from '~assets/icons/close-cross-icon.svg';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import dayjs from 'dayjs';
 import blockToDays from '~src/util/blockToDays';
@@ -34,6 +33,7 @@ import executeTx from '~src/util/executeTx';
 import VoteInitiatedModal from '../Referenda/Modal/VoteSuccessModal';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -320,7 +320,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					onCancel={() => setShowModal(false)}
 					footer={false}
 					className={`w-[500px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[605px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-					closeIcon={<CloseCross />}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
 						<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>

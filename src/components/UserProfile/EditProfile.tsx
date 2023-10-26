@@ -2,14 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CloseOutlined } from '@ant-design/icons';
 import { Button, Divider, Modal } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import { handleTokenChange } from 'src/services/auth.service';
 
-import { EditIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, EditIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BasicInformation from './BasicInformation';
@@ -203,7 +202,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					setOpenModal && setOpenModal(false);
 				}}
 				title={<h3 className='text-xl font-semibold text-[#1D2632]'>Edit Profile</h3>}
-				closeIcon={<CloseOutlined className='text-sm text-[#485F7D] dark:text-blue-dark-medium' />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				footer={
 					<div className='-mx-6 -mb-5 px-6 pb-4'>
 						<Divider className='mb-4 mt-6' />

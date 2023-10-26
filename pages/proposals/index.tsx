@@ -16,7 +16,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import ProposalsIcon from '~assets/icons/proposals-icon.svg';
+import { ProposalsIconListing } from '~src/ui-components/CustomIcons';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
@@ -80,7 +80,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 				network={network}
 			/>
 			<div className='mt-3 flex items-center'>
-				<ProposalsIcon className='-mt-3.5' />
+				<ProposalsIconListing className='-mt-3.5 text-lightBlue dark:text-icon-dark-inactive' />
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Proposals</h1>
 			</div>
 

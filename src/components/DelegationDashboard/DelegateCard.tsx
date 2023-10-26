@@ -20,7 +20,7 @@ import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
-import CloseIcon from '~assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
 
@@ -131,7 +131,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				</Button>
 			</div>
 
-			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-medium'}>
+			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
 				<p className='bio w-[80%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
 				{delegate?.bio.length > 100 && (
 					<span
@@ -172,7 +172,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				className={'modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 				footer={false}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			>
 				<div className={'pt-[20px]'}>
 					<div className='flex items-center justify-between pl-8 pt-2'>

@@ -9,7 +9,6 @@ import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Trac
 import { useApiContext, usePostDataContext } from '~src/context';
 import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
-import CloseIcon from 'public/assets/icons/close.svg';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IProgress } from './Curves';
 import { IPeriod } from '~src/types';
@@ -19,6 +18,7 @@ import ConfirmationAttemptsRow from '~src/ui-components/ConfirmationAttemptsRow'
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -333,7 +333,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							onClick={() => setOpen(false)}
 							className='flex cursor-pointer items-center justify-center border-none bg-transparent outline-none'
 						>
-							<CloseIcon />
+							<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 						</button>
 					</div>
 				}

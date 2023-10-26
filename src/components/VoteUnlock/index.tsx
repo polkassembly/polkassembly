@@ -29,11 +29,11 @@ import VoteUnlockSuccessState from './VoteUnlockSuccessState';
 import { network as AllNetworks } from '~src/global/networkConstants';
 
 import UnlockBoxIcon from '~assets/icons/unlock-box.svg';
-import CloseIcon from '~assets/icons/close.svg';
 import WhiteUnlockIcon from '~assets/icons/white-lock.svg';
 import { setUserUnlockTokensData } from '~src/redux/tokenUnlocksData';
 import { useDispatch } from 'react-redux';
 import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 interface Props {
 	className?: string;
 	addresses: string[];
@@ -347,8 +347,9 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} ${className}`}
-				closeIcon={<CloseIcon />}
+				className={`${poppins.className} ${poppins.variable} ${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			>
 				<Spin
 					spinning={loadingStatus.isLoading}

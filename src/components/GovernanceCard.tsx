@@ -28,7 +28,7 @@ import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
-import CloseIcon from '~assets/icons/close.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -534,7 +534,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					setTagsModal(false);
 				}}
 				footer={false}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
 					<>

@@ -4,12 +4,11 @@
 import React, { useEffect, useState } from 'react';
 import { MenuProps, Modal, Timeline, TimelineItemProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import CloseIcon from '~assets/icons/close.svg';
 import { ESentiment, ICommentHistory } from '~src/types';
 import styled from 'styled-components';
 import NameLabel from './NameLabel';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
-import { AgainstIcon, ForIcon, NeutralIcon, SlightlyAgainstIcon, SlightlyForIcon } from './CustomIcons';
+import { AgainstIcon, CloseIcon, ForIcon, NeutralIcon, SlightlyAgainstIcon, SlightlyForIcon } from './CustomIcons';
 import { poppins } from 'pages/_app';
 import UserAvatar from './UserAvatar';
 // import { diffChars } from 'diff';
@@ -171,7 +170,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			className={`closeIcon ${poppins.variable} ${poppins.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={false}
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] '>Comment Edit History</label>}
 		>
 			<div className='post-history-timeline -mb-5 mt-9 flex flex-col px-4'>

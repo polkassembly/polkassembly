@@ -28,7 +28,7 @@ const ProposalVoteInfo = ({ className, deposit, loadingStatus, seconds }: Props)
 			indicator={<LoadingOutlined />}
 		>
 			<div className={className}>
-				<div className='font-medium text-sidebarBlue'>
+				<div className='font-medium text-sidebarBlue dark:text-white'>
 					<div className='mb-5 flex justify-between'>
 						<h4>Deposit</h4>
 						<div className='text-navBlue'>

@@ -273,6 +273,7 @@ const Post: FC<IPostProps> = (props) => {
 			setData(data);
 			setIsSimilarLoading(false);
 		} else {
+			setIsSimilarLoading(false);
 			console.log(error);
 		}
 	};

@@ -6,15 +6,18 @@ import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { FC } from 'react';
+
 import { poppins } from 'pages/_app';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;
 	posts: any[];
 	error?: any;
 	count?: number;
+	showSimilarPost?: boolean;
 }
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
@@ -23,16 +26,29 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 });
 
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
-	const { className, posts, error, count } = props;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { className, posts, error, count, showSimilarPost } = props;
+	const { network } = useNetworkSelector();
+	let url: string;
+	if (network === 'collectives') {
+		url = 'member-referenda';
+	} else if (network === 'polymesh') {
+		url = 'technical';
+	} else {
+		url = 'referenda';
+	}
+
 	const noPosts = count === 0 || isNaN(Number(count));
+
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (noPosts)
+	if (noPosts) {
 		return (
 			<div className={className}>
 				<PostEmptyState />
 			</div>
 		);
+	}
 
 	if (posts && posts.length > 0)
 		return (
@@ -48,9 +64,12 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 								className='my-0'
 							>
 								{
-									<Link href={`/referenda/${post.post_id}`}>
+									<Link
+										href={`/${url}/${post.post_id}`}
+										target={showSimilarPost ? '_blank' : '_self'}
+									>
 										<GovernanceCard
-											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
+											className={`${showSimilarPost ? 'mb-6 rounded-2xl bg-white' : (index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 											postReactionCount={post?.post_reactions}
 											address={post.proposer}
 											commentsCount={post.comments_count || 0}
@@ -58,6 +77,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 											onchainId={post.post_id}
 											status={post.status}
 											title={post.title}
+											description={post.description}
 											topic={post?.topic?.name}
 											created_at={post.created_at}
 											tags={post?.tags}
@@ -68,8 +88,10 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 											statusHistory={post?.status_history || []}
 											index={index}
 											proposalType={post?.type}
-											trackNumber={post?.track_no}
+											trackNumber={post?.track_no || post?.trackNumber}
 											truncateUsername={false}
+											type={post?.type}
+											showSimilarPost={showSimilarPost}
 										/>
 									</Link>
 								}

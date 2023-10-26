@@ -30,7 +30,9 @@ import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import CloseIcon from '~assets/icons/close.svg';
 import { ProposalType } from '~src/global/proposalType';
+import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -71,9 +73,12 @@ interface IGovernanceProps {
 	index?: number;
 	proposalType?: ProposalType | string;
 	votesData?: any;
-	trackNumber?: number | null;
+	trackNumber?: number;
 	identityId?: string | null;
 	truncateUsername?: boolean;
+	showSimilarPost?: boolean;
+	type?: string;
+	description?: string;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -106,7 +111,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		proposalType,
 		votesData,
 		identityId = null,
-		truncateUsername = true
+		truncateUsername = true,
+		showSimilarPost,
+		description
 	} = props;
 
 	const router = useRouter();
@@ -126,6 +133,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
+	const content = description;
+
+	const [showMore, setShowMore] = useState(false);
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
@@ -163,8 +173,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	useEffect(() => {
 		if (!window || trackNumber === null) return;
-		const trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
-
+		let trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
+		if (!trackDetails) {
+			trackDetails = getTrackData(network, '', trackNumber);
+		}
 		if (!created_at || !trackDetails) return;
 
 		const prepare = getPeriodData(network, dayjs(created_at), trackDetails, 'preparePeriod');
@@ -173,9 +185,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
 		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, []);
 
 	useEffect(() => {
 		if (!identityId || address) return;
@@ -187,6 +198,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
+	function formatTrackName(str: string) {
+		return str
+			.split('_') // Split the string into words using underscores as separators
+			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
+			.join(' '); // Join the words back together with a space separator
+	}
+
 	return (
 		<>
 			<div
@@ -197,7 +215,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
-							<span className='flex-none text-center font-medium text-bodyBlue sm:w-[120px]'>#{isTip ? tip_index : onchainId}</span>
+							<span className={`flex-none text-center font-medium text-bodyBlue ${showSimilarPost ? 'ml-5 w-[76px]' : 'sm:w-[120px]'}`}>#{isTip ? tip_index : onchainId}</span>
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
 								username={username}
@@ -214,7 +232,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 					<div className='mt-1 flex items-center justify-between'>
-						<div className='ml-[120px] flex flex-grow'>
+						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'} flex flex-grow`}>
 							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue lg:max-w-none'>
 								<span className='break-all text-sm font-medium text-bodyBlue'>{mainTitle}</span>
 							</h1>
@@ -234,17 +252,45 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						)}
 					</div>
-					<div className='flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:mb-1 sm:ml-[120px] sm:mt-0 sm:flex lg:flex-row lg:items-center'>
+					{showSimilarPost && content && (
+						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'}`}>
+							<h1 className='desc-container mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
+								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 150)}...`}</p>
+							</h1>
+							{content && content.length > 120 && (
+								<p
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										setShowMore(!showMore);
+									}}
+									className='m-0 p-0 text-xs text-pink_primary'
+								>
+									{showMore ? 'See Less' : 'See More'}
+								</p>
+							)}
+							<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
+						</div>
+					)}
+					<div
+						className={`flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:mb-1 ${
+							showSimilarPost ? 'ml-[96px]' : 'sm:ml-[120px]'
+						} sm:mt-0 sm:flex lg:flex-row lg:items-center`}
+					>
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
-							<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-								<LikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
-							</div>
-							<div className='mr-0.5 items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-								<DislikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
-							</div>
-							{isCommentsVisible ? (
+							{postReactionCount && (
+								<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
+									<LikeOutlined style={{ color: '#485F7D' }} />
+									<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
+								</div>
+							)}
+							{postReactionCount && (
+								<div className='mr-0.5 items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
+									<DislikeOutlined style={{ color: '#485F7D' }} />
+									<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
+								</div>
+							)}
+							{isCommentsVisible && !showSimilarPost ? (
 								<>
 									<div className='items-center text-lightBlue xs:hidden sm:flex'>
 										<NewChatIcon
@@ -285,13 +331,20 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 											+{tags.length - 2}
 										</span>
 									)}
+
+									<Divider
+										type='vertical'
+										style={{ borderLeft: '1px solid #485F7D' }}
+									/>
 								</>
 							)}
 
-							<Divider
-								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
-							/>
+							{!showSimilarPost && (
+								<Divider
+									type='vertical'
+									style={{ borderLeft: '1px solid #485F7D' }}
+								/>
+							)}
 							{cid ? (
 								<>
 									<Link
@@ -371,6 +424,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</div>
 							) : null}
+							{showSimilarPost ? (
+								//type yaha daalo
+								<>
+									<Divider
+										type='vertical'
+										className='max-sm:hidden'
+										style={{ borderLeft: '1px solid #90A0B7' }}
+									/>
+									<p className='m-0 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
+								</>
+							) : null}
 						</div>
 
 						{!!end && !!currentBlock && (
@@ -436,8 +500,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
-						#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
+					<div className='flex'>
+						<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
+							#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
+						</div>
+						{showSimilarPost && (
+							<Divider
+								type='vertical'
+								className='my-4'
+								style={{ borderLeft: '1px solid #485F7D' }}
+							/>
+						)}
+						{showSimilarPost && <p className='m-0 my-[14px] ml-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
 					</div>
 
 					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue xs:flex sm:hidden lg:flex-row lg:items-center'>
@@ -496,6 +570,26 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</div>
 							)}
 						</div>
+						{showSimilarPost && content && (
+							<div className=''>
+								<h1 className='desc-container mr-5 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
+									<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 120)}...`}</p>
+								</h1>
+								{content && content.length > 120 && (
+									<p
+										onClick={(e) => {
+											e.stopPropagation();
+											e.preventDefault();
+											setTagsModal(true);
+										}}
+										className='m-0 p-0 text-xs text-pink_primary'
+									>
+										{showMore ? 'See Less' : 'See More'}
+									</p>
+								)}
+								<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
+							</div>
+						)}
 
 						<div className='mb-1 items-center justify-between xs:flex xs:gap-x-2'>
 							{status && <StatusTag status={status} />}

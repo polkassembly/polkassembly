@@ -93,6 +93,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
 	const dispatch = useDispatch();
+
 	useEffect(() => {
 		setIsSelectedAddressMultisig(false);
 		if (address) {
@@ -141,6 +142,23 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, status]);
 
+	useEffect(() => {
+		if (status.includes(ETrackDelegationStatus.Delegated)) {
+			setShowTable(true);
+		} else if (status.includes(ETrackDelegationStatus.Received_Delegation)) {
+			setShowTable(true);
+		} else if (status.includes(ETrackDelegationStatus.Undelegated)) {
+			setShowTable(false);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [status, address]);
+
+	useEffect(() => {
+		getData();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
+
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`);
 
@@ -176,23 +194,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 			router.push(`/delegation/${route}`);
 		}
 	};
-
-	useEffect(() => {
-		if (status.includes(ETrackDelegationStatus.Delegated)) {
-			setShowTable(true);
-		} else if (status.includes(ETrackDelegationStatus.Received_Delegation)) {
-			setShowTable(true);
-		} else if (status.includes(ETrackDelegationStatus.Undelegated)) {
-			setShowTable(false);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, address]);
-
-	useEffect(() => {
-		getData();
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
 
 	return (
 		<div className={`${className}`}>

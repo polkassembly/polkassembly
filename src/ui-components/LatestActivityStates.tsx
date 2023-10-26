@@ -84,7 +84,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 					key={rowData.key}
 					className={`${
 						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : ''
-					} h-auto min-h-[140px] border-2 border-solid border-[#DCDFE350] transition-all  duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark ${
+					} h-auto min-h-[140px] border-2  border-[#DCDFE350] transition-all  duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark ${
 						poppins.variable
 					} ${poppins.className}`}
 					onClick={() => onClick(rowData)}
@@ -111,10 +111,9 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						</span>
 						<Divider
 							type='vertical'
-							className='mt-1 text-xs font-normal'
-							style={{ borderLeft: '1px solid #485F7D' }}
+							className='border-l-1 mt-1 border-lightBlue text-xs font-normal font-normal dark:border-icon-dark-inactive'
 						/>
-						<span className='mx-1.5 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+						<span className='mx-1.5 text-xs font-normal text-lightBlue dark:text-icon-dark-inactive'>
 							{rowData.created_at
 								? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w'))
 									? dayjs(rowData.created_at).startOf('day').fromNow()
@@ -147,9 +146,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 					key={rowData.key}
 					className={`${
 						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : ''
-					} h-auto min-h-[140px] border-2 border-solid border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl ${poppins.variable} ${
-						poppins.className
-					}`}
+					} h-auto min-h-[140px] border-2  border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl ${poppins.variable} ${poppins.className}`}
 					onClick={() => onClick(rowData)}
 				>
 					{/* Meta Data Row */}
@@ -174,10 +171,9 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						</span>
 						<Divider
 							type='vertical'
-							className='mt-1 text-xs font-normal'
-							style={{ borderLeft: '1px solid #485F7D' }}
+							className='border-l-1 mt-1 border-lightBlue text-xs font-normal dark:border-icon-dark-inactive'
 						/>
-						<span className='mx-1.5 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+						<span className='mx-1.5 text-xs font-normal text-lightBlue dark:text-icon-dark-inactive'>
 							{rowData.created_at ? getRelativeCreatedAt(rowData.created_at as any) : null}
 						</span>
 					</div>

@@ -348,7 +348,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						<DelegateProfileGreyIcon className='mr-2' />
 						Delegate
 					</div>
@@ -484,12 +484,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								<BalanceInput
 									onBlur={getTxFee}
 									placeholder={'Enter balance'}
-									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
+									className='text-sm font-normal text-lightBlue dark:text-blue-dark-high'
 									address={delegationDashboardAddress}
 									onAccountBalanceChange={handleOnBalanceChange}
 									onChange={(balance) => setBnBalance(balance)}
 									size='middle'
-									inputClassName='text-[#7c899b] text-sm'
+									inputClassName='text-[#7c899b] text-sm dark:bg-section-dark-overlay'
 								/>
 								<div className='mb-2 mt-4 border-solid border-white'>
 									<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>

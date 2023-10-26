@@ -37,105 +37,105 @@ export const handleTracksIcon = (index: string, size: number) => {
 		case 'Root':
 			return (
 				<RootTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Treasurer':
 			return (
 				<TreasurerTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Whitelisted Caller':
 			return (
 				<WhitelistedCallerTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Lease Admin':
 			return (
 				<LeaseAdminTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'General Admin':
 			return (
 				<GeneralAdminTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Staking Admin':
 			return (
 				<StakingAdminTrackTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Fellowship Admin':
 			return (
 				<FellowshipAdminTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Small Tipper':
 			return (
 				<SmallTipperTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Medium Spender':
 			return (
 				<MediumSpenderTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Small Spender':
 			return (
 				<SmallSpenderTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Auction Admin':
 			return (
 				<AuctionAdminTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Big Spender':
 			return (
 				<BigSpenderTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Big Tipper':
 			return (
 				<BigTipperTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Referendum Killer':
 			return (
 				<ReferendumKillerTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);
 		case 'Referendum Canceller':
 			return (
 				<ReferendumCancellerTrackIcon
-					className='text-lightBlue dark:text-blue-dark-medium'
+					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>
 			);

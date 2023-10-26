@@ -320,7 +320,7 @@ const AddressConnectModal = ({
 			setLoading(false);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginWallet, loginAddress]);
+	}, [loginWallet, loginAddress, api, apiReady]);
 
 	const handleInitiatorBalance = useCallback(
 		async () => {
@@ -368,7 +368,7 @@ const AddressConnectModal = ({
 							}}
 						/>
 					)}
-					Connect your wallet
+					{linkAddressNeeded ? 'Connect your Address' : 'Select your address'}
 				</div>
 			}
 			footer={

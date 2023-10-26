@@ -110,6 +110,10 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 	};
 
 	useEffect(() => {
+		if (!userAddresses.length) {
+			setVotesData([]);
+			return;
+		}
 		handleVoteHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [page, userAddresses, sortByPostIndex, checkedAddressList, govType]);

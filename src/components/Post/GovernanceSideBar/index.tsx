@@ -380,7 +380,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			setIsLastVoteLoading(false);
 			return;
 		}
-
 		setOnChainLastVote(data.votes[0]);
 		setIsLastVoteLoading(false);
 	}, [address, defaultAddress, loginAddress, network, onchainId, proposalType]);
@@ -719,7 +718,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, network, apiReady]);
 
-	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod }) => {
+	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod, isDelegated }) => {
 		const unit = `${chainProperties[network]?.tokenSymbol}`;
 		return (
 			<Spin
@@ -727,14 +726,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='mb-1.5 flex items-center justify-between'>
-					<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
-					<Button
-						loading={loading}
-						onClick={handleRemoveVote}
-						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
-					>
-						Remove Vote
-					</Button>
+					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
+					{!isDelegated && (
+						<Button
+							loading={loading}
+							onClick={handleRemoveVote}
+							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
+						>
+							Remove Vote
+						</Button>
+					)}
 				</div>
 
 				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
@@ -892,8 +893,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			</div>
 		);
 	};
-
-	const RenderLastVote = lastVote ? <LastVoteInfoLocalState {...lastVote} /> : onChainLastVote !== null ? <LastVoteInfoOnChain {...onChainLastVote} /> : null;
+	const RenderLastVote =
+		address === loginAddress ? lastVote ? <LastVoteInfoLocalState {...lastVote} /> : onChainLastVote !== null ? <LastVoteInfoOnChain {...onChainLastVote} /> : null : null;
 	return (
 		<>
 			{

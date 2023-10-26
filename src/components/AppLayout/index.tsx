@@ -746,7 +746,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} ${isMobile && 'mobile-margin'} dark:bg-section-dark-overlay`}
+						className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>

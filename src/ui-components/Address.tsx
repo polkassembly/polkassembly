@@ -15,7 +15,6 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import shortenAddress from '~src/util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
-import Link from 'next/link';
 import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
@@ -111,11 +110,12 @@ const Address = (props: Props) => {
 			setApi(apiContext.api);
 			setApiReady(apiContext.apiReady);
 		}
-	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address]);
 
 	const FEATURE_RELEASE_DATE = dayjs('2023-06-12').toDate(); // Date from which we are sending custom username flag on web3 sign up.
 
-	const fetchUsername = async () => {
+	const fetchUsername = async (address: string) => {
 		if (isVoterAddress) {
 			return;
 		}
@@ -175,7 +175,11 @@ const Address = (props: Props) => {
 			.then((unsub) => {
 				unsubscribe = unsub;
 			})
-			.catch((e) => console.error(e));
+			.catch((e) => {
+				console.error(e);
+				setMainDisplay('');
+				setSub('');
+			});
 
 		return () => unsubscribe && unsubscribe();
 	};
@@ -207,7 +211,7 @@ const Address = (props: Props) => {
 		if (!api || !apiReady || !address || !encodedAddr) return;
 
 		try {
-			fetchUsername();
+			fetchUsername(address);
 		} catch (error) {
 			console.log(error);
 		}
@@ -229,10 +233,9 @@ const Address = (props: Props) => {
 	const addressSuffix = extensionName || mainDisplay;
 
 	const handleClick = (event: any) => {
+		if (disableAddressClick) return;
 		event.stopPropagation();
 		event.preventDefault();
-
-		if (disableAddressClick) return;
 
 		window.open(handleRedirectLink(), '_blank');
 	};
@@ -268,9 +271,7 @@ const Address = (props: Props) => {
 							))}
 
 						<div className={`flex items-center font-semibold text-bodyBlue dark:text-blue-dark-high ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
-							<Link
-								href={handleRedirectLink()}
-								target='_blank'
+							<div
 								onClick={(e) => handleClick(e)}
 								title={mainDisplay || encodedAddr}
 								className={`flex gap-x-1 ${
@@ -283,7 +284,7 @@ const Address = (props: Props) => {
 									</span>
 								)}
 								{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
-							</Link>
+							</div>
 						</div>
 					</div>
 				) : !!extensionName || !!mainDisplay ? (
@@ -302,9 +303,7 @@ const Address = (props: Props) => {
 											/>
 										))}
 									<Space className={'header'}>
-										<Link
-											href={handleRedirectLink()}
-											target='_blank'
+										<div
 											onClick={(e) => handleClick(e)}
 											className={`flex flex-col font-semibold text-bodyBlue dark:text-blue-dark-high  ${
 												!disableAddressClick ? 'hover:underline' : 'cursor-pointer'
@@ -314,7 +313,7 @@ const Address = (props: Props) => {
 											{!extensionName && sub && isSubVisible && (
 												<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
 											)}
-										</Link>
+										</div>
 									</Space>
 								</div>
 							</div>

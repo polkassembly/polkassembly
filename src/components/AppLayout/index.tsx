@@ -69,6 +69,7 @@ import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
+import ToggleButton from '~src/ui-components/ToggleButton';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -695,7 +696,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (isMobile) {
 		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
-
+	sidebarItems.push(getSiderMenuItem('', '', <ToggleButton />));
 	return (
 		<Layout className={className}>
 			<NavHeader

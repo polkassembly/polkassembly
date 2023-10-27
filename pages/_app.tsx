@@ -83,10 +83,7 @@ function App({ Component, pageProps }: AppProps) {
 
 	return (
 		<PersistGate persistor={store.__persistor}>
-			<ThemeProvider
-				attribute='class'
-				enableSystem
-			>
+			<ThemeProvider attribute='class'>
 				<ConfigProvider theme={antdTheme}>
 					<ModalProvider>
 						<ErrorBoundary>

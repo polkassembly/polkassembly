@@ -13,6 +13,7 @@ import { formatBalance } from '@polkadot/util';
 import HelperTooltip from './HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
+import InputSuffixIcon from '~assets/icons/balance-input-suffix.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -127,7 +128,12 @@ const BalanceInput = ({
 			>
 				<Input
 					onBlur={() => onBlur?.()}
-					addonAfter={chainProperties[network]?.tokenSymbol}
+					addonAfter={
+						<div className='flex items-center justify-center gap-[2px]'>
+							<InputSuffixIcon />
+							{chainProperties[network]?.tokenSymbol}
+						</div>
+					}
 					name={formItemName || 'balance'}
 					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary`}
 					onChange={(e) => onBalanceChange(e.target.value)}
@@ -141,10 +147,11 @@ const BalanceInput = ({
 };
 export default styled(BalanceInput)`
 	.suffixColor .ant-input-group .ant-input-group-addon {
-		background: var(--pink_primary);
-		color: white;
+		background: #edeff3;
+		color: var(--lightBlue) !important;
 		font-size: 12px !important;
-		border: 1px solid var(--pink_primary);
+		font-weight: 500 !important;
+		border: 0px 1px 1px 0px solid #d2d8e0;
 		border-radius: 0px 4px 4px 0px !important ;
 	}
 	.suffixColor .ant-input {

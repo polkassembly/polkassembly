@@ -35,6 +35,7 @@ import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/type
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import AvailableWallets from './AvailableWallet';
 
 interface Props {
 	className?: string;
@@ -400,141 +401,13 @@ const AddressConnectModal = ({
 						</div>
 					)}
 					<h3 className='text-center text-sm font-normal text-lightBlue'>Select a wallet</h3>
-					<div className={`flex items-center justify-center gap-x-4 ${showMultisig ? 'mb-6' : ''}`}>
-						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
-							<>
-								{availableWallets[Wallet.TALISMAN] && (
-									<WalletButton
-										className={`${wallet === Wallet.TALISMAN ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.TALISMAN)}
-										name='Talisman'
-										icon={
-											<WalletIcon
-												which={Wallet.TALISMAN}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet && (
-									<WalletButton
-										disabled={!apiReady}
-										className={`${wallet === Wallet.METAMASK ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										onClick={(event) => handleWalletClick(event as any, Wallet.METAMASK)}
-										name='MetaMask'
-										icon={
-											<WalletIcon
-												which={Wallet.METAMASK}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] && (
-									<WalletButton
-										disabled={!apiReady}
-										className={`${wallet === Wallet.NOVAWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
-										name='Nova Wallet'
-										icon={
-											<WalletIcon
-												which={Wallet.NOVAWALLET}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-							</>
-						) : (
-							<>
-								{availableWallets[Wallet.POLKADOT] && (
-									<WalletButton
-										className={`${wallet === Wallet.POLKADOT ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.POLKADOT)}
-										name='Polkadot'
-										icon={
-											<WalletIcon
-												which={Wallet.POLKADOT}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{availableWallets[Wallet.TALISMAN] && (
-									<WalletButton
-										className={`${wallet === Wallet.TALISMAN ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.TALISMAN)}
-										name='Talisman'
-										icon={
-											<WalletIcon
-												which={Wallet.TALISMAN}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{availableWallets[Wallet.SUBWALLET] && (
-									<WalletButton
-										className={`${wallet === Wallet.SUBWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
-										name='Subwallet'
-										icon={
-											<WalletIcon
-												which={Wallet.SUBWALLET}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{availableWallets[Wallet.POLKAGATE] && (
-									<WalletButton
-										className={`${wallet === Wallet.POLKAGATE ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATE)}
-										name='PolkaGate'
-										icon={
-											<WalletIcon
-												which={Wallet.POLKAGATE}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] && (
-									<WalletButton
-										disabled={!apiReady}
-										className={`${wallet === Wallet.POLYWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										onClick={(event) => handleWalletClick(event as any, Wallet.POLYWALLET)}
-										name='PolyWallet'
-										icon={
-											<WalletIcon
-												which={Wallet.POLYWALLET}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] && (
-									<WalletButton
-										disabled={!apiReady}
-										className={`${wallet === Wallet.NOVAWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
-										name='Nova Wallet'
-										icon={
-											<WalletIcon
-												which={Wallet.NOVAWALLET}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-							</>
-						)}
-					</div>
+					<AvailableWallets
+						className='flex items-center justify-center gap-x-4'
+						handleWalletClick={handleWalletClick}
+						availableWallets={availableWallets}
+						isMetamaskWallet={isMetamaskWallet}
+						wallet={wallet}
+					/>
 					{usingMultisig && (
 						<div>
 							{canUsePolkasafe(network) && !showMultisig && usingMultisig && (

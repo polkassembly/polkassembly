@@ -23,7 +23,7 @@ async function queryWithLargeInArray(collection: any, field: any, array: any) {
 }
 
 export const getResults = async (tags: any, subsquidData: any, onChainCollRef: any, results: any, seenProposalIds: any) => {
-	const filteredPostIds = subsquidData.map((proposal: any) => proposal.index && !seenProposalIds.has(proposal.index));
+	const filteredPostIds = subsquidData.map((proposal: any) => proposal.index);
 	let postsSnapshotArr = [];
 	if (tags && tags.length > 0) {
 		postsSnapshotArr = await onChainCollRef.where('tags', 'array-contains-any', tags).orderBy('created_at', 'desc').get();

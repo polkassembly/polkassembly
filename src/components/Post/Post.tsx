@@ -380,6 +380,7 @@ const Post: FC<IPostProps> = (props) => {
 		}
 
 		if (!isOffChainProposalTypeValid(proposalType)) {
+			console.log(post.description);
 			tabs.push({
 				children: (
 					<PostOnChainInfo

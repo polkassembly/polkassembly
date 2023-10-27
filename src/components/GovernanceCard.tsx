@@ -34,6 +34,7 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import Markdown from '~src/ui-components/Markdown';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -259,21 +260,22 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 					{showSimilarPost && content && (
 						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'}`}>
-							<h1 className='desc-container mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
-								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 150)}...`}</p>
-							</h1>
-							{content && content.length > 120 && (
-								<p
-									onClick={(e) => {
-										e.preventDefault();
-										e.stopPropagation();
-										setShowMore(!showMore);
-									}}
-									className='m-0 p-0 text-xs text-pink_primary'
-								>
-									{showMore ? 'See Less' : 'See More'}
+							<h1 className='desc-container mr-12 mt-0.5 flex max-h-[94px] overflow-hidden text-sm text-bodyBlue'>
+								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>
+									<Markdown
+										className='post-content'
+										md={content}
+									/>
 								</p>
-							)}
+							</h1>
+							<p
+								onClick={() => {
+									setShowMore(!showMore);
+								}}
+								className='m-0 p-0 text-xs text-pink_primary'
+							>
+								See More
+							</p>
 							<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 						</div>
 					)}
@@ -562,20 +564,21 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						{showSimilarPost && content && (
 							<div>
 								<h1 className='desc-container mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
-									<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 120)}...`}</p>
-								</h1>
-								{content && content.length > 120 && (
-									<p
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											setTagsModal(true);
-										}}
-										className='m-0 p-0 text-xs text-pink_primary'
-									>
-										{showMore ? 'See Less' : 'See More'}
+									<p className='m-0 max-h-[114px] break-all p-0 text-sm font-normal text-lightBlue'>
+										<Markdown
+											className='post-content'
+											md={content}
+										/>
 									</p>
-								)}
+								</h1>
+								<p
+									onClick={() => {
+										setTagsModal(true);
+									}}
+									className='m-0 p-0 text-xs text-pink_primary'
+								>
+									See More
+								</p>
 								<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 							</div>
 						)}

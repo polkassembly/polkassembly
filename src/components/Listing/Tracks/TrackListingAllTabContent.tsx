@@ -10,7 +10,7 @@ import React, { FC } from 'react';
 import { poppins } from 'pages/_app';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
-import { useRouter } from 'next/router';
+import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;
@@ -28,8 +28,6 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { className, posts, error, count, showSimilarPost } = props;
-	const router = useRouter();
-	const urlDetails = router.pathname.split('/')[1];
 
 	const noPosts = count === 0 || isNaN(Number(count));
 
@@ -51,6 +49,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 				</div>
 				<div className={`${className} proposals__list`}>
 					{posts.map((post, index) => {
+						console.log(post.type);
 						return (
 							<div
 								key={post.post_id}
@@ -58,7 +57,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 							>
 								{
 									<Link
-										href={`/${urlDetails}/${post.post_id}`}
+										href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(post.type as any) as any)}/${post.post_id}`}
 										target={showSimilarPost ? '_blank' : '_self'}
 									>
 										<GovernanceCard

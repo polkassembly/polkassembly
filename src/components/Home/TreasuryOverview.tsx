@@ -22,9 +22,14 @@ import Available from '~assets/icons/available.svg';
 import CurrentPrice from '~assets/icons/currentprice.svg';
 import NextBurn from '~assets/icons/nextburn.svg';
 import SpendPeriod from '~assets/icons/spendperiod.svg';
+import AvailableDark from '~assets/icons/AvailableDark.svg';
+import CurrentPriceDark from '~assets/icons/CurrentPriceDark.svg';
+import NextBurnDark from '~assets/icons/NextBurnDark.svg';
+import SpendPeriodDark from '~assets/icons/SpendPeriodDark.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -38,6 +43,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme: theme } = useTheme();
 
 	const blockTime: number = chainProperties?.[network]?.blockTime;
 	const [available, setAvailable] = useState({
@@ -325,7 +331,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 				<div className='w-full flex-1 flex-col gap-x-0 lg:flex'>
 					<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-						<Available className='lg:hidden' />
+						{theme === 'dark' ? <AvailableDark className='lg:hidden' /> : <Available className='lg:hidden' />}
 					</div>
 					{!available.isLoading ? (
 						<>
@@ -350,12 +356,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							{!['polymesh', 'polymesh-test'].includes(network) && (
 								<>
 									<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<Divider
-											style={{
-												background: '#D2D8E0'
-											}}
-											className='m-0 p-0'
-										/>
+										<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
 										<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
 											{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
 										</span>
@@ -369,9 +370,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						</div>
 					)}
 				</div>
-				<div>
-					<Available className='xs:hidden lg:block' />
-				</div>
+				<div>{theme === 'dark' ? <AvailableDark className='xs:hidden lg:block' /> : <Available className='xs:hidden lg:block' />}</div>
 			</div>
 
 			{/* CurrentPrice */}
@@ -379,7 +378,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-							<CurrentPrice className='lg:hidden' />
+							{theme === 'dark' ? <CurrentPriceDark className='lg:hidden' /> : <CurrentPrice className='lg:hidden' />}
 						</div>
 						{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
 							<>
@@ -402,12 +401,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									</div>
 								</div>
 								<div className='flex flex-col justify-center gap-y-3 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high'>
-									<Divider
-										style={{
-											background: '#D2D8E0'
-										}}
-										className='m-0 p-0'
-									/>
+									<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
 									<div className='flex items-center text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre'>
 										{priceWeeklyChange.value === 'N/A' ? (
 											'N/A'
@@ -433,9 +427,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							</div>
 						)}
 					</div>
-					<div>
-						<CurrentPrice className='xs:hidden lg:block' />
-					</div>
+					<div>{theme === 'dark' ? <CurrentPriceDark className='xs:hidden lg:block' /> : <CurrentPrice className='xs:hidden lg:block' />}</div>
 				</div>
 			)}
 
@@ -444,7 +436,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-							<NextBurn className='lg:hidden' />
+							{theme === 'dark' ? <NextBurnDark className='lg:hidden' /> : <NextBurn className='lg:hidden' />}
 						</div>
 						{!nextBurn.isLoading ? (
 							<>
@@ -464,12 +456,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									</div>
 								</div>
 								<div className='flex flex-col justify-center gap-y-3 font-medium text-sidebarBlue'>
-									<Divider
-										style={{
-											background: '#D2D8E0'
-										}}
-										className='m-0 p-0'
-									/>
+									<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
 									<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
 								</div>
 							</>
@@ -479,9 +466,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							</div>
 						)}
 					</div>
-					<div>
-						<NextBurn className='xs:hidden lg:block' />
-					</div>
+					<div>{theme === 'dark' ? <NextBurnDark className='xs:hidden lg:block' /> : <NextBurn className='xs:hidden lg:block' />}</div>
 				</div>
 			)}
 
@@ -492,7 +477,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 							<div className='w-full flex-col gap-x-0 lg:flex'>
 								<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-									<SpendPeriod className='lg:hidden' />
+									{theme === 'dark' ? <SpendPeriodDark className='lg:hidden' /> : <SpendPeriod className='lg:hidden' />}
 								</div>
 								{!spendPeriod.isLoading ? (
 									<>
@@ -534,12 +519,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										</div>
 										{
 											<div className='flex flex-col justify-center gap-y-3 font-medium'>
-												<Divider
-													style={{
-														background: '#D2D8E0'
-													}}
-													className='m-0 p-0'
-												/>
+												<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
 												<span className='flex items-center'>
 													<Progress
 														className='m-0 flex items-center p-0'
@@ -558,9 +538,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									</div>
 								)}
 							</div>
-							<div>
-								<SpendPeriod className='mt-2 xs:hidden lg:block' />
-							</div>
+							<div>{theme === 'dark' ? <SpendPeriodDark className='mt-2 xs:hidden lg:block' /> : <SpendPeriod className='mt-2 xs:hidden lg:block' />}</div>
 						</div>
 					)}
 				</>

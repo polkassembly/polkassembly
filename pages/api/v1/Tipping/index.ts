@@ -10,6 +10,7 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 export interface ITip {
 	created_at: Date;
@@ -37,12 +38,15 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 
-	const tipDoc = firestore_db.collection('tippings').doc(tipFrom).collection('tips').doc(tipTo);
+	const substracteTipFrom = getSubstrateAddress(tipFrom) || tipFrom;
+	const substracteTipTo = getSubstrateAddress(tipTo) || tipTo;
+
+	const tipDoc = firestore_db.collection('tippings').doc(substracteTipFrom).collection('tips').doc(substracteTipTo);
 	const newTip: ITip = {
 		created_at: new Date(),
 		remark,
-		tip_from: tipFrom,
-		tip_to: tipTo,
+		tip_from: substracteTipFrom,
+		tip_to: substracteTipTo,
 		user_id: user.id
 	};
 

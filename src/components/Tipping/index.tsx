@@ -30,6 +30,7 @@ import executeTx from '~src/util/executeTx';
 import { inputToBn } from '~src/util/inputToBn';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
 const ONE_DOLLAR_IN_DOT = '0.230658';
@@ -160,8 +161,9 @@ const Tipping = ({ className, destinationAddress }: Props) => {
 	};
 
 	const handleTip = async () => {
-		if (!api || !apiReady || disable) return;
-		const tipTx = api.tx.balances?.transferKeepAlive(destinationAddress, tipAmount as any);
+		if (!api || !apiReady || disable || !destinationAddress) return;
+		const destinationSubtrateAddress = getSubstrateAddress(destinationAddress) || destinationAddress;
+		const tipTx = api.tx.balances?.transferKeepAlive(destinationSubtrateAddress, tipAmount as any);
 		const remarkTx = api.tx.system.remarkWithEvent(`${remark} tipped via Polkassembly`.trim());
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 		const tx = api.tx.utility.batchAll([tipTx, remarkTx]);

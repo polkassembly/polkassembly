@@ -64,7 +64,6 @@ import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import ProposalLive from './ProposalLive';
 import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
@@ -766,7 +765,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				) : ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
-						<ProposalLive />
 						<div className='flex flex-row'>
 							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 							<CustomContent

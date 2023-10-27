@@ -10,7 +10,7 @@ import React, { FC } from 'react';
 import { poppins } from 'pages/_app';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;
@@ -28,15 +28,6 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { className, posts, error, count, showSimilarPost } = props;
-	const { network } = useNetworkSelector();
-	let url: string;
-	if (network === 'collectives') {
-		url = 'member-referenda';
-	} else if (network === 'polymesh') {
-		url = 'technical';
-	} else {
-		url = 'referenda';
-	}
 
 	const noPosts = count === 0 || isNaN(Number(count));
 
@@ -65,7 +56,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 							>
 								{
 									<Link
-										href={`/${url}/${post.post_id}`}
+										href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(post.type as any) as any)}/${post.post_id}`}
 										target={showSimilarPost ? '_blank' : '_self'}
 									>
 										<GovernanceCard

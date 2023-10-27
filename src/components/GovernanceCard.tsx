@@ -34,6 +34,8 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { getTrackData } from './Listing/Tracks/AboutTrackCard';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import Markdown from '~src/ui-components/Markdown';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -143,7 +145,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
-
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
 
 	const [decision, setDecision] = useState<IPeriod>();
@@ -212,12 +213,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			<div
 				className={`${className} ${
 					ownProposal && 'border-l-4 border-l-pink_primary'
-				} min-h-[120px] border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark xs:hidden sm:flex sm:p-3`}
+				} dark:border-separatorDark min-h-[120px] border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl xs:hidden sm:flex sm:p-3`}
 			>
 				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
-							<span className={`flex-none text-center font-medium text-bodyBlue dark:text-blue-dark-high ${showSimilarPost ? 'ml-5 w-[76px]' : 'sm:w-[120px]'}`}>
+							<span className={`flex-none text-center font-medium text-bodyBlue dark:text-white ${showSimilarPost ? 'mt-[2px] w-[76px]' : 'sm:w-[120px]'}`}>
 								#{isTip ? tip_index : onchainId}
 							</span>
 							<OnchainCreationLabel
@@ -226,7 +227,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								truncateUsername={truncateUsername}
 							/>
 						</div>
-						<div className='flex items-center justify-end'>
+						<div className={`${showSimilarPost ? '-mr-5' : ''} flex items-center justify-end`}>
 							{status && (
 								<StatusTag
 									className='sm:mr-10'
@@ -237,20 +238,20 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 					<div className='mt-1 flex items-center justify-between'>
-						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'} flex flex-grow`}>
-							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue dark:text-blue-dark-high lg:max-w-none'>
-								<span className='break-all text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{mainTitle}</span>
+						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'} flex flex-grow`}>
+							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue dark:text-white lg:max-w-none'>
+								<span className='break-all text-sm font-medium text-bodyBlue dark:text-white'>{mainTitle}</span>
 							</h1>
-							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
+							<h2 className='dark:text-blue-dark-high text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 						</div>
 						{requestedAmount && (
 							<div className='flex items-center justify-center'>
 								{requestedAmount > 100 ? (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
+									<span className='dark:text-blue-dark-high whitespace-pre text-sm font-medium text-lightBlue sm:mr-[2.63rem]'>
 										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
 									</span>
 								) : (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.65rem]'>
+									<span className='dark:text-blue-dark-high whitespace-pre text-sm font-medium text-lightBlue sm:mr-[2.65rem]'>
 										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
 									</span>
 								)}
@@ -258,67 +259,71 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						)}
 					</div>
 					{showSimilarPost && content && (
-						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'}`}>
-							<h1 className='desc-container mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue dark:text-white'>
-								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 150)}...`}</p>
-							</h1>
-							{content && content.length > 120 && (
-								<p
-									onClick={(e) => {
-										e.preventDefault();
-										e.stopPropagation();
-										setShowMore(!showMore);
-									}}
-									className='m-0 p-0 text-xs text-pink_primary'
-								>
-									{showMore ? 'See Less' : 'See More'}
+						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'}`}>
+							<h1 className='desc-container mr-12 mt-0.5 flex max-h-[94px] overflow-hidden text-sm text-bodyBlue dark:text-white'>
+								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>
+									<Markdown
+										className='post-content'
+										md={content}
+									/>
 								</p>
-							)}
+							</h1>
+							<p
+								onClick={() => {
+									setShowMore(!showMore);
+								}}
+								className='m-0 p-0 text-xs text-pink_primary'
+							>
+								See More
+							</p>
 							<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 						</div>
 					)}
 					<div
-						className={`flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:hidden sm:mb-1 ${
+						className={`dark:text-blue-dark-high flex-col items-start text-xs font-medium text-bodyBlue xs:hidden sm:mb-1 ${
 							showSimilarPost ? 'ml-[96px]' : 'sm:ml-[120px]'
 						} sm:mt-0 sm:flex lg:flex-row lg:items-center`}
 					>
-						<div className='flex items-center gap-x-2 lg:h-[32px]'>
+						<div className={`${showSimilarPost ? '-ml-5' : ''} flex items-center gap-x-2 lg:h-[32px]`}>
 							{postReactionCount && (
 								<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-									<LikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
-									<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
+									<LikeOutlined className='dark:text-icon-dark-inactive text-lightBlue' />
+									<span className='dark:text-blue-dark-medium text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
 								</div>
 							)}
 							{postReactionCount && (
 								<div className='mr-0.5 items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-									<DislikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
-									<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
+									<DislikeOutlined className='dark:text-icon-dark-inactive text-lightBlue' />
+									<span className='dark:text-blue-dark-medium text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
 								</div>
 							)}
 							{isCommentsVisible && !showSimilarPost ? (
 								<>
-									<div className='items-center text-lightBlue dark:text-blue-dark-medium xs:hidden sm:flex'>
-										<CommentsIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' /> {commentsCount}
+									<div className='dark:text-blue-dark-medium items-center text-lightBlue xs:hidden sm:flex'>
+										<CommentsIcon className='dark:text-icon-dark-inactive mr-1 text-lightBlue' /> {commentsCount}
 									</div>
+									{!showSimilarPost && (
+										<Divider
+											type='vertical'
+											className='max-lg:hidden'
+											style={{ borderLeft: '1px solid #90A0B7' }}
+										/>
+									)}
 								</>
 							) : null}
 							{tags && tags.length > 0 && (
 								<>
-									<Divider
-										type='vertical'
-										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
-									/>
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:text-blue-dark-medium'
+											className='dark:text-blue-dark-medium rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue'
 										>
 											{tag}
 										</div>
 									))}
 									{tags.length > 2 && (
 										<span
-											className='text-bodyBlue dark:text-blue-dark-high'
+											className='dark:text-blue-dark-high text-bodyBlue'
 											style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -329,19 +334,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 											+{tags.length - 2}
 										</span>
 									)}
-
 									<Divider
 										type='vertical'
-										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive'
+										className='border-l-1 dark:border-icon-dark-inactive border-lightBlue'
 									/>
 								</>
-							)}
-
-							{!showSimilarPost && (
-								<Divider
-									type='vertical'
-									className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
-								/>
 							)}
 							{cid ? (
 								<>
@@ -354,13 +351,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</Link>
 									<Divider
 										type='vertical'
-										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+										className='border-l-1 dark:border-icon-dark-inactive border-[#90A0B7] max-sm:hidden sm:mt-1'
 									/>
 								</>
 							) : null}
 							{relativeCreatedAt && (
 								<>
-									<div className='flex items-center text-lightBlue dark:text-icon-dark-inactive sm:mt-0'>
+									<div className='dark:text-icon-dark-inactive flex items-center text-lightBlue sm:mt-0'>
 										<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
 									</div>
 								</>
@@ -369,7 +366,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<>
 									<Divider
 										type='vertical'
-										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+										className='border-l-1 dark:border-icon-dark-inactive border-[#90A0B7] max-sm:hidden sm:mt-1'
 									/>
 									<Tooltip
 										overlayClassName='max-w-none'
@@ -395,7 +392,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<>
 									<Divider
 										type='vertical'
-										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
+										className='border-l-1 dark:border-icon-dark-inactive border-[#90A0B7] max-sm:hidden'
 									/>
 									<VotesProgressInListing
 										index={index}
@@ -407,11 +404,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</>
 							)}
-							{topic ? (
+							{!isOpenGovSupported(network) && topic ? (
 								<div className='flex items-center sm:-mt-1'>
 									<Divider
 										type='vertical'
-										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+										className='border-l-1 dark:border-icon-dark-inactive border-lightBlue max-sm:hidden sm:mt-1'
 									/>
 									<TopicTag
 										theme={theme}
@@ -420,8 +417,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</div>
 							) : null}
-							{showSimilarPost ? (
-								//type yaha daalo
+							{showSimilarPost && isOpenGovSupported(network) ? (
 								<>
 									<Divider
 										type='vertical'
@@ -434,9 +430,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 
 						{!!end && !!currentBlock && (
-							<div className='flex items-center text-lightBlue dark:text-icon-dark-inactive'>
+							<div className='dark:text-icon-dark-inactive flex items-center text-lightBlue'>
 								<Divider
-									className='border-l-1 hidden border-lightBlue dark:border-icon-dark-inactive lg:inline-block'
+									className='border-l-1 dark:border-icon-dark-inactive hidden border-lightBlue lg:inline-block'
 									type='vertical'
 								/>
 								<ClockCircleOutlined className='mr-1' />
@@ -461,7 +457,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					<div className='justify-between xs:flex sm:my-0 sm:hidden'>
-						{topic && (
+						{topic && !isOpenGovSupported(network) && (
 							<div>
 								<TopicTag
 									className='xs:mx-1'
@@ -473,16 +469,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						{requestedAmount && (
 							<div className='xs:mr-5 sm:m-0'>
 								{requestedAmount > 100 ? (
-									<span className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
+									<span className='dark:text-blue-dark-high text-sm font-medium text-lightBlue'>
 										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
 									</span>
 								) : (
-									<span className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
+									<span className='dark:text-blue-dark-high text-sm font-medium text-lightBlue'>
 										{requestedAmount} {chainProperties[network]?.tokenSymbol}
 									</span>
 								)}
 							</div>
 						)}
+						{showSimilarPost && isOpenGovSupported(network) && <p className='m-0 ml-1 mt-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
 					</div>
 					<div className='items-center justify-between gap-x-2 xs:flex sm:hidden'>
 						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
@@ -496,20 +493,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='flex'>
-						<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
-						</div>
-						{showSimilarPost && (
-							<Divider
-								type='vertical'
-								className='border-l-1 my-4 border-lightBlue dark:border-icon-dark-inactive'
-							/>
-						)}
-						{showSimilarPost && <p className='m-0 my-[14px] ml-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
+					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue dark:text-white'>
+						#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:flex sm:hidden lg:flex-row lg:items-center'>
+					<div className='dark:text-blue-dark-high flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue xs:flex sm:hidden lg:flex-row lg:items-center'>
 						<div className='h-[30px] flex-shrink-0 items-center xs:flex xs:justify-start sm:hidden'>
 							<OnchainCreationLabel
 								address={address}
@@ -518,11 +506,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							/>
 							<Divider
 								type='vertical'
-								className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
+								className='border-l-1 dark:border-icon-dark-inactive border-lightBlue max-lg:hidden xs:mt-0.5 xs:inline-block'
 							/>
 							{relativeCreatedAt && (
 								<>
-									<div className='mt-0 flex items-center text-lightBlue dark:text-icon-dark-inactive'>
+									<div className='dark:text-icon-dark-inactive mt-0 flex items-center text-lightBlue'>
 										<ClockCircleOutlined className='mr-1' /> <span> {relativeCreatedAt}</span>
 									</div>
 								</>
@@ -531,7 +519,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<div className='flex items-center'>
 									<Divider
 										type='vertical'
-										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
+										className='border-l-1 dark:border-icon-dark-inactive border-[#90A0B7] max-lg:hidden xs:mt-0.5 xs:inline-block'
 									/>
 									<div className='mt-2 min-w-[30px]'>
 										<Progress
@@ -547,7 +535,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<div className='flex items-center'>
 									<Divider
 										type='vertical'
-										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
+										className='border-l-1 dark:border-icon-dark-inactive border-[#90A0B7] max-lg:hidden xs:mt-0.5 xs:inline-block'
 									/>
 									<div>
 										<VotesProgressInListing
@@ -563,22 +551,23 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							)}
 						</div>
 						{showSimilarPost && content && (
-							<div className=''>
-								<h1 className='desc-container mr-5 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
-									<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 120)}...`}</p>
-								</h1>
-								{content && content.length > 120 && (
-									<p
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											setTagsModal(true);
-										}}
-										className='m-0 p-0 text-xs text-pink_primary'
-									>
-										{showMore ? 'See Less' : 'See More'}
+							<div>
+								<h1 className='desc-container mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
+									<p className='m-0 max-h-[114px] break-all p-0 text-sm font-normal text-lightBlue'>
+										<Markdown
+											className='post-content'
+											md={content}
+										/>
 									</p>
-								)}
+								</h1>
+								<p
+									onClick={() => {
+										setTagsModal(true);
+									}}
+									className='m-0 p-0 text-xs text-pink_primary'
+								>
+									See More
+								</p>
 								<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 							</div>
 						)}
@@ -594,20 +583,20 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<div className='flex'>
 									<Divider
 										type='vertical'
-										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden'
+										className='border-l-1 dark:border-icon-dark-inactive border-[#90A0B7] max-lg:hidden'
 									/>
-									<div className='flex gap-1'>
+									<div className='mr-[2px] flex gap-1'>
 										{tags?.slice(0, 2).map((tag, index) => (
 											<div
 												key={index}
-												className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:text-blue-dark-medium'
+												className='dark:text-blue-dark-medium rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue'
 											>
 												{tag}
 											</div>
 										))}
 										{tags.length > 2 && (
 											<span
-												className='text-bodyBlue dark:text-blue-dark-high'
+												className='dark:text-blue-dark-high text-bodyBlue'
 												style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
 												onClick={(e) => {
 													e.stopPropagation();
@@ -634,17 +623,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					setTagsModal(false);
 				}}
 				footer={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
+				className={`${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay h-[120px]  max-w-full shrink-0 max-sm:w-[100%]`}
 				title={
 					<>
-						<label className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
+						<label className='dark:text-blue-dark-high mb-2 text-lg font-medium tracking-wide text-bodyBlue'>
 							<TagsIcon className='mr-2' />
 							Tags
 						</label>
 						<Divider
 							type='horizontal'
-							className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive'
+							className='border-l-1 dark:border-icon-dark-inactive border-[#90A0B7]'
 						/>
 					</>
 				}
@@ -655,7 +644,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{tags?.map((tag, index) => (
 								<div
 									key={index}
-									className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'
+									className='dark:text-blue-dark-medium rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-1 text-xs font-normal text-lightBlue'
 								>
 									{tag}
 								</div>

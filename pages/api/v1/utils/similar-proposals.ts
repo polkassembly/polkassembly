@@ -23,7 +23,7 @@ async function queryWithLargeInArray(collection: any, field: any, array: any) {
 }
 
 export const getResults = async (tags: any, subsquidData: any, onChainCollRef: any, results: any, seenProposalIds: any) => {
-	const filteredPostIds = subsquidData.map((proposal: any) => proposal.index && !seenProposalIds.has(proposal.index));
+	const filteredPostIds = subsquidData.map((proposal: any) => proposal.index);
 	let postsSnapshotArr = [];
 	if (tags && tags.length > 0) {
 		postsSnapshotArr = await onChainCollRef.where('tags', 'array-contains-any', tags).orderBy('created_at', 'desc').get();
@@ -71,7 +71,7 @@ const buildFirestoreData = async (docData: any, strProposalType: string, network
 	const { topic, topic_id } = docData;
 	return {
 		created_at: created_at?.toDate ? created_at?.toDate() : created_at,
-		description: docData?.description || subsquareDescription || null,
+		description: docData?.content || subsquareDescription || null,
 		gov_type: docData?.gov_type,
 		isSpam: docData?.isSpam || false,
 		isSpamReportInvalid: docData?.isSpamReportInvalid || false,

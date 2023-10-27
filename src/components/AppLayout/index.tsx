@@ -92,7 +92,7 @@ const Menu = styled(AntdMenu)`
 `;
 
 function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-	label = <span className='text-lightBlue dark:text-icon-dark-inactive'>{label}</span>;
+	label = <span className='dark:text-icon-dark-inactive text-lightBlue'>{label}</span>;
 	return {
 		children,
 		icon,
@@ -121,7 +121,7 @@ const getUserDropDown = (
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary dark:text-icon-dark-inactive'
+					className='dark:text-icon-dark-inactive flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<UserOutlined />
@@ -133,7 +133,7 @@ const getUserDropDown = (
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary dark:text-icon-dark-inactive'
+					className='dark:text-icon-dark-inactive flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<SettingOutlined />
@@ -146,7 +146,7 @@ const getUserDropDown = (
 			label: (
 				<Link
 					href='/'
-					className='flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary dark:text-icon-dark-inactive'
+					className='dark:text-icon-dark-inactive flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -165,7 +165,7 @@ const getUserDropDown = (
 			key: 'set on-chain identity',
 			label: (
 				<Link
-					className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
+					className={`dark:text-icon-dark-inactive -ml-1 flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary ${className}`}
 					href={''}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -344,57 +344,58 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									className={`${sidedrawer ? 'ml-2' : 'ml-0'}h-full`}
 									sidedrawer={sidedrawer}
 								/>
-								<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom -mx-4 my-2`}></div>
+								<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom dark:border-separatorDark border-b-1 -mx-4 my-2`}></div>
 							</div>
 						</div>
 				  )
 				: null,
-			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-lightBlue dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
+			getSiderMenuItem('', '', <ToggleButton />),
+			getSiderMenuItem('Overview', '/', <OverviewIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='dark:text-icon-dark-inactive mt-1.5 text-lightBlue' />),
+			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-3 text-lightBlue dark:text-icon-dark-inactive' />)
+			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='dark:text-icon-dark-inactive mt-3 text-lightBlue' />)
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-lightBlue dark:text-icon-dark-inactive' />)
+					getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
+					getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='dark:text-icon-dark-inactive text-lightBlue' />)
 			  ]
 			: [],
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Members', '/council', <MembersIcon className='text-lightBlue dark:text-icon-dark-inactive' />)
+					getSiderMenuItem('Motions', '/motions', <MotionsIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
+					getSiderMenuItem('Members', '/council', <MembersIcon className='dark:text-icon-dark-inactive text-lightBlue' />)
 			  ]
 			: [],
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-lightBlue dark:text-icon-dark-inactive' />)
+					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
+					getSiderMenuItem('Tips', '/tips', <TipsIcon className='dark:text-icon-dark-inactive text-lightBlue' />)
 			  ]
 			: [],
 		techCommItems: chainProperties[network]?.subsquidUrl
-			? [getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-lightBlue dark:text-icon-dark-inactive' />)]
+			? [getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='dark:text-icon-dark-inactive text-lightBlue' />)]
 			: [],
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-lightBlue dark:text-icon-dark-inactive' />)
+					getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
+					getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
+					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
+					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='dark:text-icon-dark-inactive text-lightBlue' />)
 			  ]
 			: [],
 		PIPsItems:
 			chainProperties[network]?.subsquidUrl && network === 'polymesh'
 				? [
-						getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='mt-1.5 text-lightBlue dark:text-icon-dark-inactive' />),
-						getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='mt-1.5 text-lightBlue dark:text-icon-dark-inactive' />),
-						getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='mt-1.5 text-lightBlue dark:text-icon-dark-inactive' />)
+						getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='dark:text-icon-dark-inactive mt-1.5 text-lightBlue' />),
+						getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='dark:text-icon-dark-inactive mt-1.5 text-lightBlue' />),
+						getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='dark:text-icon-dark-inactive mt-1.5 text-lightBlue' />)
 				  ]
 				: []
 	};
 	if (isGrantsSupported(network)) {
-		gov1Items['overviewItems'].splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-lightBlue dark:text-icon-dark-inactive' />));
+		gov1Items['overviewItems'].splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='dark:text-icon-dark-inactive text-lightBlue' />));
 	}
 
 	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
@@ -413,18 +414,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						: network === AllNetworks.MOONBEAM
 						? [
 								...[
-									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
+									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
 									getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
 								]
 						  ]
 						: [
 								...gov1Items.treasuryItems,
-								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
+								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
 								getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
 						  ]
 					: [
 							...gov1Items.treasuryItems,
-							getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
+							getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
 							getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
 					  ]
 			),
@@ -443,7 +444,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (network === 'polymesh') {
 		items = items.concat(
 			getSiderMenuItem(
-				<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>PIPs</span>,
+				<span className='dark:text-icon-dark-inactive ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>,
 				'pipsHeading',
 				null
 			),
@@ -454,8 +455,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	if (network === AllNetworks.COLLECTIVES) {
 		const fellowshipItems = [
-			getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />)
+			getSiderMenuItem('Members', '/fellowship', <MembersIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
+			getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />)
 		];
 		items = [
 			...gov1Items.overviewItems,
@@ -520,11 +521,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				default: {
 					const icon =
 						trackName === PostOrigin.ROOT ? (
-							<RootIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+							<RootIcon className='dark:text-icon-dark-inactive text-lightBlue' />
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
-							<AuctionAdminIcon className='ml-0.5 text-lightBlue dark:text-icon-dark-inactive' />
+							<AuctionAdminIcon className='dark:text-icon-dark-inactive ml-0.5 text-lightBlue' />
 						) : (
-							<StakingAdminIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+							<StakingAdminIcon className='dark:text-icon-dark-inactive text-lightBlue' />
 						);
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
@@ -556,47 +557,48 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								className={`${sidedrawer ? 'ml-2' : 'ml-0'} h-full`}
 								sidedrawer={sidedrawer}
 							/>
-							<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom -mx-4 my-2`}></div>
+							<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom dark:border-separatorDark border-b-1 -mx-4 my-2`}></div>
 						</div>
 					</div>
 			  )
 			: null,
-		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 text-lightBlue dark:text-icon-dark-inactive' />),
-		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-lightBlue dark:text-icon-dark-inactive' />),
-		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
+		getSiderMenuItem('', '', <ToggleButton />),
+		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='dark:text-icon-dark-inactive mt-1 text-lightBlue' />),
+		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='dark:text-icon-dark-inactive mt-1.5 text-lightBlue' />),
+		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='dark:text-icon-dark-inactive text-lightBlue' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
-		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 text-lightBlue dark:text-icon-dark-inactive' />),
-		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
+		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='dark:text-icon-dark-inactive mt-2.5 text-lightBlue' />),
+		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='dark:text-icon-dark-inactive mt-1 text-lightBlue' />)
 	];
 
 	if (['kusama', 'polkadot'].includes(network)) {
-		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5' />));
+		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='dark:text-icon-dark-inactive mt-1.5 text-lightBlue' />));
 	}
 	if (isGrantsSupported(network)) {
-		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-lightBlue dark:text-icon-dark-inactive' />));
+		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='dark:text-icon-dark-inactive text-lightBlue' />));
 	}
 
 	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		// Tracks Heading
-		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Tracks</span>, 'tracksHeading', null),
+		getSiderMenuItem(<span className='dark:text-icon-dark-inactive ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.governanceItems]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.fellowshipItems])
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, [...gov2TrackItems.governanceItems]),
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, [...gov2TrackItems.fellowshipItems])
 	];
 
 	let gov2CollapsedItems: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.governanceItems]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.fellowshipItems])
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, [...gov2TrackItems.governanceItems]),
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, [...gov2TrackItems.fellowshipItems])
 	];
 
 	if (isFellowshipSupported(network)) {
 		gov2Items.splice(
 			gov2Items.length - 1,
 			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='mt-1 text-lightBlue dark:text-icon-dark-inactive' />, [
+			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='dark:text-icon-dark-inactive mt-1 text-lightBlue' />, [
 				...gov2TrackItems.fellowshipItems
 			])
 		);
@@ -608,7 +610,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			if (isOpenGovSupported(network)) {
 				items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
 			}
-			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...items]));
+			gov2Items.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, [...items]));
 		} else {
 			gov2Items.splice(gov2Items.length - 2, 1);
 		}
@@ -618,7 +620,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2CollapsedItems.splice(
 			gov2CollapsedItems.length - 1,
 			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.fellowshipItems])
+			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, [...gov2TrackItems.fellowshipItems])
 		);
 	}
 
@@ -627,7 +629,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			gov2CollapsedItems.splice(
 				-1,
 				0,
-				getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.treasuryItems])
+				getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, [...gov2TrackItems.treasuryItems])
 			);
 		} else {
 			gov2CollapsedItems.splice(gov2CollapsedItems.length - 2, 1);
@@ -662,16 +664,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 	if (network === AllNetworks.MOONBEAM) {
 		gov2Items = gov2Items.concat(
-			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
+			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, gov1Items.treasuryItems)
 		);
 		gov2CollapsedItems = [
 			...gov2CollapsedItems,
-			getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
+			getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='dark:text-icon-dark-inactive text-lightBlue' />, gov1Items.treasuryItems)
 		];
 	}
 
 	if (network !== AllNetworks.POLYMESH) {
-		gov2Items = [...gov2Items, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...items])];
+		gov2Items = [...gov2Items, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='dark:text-icon-dark-inactive text-lightBlue' />, [...items])];
 	}
 
 	const userDropdown = getUserDropDown(
@@ -695,7 +697,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (isMobile) {
 		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
-	sidebarItems.push(getSiderMenuItem('', '', <ToggleButton />));
 	return (
 		<Layout className={className}>
 			<NavHeader
@@ -713,7 +714,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'sidebar fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white dark:bg-section-dark-overlay lg:block'}
+					className={'sidebar dark:bg-section-dark-overlay fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white lg:block'}
 				>
 					<Menu
 						theme={theme}
@@ -751,7 +752,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</Drawer>
 				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
-					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
+					<Layout className='min-h-[calc(100vh - 10rem)] dark:bg-section-dark-background bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={'moonbeam'} />
 						<div className='flex flex-row'>
@@ -763,7 +764,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</Layout>
 				) : ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
-					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
+					<Layout className='min-h-[calc(100vh - 10rem)] dark:bg-section-dark-background bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<div className='flex flex-row'>
 							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
@@ -774,7 +775,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</Layout>
 				) : (
-					<Layout className={'min-h-[calc(100vh - 10rem)] flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
+					<Layout className={'min-h-[calc(100vh - 10rem)] dark:bg-section-dark-background flex flex-row bg-[#F5F6F8]'}>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 						<CustomContent
@@ -798,7 +799,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				zIndex={100}
 				open={identityMobileModal}
 				footer={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 				onCancel={() => setIdentityMobileModal(false)}
 				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
 				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}

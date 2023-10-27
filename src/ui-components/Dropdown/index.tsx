@@ -8,7 +8,9 @@ export const Dropdown = (props: any) => {
 	return (
 		<AntdDropdown
 			{...props}
-			overlayClassName={`dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${props.theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
+			overlayClassName={`dark:bg-section-dark-overlay dark:border-separatorDark dark:rounded-lg dark:text-white ${
+				props.theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''
+			}`}
 		>
 			{props.children}
 		</AntdDropdown>

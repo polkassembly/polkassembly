@@ -22,6 +22,7 @@ import Mail from '~assets/icons/mail.svg';
 import Arrow from '~assets/icons/arrow.svg';
 import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
+import PaLogoDark from '~assets/PALogoDark.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -117,7 +118,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high '>
+					<span className='dark:text-blue-dark-high flex text-sm font-medium text-bodyBlue hover:text-pink_primary '>
 						<TownHall />
 						<div className='ml-2 '> TownHall </div>
 					</span>
@@ -134,7 +135,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'>
+					<span className='dark:text-blue-dark-high flex text-sm font-medium text-bodyBlue hover:text-pink_primary'>
 						<PolkaSafe />
 						<span className='ml-2'>Polkasafe</span>
 					</span>
@@ -148,7 +149,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='dark:text-blue-dark-high flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -160,7 +161,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='dark:text-blue-dark-high flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<IconSettings className='userdropdown-icon text-2xl' />
@@ -172,7 +173,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'logout',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='dark:text-blue-dark-high flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
 					onClick={() => handleLogout(username || '')}
 					href='/'
 				>
@@ -188,7 +189,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'set on-chain identity',
 			label: (
 				<Link
-					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
+					className={`dark:text-blue-dark-high flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary ${className}`}
 					href={''}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -236,7 +237,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		<Header
 			className={`${className} shadow-md ${
 				sidedrawer && !isMobile ? 'z-[500]' : isMobile ? 'z-[1010]' : 'z-[1000]'
-			} navbar-container sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
+			} navbar-container dark:bg-section-dark-overlay sticky top-0 flex  h-[60px] max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal`}
 		>
 			<span
 				onClick={() => {
@@ -251,15 +252,22 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						className='logo-size flex'
 						href={'/'}
 					>
-						<PaLogo
-							className='logo-container -ml-[2px]'
-							sidedrawer={isMobile}
-						/>
+						{theme === 'dark' ? (
+							<PaLogoDark
+								className='logo-container -ml-[2px]'
+								sidedrawer={isMobile}
+							/>
+						) : (
+							<PaLogo
+								className='logo-container -ml-[2px]'
+								sidedrawer={isMobile}
+							/>
+						)}
 					</Link>
 
 					<div className='type-container flex items-center'>
 						<span className='line-container ml-[16px] mr-[8px] h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
-						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:text-blue-dark-high lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+						<h2 className='text-container dark:text-blue-dark-high m-0 ml-[84px] p-0 text-base text-bodyBlue lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
@@ -325,7 +333,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								}
 								isClicked.current = false;
 							}}
-							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:bg-section-dark-overlay md:hidden'
+							className='dark:bg-section-dark-overlay ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none md:hidden'
 						>
 							<CloseOutlined className='h-[15px] w-[15px]' />
 							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
@@ -337,14 +345,14 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								>
 									<div className='flex flex-col'>
 										<div>
-											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Network</p>
+											<p className='dark:text-blue-dark-medium m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Network</p>
 											<NetworkDropdown
 												setSidedrawer={() => {}}
 												isSmallScreen={true}
 											/>
 										</div>
 										<div className='mt-6'>
-											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
+											<p className='dark:text-blue-dark-medium m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Node</p>
 											<RPCDropdown isSmallScreen={true} />
 										</div>
 										<div className={`${username ? 'hidden' : 'block'}`}>
@@ -355,7 +363,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/signup');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
+													className='dark:bg-section-dark-overlay flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
 												>
 													Sign Up
 												</button>

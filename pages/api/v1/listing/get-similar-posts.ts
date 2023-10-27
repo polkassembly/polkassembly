@@ -32,27 +32,28 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		variables: postsVariables
 	});
 	let results: any = [];
+	const seenProposalIds = new Set<number>();
 	const subsquidData = subsquidRes?.data?.proposals;
 	if (!subsquidData) {
 		return res.status(400).json({ message: 'error' || messages.NO_ACTIVE_PROPOSALS });
 	}
 	const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 	if (tags && tags?.length > 0) {
-		results = await getResults(tags, subsquidData, onChainCollRef, results);
+		results = await getResults(tags, subsquidData, onChainCollRef, results, seenProposalIds);
 	}
 
 	if (results.length < 3 && trackNumber) {
 		const filteredData = subsquidData.filter((proposal: any) => proposal.trackNumber === trackNumber);
-		results = await getResults(null, filteredData, onChainCollRef, results);
+		results = await getResults(null, filteredData, onChainCollRef, results, seenProposalIds);
 	}
 
 	if (results.length < 3 && trackGroup) {
 		const filteredData = subsquidData.filter((proposal: any) => trackGroup.includes(proposal.trackNumber));
-		results = await getResults(null, filteredData, onChainCollRef, results);
+		results = await getResults(null, filteredData, onChainCollRef, results, seenProposalIds);
 	}
 
 	if (results.length < 3) {
-		results = await getResults(null, subsquidData, onChainCollRef, results);
+		results = await getResults(null, subsquidData, onChainCollRef, results, seenProposalIds);
 	}
 
 	return res.status(200).json(results || []);

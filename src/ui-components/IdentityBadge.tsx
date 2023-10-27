@@ -17,6 +17,8 @@ import RiotIcon from '~assets/icons/riot-icon.svg';
 import ShareScreenIcon from '~assets/icons/screen-share-icon.svg';
 import PgpIcon from '~assets/icons/pgp-icon.svg';
 import dynamic from 'next/dynamic';
+import { useNetworkSelector } from '~src/redux/selectors';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
@@ -62,6 +64,7 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const { network } = useNetworkSelector();
 	const identityArr = [
 		{ key: 'Email', value: identity?.email },
 		{ key: 'Judgements', value: identity?.judgements || [] },
@@ -133,14 +136,17 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 						/>
 					)}
 					<a
-						href={`https://polkaverse.com/accounts/${address}`}
 						target='_blank'
 						rel='noreferrer'
 						className='flex text-pink-500'
 						onClick={(e) => {
 							e.stopPropagation();
 							e.preventDefault();
-							window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
+							const substrateAddress = getSubstrateAddress(address);
+							if (addressPrefix) {
+								return window.open(`https://${network}.polkassembly.io/address/${substrateAddress}`, '_blank');
+							}
+							return window.open(`https://${network}.polkassembly.io/user/${addressPrefix}`, '_blank');
 						}}
 					>
 						<ShareScreenIcon className='ml-1 mr-2' />

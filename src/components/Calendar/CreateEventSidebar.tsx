@@ -134,22 +134,22 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 
 	return (
 		<SidebarRight
-			className={className}
+			className={`${className} dark:bg-section-dark-overlay`}
 			open={open}
 			closeSidebar={() => setSidebarCreateEvent(false)}
 		>
-			<div className='dashboard-heading'>
+			<div className='dashboard-heading dark:font-medium dark:text-white'>
 				<h1>Create Event</h1>
 			</div>
 
 			<div className='create-event-form'>
 				<Form>
 					<div>
-						<label className='input-label'>Event Title</label>
+						<label className='input-label dark:text-blue-dark-medium'>Event Title</label>
 						<Form.Item validateStatus={errorsFound.includes('eventTitle') ? 'error' : ''}>
 							<Input
 								type='text'
-								className='text-input dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className='text-input dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								value={eventTitle}
 								onChange={(e) => setEventTitle(e.target.value)}
 								disabled={loading}
@@ -162,7 +162,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						<Form.Item validateStatus={errorsFound.includes('eventDescription') ? 'error' : ''}>
 							<Input
 								type='text'
-								className='text-input dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className='text-input dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								value={eventDescription}
 								onChange={(e) => setEventDescription(e.target.value)}
 								disabled={loading}
@@ -174,12 +174,13 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 					<Radio.Group
 						onChange={onEventTypeRadioToggle}
 						value={eventType}
-						className='radio-input-group'
+						className='radio-input-group dark:text-white'
 					>
 						<Radio
 							value='online'
 							checked={eventType === 'online'}
 							disabled={loading}
+							className='dark:text-white'
 						>
 							Online
 						</Radio>
@@ -187,6 +188,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							value='offline'
 							checked={eventType === 'offline'}
 							disabled={loading}
+							className='dark:text-white'
 						>
 							Offline
 						</Radio>
@@ -228,7 +230,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<Form.Item validateStatus={errorsFound.includes('eventJoiningLink') ? 'error' : ''}>
 								<Input
 									type='text'
-									className='text-input dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									className='text-input dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									value={eventJoiningLink}
 									onChange={(e) => setEventJoiningLink(e.target.value)}
 									disabled={loading}
@@ -241,7 +243,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<Form.Item validateStatus={errorsFound.includes('eventLocation') ? 'error' : ''}>
 								<Input
 									type='text'
-									className='text-input dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									className='text-input dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									value={eventLocation}
 									onChange={(e) => setEventLocation(e.target.value)}
 									disabled={loading}
@@ -254,6 +256,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						<Button
 							onClick={closeCreateEventSidebar}
 							disabled={loading}
+							className='dark:bg-transparent dark:text-white'
 						>
 							Cancel
 						</Button>

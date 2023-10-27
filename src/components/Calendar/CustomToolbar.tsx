@@ -184,7 +184,7 @@ function CustomToolbar(props: any) {
 							</Dropdown>
 						</div>
 						<div className='flex items-center'>
-							<span className='text-md ml-5 mr-5 w-[130px] text-sidebarBlue md:text-lg'>{dayjs(props.date).format('MMMM YYYY')}</span>
+							<span className='text-md ml-5 mr-5 w-[130px] text-sidebarBlue dark:text-white md:text-lg'>{dayjs(props.date).format('MMMM YYYY')}</span>
 							<LeftOutlined
 								onClick={goToBack}
 								className='mr-3 cursor-pointer text-sm hover:font-semibold hover:text-sidebarBlue'
@@ -198,7 +198,7 @@ function CustomToolbar(props: any) {
 						{/* <Button className='search-btn' icon='search' /> */}
 						<div className='ml-auto flex items-center'>
 							<Button
-								className='rounded-md'
+								className='rounded-md dark:bg-section-dark-overlay dark:text-white'
 								onClick={goToToday}
 							>
 								Today

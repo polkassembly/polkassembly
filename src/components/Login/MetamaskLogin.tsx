@@ -33,6 +33,8 @@ import TFALoginForm from './TFALoginForm';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useTheme } from 'next-themes';
+import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -57,6 +59,7 @@ const initAuthResponse: IAuthResponse = {
 };
 
 export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
+	const { resolvedTheme: theme } = useTheme();
 	switch (which) {
 		case Wallet.POLKADOT:
 			return <PolkadotJSIcon className={`h-8 w-8 ${className}`} />;
@@ -73,7 +76,11 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 		case Wallet.METAMASK:
 			return <MetamaskIcon className={`h-8 w-8 ${className}`} />;
 		case Wallet.POLKASAFE:
-			return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
+			if (theme === 'dark') {
+				return <PolkaSafeDarkIcon className={`h-8 w-6 ${className}`} />;
+			} else {
+				return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
+			}
 		default:
 			return null;
 	}

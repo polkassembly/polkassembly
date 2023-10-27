@@ -23,7 +23,6 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
-import { useTheme } from 'next-themes';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
@@ -51,9 +50,10 @@ interface Props {
 	isDelegation?: boolean;
 	className?: string;
 	setWithPolkasafe?: any;
+	theme?: string;
 }
 
-const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe }) => {
+const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe, theme }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
@@ -70,7 +70,6 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	const [firstPassword, setFirstPassword] = useState('');
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
 	const { network } = useNetworkSelector();
-	const { resolvedTheme: theme } = useTheme();
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -380,4 +379,12 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	);
 };
 
-export default Web2Signup;
+export default styled(Web2Signup)`
+	.ant-input {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '')} !important;
+	}
+	.ant-input::placeholder {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+	}
+`;

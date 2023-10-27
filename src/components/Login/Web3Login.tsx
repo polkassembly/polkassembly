@@ -19,6 +19,7 @@ import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -33,6 +34,7 @@ import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -56,6 +58,7 @@ const initAuthResponse: IAuthResponse = {
 
 const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, isModal, setLoginOpen, setSignupOpen, withPolkasafe, setChosenWallet, onWalletUpdate }) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
@@ -384,7 +387,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 	return (
 		<>
 			<div className='flex items-center'>
-				<LoginLogo className='ml-6 mr-2' />
+				{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
 				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />

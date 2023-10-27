@@ -16,6 +16,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useTheme } from 'next-themes';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 interface Props {
@@ -63,6 +64,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 	const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
 	const [walletError, setWalletError] = useState<string | undefined>();
 	const [withPolkasafe, setWithPolkasafe] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
 
@@ -102,6 +104,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (
 						<Web2Login
+							theme={theme}
 							isModal={isModal}
 							setLoginOpen={setLoginOpen}
 							isDelegation={isDelegation}

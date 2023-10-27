@@ -23,6 +23,7 @@ import { trackEvent } from 'analytics';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (
@@ -58,8 +59,10 @@ interface Props {
 	isDelegation?: boolean;
 	className?: string;
 	setWithPolkasafe?: any;
+	theme?: string;
 }
-const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe }) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe, theme }) => {
 	const { username } = validation;
 	const dispatch = useDispatch();
 	const router = useRouter();
@@ -155,7 +158,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	return (
 		<Container className={`flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay ${className} `}>
 			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
-				<LoginLogo className='mr-3' />
+				{theme === 'dark' ? <LoginLogoDark className='mr-3' /> : <LoginLogo className='mr-3' />}
 				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>Login</span>
 			</div>
 			<Divider
@@ -296,4 +299,12 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	);
 };
 
-export default Web2Login;
+export default styled(Web2Login)`
+	.ant-input {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '')} !important;
+	}
+	.ant-input::placeholder {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+	}
+`;

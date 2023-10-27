@@ -33,6 +33,8 @@ import { ProposalType } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { getTrackData } from './Listing/Tracks/AboutTrackCard';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import Markdown from '~src/ui-components/Markdown';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -141,7 +143,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
-
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
 
 	const [decision, setDecision] = useState<IPeriod>();
@@ -215,14 +216,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
-							<span className={`flex-none text-center font-medium text-bodyBlue ${showSimilarPost ? 'ml-5 w-[76px]' : 'sm:w-[120px]'}`}>#{isTip ? tip_index : onchainId}</span>
+							<span className={`flex-none text-center font-medium text-bodyBlue ${showSimilarPost ? 'mt-[2px] w-[76px]' : 'sm:w-[120px]'}`}>#{isTip ? tip_index : onchainId}</span>
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
 								username={username}
 								truncateUsername={truncateUsername}
 							/>
 						</div>
-						<div className='flex items-center justify-end'>
+						<div className={`${showSimilarPost ? '-mr-5' : ''} flex items-center justify-end`}>
 							{status && (
 								<StatusTag
 									className='sm:mr-10'
@@ -232,7 +233,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 					<div className='mt-1 flex items-center justify-between'>
-						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'} flex flex-grow`}>
+						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'} flex flex-grow`}>
 							<h1 className='mt-0.5 flex overflow-hidden text-sm text-bodyBlue lg:max-w-none'>
 								<span className='break-all text-sm font-medium text-bodyBlue'>{mainTitle}</span>
 							</h1>
@@ -253,22 +254,23 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						)}
 					</div>
 					{showSimilarPost && content && (
-						<div className={`${showSimilarPost ? 'ml-[96px]' : 'ml-[120px]'}`}>
-							<h1 className='desc-container mr-12 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
-								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 150)}...`}</p>
-							</h1>
-							{content && content.length > 120 && (
-								<p
-									onClick={(e) => {
-										e.preventDefault();
-										e.stopPropagation();
-										setShowMore(!showMore);
-									}}
-									className='m-0 p-0 text-xs text-pink_primary'
-								>
-									{showMore ? 'See Less' : 'See More'}
+						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'}`}>
+							<h1 className='desc-container mr-12 mt-0.5 flex max-h-[94px] overflow-hidden text-sm text-bodyBlue'>
+								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>
+									<Markdown
+										className='post-content'
+										md={content}
+									/>
 								</p>
-							)}
+							</h1>
+							<p
+								onClick={() => {
+									setShowMore(!showMore);
+								}}
+								className='m-0 p-0 text-xs text-pink_primary'
+							>
+								See More
+							</p>
 							<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 						</div>
 					)}
@@ -277,7 +279,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							showSimilarPost ? 'ml-[96px]' : 'sm:ml-[120px]'
 						} sm:mt-0 sm:flex lg:flex-row lg:items-center`}
 					>
-						<div className='flex items-center gap-x-2 lg:h-[32px]'>
+						<div className={`${showSimilarPost ? '-ml-5' : ''} flex items-center gap-x-2 lg:h-[32px]`}>
 							{postReactionCount && (
 								<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 									<LikeOutlined style={{ color: '#485F7D' }} />
@@ -301,15 +303,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										/>{' '}
 										{commentsCount}
 									</div>
+									{!showSimilarPost && (
+										<Divider
+											type='vertical'
+											className='max-lg:hidden'
+											style={{ borderLeft: '1px solid #90A0B7' }}
+										/>
+									)}
 								</>
 							) : null}
 							{tags && tags.length > 0 && (
 								<>
-									<Divider
-										type='vertical'
-										className='max-lg:hidden'
-										style={{ borderLeft: '1px solid #90A0B7' }}
-									/>
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
@@ -331,19 +335,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 											+{tags.length - 2}
 										</span>
 									)}
-
 									<Divider
 										type='vertical'
 										style={{ borderLeft: '1px solid #485F7D' }}
 									/>
 								</>
-							)}
-
-							{!showSimilarPost && (
-								<Divider
-									type='vertical'
-									style={{ borderLeft: '1px solid #485F7D' }}
-								/>
 							)}
 							{cid ? (
 								<>
@@ -411,7 +407,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</>
 							)}
-							{topic ? (
+							{!isOpenGovSupported(network) && topic ? (
 								<div className='flex items-center sm:-mt-1'>
 									<Divider
 										type='vertical'
@@ -424,8 +420,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</div>
 							) : null}
-							{showSimilarPost ? (
-								//type yaha daalo
+							{showSimilarPost && isOpenGovSupported(network) ? (
 								<>
 									<Divider
 										type='vertical'
@@ -466,7 +461,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					<div className='justify-between xs:flex sm:my-0 sm:hidden'>
-						{topic && (
+						{topic && !isOpenGovSupported(network) && (
 							<div>
 								<TopicTag
 									className='xs:mx-1'
@@ -487,6 +482,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								)}
 							</div>
 						)}
+						{showSimilarPost && isOpenGovSupported(network) && <p className='m-0 ml-1 mt-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
 					</div>
 					<div className='items-center justify-between gap-x-2 xs:flex sm:hidden'>
 						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (
@@ -500,18 +496,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						) : null}
 					</div>
-					<div className='flex'>
-						<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
-							#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
-						</div>
-						{showSimilarPost && (
-							<Divider
-								type='vertical'
-								className='my-4'
-								style={{ borderLeft: '1px solid #485F7D' }}
-							/>
-						)}
-						{showSimilarPost && <p className='m-0 my-[14px] ml-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
+					<div className='max-xs-hidden mx-1 my-3 text-sm font-medium text-bodyBlue'>
+						#{isTip ? tip_index : onchainId} {mainTitle} {subTitle}
 					</div>
 
 					<div className='flex-col gap-3 pl-1 text-xs font-medium text-bodyBlue xs:flex sm:hidden lg:flex-row lg:items-center'>
@@ -571,22 +557,23 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							)}
 						</div>
 						{showSimilarPost && content && (
-							<div className=''>
-								<h1 className='desc-container mr-5 mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
-									<p className='m-0 p-0 text-sm font-normal text-lightBlue'>{showMore ? content : `${content.slice(0, 120)}...`}</p>
-								</h1>
-								{content && content.length > 120 && (
-									<p
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											setTagsModal(true);
-										}}
-										className='m-0 p-0 text-xs text-pink_primary'
-									>
-										{showMore ? 'See Less' : 'See More'}
+							<div>
+								<h1 className='desc-container mt-0.5 flex overflow-hidden text-sm text-bodyBlue'>
+									<p className='m-0 max-h-[114px] break-all p-0 text-sm font-normal text-lightBlue'>
+										<Markdown
+											className='post-content'
+											md={content}
+										/>
 									</p>
-								)}
+								</h1>
+								<p
+									onClick={() => {
+										setTagsModal(true);
+									}}
+									className='m-0 p-0 text-xs text-pink_primary'
+								>
+									See More
+								</p>
 								<h2 className='text-sm font-medium text-bodyBlue'>{subTitle}</h2>
 							</div>
 						)}
@@ -600,7 +587,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='max-lg:hidden'
 										style={{ borderLeft: '1px solid #90A0B7' }}
 									/>
-									<div className='flex gap-1'>
+									<div className='mr-[2px] flex gap-1'>
 										{tags?.slice(0, 2).map((tag, index) => (
 											<div
 												key={index}

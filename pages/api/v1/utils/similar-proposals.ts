@@ -22,8 +22,8 @@ async function queryWithLargeInArray(collection: any, field: any, array: any) {
 	return results;
 }
 
-export const getResults = async (tags: any, subsquidData: any, onChainCollRef: any, results: any) => {
-	const filteredPostIds = subsquidData.map((proposal: any) => proposal.index);
+export const getResults = async (tags: any, subsquidData: any, onChainCollRef: any, results: any, seenProposalIds: any) => {
+	const filteredPostIds = subsquidData.map((proposal: any) => proposal.index && !seenProposalIds.has(proposal.index));
 	let postsSnapshotArr = [];
 	if (tags && tags.length > 0) {
 		postsSnapshotArr = await onChainCollRef.where('tags', 'array-contains-any', tags).orderBy('created_at', 'desc').get();
@@ -34,7 +34,7 @@ export const getResults = async (tags: any, subsquidData: any, onChainCollRef: a
 		postsSnapshotArr = await queryWithLargeInArray(onChainCollRef, 'id', filteredPostIds);
 	}
 	if (postsSnapshotArr && postsSnapshotArr.length > 0) {
-		results.push(...(await combinedata(postsSnapshotArr, subsquidData)));
+		results.push(...(await combinedata(postsSnapshotArr, subsquidData, seenProposalIds)));
 		if (results.length >= 3) {
 			results = results.slice(0, 3);
 		}
@@ -92,10 +92,10 @@ const buildFirestoreData = async (docData: any, strProposalType: string, network
 	};
 };
 
-const combinedata = async (postsSnapshotArr: any, subsquidData: any) => {
+const combinedata = async (postsSnapshotArr: any, subsquidData: any, seenProposalIds: any) => {
 	let result = postsSnapshotArr.map(async (firestorePostData: any) => {
 		const firestorePost = firestorePostData.data();
-		const subsquidPost = subsquidData.find((post: any) => post.index == firestorePost.id);
+		const subsquidPost = subsquidData.find((post: any) => post.index == firestorePost.id && !seenProposalIds.has(post.index));
 		if (!subsquidPost) return;
 		let timeline = [];
 		const isStatus = {
@@ -143,6 +143,7 @@ const combinedata = async (postsSnapshotArr: any, subsquidData: any) => {
 			trackNumber: subsquidPost.trackNumber,
 			type: subsquidPost.type
 		};
+		seenProposalIds.add(subsquidPost.index);
 		return data;
 	});
 	result = await Promise.allSettled(result);

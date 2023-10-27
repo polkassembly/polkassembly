@@ -547,9 +547,9 @@ const Post: FC<IPostProps> = (props) => {
 							)}
 						</div>
 						<div className='flex items-center'>
-							<hr className='seperation-border mr-2 flex-grow' />
-							<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
-							<hr className='seperation-border ml-2 flex-grow' />
+							<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
+							<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
+							<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
 						</div>
 						{isSimilarLoading ? (
 							<>

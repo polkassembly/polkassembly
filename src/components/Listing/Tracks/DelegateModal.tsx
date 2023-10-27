@@ -360,11 +360,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				confirmLoading={loading}
 				onCancel={handleCloseModal}
 				footer={
-					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
+					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-separatorDark'>
 						<Button
 							key='back'
 							disabled={loading}
-							className='h-[40px] w-[134px] rounded-[4px]'
+							className='h-[40px] w-[134px] rounded-[4px] dark:bg-section-dark-overlay dark:text-white'
 							onClick={() => setOpen?.(false)}
 						>
 							Cancel
@@ -428,8 +428,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										name='dashboardAddress'
 										defaultAddress={delegationDashboardAddress}
 										onChange={() => setLoading(false)}
-										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium'}
-										className='-mt-6 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium dark:bg-[#1D1D1D]'}
+										className='-mt-6 text-sm font-normal text-bodyBlue dark:bg-[#1D1D1D] dark:text-blue-dark-high'
 										disabled
 										size='large'
 										identiconSize={30}
@@ -494,7 +494,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									inputClassName='text-[#7c899b] text-sm dark:bg-section-dark-overlay'
 									theme={theme}
 								/>
-								<div className='mb-2 mt-4 border-solid border-white'>
+								<div className='mb-2 mt-4 border-solid border-white dark:border-separatorDark'>
 									<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
 										Conviction
 										<span>
@@ -513,13 +513,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 											onChange={handleOnchangeConviction}
 											step={7}
 											marks={{
-												1: { label: <div>0.1x</div>, style: { color: 'var(--bodyBlue)', fontSize: '12px', marginTop: '16px' } },
-												2: { label: <div>1x</div>, style: { color: 'var(--bodyBlue)', fontSize: '12px', marginTop: '16px' } },
-												3: { label: <div>2x</div>, style: { color: 'var(--bodyBlue)', fontSize: '12px', marginTop: '16px' } },
-												4: { label: <div>3x</div>, style: { color: 'var(--bodyBlue)', fontSize: '12px', marginTop: '16px' } },
-												5: { label: <div>4x</div>, style: { color: 'var(--bodyBlue)', fontSize: '12px', marginTop: '16px' } },
-												6: { label: <div>5x</div>, style: { color: 'var(--bodyBlue)', fontSize: '12px', marginTop: '16px' } },
-												7: { label: <div>6x</div>, style: { color: 'var(--bodyBlue)', fontSize: '12px', marginTop: '16px' } }
+												1: { label: <div>0.1x</div>, style: { color: `${theme === 'dark' ? '#909090' : '#243A57'}`, fontSize: '12px', marginTop: '16px' } },
+												2: { label: <div>1x</div>, style: { color: `${theme === 'dark' ? '#909090' : '#243A57'}`, fontSize: '12px', marginTop: '16px' } },
+												3: { label: <div>2x</div>, style: { color: `${theme === 'dark' ? '#909090' : '#243A57'}`, fontSize: '12px', marginTop: '16px' } },
+												4: { label: <div>3x</div>, style: { color: `${theme === 'dark' ? '#909090' : '#243A57'}`, fontSize: '12px', marginTop: '16px' } },
+												5: { label: <div>4x</div>, style: { color: `${theme === 'dark' ? '#909090' : '#243A57'}`, fontSize: '12px', marginTop: '16px' } },
+												6: { label: <div>5x</div>, style: { color: `${theme === 'dark' ? '#909090' : '#243A57'}`, fontSize: '12px', marginTop: '16px' } },
+												7: { label: <div>6x</div>, style: { color: `${theme === 'dark' ? '#909090' : '#243A57'}`, fontSize: '12px', marginTop: '16px' } }
 											}}
 											min={1}
 											max={7}
@@ -527,7 +527,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										/>
 									</div>
 								</div>
-								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px]'>
+								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px] dark:bg-inactiveIconDark'>
 									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue dark:text-blue-dark-medium'>
 										<LockIcon />
 										<span>Locking period</span>

@@ -305,8 +305,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									{!showSimilarPost && (
 										<Divider
 											type='vertical'
-											className='max-lg:hidden'
-											style={{ borderLeft: '1px solid #90A0B7' }}
+											className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-lg:hidden'
 										/>
 									)}
 								</>
@@ -421,8 +420,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<>
 									<Divider
 										type='vertical'
-										className='max-sm:hidden'
-										style={{ borderLeft: '1px solid #90A0B7' }}
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 									/>
 									<p className='m-0 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
 								</>
@@ -632,7 +630,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							Tags
 						</label>
 						<Divider
-							type='horizontal'
+							type='vertical'
 							className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive'
 						/>
 					</>

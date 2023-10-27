@@ -339,7 +339,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											<AnchorLink
 												href={`#${comments[`${timeline.index}_${timeline.type}`]?.[0]?.id}`}
 												title={
-													<div className='sticky top-10 flex flex-col text-lightBlue dark:text-blue-dark-medium'>
+													<div className='sticky top-10 flex flex-col text-lightBlue dark:text-blue-dark-high'>
 														<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
 														<div className='text-xs'>({comments[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
@@ -347,7 +347,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 												}
 											/>
 										) : (
-											<div className='sticky top-10 ml-5 flex cursor-pointer flex-col text-lightBlue dark:text-blue-dark-medium'>
+											<div className='sticky top-10 ml-5 flex cursor-pointer flex-col text-lightBlue dark:text-blue-dark-high'>
 												<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 												<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
 												<div className='text-xs'>({timeline.commentsCount})</div>
@@ -357,7 +357,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								) : (
 									<div
 										key={timeline.id}
-										className='sticky top-10 ml-5 flex cursor-default flex-col text-lightBlue dark:text-blue-dark-medium'
+										className='sticky top-10 ml-5 flex cursor-default flex-col text-lightBlue dark:text-blue-dark-high'
 									>
 										<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 										<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>

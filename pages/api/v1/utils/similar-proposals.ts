@@ -71,7 +71,7 @@ const buildFirestoreData = async (docData: any, strProposalType: string, network
 	const { topic, topic_id } = docData;
 	return {
 		created_at: created_at?.toDate ? created_at?.toDate() : created_at,
-		description: docData?.description || subsquareDescription || null,
+		description: docData?.content || subsquareDescription || null,
 		gov_type: docData?.gov_type,
 		isSpam: docData?.isSpam || false,
 		isSpamReportInvalid: docData?.isSpamReportInvalid || false,

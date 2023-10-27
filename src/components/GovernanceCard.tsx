@@ -143,7 +143,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
-	const [isOpenGov, setIsOpenGov] = useState(false);
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
 
 	const [decision, setDecision] = useState<IPeriod>();
@@ -189,10 +188,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		setRemainingTime(convertRemainingTime(decision.periodEndsAt));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	useEffect(() => {
-		isOpenGovSupported(network) ? setIsOpenGov(true) : setIsOpenGov(false);
-	}, [network]);
 
 	useEffect(() => {
 		if (!identityId || address) return;
@@ -412,7 +407,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</>
 							)}
-							{!isOpenGov && topic ? (
+							{!isOpenGovSupported(network) && topic ? (
 								<div className='flex items-center sm:-mt-1'>
 									<Divider
 										type='vertical'
@@ -425,7 +420,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</div>
 							) : null}
-							{showSimilarPost && isOpenGov ? (
+							{showSimilarPost && isOpenGovSupported(network) ? (
 								<>
 									<Divider
 										type='vertical'
@@ -466,7 +461,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					<div className='justify-between xs:flex sm:my-0 sm:hidden'>
-						{topic && !isOpenGov && (
+						{topic && !isOpenGovSupported(network) && (
 							<div>
 								<TopicTag
 									className='xs:mx-1'
@@ -487,7 +482,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								)}
 							</div>
 						)}
-						{showSimilarPost && <p className='m-0 ml-1 mt-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
+						{showSimilarPost && isOpenGovSupported(network) && <p className='m-0 ml-1 mt-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}
 					</div>
 					<div className='items-center justify-between gap-x-2 xs:flex sm:hidden'>
 						{spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0 ? (

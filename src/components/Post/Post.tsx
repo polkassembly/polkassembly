@@ -111,7 +111,6 @@ const Post: FC<IPostProps> = (props) => {
 	const isOffchainPost = !isOnchainPost;
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
-	const emptyStateMsg = 'No Active Proposals';
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
@@ -380,7 +379,6 @@ const Post: FC<IPostProps> = (props) => {
 		}
 
 		if (!isOffChainProposalTypeValid(proposalType)) {
-			console.log(post.description);
 			tabs.push({
 				children: (
 					<PostOnChainInfo
@@ -551,7 +549,7 @@ const Post: FC<IPostProps> = (props) => {
 						{isSimilarLoading ? (
 							<>
 								<div>
-									<LoadingState />{' '}
+									<LoadingState />
 								</div>
 							</>
 						) : (
@@ -570,7 +568,7 @@ const Post: FC<IPostProps> = (props) => {
 									</div>
 								) : (
 									<div className={`${className} mt-5`}>
-										<PostEmptyState text={emptyStateMsg} />
+										<PostEmptyState text='No Active Proposals' />
 									</div>
 								)}
 							</div>

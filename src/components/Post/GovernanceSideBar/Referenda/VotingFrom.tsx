@@ -51,7 +51,7 @@ const VotingForm = ({
 			<Select
 				onChange={(key) => setConviction(Number(key))}
 				size='large'
-				className='dark:[&>.ant-select-selector]:bg-section-dark-overlay dark:[&>.ant-select-selection-item]:text-white'
+				className='dark:[&>.ant-select-selection-item]:text-white dark:[&>.ant-select-selector]:bg-section-dark-overlay'
 				defaultValue={conviction}
 				suffixIcon={<DownIcon />}
 				popupClassName='z-[1060]'

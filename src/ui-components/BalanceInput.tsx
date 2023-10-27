@@ -81,7 +81,7 @@ const BalanceInput = ({
 	return (
 		<div className={`${className} balance-input flex w-full flex-col`}>
 			{(label || (address && withBalance)) && (
-				<label className='inner-headings dark:text-blue-dark-medium mb-[2px]'>
+				<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
 					<span className='flex items-center'>
 						{label}
 						<span>
@@ -132,7 +132,7 @@ const BalanceInput = ({
 					onBlur={() => onBlur?.()}
 					addonAfter={chainProperties[network]?.tokenSymbol}
 					name={formItemName || 'balance'}
-					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high mt-0 text-sm hover:border-pink_primary dark:focus:border-[#91054F]`}
+					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 					onChange={(e) => onBalanceChange(e.target.value)}
 					placeholder={placeholder}
 					value={formatedBalance(String(balance || ZERO_BN), unit)}

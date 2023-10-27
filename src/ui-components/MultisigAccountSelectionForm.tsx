@@ -149,7 +149,7 @@ const MultisigAccountSelectionForm = ({
 								<h3 className='mb-0 text-sm font-normal'>Choose linked multisig account</h3>
 								{!withoutInfo && <HelperTooltip text='You can choose an multisig account that are linked from the selected address.' />}
 								{showMultisigBalance && walletAddress && (
-									<div className={`${poppins.className} ${poppins.variable} dark:text-blue-dark-medium ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B]`}>
+									<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium`}>
 										Available: <span className='text-pink_primary'>{formatBnBalance(multisigBalance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 									</div>
 								)}

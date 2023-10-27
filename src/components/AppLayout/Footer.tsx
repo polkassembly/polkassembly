@@ -35,9 +35,9 @@ const Footer = ({ className }: { className?: string }) => {
 	return (
 		<footer
 			aria-label='Site Footer'
-			className={`${className} dark:bg-section-dark-overlay bg-white max-[650px]:rounded-[14px] `}
+			className={`${className} bg-white dark:bg-section-dark-overlay max-[650px]:rounded-[14px] `}
 		>
-			<div className='dark:bg-section-dark-overlay mx-auto max-w-screen-xl px-4 pt-8 sm:px-6 lg:pl-8 lg:pr-2'>
+			<div className='mx-auto max-w-screen-xl px-4 pt-8 dark:bg-section-dark-overlay sm:px-6 lg:pl-8 lg:pr-2'>
 				<div className='flex flex-col md:flex-row '>
 					{/* Logo and Network Link */}
 					<div>
@@ -109,13 +109,13 @@ const Footer = ({ className }: { className?: string }) => {
 					{/* Terms Links */}
 					<div className='mx-auto mt-8 flex flex-col justify-center md:mx-0 md:ml-auto md:mt-0 md:flex-row md:justify-end'>
 						<div className='text-center sm:text-left md:ml-10 lg:ml-14'>
-							<p className='dark:text-blue-dark-high mb-[-5px] text-lg font-bold text-bodyBlue max-[650px]:mt-[-15px] '>Help Center</p>
+							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px] '>Help Center</p>
 
 							<nav
 								aria-label='Footer About Nav'
 								className='mt-4 md:mt-3'
 							>
-								<div className='dark:text-blue-dark-high space-y-2 text-sm font-normal text-lightBlue'>
+								<div className='space-y-2 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
 									<div>
 										<a
 											href='https://polkassembly.hellonext.co/'
@@ -123,7 +123,7 @@ const Footer = ({ className }: { className?: string }) => {
 											rel='noreferrer'
 										>
 											Report an Issue
-											<RedirectIcon className='dark:text-blue-dark-high ml-3 text-lightBlue' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
 									</div>
 									<div className='max-[650px]:mb-[-5px]'>
@@ -133,7 +133,7 @@ const Footer = ({ className }: { className?: string }) => {
 											rel='noreferrer'
 										>
 											Feedback
-											<RedirectIcon className='dark:text-blue-dark-high ml-3 text-lightBlue' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
 									</div>
 									<div className='max-[650px]:hidden'>
@@ -146,15 +146,15 @@ const Footer = ({ className }: { className?: string }) => {
 											rel='noreferrer'
 										>
 											Github
-											<RedirectIcon className='dark:text-blue-dark-high ml-3 text-lightBlue' />
+											<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 										</a>
 									</div>
 								</div>
 							</nav>
 						</div>
 
-						<div className='dark:text-blue-dark-high mt-8 text-center font-normal text-lightBlue sm:text-left md:ml-10 md:mt-0 lg:ml-14'>
-							<p className='dark:text-blue-dark-high mb-[-5px] text-lg font-bold text-bodyBlue max-[650px]:mt-[-15px] '>Our Services</p>
+						<div className='mt-8 text-center font-normal text-lightBlue dark:text-blue-dark-high sm:text-left md:ml-10 md:mt-0 lg:ml-14'>
+							<p className='mb-[-5px] text-lg font-bold text-bodyBlue dark:text-blue-dark-high max-[650px]:mt-[-15px] '>Our Services</p>
 
 							<nav
 								aria-label='Footer Services Nav'
@@ -169,7 +169,7 @@ const Footer = ({ className }: { className?: string }) => {
 										>
 											Docs
 										</a>
-										<RedirectIcon className='dark:text-blue-dark-high ml-3 text-lightBlue' />
+										<RedirectIcon className='ml-3 text-lightBlue dark:text-blue-dark-high' />
 									</div>
 
 									<div className='max-[650px]:hidden'>
@@ -187,7 +187,7 @@ const Footer = ({ className }: { className?: string }) => {
 
 				{/* Below divider */}
 				<Divider className='mb-0' />
-				<div className='dark:text-blue-dark-medium mt-5 pb-3 text-sm font-medium text-lightBlue'>
+				<div className='mt-5 pb-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
 					<div className='text-center sm:flex sm:justify-between sm:text-left'>
 						<div className='flex max-[650px]:flex-col'>
 							<p className=' mr-1 max-[650px]:mb-0 '>A House of Commons Initiative.</p>

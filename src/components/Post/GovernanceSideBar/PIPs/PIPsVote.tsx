@@ -64,7 +64,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			if (days && !isNaN(Number(days))) {
 				return [
 					<Select.Option
-						className={`dark:text-blue-dark-high dark:bg-section-dark-overlay text-bodyBlue ${poppins.variable}`}
+						className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
 						key={0}
 						value={0}
 					>
@@ -72,7 +72,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</Select.Option>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<Select.Option
-							className={`dark:text-blue-dark-high dark:bg-section-dark-overlay text-bodyBlue ${poppins.variable}`}
+							className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
@@ -83,7 +83,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<Select.Option
-			className={`dark:text-blue-dark-high dark:bg-section-dark-overlay text-bodyBlue ${poppins.variable}`}
+			className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
 			key={0}
 			value={0}
 		>
@@ -91,7 +91,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<Select.Option
-				className={`dark:text-blue-dark-high dark:bg-section-dark-overlay text-bodyBlue ${poppins.variable}`}
+				className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
@@ -321,13 +321,13 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					open={showModal}
 					onCancel={() => setShowModal(false)}
 					footer={false}
-					className={`w-[500px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum dark:[&>.ant-modal-content]:bg-section-dark-overlay max-h-[605px] rounded-[6px] max-md:w-full`}
-					closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
+					className={`w-[500px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[605px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
-						<div className='dark:border-separatorDark dark:bg-section-dark-overlay -mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0]'>
+						<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
 							<CastVoteIcon className='ml-6' />
-							<span className='dark:text-blue-dark-high text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Cast Your Vote</span>
+							<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 						</div>
 					}
 				>
@@ -339,7 +339,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 						>
 							<>
 								<div className='mb-6'>
-									<div className='dark:text-blue-dark-medium mt-3 flex items-center justify-center text-sm font-normal text-[#485F7D]'>Select a wallet</div>
+									<div className='mt-3 flex items-center justify-center text-sm font-normal text-[#485F7D] dark:text-blue-dark-medium'>Select a wallet</div>
 									<div className='mt-1 flex items-center justify-center gap-x-5'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
@@ -458,7 +458,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										withBalance
 										onAccountChange={onAccountChange}
 										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} dark:text-blue-dark-medium text-sm font-normal text-lightBlue`}
+										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										withoutInfo={true}
 									/>
@@ -471,10 +471,10 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 								) : null}
 
 								{/* aye nye split abstain buttons */}
-								<h3 className='inner-headings dark:text-blue-dark-medium mb-[2px] mt-[24px]'>Choose your vote</h3>
+								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
 									block
-									className={`${className} dark:bg-section-dark-overlay mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white`}
+									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-section-dark-overlay`}
 									size='large'
 									value={vote}
 									onChange={(value) => {

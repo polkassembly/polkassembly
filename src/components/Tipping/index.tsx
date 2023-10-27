@@ -156,8 +156,6 @@ const Tipping = ({ className, destinationAddress }: Props) => {
 			message,
 			status: NotificationStatus.ERROR
 		});
-		await handleSetTip();
-
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 

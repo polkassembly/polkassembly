@@ -352,7 +352,12 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 		}
 	};
 
+	const handleOptionalSkip = () => {
+		setLoginOpen?.(false);
+	};
+
 	const handleOptionalDetails = () => {
+		// setLoginOpen?.(false);
 		if (email && email.trim() !== '' && firstPassword && firstPassword.trim() !== '') {
 			console.log(email, firstPassword);
 		}
@@ -810,11 +815,18 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 									className='-mt-6 mb-5'
 									style={{ borderTop: '1px solid #E1E6EB' }}
 								></Divider>
-								<div className='mb-6 flex px-8'>
+								<div className='mb-6 flex justify-end gap-x-5 px-8'>
 									<Button
 										size='large'
 										htmlType='submit'
-										className='ml-auto w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+										className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+									>
+										Done
+									</Button>
+									<Button
+										size='large'
+										onClick={handleOptionalSkip}
+										className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
 									>
 										Skip
 									</Button>

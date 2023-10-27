@@ -137,6 +137,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					onChange={onChange}
 					value={value || ''}
 					height={Number(height) || 300}
+					theme={theme}
 				/>
 			) : (
 				<div className='relative'>

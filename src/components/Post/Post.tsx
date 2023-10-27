@@ -111,6 +111,7 @@ const Post: FC<IPostProps> = (props) => {
 	const isOffchainPost = !isOnchainPost;
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
+	const emptyStateMsg = 'No Active Proposals';
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
@@ -541,36 +542,36 @@ const Post: FC<IPostProps> = (props) => {
 								</>
 							)}
 						</div>
-						{isSimilarLoading && (
+						<div className='flex items-center'>
+							<hr className='seperation-border mr-2 flex-grow' />
+							<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
+							<hr className='seperation-border ml-2 flex-grow' />
+						</div>
+						{isSimilarLoading ? (
 							<>
-								<div className='flex items-center'>
-									<hr className='seperation-border mr-2 flex-grow' />
-									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
-									<hr className='seperation-border ml-2 flex-grow' />
-								</div>
 								<div>
 									<LoadingState />{' '}
 								</div>
 							</>
-						)}
-						{data.length > 0 && (
+						) : (
 							<div>
-								{/* seperation-line */}
-								<div className='flex items-center'>
-									<hr className='seperation-border mr-2 flex-grow' />
-									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
-									<hr className='seperation-border ml-2 flex-grow' />
-								</div>
-
-								{/* main content */}
-								<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
-									<TrackListingAllTabContent
-										posts={data}
-										// error={error}
-										count={data?.length || 0}
-										showSimilarPost={true}
-									/>
-								</div>
+								{data.length > 0 ? (
+									<div>
+										{/* main content */}
+										<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
+											<TrackListingAllTabContent
+												posts={data}
+												// error={error}
+												count={data?.length || 0}
+												showSimilarPost={true}
+											/>
+										</div>
+									</div>
+								) : (
+									<div className={`${className} mt-5`}>
+										<PostEmptyState text={emptyStateMsg} />
+									</div>
+								)}
 							</div>
 						)}
 					</div>

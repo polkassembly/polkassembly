@@ -7,6 +7,7 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import { ReactNode } from 'react-markdown/lib/ast-to-react';
 import DownIcon from '~assets/icons/down-icon.svg';
 import BN from 'bn.js';
+import { useTheme } from 'next-themes';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',
@@ -42,13 +43,15 @@ const VotingForm = ({
 	setConviction,
 	convictionClassName
 }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
+
 	const ConvictionSelect = ({ className }: { className?: string }) => (
 		<Form.Item className={className}>
-			<label className='inner-headings'>Vote lock</label>
+			<label className='inner-headings dark:text-blue-dark-medium'>Vote lock</label>
 			<Select
 				onChange={(key) => setConviction(Number(key))}
 				size='large'
-				className=''
+				className='dark:[&>.ant-select-selector]:bg-section-dark-overlay dark:[&>.ant-select-selection-item]:text-white'
 				defaultValue={conviction}
 				suffixIcon={<DownIcon />}
 				popupClassName='z-[1060]'
@@ -72,6 +75,7 @@ const VotingForm = ({
 					onChange={(balance: BN) => onAbstainValueChange?.(balance)}
 					className='text-sm font-medium'
 					formItemName={'abstainVote'}
+					theme={theme}
 				/>
 			)}
 
@@ -83,6 +87,7 @@ const VotingForm = ({
 						onChange={(balance: BN) => onAyeValueChange?.(balance)}
 						className='text-sm font-medium'
 						formItemName={'ayeVote'}
+						theme={theme}
 					/>
 
 					<BalanceInput
@@ -91,6 +96,7 @@ const VotingForm = ({
 						onChange={(balance: BN) => onNayValueChange?.(balance)}
 						className='text-sm font-medium'
 						formItemName={'nayVote'}
+						theme={theme}
 					/>
 				</>
 			)}
@@ -103,6 +109,7 @@ const VotingForm = ({
 						onChange={onBalanceChange}
 						className='border-[#D2D8E0] text-sm font-medium'
 						formItemName='balance'
+						theme={theme}
 					/>
 					<ConvictionSelect className={`${convictionClassName}`} />
 				</>

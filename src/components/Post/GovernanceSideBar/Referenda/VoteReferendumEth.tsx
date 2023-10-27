@@ -35,6 +35,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -77,6 +78,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
 	const [successModal, setSuccessModal] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const convictionOpts = useMemo(() => {
 		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
@@ -375,11 +377,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				}}
 				footer={false}
 				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 				title={
-					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
+					<div className='dark:border-separatorDark dark:bg-section-dark-overlay -mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0]'>
 						<CastVoteIcon className='mt-1' />
-						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
+						<span className='dark:text-blue-dark-high text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Cast Your Vote</span>
 					</div>
 				}
 			>
@@ -389,7 +391,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						indicator={<LoadingOutlined />}
 						tip={loadingStatus.message}
 					>
-						<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
+						<div className='dark:text-blue-dark-medium mt-3 flex items-center justify-center text-sm font-normal text-lightBlue'>Select a wallet</div>
 						<div className='mb-[24px] mt-1 flex items-center justify-center gap-x-5'>
 							{availableWallets[Wallet.TALISMAN] && (
 								<WalletButton
@@ -455,6 +457,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								className={'mb-[21px] text-sidebarBlue'}
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
+								theme={theme}
 							/>
 						) : !wallet ? (
 							<Alert
@@ -463,10 +466,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								type='info'
 							/>
 						) : null}
-						<h3 className='inner-headings mb-[2px] mt-6'>Choose your vote</h3>
+						<h3 className='inner-headings dark:text-blue-dark-medium mb-[2px] mt-6'>Choose your vote</h3>
 						<Segmented
 							block
-							className={'mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white hover:bg-white dark:bg-section-dark-overlay'}
+							className={'dark:bg-section-dark-overlay dark:border-separatorDark mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white hover:bg-white'}
 							size='large'
 							value={vote}
 							onChange={(value) => {

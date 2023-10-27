@@ -36,6 +36,7 @@ import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -52,6 +53,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
+	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [target, setTarget] = useState<string>('');
@@ -315,7 +317,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 					?.filter((item) => item?.trackId !== trackNum)
 					?.map((track, index) => (
 						<div
-							className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+							className={`${poppins.variable} ${poppins.className} dark:text-blue-dark-high flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue`}
 							key={index}
 						>
 							<Checkbox
@@ -344,11 +346,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			)}
 			<Modal
 				maskClosable={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
+				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] dark:[&>.ant-modal-content]:bg-section-dark-overlay w-[600px] max-md:w-full`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high -mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue'>
 						<DelegateProfileGreyIcon className='mr-2' />
 						Delegate
 					</div>
@@ -421,13 +423,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									/>
 								)}
 								<div className=''>
-									<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
+									<label className='dark:text-blue-dark-medium mb-[2px] text-sm text-lightBlue'>Your Address</label>
 									<AddressInput
 										name='dashboardAddress'
 										defaultAddress={delegationDashboardAddress}
 										onChange={() => setLoading(false)}
 										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium'}
-										className='-mt-6 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+										className='dark:text-blue-dark-high -mt-6 text-sm font-normal text-bodyBlue'
 										disabled
 										size='large'
 										identiconSize={30}
@@ -439,7 +441,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									defaultAddress={defaultTarget}
 									label={'Beneficiary Address'}
 									placeholder='Add beneficiary address'
-									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
+									className='dark:text-blue-dark-medium text-sm font-normal text-lightBlue'
 									onChange={(address) => {
 										setTarget(address);
 										handleSubstrateAddressChangeAlert(address);
@@ -466,7 +468,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									/>
 								)}
 
-								<div className='mt-6 flex cursor-pointer items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+								<div className='dark:text-blue-dark-medium mt-6 flex cursor-pointer items-center justify-between text-lightBlue'>
 									Balance
 									<span
 										onClick={() => {
@@ -484,15 +486,16 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								<BalanceInput
 									onBlur={getTxFee}
 									placeholder={'Enter balance'}
-									className='text-sm font-normal text-lightBlue dark:text-blue-dark-high'
+									className='dark:text-blue-dark-high text-sm font-normal text-lightBlue'
 									address={delegationDashboardAddress}
 									onAccountBalanceChange={handleOnBalanceChange}
 									onChange={(balance) => setBnBalance(balance)}
 									size='middle'
 									inputClassName='text-[#7c899b] text-sm dark:bg-section-dark-overlay'
+									theme={theme}
 								/>
 								<div className='mb-2 mt-4 border-solid border-white'>
-									<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
+									<label className='dark:text-blue-dark-medium flex items-center text-sm text-lightBlue'>
 										Conviction
 										<span>
 											<HelperTooltip
@@ -525,16 +528,16 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									</div>
 								</div>
 								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px]'>
-									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue dark:text-blue-dark-medium'>
+									<div className='dark:text-blue-dark-medium flex items-center justify-center gap-[10px] text-sm text-lightBlue'>
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
-									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+									<div className='dark:text-blue-dark-high flex items-center justify-center text-sm font-medium text-bodyBlue'>
 										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance, locked for ${lock} enactment period`}
 									</div>
 								</div>
 								<div className='mb-2 mt-6 flex items-center justify-between'>
-									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
+									<span className='dark:text-blue-dark-medium text-sm text-lightBlue'>Selected track(s)</span>
 									<Popover
 										content={content}
 										placement='topLeft'

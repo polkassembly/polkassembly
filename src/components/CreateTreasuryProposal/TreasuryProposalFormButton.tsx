@@ -29,6 +29,7 @@ import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -44,6 +45,7 @@ const TreasuryProposalFormButton = ({
 	className // setTipModalOpen,
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const [extensionNotAvailable, setExtensionNotAvailable] = useState(false);
@@ -339,7 +341,7 @@ const TreasuryProposalFormButton = ({
 	);
 	return loadingStatus.isLoading ? (
 		<Spin indicator={<LoadingOutlined />}>
-			<div className='flex h-[75px] min-w-[226px] cursor-not-allowed items-center justify-center rounded-[4px] border-none bg-white px-[19x] py-6 text-sm font-medium leading-[27px] text-pink_primary shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none dark:bg-section-dark-overlay'>
+			<div className='dark:bg-section-dark-overlay flex h-[75px] min-w-[226px] cursor-not-allowed items-center justify-center rounded-[4px] border-none bg-white px-[19x] py-6 text-sm font-medium leading-[27px] text-pink_primary shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'>
 				{loadingStatus.message}
 			</div>
 		</Spin>
@@ -402,7 +404,7 @@ const TreasuryProposalFormButton = ({
 												value={submitWithAccount}
 												className={`${
 													submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'
-												} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
+												} dark:text-blue-dark-high dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]`}
 												onChange={(e) => setSubmitWithAccount(e.target.value)}
 												placeholder='Account Address'
 											/>
@@ -459,7 +461,7 @@ const TreasuryProposalFormButton = ({
 													value={beneficiaryAccount}
 													className={`${
 														beneficiaryAccount === '' ? 'px-[0.5em]' : 'pl-10'
-													} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
+													} dark:text-blue-dark-high dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]`}
 													onChange={(e) => setBeneficiaryAccount(e.target.value)}
 													placeholder='Account Address'
 												/>
@@ -490,6 +492,7 @@ const TreasuryProposalFormButton = ({
 										placeholder={'0'}
 										className=' m-0 w-full'
 										onChange={onBalanceChange}
+										theme={theme}
 									/>
 								</div>
 
@@ -505,7 +508,7 @@ const TreasuryProposalFormButton = ({
 										</label>
 
 										<Input
-											className=' hide-pointer dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+											className=' hide-pointer dark:text-blue-dark-high dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
 											value={treasuryProposal.bondPercent}
 										/>
 									</div>
@@ -523,7 +526,7 @@ const TreasuryProposalFormButton = ({
 										</label>
 
 										<Input
-											className='hide-pointer dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+											className='hide-pointer dark:text-blue-dark-high dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
 											value={minimumBond}
 										/>
 									</div>

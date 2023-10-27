@@ -26,6 +26,7 @@ import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdo
 import executeTx from '~src/util/executeTx';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -48,6 +49,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 	const { api, apiReady } = useApiContext();
 	const { id } = useUserDetailsSelector();
 	const { network: Network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const [vote, setVote] = useState<{
 		timestamp: string | undefined;
 		decision: EDecision;
@@ -205,7 +207,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 
 	const VotingForm = () => (
 		<GovSidebarCard>
-			<h3 className='mb-6 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Cast your Vote!</h3>
+			<h3 className='text-blue-light-high dark:text-blue-dark-high mb-6 text-xl font-semibold leading-6 tracking-[0.0015em]'>Cast your Vote!</h3>
 			<Button
 				className='mx-auto my-3 flex w-[95%] items-center justify-center rounded-lg border-pink_primary bg-pink_primary p-7 text-lg text-white hover:border-pink_primary hover:bg-pink_secondary'
 				onClick={openModal}
@@ -224,7 +226,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 					spinning={loadingStatus.isLoading}
 					indicator={<LoadingOutlined />}
 				>
-					<h4 className='mb-7 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Cast Your Vote</h4>
+					<h4 className='text-blue-light-high dark:text-blue-dark-high mb-7 text-xl font-semibold leading-6 tracking-[0.0015em]'>Cast Your Vote</h4>
 
 					<AccountSelectionForm
 						title='Vote with Account'
@@ -232,6 +234,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 						address={address}
 						withBalance
 						onAccountChange={onAccountChange}
+						theme={theme}
 					/>
 
 					<AyeNayButtons
@@ -245,8 +248,8 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			</Modal>
 			{voteCount ? (
 				<div>
-					<p className='mb-[5px] text-[12px] font-medium leading-6 text-blue-light-high dark:text-blue-dark-high'>Last Vote:</p>
-					<div className='mb-[-5px] flex text-[12px] font-normal leading-6 text-blue-light-high dark:text-blue-dark-high'>
+					<p className='text-blue-light-high dark:text-blue-dark-high mb-[5px] text-[12px] font-medium leading-6'>Last Vote:</p>
+					<div className='text-blue-light-high dark:text-blue-dark-high mb-[-5px] flex text-[12px] font-normal leading-6'>
 						<Tooltip
 							placement='bottom'
 							title='Decision'

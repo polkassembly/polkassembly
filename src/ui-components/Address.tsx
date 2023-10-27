@@ -256,7 +256,7 @@ const Address = (props: Props) => {
 						theme={'polkadot'}
 					/>
 				))}
-			<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
+			<div className='dark:text-blue-dark-high flex items-center text-bodyBlue'>
 				{displayInline ? (
 					<div className='inline-address flex items-center'>
 						{!!kiltName ||
@@ -270,13 +270,13 @@ const Address = (props: Props) => {
 								/>
 							))}
 
-						<div className={`flex items-center font-semibold text-bodyBlue dark:text-blue-dark-high ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
+						<div className={`dark:text-blue-dark-high flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
 							<div
 								onClick={(e) => handleClick(e)}
 								title={mainDisplay || encodedAddr}
 								className={`flex gap-x-1 ${
-									usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-blue-dark-high'
-								} hover:text-bodyBlue dark:text-blue-dark-high`}
+									usernameClassName ? usernameClassName : 'dark:text-blue-dark-high text-sm font-medium text-bodyBlue'
+								} dark:text-blue-dark-high hover:text-bodyBlue`}
 							>
 								{!!addressPrefix && (
 									<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -288,7 +288,7 @@ const Address = (props: Props) => {
 						</div>
 					</div>
 				) : !!extensionName || !!mainDisplay ? (
-					<div className='ml-0.5 font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='dark:text-blue-dark-high ml-0.5 font-semibold text-bodyBlue'>
 						{!disableHeader && (
 							<div>
 								<div className='flex items-center'>
@@ -305,9 +305,9 @@ const Address = (props: Props) => {
 									<Space className={'header'}>
 										<div
 											onClick={(e) => handleClick(e)}
-											className={`flex flex-col font-semibold text-bodyBlue dark:text-blue-dark-high  ${
+											className={`dark:text-blue-dark-high flex flex-col font-semibold text-bodyBlue  ${
 												!disableAddressClick ? 'hover:underline' : 'cursor-pointer'
-											} hover:text-bodyBlue dark:text-blue-dark-high`}
+											} dark:text-blue-dark-high hover:text-bodyBlue`}
 										>
 											{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 											{!extensionName && sub && isSubVisible && (
@@ -329,7 +329,7 @@ const Address = (props: Props) => {
 				)}
 			</div>
 			{addressOtherTextType ? (
-				<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue dark:text-blue-dark-medium'}>
+				<p className={'dark:text-blue-dark-medium m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue'}>
 					<span
 						className={classNames('h-[6px] w-[6px] rounded-full', {
 							'bg-aye_green ': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.COUNCIL_CONNECTED].includes(addressOtherTextType),
@@ -337,7 +337,7 @@ const Address = (props: Props) => {
 							'bg-nay_red': [EAddressOtherTextType.UNLINKED_ADDRESS].includes(addressOtherTextType)
 						})}
 					></span>
-					<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{addressOtherTextType}</span>
+					<span className='dark:text-blue-dark-medium text-xs text-lightBlue'>{addressOtherTextType}</span>
 				</p>
 			) : null}
 		</div>

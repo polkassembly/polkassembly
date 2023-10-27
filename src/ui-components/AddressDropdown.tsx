@@ -117,7 +117,7 @@ const AddressDropdown = ({
 		<Dropdown
 			theme={theme}
 			trigger={['click']}
-			className={className}
+			className={`${className} dark:border-separatorDark`}
 			disabled={isDisabled}
 			overlayClassName='z-[1056]'
 			menu={{

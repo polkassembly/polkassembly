@@ -33,6 +33,7 @@ interface Props {
 	tooltipMessage?: string;
 	setInputValue?: (pre: string) => void;
 	onBlur?: () => void;
+	theme?: string;
 }
 
 const BalanceInput = ({
@@ -50,7 +51,9 @@ const BalanceInput = ({
 	formItemName = 'balance',
 	tooltipMessage,
 	setInputValue,
-	onBlur
+	onBlur,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	theme
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -78,7 +81,7 @@ const BalanceInput = ({
 	return (
 		<div className={`${className} balance-input flex w-full flex-col`}>
 			{(label || (address && withBalance)) && (
-				<label className='inner-headings mb-[2px]'>
+				<label className='inner-headings dark:text-blue-dark-medium mb-[2px]'>
 					<span className='flex items-center'>
 						{label}
 						<span>
@@ -129,7 +132,7 @@ const BalanceInput = ({
 					onBlur={() => onBlur?.()}
 					addonAfter={chainProperties[network]?.tokenSymbol}
 					name={formItemName || 'balance'}
-					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]`}
+					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high mt-0 text-sm hover:border-pink_primary dark:focus:border-[#91054F]`}
 					onChange={(e) => onBalanceChange(e.target.value)}
 					placeholder={placeholder}
 					value={formatedBalance(String(balance || ZERO_BN), unit)}
@@ -148,10 +151,11 @@ export default styled(BalanceInput)`
 		border-radius: 0px 4px 4px 0px !important ;
 	}
 	.suffixColor .ant-input {
-		background-color: '#0D0D0D' !important;
-		color: var(--bodyBlue) !important;
+		background: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
 		border-radius: 4px 0px 0px 4px !important;
 		height: 40px !important;
+		border: ${(props) => (props.theme === 'dark' ? '1px solid #4b4b4b' : '1px solid #D2D8E0')} !important;
 	}
 	.balance-input .ant-input-number-handler-up {
 		display: none !important;
@@ -165,15 +169,16 @@ export default styled(BalanceInput)`
 		right: 2px;
 	}
 	.balance-input .ant-input-number {
-		border: 1px solid #d2d8e0;
+		border: ${(props) => (props.theme === 'dark' ? '1px solid #4b4b4b' : '1px solid #D2D8E0')} !important;
 	}
 	.balance-input .ant-input-number-focused {
 		border: 1px solid var(--pink_primary);
 	}
 	input::placeholder {
-		font-weight: 400 !important;
+		font-weight: 300 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
 	}
 `;

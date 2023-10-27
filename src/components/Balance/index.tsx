@@ -111,7 +111,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, cla
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
 	return (
-		<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-white ${classname}`}>
+		<div className={`${poppins.className} ${poppins.variable} dark:text-blue-dark-medium ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] ${classname}`}>
 			<span>Free Balance</span>
 			<HelperTooltip
 				className='mx-1'

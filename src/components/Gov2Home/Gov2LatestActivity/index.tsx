@@ -22,7 +22,7 @@ import { Tabs } from '~src/ui-components/Tabs';
 const Container = styled.div`
 	th {
 		color: ${(props) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
-		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '#fafafa')} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -40,7 +40,7 @@ const Container = styled.div`
 
 	.ant-table-thead > tr > th {
 		color: ${(props) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
-		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '#fafafa')} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -80,10 +80,12 @@ const Container = styled.div`
 	.ant-table-wrapper .ant-table-tbody > tr > th,
 	.ant-table-wrapper .ant-table-tbody > tr > td {
 		border-bottom: ${(props) => (props.theme == 'dark' ? '1px solid #323232' : '1px solid #E1E6EB')} !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0d0d0d' : '#ffffff')} !important;
 	}
 	.ant-table-wrapper .ant-table-thead > tr > th,
 	.ant-table-wrapper .ant-table-thead > tr > td {
 		border-bottom: ${(props) => (props.theme == 'dark' ? '1px solid #323232' : '1px solid #E1E6EB')} !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0d0d0d' : '#ffffff')} !important;
 	}
 	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab,
 	.ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab {
@@ -95,10 +97,6 @@ const Container = styled.div`
 	.ant-tabs-top > div > .ant-tabs-nav::before,
 	.ant-tabs-bottom > div > .ant-tabs-nav::before {
 		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '')} !important;
-	}
-	.ant-table-wrapper .ant-table-cell-fix-left,
-	.ant-table-wrapper .ant-table-cell-fix-right {
-		background: none !important;
 	}
 	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
 	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
@@ -179,14 +177,14 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 
 	return (
 		<Container
-			className={`${className} rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}
+			className={`${className} dark:bg-section-dark-overlay rounded-xxl bg-white p-0 drop-shadow-md lg:p-6`}
 			theme={theme}
 		>
 			<div className='flex items-center justify-between pl-1 pr-4'>
-				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>
+				<h2 className='dark:text-blue-dark-high mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue lg:mx-0 lg:mt-0'>Latest Activity</h2>
 				{currentTab !== 'all' && (
 					<Link
-						className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+						className='dark:text-blue-dark-high rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary'
 						href={`/${currentTab}`}
 					>
 						View all
@@ -196,7 +194,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 			<Tabs
 				type='card'
 				items={tabItems}
-				className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
+				className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay dark:text-blue-dark-high text-sm font-medium text-bodyBlue md:px-2'
 				onChange={(key: any) => setCurrentTab(key)}
 				theme={theme}
 			/>

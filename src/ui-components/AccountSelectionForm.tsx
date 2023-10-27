@@ -28,6 +28,7 @@ interface Props {
 	linkAddressTextDisabled?: boolean;
 	addressTextClassName?: string;
 	isTruncateUsername?: boolean;
+	theme?: string;
 }
 
 const AccountSelectionForm = ({
@@ -46,7 +47,9 @@ const AccountSelectionForm = ({
 	withoutInfo,
 	linkAddressTextDisabled = false,
 	addressTextClassName,
-	isTruncateUsername = true
+	isTruncateUsername = true,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	theme
 }: Props) => {
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
 	useEffect(() => {
@@ -58,7 +61,7 @@ const AccountSelectionForm = ({
 	return (
 		<article className={`flex w-full flex-col ${className}`}>
 			<div className='ml-[-6px] flex items-center gap-x-2'>
-				<h3 className='inner-headings mb-[2px] ml-1.5 dark:text-white'>{title}</h3>
+				<h3 className='inner-headings dark:text-blue-dark-medium mb-[2px] ml-1.5'>{title}</h3>
 				{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
 				{address && withBalance && (
 					<Balance
@@ -86,6 +89,6 @@ const AccountSelectionForm = ({
 };
 export default styled(AccountSelectionForm)`
 	.ant-dropdown-trigger {
-		border: 1px solid #d2d8e0 !important;
+		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
 	}
 `;

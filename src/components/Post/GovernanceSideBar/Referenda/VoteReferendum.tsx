@@ -45,6 +45,7 @@ import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -72,7 +73,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			if (days && !isNaN(Number(days))) {
 				return [
 					<Select.Option
-						className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`}
+						className={`dark:text-blue-dark-high dark:bg-section-dark-overlay text-bodyBlue ${poppins.variable}`}
 						key={0}
 						value={0}
 					>
@@ -80,7 +81,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 					</Select.Option>,
 					...CONVICTIONS.map(([value, lock]) => (
 						<Select.Option
-							className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`}
+							className={`dark:text-blue-dark-high dark:bg-section-dark-overlay text-bodyBlue ${poppins.variable}`}
 							key={value}
 							value={value}
 						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
@@ -91,7 +92,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	}
 	return [
 		<Select.Option
-			className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`}
+			className={`dark:text-blue-dark-high dark:bg-section-dark-overlay text-bodyBlue ${poppins.variable}`}
 			key={0}
 			value={0}
 		>
@@ -99,7 +100,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 		</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) => (
 			<Select.Option
-				className={`text-bodyBlue dark:text-blue-dark-high ${poppins.variable}`}
+				className={`dark:text-blue-dark-high dark:bg-section-dark-overlay text-bodyBlue ${poppins.variable}`}
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
@@ -133,6 +134,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [voteValues, setVoteValues] = useState({ abstainVoteValue: ZERO_BN, ayeVoteValue: ZERO_BN, nayVoteValue: ZERO_BN, totalVoteValue: ZERO_BN });
 	const [multisig, setMultisig] = useState<string>('');
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const { client, connect } = usePolkasafe(address);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
@@ -550,8 +552,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						handleModalReset();
 					}}
 					footer={false}
-					className={`w-[550px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[675px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+					className={`w-[550px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum dark:[&>.ant-modal-content]:bg-section-dark-overlay max-h-[675px] rounded-[6px] max-md:w-full`}
+					closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
 						showMultisig ? (
@@ -565,13 +567,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								/>
 								<div className='flex items-center gap-[8px]'>
 									<PolkasafeIcon className='ml-14' />
-									<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Vote with Polkasafe Multisig</span>
+									<span className='dark:text-blue-dark-high text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Cast Vote with Polkasafe Multisig</span>
 								</div>
 							</div>
 						) : (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='dark:border-separatorDark dark:bg-section-dark-overlay -mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0]'>
 								<CastVoteIcon className='ml-6' />
-								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
+								<span className='dark:text-blue-dark-high text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Cast Your Vote</span>
 							</div>
 						)
 					}
@@ -584,7 +586,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						>
 							<>
 								<div className='mb-6'>
-									<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
+									<div className='dark:text-blue-dark-medium mt-3 flex items-center justify-center text-sm font-normal text-lightBlue'>Select a wallet</div>
 									<div className='mt-1 flex items-center justify-center gap-x-5'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
@@ -676,7 +678,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											<Divider className='m-0'>OR</Divider>
 											<div className='flex w-full justify-center'>
 												<WalletButton
-													className='!border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'
+													className='dark:text-blue-dark-high !border-[#D2D8E0] text-sm font-semibold text-bodyBlue'
 													onClick={() => {
 														setShowMultisig(!showMultisig);
 													}}
@@ -743,7 +745,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+											className={`${poppins.variable} ${poppins.className} dark:text-blue-dark-medium text-sm font-normal text-lightBlue`}
 											walletAddress={multisig}
 											setWalletAddress={setMultisig}
 											containerClassName='gap-5'
@@ -761,9 +763,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+											className={`${poppins.variable} ${poppins.className} dark:text-blue-dark-medium text-sm font-normal text-lightBlue`}
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
+											theme={theme}
 										/>
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
@@ -775,10 +778,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								) : null}
 
 								{/* aye nye split abstain buttons */}
-								<h3 className='inner-headings mb-[2px] mt-[24px]'>Choose your vote</h3>
+								<h3 className='inner-headings dark:text-blue-dark-medium mb-[2px] mt-[24px]'>Choose your vote</h3>
 								<Segmented
 									block
-									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-section-dark-overlay`}
+									className={`${className} dark:bg-section-dark-overlay dark:border-separatorDark mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white`}
 									size='large'
 									value={vote}
 									onChange={(value) => {
@@ -921,7 +924,7 @@ export default React.memo(styled(VoteReferendum)`
 		align-items: center;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: #243a57 !important;
+		color: #243a57;
 	}
 
 	.vote-referendum .ant-input-number-in-from-item {
@@ -941,7 +944,7 @@ export default React.memo(styled(VoteReferendum)`
 	}
 
 	.vote-referendum .ant-select-selection-item {
-		color: #243a57 !important;
+		color: #243a57;
 	}
 	.vote-referendum .ant-select-focused {
 		border: 1px solid #e5007a !important;

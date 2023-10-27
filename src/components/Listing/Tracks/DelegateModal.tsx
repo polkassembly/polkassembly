@@ -294,11 +294,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	};
 
 	const handleCloseModal = () => {
-		form.setFieldValue('targetAddress', '');
 		form.setFieldValue('balance', '');
-		setTarget('');
 		setBnBalance(ZERO_BN);
-		setTarget('');
 		setConviction(0);
 		setCheckedList([]);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
@@ -362,8 +359,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						<Button
 							key='back'
 							disabled={loading}
-							className='h-[40px] w-[134px] rounded-[4px]'
-							onClick={() => setOpen?.(false)}
+							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary tracking-wide text-pink_primary'
+							onClick={handleCloseModal}
 						>
 							Cancel
 						</Button>
@@ -436,7 +433,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								<AddressInput
 									onBlur={getTxFee}
 									name='targetAddress'
-									defaultAddress={defaultTarget}
+									defaultAddress={defaultTarget || target}
 									label={'Beneficiary Address'}
 									placeholder='Add beneficiary address'
 									className='text-sm font-normal text-lightBlue'

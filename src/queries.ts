@@ -1019,6 +1019,7 @@ query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $v
     type
     createdAtBlock
     createdAt
+    isDelegated
     lockPeriod
     proposal {
       index
@@ -1597,6 +1598,7 @@ query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOr
       }
     }
     lockPeriod
+    createdAt
   }
 }
 `;
@@ -1717,3 +1719,156 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
   }
 }
 `;
+
+// get similar proposals
+export const GET_PROPOSAL_BY_STATUS_AND_TYPE = `query ProposalByStatusAndType($type_eq:ProposalType) {
+  proposals(where: {type_eq: $type_eq, status_in: [Started,Deciding,Submitted, DecisionDepositPlaced, Active ]}, limit: 50) {
+    index
+    proposer
+    status
+    statusHistory {
+      id
+      status
+    }
+    type
+    createdAt
+    updatedAt
+    trackNumber
+  }
+}`;
+
+export const GET_PROPOSAL_ALLIANCE_ANNOUNCEMENT = `query getAllianceAnnouncements( $limit: Int = 50, $offset: Int = 0, $type_eq: AnnouncementType!, $index_not_eq: Int) {
+  announcements(limit: $limit, offset: $offset, where:{status_not_in:[Rejected,Executed,TimedOut, Approved, Cancelled,ConfirmStarted, ConfirmAborted], type_eq: $type_eq, index_not_eq: $index_not_eq }, orderBy: createdAtBlock_DESC) {
+    id
+    code
+    codec
+    createdAt
+    createdAtBlock
+    hash
+    index
+    proposer
+    type
+    updatedAt
+    version
+    cid
+    status
+    statusHistory {
+      id
+      status
+    }
+  }
+}`;
+
+export const GET_POSTS_LISTING_BY_TYPE_FOR_COLLECTIVE = `query ProposalsListingByType($limit: Int = 50, $offset: Int = 0,  $type_eq: ProposalType!, $index_not_eq: Int) {
+  proposals(limit: $limit, offset: $offset, where: {status_not_in:[Rejected,Executed,TimedOut, Approved], type_deq: $type_eq, index_not_eq: $index_not_eq}, orderBy: createdAtBlock_DESC) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+     
+    }
+    preimage {
+      method
+      proposer
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    trackNumber
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+  }
+}`;
+
+export const GET_POSTS_LISTING_BY_TYPE = `query ProposalsListingByType( $limit: Int = 50, $type_eq: ProposalType!, $index_not_eq: Int) {
+  proposals(limit: $limit, where:{status_in:[Started,Submitted,Deciding, DecisionDepositPlaced, ConfirmStarted, ConfirmAborted], type_eq:$type_eq, index_not_eq: $index_not_eq}, orderBy: createdAtBlock_DESC) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
+     group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+    index
+    end
+    hash
+    description
+    type
+    trackNumber
+    statusHistory {
+      status
+    }
+  }
+}`;
+
+export const GET_POSTS_LISTING_FOR_POLYMESH = `query PolymeshPrposalsQuery($type_eq: ProposalType, $limit: Int = 50, $index_not_eq: Int) {
+  proposals(limit: $limit, where:{type_eq:$type_eq, status_in:[Proposed, Scheduled], index_not_eq: $index_not_eq}, orderBy: createdAtBlock_DESC) {
+    createdAt
+    createdAtBlock
+    deposit
+    endedAtBlock
+    endedAt
+    hash
+    fee
+    description
+    proposer
+    index
+    status
+    identity
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+    }
+    updatedAt
+    updatedAtBlock
+    type
+  }
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {type_in: $type_in}) {
+    totalCount
+  }
+}`;

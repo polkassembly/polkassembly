@@ -129,7 +129,7 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 			votes.forEach((vote) => {
 				if (vote) {
 					const currentVote = {
-						isDelegated: vote?.delegatedVotes ? vote?.delegatedVotes?.length > 0 : false,
+						isDelegated: vote?.isDelegated || vote?.delegatedVotes ? vote?.delegatedVotes?.length > 0 : false,
 						proposalType: vote?.proposal?.type,
 						...vote
 					} as IVoteHistory;

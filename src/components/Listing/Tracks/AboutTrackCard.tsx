@@ -40,9 +40,39 @@ const getDefaultTrackMetaData = () => {
 		maxDeciding: '',
 		minEnactmentPeriod: '',
 		preparePeriod: '',
+		trackGroup: [],
 		trackId: 0
 	};
 };
+const groups: any = {
+	Admin: ['staking_admin', 'lease_admin', 'fellowship_admin', 'general_admin', 'auction_admin'],
+	Governance: ['referendum_killer', 'referendum_canceller'],
+	Root: ['whitelisted_caller', 'root'],
+	Treasury: ['small_spender', 'medium_spender', 'big_spender', 'small_tipper', 'big_tipper', 'treasurer']
+};
+
+function addTrackGroup(arr: any) {
+	for (let i = 0; i < arr.length; i++) {
+		const currentTrackId = arr[i][0];
+		const currentTrackName = arr[i][1].name;
+
+		let groupName: any;
+		for (const group in groups) {
+			if (groups[group].includes(currentTrackName)) {
+				groupName = group;
+				break;
+			}
+		}
+
+		if (groupName) {
+			const trackGroup = arr.filter((track: any[]) => groups[groupName].includes(track[1].name) && track[0] !== currentTrackId).map((track: any[]) => track[0]);
+
+			arr[i][1].trackGroup = trackGroup;
+		}
+	}
+
+	return arr;
+}
 
 export const getTrackData = (network: string, trackName?: string, trackNumber?: number) => {
 	const defaultTrackMetaData = getDefaultTrackMetaData();
@@ -58,14 +88,16 @@ export const getTrackData = (network: string, trackName?: string, trackNumber?: 
 			(defaultTrackMetaData as any)[key] = trackMetaData?.[key];
 		});
 	}
+	//33: [32, 34, 36]
 	const tracks = localStorage.getItem('tracks');
 	if (tracks) {
 		const tracksArr = JSON.parse(tracks) as any[];
 		if (tracksArr && Array.isArray(tracksArr) && tracksArr.length > 0) {
+			addTrackGroup(tracksArr);
 			const currTrackMetaDataArr = tracksArr.find((v) => v && Array.isArray(v) && v.length > 1 && v[0] === trackMetaData?.trackId);
 			if (currTrackMetaDataArr && Array.isArray(currTrackMetaDataArr) && currTrackMetaDataArr.length >= 2) {
 				const currTrackMetaData = currTrackMetaDataArr[1];
-				const keys = ['confirmPeriod', 'decisionDeposit', 'decisionPeriod', 'maxDeciding', 'minEnactmentPeriod', 'preparePeriod'];
+				const keys = ['confirmPeriod', 'decisionDeposit', 'decisionPeriod', 'maxDeciding', 'minEnactmentPeriod', 'preparePeriod', 'trackGroup'];
 				keys.forEach((key) => {
 					if (currTrackMetaData[key]) {
 						(defaultTrackMetaData as any)[key] = currTrackMetaData[key];

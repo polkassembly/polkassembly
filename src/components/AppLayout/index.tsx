@@ -64,7 +64,6 @@ import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import ProposalLive from './ProposalLive';
 import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
 
@@ -697,7 +696,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} ${isMobile && 'mobile-margin'}`}
+						className={`${username ? 'auth-sider-menu' : ''}`}
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
@@ -716,7 +715,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				) : ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
-						<ProposalLive />
 						<div className='flex flex-row'>
 							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 							<CustomContent

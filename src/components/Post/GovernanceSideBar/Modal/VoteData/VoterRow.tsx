@@ -192,15 +192,14 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 				<div className='flex flex-col gap-4'>
 					<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4'>
 						<span className='flex items-center gap-1 text-xs text-bodyBlue'>
-							<CalenderIcon />{' '}
-							{dayjs(voteData.createdAt.toDate?.())
-								.format('MM/DD/YYYY, h:mm A')
-								.toString()}
+							<CalenderIcon />
+
+							{dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
 						</span>
 						{voteData?.decision !== 'abstain' && isReferendum2 && (
 							<span className='flex items-center gap-1 text-xs font-medium text-lightBlue'>
 								<PowerIcon />
-								Voting Power:{' '}
+								Voting Power:
 								<span className='text-bodyBlue'>
 									{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
 								</span>

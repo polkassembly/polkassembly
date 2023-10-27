@@ -33,6 +33,7 @@ import InputClearIcon from '~assets/icons/close-tags.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import LeftArrow from '~assets/icons/arrow-left.svg';
 import PaLogo from '../AppLayout/PaLogo';
+import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector } from '~src/redux/selectors';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
@@ -82,16 +83,6 @@ export enum EDateFilter {
 }
 
 const gov1Tracks = ['tips', 'council_motions', 'bounties', 'child_bounties', 'treasury_proposals', 'democracy_proposals', 'tech_committee_proposals', 'referendums'];
-const getTrackNameFromId = (network: string, trackId: number) => {
-	let trackName = '';
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
-		if (value?.trackId === trackId && !value?.fellowshipOrigin) {
-			trackName = value?.name;
-		}
-	});
-	return trackName;
-};
 
 const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperSearch }: Props) => {
 	const userIndex = algolia_client.initIndex('polkassembly_users');

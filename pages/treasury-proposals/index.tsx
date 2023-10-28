@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Pagination } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -24,6 +23,8 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import { Pagination } from '~src/components/Pagination';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -61,6 +62,7 @@ interface ITreasuryProps {
 
 const Treasury: FC<ITreasuryProps> = (props) => {
 	const { data, error } = props;
+	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -139,6 +141,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 					<div className='mt-6 flex justify-end'>
 						{!!count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
+								theme={theme}
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
 								total={count}

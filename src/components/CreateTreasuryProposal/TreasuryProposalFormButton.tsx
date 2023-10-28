@@ -333,7 +333,7 @@ const TreasuryProposalFormButton = ({
 			{' '}
 			<button
 				disabled={true}
-				className='cursor-pointer rounded-[4px] border-none bg-grey_secondary p-4 text-sm font-medium text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)]  outline-none'
+				className='cursor-pointer rounded-[4px] border-none bg-grey_secondary p-4 text-sm font-medium text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none  dark:bg-[#1D1D1D]'
 			>
 				+ Add New Proposal
 			</button>

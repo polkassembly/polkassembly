@@ -325,15 +325,15 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 						{identity && (
 							<Row gutter={[8, 40]}>
 								<Col span={8}>
-									<div className='mb-1 text-[12px] font-medium text-sidebarBlue'>Account</div>
+									<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Account</div>
 									<AddressComponent address={`${address}`} />
 								</Col>
 								{identity?.email && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue'>Email</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Email</div>
 										<a
 											href={`mailto:${identity.email}`}
-											className='text-navBlue hover:text-pink_primary'
+											className='text-navBlue hover:text-pink_primary dark:text-white'
 										>
 											{identity.email}
 										</a>
@@ -341,36 +341,36 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 								)}
 								{identity?.legal && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue'>Legal</div>
-										<div className='text-navBlue'>{identity.legal}</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Legal</div>
+										<div className='text-navBlue dark:text-white'>{identity.legal}</div>
 									</Col>
 								)}
 								{identity?.riot && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue'>Riot</div>
-										<div className='text-navBlue'>{identity.riot}</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Riot</div>
+										<div className='text-navBlue dark:text-white'>{identity.riot}</div>
 									</Col>
 								)}
 								{identity?.judgements?.length > 0 && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue'>Judgements</div>
-										<div className='text-navBlue'>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Judgements</div>
+										<div className='text-navBlue dark:text-white'>
 											{icon} {displayJudgements}
 										</div>
 									</Col>
 								)}
 								{identity?.web && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue'>Web</div>
-										<div className='text-navBlue'>{identity.web}</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Web</div>
+										<div className='text-navBlue dark:text-white'>{identity.web}</div>
 									</Col>
 								)}
 								{identity?.twitter && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue'>Web</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Web</div>
 										<a
 											href={`https://twitter.com/${identity.twitter.substring(1)}`}
-											className='text-navBlue hover:text-pink_primary'
+											className='text-navBlue hover:text-pink_primary dark:text-white'
 										>
 											{identity.twitter}
 										</a>
@@ -398,14 +398,17 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			<BackToListingView postCategory={membersType as EMembersType} />
 
 			<div className='mb-4 mt-6 flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-6 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:mb-0 md:mr-4 md:text-base'>
-					<Markdown md={profileDetails?.bio || noDescription} />
+				<p className='mb-4 w-full rounded-md bg-white p-6 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay dark:text-white md:mb-0 md:mr-4 md:text-base'>
+					<Markdown
+						theme={theme}
+						md={profileDetails?.bio || noDescription}
+					/>
 				</p>
 				<SetOnChainIdentityButton />
 			</div>
 
 			<div className='w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay lg:p-6'>
-				<h2 className='dashboard-heading mb-4'>{profileDetails?.title || 'Untitled'}</h2>
+				<h2 className='dashboard-heading mb-4 dark:text-white'>{profileDetails?.title || 'Untitled'}</h2>
 				<Tabs
 					theme={theme}
 					type='card'

@@ -173,7 +173,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 					</div>
 				</div>
 			) : (
-				<div className='flex h-[60px] w-full items-center justify-center rounded-md bg-white text-[18px] font-medium text-sidebarBlue drop-shadow-md dark:bg-section-dark-overlay'>
+				<div className='flex h-[60px] w-full items-center justify-center rounded-md bg-white text-[18px] font-medium text-sidebarBlue drop-shadow-md dark:bg-section-dark-overlay dark:text-white'>
 					Deadline: Not Set
 				</div>
 			)}

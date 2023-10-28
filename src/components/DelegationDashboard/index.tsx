@@ -10,9 +10,6 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { Skeleton } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
-import { Wallet } from '~src/types';
-import { setUserDetailsState } from '~src/redux/userDetails';
-import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 
@@ -31,7 +28,6 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 
 const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
-	const dispatch = useDispatch();
 	const isLoggedOut = !userDetails.id;
 	const { resolvedTheme: theme } = useTheme();
 	const [openModal, setOpenModal] = useState<boolean>(false);
@@ -41,16 +37,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 	useEffect(() => {
 		if (!window) return;
-		const wallet = localStorage.getItem('delegationWallet') || '';
-		const address = localStorage.getItem('delegationDashboardAddress') || '';
-		(!userDetails?.delegationDashboardAddress || !userDetails?.loginWallet) &&
-			dispatch(
-				setUserDetailsState({
-					...userDetails,
-					delegationDashboardAddress: address || userDetails?.delegationDashboardAddress,
-					loginWallet: wallet as Wallet
-				})
-			);
 		if (window.innerWidth < 768) {
 			setIsMobile(true);
 		}

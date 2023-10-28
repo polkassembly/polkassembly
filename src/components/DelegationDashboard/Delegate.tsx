@@ -32,17 +32,20 @@ interface Props {
 
 const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
-	const { network } = useNetworkSelector();
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 
 	useEffect(() => {
-		address && (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+		if (!address) return;
+		if ((getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network)) {
+			setAddressAlert(true);
+		}
 		setTimeout(() => {
 			setAddressAlert(false);
 		}, 5000);
@@ -60,7 +63,6 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegate[]>(`api/v1/delegations/delegates?address=${address}`);
-
 		if (data) {
 			setDelegatesData(data);
 		} else {
@@ -82,7 +84,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 			>
 				<div className='jutify-center flex items-center gap-2'>
 					<DelegatedIcon className='mr-[4px]' />
-					<span className='text-[24px] font-semibold tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Delegate</span>
+					<span className='text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Delegate</span>
 				</div>
 				<div className='p-2'>{!expandProposals ? <ExpandIcon /> : <CollapseIcon />}</div>
 			</div>
@@ -91,12 +93,12 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 				<div className='mt-[24px]'>
 					{disabled && (
 						<Alert
-							className='text-sm font-normal text-blue-light-high dark:text-blue-dark-high'
+							className='text-sm font-normal text-bodyBlue dark:text-white'
 							showIcon
 							message='You have already delegated for this track.'
 						/>
 					)}
-					<h4 className={`mb-4 mt-4 text-sm font-normal text-blue-light-high dark:text-blue-dark-high ${disabled && 'opacity-50'}`}>
+					<h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white ${disabled && 'opacity-50'}`}>
 						Enter an address or Select from the list below to delegate your voting power
 					</h4>
 
@@ -125,25 +127,6 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 								<span className='text-sm font-medium text-white'>Delegate</span>
 							</Button>
 						</div>
-						{/* <Popover
-					showArrow={false}
-					placement='bottomLeft'
-					content={<>
-						<div className='py-1 flex items-center gap-[11px] cursor-pointer'
-							// onClick={() => { setSelectedWallet('nova-wallet');filterByWallet('nova-wallet');}}
-						>
-							<NovaWalletIcon/>
-							<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>Nova Wallet Delegates</span>
-						</div>
-						<div className='py-1 flex items-center gap-[11px] cursor-pointer'
-							//  onClick={() => { setSelectedWallet('others');filterByWallet('others');}}
-						>
-							<ProfileIcon/>
-							<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>Others</span>
-						</div>
-					</>}>
-					<DelegateMenuIcon/>
-				</Popover> */}
 					</div>
 
 					{getEncodedAddress(address, network) === delegationDashboardAddress && (

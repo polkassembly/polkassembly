@@ -35,8 +35,8 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo }
 			>
 				<div className='jutify-center flex items-center gap-2'>
 					<ActiveProposalsIcon className='mr-[4px]' />
-					<span className='text-[24px] font-semibold tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Active Proposals</span>
-					<span className='flex h-[34px] items-center justify-center rounded-[26px] bg-[#D2D8E04D] px-3 py-[6px] font-semibold text-blue-light-high dark:text-blue-dark-high'>
+					<span className='text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Active Proposals</span>
+					<span className='flex h-[34px] items-center justify-center rounded-[26px] bg-[#D2D8E04D] px-3 py-[6px] font-semibold text-bodyBlue dark:text-white'>
 						{count < 10 && count !== 0 && 0}
 						{count}
 					</span>

@@ -118,7 +118,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 				>
 					<Form.Item
 						name='title'
-						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Title</span>}
+						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Title</span>}
 						rules={[
 							{
 								required: true
@@ -130,15 +130,15 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 							name='title'
 							autoFocus
 							placeholder='Add your title here'
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-normal dark:text-white dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Description</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
 						<ContentForm />
 					</div>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Tags</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Tags</label>
 						<AddTags
 							tags={tags}
 							setTags={setTags}

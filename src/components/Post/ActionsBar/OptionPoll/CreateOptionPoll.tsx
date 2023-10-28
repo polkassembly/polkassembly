@@ -141,7 +141,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 	return (
 		<>
 			<Button
-				className={'flex items-center border-none px-1.5 text-pink_primary shadow-none'}
+				className={'flex items-center border-none px-1.5 text-pink_primary shadow-none dark:border-none dark:bg-transparent dark:text-blue-dark-helper'}
 				onClick={() => setShowModal(true)}
 			>
 				<AuditOutlined />

@@ -184,8 +184,8 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 						loading={loading}
 						disabled={formDisabled}
 						onClick={() => form.submit()}
-						className={`'border-none capitalize' rounded-[4px] bg-pink_primary px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-white outline-none ${
-							formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+						className={`'border-none capitalize' rounded-[4px] bg-pink_primary px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-white outline-none dark:border-none ${
+							formDisabled ? 'cursor-not-allowed' : 'cursor-pointer dark:border-none'
 						}`}
 					>
 						{url && prevUrl === url ? 'Save' : 'Preview'}
@@ -206,7 +206,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 				>
 					<Form.Item
 						name='url'
-						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Link Discussion Post</span>}
+						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Link Discussion Post</span>}
 						rules={[
 							{
 								required: true
@@ -223,7 +223,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 								setPost(undefined);
 							}}
 							placeholder='Enter your post URL here'
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-light dark:text-white dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<LinkPostPreview

@@ -269,7 +269,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 				>
 					<Form.Item
 						name='title'
-						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Title</span>}
+						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Title</span>}
 						rules={[
 							{
 								required: true
@@ -287,11 +287,11 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								}))
 							}
 							placeholder='Add your title here'
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:text-white dark:focus:border-[#91054F] dark:font-normal'
 						/>
 					</Form.Item>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Description</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
 						<ContentForm
 							onChange={(content) => {
 								setEditPostValue((prev) => ({
@@ -303,7 +303,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						/>
 					</div>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Tags</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Tags</label>
 						<AddTags
 							tags={tags}
 							setTags={setTags}
@@ -312,7 +312,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					</div>
 					{post_link ? (
 						<article>
-							<h3 className='mb-2 text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Linked Discussion</h3>
+							<h3 className='mb-2 text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Linked Discussion</h3>
 							<LinkPostPreview post={post} />
 							<div className='my-2 flex items-center justify-end'>
 								<Button
@@ -333,7 +333,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						<article className='flex flex-col gap-y-3'>
 							<Form.Item
 								name='url'
-								label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post</span>}
+								label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post</span>}
 								className='mb-0 mt-5'
 							>
 								<Input
@@ -345,7 +345,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 									}}
 									autoFocus
 									placeholder='Enter your post URL here'
-									className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:text-white dark:focus:border-[#91054F] dark:font-normal'
 								/>
 							</Form.Item>
 							<LinkPostPreview post={post} />

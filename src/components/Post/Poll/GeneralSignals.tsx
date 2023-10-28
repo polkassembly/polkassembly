@@ -21,6 +21,7 @@ import POLL_TYPE from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTheme } from 'next-themes';
 
 interface IGeneralSignalsProps {
 	className?: string;
@@ -38,6 +39,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 	const [ayes, setAyes] = useState(0);
 	const [nays, setNays] = useState(0);
 	const [ownVote, setOwnVote] = useState<Vote | null>(null);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		let ayes = 0;
@@ -199,13 +201,16 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 					<div className='flex flex-col items-center text-base text-white'>
 						<div
 							id='bigCircle'
-							className={`${ayes >= nays ? 'bg-aye_green' : 'bg-nay_red'} z-10 flex h-[110px] w-[110px] items-center justify-center rounded-full`}
+							className={`${ayes >= nays ? (theme === 'dark' ? 'bg-aye_green_Dark' : 'bg-aye_green') : theme === 'dark' ? 'bg-nay_red_Dark' : 'bg-nay_red'} 
+								z-10 flex h-[110px] w-[110px] items-center justify-center rounded-full`}
 						>
 							{ayes == 0 && nays == 0 ? '0' : ayes >= nays ? ((ayes / (ayes + nays)) * 100).toFixed(1) : ((nays / (ayes + nays)) * 100).toFixed(1)}%
 						</div>
 						<div
 							id='smallCircle'
-							className={`${ayes < nays ? 'bg-aye_green' : 'bg-nay_red'} z-20 -mt-8 flex h-[75px] w-[75px] items-center justify-center rounded-full border-2 border-white`}
+							className={`${
+								ayes < nays ? (theme === 'dark' ? 'bg-aye_green_Dark' : 'bg-ayeColor') : theme === 'dark' ? 'bg-nay_red_Dark' : 'bg-nayColor'
+							} z-20 -mt-8 flex h-[75px] w-[75px] items-center justify-center rounded-full border-2 border-white`}
 						>
 							{ayes == 0 && nays == 0 ? '0' : ayes < nays ? ((ayes / (ayes + nays)) * 100).toFixed(1) : ((nays / (ayes + nays)) * 100).toFixed(1)}%
 						</div>
@@ -213,13 +218,13 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 
 					<div className='ml-12 flex flex-1 flex-col justify-between py-12'>
 						<div className='mb-auto flex items-center'>
-							<div className='mr-auto font-medium text-sidebarBlue'>Aye</div>
-							<div className='mr-12 text-navBlue'>{ayes}</div>
+							<div className='mr-auto font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Aye</div>
+							<div className='mr-12 text-navBlue dark:text-white'>{ayes}</div>
 						</div>
 
 						<div className='flex items-center'>
-							<div className='mr-auto font-medium text-sidebarBlue'>Nay</div>
-							<div className='mr-12 text-navBlue'>{nays}</div>
+							<div className='mr-auto font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Nay</div>
+							<div className='mr-12 text-navBlue dark:text-white'>{nays}</div>
 						</div>
 					</div>
 				</div>
@@ -244,7 +249,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 								Poll ended.{' '}
 								{canEdit ? (
 									<Button
-										className='info'
+										className='info dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'
 										onClick={extendsPoll}
 									>
 										Extend Poll
@@ -259,7 +264,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 							{ownVote && canVote && (
 								<Button
 									size='middle'
-									className='info text-muted cancelVoteLink '
+									className='info text-muted cancelVoteLink dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'
 									onClick={cancelVote}
 								>
 									Cancel <span className='capitalize'>&nbsp;{ownVote.toLowerCase()}&nbsp;</span> vote

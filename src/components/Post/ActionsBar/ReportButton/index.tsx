@@ -172,11 +172,15 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				className={`${type === 'comment' ? 'm-0 p-0' : 'm-0 px-1'} flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent shadow-none`}
 				onClick={() => setShowModal(true)}
 			>
-				{isDeleteModal ? <DeleteOutlined className={`${className} text-pink_primary`} /> : <FlagOutlined className={`${className} p-0 text-pink_primary`} />}
 				{isDeleteModal ? (
-					<span className={`${className} break-keep text-pink_primary`}>Delete</span>
+					<DeleteOutlined className={`${className} text-pink_primary dark:text-blue-dark-helper`} />
 				) : (
-					<span className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary`}>Report</span>
+					<FlagOutlined className={`${className} p-0 text-pink_primary dark:text-blue-dark-helper`} />
+				)}
+				{isDeleteModal ? (
+					<span className={`${className} break-keep text-pink_primary dark:text-blue-dark-helper`}>Delete</span>
+				) : (
+					<span className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary dark:text-blue-dark-helper`}>Report</span>
 				)}
 			</button>
 			<Modal
@@ -194,6 +198,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						key='back'
 						disabled={loading}
 						onClick={() => setShowModal(false)}
+						className='dark:bg-transparent'
 					>
 						Cancel
 					</Button>,

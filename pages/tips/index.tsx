@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Pagination } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
@@ -21,6 +20,8 @@ import TipIcon from '~assets/icons/tip-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { useTheme } from 'next-themes';
+import { Pagination } from '~src/components/Pagination';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -51,6 +52,7 @@ interface ITipsProps {
 const Tips: FC<ITipsProps> = (props) => {
 	const { data, error, page, network } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -108,6 +110,7 @@ const Tips: FC<ITipsProps> = (props) => {
 					<div className='mt-6 flex justify-end'>
 						{!!count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
+								theme={theme}
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
 								total={count}

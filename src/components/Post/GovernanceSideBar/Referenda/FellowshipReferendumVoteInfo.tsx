@@ -18,7 +18,7 @@ const FellowshipReferendumVoteInfo: FC<IFellowshipReferendumVoteInfoProps> = (pr
 
 	return (
 		<GovSidebarCard className={className}>
-			<h6 className='dashboard-heading mb-6'>Voting Status</h6>
+			<h6 className='dashboard-heading mb-6 dark:text-white'>Voting Status</h6>
 
 			{tally && (
 				<>

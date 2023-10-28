@@ -191,7 +191,8 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 				indicator={<LoadingOutlined />}
 			>
 				<h3 className='flex items-center'>
-					<span className='dashboard-heading mr-2'>Poll Signals</span> <HelperTooltip text='This represents the off-chain votes of Polkassembly users including council members' />
+					<span className='dashboard-heading mr-2 dark:text-white'>Poll Signals</span>{' '}
+					<HelperTooltip text='This represents the off-chain votes of Polkassembly users including council members' />
 				</h3>
 
 				<div className='my-6 flex'>

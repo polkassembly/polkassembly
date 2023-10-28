@@ -31,7 +31,7 @@ const ProposalVoteInfo = ({ className, deposit, loadingStatus, seconds }: Props)
 				<div className='font-medium text-sidebarBlue dark:text-white'>
 					<div className='mb-5 flex justify-between'>
 						<h4>Deposit</h4>
-						<div className='text-navBlue'>
+						<div className='text-navBlue dark:text-icon-dark-inactive'>
 							{formatBnBalance(
 								deposit,
 								{
@@ -45,12 +45,12 @@ const ProposalVoteInfo = ({ className, deposit, loadingStatus, seconds }: Props)
 
 					<div className='mb-5 flex justify-between'>
 						<h4>Endorsed by</h4>
-						<div className='text-navBlue'>{seconds || seconds === 0 ? <div>{seconds} addresses</div> : null}</div>
+						<div className='text-navBlue dark:text-icon-dark-inactive'>{seconds || seconds === 0 ? <div>{seconds} addresses</div> : null}</div>
 					</div>
 
 					<div className='mb-5 flex justify-between'>
 						<h4>Locked {chainProperties[network]?.tokenSymbol}</h4>
-						<div className='text-navBlue'>
+						<div className='text-navBlue dark:text-icon-dark-inactive'>
 							{formatBnBalance(
 								new BN(deposit).mul(new BN(seconds)),
 								{

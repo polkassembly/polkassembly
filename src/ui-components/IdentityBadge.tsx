@@ -4,7 +4,7 @@
 
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import { Tooltip, Skeleton } from 'antd';
+import { Tooltip, Skeleton, message } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import VerifiedIcon from '~assets/icons/verified-icon.svg';
@@ -14,11 +14,14 @@ import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import TwitterIcon from '~assets/icons/twitter-icon.svg';
 import WebIcon from '~assets/icons/web-icon.svg';
 import RiotIcon from '~assets/icons/riot-icon.svg';
-import ShareScreenIcon from '~assets/icons/screen-share-icon.svg';
+import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import PgpIcon from '~assets/icons/pgp-icon.svg';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import CopyIcon from '~assets/icons/content_copy_small.svg';
+import copyToClipboard from '~src/util/copyToClipboard';
+
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
@@ -32,6 +35,7 @@ interface Props {
 	addressPrefix?: string;
 	imgUrl?: string;
 	sinceDate?: Date;
+	addressShort: string;
 }
 
 export interface INetworkWalletErr {
@@ -60,10 +64,20 @@ const StyledPopup = styled.div`
 	}
 `;
 
-const IdentityBadge = ({ className, address, identity, flags, addressPrefix, imgUrl, sinceDate }: Props) => {
+const IdentityBadge = ({ className, address, identity, flags, addressPrefix, imgUrl, sinceDate, addressShort }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const [messageApi, contextHolder] = message.useMessage();
+
+	const success = () => {
+		messageApi.open({
+			content: 'Address copied to clipboard',
+			duration: 10,
+			type: 'success'
+		});
+	};
+
 	const { network } = useNetworkSelector();
 	const identityArr = [
 		{ key: 'Email', value: identity?.email },
@@ -74,8 +88,6 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 		{ key: 'Twitter', value: identity?.twitter },
 		{ key: 'Web', value: identity?.web }
 	];
-
-	console.log(identityArr);
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const CouncilEmoji = () => (
@@ -111,10 +123,6 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 				return <WebIcon className='mx-1' />;
 		}
 	};
-
-	console.log(identityArr);
-	console.log(imgUrl);
-
 	// const displayJudgements = JSON.stringify(judgements?.map(([, jud]) => jud.toString()));
 	const popupContent = (
 		<>
@@ -123,15 +131,15 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 					src={imgUrl}
 					alt='User Picture'
 					className='absolute left-[25%] top-[-5%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 bg-transparent'
-					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
+					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
 				/>
-				<div className='mt-5 flex items-center'>
-					<h3 className='mb-px inline whitespace-pre text-lg text-sm font-semibold text-bodyBlue'>{addressPrefix}</h3>
+				<div className='mb-0 mt-6 flex items-center'>
+					<h3 className='whitespace-pre text-[15px] font-semibold text-bodyBlue'>{addressPrefix}</h3>
 					{isGood ? (
-						<VerifiedIcon className='ml-1.5' />
+						<VerifiedIcon className='ml-1.5 mt-[-5px]' />
 					) : (
 						<MinusCircleFilled
-							className='ml-1'
+							className='ml-1 mt-[-6px]'
 							style={{ color }}
 						/>
 					)}
@@ -149,12 +157,28 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 							return window.open(`https://${network}.polkassembly.io/user/${addressPrefix}`, '_blank');
 						}}
 					>
-						<ShareScreenIcon className='ml-1 mr-2' />
+						<ShareScreenIcon className='ml-1 mr-2 mt-[-5px]' />
 					</a>
 				</div>
-				<div className='my-1 text-xs text-bodyBlue'>{address}</div>
+				<div className='-mt-0.5 mb-1 flex text-xs text-bodyBlue'>
+					<span>{addressShort}</span>
+					<span
+						className='ml-2 flex cursor-pointer items-center'
+						onClick={(e) => {
+							e.preventDefault();
+							copyToClipboard(address);
+							success();
+						}}
+					>
+						{contextHolder}
+						<CopyIcon />
+					</span>
+				</div>
 				<div className='flex items-center justify-between'>
-					<p className='mb-0.5 text-xs text-[#7C899A]'>Since: {sinceDate?.toLocaleDateString()}</p>
+					<p className='mb-0.5 text-xs text-[#576D8B99]'>
+						Since:
+						<span className='text-lightBlue'>{sinceDate?.toLocaleDateString()}</span>
+					</p>
 					<div className='flex items-center'>
 						{identityArr.map((item, index) => {
 							return (

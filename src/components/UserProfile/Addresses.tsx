@@ -17,6 +17,7 @@ const Addresses: FC<IAddressesProps> = (props) => {
 	const [open, setOpen] = useState(false);
 	const toggleOpen = () => setOpen((prev) => !prev);
 	if (addresses.length === 0) return null;
+	console.log(addresses);
 	return (
 		<>
 			<div>

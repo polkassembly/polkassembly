@@ -46,9 +46,11 @@ interface IPostEmptyStateProps {
 	description?: string | JSX.Element;
 	image?: JSX.Element;
 	imageStyle?: any;
+	text?: string;
 }
-export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, description, postCategory, image, imageStyle }) => {
+export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, description, postCategory, image, imageStyle, text }) => {
 	//console.log('image=>'+image);
+	text ? text : 'No Data.';
 	return (
 		<Empty
 			className={className}
@@ -60,7 +62,7 @@ export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, descriptio
 				) : description ? (
 					<span className='text-md text-navBlue'>{description}</span>
 				) : (
-					<span className='text-md text-navBlue'>No data.</span>
+					<span className='text-md text-navBlue'>{text}</span>
 				)
 			}
 		/>

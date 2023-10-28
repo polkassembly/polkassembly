@@ -42,12 +42,12 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		results = await getResults(tags, subsquidData, onChainCollRef, results, seenProposalIds);
 	}
 
-	if (results.length < 3 && trackNumber) {
+	if (results.length < 3 && !isNaN(trackNumber)) {
 		const filteredData = subsquidData.filter((proposal: any) => proposal.trackNumber === trackNumber);
 		results = await getResults(null, filteredData, onChainCollRef, results, seenProposalIds);
 	}
 
-	if (results.length < 3 && trackGroup) {
+	if (results.length < 3 && trackGroup && Array.isArray(trackGroup) && trackGroup.length > 0) {
 		const filteredData = subsquidData.filter((proposal: any) => trackGroup.includes(proposal.trackNumber));
 		results = await getResults(null, filteredData, onChainCollRef, results, seenProposalIds);
 	}

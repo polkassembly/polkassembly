@@ -35,6 +35,8 @@ interface Props {
 
 const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Props) => {
 	const { network } = useNetworkSelector();
+	const { delegationDashboardAddress: address } = useUserDetailsSelector();
+
 	const timeline = [{ created_at: proposal.created_at, hash: proposal.hash }];
 	const [decision, setDecision] = useState<IPeriod>(getDefaultPeriod());
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
@@ -43,7 +45,6 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	const [isAye, setIsAye] = useState<boolean>(false);
 	const [isNay, setIsNay] = useState<boolean>(false);
 	const [isAbstain, setIsAbstain] = useState<boolean>(false);
-	const { delegationDashboardAddress: address } = useUserDetailsSelector();
 
 	let titleString = proposal?.title || proposal?.method || noTitle;
 
@@ -137,11 +138,11 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 
 	return (
 		<Link href={`/referenda/${proposal?.post_id}`}>
-			<div className={'rounded-[6px] rounded-t-[6px] border-[1px] border-solid border-[#D2D8E0] hover:border-[#E5007A]'}>
+			<div className={'rounded-[6px] rounded-t-[6px] border-[1px] border-solid border-[#D2D8E0] hover:border-pink_primary'}>
 				<div className='flex justify-between border-[1px] px-6 py-6 hover:border-pink_primary max-sm:flex-col max-sm:items-start max-sm:gap-2'>
 					<div className='flex flex-col '>
-						<h2 className='text-medium text-sm text-[#243A57]'>{mainTitle}</h2>
-						<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-[#485F7D] max-lg:flex-col max-lg:items-start max-lg:gap-2'>
+						<h2 className='text-medium text-sm text-bodyBlue'>{mainTitle}</h2>
+						<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-lightBlue max-lg:flex-col max-lg:items-start max-lg:gap-2'>
 							{
 								<div className='flex items-center gap-1'>
 									By:
@@ -174,7 +175,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 										type='vertical'
 										style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}
 									/>
-									<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-[#243A57]'}`}>
+									<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-bodyBlue'}`}>
 										<ClockCircleOutlined className='mr-1' />
 										{remainingTime}
 										Remaining
@@ -211,14 +212,14 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									{isAye && <AyeIcon />} {isNay && <NayIcon />}
 								</span>
 								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799]'>
-									Balance:<span className='font-medium text-[#243A57]'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
+									Balance:<span className='font-medium text-bodyBlue'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
 								</div>
 								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799]'>
-									Conviction:<span className='font-medium text-[#243A57]'>{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
+									Conviction:<span className='font-medium text-bodyBlue'>{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
 								</div>
 							</div>
 						) : (
-							<div className='ml-1 flex items-center text-xs font-medium text-[#485F7D]'>Abstain</div>
+							<div className='ml-1 flex items-center text-xs font-medium text-lightBlue'>Abstain</div>
 						)}
 					</div>
 				) : (
@@ -231,7 +232,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									displayInline
 								/>
 							)}
-							<div className='flex items-center justify-center text-xs text-[#485F7D]'>
+							<div className='flex items-center justify-center text-xs text-lightBlue'>
 								Not Voted yet <CautionIcon className='ml-1' />
 							</div>
 						</div>

@@ -63,13 +63,6 @@ const ProfileBalances = ({ className }: Props) => {
 			setTransferableBalance(balances?.transferableBalance || ZERO_BN);
 			setLockBalance(balances?.lockedBalance || ZERO_BN);
 		})();
-
-		if (loginWallet && defaultAddress) {
-			localStorage.setItem('delegationWallet', loginWallet);
-			localStorage.setItem('delegationDashboardAddress', defaultAddress || delegationDashboardAddress);
-			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: defaultAddress || delegationDashboardAddress }));
-		}
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [delegationDashboardAddress, api, apiReady]);
 
@@ -82,6 +75,7 @@ const ProfileBalances = ({ className }: Props) => {
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, delegationDashboardAddress]);
+
 	return (
 		<div className={'flex w-full items-center justify-between pl-[70px] max-md:pl-4 '}>
 			<div className={`${className} flex h-full items-center  gap-1 py-[17px] max-md:px-[10px]`}>
@@ -135,7 +129,10 @@ const ProfileBalances = ({ className }: Props) => {
 						address={delegationDashboardAddress || defaultAddress}
 						withBalance={false}
 						className='cursor-pointer text-sm text-[#788698]'
-						onAccountChange={setAddress}
+						onAccountChange={(address) => {
+							setAddress(address);
+							dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
+						}}
 						inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
 						isSwitchButton={true}
 						setSwitchModalOpen={setOpenModal}
@@ -152,6 +149,7 @@ const ProfileBalances = ({ className }: Props) => {
 				setOpen={setOpenModal}
 				walletAlertTitle={'Delegation'}
 				closable={true}
+				onConfirm={(address: string) => dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }))}
 			/>
 		</div>
 	);

@@ -287,7 +287,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								}))
 							}
 							placeholder='Add your title here'
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:text-white dark:focus:border-[#91054F] dark:font-normal'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-normal dark:text-white dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<div className='mt-[30px]'>
@@ -333,7 +333,11 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						<article className='flex flex-col gap-y-3'>
 							<Form.Item
 								name='url'
-								label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post</span>}
+								label={
+									<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>
+										Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post
+									</span>
+								}
 								className='mb-0 mt-5'
 							>
 								<Input
@@ -345,7 +349,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 									}}
 									autoFocus
 									placeholder='Enter your post URL here'
-									className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:text-white dark:focus:border-[#91054F] dark:font-normal'
+									className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-normal dark:text-white dark:focus:border-[#91054F]'
 								/>
 							</Form.Item>
 							<LinkPostPreview post={post} />

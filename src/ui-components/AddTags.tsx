@@ -187,7 +187,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 								<Tag
 									key={index}
 									className={`text-normal mt-1 rounded-xl border-[#90A0B7] bg-white px-[16px] py-[4px] text-xs tracking-wide text-[#90A0B7] dark:bg-section-dark-overlay ${
-										disabled ? 'dark:bg-disableStateDark bg-[#F5F5F5]' : 'hover:border-pink_primary'
+										disabled ? 'bg-[#F5F5F5] dark:bg-disableStateDark' : 'hover:border-pink_primary'
 									}`}
 									closable={!disabled}
 									onClose={(e) => {

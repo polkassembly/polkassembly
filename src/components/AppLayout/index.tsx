@@ -444,7 +444,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (network === 'polymesh') {
 		items = items.concat(
 			getSiderMenuItem(
-				<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>PIPs</span>,
+				<span className='ml-2 cursor-text text-xs font-medium uppercase text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>PIPs</span>,
 				'pipsHeading',
 				null
 			),
@@ -581,7 +581,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		// Tracks Heading
-		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Tracks</span>, 'tracksHeading', null),
+		getSiderMenuItem(<span className='ml-2 text-xs font-medium uppercase text-lightBlue hover:text-navBlue dark:text-icon-dark-inactive'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.governanceItems]),
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-lightBlue dark:text-icon-dark-inactive' />, [...gov2TrackItems.fellowshipItems])
@@ -643,10 +643,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
-		router.replace(router.asPath);
 		if (!router.query?.username) return;
 		if (router.query?.username.includes(username)) {
-			router.replace('/');
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 	};
 

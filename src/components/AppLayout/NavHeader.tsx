@@ -72,7 +72,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
-		router.replace(router.asPath);
 		if (!router.query?.username) return;
 		if (router.query?.username.includes(username)) {
 			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
@@ -173,9 +172,13 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'logout',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
-					onClick={() => handleLogout(username || '')}
 					href='/'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white'
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						handleLogout(username || '');
+					}}
 				>
 					<IconLogout className='userdropdown-icon text-2xl' />
 					<span>Logout</span>

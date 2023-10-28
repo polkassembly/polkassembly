@@ -19,9 +19,13 @@ import DeleteIcon from '~assets/icons/delete-icon-settings.svg';
 import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 const { Panel } = Collapse;
 
 const Delete: FC<{ className?: string }> = ({ className }) => {
+	const { network } = useNetworkSelector();
+	const { username } = useUserDetailsSelector();
 	const [error, setError] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [isOther, setIsOther] = useState(false);
@@ -33,7 +37,10 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 
 	const handleLogout = async () => {
 		dispatch(logout());
-		router.replace('/');
+		if (!router.query?.username) return;
+		if (router.query?.username.includes(username || '')) {
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
+		}
 	};
 
 	const handleSubmit = async (formData: any) => {
@@ -51,7 +58,9 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 				console.error('Delete account error', error);
 			}
 
-			if (data) handleLogout();
+			if (data) {
+				handleLogout();
+			}
 
 			setLoading(true);
 		}

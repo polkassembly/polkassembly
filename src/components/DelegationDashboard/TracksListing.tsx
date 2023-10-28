@@ -36,8 +36,10 @@ export interface ITrackDataType {
 }
 
 const DashboardTrackListing = ({ className }: Props) => {
-	const [status, setStatusValue] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.All);
 	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
+	const { delegationDashboardAddress } = useUserDetailsSelector();
+	const [status, setStatusValue] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.All);
 	const [delegatedCount, setDelegatedCount] = useState<number>(0);
 	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
 	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
@@ -45,10 +47,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const [showTable, setShowTable] = useState<boolean>(false);
 	const router = useRouter();
 	const [rowsData, setRowsData] = useState<ITrackDataType[]>([]);
-	const { api, apiReady } = useApiContext();
 	const [data, setData] = useState<ITrackDataType[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress } = useUserDetailsSelector();
 
 	const filterTrackDataByTrackNumber = (trackNo: number) => {
 		if (network) {
@@ -245,7 +245,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 
 			{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && (
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
-					<div className='mt-5 text-center text-[#243A57]'>
+					<div className='mt-5 text-center text-bodyBlue'>
 						<DelegateDelegationIcon />
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegated Tracks</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
@@ -271,7 +271,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 			{status === ETrackDelegationStatus.Undelegated && undelegatedCount === 0 && (
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
 					<UnDelegatedIcon />
-					<div className='mt-5 text-center text-[#243A57]'>
+					<div className='mt-5 text-center text-bodyBlue'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Undelegated Tracks</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 							All tracks have been delegated. Undelegate a track to view here
@@ -283,7 +283,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 			{status === ETrackDelegationStatus.Received_Delegation && receivedDelegationCount === 0 && (
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
 					<ReceivedDelegationIcon />
-					<div className='mt-5 text-center text-[#243A57]'>
+					<div className='mt-5 text-center text-bodyBlue'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegation Received</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 							You have not received delegations for any of the tracks
@@ -296,7 +296,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 };
 export default styled(DashboardTrackListing)`
 	.column .ant-table-thead > tr > th {
-		color: #485f7d !important;
+		color: var(--lightBlue) !important;
 		font-size: 14px;
 		font-weight: 600px;
 		line-height: 21px;

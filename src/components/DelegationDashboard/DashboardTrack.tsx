@@ -3,16 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
 import { Button, Skeleton, Table } from 'antd';
-import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
-import { ETrackDelegationStatus, IDelegation, Wallet } from '~src/types';
+import { ETrackDelegationStatus, IDelegation } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import BN from 'bn.js';
@@ -21,9 +21,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { setUserDetailsState } from '~src/redux/userDetails';
-import { useDispatch } from 'react-redux';
+import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 interface Props {
 	className?: string;
 	posts: any[];
@@ -74,14 +72,15 @@ export const handleTrack = (track: string) => {
 };
 
 const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
+	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
 	const {
 		query: { track }
 	} = useRouter();
-	const { network } = useNetworkSelector();
 	const [status, setStatus] = useState<ETrackDelegationStatus[]>([]);
 	const router = useRouter();
 	const [showTable, setShowTable] = useState<boolean>(false);
-	const currentUser = useUserDetailsSelector();
+
 	const { delegationDashboardAddress: address, loginWallet, id } = currentUser;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [rowData, setRowData] = useState<ITrackRowData[]>([]);
@@ -91,7 +90,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
-	const dispatch = useDispatch();
 
 	useEffect(() => {
 		setIsSelectedAddressMultisig(false);
@@ -102,16 +100,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 
 	useEffect(() => {
 		if (!window) return;
-
-		const wallet = localStorage.getItem('delegationWallet') || '';
-		const address = localStorage.getItem('delegationDashboardAddress') || '';
-		dispatch(
-			setUserDetailsState({
-				...currentUser,
-				delegationDashboardAddress: address,
-				loginWallet: wallet as Wallet
-			})
-		);
 
 		if (!network) return;
 

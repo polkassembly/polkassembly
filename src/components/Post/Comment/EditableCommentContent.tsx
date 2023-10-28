@@ -28,7 +28,6 @@ import { IComment } from './Comment';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import DeleteIcon from '~assets/icons/delete.svg';
 import EditIcon from '~assets/icons/edit-i.svg';
-import CopyIcon from '~assets/icons/copy.svg';
 import ReplyIcon from '~assets/icons/reply.svg';
 import {
 	AgainstIcon,
@@ -40,7 +39,8 @@ import {
 	SlightlyAgainstUnfilledIcon,
 	NeutralUnfilledIcon,
 	SlightlyForUnfilledIcon,
-	ForUnfilledIcon
+	ForUnfilledIcon,
+	CopyIcon
 } from '~src/ui-components/CustomIcons';
 
 import { poppins } from 'pages/_app';
@@ -527,7 +527,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						copyLink();
 					}}
 				>
-					<CopyIcon className='mr-1' /> Copy link
+					<CopyIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' /> Copy link
 				</div>
 			)
 		},

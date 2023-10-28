@@ -24,7 +24,7 @@ export const Collapse = styled(AntDCollapse)`
 	}
 
 	.ant-collapse-item {
-		border-bottom: 1px solid ${(props) => (props.theme === 'dark' ? '#90909060' : '')} !important;
+		border-bottom: 1px solid ${(props) => (props.theme === 'dark' ? '#90909060' : 'none')} !important;
 	}
 
 	.ant-collapse .ant-collapse-content {

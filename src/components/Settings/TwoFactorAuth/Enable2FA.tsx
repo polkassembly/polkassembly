@@ -9,13 +9,13 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { LoadingOutlined } from '@ant-design/icons';
 import { I2FAGenerateResponse, TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import CopyIcon from '~assets/icons/content-copy.svg';
 
 import { poppins } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import { CopyIcon } from '~src/ui-components/CustomIcons';
 
 const Title = (
 	<>
@@ -199,7 +199,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 										onClick={() => handleCopyClicked(tfaResponse.base32_secret)}
 										className='border-text_secondary cursor-pointer rounded-md border border-solid p-1 px-2 text-sm text-pink_primary'
 									>
-										<CopyIcon className='relative top-[6px]' />
+										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' />
 										{tfaResponse.base32_secret}
 									</span>
 								)}

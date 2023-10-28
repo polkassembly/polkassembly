@@ -4,10 +4,9 @@
 
 import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
-import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
 
 type Props = {
 	icon: any;
@@ -51,7 +50,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 				<ol>
 					<li className='list-inside leading-[40px] dark:text-white'>
 						Click this invite link
-						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
+						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'>
 							<a
 								href='https://discord.com/oauth2/authorize?client_id=1112538708219007017&permissions=397284485120&scope=bot'
 								target='_blank'
@@ -66,9 +65,9 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 						<br />
 						<span
 							onClick={() => handleCopyClicked('/add <username> <verificationToken>')}
-							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 						>
-							<CopyIcon className='relative top-[6px]' /> {'<username>'} {'<verificationToken>'}
+							<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' /> {'<username>'} {'<verificationToken>'}
 						</span>
 						<Button
 							loading={loading}
@@ -84,9 +83,9 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 									Copy your username:
 									<span
 										onClick={() => handleCopyClicked(username as string)}
-										className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+										className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 									>
-										<CopyIcon className='relative top-[6px]' /> {username}
+										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {username}
 									</span>
 								</div>
 
@@ -94,9 +93,9 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 									<span>Verification Token: </span>
 									<span
 										onClick={() => handleCopyClicked(token)}
-										className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+										className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 									>
-										<CopyIcon className='relative top-[6px]' /> {token}
+										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {token}
 									</span>
 								</div>
 							</>

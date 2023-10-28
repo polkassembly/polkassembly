@@ -10,7 +10,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from './Address';
 import { EditIcon } from './CustomIcons';
 import copyToClipboard from '~src/util/copyToClipboard';
-import CopyIcon from '~assets/icons/content-copy.svg';
+import { CopyIcon } from '~src/ui-components/CustomIcons';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
@@ -98,14 +98,14 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 								}}
 							>
 								{contextHolder}
-								<CopyIcon />
+								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</div>
 					)}
 
 					{!bio ? (
 						<h2
-							className={`mt-2 text-sm font-normal text-[#576D8BCC] ${username === userProfile.username && 'cursor-pointer'}`}
+							className={`mt-2 text-sm font-normal text-[#576D8BCC] dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
 							onClick={() => setOpenEditModal(true)}
 						>
 							{username === userProfile.username ? 'Click here to add bio' : 'No Bio'}

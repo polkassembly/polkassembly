@@ -4,10 +4,9 @@
 
 import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
-import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
 
 type Props = {
 	icon: any;
@@ -53,7 +52,7 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 				<ol>
 					<li className='list-inside leading-[40px] dark:text-white'>
 						Click this invite link
-						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
+						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'>
 							<a
 								href='https://t.me/PolkassemblyBot'
 								target='_blank'
@@ -66,9 +65,9 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 						or Add
 						<span
 							onClick={() => handleCopyClicked('@PolkassemblyBot')}
-							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 						>
-							<CopyIcon className='color-pink_primary relative top-[6px]' /> @PolkassemblyBot
+							<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> @PolkassemblyBot
 						</span>
 						to your Telegram Chat as a member
 					</li>
@@ -77,9 +76,9 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 						<br />
 						<span
 							onClick={() => handleCopyClicked('/add <username> <verificationToken>')}
-							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 						>
-							<CopyIcon className='relative top-[6px]' /> {'<username>'} {'<verificationToken>'}
+							<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {'<username>'} {'<verificationToken>'}
 						</span>
 						<Button
 							loading={loading}
@@ -94,9 +93,10 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 								<span>Username & Verification Token: </span>
 								<div
 									onClick={() => handleCopyClicked(`/add ${username} ${token}`)}
-									className='bg-bg-secondary border-text_secondary mx-2 flex h-[30px] max-w-[230px] cursor-pointer items-center rounded-md border border-solid p-0 text-pink_primary'
+									className='bg-bg-secondary border-text_secondary mx-2 flex h-[30px] max-w-[230px] cursor-pointer items-center rounded-md border border-solid p-0 text-pink_primary dark:text-blue-dark-helper'
 								>
-									<CopyIcon className='relative' /> <span className='mr-2 inline-block max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{username}</span>
+									<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' />{' '}
+									<span className='mr-2 inline-block max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{username}</span>
 									<span className='inline-block max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{token}</span>
 								</div>
 							</div>
@@ -106,9 +106,9 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 						(Optional) Send this command to get help:
 						<span
 							onClick={() => handleCopyClicked('/start')}
-							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 						>
-							<CopyIcon className='relative top-[6px]' /> /start
+							<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> /start
 						</span>
 					</li>
 				</ol>

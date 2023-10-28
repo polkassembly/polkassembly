@@ -90,8 +90,8 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 				{topicOptions.map((topic) => (
 					<div
 						onClick={() => onTopicChange(topic)}
-						className={`cursor-pointer rounded-2xl px-3 py-2 text-xs dark:bg-section-dark-overlay ${
-							topicIdToTopictext(topicId) === topic ? 'bg-pink_primary text-white' : 'bg-[#ebeef2] text-lightBlue dark:text-blue-dark-medium'
+						className={`dark:bg-disableStateDark cursor-pointer rounded-2xl px-3 py-2 text-xs dark:border-separatorDark ${
+							topicIdToTopictext(topicId) === topic ? 'bg-pink_primary text-white dark:bg-[#5A1138]' : 'bg-[#ebeef2] text-lightBlue dark:bg-[#5A1138] dark:text-blue-dark-medium'
 						}`}
 						key={topic}
 					>

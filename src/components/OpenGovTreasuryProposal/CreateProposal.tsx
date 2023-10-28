@@ -12,7 +12,6 @@ import { BN_HUNDRED, formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
-import CopyIcon from '~assets/icons/content-copy.svg';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
@@ -25,6 +24,7 @@ import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { CopyIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -304,7 +304,7 @@ const CreateProposal = ({
 								}}
 							>
 								{contextHolder}
-								<CopyIcon />
+								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</span>
 						<span className='flex'>
@@ -328,7 +328,7 @@ const CreateProposal = ({
 								}}
 							>
 								{contextHolder}
-								<CopyIcon />
+								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</span>
 					</div>

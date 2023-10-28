@@ -12,14 +12,14 @@ import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
-import { Wallet } from 'src/types';
+import { NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AuthForm from 'src/ui-components/AuthForm';
 import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
-import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
+import { ChallengeMessage, IAddProfileResponse, IAuthResponse, TokenType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -37,6 +37,8 @@ import { IconConfirmation, BlueCautionIcon, IconMail } from '~src/ui-components/
 import messages from '~src/util/messages';
 import { password, username } from '~src/util/validation';
 import * as validation from 'src/util/validation';
+import queueNotification from '~src/ui-components/QueueNotification';
+import nameBlacklist from '~src/auth/utils/nameBlacklist';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -83,6 +85,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 	const [isError, setIsError] = useState(false);
 	const [firstPassword, setFirstPassword] = useState('');
 	const [email, setEmail] = useState('');
+	const userDetailsContext = useUserDetailsSelector();
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -336,27 +339,85 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 			setError(error.message);
 			setLoading(false);
 		}
-
-		console.log(showOptionalFields);
 	};
 
-	const handleOptionalUsername = () => {
+	const validateUsername = (optionalUsername: string) => {
+		let errorUsername = 0;
+		const format = /^[a-zA-Z0-9_@]*$/;
+		if (!format.test(optionalUsername) || optionalUsername.length > 30 || optionalUsername.length < 3) {
+			queueNotification({
+				header: 'Error',
+				message: 'Username is Invalid',
+				status: NotificationStatus.ERROR
+			});
+			errorUsername += 1;
+		}
+
+		// banned username
+		for (let i = 0; i < nameBlacklist.length; i++) {
+			if (optionalUsername.toLowerCase().includes(nameBlacklist[i])) {
+				queueNotification({
+					header: 'Error',
+					message: 'Entered Username is Banned',
+					status: NotificationStatus.ERROR
+				});
+				errorUsername += 1;
+			}
+		}
+		return errorUsername === 0;
+	};
+
+	const handleOptionalUsername = async () => {
 		if (optionalUsername && optionalUsername.trim() !== '') {
 			// Username is not empty, set user to true
-			console.log(optionalUsername);
-			setShowSuccessModal(false);
-			setIsError(false);
+			if (!validateUsername(optionalUsername)) return;
+			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
+				// username: optionalUsername
+				badges: JSON.stringify([]),
+				bio: '',
+				custom_username: true,
+				image: currentUser.picture || '',
+				social_links: JSON.stringify([]),
+				title: '',
+				user_id: Number(currentUser.id),
+				username: optionalUsername
+			});
+
+			if (error || !data) {
+				console.error('Error updating profile: ', error);
+				queueNotification({
+					header: 'Error!',
+					message: error || 'Your profile was not updated.',
+					status: NotificationStatus.ERROR
+				});
+				setLoading(true);
+				setShowSuccessModal(true);
+				setIsError(true);
+			}
+
+			if (data?.token) {
+				queueNotification({
+					header: 'Success!',
+					message: 'Your profile was updated.',
+					status: NotificationStatus.SUCCESS
+				});
+				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
+				setLoading(true);
+				setShowSuccessModal(false);
+				setIsError(false);
+			}
 		} else {
 			setIsError(true);
 			// Username is empty, handle accordingly
 		}
+		console.log(currentUser);
 	};
 
 	const handleOptionalSkip = () => {
 		setLoginOpen?.(false);
 	};
 
-	const handleOptionalDetails = () => {
+	const handleOptionalDetails = async () => {
 		// setLoginOpen?.(false);
 		if (email && email.trim() !== '' && firstPassword && firstPassword.trim() !== '') {
 			console.log(email, firstPassword);
@@ -663,7 +724,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 											validateTrigger='onSubmit'
 										>
 											<Input
-												disabled={loading}
+												// disabled={loading}
 												onChange={(e) => setOptionalUsername(e.target.value)}
 												placeholder='Type here'
 												className='rounded-md px-4 py-3'

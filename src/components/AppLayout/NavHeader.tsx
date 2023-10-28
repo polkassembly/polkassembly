@@ -252,11 +252,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						className='logo-size flex'
 						href={'/'}
 					>
-						{theme === 'dark' ? (
-							<PaLogoDark
-								className='logo-container -ml-[2px]'
-								sidedrawer={isMobile}
-							/>
+						{theme === 'dark' && isMobile ? (
+							<PaLogoDark className='logo-container -ml-[2px]' />
 						) : (
 							<PaLogo
 								className='logo-container -ml-[2px]'

@@ -6,8 +6,8 @@ import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VotersList from './VoteList';
 import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
 import { Divider, Modal as AntdModal } from 'antd';
-import CloseIcon from '~assets/icons/close-icon.svg';
 import styled from 'styled-components';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 interface IVoteDataModal {
 	setOpen?: any;
 	open?: any;
@@ -42,12 +42,12 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 						</span>
 						<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Voting Data</span>
 					</h3>
-					<Divider className='my-2 mb-5 text-[#D2D8E0]' />
+					<Divider className='my-2 mb-5 text-[#D2D8E0] dark:border-separatorDark' />
 				</div>
 			}
 			open={open}
 			closable
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			className={'sm:w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 			onCancel={() => {
 				setOpen(false);

@@ -37,6 +37,9 @@ const StyledSegmented = styled(Segmented)`
 	.ant-segmented-group > label {
 		border-radius: 20px !important;
 	}
+	.ant-segmented-item {
+		color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
+	}
 `;
 
 const VoteContainer = styled.div`
@@ -247,9 +250,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</div>
 							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-									<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-blue-dark-medium  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+									<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									<div
-										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-medium ${decision === 'abstain' ? 'w-[160px]' : ''}`}
+										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-white ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -262,7 +265,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
-											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-medium'}
+											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-high'}
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -275,7 +278,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</div>
 									) : null}
 
-									<div className='flex w-[120px] items-center gap-1 text-lightBlue dark:text-blue-dark-medium'>
+									<div className='flex w-[120px] items-center gap-1 text-lightBlue dark:text-blue-dark-high'>
 										<span
 											className='flex cursor-pointer'
 											onClick={() => {
@@ -293,7 +296,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 												color='#E5007A'
 												title='Vote Power for delegated votes is the self vote power + delegated vote power.'
 											>
-												<InfoCircleOutlined className='text-xs text-lightBlue dark:text-blue-dark-medium' />
+												<InfoCircleOutlined className='text-xs text-lightBlue dark:text-blue-dark-high' />
 											</Tooltip>
 										</span>
 									</div>
@@ -325,6 +328,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
 							<p className='m-0 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
 							<Pagination
+								theme={theme}
 								size='small'
 								defaultCurrent={1}
 								current={currentPage}

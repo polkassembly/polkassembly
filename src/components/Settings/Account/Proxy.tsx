@@ -137,9 +137,9 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:text-blue-dark-high'>
-					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Proxy address</span>
-					<Divider />
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue dark:text-white'>Link Proxy address</span>
+					<Divider className='border-b-1 dark:border-separatorDark' />
 				</div>
 			}
 			open={open}
@@ -196,7 +196,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 						<>
 							<section>
 								<label
-									className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+									className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white dark:text-white'
 									htmlFor='proxiedAccount'
 								>
 									Proxied Address

@@ -52,7 +52,7 @@ const ListingContainer: FC<IListingContainerProps> = (props) => {
 	return (
 		<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
 			<div className='flex items-center justify-between'>
-				<h1 className='dashboard-heading'>{title}</h1>
+				<h1 className='dashboard-heading dark:text-white'>{title}</h1>
 			</div>
 			{loading ? (
 				<LoadingState />

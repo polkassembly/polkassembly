@@ -91,7 +91,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 							Old Username
 						</label>
 						<Input
-							className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='dark:bg-disableStateDark p-2 text-sm leading-[21px] dark:border-separatorDark dark:text-blue-dark-high'
 							value={username}
 							disabled
 						/>

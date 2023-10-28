@@ -88,7 +88,7 @@ const AddNetworkModal = ({
 							}
 							onCancel();
 						}}
-						className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
+						className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
 					>
 						Cancel
 					</Button>,
@@ -140,7 +140,7 @@ const AddNetworkModal = ({
 							<div key={chain}>
 								<div className='mb-2 flex items-center gap-[8px]'>
 									<SmallParachainIcon />
-									<h3 className='mb-0 text-sm font-semibold leading-[21px] tracking-wide text-sidebarBlue'>
+									<h3 className='mb-0 text-sm font-semibold leading-[21px] tracking-wide text-sidebarBlue dark:font-normal dark:text-white'>
 										{networkLabel[chain] === 'Kusama' || networkLabel[chain] === 'Polkadot' ? `${networkLabel[chain]} and Parachains` : networkLabel[chain]}
 									</h3>
 									<span className='flex items-center gap-[8px]'>
@@ -150,7 +150,7 @@ const AddNetworkModal = ({
 											onChange={(checked) => handleAllClick(checked, chain)}
 											checked={allNetworks[chain].every((network: any) => network.selected)}
 										/>
-										<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
+										<p className='m-0 text-[#485F7D] dark:text-white'>All</p>
 									</span>
 								</div>
 								<div className='flex flex-wrap gap-[10px]'>
@@ -186,7 +186,7 @@ const AddNetworkModal = ({
 								</div>
 								{i < Object.keys(allNetworks).length - 1 && (
 									<Divider
-										className='border-2 border-[#D2D8E0]'
+										className='border-2 border-[#D2D8E0] dark:border-separatorDark dark:border-separatorDark'
 										dashed
 									/>
 								)}
@@ -195,7 +195,7 @@ const AddNetworkModal = ({
 					})
 				)}
 				<div className='ml-[-24px] mr-[-24px]'>
-					<Divider className='my-4' />
+					<Divider className='my-4 dark:border-separatorDark' />
 				</div>
 			</Modal>
 		</>

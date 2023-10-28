@@ -42,6 +42,8 @@ module.exports = {
 				separatorDark: 'var(--separatorDark)',
 				inactiveIconDark: 'var(--inactiveIconDark)',
 				modalOverlayDark: 'var(--modalOverlayDark)',
+				alertColorDark: 'var(--alertColorDark)',
+				disableStateDark: 'var(--disableStateDark)',
 				blue: {
 					light: {
 						disabled: '#96A4B6',

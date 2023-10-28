@@ -38,6 +38,8 @@
   --tableRowSeparator: #323232;
   --inactiveIconDark: #222222;
   --modalOverlayDark: #E8E8E826;
+  --alertColorDark: #141C2D;
+  --disableStateDark: #1D1D1D;
 }
 
 ::-webkit-scrollbar {

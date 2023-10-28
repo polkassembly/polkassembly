@@ -42,7 +42,7 @@ const Row = ({ label, data, handleEdit }: { label: string; data: string; handleE
 			</p>
 		</div>
 		<span
-			className='flex cursor-pointer items-center gap-1 text-[14px] font-medium text-[#485F7D] text-pink_primary dark:text-blue-dark-medium'
+			className='flex cursor-pointer items-center gap-1 text-[14px] font-medium text-[#485F7D] text-pink_primary dark:text-blue-dark-high'
 			onClick={handleEdit}
 		>
 			<EditPencilIcon /> Edit

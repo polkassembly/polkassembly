@@ -270,9 +270,9 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:text-blue-dark-high'>
-					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Multisig address</span>
-					<Divider />
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue dark:text-white'>Link Multisig address</span>
+					<Divider className='border-b-1 dark:border-separatorDark' />
 				</div>
 			}
 			open={open}
@@ -319,7 +319,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 				className='mb-4 flex flex-col gap-y-6'
 			>
 				<section className='flex w-full flex-col gap-y-4'>
-					<label className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue'>
+					<label className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'>
 						Signatory Addresses
 						<HelperTooltip
 							placement='right'
@@ -372,7 +372,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 				</section>
 				<section>
 					<label
-						className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+						className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'
 						htmlFor='multisigAddress'
 					>
 						Multisig Address
@@ -391,13 +391,13 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						<Input
 							placeholder='Enter a valid multisig address'
 							className='rounded-md border-grey_border px-4 py-3'
-							id='multisigAddress dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							id='multisigAddress dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 				</section>
 				<section>
 					<label
-						className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+						className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'
 						htmlFor='threshold'
 					>
 						Threshold

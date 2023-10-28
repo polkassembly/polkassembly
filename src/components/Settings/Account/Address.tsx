@@ -257,7 +257,9 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 		const StyledUnlinkButton: FC<{ withClickHandler?: boolean }> = ({ withClickHandler = false }) => {
 			return (
 				<Button
-					className={`m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-red_primary outline-none ${!withClickHandler ? 'opacity-50' : ''}`}
+					className={`m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-red_primary outline-none dark:border-separatorDark dark:bg-section-dark-overlay ${
+						!withClickHandler ? 'opacity-50' : ''
+					}`}
 					disabled={withClickHandler ? false : true}
 					onClick={() => (withClickHandler ? handleUnlink(address) : null)}
 				>
@@ -281,7 +283,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 	const SetDefaultAddress: FC<{ address: string }> = ({ address }) => {
 		return currentUser.defaultAddress !== address ? (
 			<Button
-				className='m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-grey_primary outline-none'
+				className='m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-grey_primary outline-none dark:bg-section-dark-overlay dark:text-white'
 				onClick={() => handleDefault(address)}
 			>
 				Set default
@@ -358,7 +360,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 		return (
 			<article className='flex flex-col gap-y-2'>
-				<label className='text-sm font-medium tracking-wide text-sidebarBlue'>{title}</label>
+				<label className='text-sm font-medium tracking-wide text-sidebarBlue dark:text-white'>{title}</label>
 				<div className='flex flex-col'>
 					{accountsObj &&
 						Object.entries(accountsObj).map(([key, value], index, arr) => {
@@ -398,7 +400,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 																<>
 																	<div className='col-span-1'>
 																		<Button
-																			className='m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-grey_primary outline-none'
+																			className='m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-grey_primary outline-none dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'
 																			onClick={() => handleLink(address, key as Wallet)}
 																			icon={<LinkOutlined />}
 																		>
@@ -412,7 +414,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 												);
 											})}
 										</div>
-										{arr.length - 1 > index ? <Divider /> : null}
+										{arr.length - 1 > index ? <Divider className='border-b-1 dark:border-separatorDark' /> : null}
 									</div>
 								)
 							);
@@ -427,9 +429,9 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:text-blue-dark-high'>
-					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Address</span>
-					<Divider />
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue dark:text-white'>Link Address</span>
+					<Divider className='border-b-1 dark:border-separatorDark' />
 				</div>
 			}
 			open={open}
@@ -477,7 +479,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				indicator={<LoadingOutlined />}
 			>
 				{fetchAccountsInfo ? (
-					<div className='max-w-[600px]'>
+					<div className='max-w-[600px] dark:text-white'>
 						<p>For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.</p>
 					</div>
 				) : noExtension ? (
@@ -506,7 +508,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 					</section>
 				)}
 				<div className='ml-[-24px] mr-[-24px]'>
-					<Divider className='my-4 mt-0' />
+					<Divider className='border-b-1 my-4 mt-0 dark:border-separatorDark' />
 				</div>
 			</Spin>
 		</Modal>

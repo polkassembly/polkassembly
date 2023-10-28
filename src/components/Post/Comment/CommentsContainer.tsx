@@ -264,7 +264,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					)}
 				</>
 			) : (
-				<div className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md dark:bg-[#141C2D]'>
+				<div className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md dark:bg-alertColorDark'>
 					<Image
 						src='/assets/icons/alert-login.svg'
 						width={20}

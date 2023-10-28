@@ -175,7 +175,11 @@ export default function PipNotification({ onSetNotification, userNotification, d
 											<GroupCheckbox
 												categoryOptions={options[postType]}
 												title={postOriginMapper(postType)}
-												classname={i === category.length - 1 ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]' : 'md:basis-[50%]'}
+												classname={
+													i === category.length - 1
+														? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px] dark:border-separatorDark'
+														: 'md:basis-[50%]'
+												}
 												Icon={iconMapper(postType)}
 												onChange={handleChange}
 												handleCategoryAllClick={handleCategoryAllClick}
@@ -192,7 +196,7 @@ export default function PipNotification({ onSetNotification, userNotification, d
 							</div>
 							{i !== pipTwoOptions.length - 1 && (
 								<Divider
-									className='border-2 border-[#D2D8E0]'
+									className='border-2 border-[#D2D8E0] dark:border-separatorDark'
 									dashed
 								/>
 							)}

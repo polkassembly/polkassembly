@@ -38,7 +38,7 @@ export default function Toggler({ label, onClick, selected }: Props) {
 				onChange={(checked, e) => handleClick(checked, e)}
 				checked={selected}
 			/>
-			<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>{label}</p>
+			<p className='m-0 text-[#485F7D] dark:text-white'>{label}</p>
 		</span>
 	);
 }

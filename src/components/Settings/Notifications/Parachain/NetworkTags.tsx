@@ -28,7 +28,7 @@ export default function NetworkTags({ icon, name, selected = true, onActionClick
 		<Tag
 			onClick={onActionClick}
 			className={`flex items-center justify-between rounded-[34px] border border-solid border-[#E5007A] px-[24px] ${
-				selected ? 'bg-[#FEF2F8] py-[8px] dark:bg-[#33071E]' : 'bg-white py-[14px]'
+				selected ? 'bg-[#FEF2F8] py-[8px] dark:bg-[#33071E]' : 'bg-white py-[14px] dark:border-separatorDark dark:bg-section-dark-overlay'
 			} cursor-pointer`}
 		>
 			{icon ? (

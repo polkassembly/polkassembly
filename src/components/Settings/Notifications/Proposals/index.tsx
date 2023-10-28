@@ -133,7 +133,7 @@ export default function Proposals({ onSetNotification, dispatch, options, userNo
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-white'>All</p>
 								</span>
 							</>
 						)}

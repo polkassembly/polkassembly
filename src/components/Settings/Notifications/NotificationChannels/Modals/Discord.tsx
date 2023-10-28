@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 type Props = {
 	icon: any;
@@ -33,21 +34,22 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 	};
 	return (
 		<Modal
+			className='min-[550px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<h3 className='mb-5 flex items-center gap-3'>
+				<h3 className='mb-5 flex items-center gap-3 dark:bg-section-dark-overlay dark:text-white'>
 					{icon} {title}
 				</h3>
 			}
 			open={open}
 			closable
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={onClose}
 			footer={null}
-			className='min-[550px]'
 		>
 			<div className=''>
 				<ol>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Click this invite link
 						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
 							<a
@@ -59,7 +61,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 							</a>
 						</span>
 					</li>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Send this command to the chat with the bot:
 						<br />
 						<span
@@ -71,14 +73,14 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 						<Button
 							loading={loading}
 							onClick={handleGenerateToken}
-							className='bg-pink_primary font-normal text-white'
+							className='bg-pink_primary font-normal text-white dark:border-none'
 						>
 							Generate Token
 						</Button>
 						<br />
 						{token && (
 							<>
-								<div className='list-inside leading-[40px]'>
+								<div className='list-inside leading-[40px] dark:text-white'>
 									Copy your username:
 									<span
 										onClick={() => handleCopyClicked(username as string)}
@@ -88,7 +90,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 									</span>
 								</div>
 
-								<div className=''>
+								<div className='dark:text-white'>
 									<span>Verification Token: </span>
 									<span
 										onClick={() => handleCopyClicked(token)}

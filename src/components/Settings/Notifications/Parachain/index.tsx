@@ -120,7 +120,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 					/>
 				</Space>
 				<Divider
-					className='border-2 border-[#D2D8E0]'
+					className='border-2 border-[#D2D8E0] dark:border-separatorDark'
 					dashed
 				/>
 				<div className='item-center flex flex-col gap-6'>

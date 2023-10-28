@@ -201,7 +201,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				<List
 					style={{ bottom: '85px', position: 'fixed', right: '20px', zIndex: '999' }}
 					header={
-						<div className='flex h-[38px] justify-between text-xl font-semibold text-lightBlue dark:text-blue-dark-medium'>
+						<div className='flex h-[38px] justify-between text-xl font-semibold text-lightBlue dark:text-white'>
 							<p className='mt-2 h-[25px]'>Menu</p>
 							<CloseIcon
 								className='mt-4 cursor-pointer'

@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 type Props = {
 	icon: any;
@@ -38,18 +39,19 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<h3 className='mb-5 flex items-center gap-3 dark:bg-section-dark-overlay'>
+				<h3 className='mb-5 flex items-center gap-3 dark:bg-section-dark-overlay dark:text-white'>
 					{icon} {title}
 				</h3>
 			}
 			open={open}
 			closable
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={onClose}
 			footer={null}
 		>
 			<div className=''>
 				<ol>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Click this invite link
 						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
 							<a
@@ -70,7 +72,7 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 						</span>
 						to your Telegram Chat as a member
 					</li>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Send this command to the chat with the bot:
 						<br />
 						<span
@@ -82,13 +84,13 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 						<Button
 							loading={loading}
 							onClick={handleGenerateToken}
-							className='bg-pink_primary font-normal text-white'
+							className='bg-pink_primary font-normal text-white dark:border-none'
 						>
 							Generate Token
 						</Button>
 						<br />
 						{token && (
-							<div className='flex items-center'>
+							<div className='flex items-center dark:text-white'>
 								<span>Username & Verification Token: </span>
 								<div
 									onClick={() => handleCopyClicked(`/add ${username} ${token}`)}
@@ -100,7 +102,7 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 							</div>
 						)}
 					</li>
-					<li className='list-inside'>
+					<li className='list-inside dark:text-white'>
 						(Optional) Send this command to get help:
 						<span
 							onClick={() => handleCopyClicked('/start')}

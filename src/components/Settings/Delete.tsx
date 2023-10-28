@@ -18,6 +18,7 @@ import { Collapse } from './Notifications/common-ui/Collapse';
 import DeleteIcon from '~assets/icons/delete-icon-settings.svg';
 import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
+import { useTheme } from 'next-themes';
 const { Panel } = Collapse;
 
 const Delete: FC<{ className?: string }> = ({ className }) => {
@@ -28,6 +29,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	const [form] = Form.useForm();
 	const router = useRouter();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleLogout = async () => {
 		dispatch(logout());
@@ -68,11 +70,12 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
+			theme={theme}
 		>
 			<Panel
 				header={

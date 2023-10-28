@@ -42,7 +42,7 @@ interface ParachainRowData {
 
 const Table = styled(AntdTable)`
 	.ant-table-thead > tr > th {
-		background: ${(props) => (props.theme === 'dark' ? '#1C1D1F' : 'white')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#1C1D1F' : '#fafafa')} !important;
 		color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')} !important;
 		font-weight: 500 !important;
 		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;

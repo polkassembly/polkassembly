@@ -37,6 +37,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
+import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -135,7 +136,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					className='custom-link'
 				>
 					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'>
-						<PolkaSafe />
+						{theme === 'dark' ? <PolkaSafeDarkIcon /> : <PolkaSafe />}
 						<span className='ml-2'>Polkasafe</span>
 					</span>
 				</a>

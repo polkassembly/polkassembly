@@ -58,6 +58,9 @@ const Calendar = styled(StyledCalendar)`
 		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
 		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
+	.ant-select-dropdown {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+	}
 `;
 
 const UpcomingEvents = ({ className }: Props) => {
@@ -416,7 +419,7 @@ const UpcomingEvents = ({ className }: Props) => {
 	const CalendarElement = () => (
 		<Spin spinning={loading}>
 			<Calendar
-				className='mb-4 rounded-xl border border-solid border-gray-200 dark:bg-section-dark-overlay'
+				className='mb-4 rounded-xl border border-solid border-gray-200 dark:border-separatorDark dark:bg-section-dark-overlay'
 				fullscreen={false}
 				cellRender={dateCellRender}
 				theme={theme}

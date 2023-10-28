@@ -29,6 +29,10 @@ const Container = styled.div`
 		white-space: nowrap;
 	}
 
+	.ant-table-wrapper .ant-table-container::after {
+		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+	}
+
 	th.ant-table-cell {
 		color: ${(props) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
 		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
@@ -85,7 +89,7 @@ const Container = styled.div`
 	.ant-table-wrapper .ant-table-thead > tr > th,
 	.ant-table-wrapper .ant-table-thead > tr > td {
 		border-bottom: ${(props) => (props.theme == 'dark' ? '1px solid #323232' : '1px solid #E1E6EB')} !important;
-		background: ${(props) => (props.theme == 'dark' ? '#0d0d0d' : '#ffffff')} !important;
+		background: ${(props) => (props.theme == 'dark' ? '#1C1D1F' : '#fafafa')} !important;
 	}
 	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab,
 	.ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab {

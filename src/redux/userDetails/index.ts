@@ -49,7 +49,6 @@ export const userDetailsStore = createSlice({
 	reducers: {
 		setLogout: (state) => {
 			deleteLocalStorageToken();
-			localStorage.removeItem('delegationDashboardAddress');
 			localStorage.removeItem('delegationWallet');
 			localStorage.removeItem('loginWallet');
 			localStorage.removeItem('loginAddress');
@@ -60,6 +59,7 @@ export const userDetailsStore = createSlice({
 			state.addresses = [];
 			state.allowed_roles = [];
 			state.defaultAddress = null;
+			state.delegationDashboardAddress = '';
 			state.email = null;
 			state.email_verified = false;
 			state.id = null;

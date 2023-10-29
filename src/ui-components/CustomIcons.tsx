@@ -126,6 +126,7 @@ import RedirectSVG from '~assets/icons/redirect-icon.svg';
 import ProposalsIconSVG from '~assets/icons/proposals-icon.svg';
 import TechComIconSVG from '~assets/icons/tech-com-icon.svg';
 import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
+import VoteDataSVG from '~assets/icons/vote-data-icon.svg';
 
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -144,6 +145,13 @@ export const IconLogout = (props: Partial<CustomIconComponentProps>) => (
 export const ProposalsIconListing = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ProposalsIconSVG}
+		{...props}
+	/>
+);
+
+export const VoteDataIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={VoteDataSVG}
 		{...props}
 	/>
 );

@@ -19,7 +19,6 @@ import VoterRow from './VoterRow';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 // import ChartIcon from '~assets/chart-icon.svg';
 // import ThresholdGraph from './ThresholdGraph';
-import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
 import DelegationVotersList from './DelegateVoteList';
 // import GraphExpandIcon from '~assets/graph-expand.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -27,7 +26,7 @@ import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/components/Pagination';
 import { useTheme } from 'next-themes';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -396,9 +395,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					title={
 						<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
 							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
-								<span className='relative top-[3px]'>
-									<VoteDataIcon />
-								</span>
+								<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 								<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Data</span>
 							</h3>
 							<Divider className='my-2 mb-5 text-[#D2D8E0] dark:text-separatorDark' />

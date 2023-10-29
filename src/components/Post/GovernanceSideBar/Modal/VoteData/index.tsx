@@ -4,10 +4,9 @@
 import React, { FC } from 'react';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VotersList from './VoteList';
-import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
 import { Divider, Modal as AntdModal } from 'antd';
 import styled from 'styled-components';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 interface IVoteDataModal {
 	setOpen?: any;
 	open?: any;
@@ -37,9 +36,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 			title={
 				<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
 					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
-						<span className='relative top-[3px]'>
-							<VoteDataIcon />
-						</span>
+						<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 						<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Voting Data</span>
 					</h3>
 					<Divider className='my-2 mb-5 text-[#D2D8E0] dark:border-separatorDark' />

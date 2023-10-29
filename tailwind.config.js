@@ -46,6 +46,7 @@ module.exports = {
 				modalOverlayDark: 'var(--modalOverlayDark)',
 				alertColorDark: 'var(--alertColorDark)',
 				disableStateDark: 'var(--disableStateDark)',
+				helperTextColorDark: 'var(--helperTextColorDark)',
 				blue: {
 					light: {
 						disabled: '#96A4B6',

@@ -42,6 +42,7 @@
   --modalOverlayDark: #E8E8E826;
   --alertColorDark: #141C2D;
   --disableStateDark: #1D1D1D;
+  --helperTextColorDark: #595959;
 }
 
 ::-webkit-scrollbar {

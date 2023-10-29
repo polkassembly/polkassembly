@@ -133,34 +133,34 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:font-normal'>Ayes</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:font-normal dark:text-white'>Ayes</span>
 							</div>
-							<div className='text-xs font-medium leading-[22px] text-navBlue'>
+							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
 								{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 							</div>
 						</article>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nays</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Nays</span>
 							</div>
-							<div className='text-xs font-medium leading-[22px] text-navBlue'>
+							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
 								{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 							</div>
 						</article>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Support</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Support</span>
 							</div>
-							<div className='text-xs font-medium leading-[22px] text-navBlue'>
+							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
 								{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 							</div>
 						</article>
 						{activeIssuance ? (
 							<article className='flex items-center justify-between gap-x-2'>
 								<div className='flex items-center gap-x-1'>
-									<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Issuance</span>
+									<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Issuance</span>
 								</div>
-								<div className='text-xs font-medium leading-[22px] text-navBlue'>
+								<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
 									{formatUSDWithUnits(formatBnBalance(activeIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
 							</article>

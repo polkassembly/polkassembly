@@ -65,6 +65,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			updated_at: last_comment_at
 		})
 		.then(() => {
+			postRef
+				.update({
+					last_comment_at
+				})
+				.then(() => {});
 			const ipfsScript = new IPFSScript();
 			ipfsScript.run(
 				{
@@ -75,11 +80,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 				},
 				replyRef.path
 			);
-			postRef
-				.update({
-					last_comment_at
-				})
-				.then(() => {});
 			return res.status(200).json({ message: 'Reply saved.' });
 		})
 		.catch((error) => {

@@ -296,9 +296,9 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			const postDocRef = postsByTypeRef(network, proposalType).doc(String(obj.index));
 			if (strProposalType === proposalType && Number(obj.index) === Number(postId)) {
 				isCurrPostUpdated = true;
+				batch.set(postDocRef, newPostDoc, { merge: true });
 				const ipfsScript = new IPFSScript();
 				ipfsScript.run(newPostDoc, postDocRef.path);
-				batch.set(postDocRef, newPostDoc, { merge: true });
 			} else if (![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)) {
 				let post_link: any = {
 					id: postId,
@@ -322,18 +322,18 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					user_id: post?.user_id || user.id,
 					username: post?.username || user.username
 				};
+				batch.set(postDocRef, data, { merge: true });
 				const ipfsScript = new IPFSScript();
 				ipfsScript.run(data, postDocRef.path);
-				batch.set(postDocRef, data, { merge: true });
 			}
 		});
 		await batch.commit();
 	}
 
 	if (!isCurrPostUpdated) {
+		await postDocRef.set(newPostDoc, { merge: true });
 		const ipfsScript = new IPFSScript();
 		ipfsScript.run(newPostDoc, postDocRef.path);
-		await postDocRef.set(newPostDoc, { merge: true });
 	}
 
 	const { last_edited_at, topic_id: topicId } = newPostDoc;

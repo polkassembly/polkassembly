@@ -31,6 +31,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import { checkIsProposer } from './utils/checkIsProposer';
 import { getUserWithAddress } from '../data/userProfileWithUsername';
+import IPFSScript from '~src/api-utils/ipfs';
 
 export interface IEditPostResponse {
 	content: string;
@@ -295,6 +296,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			const postDocRef = postsByTypeRef(network, proposalType).doc(String(obj.index));
 			if (strProposalType === proposalType && Number(obj.index) === Number(postId)) {
 				isCurrPostUpdated = true;
+				const ipfsScript = new IPFSScript();
+				ipfsScript.run(newPostDoc, postDocRef.path);
 				batch.set(postDocRef, newPostDoc, { merge: true });
 			} else if (![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)) {
 				let post_link: any = {
@@ -304,31 +307,32 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				if (isProposalTypeValid(strProposalType)) {
 					post_link = null;
 				}
-				batch.set(
-					postDocRef,
-					{
-						content,
-						created_at,
-						id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
-						isDeleted: false,
-						last_edited_at: last_comment_at,
-						post_link: post_link,
-						proposer_address: proposer_address,
-						summary: summary,
-						tags: tags || [],
-						title,
-						topic_id: topic_id || getTopicFromType(proposalType).id,
-						user_id: post?.user_id || user.id,
-						username: post?.username || user.username
-					},
-					{ merge: true }
-				);
+				const data = {
+					content,
+					created_at,
+					id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
+					isDeleted: false,
+					last_edited_at: last_comment_at,
+					post_link: post_link,
+					proposer_address: proposer_address,
+					summary: summary,
+					tags: tags || [],
+					title,
+					topic_id: topic_id || getTopicFromType(proposalType).id,
+					user_id: post?.user_id || user.id,
+					username: post?.username || user.username
+				};
+				const ipfsScript = new IPFSScript();
+				ipfsScript.run(data, postDocRef.path);
+				batch.set(postDocRef, data, { merge: true });
 			}
 		});
 		await batch.commit();
 	}
 
 	if (!isCurrPostUpdated) {
+		const ipfsScript = new IPFSScript();
+		ipfsScript.run(newPostDoc, postDocRef.path);
 		await postDocRef.set(newPostDoc, { merge: true });
 	}
 

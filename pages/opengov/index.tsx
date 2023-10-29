@@ -32,6 +32,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -120,6 +121,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	const { api, apiReady } = useApiContext();
 	const { id: userId } = useUserDetailsSelector();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -177,7 +179,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 			</div>
 
 			<div className='mx-1 mt-8'>
-				<TreasuryOverview />
+				<TreasuryOverview theme={theme} />
 			</div>
 
 			<div className='mx-1 mt-8'>

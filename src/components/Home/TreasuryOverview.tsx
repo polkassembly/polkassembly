@@ -29,21 +29,21 @@ import SpendPeriodDark from '~assets/icons/SpendPeriodDark.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
 interface ITreasuryOverviewProps {
 	inTreasuryProposals?: boolean;
 	className?: string;
+	theme?: string;
 }
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
-	const { className, inTreasuryProposals } = props;
+	const { className, inTreasuryProposals, theme } = props;
 	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useApiContext();
-	const { resolvedTheme: theme } = useTheme();
+	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
 
 	const blockTime: number = chainProperties?.[network]?.blockTime;
 	const [available, setAvailable] = useState({
@@ -524,7 +524,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 													<Progress
 														className='m-0 flex items-center p-0'
 														percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
-														trailColor='#E1E6EB'
+														trailColor={trailColor}
 														strokeColor='#E5007A'
 														size='small'
 													/>
@@ -549,7 +549,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 export default styled(TreasuryOverview)`
 	.ant-progress-text {
-		color: #485f7d !important;
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#1E262D')} !important;
 		font-size: 12px !important;
 	}
 	.ant-progress-outer {

@@ -26,7 +26,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<HomeFilled className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
+					<HomeFilled className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.twitter ? (
@@ -35,7 +35,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<TwitterOutlined className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
+					<TwitterOutlined className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.discord ? (
@@ -44,7 +44,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<DiscordIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
+					<DiscordIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.github ? (
@@ -53,7 +53,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<GithubIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
+					<GithubIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.youtube ? (
@@ -62,7 +62,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<YoutubeFilled className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
+					<YoutubeFilled className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.reddit ? (
@@ -71,7 +71,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<RedditIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
+					<RedditIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.telegram ? (
@@ -80,7 +80,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<TelegramIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
+					<TelegramIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 			{blockchain_socials.block_explorer ? (
@@ -89,7 +89,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<CubeIcon className='text-sm text-lightBlue dark:text-blue-dark-medium md:mr-1 md:text-lg' />
+					<CubeIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
 				</a>
 			) : null}
 		</Space>

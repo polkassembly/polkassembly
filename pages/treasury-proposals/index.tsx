@@ -123,7 +123,10 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			</div>
 
 			{/* Treasury Overview Cards */}
-			<TreasuryOverview className='my-6' />
+			<TreasuryOverview
+				theme={theme}
+				className='my-6'
+			/>
 
 			<div className='rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center justify-between'>

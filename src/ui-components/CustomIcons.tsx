@@ -125,6 +125,7 @@ import PgpSVG from '~assets/icons/pgp-icon.svg';
 import RedirectSVG from '~assets/icons/redirect-icon.svg';
 import ProposalsIconSVG from '~assets/icons/proposals-icon.svg';
 import TechComIconSVG from '~assets/icons/tech-com-icon.svg';
+import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -185,6 +186,13 @@ export const OptionMenu = (props: Partial<CustomIconComponentProps>) => (
 export const PolkassemblyIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={PolkassemblyLogo}
+		{...props}
+	/>
+);
+
+export const DelegateModalIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DelegateProfileGreyIcon}
 		{...props}
 	/>
 );

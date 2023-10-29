@@ -201,7 +201,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);
 				}}
-				title={<h3 className='text-xl font-semibold text-[#1D2632]'>Edit Profile</h3>}
+				title={<div className='text-xl font-semibold text-[#1D2632] dark:bg-section-dark-overlay dark:text-white'>Edit Profile</div>}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				footer={
 					<div className='-mx-6 -mb-5 px-6 pb-4'>
@@ -215,7 +215,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								}}
 								disabled={loading}
 								size='middle'
-								className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm font-medium text-pink_primary'
+								className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm font-medium text-pink_primary dark:bg-section-dark-overlay'
 							>
 								Cancel
 							</Button>,
@@ -267,6 +267,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						{
 							children: (
 								<Socials
+									theme={theme}
 									loading={loading}
 									profile={profile}
 									setProfile={setProfile}

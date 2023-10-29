@@ -34,6 +34,9 @@ const StyledTabs = styled(AntdTabs)`
 	.ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab-active {
 		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
 	}
+	.dmTqqK .borderRemove .ant-tabs-nav-list {
+		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+	}
 `;
 
 export const Tabs = (props: any) => {

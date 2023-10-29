@@ -29,13 +29,10 @@ import Balance from '~src/components/Balance';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
-
-import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
-import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
@@ -348,7 +345,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						<DelegateProfileGreyIcon className='mr-2' />
+						<DelegateModalIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive' />
 						Delegate
 					</div>
 				}
@@ -491,7 +488,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									inputClassName='text-[#7c899b] text-sm dark:bg-section-dark-overlay'
 									theme={theme}
 								/>
-								<div className='mb-2 mt-4 border-solid border-white dark:border-separatorDark'>
+								<div className='mb-2 mt-4'>
 									<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
 										Conviction
 										<span>
@@ -554,7 +551,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										{checkedTrack && (
 											<div
 												key={checkedTrack?.trackId}
-												className='flex items-center justify-center gap-2 rounded-[20px] border-[1px] border-solid border-[#D2D8E0] px-3 py-2 text-sm text-[#7c899b]'
+												className='flex items-center justify-center gap-2 rounded-[20px] border-[1px] border-solid border-[#D2D8E0] px-3 py-2 text-sm text-[#7c899b] dark:border-separatorDark dark:text-white'
 											>
 												{checkedTrack?.name}
 											</div>
@@ -565,14 +562,14 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 												.map((list, index) => (
 													<div
 														key={index}
-														className='flex items-center justify-center gap-2 rounded-[20px] border-[1px] border-solid border-[#D2D8E0] px-3 py-2 text-sm text-[#7c899b]'
+														className='flex items-center justify-center gap-2 rounded-[20px] border-[1px] border-solid border-[#D2D8E0] px-3 py-2 text-sm text-[#7c899b] dark:border-separatorDark dark:text-white'
 													>
 														{list}
 														<span
 															onClick={() => handleClose(String(list))}
 															className='flex items-center justify-center'
 														>
-															<CrossIcon />
+															<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 														</span>
 													</div>
 												))}

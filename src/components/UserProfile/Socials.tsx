@@ -8,16 +8,19 @@ import React, { FC } from 'react';
 import { ProfileDetails } from '~src/auth/types';
 import { socialLinks } from './Details';
 import { SocialIcon } from '~src/ui-components/SocialLinks';
+import styled from 'styled-components';
 
 interface ISocialsProps {
 	loading: boolean;
 	setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>;
 	profile: ProfileDetails;
 	errorCheck?: string | undefined;
+	theme?: string;
 }
 
 const Socials: FC<ISocialsProps> = (props) => {
-	const { loading, profile, setProfile, errorCheck } = props;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { loading, profile, setProfile, errorCheck, theme } = props;
 	return (
 		<div className='flex max-h-[552px] flex-col gap-y-4'>
 			{socialLinks.map((socialLink) => {
@@ -32,7 +35,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 							<span>{strLink}</span>
 						</label>
 						<Input
-							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							size='large'
 							type='url'
 							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)]' />}
@@ -84,4 +87,9 @@ const Socials: FC<ISocialsProps> = (props) => {
 	);
 };
 
-export default Socials;
+export default styled(Socials)`
+	.ant-input .ant-input-lg {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#1D2632')} !important;
+	}
+`;

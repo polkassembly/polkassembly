@@ -183,7 +183,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className={`flex items-center gap-2 border-l-0 border-r-0 border-t-0 px-8 py-6 text-xl font-medium text-sidebarBlue max-lg:gap-0 ${
+				className={`flex items-center gap-2 border-l-0 border-r-0 border-t-0 px-8 py-6 text-xl font-medium text-sidebarBlue dark:text-white max-lg:gap-0 ${
 					showTable && 'border-b-[1px] border-solid border-[#e7ebf0] dark:text-blue-dark-high'
 				} max-lg:px-4`}
 			>
@@ -265,7 +265,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 									setStatusValue(ETrackDelegationStatus.Undelegated);
 									filterByStatus(ETrackDelegationStatus.Undelegated);
 								}}
-								className={`ml-[17px] flex cursor-pointer items-center justify-center border-none text-sm font-normal  tracking-wide text-[#E5007A] shadow-none max-md:mt-[10px] ${
+								className={`ml-[17px] flex cursor-pointer items-center justify-center border-none text-sm font-normal  tracking-wide text-[#E5007A] shadow-none dark:bg-transparent max-md:mt-[10px] ${
 									!api || (!apiReady && 'opacity-50')
 								}`}
 							>

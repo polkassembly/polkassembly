@@ -112,10 +112,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			<div className='flex gap-x-6'>
 				<div className='hidden w-full max-w-[103px] md:block'></div>
 				<div className='flex-1'>
-					<Divider
-						className='my-6'
-						style={{ borderColor: '#d2d8e0' }}
-					/>
+					<Divider className='my-6 border-[#d2d8e0] dark:border-separatorDark' />
 					<article>
 						<label
 							className='cursor-pointer text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'

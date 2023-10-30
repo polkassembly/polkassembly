@@ -82,7 +82,7 @@ const AddressDropdown = ({
 				<Address
 					className={`flex items-center ${poppins.className} ${poppins.className}`}
 					addressOtherTextType={getOtherTextType(account)}
-					addressClassName='text-lightBlue'
+					addressClassName='text-lightBlue text-xs'
 					extensionName={account.name}
 					address={account.address}
 					disableAddressClick
@@ -147,7 +147,7 @@ const AddressDropdown = ({
 						)
 					)}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
-					addressClassName='text-lightBlue'
+					addressClassName='text-lightBlue text-xs'
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
 				/>

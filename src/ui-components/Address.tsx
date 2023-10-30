@@ -322,7 +322,7 @@ const Address = (props: Props) => {
 							</div>
 						)}
 						<div
-							className={`${addressClassName} ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} text-xs font-normal`}
+							className={`${!addressClassName ? 'text-xs' : addressClassName} ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} font-normal`}
 							onClick={(e) => handleClick(e)}
 						>
 							{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}

@@ -64,7 +64,6 @@ import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import ProposalLive from './ProposalLive';
 import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
 
@@ -416,7 +415,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 	if (network === 'polymesh') {
 		items = items.concat(
-			getSiderMenuItem(<span className='ml-2 cursor-text text-base font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
+			getSiderMenuItem(<span className='ml-2 cursor-text text-xs font-medium uppercase text-lightBlue hover:text-navBlue'>PIPs</span>, 'pipsHeading', null),
 			...gov1Items.PIPsItems
 		);
 		collapsedItems = collapsedItems.concat([...gov1Items.PIPsItems]);
@@ -542,7 +541,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		// Tracks Heading
-		getSiderMenuItem(<span className='ml-2 text-base font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
+		getSiderMenuItem(<span className='ml-2 text-xs font-medium uppercase text-lightBlue hover:text-navBlue'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.governanceItems]),
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [...gov2TrackItems.fellowshipItems])
@@ -598,10 +597,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
-		router.replace(router.asPath);
 		if (!router.query?.username) return;
 		if (router.query?.username.includes(username)) {
-			router.replace('/');
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 	};
 
@@ -716,7 +714,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				) : ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
-						<ProposalLive />
 						<div className='flex flex-row'>
 							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 							<CustomContent

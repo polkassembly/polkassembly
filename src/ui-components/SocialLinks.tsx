@@ -54,7 +54,7 @@ const SocialLink: FC<ISocialLink> = (props) => {
 			link = `https://twitter.com/${userName}`;
 			break;
 		case ESocialType.TELEGRAM:
-			link = `https:/t.me/${userName}`;
+			link = `https://t.me/${userName}`;
 			break;
 		case ESocialType.EMAIL:
 			link = `mailto:${handle}`;

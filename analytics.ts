@@ -3,22 +3,20 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import ReactGA from 'react-ga4';
 import { chainProperties } from '~src/global/networkConstants';
-
-
 export const initGA = (network: string) => {
-    ReactGA.initialize(chainProperties[network].gTag || '');
+	ReactGA.initialize(chainProperties[network].gTag || '');
 };
 
 export const logPageView = () => {
-    ReactGA.set({ page: window.location.pathname });
-    ReactGA.send("pageview");
+	ReactGA.set({ page: window.location.pathname });
+	ReactGA.send('pageview');
 };
 
 export const trackEvent = (category: string, action: string, label: string) => {
-    ReactGA.event({
-        category,
-        action,
-        label,
-        transport: "xhr"
-    });
+	ReactGA.event({
+		action,
+		category,
+		label,
+		transport: 'xhr'
+	});
 };

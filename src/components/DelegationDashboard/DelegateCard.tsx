@@ -33,11 +33,11 @@ interface Props {
 const ZERO_BN = new BN(0);
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const [balance, setBalance] = useState<BN>(ZERO_BN);
-	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [social_links, setSocial_links] = useState<any[]>([]);
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);

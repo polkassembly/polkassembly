@@ -5,7 +5,6 @@
 import { Avatar } from 'antd';
 import React, { FC } from 'react';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
-
 interface IImageComponentProps {
 	className?: string;
 	src: any;
@@ -15,16 +14,18 @@ interface IImageComponentProps {
 
 const ImageComponent: FC<IImageComponentProps> = (props) => {
 	const { alt, className, src, iconClassName } = props;
-	const newSrc = src && src.trim() ? src.trim() : null;
+	const regex = /\.(jpg|jpeg|png|gif|bmp|svg|tiff|ico)$/;
 	return (
 		<Avatar
 			className={className}
-			src={newSrc}
+			src={src}
 			alt={alt}
 			icon={
-				<span className={iconClassName}>
-					<DefaultProfile />
-				</span>
+				regex.test(src) ? null : (
+					<span className={iconClassName}>
+						<DefaultProfile />
+					</span>
+				)
 			}
 		/>
 	);

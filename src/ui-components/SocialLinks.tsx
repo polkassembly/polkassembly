@@ -79,6 +79,11 @@ const SocialLink: FC<ISocialLink> = (props) => {
 			) : (
 				<a
 					href={link}
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						window.open(link, '_blank');
+					}}
 					target='_blank'
 					rel='noreferrer'
 					className={className}

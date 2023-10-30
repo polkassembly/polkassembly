@@ -87,6 +87,7 @@ const AddressDropdown = ({
 					address={account.address}
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
+					disableTooltip
 				/>
 			)
 		});
@@ -150,6 +151,7 @@ const AddressDropdown = ({
 					addressClassName='text-lightBlue text-xs'
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
+					disableTooltip
 				/>
 				<span className='mx-2 mb-1'>
 					<DownIcon />

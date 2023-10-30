@@ -61,7 +61,13 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 	};
 
 	return (
-		<div className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2`}>
+		<div
+			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2`}
+			onClick={(e) => {
+				e.stopPropagation();
+				e.preventDefault();
+			}}
+		>
 			<div className='flex flex-col gap-1.5 px-4'>
 				<ImageComponent
 					src={imgUrl}
@@ -69,7 +75,7 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 					className='absolute left-[25%] top-[-4%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 border-[3px] border-solid border-white bg-transparent'
 					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
 				/>
-				<div className='mt-[28px] flex items-center justify-start gap-2'>
+				<div className='mt-8 flex items-center justify-start gap-2'>
 					<span className='text-xl font-semibold tracking-wide text-bodyBlue'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
 					<div className='flex items-center justify-center'>{isGood ? <VerifiedIcon /> : <MinusCircleFilled style={{ color }} />}</div>
 					<a
@@ -95,6 +101,7 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 						iconSize={20}
 						addressMaxLength={5}
 						addressClassName='text-sm'
+						disableTooltip
 					/>
 					<span
 						className='flex cursor-pointer items-center'
@@ -108,7 +115,7 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 						<CopyIcon />
 					</span>
 				</div>
-				<div className='flex items-center justify-between gap-1 border-solid'>
+				<div className='mt-0.5 flex items-center justify-between gap-1 border-solid'>
 					<span className='flex items-center text-xs tracking-wide text-[#9aa7b9]'>
 						Since:<span className='ml-0.5 text-lightBlue '>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
 					</span>
@@ -135,7 +142,7 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 					</div>
 				</div>
 			</div>
-			<article className='mt-1 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue'>
+			<article className='mt-2 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue'>
 				<div className='flex items-center gap-1 font-medium text-lightBlue'>
 					<JudgementIcon />
 					<span>Judgements:</span>

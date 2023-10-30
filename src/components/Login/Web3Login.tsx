@@ -288,7 +288,14 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 							localStorage.setItem('multisigAssociatedAddress', address);
 							handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 							if (isModal) {
-								setLoginOpen && setLoginOpen(false);
+								const localCurrentUser: any = decodeToken<JWTPayloadType>(confirmData.token);
+								if (localCurrentUser?.web3signup && localCurrentUser?.username.length === 25 && !MANUAL_USERNAME_25_CHAR.includes(localCurrentUser?.username)) {
+									setLoginOpen?.(true);
+									setShowOptionalFields(true);
+								} else {
+									setLoginOpen?.(false);
+									setShowOptionalFields(false);
+								}
 								setLoading(false);
 								return;
 							}
@@ -389,12 +396,50 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 		}
 	};
 
-	const handleOptionalSkip = () => {
+	const handleOptionalSkip = async () => {
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
+			badges: JSON.stringify([]),
+			bio: '',
+			custom_username: true,
+			email: currentUser.email || '',
+			image: currentUser.picture || '',
+			social_links: JSON.stringify([]),
+			title: '',
+			user_id: Number(currentUser.id),
+			username: optionalUsername
+		});
+
+		if (error || !data) {
+			console.error('Error updating profile: ', error);
+			queueNotification({
+				header: 'Error!',
+				message: error || 'Your Username was not updated.',
+				status: NotificationStatus.ERROR
+			});
+			setLoading(true);
+			setShowSuccessModal(true);
+			setIsError(true);
+		}
+
+		if (data?.token) {
+			queueNotification({
+				header: 'Success!',
+				message: 'Your Username is updated.',
+				status: NotificationStatus.SUCCESS
+			});
+			handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
+			setLoading(false);
+			setLoginOpen?.(false);
+			setShowSuccessModal(false);
+			setIsError(false);
+		}
 		setLoginOpen?.(false);
 	};
 
 	const handleOptionalDetails = async () => {
 		if (email && email.trim() !== '') {
+			setLoading(true);
 			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
 				badges: JSON.stringify([]),
 				bio: '',
@@ -426,7 +471,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					status: NotificationStatus.SUCCESS
 				});
 				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
-				setLoading(true);
+				setLoading(false);
 				setLoginOpen?.(false);
 				setShowSuccessModal(false);
 				setIsError(false);
@@ -742,22 +787,13 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 									</div>
 									{!isError && (
 										<div
-											className='mb-5 mt-1 flex justify-center p-3 text-center'
+											className='mb-5 mt-1 flex p-3'
 											style={{ backgroundColor: '#E6F4FF', border: '1px solid #91CAFF', borderRadius: '6px' }}
 										>
 											<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
 											<p className='m-0 p-0 text-sm text-bodyBlue'>You can update your username from the settings page.</p>
 										</div>
 									)}
-									{/* {isError && (
-								<div
-									className='-mt-1 mb-5 flex justify-center p-3 text-center'
-									style={{ backgroundColor: '#FFF1F4', border: '1px solid #FF3C5F', borderRadius: '6px' }}
-								>
-									<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
-									<p className='m-0 p-0 text-sm text-bodyBlue'>Adding a username is a mandatory field.</p>
-								</div>
-							)} */}
 								</div>
 								<Divider
 									className='-mt-2'
@@ -818,7 +854,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 										style={{ backgroundColor: '#E6F4FF', border: '1px solid #91CAFF', borderRadius: '6px' }}
 									>
 										<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
-										<p className='m-0 p-0 text-sm text-bodyBlue'>You can set your email and password later from the settings page.</p>
+										<p className='m-0 p-0 text-sm text-bodyBlue'>You can set your email later from the settings page.</p>
 									</div>
 								</div>
 								<Divider
@@ -829,6 +865,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 									{!email && (
 										<Button
 											size='large'
+											loading={loading}
 											onClick={handleOptionalSkip}
 											className='w-[144px] rounded-md border border-solid border-pink_primary text-pink_primary outline-none'
 										>
@@ -839,6 +876,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 										<Button
 											size='large'
 											htmlType='submit'
+											loading={loading}
 											className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
 										>
 											Done

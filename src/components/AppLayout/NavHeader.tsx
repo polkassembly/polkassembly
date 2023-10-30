@@ -170,7 +170,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
-					onClick={() => handleLogout(username || '')}
+					onClick={() => {
+						handleLogout(username || '');
+						window.location.reload(); // Add this line to reload the page
+					}}
 					href='/'
 				>
 					<IconLogout className='userdropdown-icon text-2xl' />

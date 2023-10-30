@@ -324,7 +324,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 				if (isModal) {
 					const localCurrentUser: any = decodeToken<JWTPayloadType>(addressLoginData.token);
-					console.log(localCurrentUser);
 					if (localCurrentUser?.web3signup && localCurrentUser?.username.length === 25 && !MANUAL_USERNAME_25_CHAR.includes(localCurrentUser?.username)) {
 						setLoginOpen?.(true);
 						setShowOptionalFields(true);
@@ -332,8 +331,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						setLoginOpen?.(false);
 						setShowOptionalFields(false);
 					}
-					// setLoginOpen?.(true);
-					// setShowOptionalFields(true);
 					setLoading(false);
 					return;
 				}
@@ -375,6 +372,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					status: NotificationStatus.ERROR
 				});
 				errorUsername += 1;
+				setLoading(true);
 			}
 		}
 		return errorUsername === 0;
@@ -397,7 +395,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 	const handleOptionalDetails = async () => {
 		if (email && email.trim() !== '') {
-			console.log(email);
 			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
 				badges: JSON.stringify([]),
 				bio: '',

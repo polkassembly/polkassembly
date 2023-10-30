@@ -5,8 +5,6 @@
 import { Avatar } from 'antd';
 import React, { FC } from 'react';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
-import validator from 'validator';
-
 interface IImageComponentProps {
 	className?: string;
 	src: any;
@@ -16,16 +14,14 @@ interface IImageComponentProps {
 
 const ImageComponent: FC<IImageComponentProps> = (props) => {
 	const { alt, className, src, iconClassName } = props;
-	const regex = validator.isURL(src || '', { protocols: ['http', 'https'], require_protocol: true });
-
-	const newSrc = regex && src && src.trim() ? src.trim() : null;
+	const regex = /\.(jpg|jpeg|png|gif|bmp|svg|tiff|ico)$/;
 	return (
 		<Avatar
 			className={className}
-			src={newSrc}
+			src={src}
 			alt={alt}
 			icon={
-				newSrc ? null : (
+				regex.test(src) ? null : (
 					<span className={iconClassName}>
 						<DefaultProfile />
 					</span>

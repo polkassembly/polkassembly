@@ -7,20 +7,19 @@ import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-der
 import { Tooltip, Skeleton, message } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import VerifiedIcon from '~assets/icons/verified-icon.svg';
-import EmailIcon from '~assets/icons/email-icon.svg';
-import LegalIcon from '~assets/icons/legal-icon.svg';
+import VerifiedIcon from '~assets/icons/verified-tick.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
-import TwitterIcon from '~assets/icons/twitter-icon.svg';
-import WebIcon from '~assets/icons/web-icon.svg';
-import RiotIcon from '~assets/icons/riot-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
-import PgpIcon from '~assets/icons/pgp-icon.svg';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import CopyIcon from '~assets/icons/content_copy_small.svg';
 import copyToClipboard from '~src/util/copyToClipboard';
+import { poppins } from 'pages/_app';
+import Address from './Address';
+import dayjs from 'dayjs';
+import SocialLink from './SocialLinks';
+import { socialLinks } from '~src/components/UserProfile/Details';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -32,9 +31,10 @@ interface Props {
 	identity?: DeriveAccountRegistration | null;
 	flags?: DeriveAccountFlags;
 	web3Name?: string;
-	addressPrefix?: string;
+	polkassemblyUsername?: string;
+	username: string;
 	imgUrl?: string;
-	sinceDate?: Date;
+	profileCreatedAt?: Date;
 	addressShort: string;
 }
 
@@ -64,7 +64,7 @@ const StyledPopup = styled.div`
 	}
 `;
 
-const IdentityBadge = ({ className, address, identity, flags, addressPrefix, imgUrl, sinceDate, addressShort }: Props) => {
+const IdentityBadge = ({ className, address, identity, flags, username, polkassemblyUsername, imgUrl, profileCreatedAt }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
@@ -83,7 +83,6 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 		{ key: 'Email', value: identity?.email },
 		{ key: 'Judgements', value: identity?.judgements || [] },
 		{ key: 'Legal', value: identity?.legal },
-		{ key: 'Pgp', value: identity?.pgp },
 		{ key: 'Riot', value: identity?.riot },
 		{ key: 'Twitter', value: identity?.twitter },
 		{ key: 'Web', value: identity?.web }
@@ -107,63 +106,47 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 		</span>
 	);
 
-	const getIdentityIcons = (key: string) => {
-		switch (key) {
-			case 'Legal':
-				return <LegalIcon className='mx-1' />;
-			case 'Email':
-				return <EmailIcon className='mx-1' />;
-			case 'Pgp':
-				return <PgpIcon className='mx-1' />;
-			case 'Riot':
-				return <RiotIcon className='mx-1' />;
-			case 'Twitter':
-				return <TwitterIcon className='mx-1' />;
-			case 'Web':
-				return <WebIcon className='mx-1' />;
-		}
-	};
 	// const displayJudgements = JSON.stringify(judgements?.map(([, jud]) => jud.toString()));
 	const popupContent = (
 		<>
-			<StyledPopup>
-				<ImageComponent
-					src={imgUrl}
-					alt='User Picture'
-					className='absolute left-[25%] top-[-5%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 bg-transparent'
-					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
-				/>
-				<div className='mb-0 mt-6 flex items-center'>
-					<h3 className='whitespace-pre text-[15px] font-semibold text-bodyBlue'>{addressPrefix}</h3>
-					{isGood ? (
-						<VerifiedIcon className='ml-1.5 mt-[-5px]' />
-					) : (
-						<MinusCircleFilled
-							className='ml-1 mt-[-6px]'
-							style={{ color }}
-						/>
-					)}
+			<StyledPopup className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 px-3`}>
+				<div>
+					<ImageComponent
+						src={imgUrl}
+						alt='User Picture'
+						className='absolute left-[25%] top-[-5%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 bg-transparent'
+						iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
+					/>
+				</div>
+				<div className='mt-4 flex items-center justify-start gap-2'>
+					<span className='text-xl font-semibold tracking-wide text-bodyBlue'>{username?.length > 12 ? `${username?.slice(0, 12)}...` : username}</span>
+					<div className='flex items-center justify-center'>{isGood ? <VerifiedIcon /> : <MinusCircleFilled style={{ color }} />}</div>
 					<a
 						target='_blank'
 						rel='noreferrer'
-						className='flex text-pink-500'
-						onClick={(e) => {
-							e.stopPropagation();
-							e.preventDefault();
+						className='flex text-pink_primary'
+						onClick={() => {
 							const substrateAddress = getSubstrateAddress(address);
-							if (addressPrefix) {
-								return window.open(`https://${network}.polkassembly.io/address/${substrateAddress}`, '_blank');
+							if (!polkassemblyUsername?.length) {
+								window.open(`https://${network}.polkassembly.io/address/${substrateAddress || address}`, '_blank');
+							} else {
+								window.open(`https://${network}.polkassembly.io/user/${polkassemblyUsername}`, '_blank');
 							}
-							return window.open(`https://${network}.polkassembly.io/user/${addressPrefix}`, '_blank');
 						}}
 					>
-						<ShareScreenIcon className='ml-1 mr-2 mt-[-5px]' />
+						<ShareScreenIcon />
 					</a>
 				</div>
-				<div className='-mt-0.5 mb-1 flex text-xs text-bodyBlue'>
-					<span>{addressShort}</span>
+				<div className='flex items-center gap-2 text-xs text-bodyBlue'>
+					<Address
+						address={address}
+						iconSize={20}
+						disableHeader
+						addressMaxLength={5}
+						addressClassName='text-base'
+					/>
 					<span
-						className='ml-2 flex cursor-pointer items-center'
+						className='flex cursor-pointer items-center'
 						onClick={(e) => {
 							e.preventDefault();
 							copyToClipboard(address);
@@ -174,47 +157,55 @@ const IdentityBadge = ({ className, address, identity, flags, addressPrefix, img
 						<CopyIcon />
 					</span>
 				</div>
-				<div className='flex items-center justify-between'>
-					<p className='mb-0.5 text-xs text-[#576D8B99]'>
-						Since:
-						<span className='text-lightBlue'>{sinceDate?.toLocaleDateString()}</span>
-					</p>
-					<div className='flex items-center'>
-						{identityArr.map((item, index) => {
+				<div className='flex flex-col gap-2 border-solid'>
+					<span className='text-xs tracking-wide text-[#7C899A]'>Since: {dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
+					<div className='flex gap-1.5'>
+						{socialLinks?.map((social: any, index: number) => {
+							const link = identityArr?.find((s) => s.key === social)?.value || '';
 							return (
-								<Tooltip
-									color='#575255'
+								<div
+									title={link ? String(link) : ''}
 									key={index}
-									title={JSON.stringify(item?.value)}
 								>
-									{/* item should not be judgements */}
-									{JSON.stringify(item?.value) && item?.key !== 'Judgements' ? (
-										<span className='px-auto ml-1 h-[20px] w-[22px] cursor-pointer rounded-xl bg-[#EDEFF3] text-bodyBlue '>
-											{item?.key !== 'Judgements' && getIdentityIcons(item?.key)}
-										</span>
-									) : null}
-								</Tooltip>
+									<SocialLink
+										className={`flex h-[22px] w-[22px] items-center justify-center rounded-[20px] p-[10px] text-xs hover:text-[#576D8B] ${link ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
+										link={link as string}
+										type={social}
+										iconClassName={`text-xs ${link ? 'text-white' : 'text-[#96A4B6]'}`}
+									/>
+								</div>
 							);
 						})}
 					</div>
 				</div>
-				<article className='mx-auto mt-2 flex h-11 w-48 rounded-lg bg-[#F4F8FF] text-xs text-bodyBlue'>
-					<div className='m-auto flex items-center'>
-						<span className='font-medium text-lightBlue'>
-							<JudgementIcon className='mx-1' />
-							Judgements:
-						</span>
-						<div className='ml-1 mt-0.5'>{judgements?.map(([, jud]) => jud.toString()).join(', ') || 'None'}</div>
+				<article className='mt-1 flex h-11 items-center gap-1 rounded-lg bg-[#F4F8FF] px-3 text-xs text-bodyBlue'>
+					<div className='flex items-center gap-1 font-medium text-lightBlue'>
+						<JudgementIcon />
+						<span>Judgements:</span>
 					</div>
+					<span className='text-bodyBlue'>
+						{judgements
+							?.map(([, jud]) => jud.toString())
+							.join(', ')
+							?.split(',')?.[0] || 'None'}
+					</span>
 				</article>
 			</StyledPopup>
 		</>
 	);
 
 	return (
-		<div className={className}>
+		<div
+			className={className}
+			onClick={(e) => {
+				e.stopPropagation();
+				e.preventDefault();
+			}}
+		>
 			<Tooltip
+				arrow
 				color='#fff'
+				overlayClassName='w-[300px]'
 				title={popupContent}
 			>
 				<div>{infoElem}</div>

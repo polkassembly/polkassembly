@@ -365,7 +365,7 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 			{
 				dataIndex: 'lockPeriod',
 				key: 1,
-				render: (conviction) => <div className='text-start text-sm font-normal text-bodyBlue'>{conviction}x</div>,
+				render: (conviction) => <div className='text-start text-sm font-normal text-bodyBlue'>{Number(conviction) ? conviction : 0.1}x</div>,
 				title: 'Conviction',
 				width: '15%'
 			},
@@ -424,7 +424,7 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 			{
 				dataIndex: 'lockPeriod',
 				key: 1,
-				render: (conviction) => <div className='text-start text-sm font-normal text-bodyBlue'>{conviction}x</div>,
+				render: (conviction) => <div className='text-start text-sm font-normal text-bodyBlue'>{Number(conviction) ? conviction : 0.1}x</div>,
 				title: 'Conviction',
 				width: '15%'
 			},

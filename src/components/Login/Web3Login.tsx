@@ -42,7 +42,6 @@ import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import { decodeToken } from 'react-jwt';
 import { JWTPayloadType } from '~src/auth/types';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
-import dayjs from 'dayjs';
 import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 
 const ZERO_BN = new BN(0);
@@ -322,17 +321,11 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 				localStorage.setItem('multisigAssociatedAddress', address);
 				handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
-				const FEATURE_RELEASE_DATE = dayjs('2023-06-12').toDate(); // Date from which we are sending custom username flag on web3 sign up.
 
 				if (isModal) {
 					const localCurrentUser: any = decodeToken<JWTPayloadType>(addressLoginData.token);
 					console.log(localCurrentUser);
-					if (
-						localCurrentUser?.web3signup &&
-						localCurrentUser?.username.length === 25 &&
-						!MANUAL_USERNAME_25_CHAR.includes(localCurrentUser?.username) &&
-						dayjs(localCurrentUser?.created_at).isBefore(dayjs(FEATURE_RELEASE_DATE))
-					) {
+					if (localCurrentUser?.web3signup && localCurrentUser?.username.length === 25 && !MANUAL_USERNAME_25_CHAR.includes(localCurrentUser?.username)) {
 						setLoginOpen?.(true);
 						setShowOptionalFields(true);
 					} else {

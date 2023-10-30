@@ -8,7 +8,7 @@ import DarkModeSwitcher from '~assets/icons/darkmodeswitcher.svg';
 import LightModeSwitcher from '~assets/icons/lightmodeswitcher.svg';
 import classNames from 'classnames';
 
-const ToggleButton = () => {
+const BigToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();
 
 	return (
@@ -18,15 +18,19 @@ const ToggleButton = () => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
 				}}
-				className={classNames('flex cursor-pointer items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent p-2 outline-none', {
+				className={classNames('flex cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-3 py-[6px] outline-none', {
 					'border-[#3B444F]': theme === 'dark',
 					'border-[#D2D8E0]': theme === 'light'
 				})}
 			>
 				{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}
+				<p className='m-0 flex items-center justify-center gap-x-1'>
+					<span className='text-xs font-normal tracking-[0.24px] text-bodyBlue dark:text-white'>Switch to</span>
+					<span className='text-xs font-semibold tracking-[0.24px] text-bodyBlue dark:text-white'>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+				</p>
 			</button>
 		</div>
 	);
 };
 
-export default ToggleButton;
+export default BigToggleButton;

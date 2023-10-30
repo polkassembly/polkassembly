@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
@@ -69,6 +70,7 @@ import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
+import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -340,16 +342,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							} svgLogo logo-container logo-display-block flex h-[66px] items-center justify-center bg-transparent`}
 						>
 							<div>
-								<PaLogo
-									className={`${sidedrawer ? 'ml-2' : 'ml-0'}h-full`}
-									sidedrawer={sidedrawer}
-								/>
-								<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
+								<div className={`${sidedrawer ? 'ml-2' : 'ml-0'} h-full`}>
+									{sidedrawer ? (
+										<img
+											src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
+											alt='polkassembly logo'
+										/>
+									) : (
+										<PaLogo sidedrawer={sidedrawer} />
+									)}
+								</div>
+								<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 							</div>
 						</div>
 				  )
 				: null,
-			getSiderMenuItem('', '', <ToggleButton />),
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-lightBlue dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
@@ -553,16 +560,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						} svgLogo logo-container logo-display-block flex h-[66px] items-center justify-center bg-transparent`}
 					>
 						<div>
-							<PaLogo
-								className={`${sidedrawer ? 'ml-2' : 'ml-0'} h-full`}
-								sidedrawer={sidedrawer}
-							/>
-							<div className={`${sidedrawer ? 'ml-[38px] w-56' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
+							<div className={`${sidedrawer ? 'ml-2' : 'ml-0'} h-full`}>
+								{sidedrawer ? (
+									<img
+										src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
+										alt='polkassembly logo'
+									/>
+								) : (
+									<PaLogo sidedrawer={sidedrawer} />
+								)}
+							</div>
+							<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 						</div>
 					</div>
 			  )
 			: null,
-		getSiderMenuItem('', '', <ToggleButton />),
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 text-lightBlue dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 text-lightBlue dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-lightBlue dark:text-icon-dark-inactive' />),
@@ -715,14 +727,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
 					className={'sidebar fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white dark:bg-section-dark-overlay lg:block'}
 				>
-					<Menu
-						theme={theme}
-						mode='inline'
-						selectedKeys={[router.pathname]}
-						items={sidebarItems}
-						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
-					/>
+					<div className='flex h-full flex-col justify-between'>
+						<Menu
+							theme={theme}
+							mode='inline'
+							selectedKeys={[router.pathname]}
+							items={sidebarItems}
+							onClick={handleMenuClick}
+							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
+						/>
+						<ToggleButton />
+					</div>
 				</Sider>
 				<Drawer
 					placement='left'
@@ -739,16 +754,19 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						zIndex: '1005'
 					}}
 				>
-					<Menu
-						theme={theme}
-						mode='inline'
-						selectedKeys={[router.pathname]}
-						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
-						items={sidebarItems}
-						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
-						onMouseLeave={() => setSidedrawer(false)}
-					/>
+					<div className='flex h-full flex-col justify-between'>
+						<Menu
+							theme={theme}
+							mode='inline'
+							selectedKeys={[router.pathname]}
+							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
+							items={sidebarItems}
+							onClick={handleMenuClick}
+							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
+							onMouseLeave={() => setSidedrawer(false)}
+						/>
+						<BigToggleButton />
+					</div>
 				</Drawer>
 				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>

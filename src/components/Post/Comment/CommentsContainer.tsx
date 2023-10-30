@@ -306,7 +306,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								>
 									<div
 										onClick={() => getFilteredComments(data.sentiment)}
-										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8] dark:bg-[#33071E] ${
+										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8]  ${
 											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary dark:bg-[#33071E]'
 										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} ${
 											overallSentiments[data.sentiment] == 0 ? 'pointer-events-none' : ''

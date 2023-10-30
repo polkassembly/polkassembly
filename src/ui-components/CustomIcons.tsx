@@ -6,6 +6,7 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 
+import PolkasafeWhiteIconSVG from '~assets/polkasafe-white-logo.svg';
 import CautionIcon from '~assets/icons/Caution 2.svg';
 import RetrySVG from '~assets/icons/Refresh.svg';
 import OpenAiSVG from '~assets/icons/openai.svg';
@@ -127,6 +128,13 @@ import ProposalsIconSVG from '~assets/icons/proposals-icon.svg';
 import TechComIconSVG from '~assets/icons/tech-com-icon.svg';
 import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import VoteDataSVG from '~assets/icons/vote-data-icon.svg';
+
+export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={PolkasafeWhiteIconSVG}
+		{...props}
+	/>
+);
 
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon

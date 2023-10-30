@@ -47,6 +47,7 @@ module.exports = {
 				alertColorDark: 'var(--alertColorDark)',
 				disableStateDark: 'var(--disableStateDark)',
 				helperTextColorDark: 'var(--helperTextColorDark)',
+				borderColorDark: 'var(--borderColorDark)',
 				blue: {
 					light: {
 						disabled: '#96A4B6',

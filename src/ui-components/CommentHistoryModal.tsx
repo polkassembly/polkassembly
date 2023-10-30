@@ -64,7 +64,7 @@ export const getSentimentIcon = (sentiment: ESentiment, theme: string) => {
 const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
 	const [historyData, setHistoryData] = useState<IHistoryData[]>(history);
 	const getSentimentLabel = (sentiment: ESentiment) => {
-		return <div className={`${poppins.variable} ${poppins.className} bg-pink-100 pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
+		return <div className={`${poppins.variable} ${poppins.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
 	const { resolvedTheme: theme } = useTheme();
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {

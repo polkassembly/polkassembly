@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, Dashboard, OptionMenu, PolkasafeWhiteIcon } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Button, Divider, Skeleton, Space } from 'antd';
@@ -37,7 +37,6 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
-import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -118,9 +117,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high '>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'>
 						<TownHall />
-						<div className='ml-2 '> TownHall </div>
+						<span> TownHall </span>
 					</span>
 				</a>
 			)
@@ -135,9 +134,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'>
-						{theme === 'dark' ? <PolkaSafeDarkIcon /> : <PolkaSafe />}
-						<span className='ml-2'>Polkasafe</span>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'>
+						{theme === 'dark' ? (
+							<span className='flex items-center justify-center'>
+								<PolkasafeWhiteIcon className='text-2xl' />
+							</span>
+						) : (
+							<PolkaSafe />
+						)}
+						<span>Polkasafe</span>
 					</span>
 				</a>
 			)

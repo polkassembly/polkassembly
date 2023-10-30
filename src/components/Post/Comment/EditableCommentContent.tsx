@@ -627,7 +627,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}}
 							className='mb-0'
 						/>
-						<div className='background mb-[10px] mt-[-25px] h-[70px] rounded-e-md bg-gray-100 p-2'>
+						<div className='background mb-[10px] mt-[-25px] h-[70px] rounded-md rounded-e-md border-0 border-solid bg-gray-100 p-2 dark:border dark:border-[#3B444F] dark:bg-transparent'>
 							<div className='flex gap-[2px] text-[12px] text-[#334D6E]'>
 								Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5>
 							</div>
@@ -668,13 +668,13 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									<Button
 										htmlType='button'
 										onClick={handleCancel}
-										className='mr-2 flex h-[26px] items-center dark:bg-transparent dark:text-white'
+										className='dark:border-borderColorDark mr-2 flex h-[26px] items-center dark:bg-transparent dark:text-white'
 									>
 										<CloseOutlined />
 									</Button>
 									<Button
 										htmlType='submit'
-										className='flex h-[26px] items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+										className='flex h-[26px] items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-transparent'
 									>
 										<CheckOutlined />
 									</Button>
@@ -775,14 +775,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											htmlType='button'
 											disabled={loadingReply}
 											onClick={handleReplyCancel}
-											className='mr-2 flex items-center dark:bg-transparent dark:text-white'
+											className='mr-2 flex items-center dark:border-[#3B444F] dark:bg-transparent dark:text-white'
 										>
 											<CloseOutlined /> Cancel
 										</Button>
 										<Button
 											htmlType='submit'
 											disabled={loadingReply}
-											className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+											className='flex items-center border-none bg-pink_primary text-white hover:bg-pink_secondary'
 										>
 											<CheckOutlined /> Reply
 										</Button>

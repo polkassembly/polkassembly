@@ -540,13 +540,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								<Button
 									htmlType='button'
 									onClick={handleCancel}
-									className='mr-2 flex items-center'
+									className='dark:border-borderColorDark mr-2 flex items-center dark:bg-transparent dark:text-white'
 								>
 									<CloseOutlined /> Cancel
 								</Button>
 								<Button
 									htmlType='submit'
-									className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+									className='dark:border-borderColorDark flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
 								>
 									<CheckOutlined /> Reply
 								</Button>
@@ -560,10 +560,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 							md={content}
 						/>
-						<div className='flex flex-wrap items-center gap-3 bg-[#ebf0f5] dark:bg-section-dark-overlay'>
+						<div className='flex flex-wrap items-center gap-3'>
 							{isEditable && (
 								<Button
-									className={'flex items-center border-none p-0 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
+									className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
 									disabled={loading}
 									onClick={toggleEdit}
 								>
@@ -580,7 +580,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							)}
 							{id === userId ? (
 								<Button
-									className={'flex items-center border-none pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
+									className={'flex items-center border-none bg-transparent pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
 									onClick={deleteReply}
 								>
 									<DeleteOutlined />
@@ -619,7 +619,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										color='#E5007A'
 									>
 										<Button
-											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper ${
+											className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
 												reply.reply_source ? 'disabled-reply' : ''
 											}`}
 										>
@@ -629,7 +629,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								) : (
 									!isReplying && (
 										<Button
-											className={'flex items-center border-none p-0 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
+											className={'flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
 											onClick={() => setIsReplying(!isReplying)}
 										>
 											<ReplyIcon className='mr-1' />
@@ -674,14 +674,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										<Button
 											htmlType='button'
 											onClick={() => handleReplyCancel()}
-											className='mr-2 flex items-center'
+											className='dark:border-borderColorDark mr-2 flex items-center dark:bg-transparent dark:text-white'
 										>
 											<CloseOutlined /> Cancel
 										</Button>
 										<Button
 											loading={loading}
 											onClick={() => handleReplySave()}
-											className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+											className='flex items-center bg-pink_primary text-white hover:bg-pink_secondary dark:border-none'
 										>
 											<CheckOutlined />
 											Reply

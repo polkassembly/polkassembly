@@ -338,6 +338,8 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						setLoginOpen?.(false);
 						setShowOptionalFields(false);
 					}
+					setLoginOpen?.(true);
+					setShowOptionalFields(true);
 					setLoading(false);
 					return;
 				}
@@ -417,7 +419,8 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				message: error || 'Your Username was not updated.',
 				status: NotificationStatus.ERROR
 			});
-			setLoading(true);
+			setLoading(false);
+			setLoginOpen?.(true);
 			setShowSuccessModal(true);
 			setIsError(true);
 		}
@@ -434,7 +437,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 			setShowSuccessModal(false);
 			setIsError(false);
 		}
-		setLoginOpen?.(false);
 	};
 
 	const handleOptionalDetails = async () => {
@@ -459,7 +461,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					message: error || 'Your profile was not updated.',
 					status: NotificationStatus.ERROR
 				});
-				setLoading(true);
+				setLoading(false);
 				setShowSuccessModal(true);
 				setIsError(true);
 			}

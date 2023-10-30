@@ -69,7 +69,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 					<Image
 						alt=''
 						src={SubWalletIcon}
-						className='-mt-1 h-[28px] w-[25px]'
+						className='-mt-2 h-[26px] w-[20px]'
 					/>
 				</span>
 			);

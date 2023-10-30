@@ -106,6 +106,9 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						}
 						value={profile?.image}
 						disabled={loading}
+						classNames={{
+							input: 'dark:placeholder:text-borderColorDark dark:text-white'
+						}}
 					/>
 				</div>
 			</article>
@@ -134,6 +137,9 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							}
 							disabled={loading}
 							className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							classNames={{
+								input: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
 					<article className='mt-4 cursor-pointer text-sm text-[#485F7D] dark:text-blue-dark-medium'>
@@ -146,6 +152,9 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							onChange={(e) => setUsername(e.target.value)}
 							value={username}
 							disabled={loading}
+							classNames={{
+								input: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
 					<article className='mt-4'>
@@ -169,6 +178,9 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							}
 							disabled={loading}
 							className='rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-[10px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							classNames={{
+								textarea: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
 					<article className='mt-4'>
@@ -191,6 +203,9 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								onKeyPress={(e: any) => handleNewBadgeKeyPress(e)}
 								className='mt-[2px] h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								disabled={loading}
+								classNames={{
+									input: 'dark:placeholder:text-borderColorDark dark:text-white'
+								}}
 							/>
 							<Button
 								className='h-10 rounded border border-solid border-pink_primary bg-transparent text-sm font-medium text-pink_primary'

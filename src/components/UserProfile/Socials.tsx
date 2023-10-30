@@ -35,10 +35,13 @@ const Socials: FC<ISocialsProps> = (props) => {
 							<span>{strLink}</span>
 						</label>
 						<Input
-							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							size='large'
 							type='url'
-							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)]' />}
+							classNames={{
+								input: 'dark:bg-transparent dark:placeholder:text-borderColorDark dark:text-white'
+							}}
+							prefix={<LinkOutlined className='dark:text-borderColorDark mr-1.5 text-base text-[rgba(72,95,125,0.2)]' />}
 							placeholder={`Enter ${strLink} ${strLink === 'Email' ? '' : 'URL'}`}
 							onChange={(e) => {
 								const value = e.target.value.trim();
@@ -77,7 +80,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 			})}
 			{errorCheck && (
 				<Alert
-					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue dark:text-blue-dark-high'
+					className='dark:bg-borderColorDark mt-4 h-[40px] rounded-[4px] border-none px-5 py-2 text-sm text-bodyBlue outline-none dark:text-white '
 					message={errorCheck}
 					type='info'
 					showIcon

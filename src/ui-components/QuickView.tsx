@@ -19,6 +19,7 @@ import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { ISocial } from '~src/auth/types';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -33,8 +34,9 @@ interface Props {
 	username: string;
 	imgUrl?: string;
 	profileCreatedAt?: Date;
+	socials?: ISocial[];
 }
-const QuickView = ({ className, address, identity, username, polkassemblyUsername, imgUrl, profileCreatedAt }: Props) => {
+const QuickView = ({ className, address, identity, username, polkassemblyUsername, imgUrl, profileCreatedAt, socials }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
@@ -42,12 +44,12 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 
 	const { network } = useNetworkSelector();
 	const identityArr = [
-		{ key: 'Email', value: identity?.email },
-		{ key: 'Judgements', value: identity?.judgements || [] },
-		{ key: 'Legal', value: identity?.legal },
-		{ key: 'Riot', value: identity?.riot },
-		{ key: 'Twitter', value: identity?.twitter },
-		{ key: 'Web', value: identity?.web }
+		{ isVerified: !!identity?.email, key: 'Email', value: identity?.email || socials?.find((social) => social.type === 'Email')?.link || '' },
+		{ isVerified: !!identity?.judgements, key: 'Judgements', value: identity?.judgements || [] },
+		{ isVerified: !!identity?.legal, key: 'Legal', value: identity?.legal },
+		{ isVerified: !!identity?.riot, key: 'Riot', value: identity?.riot || socials?.find((social) => social.type === 'Riot')?.link || '' },
+		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
+		{ isVerified: !!identity?.web, key: 'Web', value: identity?.web }
 	];
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const success = () => {
@@ -59,76 +61,81 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 	};
 
 	return (
-		<div className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 px-6 ${className} pb-2`}>
-			<div>
+		<div className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2`}>
+			<div className='flex flex-col gap-1.5 px-4'>
 				<ImageComponent
 					src={imgUrl}
 					alt='User Picture'
-					className='absolute left-[25%] top-[-4%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 bg-transparent'
+					className='absolute left-[25%] top-[-4%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 border-[3px] border-solid border-white bg-transparent'
 					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
 				/>
-			</div>
-			<div className='mt-8 flex items-center justify-start gap-2'>
-				<span className='text-xl font-semibold tracking-wide text-bodyBlue'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
-				<div className='flex items-center justify-center'>{isGood ? <VerifiedIcon /> : <MinusCircleFilled style={{ color }} />}</div>
-				<a
-					target='_blank'
-					rel='noreferrer'
-					className='flex text-pink_primary'
-					onClick={() => {
-						const substrateAddress = getSubstrateAddress(address);
-						if (!polkassemblyUsername?.length) {
-							window.open(`https://${network}.polkassembly.io/address/${substrateAddress || address}`, '_blank');
-						} else {
-							window.open(`https://${network}.polkassembly.io/user/${polkassemblyUsername}`, '_blank');
-						}
-					}}
-				>
-					<ShareScreenIcon />
-				</a>
-			</div>
-			<div className='flex items-center gap-2 text-xs text-bodyBlue'>
-				<Address
-					address={address}
-					disableHeader
-					iconSize={20}
-					addressMaxLength={5}
-					addressClassName='text-sm'
-				/>
-				<span
-					className='flex cursor-pointer items-center'
-					onClick={(e) => {
-						e.preventDefault();
-						copyToClipboard(address);
-						success();
-					}}
-				>
-					{contextHolder}
-					<CopyIcon />
-				</span>
-			</div>
-			<div className='flex items-center justify-between gap-1 border-solid'>
-				<span className='text-xs tracking-wide text-[#7C899A]'>Since: {dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
-				<div className='flex items-center gap-1.5'>
-					{socialLinks?.map((social: any, index: number) => {
-						const link = identityArr?.find((s) => s.key === social)?.value || '';
-						return (
-							<div
-								title={link ? String(link) : ''}
-								key={index}
-							>
-								<SocialLink
-									className={`flex h-[20px] w-[20px] items-center justify-center rounded-[20px] text-xs hover:text-[#576D8B] ${link ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
-									link={link as string}
-									type={social}
-									iconClassName={`text-xs ${link ? 'text-white' : 'text-[#96A4B6]'}`}
-								/>
-							</div>
-						);
-					})}
+				<div className='mt-[28px] flex items-center justify-start gap-2'>
+					<span className='text-xl font-semibold tracking-wide text-bodyBlue'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
+					<div className='flex items-center justify-center'>{isGood ? <VerifiedIcon /> : <MinusCircleFilled style={{ color }} />}</div>
+					<a
+						target='_blank'
+						rel='noreferrer'
+						className='flex text-pink_primary'
+						onClick={() => {
+							const substrateAddress = getSubstrateAddress(address);
+							if (!polkassemblyUsername?.length) {
+								window.open(`https://${network}.polkassembly.io/address/${substrateAddress || address}`, '_blank');
+							} else {
+								window.open(`https://${network}.polkassembly.io/user/${polkassemblyUsername}`, '_blank');
+							}
+						}}
+					>
+						<ShareScreenIcon />
+					</a>
+				</div>
+				<div className='flex items-center gap-1 text-xs text-bodyBlue'>
+					<Address
+						address={address}
+						disableHeader
+						iconSize={20}
+						addressMaxLength={5}
+						addressClassName='text-sm'
+					/>
+					<span
+						className='flex cursor-pointer items-center'
+						onClick={(e) => {
+							e.preventDefault();
+							copyToClipboard(address);
+							success();
+						}}
+					>
+						{contextHolder}
+						<CopyIcon />
+					</span>
+				</div>
+				<div className='flex items-center justify-between gap-1 border-solid'>
+					<span className='flex items-center text-xs tracking-wide text-[#9aa7b9]'>
+						Since:<span className='ml-0.5 text-lightBlue '>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
+					</span>
+					<div className='flex items-center gap-1.5'>
+						{socialLinks?.map((social: any, index: number) => {
+							const link = identityArr?.find((s) => s.key === social)?.value || '';
+							const isVerified = identityArr.find((s) => s.key === social)?.isVerified || false;
+							return (
+								link && (
+									<div
+										title={link ? String(link) : ''}
+										key={index}
+									>
+										<SocialLink
+											className={`flex h-[24px] w-[24px] items-center justify-center rounded-[20px] text-base hover:text-[#576D8B] ${isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
+											link={link as string}
+											type={social}
+											iconClassName={`text-sm ${isVerified ? 'text-white' : 'text-[#96A4B6]'}`}
+										/>
+									</div>
+								)
+							);
+						})}
+					</div>
 				</div>
 			</div>
-			<article className='mt-1 flex h-11 items-center justify-center gap-1 rounded-lg bg-[#F4F8FF] px-3 text-xs text-bodyBlue'>
+			<article className='mt-1 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue'>
 				<div className='flex items-center gap-1 font-medium text-lightBlue'>
 					<JudgementIcon />
 					<span>Judgements:</span>

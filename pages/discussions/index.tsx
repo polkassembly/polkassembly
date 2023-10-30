@@ -22,11 +22,6 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import dynamic from 'next/dynamic';
-const Tipping = dynamic(() => import('~src/components/Tipping'), {
-	// loading: () => <Skeleton active />,
-	ssr: false
-});
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -116,7 +111,6 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
 				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue'>
-					<Tipping destinationAddress='16kXcMxe3sGTWcgbQj5nGdkUtB9RaudkXMe5GBvGuinF968p' />
 					<DiscussionsIcon className='mt-2 xs:mr-3 sm:mr-2 sm:mt-1.5' />
 					Latest Discussions({count})
 				</div>

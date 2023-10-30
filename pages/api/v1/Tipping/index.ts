@@ -15,6 +15,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 export interface ITip {
 	created_at: Date;
 	remark: string;
+	network: string;
 	tip_from: string;
 	tip_to: string;
 	user_id: number;
@@ -41,16 +42,17 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const substracteTipFrom = getSubstrateAddress(tipFrom) || tipFrom;
 	const substracteTipTo = getSubstrateAddress(tipTo) || tipTo;
 
-	const tipDoc = firestore_db.collection('tippings').doc(substracteTipFrom).collection('tips').doc(substracteTipTo);
+	const tippingsDoc = firestore_db.collection('tippings').doc();
 	const newTip: ITip = {
 		created_at: new Date(),
+		network,
 		remark,
 		tip_from: substracteTipFrom,
 		tip_to: substracteTipTo,
 		user_id: user.id
 	};
 
-	await tipDoc
+	await tippingsDoc
 		.set(newTip as any, { merge: true })
 		.then(() => {
 			return res.status(200).json({ message: messages.SUCCESS });

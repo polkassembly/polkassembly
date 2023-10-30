@@ -36,17 +36,19 @@ const ZERO_BN = new BN(0);
 const ONE_DOLLAR_IN_DOT = '0.230658';
 
 interface Props {
+	open: boolean;
+	setOpen: (pre: boolean) => void;
 	className?: string;
 	destinationAddress: string;
 }
 
-const tipClassName = 'flex items-center gap-1 rounded-[28px] border-[1px] border-solid px-4 py-1 cursor-pointer';
-const Tipping = ({ className, destinationAddress }: Props) => {
+const TIPS = [3, 5, 10, 15];
+
+const Tipping = ({ className, destinationAddress, open, setOpen }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const [form] = Form.useForm();
-	const [open, setOpen] = useState<boolean>(false);
 	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
 	const [address, setAddress] = useState<string>('');
 	const [availableWallets, setAvailableWallets] = useState<any>({});
@@ -62,6 +64,7 @@ const Tipping = ({ className, destinationAddress }: Props) => {
 	const handleCancel = () => {
 		setTipAmount(ZERO_BN);
 		setRemark('');
+		form.setFieldValue('balance', '');
 		setLoadingStatus({ isLoading: false, message: '' });
 		setOpen(false);
 	};
@@ -183,12 +186,6 @@ const Tipping = ({ className, destinationAddress }: Props) => {
 
 	return (
 		<div>
-			<Button
-				onClick={() => setOpen(true)}
-				className='flex h-[40px] w-[161px] items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary'
-			>
-				Tip
-			</Button>
 			<Modal
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue'>
@@ -197,6 +194,7 @@ const Tipping = ({ className, destinationAddress }: Props) => {
 					</div>
 				}
 				open={open}
+				zIndex={1056}
 				onCancel={handleCancel}
 				closeIcon={<CloseIcon />}
 				className={`${poppins.className} ${poppins.variable} w-[604px] max-sm:w-full ${className}`}
@@ -273,50 +271,25 @@ const Tipping = ({ className, destinationAddress }: Props) => {
 							<div className='mt-6 border-0 border-t-[1px] border-dashed border-[#D2D8E0] pt-6'>
 								<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>Please select a tip you would like to give to Hannah Baker:</span>
 								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
-									<span
-										className={`${tipClassName} ${handleTipChangeToDollar(3).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'}`}
-										key={3}
-										onClick={() => {
-											setTipAmount(handleTipChangeToDollar(3));
-											form.setFieldValue('balance', '');
-										}}
-									>
-										<Tip1Icon />
-										<span>$3</span>
-									</span>
-									<span
-										className={`${tipClassName} ${handleTipChangeToDollar(5).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'}`}
-										key={5}
-										onClick={() => {
-											setTipAmount(handleTipChangeToDollar(5));
-											form.setFieldValue('balance', '');
-										}}
-									>
-										<Tip2Icon />
-										<span>$5</span>
-									</span>
-									<span
-										className={`${tipClassName} ${handleTipChangeToDollar(10).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'}`}
-										key={10}
-										onClick={() => {
-											setTipAmount(handleTipChangeToDollar(10));
-											form.setFieldValue('balance', '');
-										}}
-									>
-										<Tip3Icon />
-										<span>$10</span>
-									</span>
-									<span
-										className={`${tipClassName} ${handleTipChangeToDollar(15).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'}`}
-										key={15}
-										onClick={() => {
-											setTipAmount(handleTipChangeToDollar(15));
-											form.setFieldValue('balance', '');
-										}}
-									>
-										<Tip4Icon />
-										<span>$15</span>
-									</span>
+									{TIPS.map((tip) => (
+										<span
+											className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
+												handleTipChangeToDollar(tip).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'
+											}`}
+											key={tip}
+											onClick={() => {
+												const tipBlance = handleTipChangeToDollar(tip);
+												setTipAmount(tipBlance);
+												form.setFieldValue('balance', tipBlance);
+											}}
+										>
+											{tip === 3 && <Tip1Icon />}
+											{tip === 5 && <Tip2Icon />}
+											{tip === 10 && <Tip3Icon />}
+											{tip === 15 && <Tip4Icon />}
+											<span>${tip}</span>
+										</span>
+									))}
 								</div>
 								<BalanceInput
 									label='Or enter the custom amount you would like to Tip'
@@ -326,16 +299,18 @@ const Tipping = ({ className, destinationAddress }: Props) => {
 									onChange={(tip) => setTipAmount(tip)}
 									className='mt-6'
 								/>
-								<div className='mt-6'>
-									<Input
-										name='remark'
-										value={remark}
-										onChange={(e) => setRemark(e.target.value)}
-										className='ml-4 h-[40px] w-[524px] rounded-[4px] max-sm:w-full'
-										placeholder='Say something nice with your tip(optional)'
-									/>
-									<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />
-								</div>
+								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount) && (
+									<div className='mt-6'>
+										<Input
+											name='remark'
+											value={remark}
+											onChange={(e) => setRemark(e.target.value)}
+											className='ml-4 h-[40px] w-[524px] rounded-[4px] max-sm:w-full'
+											placeholder='Say something nice with your tip(optional)'
+										/>
+										<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />
+									</div>
+								)}
 							</div>
 						</Form>
 					)}

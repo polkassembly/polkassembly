@@ -15,6 +15,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { CommentReply } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
+import IPFSScript from '~src/api-utils/ipfs';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -81,6 +82,9 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 				headers: firebaseFunctionsHeader(network),
 				method: 'POST'
 			});
+
+			const ipfsScript = new IPFSScript();
+			ipfsScript.run(newReply, newReplyRef.path);
 
 			return res.status(200).json({
 				id: newReply.id

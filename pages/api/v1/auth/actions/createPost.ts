@@ -7,6 +7,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import IPFSScript from '~src/api-utils/ipfs';
 import authServiceInstance from '~src/auth/auth';
 import { deleteKeys, redisDel } from '~src/auth/redis';
 import { CreatePostResponseType } from '~src/auth/types';
@@ -97,11 +98,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	await postDocRef
 		.set(newPost)
-		.then(() => {
+		.then(async () => {
 			res.status(200).json({ message: 'Post saved.', post_id: newID });
 			if (tags && Array.isArray(tags) && tags.length > 0) {
 				batch.commit();
 			}
+			const ipfsScript = new IPFSScript();
+			await ipfsScript.run(newPost, postDocRef.path);
 			return;
 		})
 		.catch((error) => {

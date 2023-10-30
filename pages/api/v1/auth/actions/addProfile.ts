@@ -17,7 +17,6 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
-	let updatedJWT;
 	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username, custom_username = false, email } = req.body;
 	if (!username) return res.status(400).json({ message: 'Missing parameters in request body' });
 
@@ -51,7 +50,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const network = String(req.headers['x-network']);
 	if (email) {
 		if (email == '' || !isValidEmail(email)) return res.status(400).json({ message: messages.INVALID_EMAIL });
-		updatedJWT = await authServiceInstance.SendVerifyEmail(token, email, network);
+		await authServiceInstance.SendVerifyEmail(token, email, network);
 	}
 
 	const user = await authServiceInstance.GetUser(token);

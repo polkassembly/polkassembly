@@ -33,7 +33,7 @@ import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { IconConfirmation, BlueCautionIcon, IconMail } from '~src/ui-components/CustomIcons';
+import { BlueCautionIcon, IconMail } from '~src/ui-components/CustomIcons';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';
 import * as validation from 'src/util/validation';
@@ -43,6 +43,7 @@ import { decodeToken } from 'react-jwt';
 import { JWTPayloadType } from '~src/auth/types';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import dayjs from 'dayjs';
+import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -362,7 +363,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 	const validateUsername = (optionalUsername: string) => {
 		let errorUsername = 0;
-		const format = /^[a-zA-Z0-9_@]*$/;
+		const format = /^[a-zA-Z0-9_]*$/;
 		if (!format.test(optionalUsername) || optionalUsername.length > 30 || optionalUsername.length < 3) {
 			queueNotification({
 				header: 'Error',
@@ -436,6 +437,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				});
 				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
 				setLoading(true);
+				setLoginOpen?.(false);
 				setShowSuccessModal(false);
 				setIsError(false);
 			}
@@ -709,9 +711,10 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						<AuthForm onSubmit={handleOptionalUsername}>
 							<div>
 								<div className='px-8 pb-2 pt-8'>
-									<IconConfirmation className='confirm-logo-conatiner text-2xl' />
-									<p className='mt-8 justify-center text-center text-xl font-semibold text-bodyBlue'>You are successfully logged in</p>
-									<p className='mt-4 justify-center text-center text-sm font-normal text-bodyBlue'>Please add your username to personalise your experience.</p>
+									<div className='flex justify-center'>
+										<ConfirmationIcon className='confirm-logo-conatiner absolute -top-[78px]' />
+									</div>
+									<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue'>You are successfully logged in</p>
 									<div className='flex flex-col gap-y-1'>
 										<label
 											className='text-sm text-lightBlue '

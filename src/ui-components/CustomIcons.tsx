@@ -8,7 +8,7 @@ import React from 'react';
 import MailIcon from '~assets/icons/mailIcon.svg';
 import BlueCaution from '~assets/icons/CautionBlue.svg';
 import CautionIcon from '~assets/icons/Caution 2.svg';
-import ConfirmationIcon from '~assets/icons/Confirmation.svg';
+import SignupIcon from '~assets/icons/signupIcon.svg';
 import RetrySVG from '~assets/icons/Refresh.svg';
 import OpenAiSVG from '~assets/icons/openai.svg';
 import AiStarSVG from '~assets/icons/ai-star.svg';
@@ -140,9 +140,9 @@ export const BlueCautionIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
-export const IconConfirmation = (props: Partial<CustomIconComponentProps>) => (
+export const IconSignup = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
-		component={ConfirmationIcon}
+		component={SignupIcon}
 		{...props}
 	/>
 );

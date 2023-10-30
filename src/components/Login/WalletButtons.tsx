@@ -18,9 +18,10 @@ interface Props {
 	noHeader?: boolean;
 	selectedWallet?: Wallet;
 	optionalLogin?: boolean;
+	forSignUpModal?: boolean;
 }
 
-const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, noHeader = false, selectedWallet, optionalLogin }: Props) => {
+const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, noHeader = false, selectedWallet, optionalLogin, forSignUpModal }: Props) => {
 	const { network } = useNetworkSelector();
 	function handleWalletClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) {
 		event.preventDefault();
@@ -30,7 +31,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 	return (
 		<div className='w-full'>
 			{!noHeader && !optionalLogin && (
-				<div className='flex items-center gap-x-2'>
+				<div className={`${forSignUpModal ? '-mt-10' : ''} flex items-center gap-x-2`}>
 					<Divider className='text-grey_primary'>Or Login with</Divider>
 				</div>
 			)}

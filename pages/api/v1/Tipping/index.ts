@@ -9,6 +9,7 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import { chainProperties } from '~src/global/networkConstants';
 import { firestore_db } from '~src/services/firebaseInit';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
@@ -19,6 +20,8 @@ export interface ITip {
 	tip_from: string;
 	tip_to: string;
 	user_id: number;
+	amount: number;
+	token: string;
 }
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
@@ -33,22 +36,26 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { remark, tipFrom, tipTo } = req.body;
+	const { remark, tipFrom, tipTo, amount } = req.body;
 
-	if (!remark || typeof remark !== 'string' || !tipFrom || !tipTo || typeof tipFrom !== 'string' || typeof tipTo !== 'string') {
+	if (!remark || typeof remark !== 'string' || !tipFrom || !tipTo || typeof tipFrom !== 'string' || typeof tipTo !== 'string' || !amount || typeof amount !== 'number') {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
+
+	const tokenSymbol = `${chainProperties[network]?.tokenSymbol}`;
 
 	const substracteTipFrom = getSubstrateAddress(tipFrom) || tipFrom;
 	const substracteTipTo = getSubstrateAddress(tipTo) || tipTo;
 
 	const tippingsDoc = firestore_db.collection('tippings').doc();
 	const newTip: ITip = {
+		amount,
 		created_at: new Date(),
 		network,
 		remark,
 		tip_from: substracteTipFrom,
 		tip_to: substracteTipTo,
+		token: tokenSymbol,
 		user_id: user.id
 	};
 

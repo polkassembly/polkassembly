@@ -40,11 +40,12 @@ interface Props {
 	setOpen: (pre: boolean) => void;
 	className?: string;
 	destinationAddress: string;
+	username: string;
 }
 
 const TIPS = [3, 5, 10, 15];
 
-const Tipping = ({ className, destinationAddress, open, setOpen }: Props) => {
+const Tipping = ({ className, destinationAddress, open, setOpen, username }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -61,7 +62,9 @@ const Tipping = ({ className, destinationAddress, open, setOpen }: Props) => {
 	const disable = loadingStatus.isLoading || availableBalance.lte(tipAmount) || !address || tipAmount.eq(ZERO_BN);
 	const [remark, setRemark] = useState<string>('');
 
-	const handleCancel = () => {
+	const handleCancel = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
 		setTipAmount(ZERO_BN);
 		setRemark('');
 		form.setFieldValue('balance', '');
@@ -134,6 +137,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen }: Props) => {
 	};
 	const handleSetTip = async () => {
 		const { data, error } = await nextApiClientFetch<MessageType>('api/v1/Tipping', {
+			amount: Number(tipAmount.toString()) || 0,
 			remark: `${remark} tipped via Polkassembly`.trim(),
 			tipFrom: address,
 			tipTo: destinationAddress
@@ -148,10 +152,11 @@ const Tipping = ({ className, destinationAddress, open, setOpen }: Props) => {
 	const onSuccess = async () => {
 		queueNotification({
 			header: 'Success!',
-			message: 'Delegation successful.',
+			message: `You have successfully tipped to ${username.length > 10 ? `${username.slice(0, 10)}...` : username}`,
 			status: NotificationStatus.SUCCESS
 		});
 		await handleSetTip();
+		setOpen(false);
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 	const onFailed = async (message: string) => {
@@ -160,6 +165,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen }: Props) => {
 			message,
 			status: NotificationStatus.ERROR
 		});
+
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
@@ -269,7 +275,9 @@ const Tipping = ({ className, destinationAddress, open, setOpen }: Props) => {
 								/>
 							) : null}
 							<div className='mt-6 border-0 border-t-[1px] border-dashed border-[#D2D8E0] pt-6'>
-								<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>Please select a tip you would like to give to Hannah Baker:</span>
+								<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>
+									Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
+								</span>
 								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
 									{TIPS.map((tip) => (
 										<span

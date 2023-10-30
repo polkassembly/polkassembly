@@ -191,7 +191,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							setWeb3Login(false);
 						}}
 					>
-						Or <span className='text-pink_primary'>Login with Account</span>
+						Or <span className='text-pink_primary'>Login with Username/Email</span>
 					</p>
 				</AuthForm>
 			)}

@@ -8,6 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
 import { ISocial, MessageType, TokenType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import isValidEmail from '~src/auth/utils/isValidEmail';
 import messages from '~src/auth/utils/messages';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import firebaseAdmin from '~src/services/firebaseInit';
@@ -16,8 +17,8 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
-
-	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username, custom_username = false } = req.body;
+	let updatedJWT;
+	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username, custom_username = false, email } = req.body;
 	if (!username) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	for (let i = 0; i < nameBlacklist.length; i++) {
@@ -47,6 +48,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Missing user token' });
 
+	const network = String(req.headers['x-network']);
+	if (email) {
+		if (email == '' || !isValidEmail(email)) return res.status(400).json({ message: messages.INVALID_EMAIL });
+		updatedJWT = await authServiceInstance.SendVerifyEmail(token, email, network);
+	}
+
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
@@ -62,12 +69,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const profile = {
 		badges,
 		bio: bio || '',
+		email: email || '',
 		image: image || '',
 		social_links: newSocialLinks || [],
 		title: title || ''
 	};
 
-	const updated_token = await authServiceInstance.getSignedToken({ ...user, custom_username, profile, username });
+	const updated_token = await authServiceInstance.getSignedToken({ ...user, custom_username, email, profile, username });
 
 	await userRef
 		.update({ custom_username, profile, username })

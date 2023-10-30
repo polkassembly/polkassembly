@@ -35,10 +35,14 @@ import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IconConfirmation, BlueCautionIcon, IconMail } from '~src/ui-components/CustomIcons';
 import messages from '~src/util/messages';
-import { password, username } from '~src/util/validation';
+import { username } from '~src/util/validation';
 import * as validation from 'src/util/validation';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
+import { decodeToken } from 'react-jwt';
+import { JWTPayloadType } from '~src/auth/types';
+import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import dayjs from 'dayjs';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -83,7 +87,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 	const [optionalUsername, setOptionalUsername] = useState('');
 	const [showSuccessModal, setShowSuccessModal] = useState(true);
 	const [isError, setIsError] = useState(false);
-	const [firstPassword, setFirstPassword] = useState('');
 	const [email, setEmail] = useState('');
 	const userDetailsContext = useUserDetailsSelector();
 
@@ -318,9 +321,25 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 				localStorage.setItem('multisigAssociatedAddress', address);
 				handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
+				const FEATURE_RELEASE_DATE = dayjs('2023-06-12').toDate(); // Date from which we are sending custom username flag on web3 sign up.
+
 				if (isModal) {
-					setLoginOpen?.(true);
-					setShowOptionalFields(true);
+					const localCurrentUser: any = decodeToken<JWTPayloadType>(addressLoginData.token);
+					console.log(localCurrentUser);
+					if (
+						localCurrentUser?.web3signup &&
+						localCurrentUser?.username.length === 25 &&
+						!MANUAL_USERNAME_25_CHAR.includes(localCurrentUser?.username) &&
+						dayjs(localCurrentUser?.created_at).isBefore(dayjs(FEATURE_RELEASE_DATE))
+					) {
+						setLoginOpen?.(true);
+						setShowOptionalFields(true);
+					} else {
+						setLoginOpen?.(false);
+						setShowOptionalFields(false);
+					}
+					// setLoginOpen?.(true);
+					// setShowOptionalFields(true);
 					setLoading(false);
 					return;
 				}
@@ -371,11 +390,25 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 		if (optionalUsername && optionalUsername.trim() !== '') {
 			// Username is not empty, set user to true
 			if (!validateUsername(optionalUsername)) return;
+			setShowSuccessModal(false);
+			setIsError(false);
+		} else {
+			setIsError(true);
+		}
+	};
+
+	const handleOptionalSkip = () => {
+		setLoginOpen?.(false);
+	};
+
+	const handleOptionalDetails = async () => {
+		if (email && email.trim() !== '') {
+			console.log(email);
 			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
-				// username: optionalUsername
 				badges: JSON.stringify([]),
 				bio: '',
 				custom_username: true,
+				email: email,
 				image: currentUser.picture || '',
 				social_links: JSON.stringify([]),
 				title: '',
@@ -406,21 +439,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				setShowSuccessModal(false);
 				setIsError(false);
 			}
-		} else {
-			setIsError(true);
-			// Username is empty, handle accordingly
-		}
-		console.log(currentUser);
-	};
-
-	const handleOptionalSkip = () => {
-		setLoginOpen?.(false);
-	};
-
-	const handleOptionalDetails = async () => {
-		// setLoginOpen?.(false);
-		if (email && email.trim() !== '' && firstPassword && firstPassword.trim() !== '') {
-			console.log(email, firstPassword);
 		}
 	};
 
@@ -644,7 +662,13 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 														}
 													/>
 												)}
-												<div className='flex items-center justify-center'>
+												<div className='flex items-center justify-center gap-x-2'>
+													<Button
+														className='text-md flex w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-5 py-5 font-normal leading-none text-[#E5007A] outline-none'
+														onClick={() => handleBackToLogin()}
+													>
+														Go Back
+													</Button>
 													<Button
 														loading={loading}
 														disabled={withPolkasafe && !multisigAddress}
@@ -668,15 +692,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 															</Button>
 														</div>
 													</Divider>
-												</div>
-												<div className='-mt-2 flex justify-center pb-5 font-normal'>
-													<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
-													<div
-														onClick={handleClick}
-														className='cursor-pointer text-base text-pink_primary'
-													>
-														&nbsp; Sign Up{' '}
-													</div>
 												</div>
 											</>
 										)
@@ -778,7 +793,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 									className='-mt-1 mb-5'
 									style={{ borderTop: '1px solid #E1E6EB' }}
 								></Divider>
-								<div className='p-8'>
+								<div className='px-8 pb-8'>
 									<div className='flex flex-col gap-y-1'>
 										<label
 											htmlFor='email'
@@ -805,67 +820,8 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 											/>
 										</Form.Item>
 									</div>
-									<div className='flex flex-col gap-y-1'>
-										<label
-											className='text-base text-[#485F7D]'
-											htmlFor='first_password'
-										>
-											Set Password
-										</label>
-										<Form.Item
-											name='first_password'
-											rules={[
-												{
-													message: messages.VALIDATION_PASSWORD_ERROR,
-													required: password.required
-												},
-												{
-													message: messages.VALIDATION_PASSWORD_ERROR,
-													min: password.minLength
-												}
-											]}
-										>
-											<Input.Password
-												onChange={(e) => {
-													setFirstPassword(e.target.value);
-												}}
-												placeholder='Password'
-												className='rounded-md px-4 py-2'
-												id='first_password'
-											/>
-										</Form.Item>
-									</div>
-									<div className='flex flex-col gap-y-1'>
-										<label
-											className='text-base text-[#485F7D] '
-											htmlFor='second_password'
-										>
-											Re-enter Password
-										</label>
-										<Form.Item
-											name='second_password'
-											rules={[
-												{
-													message: "Password don't match",
-													validator(rule, value, callback) {
-														if (callback && value !== firstPassword) {
-															callback(rule?.message?.toString());
-														} else {
-															callback();
-														}
-													}
-												}
-											]}
-										>
-											<Input.Password
-												placeholder='Password'
-												className='rounded-md px-4 py-2'
-												id='second_password'
-											/>
-										</Form.Item>
-									</div>
 									<div
-										className='mb-5 mt-2 flex justify-center p-3 text-center'
+										className='mb-5 mt-1 flex p-3'
 										style={{ backgroundColor: '#E6F4FF', border: '1px solid #91CAFF', borderRadius: '6px' }}
 									>
 										<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
@@ -877,20 +833,24 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 									style={{ borderTop: '1px solid #E1E6EB' }}
 								></Divider>
 								<div className='mb-6 flex justify-end gap-x-5 px-8'>
-									<Button
-										size='large'
-										htmlType='submit'
-										className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
-									>
-										Done
-									</Button>
-									<Button
-										size='large'
-										onClick={handleOptionalSkip}
-										className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
-									>
-										Skip
-									</Button>
+									{!email && (
+										<Button
+											size='large'
+											onClick={handleOptionalSkip}
+											className='w-[144px] rounded-md border border-solid border-pink_primary text-pink_primary outline-none'
+										>
+											Skip
+										</Button>
+									)}
+									{email && (
+										<Button
+											size='large'
+											htmlType='submit'
+											className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+										>
+											Done
+										</Button>
+									)}
 								</div>
 							</div>
 						</AuthForm>

@@ -951,10 +951,6 @@ export default styled(AppLayout)`
 		height: 100px;
 	}
 
-	.logo-container:hover {
-		background: #fff !important;
-	}
-
 	.menu-container {
 		top: 0px;
 	}

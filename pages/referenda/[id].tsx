@@ -50,7 +50,17 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if (error) return <ErrorState errorMessage={error} />;
+	if (error)
+		return (
+			<>
+				<SEOHead
+					title={'Error' || `${noTitle} - Referenda V2`}
+					desc={'Error'}
+					network={network}
+				/>
+				<ErrorState errorMessage={error} />
+			</>
+		);
 
 	if (post) {
 		let trackName = '';
@@ -82,9 +92,16 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	}
 
 	return (
-		<div className='mt-16'>
-			<LoadingState />
-		</div>
+		<>
+			<SEOHead
+				title={'Loading' || `${noTitle} - Referenda V2`}
+				desc={'Loading'}
+				network={network}
+			/>
+			<div className='mt-16'>
+				<LoadingState />
+			</div>
+		</>
 	);
 };
 

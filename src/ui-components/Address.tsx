@@ -294,7 +294,6 @@ const Address = (props: Props) => {
 								(!!identity && !!mainDisplay && (
 									<IdentityBadge
 										theme={theme}
-										address={address}
 										identity={identity}
 										flags={flags}
 										className='text-navBlue'

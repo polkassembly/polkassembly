@@ -14,12 +14,12 @@ interface IImageComponentProps {
 }
 
 const ImageComponent: FC<IImageComponentProps> = (props) => {
-	const { alt, className, src, iconClassName } = props;
-	const newSrc = src && src.trim() ? src.trim() : null;
+	const { alt, className, src = '', iconClassName } = props;
+	const regex = /\.(jpg|jpeg|png|gif|bmp|svg|tiff|ico)$/;
 	return (
 		<Avatar
 			className={className}
-			src={newSrc}
+			src={regex.test(src) ? src : '/assets/icons/user-profile.png'}
 			alt={alt}
 			icon={
 				<span className={iconClassName}>

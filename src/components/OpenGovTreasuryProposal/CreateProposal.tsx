@@ -263,7 +263,7 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Proposer Address:</span>
 							<Address
-								addressClassName='text-bodyBlue'
+								addressClassName='text-bodyBlue text-sm'
 								address={proposerAddress}
 								iconSize={18}
 								displayInline
@@ -273,7 +273,7 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Beneficiary Address:</span>
 							<Address
-								addressClassName='text-bodyBlue'
+								addressClassName='text-bodyBlue text-sm'
 								address={beneficiaryAddress}
 								iconSize={18}
 								displayInline

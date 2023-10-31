@@ -34,7 +34,7 @@ const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX
 			<ImageComponent
 				src={picture}
 				alt='User Picture'
-				className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
+				className='flex h-[16px] w-[16px] items-center justify-center bg-transparent'
 				iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 			/>
 			<div className='flex w-[85%] items-center gap-1 text-xs'>

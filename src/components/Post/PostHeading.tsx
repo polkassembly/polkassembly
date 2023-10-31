@@ -138,7 +138,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					>
 						{history && history?.length > 0 && (
 							<div
-								className='mt-2 cursor-pointer md:mt-0'
+								className='-ml-1 mr-1 mt-2 cursor-pointer md:mt-0'
 								onClick={() => setOpenModal(true)}
 							>
 								<UpdateLabel

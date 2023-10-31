@@ -11,8 +11,7 @@ import Address from './Address';
 import dayjs from 'dayjs';
 import SocialLink from './SocialLinks';
 import { socialLinks } from '~src/components/UserProfile/Details';
-import dynamic from 'next/dynamic';
-import { Skeleton, message } from 'antd';
+import { message } from 'antd';
 import styled from 'styled-components';
 import VerifiedIcon from '~assets/icons/verified-tick.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
@@ -20,11 +19,7 @@ import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ISocial } from '~src/auth/types';
-
-const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
-	loading: () => <Skeleton.Avatar active />,
-	ssr: false
-});
+import ImageComponent from 'src/components/ImageComponent';
 
 interface Props {
 	className?: string;
@@ -49,7 +44,8 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 		{ isVerified: !!identity?.legal, key: 'Legal', value: identity?.legal },
 		{ isVerified: !!identity?.riot, key: 'Riot', value: identity?.riot || socials?.find((social) => social.type === 'Riot')?.link || '' },
 		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
-		{ isVerified: !!identity?.web, key: 'Web', value: identity?.web }
+		{ isVerified: !!identity?.web, key: 'Web', value: identity?.web },
+		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' }
 	];
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const success = () => {
@@ -72,10 +68,9 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 				<ImageComponent
 					src={imgUrl}
 					alt='User Picture'
-					className='absolute left-[25%] top-[-4%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 border-[3px] border-solid border-white bg-transparent'
-					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
+					className='-mt-[50px] flex h-[98px] w-[98px] rounded-full border-[2px] border-solid border-white bg-white'
 				/>
-				<div className='mt-8 flex items-center justify-start gap-2'>
+				<div className='mt-0 flex items-center justify-start gap-2'>
 					<span className='text-xl font-semibold tracking-wide text-bodyBlue'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
 					<div className='flex items-center justify-center'>{isGood ? <VerifiedIcon /> : <MinusCircleFilled style={{ color }} />}</div>
 					<a

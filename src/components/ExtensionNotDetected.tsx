@@ -5,6 +5,7 @@
 import { Alert } from 'antd';
 import * as React from 'react';
 import getExtensionUrl from 'src/util/getExtensionUrl';
+import { Wallet } from '~src/types';
 
 interface Props {
 	chosenWallet?: string;
@@ -15,7 +16,7 @@ const ExtensionNotDetected: React.FC<Props> = ({ chosenWallet }) => {
 		<Alert
 			message={
 				<div className='flex gap-x-2'>
-					<span className='capitalize'>{chosenWallet ? chosenWallet : 'Wallet'}</span>
+					<span className='capitalize'>{chosenWallet === Wallet.SUBWALLET ? chosenWallet.split('-')[0] : chosenWallet || 'Wallet'}</span>
 					<span>extension not detected.</span>
 				</div>
 			}

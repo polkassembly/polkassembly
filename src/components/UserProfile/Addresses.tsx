@@ -16,6 +16,7 @@ const Addresses: FC<IAddressesProps> = (props) => {
 	const [open, setOpen] = useState(false);
 	const toggleOpen = () => setOpen((prev) => !prev);
 	if (addresses.length === 0) return null;
+
 	return (
 		<>
 			<div>
@@ -38,7 +39,7 @@ const Addresses: FC<IAddressesProps> = (props) => {
 							return (
 								<Address
 									disableAddressClick={true}
-									addressClassName='text-white'
+									addressClassName='text-white text-xs'
 									disableHeader={true}
 									iconSize={20}
 									ethIdenticonSize={28}

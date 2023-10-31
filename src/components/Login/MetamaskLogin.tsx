@@ -19,7 +19,7 @@ import Loader from 'src/ui-components/Loader';
 import NovaWalletIcon from '~assets/wallet/nova-wallet-star.svg';
 import PolkadotJSIcon from '~assets/wallet/polkadotjs-icon.svg';
 import PolkagateIcon from '~assets/wallet/polkagate-icon.svg';
-import SubWalletIcon from '~assets/wallet/subwallet-icon.svg';
+import SubWalletIcon from '~assets/wallet/subwallet-icon.png';
 import TalismanIcon from '~assets/wallet/talisman-icon.svg';
 import MetamaskIcon from '~assets/wallet/metamask-icon.svg';
 import PolyWalletIcon from '~assets/wallet/poly-wallet.svg';
@@ -35,6 +35,7 @@ import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useTheme } from 'next-themes';
 import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
+import Image from 'next/image';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -66,9 +67,17 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 		case Wallet.TALISMAN:
 			return <TalismanIcon className={`h-8 w-8 ${className}`} />;
 		case Wallet.SUBWALLET:
-			return <SubWalletIcon className={`h-8 w-6 ${className}`} />;
+			return (
+				<span className={`h-8 w-8 ${className}`}>
+					<Image
+						alt=''
+						src={SubWalletIcon}
+						className='-mt-2 h-[26px] w-[20px]'
+					/>
+				</span>
+			);
 		case Wallet.POLKAGATE:
-			return <PolkagateIcon className={`h-8 w-6 ${className}`} />;
+			return <PolkagateIcon className={`h-8 w-8 ${className}`} />;
 		case Wallet.NOVAWALLET:
 			return <NovaWalletIcon className={`h-8 w-8 ${className}`} />;
 		case Wallet.POLYWALLET:

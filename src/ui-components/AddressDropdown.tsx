@@ -84,11 +84,12 @@ const AddressDropdown = ({
 				<Address
 					className={`flex items-center ${poppins.className} ${poppins.className}`}
 					addressOtherTextType={getOtherTextType(account)}
-					addressClassName='text-lightBlue dark:text-blue-dark-medium'
+					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 					extensionName={account.name}
 					address={account.address}
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
+					disableTooltip
 				/>
 			)
 		});
@@ -150,9 +151,10 @@ const AddressDropdown = ({
 						)
 					)}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
-					addressClassName='text-lightBlue dark:text-blue-dark-medium'
+					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
+					disableTooltip
 				/>
 				<span className='mx-2 mb-1'>
 					<DownIcon />

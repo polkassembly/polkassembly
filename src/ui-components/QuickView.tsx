@@ -21,6 +21,8 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { ISocial } from '~src/auth/types';
 import ImageComponent from 'src/components/ImageComponent';
 import PolkaverseIcon from '~assets/icons/polkaverse.svg';
+import WebIcon from '~assets/icons/web-icon.svg';
+import Link from 'next/link';
 
 interface Props {
 	className?: string;
@@ -45,7 +47,6 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 		{ isVerified: !!identity?.legal, key: 'Legal', value: identity?.legal },
 		{ isVerified: !!identity?.riot, key: 'Riot', value: identity?.riot || socials?.find((social) => social.type === 'Riot')?.link || '' },
 		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
-		{ isVerified: !!identity?.web, key: 'Web', value: identity?.web },
 		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' }
 	];
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
@@ -137,12 +138,23 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 								)
 							);
 						})}
-						<span
-							onClick={() => window.open(`https://polkaverse.com/accounts/${address}`, '_blank')}
+						{!!identity?.web && (
+							<Link
+								target='_blank'
+								href={identity?.web}
+								title={identity?.web}
+								className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#51D36E] text-white'
+							>
+								<WebIcon />
+							</Link>
+						)}
+						<Link
+							target='_blank'
+							href={`https://polkaverse.com/accounts/${address}`}
 							className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
 						>
 							<PolkaverseIcon />
-						</span>
+						</Link>
 					</div>
 				</div>
 			</div>

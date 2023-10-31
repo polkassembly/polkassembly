@@ -83,27 +83,29 @@ function App({ Component, pageProps }: AppProps) {
 
 	return (
 		<PersistGate persistor={store.__persistor}>
-			<ThemeProvider attribute='class'>
-				<ConfigProvider theme={antdTheme}>
-					<ModalProvider>
-						<ErrorBoundary>
-							<ApiContextProvider network={network}>
-								<>
-									{showSplashScreen && <SplashLoader />}
-									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-										<NextNProgress color='#E5007A' />
-										<CMDK />
-										<AppLayout
-											Component={Component}
-											pageProps={pageProps}
-										/>
-									</main>
-								</>
-							</ApiContextProvider>
-						</ErrorBoundary>
-					</ModalProvider>
-				</ConfigProvider>
-			</ThemeProvider>
+			{() => (
+				<ThemeProvider attribute='class'>
+					<ConfigProvider theme={antdTheme}>
+						<ModalProvider>
+							<ErrorBoundary>
+								<ApiContextProvider network={network}>
+									<>
+										{showSplashScreen && <SplashLoader />}
+										<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+											<NextNProgress color='#E5007A' />
+											<CMDK />
+											<AppLayout
+												Component={Component}
+												pageProps={pageProps}
+											/>
+										</main>
+									</>
+								</ApiContextProvider>
+							</ErrorBoundary>
+						</ModalProvider>
+					</ConfigProvider>
+				</ThemeProvider>
+			)}
 		</PersistGate>
 	);
 }

@@ -30,14 +30,14 @@ const WalletButton = ({ disabled, onClick, icon, className, text, name, optional
 
 	return (
 		<Button
-			className={`flex ${optionalLogin ? `w-full ${availableWallets ? 'bg-white' : 'bg-grey_light'}` : 'justify-center'} items-center rounded-[7px] border-[#F8E3EE] ${
+			className={`flex ${optionalLogin ? `border-grey w-full ${availableWallets ? 'bg-white' : 'bg-grey_light'}` : 'justify-center border-[#F8E3EE]'} items-center rounded-[7px] ${
 				name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'
 			} ${className}`}
 			onClick={onClick}
 			disabled={disabled}
 		>
 			<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
-			{text && optionalLogin && <p className='m-0 ml-4 p-0'>{text}</p>}
+			{text && optionalLogin && <p className='m-0 ml-4 p-0 text-lightBlue'>{text}</p>}
 			{optionalLogin && !availableWallets && <p className='m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
 		</Button>
 	);

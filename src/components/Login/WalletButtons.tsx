@@ -37,7 +37,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 			)}
 			<div className={`${optionalLogin ? '' : 'flex'} m-auto mt-3 max-w-xs flex-col justify-center gap-4 sm:mx-2 sm:max-w-none sm:flex-row`}>
 				<WalletButton
-					className={`${optionalLogin ? 'mb-4' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
+					className={`${optionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
 					disabled={disabled}
 					onClick={(event) => handleWalletClick(event as any, Wallet.POLKADOT)}
 					name='Polkadot.js'
@@ -51,7 +51,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					text='Polkadot.js'
 				/>
 				<WalletButton
-					className={`${optionalLogin ? 'mb-4' : ''} ${selectedWallet && selectedWallet === Wallet.TALISMAN ? 'border border-solid border-pink_primary' : ''}`}
+					className={`${optionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.TALISMAN ? 'border border-solid border-pink_primary' : ''}`}
 					disabled={disabled}
 					onClick={(event) => handleWalletClick(event as any, Wallet.TALISMAN)}
 					name='Talisman'
@@ -65,7 +65,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					text='Talisman'
 				/>
 				<WalletButton
-					className={`${optionalLogin ? 'mb-4' : ''} ${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary' : ''}`}
+					className={`${optionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary' : ''}`}
 					disabled={disabled}
 					onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
 					name='SubWallet'
@@ -79,7 +79,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					text='SubWallet'
 				/>
 				<WalletButton
-					className={`${optionalLogin ? 'mb-4' : ''} ${selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary' : ''}`}
+					className={`${optionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary' : ''}`}
 					disabled={disabled}
 					onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATE)}
 					name='PolkaGate'
@@ -94,7 +94,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 				/>
 				{showPolkasafe && onPolkasafeSelect && (
 					<WalletButton
-						className={`${optionalLogin ? 'mb-4' : ''}`}
+						className={`${optionalLogin ? 'mb-3' : ''}`}
 						disabled={disabled}
 						onClick={(event) => {
 							onPolkasafeSelect(true);
@@ -113,7 +113,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 				)}
 				{['polymesh'].includes(network) ? (
 					<WalletButton
-						className={`${optionalLogin ? 'mb-4' : ''}`}
+						className={`${optionalLogin ? 'mb-3' : ''}`}
 						disabled={disabled}
 						onClick={(event) => handleWalletClick(event as any, Wallet.POLYWALLET)}
 						name='PolyWallet'
@@ -129,7 +129,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 				) : null}
 				{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
 					<WalletButton
-						className={`${optionalLogin ? 'mb-4' : ''}`}
+						className={`${optionalLogin ? 'mb-3' : ''}`}
 						disabled={disabled}
 						onClick={(event) => handleWalletClick(event as any, Wallet.METAMASK)}
 						name='MetaMask'
@@ -145,7 +145,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 				) : null}
 				{(window as any).walletExtension?.isNovaWallet && (
 					<WalletButton
-						className={`${optionalLogin ? 'mb-4' : ''}`}
+						className={`${optionalLogin ? 'mb-3' : ''}`}
 						disabled={disabled}
 						onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
 						name='Nova Wallet'

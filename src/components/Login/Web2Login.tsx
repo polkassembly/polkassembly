@@ -185,13 +185,13 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						/>
 					</div>
 					<p
-						className='mb-5 cursor-pointer text-center text-sm text-lightBlue'
+						className='mb-5 mt-3 cursor-pointer text-center text-sm text-lightBlue'
 						onClick={() => {
 							setWeb2LoginClicked(true);
 							setWeb3Login(false);
 						}}
 					>
-						Or <span className='text-pink_primary'>Login with Username/Email</span>
+						Or <span className='font-semibold text-pink_primary'>Login with Username/Email</span>
 					</p>
 				</AuthForm>
 			)}

@@ -118,7 +118,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='dark:hover:text-pink-dark-primary flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
 						<TownHall />
 						<span>TownHall</span>
 					</span>
@@ -135,7 +135,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='dark:hover:text-pink-dark-primary flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
 						{theme === 'dark' ? <PolkasafeWhiteIcon className='scale-[1.7]' /> : <PolkaSafe />}
 						<span>Polkasafe</span>
 					</span>

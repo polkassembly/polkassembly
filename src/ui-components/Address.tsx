@@ -295,7 +295,7 @@ const Address = (props: Props) => {
 									/>
 								))}
 
-							<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
+							<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
 								<div
 									onClick={(e) => handleClick(e)}
 									title={mainDisplay || encodedAddr}
@@ -325,7 +325,7 @@ const Address = (props: Props) => {
 										<Space className={'header'}>
 											<div
 												onClick={(e) => handleClick(e)}
-												className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} hover:text-bodyBlue`}
+												className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick && 'cursor-pointer hover:underline'} hover:text-bodyBlue`}
 											>
 												{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 												{!extensionName && sub && isSubVisible && (
@@ -337,7 +337,7 @@ const Address = (props: Props) => {
 								</div>
 							)}
 							<div
-								className={`${!addressClassName ? 'text-xs' : addressClassName} ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'} font-normal`}
+								className={`${!addressClassName ? 'text-xs' : addressClassName} ${!disableAddressClick && 'cursor-pointer hover:underline'} font-normal`}
 								onClick={(e) => handleClick(e)}
 							>
 								{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}

@@ -13,7 +13,7 @@ export interface IAddressData {
 }
 
 export interface IAddressesResponse {
-    addressesData: IAddressData[];
+	addressesData: IAddressData[];
 }
 
 const handler: NextApiHandler<IAddressesResponse | { error: string }> = async (req, res) => {
@@ -43,7 +43,7 @@ const handler: NextApiHandler<IAddressesResponse | { error: string }> = async (r
 		});
 	}
 
-	res.status(200).json({
+	return res.status(200).json({
 		addressesData
 	});
 };

@@ -12,25 +12,25 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IChildBountiesResponse {
 	child_bounties: {
-        description: string;
-        index: number;
-        status: string;
-    }[];
-    child_bounties_count: number;
+		description: string;
+		index: number;
+		status: string;
+	}[];
+	child_bounties_count: number;
 }
 
 // expects optional id, page, voteType and listingLimit
-async function handler (req: NextApiRequest, res: NextApiResponse<IChildBountiesResponse | { error: string }>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesResponse | { error: string }>) {
 	const { postId = 0, page = 1, listingLimit = VOTES_LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) {
-		res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ error: 'Invalid network in request header' });
 	}
 
 	const numListingLimit = Number(listingLimit);
 	if (isNaN(numListingLimit)) {
-		res.status(400).json({ error: `The listingLimit "${listingLimit}" is invalid.` });
+		return res.status(400).json({ error: `The listingLimit "${listingLimit}" is invalid.` });
 	}
 
 	const numPage = Number(page);
@@ -73,7 +73,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IChildBounties
 		});
 	});
 
-	res.status(200).json(resObj);
+	return res.status(200).json(resObj);
 }
 
 export default withErrorHandling(handler);

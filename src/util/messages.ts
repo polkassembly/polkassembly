@@ -6,6 +6,7 @@ const messages = {
 	API_FETCH_ERROR: 'Something went wrong while fetching data. Please try again later.',
 	INVALID_REQUEST_BODY: 'invalid request body',
 	NETWORK_VALIDATION_ERROR: 'Invalid network in request header',
+	NO_ACTIVE_PROPOSALS: 'No active proposals found',
 	SUBSQUID_FETCH_ERROR: 'Something went wrong while fetching onchain data. Please try again later.',
 	VALIDATION_CONTENT_ERROR: 'Did you forget to add content?',
 	VALIDATION_EMAIL_ERROR: 'Please provide a valid email!',

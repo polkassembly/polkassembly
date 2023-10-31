@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import { getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect } from 'react';
 import Listing from '~src/components/Listing';
-import { useNetworkContext } from '~src/context';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -15,11 +14,18 @@ import { ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	const { page = 1, sortBy = sortValues.NEWEST } = query;
 	const proposalType = ProposalType.ANNOUNCEMENT;
-	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
 		listingLimit: LISTING_LIMIT,
 		network,
@@ -31,19 +37,20 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 interface IAnnouncementProps {
-	data?: {posts:any[],count:number };
+	data?: { posts: any[]; count: number };
 	error?: string;
 	network: string;
 }
 
-const Announcements = (props:IAnnouncementProps) => {
+const Announcements = (props: IAnnouncementProps) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
+
 	const router = useRouter();
 
 	useEffect(() => {
-		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		dispatch(setNetwork(network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
@@ -51,9 +58,9 @@ const Announcements = (props:IAnnouncementProps) => {
 	if (!data) return null;
 
 	const { posts, count } = data;
-	const onPaginationChange = (page:number) => {
+	const onPaginationChange = (page: number) => {
 		router.push({
-			query:{
+			query: {
 				page
 			}
 		});
@@ -62,24 +69,31 @@ const Announcements = (props:IAnnouncementProps) => {
 
 	return (
 		<>
-			<SEOHead title={'Alliance Announcements'} network={network}/>
+			<SEOHead
+				title={'Alliance Announcements'}
+				network={network}
+			/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>Alliance</h1>
 
 			{/* Intro and Create Post Button */}
-			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-					The Alliance Pallet provides a collective that curates a list of accounts and URLs, deemed by the voting members to be unscrupulous actors. The Alliance provides a set of ethics against bad behavior, and provides recognition and influence for those teams that contribute something back to the ecosystem.
+			<div className='flex flex-col md:flex-row'>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md md:p-8 md:text-base'>
+					The Alliance Pallet provides a collective that curates a list of accounts and URLs, deemed by the voting members to be unscrupulous actors. The Alliance provides a set of
+					ethics against bad behavior, and provides recognition and influence for those teams that contribute something back to the ecosystem.
 				</p>
 			</div>
-			<div className='shadow-md bg-white p-3 md:p-8 rounded-md'>
+			<div className='rounded-md bg-white p-3 shadow-md md:p-8'>
 				<div className='flex items-center justify-between'>
-					<h1 className='dashboard-heading'>{ count } Announcement</h1>
+					<h1 className='dashboard-heading'>{count} Announcement</h1>
 				</div>
 
 				<div>
-					<Listing posts={posts} proposalType={ProposalType.ANNOUNCEMENT} />
-					<div className='flex justify-end mt-6'>
-						{!!count && count > 0 && count > LISTING_LIMIT &&
+					<Listing
+						posts={posts}
+						proposalType={ProposalType.ANNOUNCEMENT}
+					/>
+					<div className='mt-6 flex justify-end'>
+						{!!count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
@@ -89,7 +103,7 @@ const Announcements = (props:IAnnouncementProps) => {
 								onChange={onPaginationChange}
 								responsive={true}
 							/>
-						}
+						)}
 					</div>
 				</div>
 			</div>

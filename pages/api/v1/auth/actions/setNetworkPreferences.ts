@@ -58,11 +58,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const userData = userDoc.data();
 
 	const payload: {
-		[network:string] : {[index:string] : IUserNotificationTriggerPreferences}
+		[network: string]: { [index: string]: IUserNotificationTriggerPreferences };
 	} = {};
 
 	networks.forEach((network) => {
-		payload[network]= network_preferences;
+		payload[network] = network_preferences;
 	});
 	const newNotificationSettings: IUserNotificationSettings = {
 		...(userData?.notification_preferences || {}),
@@ -72,12 +72,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 	};
 
-	await userRef.update({ notification_preferences: newNotificationSettings }).then(() => {
-		return res.status(200).json({ message: 'Success' });
-	}).catch((error) => {
-		console.error('Error updating network preferences: ', error);
-		return res.status(500).json({ message: 'Error updating  network preferences' });
-	});
+	await userRef
+		.update({ notification_preferences: newNotificationSettings })
+		.then(() => {
+			return res.status(200).json({ message: 'Success' });
+		})
+		.catch((error) => {
+			console.error('Error updating network preferences: ', error);
+			return res.status(500).json({ message: 'Error updating  network preferences' });
+		});
 }
 
 export default withErrorHandling(handler);

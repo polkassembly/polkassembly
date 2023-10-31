@@ -12,17 +12,18 @@ import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
 
 import { MessageType } from '~src/auth/types';
-import { useUserDetailsContext } from '~src/context';
 import { handleTokenChange } from '~src/services/auth.service';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import Header from '../Header';
+import { useDispatch } from 'react-redux';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IPasswordProps {
-    name: string;
-    placeholder: string;
-    rules?: Rule[];
-    onChange?: React.ChangeEventHandler<HTMLInputElement>;
+	name: string;
+	placeholder: string;
+	rules?: Rule[];
+	onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 interface IEmailProps {
@@ -36,9 +37,9 @@ interface IEmailProps {
 
 const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) => {
 	return (
-		<div className='flex flex-col gap-y-2 h-full max-w-[250px]'>
+		<div className='flex h-full max-w-[250px] flex-col gap-y-2'>
 			<label
-				className="text-sm text-sidebarBlue font-normal leading-6 tracking-wide"
+				className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
 				htmlFor={name}
 			>
 				{placeholder}
@@ -50,7 +51,7 @@ const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) =>
 				<Input.Password
 					onChange={onChange}
 					placeholder={placeholder}
-					className="rounded-md py-2 px-4 md:min-w-[250px] border-grey_border"
+					className='rounded-md border-grey_border px-4 py-2 md:min-w-[250px]'
 					id={name}
 				/>
 			</Form.Item>
@@ -60,9 +61,9 @@ const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) =>
 
 const ChangeEmail: FC<IEmailProps> = ({ disabled, value, name, label, rules, onChange }) => {
 	return (
-		<div className='flex flex-col gap-y-2 h-full max-w-[250px]'>
+		<div className='flex h-full max-w-[250px] flex-col gap-y-2'>
 			<label
-				className="text-sm text-sidebarBlue font-normal leading-6 tracking-wide"
+				className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
 				htmlFor={name}
 			>
 				{label}
@@ -76,9 +77,9 @@ const ChangeEmail: FC<IEmailProps> = ({ disabled, value, name, label, rules, onC
 					defaultValue={value}
 					value={value}
 					onChange={onChange}
-					placeholder="email@example.com"
-					className="rounded-md py-3 px-4 w-[320px]"
-					id="email"
+					placeholder='email@example.com'
+					className='w-[320px] rounded-md px-4 py-3'
+					id='email'
 					type='email'
 				/>
 			</Form.Item>
@@ -91,8 +92,8 @@ const initialPasswordsState = { new: '', old: '' };
 const Profile = () => {
 	const [form] = Form.useForm();
 	const { password, email: emailValidation } = validation;
-
-	const currentUser = useUserDetailsContext();
+	const dispatch = useDispatch();
+	const currentUser = useUserDetailsSelector();
 	const { email: currentEmail } = currentUser;
 
 	const [isChange, setIsChange] = useState(false);
@@ -101,12 +102,12 @@ const Profile = () => {
 	const [passwords, setPasswords] = useState(initialPasswordsState);
 	const [err, setErr] = useState('');
 	const [loading, setLoading] = useState(false);
-	const { web3signup } = useUserDetailsContext();
+	const { web3signup } = currentUser;
 
-	const isSubmitDisabled =web3signup ? email === '' : isChange ? (!passwords.old || !passwords.new) : (!currentPassword || currentEmail === email);
+	const isSubmitDisabled = web3signup ? email === '' : isChange ? !passwords.old || !passwords.new : !currentPassword || currentEmail === email;
 
 	const handleSubmit = async (values: any) => {
-		if(email === currentEmail){
+		if (email === currentEmail) {
 			setErr('You already verified this email');
 			return;
 		}
@@ -120,15 +121,12 @@ const Profile = () => {
 
 		//validation is successful
 		setErr('');
-		if(web3signup){
+		if (web3signup) {
 			try {
 				setLoading(true);
-				const { data, error } = await nextApiClientFetch<any>(
-					'api/v1/auth/actions/sendVerificationEmail',
-					{
-						email
-					}
-				);
+				const { data, error } = await nextApiClientFetch<any>('api/v1/auth/actions/sendVerificationEmail', {
+					email
+				});
 				if (error) {
 					queueNotification({
 						header: 'Failed!',
@@ -156,10 +154,10 @@ const Profile = () => {
 		}
 
 		const { new_password, old_password } = values;
-		if(currentEmail !== email && currentPassword){
+		if (currentEmail !== email && currentPassword) {
 			setLoading(true);
 			// nextApiClientFetch<ChangeResponseType | MessageType>
-			const { data , error } = await nextApiClientFetch<any>( 'api/v1/auth/actions/changeEmail', {
+			const { data, error } = await nextApiClientFetch<any>('api/v1/auth/actions/changeEmail', {
 				email: email,
 				password: currentPassword
 			});
@@ -176,7 +174,7 @@ const Profile = () => {
 			}
 
 			if (data && data.message && data.token) {
-				handleTokenChange(data.token, currentUser);
+				handleTokenChange(data.token, currentUser, dispatch);
 
 				form.resetFields();
 				setIsChange(false);
@@ -191,9 +189,9 @@ const Profile = () => {
 			setLoading(false);
 		}
 
-		if (new_password && old_password){
+		if (new_password && old_password) {
 			setLoading(true);
-			const { data , error } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/changePassword', {
+			const { data, error } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/changePassword', {
 				newPassword: new_password,
 				oldPassword: old_password
 			});
@@ -223,29 +221,38 @@ const Profile = () => {
 
 			setLoading(false);
 		}
-
 	};
 
 	return (
-		<Row className='flex flex-col w-full'>
-			<Header heading='Profile Settings' subHeading='Update your profile settings' />
-			<Form form={form} onFinish={handleSubmit} className='mt-8'>
-				{err && <div className='mb-4 flex items-start'>
-					<Alert type='error' message={err} />
-				</div>}
+		<Row className='flex w-full flex-col'>
+			<Header
+				heading='Profile Settings'
+				subHeading='Update your profile settings'
+			/>
+			<Form
+				form={form}
+				onFinish={handleSubmit}
+				className='mt-8'
+			>
+				{err && (
+					<div className='mb-4 flex items-start'>
+						<Alert
+							type='error'
+							message={err}
+						/>
+					</div>
+				)}
 
-				<article className='w-full flex flex-col md:flex-row gap-x-4'>
+				<article className='flex w-full flex-col gap-x-4 md:flex-row'>
 					<ChangeEmail
 						disabled={isChange}
 						value={email || ''}
-						onChange={
-							(e) => {
-								setEmail(e.target.value || '');
-								if (err){
-									setErr('');
-								}
+						onChange={(e) => {
+							setEmail(e.target.value || '');
+							if (err) {
+								setErr('');
 							}
-						}
+						}}
 						name='email'
 						label='Email'
 						rules={[
@@ -257,16 +264,13 @@ const Profile = () => {
 					/>
 				</article>
 
-				{
-					!web3signup &&
-					(isChange // only allow to change password if not changing email
-						? <article className='flex flex-col lg:flex-row gap-x-5'>
+				{!web3signup &&
+					(isChange ? ( // only allow to change password if not changing email
+						<article className='flex flex-col gap-x-5 lg:flex-row'>
 							<Password
-								onChange={
-									(e) => {
-										setPasswords((prev) => ({ ...prev, old: e?.target?.value }));
-									}
-								}
+								onChange={(e) => {
+									setPasswords((prev) => ({ ...prev, old: e?.target?.value }));
+								}}
 								name='old_password'
 								placeholder='Old Password'
 								rules={[
@@ -300,22 +304,24 @@ const Profile = () => {
 								loading={loading}
 								size='small'
 								htmlType='button'
-								onClick={() => { setIsChange(false); setPasswords(initialPasswordsState); }}
-								className='border-none outline-none bg-none flex items-center p-0 m-0 md:mt-10 text-pink_primary text-sm leading-6 tracking-wide'
+								onClick={() => {
+									setIsChange(false);
+									setPasswords(initialPasswordsState);
+								}}
+								className='m-0 flex items-center border-none bg-none p-0 text-sm leading-6 tracking-wide text-pink_primary outline-none md:mt-10'
 							>
-               Cancel Change
+								Cancel Change
 							</Button>
 						</article>
-						: <article className='w-full flex flex-col md:flex-row gap-x-4'>
+					) : (
+						<article className='flex w-full flex-col gap-x-4 md:flex-row'>
 							<Password
-								onChange={
-									(e) => {
-										setCurrentPassword(e.target.value || '');
-										if (err){
-											setErr('');
-										}
+								onChange={(e) => {
+									setCurrentPassword(e.target.value || '');
+									if (err) {
+										setErr('');
 									}
-								}
+								}}
 								name='current_password'
 								placeholder='Password'
 								rules={[
@@ -332,20 +338,25 @@ const Profile = () => {
 							<Button
 								size='small'
 								htmlType='button'
-								onClick={() => {setIsChange(true); setCurrentPassword('');}}
-								className='border-none outline-none bg-none flex items-center p-0 m-0 md:mt-10 text-pink_primary text-sm leading-6 tracking-wide'
+								onClick={() => {
+									setIsChange(true);
+									setCurrentPassword('');
+								}}
+								className='m-0 flex items-center border-none bg-none p-0 text-sm leading-6 tracking-wide text-pink_primary outline-none md:mt-10'
 							>
-               Change
+								Change
 							</Button>
-						</article>)
-				}
+						</article>
+					))}
 
 				<Button
 					loading={loading}
 					disabled={isSubmitDisabled}
 					size='large'
 					htmlType='submit'
-					className={`${!isSubmitDisabled ? 'bg-pink_primary': 'bg-icon_grey'} mt-5 rounded-lg font-semibold text-lg leading-7 text-white py-3 outline-none border-none px-14 flex items-center justify-center bg-pink_primary`}
+					className={`${
+						!isSubmitDisabled ? 'bg-pink_primary' : 'bg-icon_grey'
+					} mt-5 flex items-center justify-center rounded-lg border-none bg-pink_primary px-14 py-3 text-lg font-semibold leading-7 text-white outline-none`}
 				>
 					Save
 				</Button>

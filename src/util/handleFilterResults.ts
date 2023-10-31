@@ -4,22 +4,19 @@
 
 import { IPostTag } from '~src/types';
 
-const handleFilterResults = ( defaultTags: IPostTag[],
-	setDefaultTag:  (string:IPostTag[])=> void,
-	selectedTags: string[],
-	searchInput:string ) => {
+const handleFilterResults = (defaultTags: IPostTag[], setDefaultTag: (string: IPostTag[]) => void, selectedTags: string[], searchInput: string) => {
 	const keyword = searchInput.toLowerCase();
-	const filteredData = defaultTags.filter((tag :IPostTag) => {
+	const filteredData = defaultTags.filter((tag: IPostTag) => {
 		const item = tag.name.toLowerCase();
 		return item.indexOf(keyword) > -1;
 	});
 
-	const data=filteredData.filter((item:IPostTag) => {
-		let count=0;
-		selectedTags.map((tag:string) => {
-			if(item.name === tag)count++;
+	const data = filteredData.filter((item: IPostTag) => {
+		let count = 0;
+		selectedTags.map((tag: string) => {
+			if (item.name === tag) count++;
 		});
-		if(count === 0)return item;
+		if (count === 0) return item;
 	});
 	setDefaultTag(data);
 };

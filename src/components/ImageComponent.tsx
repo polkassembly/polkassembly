@@ -6,29 +6,27 @@ import { Avatar } from 'antd';
 import React, { FC } from 'react';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
 
-interface IImageComponentProps{
-    className?: string;
-    src: any;
-    alt: string;
-    iconClassName?: string;
+interface IImageComponentProps {
+	className?: string;
+	src: any;
+	alt: string;
+	iconClassName?: string;
 }
 
 const ImageComponent: FC<IImageComponentProps> = (props) => {
-	const { alt, className, src, iconClassName } = props;
-	const newSrc = (src && src.trim())? src.trim(): null;
+	const { alt, className, src = '', iconClassName } = props;
+	const regex = /\.(jpg|jpeg|png|gif|bmp|svg|tiff|ico)$/;
 	return (
-		<>
-			<Avatar
-				className={className}
-				src={newSrc}
-				alt={alt}
-				icon={
-					<span className={iconClassName}>
-						<DefaultProfile />
-					</span>
-				}
-			/>
-		</>
+		<Avatar
+			className={className}
+			src={regex.test(src) ? src : '/assets/icons/user-profile.png'}
+			alt={alt}
+			icon={
+				<span className={iconClassName}>
+					<DefaultProfile />
+				</span>
+			}
+		/>
 	);
 };
 

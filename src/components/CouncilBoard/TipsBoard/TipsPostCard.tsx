@@ -6,24 +6,20 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import styled from 'styled-components';
 
-const TipsPostCard = ({ className } : { className?: string }) => {
+const TipsPostCard = ({ className }: { className?: string }) => {
 	return (
 		<div className={className}>
-			<div className="tip-history tipped/not-tipped">
-				Not Tipped
-			</div>
+			<div className='tip-history tipped/not-tipped'>Not Tipped</div>
 
 			<h5>Talisman Proposal: Cross-Chain Transaction</h5>
 			<p>Working on finishing up the tickets for the bigger project files. Working on finishing up the tickets for</p>
 
-			<div className="info-bar">
-				<div className="tip-post-status opened/rewarded">
-					Opened
-				</div>
+			<div className='info-bar'>
+				<div className='tip-post-status opened/rewarded'>Opened</div>
 
-				<div className="right-info d-flex">
-					<div className="time">
-						<ClockCircleOutlined/>
+				<div className='right-info d-flex'>
+					<div className='time'>
+						<ClockCircleOutlined />
 						20h ago
 					</div>
 				</div>
@@ -33,7 +29,7 @@ const TipsPostCard = ({ className } : { className?: string }) => {
 };
 
 export default styled(TipsPostCard)`
-	background: #FFFFFF;
+	background: #ffffff;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.16);
 	border-radius: 8px;
 	padding: 15px 20px;
@@ -53,11 +49,11 @@ export default styled(TipsPostCard)`
 		margin-bottom: 6px;
 
 		&.tipped {
-			color: #5BC044;
+			color: #5bc044;
 		}
 
 		&.not-tipped {
-			color: #FF0000;
+			color: #ff0000;
 		}
 	}
 
@@ -69,16 +65,16 @@ export default styled(TipsPostCard)`
 		.tip-post-status {
 			font-size: 14px;
 			padding: 4px 8px;
-			background: #B6B6B6;
+			background: #b6b6b6;
 			border-radius: 4px;
-			color: #FFFFFF;
+			color: #ffffff;
 
 			&.opened {
-				background: #B6B6B6;
+				background: #b6b6b6;
 			}
 
 			&.rewarded {
-				background: #D6AD1D;
+				background: #d6ad1d;
 			}
 		}
 

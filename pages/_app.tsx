@@ -11,12 +11,10 @@ import NextNProgress from 'nextjs-progressbar';
 import { useEffect, useState } from 'react';
 import AppLayout from 'src/components/AppLayout';
 import CMDK from 'src/components/CMDK';
-import { UserDetailsProvider } from 'src/context/UserDetailsContext';
 import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
-import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 import { initGA, logPageView } from '../analytics';
 
@@ -42,9 +40,14 @@ const workSans = Work_Sans({
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
 import ErrorBoundary from '~src/ui-components/ErrorBoundary';
+import { PersistGate } from 'redux-persist/integration/react';
+import { wrapper } from '~src/redux/store';
+import { useStore } from 'react-redux';
+import { chainProperties } from '~src/global/networkConstants';
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
+	const store: any = useStore();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
 
@@ -53,46 +56,54 @@ export default function App({ Component, pageProps }: AppProps) {
 	}, [router.isReady]);
 
 	useEffect(() => {
-		if (!global?.window) return;
 		const networkStr = getNetwork();
+		if (!global?.window || !chainProperties[networkStr].gTag) return;
 		setNetwork(networkStr);
 
 		if (!window.GA_INITIALIZED) {
-			initGA();
+			initGA(networkStr);
 			// @ts-ignore
 			window.GA_INITIALIZED = true;
 		}
+		setNetwork(networkStr);
 		logPageView();
 	}, []);
 
-	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
-		<Image
-			style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
-			width={32}
-			height={32}
-			src='/favicon.ico'
-			alt={'Loading'}
-		/>
-	</div>;
+	const SplashLoader = () => (
+		<div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
+			<Image
+				style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
+				width={32}
+				height={32}
+				src='/favicon.ico'
+				alt={'Loading'}
+			/>
+		</div>
+	);
 
-	return <ConfigProvider theme={antdTheme}>
-		<ModalProvider>
-			<ErrorBoundary>
-				<UserDetailsProvider>
-					<ApiContextProvider network={network}>
-						<NetworkContextProvider initialNetwork={network}>
+	return (
+		<PersistGate persistor={store.__persistor}>
+			<ConfigProvider theme={antdTheme}>
+				<ModalProvider>
+					<ErrorBoundary>
+						<ApiContextProvider network={network}>
 							<>
-								{ showSplashScreen && <SplashLoader /> }
+								{showSplashScreen && <SplashLoader />}
 								<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-									<NextNProgress color="#E5007A" />
+									<NextNProgress color='#E5007A' />
 									<CMDK />
-									<AppLayout Component={Component} pageProps={pageProps} />
+									<AppLayout
+										Component={Component}
+										pageProps={pageProps}
+									/>
 								</main>
 							</>
-						</NetworkContextProvider>
-					</ApiContextProvider>
-				</UserDetailsProvider>
-			</ErrorBoundary>
-		</ModalProvider>
-	</ConfigProvider>;
+						</ApiContextProvider>
+					</ErrorBoundary>
+				</ModalProvider>
+			</ConfigProvider>
+		</PersistGate>
+	);
 }
+
+export default wrapper.withRedux(App);

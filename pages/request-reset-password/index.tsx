@@ -2,38 +2,44 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button,Form ,Input, Row } from 'antd';
+import { Button, Form, Input, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import AuthForm from 'src/ui-components/AuthForm';
 import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
 import queueNotification from '~src/ui-components/QueueNotification';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
-	network: string
+	network: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
 	return { props: { network } };
 };
 
 const RequestResetPassword: FC<Props> = (props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		dispatch(setNetwork(props.network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
@@ -44,13 +50,13 @@ const RequestResetPassword: FC<Props> = (props) => {
 		setLoading(true);
 		const { email } = data;
 		if (email) {
-			const { data , error } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/requestResetPassword', { email });
-			if(error) {
+			const { data, error } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/requestResetPassword', { email });
+			if (error) {
 				console.log('error requesting reset passoword : ', error);
 				setError(error);
 				setLoading(false);
 			}
-			if(data) {
+			if (data) {
 				queueNotification({
 					header: 'Success!',
 					message: data.message,
@@ -64,43 +70,53 @@ const RequestResetPassword: FC<Props> = (props) => {
 
 	return (
 		<>
-			<SEOHead title="Request Reset Password" network={props.network}/>
-			<Row justify='center' align='middle' className='h-full -mt-16'>
-				<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
+			<SEOHead
+				title='Request Reset Password'
+				network={props.network}
+			/>
+			<Row
+				justify='center'
+				align='middle'
+				className='-mt-16 h-full'
+			>
+				<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
 					<h3 className='text-2xl font-semibold text-[#1E232C]'>Request Password Reset</h3>
 					<AuthForm
 						onSubmit={handleSubmitForm}
-						className="flex flex-col gap-y-6"
+						className='flex flex-col gap-y-6'
 					>
-						<div className="flex flex-col gap-y-1">
+						<div className='flex flex-col gap-y-1'>
 							<label
-								htmlFor="email"
-								className="text-base text-sidebarBlue font-medium"
+								htmlFor='email'
+								className='text-base font-medium text-sidebarBlue'
 							>
-							Email
+								Email
 							</label>
 							<Form.Item
-								name="email"
-								rules={
-									[
-										{
-											message: messages.VALIDATION_EMAIL_ERROR,
-											pattern: validation.email.pattern
-										}
-									]
-								}
+								name='email'
+								rules={[
+									{
+										message: messages.VALIDATION_EMAIL_ERROR,
+										pattern: validation.email.pattern
+									}
+								]}
 							>
 								<Input
-									placeholder="email@example.com"
-									className="rounded-md py-3 px-4"
-									id="email"
+									placeholder='email@example.com'
+									className='rounded-md px-4 py-3'
+									id='email'
 								/>
 							</Form.Item>
 						</div>
 
-						<div className='flex justify-center items-center'>
-							<Button disabled={loading} htmlType="submit" size='large' className='bg-pink_primary w-56 rounded-md outline-none border-none text-white'>
-							Request reset
+						<div className='flex items-center justify-center'>
+							<Button
+								disabled={loading}
+								htmlType='submit'
+								size='large'
+								className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
+							>
+								Request reset
 							</Button>
 						</div>
 						{error && <FilteredError text={error} />}

@@ -10,17 +10,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 
-import { NetworkContext } from '~src/context/NetworkContext';
-
 import WhitelistMembersListing from './WhitelistMembersListing';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
+import { useNetworkSelector } from '~src/redux/selectors';
 
-export type WhitelistMember = {accountId:string, rank?: number};
+export type WhitelistMember = { accountId: string; rank?: number };
 
-const WhitelistMembersContainer = ({ className, membersType } : { className?:string; membersType: EMembersType }) => {
-
-	const { network } = useContext(NetworkContext);
+const WhitelistMembersContainer = ({ className, membersType }: { className?: string; membersType: EMembersType }) => {
+	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useContext(ApiContext);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,15 +33,15 @@ const WhitelistMembersContainer = ({ className, membersType } : { className?:str
 
 		// using any because it returns some Codec types
 
-		if(['moonbeam', 'moonbase', 'moonriver'].includes(network)){
-			if(!api.query.openTechCommitteeCollective){
+		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
+			if (!api.query.openTechCommitteeCollective) {
 				setNoMembers(true);
 				return;
 			}
 			api.query.openTechCommitteeCollective.members((member: any) => {
 				let members: WhitelistMember[] = [];
 
-				if(!member.length){
+				if (!member.length) {
 					setNoMembers(true);
 					return;
 				}
@@ -58,34 +56,68 @@ const WhitelistMembersContainer = ({ className, membersType } : { className?:str
 
 				setMembers(members);
 			});
-		}
-		else{
-			if(!api.query.fellowshipCollective){
+		} else if (network === 'picasso') {
+			if (!api.query.technicalCommittee) {
 				setNoMembers(true);
 				return;
 			}
-			api.query.fellowshipCollective.members.entries().then((entries: any) => {
-				let members: WhitelistMember[] = [];
+			api.query.technicalCommittee
+				.members()
+				.then((members) => {
+					let membersArr: WhitelistMember[] = [];
 
-				for (let i = 0; i < entries.length; i++) {
-					// key split into args part to extract
-					const [{ args: [accountId] }, optInfo] = entries[i];
-					if (optInfo.isSome) {
-						members.push({
-							accountId: accountId.toString(),
-							rank: Number(optInfo.unwrap().rank.toString())
-						});
+					if (!members.length) {
+						setNoMembers(true);
+						return;
 					}
-				}
 
-				members = _.orderBy(members, ['rank'], ['asc']);
+					members.forEach((m: any) => {
+						membersArr.push({
+							accountId: m.toString()
+						});
+					});
 
-				setMembers(members);
-			}).catch(err => {
-				setError(err);
-			});
+					membersArr = _.orderBy(membersArr, ['rank'], ['asc']);
+
+					setMembers(membersArr);
+				})
+				.catch((err) => {
+					setError(err);
+				});
+		} else {
+			if (!api.query.fellowshipCollective) {
+				setNoMembers(true);
+				return;
+			}
+			api.query.fellowshipCollective.members
+				.entries()
+				.then((entries: any) => {
+					let members: WhitelistMember[] = [];
+
+					for (let i = 0; i < entries.length; i++) {
+						// key split into args part to extract
+						const [
+							{
+								args: [accountId]
+							},
+							optInfo
+						] = entries[i];
+						if (optInfo.isSome) {
+							members.push({
+								accountId: accountId.toString(),
+								rank: Number(optInfo.unwrapOr(null)?.rank.toString())
+							});
+						}
+					}
+
+					members = _.orderBy(members, ['rank'], ['asc']);
+
+					setMembers(members);
+				})
+				.catch((err) => {
+					setError(err);
+				});
 		}
-
 	};
 
 	useEffect(() => {
@@ -95,44 +127,48 @@ const WhitelistMembersContainer = ({ className, membersType } : { className?:str
 
 		getWhitelistMembers();
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	if (error) {
 		return <ErrorState errorMessage={error.message || 'Error in fetching Whitelist members.'} />;
 	}
 
-	if(noMembers){
+	if (noMembers) {
 		return (
-			<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
-				<PostEmptyState/>
+			<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
+				<PostEmptyState />
 			</div>
 		);
 	}
 
-	if(members.length){
-
+	if (members.length) {
 		return (
 			<>
-				<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+				<div className={`${className} rounded-md bg-white p-3 shadow-md md:p-8`}>
 					<div className='flex items-center justify-between'>
 						<div>
 							<h1 className='dashboard-heading'>{members.length} Members</h1>
-							<FilteredTags/>
+							<FilteredTags />
 						</div>
-						<FilterByTags className='mr-[2px]'/>
+						<FilterByTags className='mr-[2px]' />
 					</div>
 
-					<WhitelistMembersListing membersType={membersType} className='mt-6' data={members} />
+					<WhitelistMembersListing
+						membersType={membersType}
+						className='mt-6'
+						data={members}
+					/>
 				</div>
 			</>
 		);
 	}
 
 	return (
-		<div className={className}><LoadingState /></div>
+		<div className={className}>
+			<LoadingState />
+		</div>
 	);
-
 };
 
 export default WhitelistMembersContainer;

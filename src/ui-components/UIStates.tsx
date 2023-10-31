@@ -18,8 +18,8 @@ export const LoadingState = () => {
 };
 
 interface IErrorStateProps {
-	errorMessage: string
-	isRefreshBtnVisible?: boolean
+	errorMessage: string;
+	isRefreshBtnVisible?: boolean;
 }
 
 export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVisible = true }) => {
@@ -27,28 +27,43 @@ export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVis
 		<Result
 			icon={<FrownOutlined className='text-pink_primary ' />}
 			title={cleanError(errorMessage)}
-			extra={isRefreshBtnVisible?<Button className='bg-pink_primary text-white rounded-md hover:bg-pink_secondary duration-300 transition-colors' onClick={() => window.location.reload()}>Refresh</Button>: null}
+			extra={
+				isRefreshBtnVisible ? (
+					<Button
+						className='rounded-md bg-pink_primary text-white transition-colors duration-300 hover:bg-pink_secondary'
+						onClick={() => window.location.reload()}
+					>
+						Refresh
+					</Button>
+				) : null
+			}
 		/>
 	);
 };
 interface IPostEmptyStateProps {
 	className?: string;
-	postCategory?: ProposalType | OffChainProposalType; description?: string | JSX.Element;
+	postCategory?: ProposalType | OffChainProposalType;
+	description?: string | JSX.Element;
 	image?: JSX.Element;
-	imageStyle?:any;
+	imageStyle?: any;
+	text?: string;
 }
-export const PostEmptyState : FC<IPostEmptyStateProps> = ({ className, description, postCategory ,image ,imageStyle } ) => {
+export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, description, postCategory, image, imageStyle, text }) => {
 	//console.log('image=>'+image);
+	text ? text : 'No Data.';
 	return (
 		<Empty
 			className={className}
 			image={image}
-			imageStyle={ imageStyle }
+			imageStyle={imageStyle}
 			description={
-				postCategory?
-					<span className='text-md text-navBlue'>
-					We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.
-					</span> : description ? <span className='text-md text-navBlue'>{description}</span> : <span className='text-md text-navBlue'>No data.</span>
+				postCategory ? (
+					<span className='text-md text-navBlue'>We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.</span>
+				) : description ? (
+					<span className='text-md text-navBlue'>{description}</span>
+				) : (
+					<span className='text-md text-navBlue'>{text}</span>
+				)
 			}
 		/>
 	);

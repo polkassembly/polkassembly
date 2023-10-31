@@ -7,8 +7,7 @@ import BN from 'bn.js';
 import { PieChart } from 'react-minimal-pie-chart';
 import React, { FC } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
-
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IVoteProgressProps {
 	ayeVotes?: BN;
@@ -30,29 +29,33 @@ interface IVoteProgressLegacyProps {
 const ZERO = new BN(0);
 
 export const VoteProgressLegacy = ({ ayeVotes, className, nayVotes, ayesNum, naysNum }: IVoteProgressLegacyProps) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
-	const bnToIntBalance = function (bn: BN): number{
-		return  Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	const bnToIntBalance = function (bn: BN): number {
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
 	const ayeVotesNumber = ayesNum === undefined ? bnToIntBalance(ayeVotes || ZERO) : Number(ayesNum);
 	const nayVotesNumber = naysNum === undefined ? bnToIntBalance(nayVotes || ZERO) : Number(naysNum);
-	const totalVotesNumber = (ayesNum === undefined || naysNum === undefined) ? bnToIntBalance(ayeVotes?.add(nayVotes|| ZERO) || ZERO) : (Number(ayesNum) + Number(naysNum));
-	const ayePercent = ayeVotesNumber/totalVotesNumber*100;
+	const totalVotesNumber = ayesNum === undefined || naysNum === undefined ? bnToIntBalance(ayeVotes?.add(nayVotes || ZERO) || ZERO) : Number(ayesNum) + Number(naysNum);
+	const ayePercent = (ayeVotesNumber / totalVotesNumber) * 100;
 	const nayPercent = 100 - ayePercent;
 
 	return (
-		<div className={`${className} flex flex-col items-center text-white text-base`}>
-			<div id="bigCircle" className={`${ayeVotesNumber >= nayVotesNumber ? 'bg-aye_green' : 'bg-nay_red'} rounded-full h-[110px] w-[110px] flex items-center justify-center z-10`}>
-				{
-					(ayeVotesNumber == 0 && nayVotesNumber == 0) ? '0' : ayeVotesNumber >= nayVotesNumber ? (ayePercent).toFixed(1) : ((nayPercent).toFixed(1))
-				}%
+		<div className={`${className} flex flex-col items-center text-base text-white`}>
+			<div
+				id='bigCircle'
+				className={`${ayeVotesNumber >= nayVotesNumber ? 'bg-aye_green' : 'bg-nay_red'} z-10 flex h-[110px] w-[110px] items-center justify-center rounded-full`}
+			>
+				{ayeVotesNumber == 0 && nayVotesNumber == 0 ? '0' : ayeVotesNumber >= nayVotesNumber ? ayePercent.toFixed(1) : nayPercent.toFixed(1)}%
 			</div>
-			<div id="smallCircle" className={`${ayeVotesNumber < nayVotesNumber ? 'bg-aye_green' : 'bg-nay_red'} -mt-8 border-2 border-white rounded-full h-[75px] w-[75px] flex items-center justify-center z-20`}>
-				{
-					(ayeVotesNumber == 0 && nayVotesNumber == 0) ? '0' : ayeVotesNumber < nayVotesNumber ? (ayePercent).toFixed(1) : (nayPercent).toFixed(1)
-				}%
+			<div
+				id='smallCircle'
+				className={`${
+					ayeVotesNumber < nayVotesNumber ? 'bg-aye_green' : 'bg-nay_red'
+				} z-20 -mt-8 flex h-[75px] w-[75px] items-center justify-center rounded-full border-2 border-white`}
+			>
+				{ayeVotesNumber == 0 && nayVotesNumber == 0 ? '0' : ayeVotesNumber < nayVotesNumber ? ayePercent.toFixed(1) : nayPercent.toFixed(1)}%
 			</div>
 		</div>
 	);
@@ -60,23 +63,23 @@ export const VoteProgressLegacy = ({ ayeVotes, className, nayVotes, ayesNum, nay
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, ayesNum, naysNum, turnoutPercentage }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
-	const bnToIntBalance = function (bn: BN): number{
-		return  Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	const bnToIntBalance = function (bn: BN): number {
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
 	const ayeVotesNumber = ayesNum === undefined ? bnToIntBalance(ayeVotes || ZERO) : Number(ayesNum);
-	const totalVotesNumber = (ayesNum === undefined || naysNum === undefined) ? bnToIntBalance(ayeVotes?.add(nayVotes|| ZERO) || ZERO) : (Number(ayesNum) + Number(naysNum));
-	const ayePercent = ayeVotesNumber/totalVotesNumber*100;
+	const totalVotesNumber = ayesNum === undefined || naysNum === undefined ? bnToIntBalance(ayeVotes?.add(nayVotes || ZERO) || ZERO) : Number(ayesNum) + Number(naysNum);
+	const ayePercent = (ayeVotesNumber / totalVotesNumber) * 100;
 	const nayPercent = 100 - ayePercent;
 	const isAyeNaN = isNaN(ayePercent);
 	const isNayNaN = isNaN(nayPercent);
 	return (
-		<div className={`${className} flex justify-center items-end gap-x-2 relative -mt-7`}>
+		<div className={`${className} relative -mt-7 flex items-end justify-center gap-x-2`}>
 			<div className='mb-10 flex flex-col justify-center'>
-				<span className='text-[#2ED47A] text-[20px] leading-6 font-semibold'>{isAyeNaN? 50: ayePercent.toFixed(1)}%</span>
-				<span className='text-[#485F7D] font-medium text-xs leading-[18px] tracking-[0.01em]'>Aye</span>
+				<span className='text-[20px] font-semibold leading-6 text-[#2ED47A]'>{isAyeNaN ? 50 : ayePercent.toFixed(1)}%</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D]'>Aye</span>
 			</div>
 			{/* {
 				turnoutPercentage?
@@ -97,14 +100,14 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 					rounded={true}
 					lineWidth={15}
 					data={[
-						{ color: '#6DE1A2', title: 'Aye', value: isAyeNaN? 50: ayePercent },
-						{ color: '#FF778F', title: 'Nay', value: isNayNaN? 50: nayPercent }
+						{ color: '#6DE1A2', title: 'Aye', value: isAyeNaN ? 50 : ayePercent },
+						{ color: '#FF778F', title: 'Nay', value: isNayNaN ? 50 : nayPercent }
 					]}
 				/>
 			</>
 			<div className='mb-10 flex flex-col justify-center'>
-				<span className='text-[#E84865] text-[20px] leading-6 font-semibold'>{isNayNaN? 50: nayPercent.toFixed(1)}%</span>
-				<span className='text-[#485F7D] font-medium text-xs leading-[18px] tracking-[0.01em]'>Nay</span>
+				<span className='text-[20px] font-semibold leading-6 text-[#E84865]'>{isNayNaN ? 50 : nayPercent.toFixed(1)}%</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D]'>Nay</span>
 			</div>
 		</div>
 	);

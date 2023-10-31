@@ -7,7 +7,8 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Checkbox, Divider, Form, Input, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useDispatch } from 'react-redux';
+import { useApiContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { chainProperties } from 'src/global/networkConstants';
 import { handleTokenChange } from 'src/services/auth.service';
@@ -21,6 +22,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -30,10 +32,11 @@ interface Props {
 }
 
 const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const [linkStarted, setLinkStarted] = useState(false);
 	const [signatories, setSignatories] = useState<{ [key: number | string]: string }>({ 0: '' });
 	const [signatoryAccounts, setSignatoryAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -93,26 +96,29 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 	const getSignatoryAccounts = () => {
 		return (
 			<>
-				{signatoryAccounts.map(account => {
+				{signatoryAccounts.map((account) => {
 					const address = getEncodedAddress(account.address, network);
 
-					return address &&
-						<div
-							key={address}
-							className='flex items-center gap-x-2'
-						>
-							<Checkbox
-								checked={isSelected(address)}
-								onChange={(e) => {
-									handleAddSignatories(e.target.checked, address);
-								}}
-							/>
-							<AddressComponent
-								className='item'
-								address={address}
-								extensionName={account.meta.name}
-							/>
-						</div>;
+					return (
+						address && (
+							<div
+								key={address}
+								className='flex items-center gap-x-2'
+							>
+								<Checkbox
+									checked={isSelected(address)}
+									onChange={(e) => {
+										handleAddSignatories(e.target.checked, address);
+									}}
+								/>
+								<AddressComponent
+									className='item'
+									address={address}
+									extensionName={account.meta.name}
+								/>
+							</div>
+						)
+					);
 				})}
 			</>
 		);
@@ -147,7 +153,10 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		});
 
 		const accounts = availableAccounts.filter((account) => {
-			return getSignatoriesArray().map(address => address.trim()).filter(address => !!address).includes(account.address);
+			return getSignatoriesArray()
+				.map((address) => address.trim())
+				.filter((address) => !!address)
+				.includes(account.address);
 		});
 
 		if (accounts.length === 0) {
@@ -187,7 +196,12 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/multisigLinkStart', { address: substrate_address });
-		if (error || !data) { setLoading(false); setError(error || 'Error in linking'); console.error('Multisig link start query failed'); return; }
+		if (error || !data) {
+			setLoading(false);
+			setError(error || 'Error in linking');
+			console.error('Multisig link start query failed');
+			return;
+		}
 
 		const { signature } = await signRaw({
 			address: signatory,
@@ -215,7 +229,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		}
 
 		if (confirmData?.token) {
-			handleTokenChange(confirmData?.token, currentUser);
+			handleTokenChange(confirmData?.token, currentUser, dispatch);
 			queueNotification({
 				header: 'Success!',
 				message: confirmData?.message || '',
@@ -255,8 +269,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
-					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>Link Multisig address</span>
+				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Multisig address</span>
 					<Divider />
 				</div>
 			}
@@ -264,64 +278,70 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			className='mb-8 md:min-w-[600px]'
 			footer={
 				<div className='flex items-center justify-end'>
-					{
-
-						[
-							<Button
-								key="link"
-								htmlType='submit'
-								onClick={() => {
-									form.submit();
-								}}
-								loading={loading}
-								className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-							>
-								{linkStarted ? 'Sign' : 'Link'}
-							</Button>,
-							<Button
-								key="cancel"
-								onClick={dismissModal}
-								className='bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-							>
-								Cancel
-							</Button>
-						]
-					}
+					{[
+						<Button
+							key='link'
+							htmlType='submit'
+							onClick={() => {
+								form.submit();
+							}}
+							loading={loading}
+							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-3 text-lg font-medium leading-none text-white outline-none'
+						>
+							{linkStarted ? 'Sign' : 'Link'}
+						</Button>,
+						<Button
+							key='cancel'
+							onClick={dismissModal}
+							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none'
+						>
+							Cancel
+						</Button>
+					]}
 				</div>
 			}
 		>
-			{
-				(error || extensionNotAvailable ) && <div className='flex flex-col gap-y-2 mb-5'>
+			{(error || extensionNotAvailable) && (
+				<div className='mb-5 flex flex-col gap-y-2'>
 					{error && <FilteredError text={error} />}
-					{extensionNotAvailable && <Alert message='Please install polkadot.js extension' type='error' />}
+					{extensionNotAvailable && (
+						<Alert
+							message='Please install polkadot.js extension'
+							type='error'
+						/>
+					)}
 				</div>
-			}
+			)}
 			<Form
 				form={form}
 				onFinish={handleFinish}
-				className='flex flex-col gap-y-6 mb-4'
+				className='mb-4 flex flex-col gap-y-6'
 			>
-				<section className='flex flex-col gap-y-4 w-full'>
-					<label
-						className="flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6"
-					>
+				<section className='flex w-full flex-col gap-y-4'>
+					<label className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue'>
 						Signatory Addresses
-						<HelperTooltip placement='right' text='The signatories (aka co-owners) have the ability to create transactions using the multisig and approve transactions sent by others. But, only once the threshold (set while creating a multisig account) is reached with approvals, the multisig transaction is enacted on-chain.' />
+						<HelperTooltip
+							placement='right'
+							text='The signatories (aka co-owners) have the ability to create transactions using the multisig and approve transactions sent by others. But, only once the threshold (set while creating a multisig account) is reached with approvals, the multisig transaction is enacted on-chain.'
+						/>
 					</label>
 					<div className='flex flex-col gap-y-2'>
-						{Object.keys(signatories).map(i => (
-							<div className='flex items-center relative' key={i}>
+						{Object.keys(signatories).map((i) => (
+							<div
+								className='relative flex items-center'
+								key={i}
+							>
 								<Input
 									id={i}
 									value={signatories[i]}
 									onChange={onSignatoriesAddressChange}
 									placeholder='Enter signatory addresses'
-									className="rounded-md py-3 px-4 border-grey_border"
+									className='rounded-md border-grey_border px-4 py-3'
 								/>
 								<button
 									type='button'
 									id={i}
-									className='border-none outline-none flex items-center justify-center absolute right-2'
+									className='absolute right-2 flex items-center justify-center border-none outline-none'
 									onClick={onSignatoriesAddressRemove}
 								>
 									<MinusCircleOutlined />
@@ -329,45 +349,36 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							</div>
 						))}
 					</div>
-					{
-						!extensionNotAvailable && <div className='flex items-center justify-between'>
+					{!extensionNotAvailable && (
+						<div className='flex items-center justify-between'>
 							<Button
 								onClick={handleDetect}
-								className='font-medium text-sm text-pink_primary p-0 m-0 outline-none border-none bg-transparent flex items-center'
+								className='m-0 flex items-center border-none bg-transparent p-0 text-sm font-medium text-pink_primary outline-none'
 							>
-								<span>
-									Choose from available account
-								</span>
+								<span>Choose from available account</span>
 								{showSignatoryAccounts ? <UpOutlined /> : <DownOutlined />}
 							</Button>
 							<Button
 								onClick={() => handleAddSignatories(true, '')}
-								className='font-medium text-sm text-pink_primary p-0 m-0 outline-none border-none bg-transparent flex items-center'
+								className='m-0 flex items-center border-none bg-transparent p-0 text-sm font-medium text-pink_primary outline-none'
 							>
 								<PlusOutlined />
-								<span>
-									Add Account
-								</span>
+								<span>Add Account</span>
 							</Button>
 						</div>
-					}
-					{showSignatoryAccounts && signatoryAccounts.length > 0 && <article className='flex flex-col gap-y-3'>
-						{getSignatoryAccounts()}
-					</article>
-					}
+					)}
+					{showSignatoryAccounts && signatoryAccounts.length > 0 && <article className='flex flex-col gap-y-3'>{getSignatoryAccounts()}</article>}
 				</section>
 				<section>
 					<label
-						className='flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6'
+						className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
 						htmlFor='multisigAddress'
 					>
 						Multisig Address
-						<HelperTooltip
-							text='This is the address of the multisig account with the above signatories.'
-						/>
+						<HelperTooltip text='This is the address of the multisig account with the above signatories.' />
 					</label>
 					<Form.Item
-						name="multisigAddress"
+						name='multisigAddress'
 						className='m-0 mt-2.5'
 						rules={[
 							{
@@ -378,23 +389,21 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 					>
 						<Input
 							placeholder='Enter a valid multisig address'
-							className="rounded-md py-3 px-4 border-grey_border"
-							id="multisigAddress"
+							className='rounded-md border-grey_border px-4 py-3'
+							id='multisigAddress'
 						/>
 					</Form.Item>
 				</section>
 				<section>
 					<label
-						className='flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6'
+						className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
 						htmlFor='threshold'
 					>
 						Threshold
-						<HelperTooltip
-							text='The number of signatories should be greater than or equal to the threshold for approving a transaction from this multisig'
-						/>
+						<HelperTooltip text='The number of signatories should be greater than or equal to the threshold for approving a transaction from this multisig' />
 					</label>
 					<Form.Item
-						name="threshold"
+						name='threshold'
 						className='m-0 mt-2.5 w-full'
 						rules={[
 							{
@@ -408,21 +417,23 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							min={1}
 							max={100}
 							placeholder='Enter threshold'
-							className="rounded-md py-2 px-3 border-grey_border w-full"
-							id="threshold"
+							className='w-full rounded-md border-grey_border px-3 py-2'
+							id='threshold'
 						/>
 					</Form.Item>
 				</section>
-				{accounts.length > 0 && <section>
-					<AccountSelectionForm
-						title='Sign with account'
-						accounts={accounts}
-						address={signatory}
-						onAccountChange={onAccountChange}
-					/>
-				</section>}
+				{accounts.length > 0 && (
+					<section>
+						<AccountSelectionForm
+							title='Sign with account'
+							accounts={accounts}
+							address={signatory}
+							onAccountChange={onAccountChange}
+						/>
+					</section>
+				)}
 			</Form>
-			<div className='mr-[-24px] ml-[-24px]'>
+			<div className='ml-[-24px] mr-[-24px]'>
 				<Divider className='my-4 mt-0' />
 			</div>
 		</Modal>

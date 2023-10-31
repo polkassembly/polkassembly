@@ -13,37 +13,41 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 
 import { poppins } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
-import { useUserDetailsContext } from '~src/context';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 
-const Title = <>
-	<span className='text-lg tracking-wide text-sidebarBlue font-bold'>Two Factor Authentication</span>
-	<Divider className='mt-2 mb-0' />
-</>;
+const Title = (
+	<>
+		<span className='text-lg font-bold tracking-wide text-sidebarBlue'>Two Factor Authentication</span>
+		<Divider className='mb-0 mt-2' />
+	</>
+);
 
 const init2FARes: I2FAGenerateResponse = {
 	base32_secret: '',
 	url: ''
 };
 
-const Enable2FA: FC<{className?: string}> = ({ className }) => {
+const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 	const [error, setError] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [tfaResponse, setTfaResponse] = useState<I2FAGenerateResponse>(init2FARes);
-	const currentUser = useUserDetailsContext();
+	const currentUser = useUserDetailsSelector();
+	const dispatch = useDispatch();
 
 	const [form] = Form.useForm();
 
 	const handleSubmit = async (formData: any) => {
 		// don't submit if loading or if user is already 2FA enabled
-		if(loading || !currentUser?.username || currentUser.is2FAEnabled) return;
+		if (loading || !currentUser?.username || currentUser.is2FAEnabled) return;
 
 		setLoading(true);
 		try {
 			await form.validateFields();
 			const authCode = formData.authCode || null;
-			if(!authCode || isNaN(authCode)) throw new Error('Please input a valid auth code');
+			if (!authCode || isNaN(authCode)) throw new Error('Please input a valid auth code');
 
 			// send as string just in case it starts with 0
 			const { data, error } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/2fa/verify', { authCode: String(authCode) });
@@ -54,7 +58,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 				return;
 			}
 
-			handleTokenChange(data.token, currentUser);
+			handleTokenChange(data.token, currentUser, dispatch);
 
 			queueNotification({
 				header: 'Success',
@@ -65,7 +69,6 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 			setShowModal(false);
 
 			// don't set loading to false because this modal should not be visible if 2FA is enabled
-
 		} catch (error) {
 			//await form.validateFields(); will automatically highlight the error ridden fields
 			setError('Please input a valid auth code');
@@ -82,7 +85,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 
 	const fetch2FASecret = async () => {
 		// don't submit if loading or if user is already 2FA enabled
-		if(loading || !currentUser?.username || currentUser.is2FAEnabled) return;
+		if (loading || !currentUser?.username || currentUser.is2FAEnabled) return;
 
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<I2FAGenerateResponse>('api/v1/auth/actions/2fa/generate');
@@ -112,7 +115,12 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 	};
 
 	return (
-		<Form className={className} form={form} disabled={loading || currentUser.is2FAEnabled} onFinish={handleSubmit}>
+		<Form
+			className={className}
+			form={form}
+			disabled={loading || currentUser.is2FAEnabled}
+			onFinish={handleSubmit}
+		>
 			<Modal
 				className={`${className} ${poppins.variable} ${poppins.className}`}
 				closable={false}
@@ -120,29 +128,41 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 				open={showModal}
 				footer={[
 					<Button
-						key="cancel"
+						key='cancel'
 						onClick={dismissModal}
-						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white'
+						className='text-md inline-flex items-center justify-center rounded-lg border-solid border-pink_primary bg-white px-7 py-5 font-semibold leading-7 text-pink_primary outline-none'
 						disabled={loading}
 					>
 						Cancel
 					</Button>,
 					<Button
 						htmlType='submit'
-						key="enable"
+						key='enable'
 						onClick={() => {
 							form.submit();
 						}}
 						disabled={loading}
-						className='rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary'
+						className='text-md inline-flex items-center justify-center rounded-lg border-none bg-pink_primary px-7 py-5 font-semibold leading-7 text-white outline-none'
 					>
-           Enable
+						Enable
 					</Button>
 				]}
 			>
-				{ !currentUser.is2FAEnabled ?
-					<Spin spinning={loading} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}>
-						{(error || !tfaResponse.base32_secret || !tfaResponse.url) && !loading && <div className='mb-4'><FilteredError text={error || 'Error in generating two factor auth QR Code. Please reload and try again.'}/></div>}
+				{!currentUser.is2FAEnabled ? (
+					<Spin
+						spinning={loading}
+						indicator={
+							<LoadingOutlined
+								style={{ fontSize: 24 }}
+								spin
+							/>
+						}
+					>
+						{(error || !tfaResponse.base32_secret || !tfaResponse.url) && !loading && (
+							<div className='mb-4'>
+								<FilteredError text={error || 'Error in generating two factor auth QR Code. Please reload and try again.'} />
+							</div>
+						)}
 
 						<section className='flex flex-col'>
 							{/* Instructions for Google Auth */}
@@ -160,27 +180,32 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 							<div className='mt-2'>
 								<h2 className='text-base text-sidebarBlue'>Scan the QR Code</h2>
 
-								{tfaResponse.url && <QRCodeAntD
-									size={200}
-									className='mx-auto'
-									errorLevel="H"
-									value={tfaResponse.url}
-								/>}
+								{tfaResponse.url && (
+									<QRCodeAntD
+										size={200}
+										className='mx-auto'
+										errorLevel='H'
+										value={tfaResponse.url}
+									/>
+								)}
 							</div>
 
 							{/* Secret Key code */}
 							<article className='mt-4'>
 								<h2 className='text-base text-sidebarBlue'>Or Enter the Code to Your App (base32 encoded) :</h2>
-								{tfaResponse.base32_secret && <span
-									onClick={() => handleCopyClicked(tfaResponse.base32_secret)}
-									className='p-1 px-2 cursor-pointer rounded-md text-pink_primary border border-solid border-text_secondary text-sm'
-								>
-									<CopyIcon className='relative top-[6px]' />{tfaResponse.base32_secret}
-								</span>}
+								{tfaResponse.base32_secret && (
+									<span
+										onClick={() => handleCopyClicked(tfaResponse.base32_secret)}
+										className='border-text_secondary cursor-pointer rounded-md border border-solid p-1 px-2 text-sm text-pink_primary'
+									>
+										<CopyIcon className='relative top-[6px]' />
+										{tfaResponse.base32_secret}
+									</span>
+								)}
 							</article>
 
 							{/* Code Input */}
-							<div className='mt-6 mb-4'>
+							<div className='mb-4 mt-6'>
 								<h2 className='text-base text-sidebarBlue'>Verify Code</h2>
 								<p>Please input the authentication code :</p>
 
@@ -192,30 +217,37 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 											message: 'Invalid authentication code',
 											validator(rule, value = '', callback) {
 												// 7 is just in case the user inputs with a space in between (Google auth formats it with a space)
-												if (callback && (!value || value.length !== 6 || isNaN(Number(value)))){
+												if (callback && (!value || value.length !== 6 || isNaN(Number(value)))) {
 													callback(rule?.message?.toString());
-												}else {
+												} else {
 													callback();
 												}
 											}
 										}
 									]}
 								>
-									<Input placeholder='Auth Code' name='authCode' className='w-[60%] text-black' />
+									<Input
+										placeholder='Auth Code'
+										name='authCode'
+										className='w-[60%] text-black'
+									/>
 								</Form.Item>
 							</div>
 						</section>
 					</Spin>
-					: <div className='text-center my-10'>Two factor authentication enabled successfully.</div>
-				}
+				) : (
+					<div className='my-10 text-center'>Two factor authentication enabled successfully.</div>
+				)}
 			</Modal>
 
 			<Button
 				onClick={handleModalOpen}
-				htmlType="submit"
-				className='w-full bg-[#F6F7F9] text-[#243A57] text-left h-full p-[16px] border-[#D2D8E0]'
+				htmlType='submit'
+				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-[#243A57]'
 			>
-				<span className='flex align-center text-[16px] font-medium '>Enable Two Factor Authentication <KeyboardDownIcon/></span>
+				<span className='align-center flex text-[16px] font-medium '>
+					Enable Two Factor Authentication <KeyboardDownIcon />
+				</span>
 				<span className='block text-[14px]'>Enhance account security with two factor authentication. Verify your identity with an extra step for added protection. </span>
 			</Button>
 		</Form>

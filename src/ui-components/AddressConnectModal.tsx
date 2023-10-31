@@ -78,7 +78,6 @@ const AddressConnectModal = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
-	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 	const [multisig, setMultisig] = useState<string>('');
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -280,7 +279,7 @@ const AddressConnectModal = ({
 		setWallet(wallet);
 		(async () => {
 			setLoading(true);
-			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network, setExtentionOpen });
+			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
 			setLoading(false);
@@ -312,8 +311,7 @@ const AddressConnectModal = ({
 				chosenAddress: (loginAddress || address) as string,
 				chosenWallet: (loginWallet || wallet) as Wallet,
 				loginAddress,
-				network,
-				setExtentionOpen
+				network
 			});
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
@@ -573,7 +571,7 @@ const AddressConnectModal = ({
 						</div>
 					)}
 
-					{Object.keys(availableWallets || {})?.length !== 0 && !accounts && wallet && wallet?.length !== 0 && !loading && (
+					{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
 						<Alert
 							message={`For using ${walletAlertTitle}:`}
 							description={
@@ -601,54 +599,52 @@ const AddressConnectModal = ({
 						/>
 					)}
 
-					{!extensionOpen && (
-						<Form
-							form={form}
-							disabled={loading}
-						>
-							{accounts.length > 0 ? (
-								showMultisig ? (
-									<MultisigAccountSelectionForm
-										multisigBalance={multisigBalance}
-										setMultisigBalance={setMultisigBalance}
-										title='Select Address'
-										accounts={accounts}
-										address={address}
-										withBalance
-										onAccountChange={(address) => {
-											setAddress(address);
-											setMultisig('');
-										}}
-										onBalanceChange={handleOnBalanceChange}
-										className='text-sm text-lightBlue'
-										walletAddress={multisig}
-										setWalletAddress={setMultisig}
-										containerClassName='gap-[20px]'
-										showMultisigBalance={true}
-										canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
-									/>
-								) : (
-									<AccountSelectionForm
-										isTruncateUsername={false}
-										title={accountSelectionFormTitle}
-										accounts={accounts}
-										address={address}
-										withBalance={true}
-										onAccountChange={(address) => setAddress(address)}
-										onBalanceChange={handleOnBalanceChange}
-										className='mt-4 text-sm text-lightBlue'
-									/>
-								)
-							) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
-								<Alert
-									type='info'
-									className='mt-4 rounded-[4px]'
-									showIcon
-									message='Please select a wallet.'
+					<Form
+						form={form}
+						disabled={loading}
+					>
+						{accounts.length > 0 ? (
+							showMultisig ? (
+								<MultisigAccountSelectionForm
+									multisigBalance={multisigBalance}
+									setMultisigBalance={setMultisigBalance}
+									title='Select Address'
+									accounts={accounts}
+									address={address}
+									withBalance
+									onAccountChange={(address) => {
+										setAddress(address);
+										setMultisig('');
+									}}
+									onBalanceChange={handleOnBalanceChange}
+									className='text-sm text-lightBlue'
+									walletAddress={multisig}
+									setWalletAddress={setMultisig}
+									containerClassName='gap-[20px]'
+									showMultisigBalance={true}
+									canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 								/>
-							) : null}
-						</Form>
-					)}
+							) : (
+								<AccountSelectionForm
+									isTruncateUsername={false}
+									title={accountSelectionFormTitle}
+									accounts={accounts}
+									address={address}
+									withBalance={true}
+									onAccountChange={(address) => setAddress(address)}
+									onBalanceChange={handleOnBalanceChange}
+									className='mt-4 text-sm text-lightBlue'
+								/>
+							)
+						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
+							<Alert
+								type='info'
+								className='mt-4 rounded-[4px]'
+								showIcon
+								message='Please select a wallet.'
+							/>
+						) : null}
+					</Form>
 				</div>
 			</Spin>
 		</Modal>

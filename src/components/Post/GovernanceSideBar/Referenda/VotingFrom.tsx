@@ -54,7 +54,7 @@ const VotingForm = ({
 				className='dark:[&>.ant-select-selection-item]:text-white dark:[&>.ant-select-selector]:bg-section-dark-overlay'
 				defaultValue={conviction}
 				suffixIcon={<DownIcon />}
-				popupClassName='z-[1060]'
+				popupClassName='z-[1060] dark:border-0 dark:border-none'
 			>
 				{convictionOpts}
 			</Select>

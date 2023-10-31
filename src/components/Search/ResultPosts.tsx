@@ -50,8 +50,8 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 						>
 							<div
 								className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] min-h-[150px] cursor-pointer flex-col rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-6 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 ${
-									index % 2 === 1 && 'bg-[#fafafb]'
-								} ${index === postsData.length - 1 && 'border-b-[1px]'} max-md:flex-wrap`}
+									index % 2 === 1 && 'bg-[#fafafb] dark:bg-[#161616]'
+								} ${index === postsData.length - 1 && 'border-b-[1px]'} dark:border-none max-md:flex-wrap`}
 							>
 								<div className='flex items-center gap-2 '>
 									{post?.proposer_address ? (

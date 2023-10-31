@@ -178,7 +178,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 	return voteData?.delegatedVotes?.length > 0 && voteData?.decision !== 'abstain' ? (
 		<StyledCollapse
 			className={`${
-				active ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-[#D2D8E0] dark:border-separatorDark dark:border-separatorDark'
+				active ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-[#D2D8E0] dark:border-separatorDark'
 			} w-[550px] gap-[0px] rounded-none border-0 ${className}`}
 			size='large'
 			expandIconPosition='end'
@@ -308,7 +308,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 		</StyledCollapse>
 	) : (
 		<div
-			className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high ${className} dark:bg-section-dark-overlay`}
+			className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high ${className}`}
 		>
 			<Title />
 		</div>

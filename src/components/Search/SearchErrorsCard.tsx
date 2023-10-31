@@ -56,7 +56,7 @@ const SearchErrorsCard = ({
 						setPeoplePage({ page: 1, totalPeople: 0 });
 						setIsSuperSearch(true);
 					}}
-					className='mt-6 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white'
+					className='mt-6 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:border-none'
 				>
 					<SuperSearchIcon />
 					<span>Use Super Search</span>
@@ -91,7 +91,7 @@ const SearchErrorsCard = ({
 					setPeoplePage({ page: 1, totalPeople: 0 });
 					setIsSuperSearch(true);
 				}}
-				className='mt-4 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white'
+				className='mt-4 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:border-none'
 			>
 				<SuperSearchIcon />
 				<span>Use Super Search</span>

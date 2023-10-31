@@ -72,7 +72,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 	};
 
 	return username?.length > 0 ? (
-		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className}`}>
+		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
 			<div className='flex justify-center gap-[34px] '>
 				<ImageComponent
 					src={image}

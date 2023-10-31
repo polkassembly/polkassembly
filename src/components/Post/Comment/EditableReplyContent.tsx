@@ -540,13 +540,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								<Button
 									htmlType='button'
 									onClick={handleCancel}
-									className='dark:border-borderColorDark mr-2 flex items-center dark:bg-transparent dark:text-white'
+									className='mr-2 flex items-center dark:border-borderColorDark dark:bg-transparent dark:text-white'
 								>
 									<CloseOutlined /> Cancel
 								</Button>
 								<Button
 									htmlType='submit'
-									className='dark:border-borderColorDark flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+									className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-borderColorDark'
 								>
 									<CheckOutlined /> Reply
 								</Button>
@@ -674,7 +674,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										<Button
 											htmlType='button'
 											onClick={() => handleReplyCancel()}
-											className='dark:border-borderColorDark mr-2 flex items-center dark:bg-transparent dark:text-white'
+											className='mr-2 flex items-center dark:border-borderColorDark dark:bg-transparent dark:text-white'
 										>
 											<CloseOutlined /> Cancel
 										</Button>

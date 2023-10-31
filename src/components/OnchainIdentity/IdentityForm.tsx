@@ -301,7 +301,7 @@ const IdentityForm = ({
 					)}
 				</div>
 				<div className='flex w-full items-end gap-2 text-sm '>
-					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-separatorDark dark:bg-[#1D1D1D]'>
+					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-separatorDark dark:bg-section-dark-overlay'>
 						<Address
 							address={address}
 							isTruncateUsername={false}
@@ -532,7 +532,7 @@ const IdentityForm = ({
 						type='info'
 						showIcon
 						message={
-							<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high '>
+							<span className='text-sm font-medium text-bodyBlue'>
 								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
@@ -549,7 +549,7 @@ const IdentityForm = ({
 								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
 									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
-										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<span className='font-medium text-bodyBlue'>
 											{formatedBalance(gasFee.toString(), unit)} {unit}
 										</span>
 									</span>
@@ -561,7 +561,7 @@ const IdentityForm = ({
 												text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<span className='font-medium text-bodyBlue'>
 											{formatedBalance(bondFee.toString(), unit)} {unit}
 										</span>
 									</span>
@@ -573,13 +573,13 @@ const IdentityForm = ({
 												className='ml-1'
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<span className='font-medium text-bodyBlue'>
 											{formatedBalance(registerarFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
-										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<span className='font-medium text-bodyBlue'>
 											{formatedBalance(totalFee.toString(), unit, 2)} {unit}
 										</span>
 									</span>

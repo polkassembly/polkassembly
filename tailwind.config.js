@@ -95,6 +95,11 @@ module.exports = {
 						background: '#1C1D1F',
 						overlay: '#0D0D0D'
 					}
+				},
+				pink: {
+					dark: {
+						primary: '#33071E'
+					}
 				}
 			},
 			screens: {

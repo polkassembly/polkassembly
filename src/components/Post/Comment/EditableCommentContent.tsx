@@ -668,7 +668,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									<Button
 										htmlType='button'
 										onClick={handleCancel}
-										className='dark:border-borderColorDark mr-2 flex h-[26px] items-center dark:bg-transparent dark:text-white'
+										className='mr-2 flex h-[26px] items-center dark:border-borderColorDark dark:bg-transparent dark:text-white'
 									>
 										<CloseOutlined />
 									</Button>

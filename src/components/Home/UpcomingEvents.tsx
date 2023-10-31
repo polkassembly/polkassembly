@@ -61,6 +61,9 @@ const Calendar = styled(StyledCalendar)`
 	.ant-select-dropdown {
 		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
 	}
+	.ant-select-selection-item {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#0d0d0d')} !important;
+	}
 `;
 
 const UpcomingEvents = ({ className }: Props) => {

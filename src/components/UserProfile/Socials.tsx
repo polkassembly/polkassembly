@@ -41,7 +41,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 							classNames={{
 								input: 'dark:bg-transparent dark:placeholder:text-borderColorDark dark:text-white'
 							}}
-							prefix={<LinkOutlined className='dark:text-borderColorDark mr-1.5 text-base text-[rgba(72,95,125,0.2)]' />}
+							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)] dark:text-borderColorDark' />}
 							placeholder={`Enter ${strLink} ${strLink === 'Email' ? '' : 'URL'}`}
 							onChange={(e) => {
 								const value = e.target.value.trim();
@@ -80,7 +80,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 			})}
 			{errorCheck && (
 				<Alert
-					className='dark:bg-borderColorDark mt-4 h-[40px] rounded-[4px] border-none px-5 py-2 text-sm text-bodyBlue outline-none dark:text-white '
+					className='mt-4 h-[40px] rounded-[4px] border-none px-5 py-2 text-sm text-bodyBlue outline-none dark:bg-borderColorDark dark:text-white '
 					message={errorCheck}
 					type='info'
 					showIcon

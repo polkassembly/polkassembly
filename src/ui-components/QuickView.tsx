@@ -11,19 +11,18 @@ import Address from './Address';
 import dayjs from 'dayjs';
 import SocialLink from './SocialLinks';
 import { socialLinks } from '~src/components/UserProfile/Details';
-import dynamic from 'next/dynamic';
-import { Button, Skeleton, message } from 'antd';
+import { Button, message } from 'antd';
 import styled from 'styled-components';
 import VerifiedIcon from '~assets/icons/verified-tick.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { useNetworkSelector } from '~src/redux/selectors';
-
-const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
-	loading: () => <Skeleton.Avatar active />,
-	ssr: false
-});
+import { ISocial } from '~src/auth/types';
+import ImageComponent from 'src/components/ImageComponent';
+import PolkaverseIcon from '~assets/icons/polkaverse.svg';
+import WebIcon from '~assets/icons/web-icon.svg';
+import Link from 'next/link';
 
 interface Props {
 	className?: string;
@@ -33,10 +32,11 @@ interface Props {
 	username: string;
 	imgUrl?: string;
 	profileCreatedAt?: Date;
+	socials?: ISocial[];
 	setOpen: (pre: boolean) => void;
 	setOpenTipping: (pre: boolean) => void;
 }
-const QuickView = ({ className, address, identity, username, polkassemblyUsername, imgUrl, profileCreatedAt, setOpen, setOpenTipping }: Props) => {
+const QuickView = ({ className, address, identity, username, polkassemblyUsername, imgUrl, profileCreatedAt, setOpen, setOpenTipping, socials }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
@@ -44,12 +44,12 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 
 	const { network } = useNetworkSelector();
 	const identityArr = [
-		{ key: 'Email', value: identity?.email },
-		{ key: 'Judgements', value: identity?.judgements || [] },
-		{ key: 'Legal', value: identity?.legal },
-		{ key: 'Riot', value: identity?.riot },
-		{ key: 'Twitter', value: identity?.twitter },
-		{ key: 'Web', value: identity?.web }
+		{ isVerified: !!identity?.email, key: 'Email', value: identity?.email || socials?.find((social) => social.type === 'Email')?.link || '' },
+		{ isVerified: !!identity?.judgements, key: 'Judgements', value: identity?.judgements || [] },
+		{ isVerified: !!identity?.legal, key: 'Legal', value: identity?.legal },
+		{ isVerified: !!identity?.riot, key: 'Riot', value: identity?.riot || socials?.find((social) => social.type === 'Riot')?.link || '' },
+		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
+		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' }
 	];
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const success = () => {
@@ -64,20 +64,18 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 		<div
 			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2`}
 			onClick={(e) => {
-				e.preventDefault();
 				e.stopPropagation();
+				e.preventDefault();
 			}}
 		>
 			<div className='flex flex-col gap-1.5 px-4'>
-				<div>
-					<ImageComponent
-						src={imgUrl}
-						alt='User Picture'
-						className='absolute left-[25%] top-[-4%] flex h-[95px] w-[95px] -translate-x-1/2 -translate-y-1/2 border-[2px] border-solid border-white bg-transparent'
-						iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
-					/>
-				</div>
-				<div className='mt-[28px] flex items-center justify-start gap-2'>
+				<ImageComponent
+					src={imgUrl}
+					alt='User Picture'
+					className='-mt-[50px] flex h-[98px] w-[98px] rounded-full border-[2px] border-solid border-white bg-white'
+					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
+				/>
+				<div className='mt-0 flex items-center justify-start gap-2'>
 					<span className='text-xl font-semibold tracking-wide text-bodyBlue'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
 					<div className='flex items-center justify-center'>{isGood ? <VerifiedIcon /> : <MinusCircleFilled style={{ color }} />}</div>
 					<a
@@ -117,31 +115,64 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 						<CopyIcon />
 					</span>
 				</div>
-				<div className='flex items-center justify-between gap-1 border-solid'>
-					<span className='text-xs tracking-wide text-[#9aa7b9]'>
-						Since:<span className='ml-0.5 text-lightBlue '>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
-					</span>
+				<div className='mt-0.5 flex items-center justify-between gap-1 border-solid'>
+					{profileCreatedAt && (
+						<span className='flex items-center text-xs tracking-wide text-[#9aa7b9]'>
+							Since:<span className='ml-0.5 text-lightBlue '>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
+						</span>
+					)}
 					<div className='flex items-center gap-1.5'>
 						{socialLinks?.map((social: any, index: number) => {
 							const link = identityArr?.find((s) => s.key === social)?.value || '';
+							const isVerified = identityArr.find((s) => s.key === social)?.isVerified || false;
 							return (
-								<div
-									title={link ? String(link) : ''}
-									key={index}
-								>
-									<SocialLink
-										className={`flex h-[24px] w-[24px] items-center justify-center rounded-[20px] text-base hover:text-[#576D8B] ${link ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
-										link={link as string}
-										type={social}
-										iconClassName={`text-sm ${link ? 'text-white' : 'text-[#96A4B6]'}`}
-									/>
-								</div>
+								link && (
+									<div
+										title={link ? String(link) : ''}
+										key={index}
+									>
+										<SocialLink
+											className={`flex h-[24px] w-[24px] items-center justify-center rounded-full text-base hover:text-[#576D8B] ${isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
+											link={link as string}
+											type={social}
+											iconClassName={`text-sm ${isVerified ? 'text-white' : 'text-[#96A4B6]'}`}
+										/>
+									</div>
+								)
 							);
 						})}
+						{!!identity?.web && (
+							<Link
+								target='_blank'
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									window.open(identity?.web, '_blank');
+								}}
+								href={identity?.web}
+								title={identity?.web}
+								className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#51D36E] text-white'
+							>
+								<WebIcon />
+							</Link>
+						)}
+						<Link
+							target='_blank'
+							onClick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
+							}}
+							title={`https://polkaverse.com/accounts/${address}`}
+							href={`https://polkaverse.com/accounts/${address}`}
+							className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
+						>
+							<PolkaverseIcon />
+						</Link>
 					</div>
 				</div>
 			</div>
-			<article className='mt-1 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue'>
+			<article className='mt-2 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue'>
 				<div className='flex items-center gap-1 font-medium text-lightBlue'>
 					<JudgementIcon />
 					<span>Judgements:</span>

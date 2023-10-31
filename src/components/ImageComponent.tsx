@@ -19,14 +19,12 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 	return (
 		<Avatar
 			className={className}
-			src={regex.test(src) ? src : '/assets/icons/user-profile.png'}
+			src={regex.test(src) ? src : 'assets/icons/user-profile.png'}
 			alt={alt}
 			icon={
-				regex.test(src) ? null : (
-					<span className={iconClassName}>
-						<DefaultProfile />
-					</span>
-				)
+				<span className={iconClassName}>
+					<DefaultProfile />
+				</span>
 			}
 		/>
 	);

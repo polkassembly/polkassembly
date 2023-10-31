@@ -157,8 +157,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					style={{ borderTop: '1px solid #E1E6EB' }}
 				></Divider>
 			</div>
-			<Container className={`flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md ${className}`}>
-				<div className='flex grid-cols-2 gap-x-5'>
+			<Container className={`flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md ${className}`}>
+				<div className='flex grid-cols-2 gap-x-5 px-8'>
 					<div
 						onClick={() => {
 							setIsPassword(false);
@@ -191,13 +191,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 						type='info'
 						showIcon
-						className='changeColor text-[#243A57]'
+						className='changeColor px-8 text-[#243A57]'
 					/>
 				)}
 				{walletError && (
 					<Alert
 						message={walletError}
 						type='error'
+						className='px-8'
 					/>
 				)}
 				<AuthForm
@@ -206,7 +207,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				>
 					{isPassword ? (
 						<>
-							<div className='flex flex-col gap-y-1'>
+							<div className='flex flex-col gap-y-1 px-8'>
 								<label
 									className='text-base text-[#485F7D]'
 									htmlFor='first_password'
@@ -236,7 +237,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									/>
 								</Form.Item>
 							</div>
-							<div className='-mt-6 flex flex-col gap-y-1'>
+							<div className='-mt-6 flex flex-col gap-y-1 px-8'>
 								<label
 									className='text-base text-[#485F7D] '
 									htmlFor='second_password'
@@ -269,7 +270,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						</>
 					) : (
 						<>
-							<div className='flex flex-col gap-y-1'>
+							<div className='flex flex-col gap-y-1 px-8'>
 								<label
 									className='text-sm tracking-wide  text-[#485F7D]'
 									htmlFor='username'
@@ -304,7 +305,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									/>
 								</Form.Item>
 							</div>
-							<div className='-mt-6 flex flex-col gap-y-1'>
+							<div className='-mt-6 flex flex-col gap-y-1 px-8'>
 								<label
 									htmlFor='email'
 									className='text-sm tracking-wide text-[#485F7D]'
@@ -329,7 +330,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							</div>
 						</>
 					)}
-					<div>
+					<div className='px-8'>
 						<WalletButtons
 							disabled={loading}
 							onWalletSelect={onWalletSelect}
@@ -338,8 +339,13 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							forSignUpModal={true}
 						/>
 					</div>
-					{error && <FilteredError text={error} />}
-					<div className='flex items-center justify-center gap-x-2 font-semibold'>
+					{error && (
+						<FilteredError
+							className='px-8 '
+							text={error}
+						/>
+					)}
+					<div className='flex items-center justify-center gap-x-2 px-8 font-semibold '>
 						<label className='text-md text-[#243A57]'>Already have an account?</label>
 						<div
 							onClick={() => handleClick()}
@@ -349,10 +355,10 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						</div>
 					</div>
 					<Divider
-						className='m-0 mt-4 p-0 '
+						className='m-0 p-0'
 						style={{ borderTop: '1px solid #E1E6EB' }}
 					></Divider>
-					<div className='-mt-1 flex items-center justify-end'>
+					<div className='-mt-1 flex items-center justify-end px-8'>
 						<Button
 							disabled={loading}
 							htmlType='submit'
@@ -364,7 +370,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					</div>
 				</AuthForm>
 				<Modal
-					className='rounded-md'
+					className='rounded-md px-8'
 					centered={true}
 					title={"You've got some mail"}
 					open={open}

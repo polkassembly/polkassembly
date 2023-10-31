@@ -17,7 +17,7 @@ import VerifiedIcon from '~assets/icons/verified-tick.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ISocial } from '~src/auth/types';
 import ImageComponent from 'src/components/ImageComponent';
 import PolkaverseIcon from '~assets/icons/polkaverse.svg';
@@ -37,6 +37,7 @@ interface Props {
 	setOpenTipping: (pre: boolean) => void;
 }
 const QuickView = ({ className, address, identity, username, polkassemblyUsername, imgUrl, profileCreatedAt, setOpen, setOpenTipping, socials }: Props) => {
+	const { id } = useUserDetailsSelector();
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
@@ -186,11 +187,14 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 			</article>
 			<div className=' flex items-center justify-end'>
 				<Button
+					disabled={!id}
 					onClick={() => {
 						setOpenTipping(true);
 						setOpen(false);
 					}}
-					className='flex h-[32px] w-[161px] items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary'
+					className={`flex h-[32px] w-[161px] items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
+						!id && 'opacity-50'
+					}`}
 				>
 					Tip
 				</Button>

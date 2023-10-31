@@ -55,7 +55,6 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
-	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [tipAmount, setTipAmount] = useState<BN>(ZERO_BN);
@@ -91,8 +90,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 				chosenAddress: (loginAddress || address) as string,
 				chosenWallet: (loginWallet || wallet) as Wallet,
 				loginAddress,
-				network,
-				setExtentionOpen
+				network
 			});
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
@@ -102,15 +100,17 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
 		if (!api || !apiReady) return;
+		setLoadingStatus({ isLoading: true, message: '' });
 		localStorage.setItem('selectedWallet', wallet);
 		setAccounts([]);
 		setAddress('');
 		event.preventDefault();
 		setWallet(wallet);
 		(async () => {
-			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network, setExtentionOpen });
+			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
+			setLoadingStatus({ isLoading: false, message: '' });
 		})();
 	};
 
@@ -252,6 +252,29 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 								isMetamaskWallet={isMetamaskWallet}
 								wallet={wallet}
 							/>
+							{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loadingStatus.isLoading && (
+								<Alert
+									message={'For using Tipping:'}
+									description={
+										<ul className='mt-[-5px] text-sm'>
+											<li>Give access to Polkassembly on your selected wallet.</li>
+											<li>Add an address to the selected wallet.</li>
+										</ul>
+									}
+									showIcon
+									className='mt-4 w-full'
+									type='info'
+								/>
+							)}
+							{Object.keys(availableWallets || {}).length === 0 && !loadingStatus.isLoading && (
+								<Alert
+									message={'Wallet extension not detected.'}
+									description={`${'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'}`}
+									type='info'
+									showIcon
+									className='changeColor text-md text-bodyBlue'
+								/>
+							)}
 						</div>
 						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount) && (
 							<Alert
@@ -261,78 +284,76 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 								message='Insufficient Balance for Tip'
 							/>
 						)}
-						{!extensionOpen && (
-							<Form
-								form={form}
-								disabled={loadingStatus.isLoading}
-							>
-								{accounts.length > 0 ? (
-									<AccountSelectionForm
-										isTruncateUsername={false}
-										title='Tip with account'
-										accounts={accounts}
-										address={address}
-										withBalance={true}
-										onAccountChange={(address) => setAddress(address)}
-										onBalanceChange={(balance) => handleOnBalanceChange(balance, true)}
-										className='mt-6 text-sm text-lightBlue'
-									/>
-								) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
-									<Alert
-										type='info'
-										className='mt-4 rounded-[4px]'
-										showIcon
-										message='Please select a wallet.'
-									/>
-								) : null}
-								<div className='mt-6 border-0 border-t-[1px] border-dashed border-[#D2D8E0] pt-6'>
-									<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>
-										Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
-									</span>
-									<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
-										{TIPS.map((tip) => (
-											<span
-												className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
-													handleTipChangeToDollar(tip).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'
-												}`}
-												key={tip}
-												onClick={() => {
-													const tipBlance = handleTipChangeToDollar(tip);
-													setTipAmount(tipBlance);
-													form.setFieldValue('balance', tipBlance);
-												}}
-											>
-												{tip === 3 && <Tip1Icon />}
-												{tip === 5 && <Tip2Icon />}
-												{tip === 10 && <Tip3Icon />}
-												{tip === 15 && <Tip4Icon />}
-												<span>${tip}</span>
-											</span>
-										))}
-									</div>
-									<BalanceInput
-										label='Or enter the custom amount you would like to Tip'
-										placeholder='Enter Amount'
-										address={address}
-										onAccountBalanceChange={(balance) => handleOnBalanceChange(balance, false)}
-										onChange={(tip) => setTipAmount(tip)}
-										className='mt-6'
-									/>
-									{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount) && (
-										<div className='mt-6'>
-											<Input
-												name='remark'
-												value={remark}
-												onChange={(e) => setRemark(e.target.value)}
-												className='ml-4 h-[40px] w-[524px] rounded-[4px] max-sm:w-full'
-												placeholder='Say something nice with your tip(optional)'
-											/>
-											<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />
-										</div>
-									)}
+						<Form
+							form={form}
+							disabled={loadingStatus.isLoading}
+						>
+							{accounts.length > 0 ? (
+								<AccountSelectionForm
+									isTruncateUsername={false}
+									title='Tip with account'
+									accounts={accounts}
+									address={address}
+									withBalance={true}
+									onAccountChange={(address) => setAddress(address)}
+									onBalanceChange={(balance) => handleOnBalanceChange(balance, true)}
+									className='mt-6 text-sm text-lightBlue'
+								/>
+							) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
+								<Alert
+									type='info'
+									className='mt-4 rounded-[4px]'
+									showIcon
+									message='Please select a wallet.'
+								/>
+							) : null}
+							<div className='mt-6 border-0 border-t-[1px] border-dashed border-[#D2D8E0] pt-6'>
+								<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>
+									Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
+								</span>
+								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
+									{TIPS.map((tip) => (
+										<span
+											className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
+												handleTipChangeToDollar(tip).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'
+											}`}
+											key={tip}
+											onClick={() => {
+												const tipBlance = handleTipChangeToDollar(tip);
+												setTipAmount(tipBlance);
+												form.setFieldValue('balance', tipBlance);
+											}}
+										>
+											{tip === 3 && <Tip1Icon />}
+											{tip === 5 && <Tip2Icon />}
+											{tip === 10 && <Tip3Icon />}
+											{tip === 15 && <Tip4Icon />}
+											<span>${tip}</span>
+										</span>
+									))}
 								</div>
-							</Form>
-						)}
+								<BalanceInput
+									label='Or enter the custom amount you would like to Tip'
+									placeholder='Enter Amount'
+									address={address}
+									onAccountBalanceChange={(balance) => handleOnBalanceChange(balance, false)}
+									onChange={(tip) => setTipAmount(tip)}
+									className='mt-6'
+								/>
+								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount) && (
+									<div className='mt-6'>
+										<Input
+											name='remark'
+											value={remark}
+											onChange={(e) => setRemark(e.target.value)}
+											className='ml-4 h-[40px] w-[524px] rounded-[4px] max-sm:w-full'
+											placeholder='Say something nice with your tip(optional)'
+										/>
+										<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />
+									</div>
+								)}
+							</div>
+						</Form>
 					</div>
 				</Spin>
 			</Modal>

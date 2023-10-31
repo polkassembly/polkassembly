@@ -22,11 +22,9 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 			src={regex.test(src) ? src : '/assets/icons/user-profile.png'}
 			alt={alt}
 			icon={
-				regex.test(src) ? null : (
-					<span className={iconClassName}>
-						<DefaultProfile />
-					</span>
-				)
+				<span className={iconClassName}>
+					<DefaultProfile />
+				</span>
 			}
 		/>
 	);

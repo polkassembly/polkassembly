@@ -191,7 +191,12 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 	};
 
 	return (
-		<div>
+		<div
+			onClick={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+			}}
+		>
 			<Modal
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue'>
@@ -232,96 +237,103 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 					spinning={loadingStatus.isLoading}
 					tip={loadingStatus.message}
 				>
-					<div className='flex flex-col items-center'>
-						<h3 className='text-sm font-normal tracking-wide text-lightBlue'>Select a wallet</h3>
-						<AvailableWallets
-							className='flex items-center justify-center gap-x-4'
-							handleWalletClick={handleWalletClick}
-							availableWallets={availableWallets}
-							isMetamaskWallet={isMetamaskWallet}
-							wallet={wallet}
-						/>
-					</div>
-					{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount) && (
-						<Alert
-							className='mt-6 rounded-[4px] text-bodyBlue'
-							showIcon
-							type='error'
-							message='Insufficient Balance for Tip'
-						/>
-					)}
-					{!extensionOpen && (
-						<Form
-							form={form}
-							disabled={loadingStatus.isLoading}
-						>
-							{accounts.length > 0 ? (
-								<AccountSelectionForm
-									isTruncateUsername={false}
-									title='Tip with account'
-									accounts={accounts}
-									address={address}
-									withBalance={true}
-									onAccountChange={(address) => setAddress(address)}
-									onBalanceChange={(balance) => handleOnBalanceChange(balance, true)}
-									className='mt-6 text-sm text-lightBlue'
-								/>
-							) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
-								<Alert
-									type='info'
-									className='mt-4 rounded-[4px]'
-									showIcon
-									message='Please select a wallet.'
-								/>
-							) : null}
-							<div className='mt-6 border-0 border-t-[1px] border-dashed border-[#D2D8E0] pt-6'>
-								<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>
-									Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
-								</span>
-								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
-									{TIPS.map((tip) => (
-										<span
-											className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
-												handleTipChangeToDollar(tip).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'
-											}`}
-											key={tip}
-											onClick={() => {
-												const tipBlance = handleTipChangeToDollar(tip);
-												setTipAmount(tipBlance);
-												form.setFieldValue('balance', tipBlance);
-											}}
-										>
-											{tip === 3 && <Tip1Icon />}
-											{tip === 5 && <Tip2Icon />}
-											{tip === 10 && <Tip3Icon />}
-											{tip === 15 && <Tip4Icon />}
-											<span>${tip}</span>
-										</span>
-									))}
-								</div>
-								<BalanceInput
-									label='Or enter the custom amount you would like to Tip'
-									placeholder='Enter Amount'
-									address={address}
-									onAccountBalanceChange={(balance) => handleOnBalanceChange(balance, false)}
-									onChange={(tip) => setTipAmount(tip)}
-									className='mt-6'
-								/>
-								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount) && (
-									<div className='mt-6'>
-										<Input
-											name='remark'
-											value={remark}
-											onChange={(e) => setRemark(e.target.value)}
-											className='ml-4 h-[40px] w-[524px] rounded-[4px] max-sm:w-full'
-											placeholder='Say something nice with your tip(optional)'
-										/>
-										<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />
+					<div
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+						}}
+					>
+						<div className='flex flex-col items-center'>
+							<h3 className='text-sm font-normal tracking-wide text-lightBlue'>Select a wallet</h3>
+							<AvailableWallets
+								className='flex items-center justify-center gap-x-4'
+								handleWalletClick={handleWalletClick}
+								availableWallets={availableWallets}
+								isMetamaskWallet={isMetamaskWallet}
+								wallet={wallet}
+							/>
+						</div>
+						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount) && (
+							<Alert
+								className='mt-6 rounded-[4px] text-bodyBlue'
+								showIcon
+								type='error'
+								message='Insufficient Balance for Tip'
+							/>
+						)}
+						{!extensionOpen && (
+							<Form
+								form={form}
+								disabled={loadingStatus.isLoading}
+							>
+								{accounts.length > 0 ? (
+									<AccountSelectionForm
+										isTruncateUsername={false}
+										title='Tip with account'
+										accounts={accounts}
+										address={address}
+										withBalance={true}
+										onAccountChange={(address) => setAddress(address)}
+										onBalanceChange={(balance) => handleOnBalanceChange(balance, true)}
+										className='mt-6 text-sm text-lightBlue'
+									/>
+								) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
+									<Alert
+										type='info'
+										className='mt-4 rounded-[4px]'
+										showIcon
+										message='Please select a wallet.'
+									/>
+								) : null}
+								<div className='mt-6 border-0 border-t-[1px] border-dashed border-[#D2D8E0] pt-6'>
+									<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>
+										Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
+									</span>
+									<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
+										{TIPS.map((tip) => (
+											<span
+												className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
+													handleTipChangeToDollar(tip).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'
+												}`}
+												key={tip}
+												onClick={() => {
+													const tipBlance = handleTipChangeToDollar(tip);
+													setTipAmount(tipBlance);
+													form.setFieldValue('balance', tipBlance);
+												}}
+											>
+												{tip === 3 && <Tip1Icon />}
+												{tip === 5 && <Tip2Icon />}
+												{tip === 10 && <Tip3Icon />}
+												{tip === 15 && <Tip4Icon />}
+												<span>${tip}</span>
+											</span>
+										))}
 									</div>
-								)}
-							</div>
-						</Form>
-					)}
+									<BalanceInput
+										label='Or enter the custom amount you would like to Tip'
+										placeholder='Enter Amount'
+										address={address}
+										onAccountBalanceChange={(balance) => handleOnBalanceChange(balance, false)}
+										onChange={(tip) => setTipAmount(tip)}
+										className='mt-6'
+									/>
+									{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount) && (
+										<div className='mt-6'>
+											<Input
+												name='remark'
+												value={remark}
+												onChange={(e) => setRemark(e.target.value)}
+												className='ml-4 h-[40px] w-[524px] rounded-[4px] max-sm:w-full'
+												placeholder='Say something nice with your tip(optional)'
+											/>
+											<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />
+										</div>
+									)}
+								</div>
+							</Form>
+						)}
+					</div>
 				</Spin>
 			</Modal>
 		</div>

@@ -65,7 +65,6 @@ const BalanceInput = ({
 			setInputValue?.('0');
 		}
 	};
-
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({

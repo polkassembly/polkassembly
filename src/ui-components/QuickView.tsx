@@ -4,7 +4,6 @@
 import React from 'react';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import CopyIcon from '~assets/icons/content_copy_small.svg';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { poppins } from 'pages/_app';
 import Address from './Address';
@@ -13,17 +12,28 @@ import SocialLink from './SocialLinks';
 import { socialLinks } from '~src/components/UserProfile/Details';
 import { Button, message } from 'antd';
 import styled from 'styled-components';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { ISocial } from '~src/auth/types';
+import ImageComponent from 'src/components/ImageComponent';
+import Link from 'next/link';
+import { network as AllNetworks } from '~src/global/networkConstants';
+
+import PolkaverseIcon from '~assets/icons/polkaverse.svg';
 import VerifiedIcon from '~assets/icons/verified-tick.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { ISocial } from '~src/auth/types';
-import ImageComponent from 'src/components/ImageComponent';
-import PolkaverseIcon from '~assets/icons/polkaverse.svg';
+import CopyIcon from '~assets/icons/content_copy_small.svg';
 import WebIcon from '~assets/icons/web-icon.svg';
-import Link from 'next/link';
 
+export const TippingUnavailableNetworks = [
+	AllNetworks.MOONBASE,
+	AllNetworks.MOONRIVER,
+	AllNetworks.POLYMESH,
+	AllNetworks.COLLECTIVES,
+	AllNetworks.WESTENDCOLLECTIVES,
+	AllNetworks.MOONBEAM
+];
 interface Props {
 	className?: string;
 	address: string;
@@ -185,20 +195,22 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 						?.split(',')?.[0] || 'None'}
 				</span>
 			</article>
-			<div className=' flex items-center justify-end'>
-				<Button
-					disabled={!id}
-					onClick={() => {
-						setOpenTipping(true);
-						setOpen(false);
-					}}
-					className={`flex h-[32px] w-[161px] items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
-						!id && 'opacity-50'
-					}`}
-				>
-					Tip
-				</Button>
-			</div>
+			{!TippingUnavailableNetworks.includes(network) && (
+				<div className=' flex items-center justify-end'>
+					<Button
+						disabled={!id}
+						onClick={() => {
+							setOpenTipping(true);
+							setOpen(false);
+						}}
+						className={`flex h-[32px] w-[161px] items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
+							!id && 'opacity-50'
+						}`}
+					>
+						Tip
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 };

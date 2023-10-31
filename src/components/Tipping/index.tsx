@@ -6,9 +6,6 @@ import { Alert, Button, Form, Input, Modal, Spin } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus, Wallet } from '~src/types';
-
-import CloseIcon from '~assets/icons/close.svg';
-import TipIcon from '~assets/icons/tip-title.svg';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
@@ -17,13 +14,6 @@ import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import BalanceInput from '~src/ui-components/BalanceInput';
-
-import Tip1Icon from '~assets/icons/tip-1.svg';
-import Tip2Icon from '~assets/icons/tip-2.svg';
-import Tip3Icon from '~assets/icons/tip-3.svg';
-import Tip4Icon from '~assets/icons/tip-4.svg';
-import SaySomethingIcon from '~assets/icons/say-something.svg';
-
 import styled from 'styled-components';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
@@ -31,9 +21,20 @@ import { inputToBn } from '~src/util/inputToBn';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
+import { formatBalance } from '@polkadot/util';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+
+import Tip1Icon from '~assets/icons/tip-1.svg';
+import Tip2Icon from '~assets/icons/tip-2.svg';
+import Tip3Icon from '~assets/icons/tip-3.svg';
+import Tip4Icon from '~assets/icons/tip-4.svg';
+import SaySomethingIcon from '~assets/icons/say-something.svg';
+import CloseIcon from '~assets/icons/close.svg';
+import TipIcon from '~assets/icons/tip-title.svg';
 
 const ZERO_BN = new BN(0);
-const ONE_DOLLAR_IN_DOT = '0.230658';
 
 interface Props {
 	open: boolean;
@@ -43,27 +44,67 @@ interface Props {
 	username: string;
 }
 
-const TIPS = [3, 5, 10, 15];
+const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; value: number }[] = [
+	{ key: 'threeDollar', value: 3 },
+	{ key: 'fiveDollar', value: 5 },
+	{ key: 'tenDollar', value: 10 },
+	{ key: 'fifteenDollar', value: 15 }
+];
 
 const Tipping = ({ className, destinationAddress, open, setOpen, username }: Props) => {
 	const { network } = useNetworkSelector();
-	const { loginWallet, loginAddress } = useUserDetailsSelector();
+	const { loginWallet, loginAddress, currentTokenPrice } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const [form] = Form.useForm();
 	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
 	const [address, setAddress] = useState<string>('');
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
+	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: '' });
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [tipAmount, setTipAmount] = useState<BN>(ZERO_BN);
 	const disable = loadingStatus.isLoading || availableBalance.lte(tipAmount) || !address || tipAmount.eq(ZERO_BN);
 	const [remark, setRemark] = useState<string>('');
+	const [existentialDeposit, setExistentialDeposi] = useState<BN>(ZERO_BN);
+	const unit = chainProperties[network]?.tokenSymbol;
+	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
+		fifteenDollar: '0',
+		fiveDollar: '0',
+		tenDollar: '0',
+		threeDollar: '0'
+	});
 
-	const handleCancel = (e: any) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const handleTipChangeToDollar = (value: number) => {
+		const tip = value / Number(currentTokenPrice || 1);
+		return String(tip);
+	};
+
+	useEffect(() => {
+		if (!network) return;
+		setLoadingStatus({ isLoading: false, message: 'Awaiting for network' });
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
+	useEffect(() => {
+		if (!currentTokenPrice || !currentTokenPrice.length) return;
+		setDollarToTokenBalance({
+			fifteenDollar: handleTipChangeToDollar(15),
+			fiveDollar: handleTipChangeToDollar(5),
+			tenDollar: handleTipChangeToDollar(10),
+			threeDollar: handleTipChangeToDollar(3)
+		});
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentTokenPrice]);
+
+	const handleCancel = (e?: any) => {
+		e?.preventDefault();
+		e?.stopPropagation();
 		setTipAmount(ZERO_BN);
 		setRemark('');
 		form.setFieldValue('balance', '');
@@ -95,6 +136,8 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
 		})();
+		const deposit = api.consts.balances.existentialDeposit;
+		setExistentialDeposi(deposit);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginWallet, loginAddress, api, apiReady]);
 
@@ -129,12 +172,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 			setTipAmount(balance);
 		}
 	};
-	const handleTipChangeToDollar = (value: number) => {
-		const bnValue = new BN(value);
-		const [balance] = inputToBn(`${ONE_DOLLAR_IN_DOT}`, network, false);
-		const tip = balance.mul(bnValue);
-		return tip;
-	};
+
 	const handleSetTip = async () => {
 		const { data, error } = await nextApiClientFetch<MessageType>('api/v1/Tipping', {
 			amount: Number(tipAmount.toString()) || 0,
@@ -158,6 +196,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 		await handleSetTip();
 		setOpen(false);
 		setLoadingStatus({ isLoading: false, message: '' });
+		handleCancel();
 	};
 	const onFailed = async (message: string) => {
 		queueNotification({
@@ -189,7 +228,6 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 			tx
 		});
 	};
-
 	return (
 		<div
 			onClick={(e) => {
@@ -276,14 +314,14 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 								/>
 							)}
 						</div>
-						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount) && (
+						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
 							<Alert
 								className='mt-6 rounded-[4px] text-bodyBlue'
 								showIcon
 								type='error'
-								message='Insufficient Balance for Tip'
+								message='Insufficient Balance for Tipping'
 							/>
-						)}
+						) : null}
 						<Form
 							form={form}
 							disabled={loadingStatus.isLoading}
@@ -312,25 +350,28 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 									Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
 								</span>
 								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
-									{TIPS.map((tip) => (
-										<span
-											className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
-												handleTipChangeToDollar(tip).eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'
-											}`}
-											key={tip}
-											onClick={() => {
-												const tipBlance = handleTipChangeToDollar(tip);
-												setTipAmount(tipBlance);
-												form.setFieldValue('balance', tipBlance);
-											}}
-										>
-											{tip === 3 && <Tip1Icon />}
-											{tip === 5 && <Tip2Icon />}
-											{tip === 10 && <Tip3Icon />}
-											{tip === 15 && <Tip4Icon />}
-											<span>${tip}</span>
-										</span>
-									))}
+									{TIPS.map((tip) => {
+										const [tipBlance] = inputToBn(dollarToTokenBalance[tip.key].slice(0, chainProperties[network].tokenDecimals - 1), network, false);
+										return (
+											<span
+												className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
+													tipBlance.eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'
+												}`}
+												key={tip.key}
+												onClick={() => {
+													form.setFieldValue('balance', '');
+													setTipAmount(tipBlance);
+													form.setFieldValue('balance', dollarToTokenBalance[tip.key].slice(0, chainProperties[network].tokenDecimals));
+												}}
+											>
+												{tip.value === 3 && <Tip1Icon />}
+												{tip.value === 5 && <Tip2Icon />}
+												{tip.value === 10 && <Tip3Icon />}
+												{tip.value === 15 && <Tip4Icon />}
+												<span>${tip.value}</span>
+											</span>
+										);
+									})}
 								</div>
 								<BalanceInput
 									label='Or enter the custom amount you would like to Tip'
@@ -339,9 +380,19 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 									onAccountBalanceChange={(balance) => handleOnBalanceChange(balance, false)}
 									onChange={(tip) => setTipAmount(tip)}
 									className='mt-6'
+									noRules
 								/>
-								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount) && (
-									<div className='mt-6'>
+								{!!form.getFieldValue('balance')?.length &&
+								(isNaN(Number(form.getFieldValue('balance'))) ||
+									(Number(form.getFieldValue('balance')) > 0 &&
+										!!form.getFieldValue('balance')?.split('.')?.[1]?.length &&
+										chainProperties[network]?.tokenDecimals < (form.getFieldValue('balance')?.split('.')?.[1].length || 0)) ||
+									(!!form.getFieldValue('balance').length && Number(form.getFieldValue('balance')) <= 0)) ? (
+									<span className='mt-[-24px] text-sm text-red-500'>Invalid Balance</span>
+								) : null}
+
+								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount.add(existentialDeposit)) && (
+									<div className='mt-12'>
 										<Input
 											name='remark'
 											value={remark}
@@ -354,6 +405,20 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 								)}
 							</div>
 						</Form>
+						{!!existentialDeposit && (
+							<div className='mt-4 flex items-center gap-4 text-sm'>
+								<span className='font-medium tracking-wide text-lightBlue'>
+									Existential Deposit
+									<HelperTooltip
+										className='ml-1'
+										text='Minimum balance to keep address live'
+									/>
+								</span>
+								<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue'>
+									{formatedBalance(existentialDeposit.toString(), unit, 2)} {unit}
+								</span>
+							</div>
+						)}
 					</div>
 				</Spin>
 			</Modal>
@@ -368,5 +433,8 @@ export default styled(Tipping)`
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
 		color: rgba(87, 109, 139, 0.8) !important;
+	}
+	.ant-form-item {
+		margin-bottom: 0px !important;
 	}
 `;

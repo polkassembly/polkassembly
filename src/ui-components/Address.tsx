@@ -23,7 +23,7 @@ import { Skeleton, Space, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ISocial } from '~src/auth/types';
-import QuickView from './QuickView';
+import QuickView, { TippingUnavailableNetworks } from './QuickView';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -370,13 +370,15 @@ const Address = (props: Props) => {
 					) : null}
 				</div>
 			</Tooltip>
-			<Tipping
-				destinationAddress={address}
-				username={addressPrefix}
-				open={openTipping}
-				setOpen={setOpenTipping}
-				key={address}
-			/>
+			{!TippingUnavailableNetworks.includes(network) && (
+				<Tipping
+					destinationAddress={address}
+					username={addressPrefix}
+					open={openTipping}
+					setOpen={setOpenTipping}
+					key={address}
+				/>
+			)}
 		</>
 	);
 };

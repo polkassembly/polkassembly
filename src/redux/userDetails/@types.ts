@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { INetworkPreferences, Wallet } from '~src/types';
-
 export interface IUserDetailsStore {
 	id?: number | null;
 	picture?: string | null;
@@ -22,4 +21,5 @@ export interface IUserDetailsStore {
 	networkPreferences: INetworkPreferences;
 	primaryNetwork: string;
 	is2FAEnabled?: boolean;
+	currentTokenPrice: string;
 }

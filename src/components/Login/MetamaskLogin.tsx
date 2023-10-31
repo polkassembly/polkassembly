@@ -86,7 +86,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 			return <MetamaskIcon className={`h-8 w-8 ${className}`} />;
 		case Wallet.POLKASAFE:
 			if (theme === 'dark') {
-				return <PolkaSafeDarkIcon className={`h-8 w-6 ${className}`} />;
+				return <PolkaSafeDarkIcon className={`h-8 w-6 scale-[1.7] ${className}`} />;
 			} else {
 				return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
 			}

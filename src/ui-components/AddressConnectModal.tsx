@@ -623,6 +623,7 @@ const AddressConnectModal = ({
 									containerClassName='gap-[20px]'
 									showMultisigBalance={true}
 									canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
+									linkAddressTextDisabled={false}
 								/>
 							) : (
 								<AccountSelectionForm

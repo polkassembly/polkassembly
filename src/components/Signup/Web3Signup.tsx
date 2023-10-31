@@ -370,6 +370,7 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 													onAccountChange={onAccountChange}
 													walletAddress={multiWallet}
 													setWalletAddress={setMultiWallet}
+													linkAddressTextDisabled={false}
 												/>
 											) : (
 												<AccountSelectionForm

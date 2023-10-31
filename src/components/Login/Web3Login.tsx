@@ -503,6 +503,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 														onAccountChange={onAccountChange}
 														walletAddress={multisigAddress}
 														setWalletAddress={setMultisigAddress}
+														linkAddressTextDisabled
 													/>
 												) : (
 													<AccountSelectionForm

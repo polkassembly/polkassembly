@@ -44,6 +44,7 @@ interface Props {
 	showMultisigBalance?: boolean;
 	multisigBalance: BN;
 	setMultisigBalance: (pre: BN) => void;
+	linkAddressTextDisabled?: boolean;
 }
 
 const MultisigAccountSelectionForm = ({
@@ -65,7 +66,8 @@ const MultisigAccountSelectionForm = ({
 	canMakeTransaction,
 	showMultisigBalance = false,
 	multisigBalance,
-	setMultisigBalance
+	setMultisigBalance,
+	linkAddressTextDisabled = false
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
 	const { api, apiReady } = useApiContext();
@@ -136,6 +138,7 @@ const MultisigAccountSelectionForm = ({
 					className={inputClassName}
 					isSwitchButton={isSwitchButton}
 					setSwitchModalOpen={setSwitchModalOpen}
+					linkAddressTextDisabled={linkAddressTextDisabled}
 				/>
 			</article>
 
@@ -164,6 +167,7 @@ const MultisigAccountSelectionForm = ({
 						className={inputClassName}
 						isSwitchButton={isSwitchButton}
 						setSwitchModalOpen={setSwitchModalOpen}
+						linkAddressTextDisabled={linkAddressTextDisabled}
 					/>
 				</article>
 			) : (

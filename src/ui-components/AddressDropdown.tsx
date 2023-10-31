@@ -120,7 +120,7 @@ const AddressDropdown = ({
 			trigger={['click']}
 			className={`${className} dark:border-separatorDark`}
 			disabled={isDisabled}
-			overlayClassName='z-[1056]'
+			overlayClassName='z-[2000]'
 			menu={{
 				items: addressItems,
 				onClick: (e: any) => {

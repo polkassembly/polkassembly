@@ -12,7 +12,7 @@ export const Dropdown = (props: any) => {
 				props.theme == 'dark'
 					? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white [&>ul>.ant-dropdown-menu-item-selected]:bg-section-dark-background [&>ul>.ant-dropdown-menu-item-selected]:text-[#5A1138] hover:[&>ul>li]:bg-section-dark-background hover:[&>ul>li]:text-pink-dark-primary'
 					: ''
-			}`}
+			} z-[2000]`}
 		>
 			{props.children}
 		</AntdDropdown>

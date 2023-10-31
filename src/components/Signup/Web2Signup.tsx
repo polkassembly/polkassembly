@@ -59,8 +59,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState(false);
 	const dispatch = useDispatch();
-	const [inputUsername, setInputUsername] = useState('');
 	const [isPassword, setIsPassword] = useState(false);
+	const [inputPassword, setInputPassword] = useState(false);
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [signUpInfo, setSignUpInfo] = useState({
@@ -148,7 +148,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	return (
 		<div>
 			<div>
-				<div className='mt-4 flex px-8'>
+				<div className='mt-4 flex gap-x-2 px-8'>
 					<IconSignup className='m-0 p-0 text-2xl' />
 					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue'>Sign Up</p>
 				</div>
@@ -158,30 +158,32 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				></Divider>
 			</div>
 			<Container className={`flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md ${className}`}>
-				<div className='flex grid-cols-2 gap-x-[10px]'>
+				<div className='flex grid-cols-2 gap-x-5'>
 					<div
 						onClick={() => {
 							setIsPassword(false);
 							if (error) setError('');
 						}}
-						className={`flex w-[298px] cursor-pointer flex-col items-center gap-x-2 gap-y-2 border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm ${
-							inputUsername ? 'border-b-2 border-green-500' : 'border-b-2 border-green-500'
-						}`}
+						className='w-[268px] cursor-pointer flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'
 					>
-						<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-8 sm:w-8 ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>1</span>
-						<span>Create Username</span>
+						<div className='flex gap-x-2 gap-y-2 '>
+							<span className={`flex h-4 w-4 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>01</span>
+							<span className='mt-[2px]'>Create Username</span>
+						</div>
+						<div>
+							<Divider className={`${isPassword ? 'bg-green_primary' : 'bg-grey_stroke'}  m-0 mt-4 border-t-[2px] p-0`}></Divider>
+						</div>
 					</div>
-					<div
-						className={`flex w-[268px] flex-col items-center gap-x-2 gap-y-2 border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm ${
-							inputUsername ? 'border-b-2 border-green-500' : 'border-b-2 border-green-500'
-						}`}
-					>
-						<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-8 sm:w-8 ${isPassword ? 'bg-pink_primary' : 'bg-grey_secondary'} rounded-full`}>2</span>
-						<span>Set Password</span>
+					<div className='w-[268px] flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'>
+						<div className='flex gap-x-2 gap-y-2 '>
+							<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-pink_primary' : 'bg-grey_secondary'} rounded-full`}>02</span>
+							<span className='mt-[2px]'>Set Password</span>
+						</div>
+						<div>
+							<Divider className={`${inputPassword ? 'bg-green_primarye' : 'bg-grey_stroke'}  m-0 mt-4 border-t-[2px] p-0`}></Divider>
+						</div>
 					</div>
 				</div>
-
-				{isPassword && <h3 className='text-2xl font-semibold text-[#1E232C]'>Set Password</h3>}
 
 				{defaultWallets.length === 0 && isDelegation && (
 					<Alert
@@ -257,6 +259,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									]}
 								>
 									<Input.Password
+										onChange={() => setInputPassword(true)}
 										placeholder='Password'
 										className='rounded-md px-4 py-2'
 										id='second_password'
@@ -296,7 +299,6 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder='John'
-										onChange={(e) => setInputUsername(e.target.value)}
 										className='rounded-md px-4 py-2'
 										id='username'
 									/>

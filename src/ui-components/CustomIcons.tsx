@@ -8,7 +8,7 @@ import React from 'react';
 import MailIcon from '~assets/icons/mailIcon.svg';
 import BlueCaution from '~assets/icons/CautionBlue.svg';
 import CautionIcon from '~assets/icons/Caution 2.svg';
-import SignupIcon from '~assets/icons/signupIcon.svg';
+import SignupIcon from '~assets/icons/userSignup.svg';
 import RetrySVG from '~assets/icons/Refresh.svg';
 import OpenAiSVG from '~assets/icons/openai.svg';
 import AiStarSVG from '~assets/icons/ai-star.svg';

@@ -104,11 +104,11 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						icon={
 							<WalletIcon
 								which={Wallet.POLKASAFE}
-								className='!mt-1 h-9 w-8'
+								className='mt-2 h-9 w-8'
 							/>
 						}
 						optionalLogin={optionalLogin}
-						text='Polkasafe'
+						text='Polkasafe (Multisig)'
 					/>
 				)}
 				{['polymesh'].includes(network) ? (

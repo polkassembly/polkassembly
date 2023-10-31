@@ -20,6 +20,7 @@ import { MinusCircleFilled } from '@ant-design/icons';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ISocial } from '~src/auth/types';
 import ImageComponent from 'src/components/ImageComponent';
+import PolkaverseIcon from '~assets/icons/polkaverse.svg';
 
 interface Props {
 	className?: string;
@@ -111,9 +112,11 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 					</span>
 				</div>
 				<div className='mt-0.5 flex items-center justify-between gap-1 border-solid'>
-					<span className='flex items-center text-xs tracking-wide text-[#9aa7b9]'>
-						Since:<span className='ml-0.5 text-lightBlue '>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
-					</span>
+					{profileCreatedAt && (
+						<span className='flex items-center text-xs tracking-wide text-[#9aa7b9]'>
+							Since:<span className='ml-0.5 text-lightBlue '>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
+						</span>
+					)}
 					<div className='flex items-center gap-1.5'>
 						{socialLinks?.map((social: any, index: number) => {
 							const link = identityArr?.find((s) => s.key === social)?.value || '';
@@ -125,7 +128,7 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 										key={index}
 									>
 										<SocialLink
-											className={`flex h-[24px] w-[24px] items-center justify-center rounded-[20px] text-base hover:text-[#576D8B] ${isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
+											className={`flex h-[24px] w-[24px] items-center justify-center rounded-full text-base hover:text-[#576D8B] ${isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
 											link={link as string}
 											type={social}
 											iconClassName={`text-sm ${isVerified ? 'text-white' : 'text-[#96A4B6]'}`}
@@ -134,6 +137,12 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 								)
 							);
 						})}
+						<span
+							onClick={() => window.open(`https://polkaverse.com/accounts/${address}`, '_blank')}
+							className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
+						>
+							<PolkaverseIcon />
+						</span>
 					</div>
 				</div>
 			</div>

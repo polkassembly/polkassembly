@@ -33,7 +33,7 @@ import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { BlueCautionIcon, IconMail } from '~src/ui-components/CustomIcons';
+import { IconMail } from '~src/ui-components/CustomIcons';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';
 import * as validation from 'src/util/validation';
@@ -758,7 +758,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 											htmlFor='username'
 										>
 											Enter Username
-											<span className='text-red'>*</span>
+											<span className='text-pink_primary'>*</span>
 										</label>
 										<Form.Item
 											name='username'
@@ -788,13 +788,12 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 										</Form.Item>
 									</div>
 									{!isError && (
-										<div
-											className='mb-5 mt-1 flex p-3'
-											style={{ backgroundColor: '#E6F4FF', border: '1px solid #91CAFF', borderRadius: '6px' }}
-										>
-											<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
-											<p className='m-0 p-0 text-sm text-bodyBlue'>You can update your username from the settings page.</p>
-										</div>
+										<Alert
+											className='mb-5 mt-1 p-3 text-sm '
+											message='You can update your username from the settings page.'
+											type='info'
+											showIcon
+										/>
 									)}
 								</div>
 								<Divider
@@ -851,13 +850,12 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 											/>
 										</Form.Item>
 									</div>
-									<div
-										className='mb-5 mt-1 flex p-3'
-										style={{ backgroundColor: '#E6F4FF', border: '1px solid #91CAFF', borderRadius: '6px' }}
-									>
-										<BlueCautionIcon className='-mt-[2px] mr-1 text-2xl' />
-										<p className='m-0 p-0 text-sm text-bodyBlue'>You can set your email later from the settings page.</p>
-									</div>
+									<Alert
+										className='mb-5 mt-1 p-3 text-sm '
+										message='You can set your email later from the settings page.'
+										type='info'
+										showIcon
+									/>
 								</div>
 								<Divider
 									className='-mt-6 mb-5'

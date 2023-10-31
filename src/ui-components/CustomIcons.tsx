@@ -6,7 +6,6 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 import MailIcon from '~assets/icons/mailIcon.svg';
-import BlueCaution from '~assets/icons/CautionBlue.svg';
 import CautionIcon from '~assets/icons/Caution 2.svg';
 import SignupIcon from '~assets/icons/userSignup.svg';
 import RetrySVG from '~assets/icons/Refresh.svg';
@@ -129,13 +128,6 @@ export const IconMail = (props: Partial<CustomIconComponentProps>) => (
 export const Caution = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={CautionIcon}
-		{...props}
-	/>
-);
-
-export const BlueCautionIcon = (props: Partial<CustomIconComponentProps>) => (
-	<Icon
-		component={BlueCaution}
 		{...props}
 	/>
 );

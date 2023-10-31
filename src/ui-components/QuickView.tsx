@@ -141,6 +141,11 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 						{!!identity?.web && (
 							<Link
 								target='_blank'
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									window.open(identity?.web, '_blank');
+								}}
 								href={identity?.web}
 								title={identity?.web}
 								className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#51D36E] text-white'
@@ -150,6 +155,12 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 						)}
 						<Link
 							target='_blank'
+							onClick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
+							}}
+							title={`https://polkaverse.com/accounts/${address}`}
 							href={`https://polkaverse.com/accounts/${address}`}
 							className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
 						>

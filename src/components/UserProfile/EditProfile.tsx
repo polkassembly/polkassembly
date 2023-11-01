@@ -21,6 +21,7 @@ import { poppins } from 'pages/_app';
 import validator from 'validator';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 interface IEditProfileModalProps {
 	id?: number | null;
@@ -53,6 +54,8 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const userDetailsContext = useUserDetailsSelector();
 	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
 	const router = useRouter();
+	const currentUser = useUserDetailsSelector();
+
 	const validateData = (image: string | undefined, social_links: ISocial[] | undefined) => {
 		// eslint-disable-next-line no-useless-escape
 		const regex = validator.isURL(image || '', { protocols: ['http', 'https'], require_protocol: true });
@@ -223,6 +226,12 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								onClick={async () => {
 									try {
 										await updateProfileData();
+
+										//GAEvent to track user profile edit
+										trackEvent('user_profile_update', 'user_profile_edit', {
+											userId: currentUser?.id || '',
+											username: username || currentUser.username || ''
+										});
 									} catch (error) {
 										setErrorCheck((prevState) => ({
 											...prevState,

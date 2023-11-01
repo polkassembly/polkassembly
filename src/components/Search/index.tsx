@@ -403,7 +403,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		if (searchInput?.trim().length > 2) {
 			//GAEvent for user search
 			trackEvent('search_query_added', 'user_search_queries', {
-				searchInput: searchInput,
+				searchInput: `${searchInput} keyword searched`,
 				userId: currentUser?.id || '',
 				userName: currentUser?.username || ''
 			});

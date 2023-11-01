@@ -12,11 +12,14 @@ export const logPageView = () => {
 	ReactGA.send('pageview');
 };
 
-export const trackEvent = (category: string, action: string, label: string) => {
+export const trackEvent = (category: string, action: string, label: object = {}) => {
+	console.log(category, action, label);
+	const serializedLabel = JSON.stringify(label);
 	ReactGA.event({
 		action,
 		category,
-		label,
+		label: serializedLabel,
+		nonInteraction: true,
 		transport: 'xhr'
 	});
 };

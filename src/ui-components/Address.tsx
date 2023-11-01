@@ -244,7 +244,6 @@ const Address = (props: Props) => {
 		if (disableAddressClick) return;
 		event.stopPropagation();
 		event.preventDefault();
-
 		window.open(handleRedirectLink(), '_blank');
 	};
 	return (

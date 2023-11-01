@@ -562,6 +562,10 @@ z-index: 1050 !important;
     padding-left: 40px !important;
     padding-right: 40px !important;
   }
+  
+  .no-account-text-container {
+    display: block !important;
+  }
 }
 
 @media (max-width: 428px) and (min-width: 319px) {
@@ -573,9 +577,6 @@ z-index: 1050 !important;
 }
 
 @media (max-width: 392px) and (min-width: 319px) {
-  .no-account-text-container {
-    display: block !important;
-  }
   .web3-button {
     padding:20px 15px !important;
   }

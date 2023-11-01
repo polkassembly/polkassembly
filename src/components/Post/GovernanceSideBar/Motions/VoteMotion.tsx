@@ -107,7 +107,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 			unit: chainProperties[Network].tokenSymbol
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		if (!api) {

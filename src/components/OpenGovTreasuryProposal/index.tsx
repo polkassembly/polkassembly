@@ -119,7 +119,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 		})();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [title, api, apiReady]);
+	}, [title, api, apiReady, preimage, postId]);
 
 	const handleClick = () => {
 		if (id) {
@@ -142,6 +142,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				<AddressConnectModal
 					open={openAddressLinkedModal}
 					setOpen={setOpenAddressLinkedModal}
+					isProposalCreation
 					closable
 					linkAddressNeeded
 					accountSelectionFormTitle='Select Proposer Address'

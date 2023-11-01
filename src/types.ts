@@ -187,7 +187,7 @@ export enum Wallet {
 	TALISMAN = 'talisman',
 	POLKADOT = 'polkadot-js',
 	POLKAGATE = 'polkagate',
-	SUBWALLET = 'subWallet-js',
+	SUBWALLET = 'subwallet-js',
 	METAMASK = 'metamask',
 	WALLETCONNECT = 'walletconnect',
 	NOVAWALLET = 'polkadot-js',

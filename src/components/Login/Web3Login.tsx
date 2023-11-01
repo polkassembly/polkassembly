@@ -552,7 +552,11 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 								<span className='-ml-2 mt-2 scale-75'>
 									<WalletIcon which={chosenWallet} />
 								</span>
-								<span className='text-xl text-bodyBlue sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+								<span className='text-xl text-bodyBlue sm:text-xl'>
+									{chosenWallet === Wallet.SUBWALLET
+										? chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).split('-')[0]
+										: chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
+								</span>
 							</p>
 						)}
 						{withPolkasafe && (

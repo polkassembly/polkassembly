@@ -338,8 +338,6 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						setLoginOpen?.(false);
 						setShowOptionalFields(false);
 					}
-					setLoginOpen?.(true);
-					setShowOptionalFields(true);
 					setLoading(false);
 					return;
 				}

@@ -93,7 +93,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, 
 				align='middle'
 				className='-mt-5 h-full'
 			>
-				<Col className='w-full sm:max-w-[600px]'>
+				<Col className='w-full sm:max-w-[605px]'>
 					{displayWeb === 2 ? (
 						<Web2Signup
 							isDelegation={isDelegation}

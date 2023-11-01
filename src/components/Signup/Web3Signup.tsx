@@ -317,7 +317,6 @@ const Web3Signup: FC<Props> = ({
 	};
 
 	const handleOptionalSkip = async () => {
-		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
 			badges: JSON.stringify([]),
 			bio: '',
@@ -337,8 +336,7 @@ const Web3Signup: FC<Props> = ({
 				message: error || 'Your Username was not updated.',
 				status: NotificationStatus.ERROR
 			});
-			setLoading(false);
-			setLoginOpen?.(true);
+			setSignupOpen && setSignupOpen(true);
 			setShowSuccessModal(true);
 			setIsError(true);
 		}
@@ -350,8 +348,7 @@ const Web3Signup: FC<Props> = ({
 				status: NotificationStatus.SUCCESS
 			});
 			handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
-			setLoading(false);
-			setLoginOpen?.(false);
+			setSignupOpen && setSignupOpen(false);
 			setShowSuccessModal(false);
 			setIsError(false);
 		}
@@ -359,7 +356,6 @@ const Web3Signup: FC<Props> = ({
 
 	const handleOptionalDetails = async () => {
 		if (email && email.trim() !== '') {
-			setLoading(true);
 			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
 				badges: JSON.stringify([]),
 				bio: '',
@@ -379,7 +375,6 @@ const Web3Signup: FC<Props> = ({
 					message: error || 'Your profile was not updated.',
 					status: NotificationStatus.ERROR
 				});
-				setLoading(false);
 				setShowSuccessModal(false);
 				setIsError(true);
 			}
@@ -391,8 +386,7 @@ const Web3Signup: FC<Props> = ({
 					status: NotificationStatus.SUCCESS
 				});
 				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
-				setLoading(false);
-				setLoginOpen?.(false);
+				setSignupOpen && setSignupOpen(false);
 				setShowSuccessModal(false);
 				setIsError(false);
 			}
@@ -704,7 +698,6 @@ const Web3Signup: FC<Props> = ({
 									{!email && (
 										<Button
 											size='large'
-											loading={loading}
 											onClick={handleOptionalSkip}
 											className='w-[144px] rounded-md border border-solid border-pink_primary text-pink_primary outline-none'
 										>
@@ -715,7 +708,6 @@ const Web3Signup: FC<Props> = ({
 										<Button
 											size='large'
 											htmlType='submit'
-											loading={loading}
 											className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
 										>
 											Done

@@ -95,6 +95,7 @@ const AddressConnectModal = ({
 	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!network) return;
@@ -397,10 +398,13 @@ const AddressConnectModal = ({
 						!accounts ||
 						(showMultisig && !multisig) ||
 						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-						(isProposalCreation ? availableBalance.lte(submissionDeposite) : false)
+						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
 					}
 					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
-						accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit) && 'opacity-50')
+						accounts.length === 0 ||
+						(showMultisig && !multisig) ||
+						(((showMultisig && initiatorBalance.lte(totalDeposit)) || (isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)) &&
+							'opacity-50')
 					}`}
 				>
 					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
@@ -674,26 +678,40 @@ const AddressConnectModal = ({
 				</div>
 				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
 					<Alert
+						className='mt-6 rounded-[4px]'
 						type='info'
 						showIcon
-						message={<span className='text-[13px] font-medium text-bodyBlue'>Please maintain minimum balance for these transactions:</span>}
-						description={
-							<ul className='-mt-1 mb-1 text-xs'>
-								<li className='flex w-full justify-between'>
-									<div className='mr-1 text-lightBlue'>Preimage Creation</div>
-									<span className='font-medium text-bodyBlue'>
-										{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
-									</span>
-								</li>
-								<li className='mt-1 flex w-full justify-between'>
-									<div className='mr-1 text-lightBlue'>Proposal Creation</div>
-									<span className='font-medium text-bodyBlue'>
-										{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
-									</span>
-								</li>
-							</ul>
+						message={
+							<span className='text-xs font-medium text-bodyBlue '>
+								Please maintain minimum balance for these transactions:
+								<span
+									className='ml-1 cursor-pointer text-xs text-pink_primary'
+									onClick={() => setHideDetails(!hideDetails)}
+								>
+									{hideDetails ? 'Show' : 'Hide'}
+								</span>
+							</span>
 						}
-						className={'mt-4 rounded-[4px]'}
+						description={
+							hideDetails ? (
+								''
+							) : (
+								<div className='mr-[18px] flex flex-col gap-1 text-xs'>
+									<li className='flex w-full justify-between'>
+										<div className='mr-1 text-lightBlue'>Preimage Creation</div>
+										<span className='font-medium text-bodyBlue'>
+											{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
+										</span>
+									</li>
+									<li className='mt-1 flex w-full justify-between'>
+										<div className='mr-1 text-lightBlue'>Proposal Submission</div>
+										<span className='font-medium text-bodyBlue'>
+											{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
+										</span>
+									</li>
+								</div>
+							)
+						}
 					/>
 				)}
 			</Spin>
@@ -712,5 +730,9 @@ export default styled(AddressConnectModal)`
 	.ant-alert-with-description .ant-alert-icon {
 		font-size: 18px !important;
 		margin-top: 4px;
+	}
+	.ant-alert-with-description .ant-alert-icon {
+		font-size: 14px !important;
+		margin-top: 6px;
 	}
 `;

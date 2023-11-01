@@ -12,7 +12,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
@@ -25,7 +24,7 @@ import queueNotification from './QueueNotification';
 import cleanError from '~src/util/cleanError';
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
 import { handleTokenChange } from '~src/services/auth.service';
-import { stringToHex } from '@polkadot/util';
+import { formatBalance, stringToHex } from '@polkadot/util';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
@@ -35,6 +34,8 @@ import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/type
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import { chainProperties } from '~src/global/networkConstants';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 interface Props {
 	className?: string;
@@ -49,6 +50,7 @@ interface Props {
 	walletAlertTitle: string;
 	accountAlertTitle?: string;
 	accountSelectionFormTitle?: string;
+	isProposalCreation?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -65,7 +67,8 @@ const AddressConnectModal = ({
 	usingMultisig = false,
 	walletAlertTitle,
 	accountAlertTitle = 'Wallet extension not detected.',
-	accountSelectionFormTitle = 'Select an address'
+	accountSelectionFormTitle = 'Select an address',
+	isProposalCreation = false
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
@@ -89,6 +92,24 @@ const AddressConnectModal = ({
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
+	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
+	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
+
+	useEffect(() => {
+		if (!network) return;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		const submissionDeposite = api.consts.referenda.submissionDeposit;
+		setSubmissionDeposite(submissionDeposite);
+	}, [api, apiReady]);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
@@ -293,8 +314,8 @@ const AddressConnectModal = ({
 		if (multisig) {
 			balanceStr = (await api.query.system.account(multisig)).data.free.toString();
 		}
-		const [balance, isValid] = inputToBn(balanceStr, network, false);
-		isValid ? setAvailableBalance(balance) : setAvailableBalance(ZERO_BN);
+		const availableBalance = new BN(balanceStr);
+		setAvailableBalance(availableBalance);
 	};
 
 	useEffect(() => {
@@ -372,7 +393,12 @@ const AddressConnectModal = ({
 			footer={
 				<Button
 					onClick={handleSubmit}
-					disabled={!accounts || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
+					disabled={
+						!accounts ||
+						(showMultisig && !multisig) ||
+						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
+						(isProposalCreation ? availableBalance.lte(submissionDeposite) : false)
+					}
 					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
 						accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit) && 'opacity-50')
 					}`}
@@ -646,6 +672,30 @@ const AddressConnectModal = ({
 						) : null}
 					</Form>
 				</div>
+				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
+					<Alert
+						type='info'
+						showIcon
+						message={<span className='text-[13px] font-medium text-bodyBlue'>Please maintain minimum balance for these transactions:</span>}
+						description={
+							<ul className='-mt-1 mb-1 text-xs'>
+								<li className='flex w-full justify-between'>
+									<div className='mr-1 text-lightBlue'>Preimage Creation</div>
+									<span className='font-medium text-bodyBlue'>
+										{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
+									</span>
+								</li>
+								<li className='mt-1 flex w-full justify-between'>
+									<div className='mr-1 text-lightBlue'>Proposal Creation</div>
+									<span className='font-medium text-bodyBlue'>
+										{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
+									</span>
+								</li>
+							</ul>
+						}
+						className={'mt-4 rounded-[4px]'}
+					/>
+				)}
 			</Spin>
 		</Modal>
 	);
@@ -654,5 +704,13 @@ const AddressConnectModal = ({
 export default styled(AddressConnectModal)`
 	.radius .ant-modal-content {
 		border-radius: 4px !important;
+	}
+	.ant-alert-with-description {
+		padding-block: 12px !important;
+		padding-inline: 16px !important;
+	}
+	.ant-alert-with-description .ant-alert-icon {
+		font-size: 18px !important;
+		margin-top: 4px;
 	}
 `;

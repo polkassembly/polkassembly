@@ -263,7 +263,7 @@ const CreatePreimage = ({
 		});
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	const onChangeLocalStorageSet = (changedKeyValueObj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
 		setTxFee(ZERO_BN);

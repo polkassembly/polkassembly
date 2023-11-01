@@ -192,7 +192,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		setWallet((loginWallet || wallet) as Wallet);
 		getAccounts((loginWallet || wallet) as Wallet, loginAddress || address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginWallet]);
+	}, [loginWallet, network]);
 
 	const handleSubmit = async () => {
 		const bnValue: BN = new BN(balance.toString() || ZERO_BN);

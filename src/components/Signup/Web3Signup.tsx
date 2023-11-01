@@ -262,10 +262,7 @@ const Web3Signup: FC<Props> = ({
 						setSignupOpen && setSignupOpen(false);
 						setShowOptionalFields(false);
 					}
-					//pls remove this
 					setIsClosable?.(false);
-					setSignupOpen && setSignupOpen(true);
-					setShowOptionalFields(true);
 					return;
 				}
 				router.back();
@@ -486,7 +483,7 @@ const Web3Signup: FC<Props> = ({
 						<>
 							<AuthForm
 								onSubmit={handleSignup}
-								className='flex flex-col gap-y-6'
+								className='flex flex-col gap-y-6 px-4 pt-3'
 							>
 								{extensionNotFound ? (
 									<div className='my-5 flex items-center justify-center'>

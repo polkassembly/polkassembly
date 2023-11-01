@@ -71,6 +71,7 @@ interface Props {
 	setPreimageLength: (pre: number | null) => void;
 	availableBalance: BN;
 	setAvailableBalance: (pre: BN) => void;
+	isUpdatedAvailableBalance: boolean;
 }
 
 interface IAdvancedDetails {
@@ -99,6 +100,7 @@ const CreatePreimage = ({
 	setPreimage,
 	availableBalance,
 	setAvailableBalance,
+	isUpdatedAvailableBalance,
 	form
 }: Props) => {
 	const { api, apiReady } = useApiContext();
@@ -697,6 +699,7 @@ const CreatePreimage = ({
 									Proposer Address
 									<span>
 										<Balance
+											isBalanceUpdated={isUpdatedAvailableBalance}
 											address={proposerAddress}
 											onChange={handleOnAvailableBalanceChange}
 										/>

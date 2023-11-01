@@ -101,7 +101,7 @@ const CreateProposal = ({
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		setShowAlert(false);

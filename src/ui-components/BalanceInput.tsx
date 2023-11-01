@@ -73,7 +73,7 @@ const BalanceInput = ({
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return (
 		<div className={`${className} balance-input flex w-full flex-col`}>

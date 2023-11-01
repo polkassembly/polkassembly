@@ -645,7 +645,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			unit: chainProperties[network].tokenSymbol
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		getVotingHistory();

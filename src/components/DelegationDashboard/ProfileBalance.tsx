@@ -53,7 +53,7 @@ const ProfileBalances = ({ className }: Props) => {
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !defaultAddress) return;

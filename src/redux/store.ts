@@ -9,6 +9,7 @@ import storage from 'redux-persist/lib/storage';
 import { networkStore } from './network';
 import { userDetailsStore } from './userDetails';
 import { userUnlockTokensDataStore } from './tokenUnlocksData';
+import { currentTokenPriceStore } from './currentTokenPrice';
 
 export const makeStore = () => {
 	const isServer = typeof window === 'undefined';
@@ -16,7 +17,8 @@ export const makeStore = () => {
 	const rootReducer = combineReducers({
 		[networkStore.name]: networkStore.reducer,
 		[userDetailsStore.name]: userDetailsStore.reducer,
-		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer
+		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer,
+		[currentTokenPriceStore.name]: currentTokenPriceStore.reducer
 	});
 
 	if (isServer) {
@@ -35,7 +37,7 @@ export const makeStore = () => {
 		const persistConfig = {
 			key: 'polkassembly',
 			storage,
-			whitelist: ['userDetails', 'userUnlockTokensData'] // make sure it does not clash with server keys
+			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice'] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

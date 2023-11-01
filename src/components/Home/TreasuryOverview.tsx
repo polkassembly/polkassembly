@@ -24,9 +24,9 @@ import NextBurn from '~assets/icons/nextburn.svg';
 import SpendPeriod from '~assets/icons/spendperiod.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { setUserDetailsState } from '~src/redux/userDetails';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -38,7 +38,6 @@ interface ITreasuryOverviewProps {
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
 	const { network } = useNetworkSelector();
-	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
 	const blockTime: number = chainProperties?.[network]?.blockTime;
@@ -253,7 +252,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					}
 				});
 		});
-		dispatch(setUserDetailsState({ ...currentUser, currentTokenPrice: currentTokenPrice.value.toString() }));
+		dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 

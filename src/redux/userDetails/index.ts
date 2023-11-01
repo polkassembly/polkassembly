@@ -9,7 +9,6 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 const initialState: IUserDetailsStore = {
 	addresses: [],
 	allowed_roles: [],
-	currentTokenPrice: '0',
 	defaultAddress: '',
 	delegationDashboardAddress: '',
 	email: null,
@@ -90,7 +89,6 @@ export const userDetailsStore = createSlice({
 			state.username = action.payload.username;
 			state.walletConnectProvider = action.payload.walletConnectProvider;
 			state.web3signup = action.payload.web3signup;
-			state.currentTokenPrice = action.payload.currentTokenPrice || '0';
 		},
 		setWalletConnectProvider: (state, action: PayloadAction<WalletConnectProvider | null>) => {
 			state.walletConnectProvider = action.payload;

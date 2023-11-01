@@ -34,6 +34,7 @@ interface Props {
 	tooltipMessage?: string;
 	setInputValue?: (pre: string) => void;
 	onBlur?: () => void;
+	isBalanceUpdated?: boolean;
 }
 
 const BalanceInput = ({
@@ -51,7 +52,8 @@ const BalanceInput = ({
 	formItemName = 'balance',
 	tooltipMessage,
 	setInputValue,
-	onBlur
+	onBlur,
+	isBalanceUpdated
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -94,6 +96,7 @@ const BalanceInput = ({
 						<span>
 							<Balance
 								address={address}
+								isBalanceUpdated={isBalanceUpdated}
 								onChange={onAccountBalanceChange}
 							/>
 						</span>

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Form, Input, Modal, Spin } from 'antd';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus, Wallet } from '~src/types';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
@@ -53,7 +53,8 @@ const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar';
 
 const Tipping = ({ className, destinationAddress, open, setOpen, username }: Props) => {
 	const { network } = useNetworkSelector();
-	const { loginWallet, loginAddress, currentTokenPrice } = useUserDetailsSelector();
+	const { loginWallet, loginAddress } = useUserDetailsSelector();
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { api, apiReady } = useApiContext();
 	const [form] = Form.useForm();
 	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
@@ -61,13 +62,14 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: '' });
-	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [tipAmount, setTipAmount] = useState<BN>(ZERO_BN);
+	const [tipInput, setTipInput] = useState<string>('0');
 	const disable = loadingStatus.isLoading || availableBalance.lte(tipAmount) || !address || tipAmount.eq(ZERO_BN);
 	const [remark, setRemark] = useState<string>('');
 	const [existentialDeposit, setExistentialDeposi] = useState<BN>(ZERO_BN);
 	const unit = chainProperties[network]?.tokenSymbol;
+	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
 		fifteenDollar: '0',
 		fiveDollar: '0',
@@ -77,7 +79,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 
 	const handleTipChangeToDollar = (value: number) => {
 		const tip = value / Number(currentTokenPrice || 1);
-		return String(tip);
+		return String(tip.toFixed(2));
 	};
 
 	useEffect(() => {
@@ -87,10 +89,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
 
-	useEffect(() => {
 		if (!currentTokenPrice || !currentTokenPrice.length) return;
 		setDollarToTokenBalance({
 			fifteenDollar: handleTipChangeToDollar(15),
@@ -100,7 +99,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentTokenPrice]);
+	}, [currentTokenPrice, currentTokenPrice.length, network, api, apiReady]);
 
 	const handleCancel = (e?: any) => {
 		e?.preventDefault();
@@ -115,10 +114,10 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setAvailableWallets(injectedWindow.injectedWeb3);
-		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
 	};
 
 	useEffect(() => {
+		setIsBalanceUpdated(false);
 		getWallet();
 		const wallet = localStorage.getItem('loginWallet') || '';
 		const address = localStorage.getItem('loginAddress');
@@ -172,28 +171,26 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 			setTipAmount(balance);
 		}
 	};
-
 	const handleSetTip = async () => {
-		const { data, error } = await nextApiClientFetch<MessageType>('api/v1/Tipping', {
-			amount: Number(tipAmount.toString()) || 0,
-			remark: `${remark} tipped via Polkassembly`.trim(),
+		const { error } = await nextApiClientFetch<MessageType>('/api/v1/Tipping', {
+			amount: Number(tipInput) || 0,
+			remark: `${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim(),
 			tipFrom: address,
 			tipTo: destinationAddress
 		});
-		if (data) {
-			console.log(data.message);
-		} else {
+		if (error) {
 			console.log(error);
 		}
 	};
 
 	const onSuccess = async () => {
+		await handleSetTip();
 		queueNotification({
 			header: 'Success!',
 			message: `You have successfully tipped to ${username.length > 10 ? `${username.slice(0, 10)}...` : username}`,
 			status: NotificationStatus.SUCCESS
 		});
-		await handleSetTip();
+		setIsBalanceUpdated(true);
 		setOpen(false);
 		setLoadingStatus({ isLoading: false, message: '' });
 		handleCancel();
@@ -287,7 +284,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 								className='flex items-center justify-center gap-x-4'
 								handleWalletClick={handleWalletClick}
 								availableWallets={availableWallets}
-								isMetamaskWallet={isMetamaskWallet}
+								isMetamaskWallet={false}
 								wallet={wallet}
 							/>
 							{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loadingStatus.isLoading && (
@@ -324,10 +321,11 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 						) : null}
 						<Form
 							form={form}
-							disabled={loadingStatus.isLoading}
+							disabled={loadingStatus.isLoading || !network}
 						>
 							{accounts.length > 0 ? (
 								<AccountSelectionForm
+									isBalanceUpdated={isBalanceUpdated}
 									isTruncateUsername={false}
 									title='Tip with account'
 									accounts={accounts}
@@ -351,7 +349,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 								</span>
 								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
 									{TIPS.map((tip) => {
-										const [tipBlance] = inputToBn(dollarToTokenBalance[tip.key].slice(0, chainProperties[network].tokenDecimals - 1), network, false);
+										const [tipBlance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
 										return (
 											<span
 												className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
@@ -361,7 +359,8 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 												onClick={() => {
 													form.setFieldValue('balance', '');
 													setTipAmount(tipBlance);
-													form.setFieldValue('balance', dollarToTokenBalance[tip.key].slice(0, chainProperties[network].tokenDecimals));
+													setTipInput(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)));
+													form.setFieldValue('balance', Number(dollarToTokenBalance[tip.key]).toFixed(2));
 												}}
 											>
 												{tip.value === 3 && <Tip1Icon />}
@@ -374,11 +373,13 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 									})}
 								</div>
 								<BalanceInput
+									setInputValue={setTipInput}
 									label='Or enter the custom amount you would like to Tip'
 									placeholder='Enter Amount'
 									address={address}
 									onAccountBalanceChange={(balance) => handleOnBalanceChange(balance, false)}
 									onChange={(tip) => setTipAmount(tip)}
+									isBalanceUpdated={open}
 									className='mt-6'
 									noRules
 								/>

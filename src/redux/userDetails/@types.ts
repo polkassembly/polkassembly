@@ -21,5 +21,4 @@ export interface IUserDetailsStore {
 	networkPreferences: INetworkPreferences;
 	primaryNetwork: string;
 	is2FAEnabled?: boolean;
-	currentTokenPrice: string;
 }

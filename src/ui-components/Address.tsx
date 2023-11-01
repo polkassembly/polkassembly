@@ -254,9 +254,9 @@ const Address = (props: Props) => {
 	return (
 		<>
 			<Tooltip
-				arrow
 				color='#fff'
 				overlayClassName={className}
+				placement='topLeft'
 				title={
 					<QuickView
 						socials={socials}

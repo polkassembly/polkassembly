@@ -696,14 +696,14 @@ const AddressConnectModal = ({
 							hideDetails ? (
 								''
 							) : (
-								<div className='mr-[18px] flex flex-col gap-1 text-xs'>
+								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs'>
 									<li className='flex w-full justify-between'>
 										<div className='mr-1 text-lightBlue'>Preimage Creation</div>
 										<span className='font-medium text-bodyBlue'>
 											{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
 										</span>
 									</li>
-									<li className='mt-1 flex w-full justify-between'>
+									<li className='mt-0 flex w-full justify-between'>
 										<div className='mr-1 text-lightBlue'>Proposal Submission</div>
 										<span className='font-medium text-bodyBlue'>
 											{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
@@ -733,6 +733,6 @@ export default styled(AddressConnectModal)`
 	}
 	.ant-alert-with-description .ant-alert-icon {
 		font-size: 14px !important;
-		margin-top: 6px;
+		margin-top: 7px;
 	}
 `;

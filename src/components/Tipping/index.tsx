@@ -33,6 +33,9 @@ import Tip4Icon from '~assets/icons/tip-4.svg';
 import SaySomethingIcon from '~assets/icons/say-something.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import TipIcon from '~assets/icons/tip-title.svg';
+import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
+import { setCurrentTokenPrice } from '~src/redux/currentTokenPrice';
+import { useDispatch } from 'react-redux';
 
 const ZERO_BN = new BN(0);
 
@@ -70,6 +73,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 	const [existentialDeposit, setExistentialDeposi] = useState<BN>(ZERO_BN);
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
+	const dispatch = useDispatch();
 	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
 		fifteenDollar: '0',
 		fiveDollar: '0',
@@ -82,15 +86,23 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 		return String(tip.toFixed(2));
 	};
 
+	const getCurrentTokenPrice = async () => {
+		const price = await fetchTokenToUSDPrice(network);
+		if (price !== 'N/A') {
+			dispatch(setCurrentTokenPrice(price));
+		}
+	};
+
 	useEffect(() => {
 		if (!network) return;
-		setLoadingStatus({ isLoading: false, message: 'Awaiting for network' });
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-
+		getCurrentTokenPrice();
 		if (!currentTokenPrice || !currentTokenPrice.length) return;
+		setLoadingStatus({ isLoading: false, message: 'Awaiting for network' });
+
 		setDollarToTokenBalance({
 			fifteenDollar: handleTipChangeToDollar(15),
 			fiveDollar: handleTipChangeToDollar(5),
@@ -209,7 +221,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 		if (!api || !apiReady || disable || !destinationAddress) return;
 		const destinationSubtrateAddress = getSubstrateAddress(destinationAddress) || destinationAddress;
 		const tipTx = api.tx.balances?.transferKeepAlive(destinationSubtrateAddress, tipAmount as any);
-		const remarkTx = api.tx.system.remarkWithEvent(`${remark} tipped via Polkassembly`.trim());
+		const remarkTx = api.tx.system.remarkWithEvent(`${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim().trim());
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 		const tx = api.tx.utility.batchAll([tipTx, remarkTx]);
 

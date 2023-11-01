@@ -252,7 +252,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					}
 				});
 		});
-		dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
+		if (currentTokenPrice.value !== 'N/A') {
+			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 

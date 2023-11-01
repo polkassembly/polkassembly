@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useState } from 'react';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import copyToClipboard from '~src/util/copyToClipboard';
@@ -10,7 +10,7 @@ import Address from './Address';
 import dayjs from 'dayjs';
 import SocialLink from './SocialLinks';
 import { socialLinks } from '~src/components/UserProfile/Details';
-import { Button, message } from 'antd';
+import { Button, Tooltip, message } from 'antd';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ISocial } from '~src/auth/types';
@@ -52,6 +52,7 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 	const [messageApi, contextHolder] = message.useMessage();
+	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
 
 	const { network } = useNetworkSelector();
 	const identityArr = [
@@ -196,20 +197,26 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 				</span>
 			</article>
 			{!TippingUnavailableNetworks.includes(network) && (
-				<div className='flex w-full items-center'>
-					<Button
-						disabled={!id}
-						onClick={() => {
-							setOpenTipping(true);
-							setOpen(false);
-						}}
-						className={`flex h-[32px] w-full items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
-							!id && 'opacity-50'
-						}`}
-					>
-						Tip
-					</Button>
-				</div>
+				<Tooltip
+					open={!id ? openTooltip : false}
+					onOpenChange={(e) => setOpenTooltip(e)}
+					title='Login to tip user'
+				>
+					<div className='flex w-full items-center'>
+						<Button
+							disabled={!id}
+							onClick={() => {
+								setOpenTipping(true);
+								setOpen(false);
+							}}
+							className={`flex h-[32px] w-full items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
+								!id && 'opacity-50'
+							}`}
+						>
+							Tip
+						</Button>
+					</div>
+				</Tooltip>
 			)}
 		</div>
 	);

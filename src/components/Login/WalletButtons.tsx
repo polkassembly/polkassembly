@@ -35,7 +35,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					<Divider className='text-grey_primary'>Or Login with</Divider>
 				</div>
 			)}
-			<div className={`${optionalLogin ? '' : 'flex'} m-auto mt-3 max-w-xs flex-col justify-center gap-4 sm:mx-2 sm:max-w-none sm:flex-row`}>
+			<div className={`${optionalLogin ? '' : 'flex flex-row'} m-auto mt-3 max-w-xs justify-center gap-4 sm:mx-2 sm:max-w-none sm:flex-row`}>
 				<WalletButton
 					className={`${optionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
 					disabled={disabled}

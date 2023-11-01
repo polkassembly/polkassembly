@@ -23,6 +23,7 @@ interface Props {
 	isModal?: boolean;
 	setLoginOpen?: (pre: boolean) => void;
 	setSignupOpen?: (pre: boolean) => void;
+	setIsClosable?: (pre: boolean) => void;
 	isDelegation?: boolean;
 }
 
@@ -48,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
-const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: Props) => {
+const Login = ({ network, setLoginOpen, setSignupOpen, setIsClosable, isModal, isDelegation }: Props) => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -99,7 +100,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 				align='middle'
 				className='-mt-5 h-full'
 			>
-				<Col className='w-full sm:max-w-[620px]'>
+				<Col className='w-full sm:max-w-[605px]'>
 					{displayWeb === 2 ? (
 						<>
 							<Web2Login
@@ -144,6 +145,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }: 
 									onWalletUpdate={onWalletUpdate}
 									withPolkasafe={withPolkasafe}
 									setChosenWallet={setChosenWallet}
+									setIsClosable={setIsClosable}
 								/>
 							)}
 						</>

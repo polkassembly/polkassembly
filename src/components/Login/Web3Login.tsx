@@ -55,6 +55,7 @@ interface Props {
 	onWalletUpdate?: () => void;
 	withPolkasafe?: boolean;
 	setChosenWallet: any;
+	setIsClosable?: (pre: boolean) => void;
 }
 
 const initAuthResponse: IAuthResponse = {
@@ -64,7 +65,18 @@ const initAuthResponse: IAuthResponse = {
 	user_id: 0
 };
 
-const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, isModal, setLoginOpen, setSignupOpen, withPolkasafe, setChosenWallet, onWalletUpdate }) => {
+const Web3Login: FC<Props> = ({
+	chosenWallet,
+	setDisplayWeb2,
+	setIsClosable,
+	setWalletError,
+	isModal,
+	setLoginOpen,
+	setSignupOpen,
+	withPolkasafe,
+	setChosenWallet,
+	onWalletUpdate
+}) => {
 	const { network } = useNetworkSelector();
 
 	const router = useRouter();
@@ -338,6 +350,9 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						setLoginOpen?.(false);
 						setShowOptionalFields(false);
 					}
+					setIsClosable?.(false);
+					setLoginOpen?.(true);
+					setShowOptionalFields(true);
 					setLoading(false);
 					return;
 				}
@@ -578,22 +593,24 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 								className='m-0 mt-5 p-0 '
 								style={{ borderTop: '1px dashed #D2D8E0' }}
 							></Divider>
-							<div className='-ml-[300px] mt-4 flex pb-5 font-normal'>
-								<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
-								<div
-									onClick={handleClick}
-									className='cursor-pointer text-base text-pink_primary'
-								>
-									&nbsp; Sign Up{' '}
+							<div className='flex w-full justify-start'>
+								<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
+									<label className='text-base text-bodyBlue'>Don&apos;t have an account?</label>
+									<div
+										onClick={handleClick}
+										className='cursor-pointer text-base text-pink_primary'
+									>
+										&nbsp; Sign Up{' '}
+									</div>
 								</div>
 							</div>
 							<Divider
 								className='m-0 mb-4 p-0 '
 								style={{ borderTop: '1px solid #E1E6EB' }}
 							></Divider>
-							<div className='ml-auto flex'>
+							<div className='web3-button-container ml-auto flex'>
 								<Button
-									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+									className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
 									onClick={() => handleBackToLogin()}
 								>
 									Go Back
@@ -602,7 +619,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 									<Button
 										key='got-it'
 										icon={<CheckOutlined />}
-										className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
+										className='web3-button flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
 										onClick={() => {
 											getAccounts(chosenWallet)
 												.then(() => {
@@ -786,6 +803,10 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 												{
 													message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
 													min: username.minLength
+												},
+												{
+													message: messages.VALIDATION_USERNAME_PATTERN_ERROR,
+													pattern: username.pattern
 												}
 											]}
 											validateTrigger='onSubmit'

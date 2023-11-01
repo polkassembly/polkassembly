@@ -8,6 +8,7 @@ import { poppins } from 'pages/_app';
 import Login from 'pages/login';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useState } from 'react';
 
 interface Props {
 	modalOpen: boolean;
@@ -21,6 +22,7 @@ interface Props {
 
 const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className, closable, isDelegation }: Props) => {
 	const { network } = useNetworkSelector();
+	const [isClosable, setIsClosable] = useState(true);
 	return (
 		<Modal
 			open={modalOpen}
@@ -29,9 +31,13 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 			maskClosable={closable}
 			zIndex={1008}
 			wrapClassName={className}
-			className={`${poppins.variable} ${poppins.className} padding-0 w-[620px]`}
-			onCancel={() => setModalOpen && setModalOpen(false)}
-			closeIcon={<CloseIcon />}
+			className={`${poppins.variable} ${poppins.className} ${isClosable ? '' : 'hide-close-button'} padding-0 w-[605px]`}
+			onCancel={() => {
+				if (isClosable) {
+					setModalOpen && setModalOpen(false);
+				}
+			}}
+			closeIcon={isClosable ? <CloseIcon /> : null}
 		>
 			<Login
 				network={network}
@@ -39,6 +45,7 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 				setLoginOpen={setModalOpen}
 				setSignupOpen={setSignupOpen}
 				isDelegation={isDelegation}
+				setIsClosable={setIsClosable}
 			/>
 		</Modal>
 	);
@@ -47,5 +54,8 @@ export default styled(LoginPopup)`
 	.padding-0 .ant-modal-content {
 		padding: 0px !important;
 		border-radius: 4px;
+	}
+	.hide-close-button .ant-modal-close {
+		display: none;
 	}
 `;

@@ -204,13 +204,13 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 				>
 					<div className='flex w-full items-center'>
 						<Button
-							disabled={!id}
 							onClick={() => {
+								if (!id) return;
 								setOpenTipping(true);
 								setOpen(false);
 							}}
 							className={`flex h-[32px] w-full items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
-								!id && 'opacity-50'
+								!id && 'cursor-not-allowed opacity-50'
 							}`}
 						>
 							Tip

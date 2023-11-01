@@ -18,9 +18,8 @@ import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import { BN_HUNDRED } from '@polkadot/util';
 import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import userProfileBalances from '~src/util/userProfieBalances';
 import { useApiContext } from '~src/context';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -57,7 +56,6 @@ export interface IPreimage {
 const ZERO_BN = new BN(0);
 const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkSelector();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
@@ -83,6 +81,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const { id } = useUserDetailsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -112,12 +111,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 		const address = localStorage.getItem('treasuryProposalProposerAddress') || '';
 		setProposerAddress(address);
 		if (!api || !apiReady || !proposerAddress) return;
-
-		(async () => {
-			const balances = await userProfileBalances({ address: proposerAddress || address, api, apiReady, network });
-			setAvailableBalance(balances?.freeBalance || ZERO_BN);
-		})();
-
+		setIsUpdatedAvailableBalance(!isUpdatedAvailableBalance);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [title, api, apiReady, preimage, postId]);
 
@@ -285,6 +279,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							setSelectedTrack={setSelectedTrack}
 							enactment={enactment}
 							setEnactment={setEnactment}
+							isUpdatedAvailableBalance={isUpdatedAvailableBalance}
 						/>
 					)}
 					{steps.step === 2 && (

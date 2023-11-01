@@ -308,6 +308,7 @@ const Web3Login: FC<Props> = ({
 									setLoginOpen?.(false);
 									setShowOptionalFields(false);
 								}
+								setIsClosable?.(false);
 								setLoading(false);
 								return;
 							}
@@ -473,7 +474,7 @@ const Web3Login: FC<Props> = ({
 					status: NotificationStatus.ERROR
 				});
 				setLoading(false);
-				setShowSuccessModal(true);
+				setShowSuccessModal(false);
 				setIsError(true);
 			}
 

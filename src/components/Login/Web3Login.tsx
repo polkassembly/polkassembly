@@ -638,8 +638,18 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 									className='flex flex-col px-4'
 								>
 									{extensionNotFound ? (
-										<div className='my-5 flex items-center justify-center'>
-											<ExtensionNotDetected chosenWallet={chosenWallet} />
+										<div>
+											<div className='my-5 flex items-center justify-center'>
+												<ExtensionNotDetected chosenWallet={chosenWallet} />
+											</div>
+											<div className='flex justify-end'>
+												<Button
+													className='flex items-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+													onClick={() => handleBackToLogin()}
+												>
+													Go Back
+												</Button>
+											</div>
 										</div>
 									) : null}
 									{accountsNotFound && (

@@ -86,7 +86,7 @@ const QuickView = ({
 
 	const handleTipping = () => {
 		if (!id) return;
-		if (!loginAddress) {
+		if (!loginAddress || !address) {
 			setOpenAddressChangeModal(true);
 		} else {
 			setOpenTipping(true);

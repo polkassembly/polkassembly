@@ -609,7 +609,7 @@ const Web3Login: FC<Props> = ({
 							></Divider>
 							<div className='web3-button-container ml-auto flex'>
 								<Button
-									className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+									className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none'
 									onClick={() => handleBackToLogin()}
 								>
 									Go Back
@@ -618,7 +618,7 @@ const Web3Login: FC<Props> = ({
 									<Button
 										key='got-it'
 										icon={<CheckOutlined />}
-										className='web3-button flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
+										className='web3-button flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-sm font-medium leading-none text-white outline-none'
 										onClick={() => {
 											getAccounts(chosenWallet)
 												.then(() => {
@@ -729,7 +729,7 @@ const Web3Login: FC<Props> = ({
 														}
 													/>
 												)}
-												<div className='flex items-center justify-center gap-x-2'>
+												<div className='mt-2 flex items-center justify-center gap-x-2'>
 													<Button
 														className='text-md flex w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-5 py-5 font-normal leading-none text-[#E5007A] outline-none'
 														onClick={() => handleBackToLogin()}

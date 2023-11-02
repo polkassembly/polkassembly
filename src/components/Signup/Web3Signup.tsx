@@ -427,7 +427,7 @@ const Web3Signup: FC<Props> = ({
 					<h3 className='flex flex-col justify-center gap-y-1 text-2xl font-semibold text-[#1E232C]'>
 						{/* <span>Sign Up</span> */}
 						{!withPolkasafe && (
-							<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
+							<p className='m-0 -mt-2 flex items-center justify-start gap-x-2 p-0'>
 								<span className='mt-2'>
 									<WalletIcon which={chosenWallet} />
 								</span>
@@ -452,7 +452,26 @@ const Web3Signup: FC<Props> = ({
 									? 'To fetch your Multisig details, please select a wallet extension'
 									: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 							</p>
-							<div className='flex'>
+							<Divider
+								className='m-0 mb-1 mt-1 p-0 '
+								style={{ borderTop: '1px dashed #D2D8E0' }}
+							></Divider>
+							<div className='flex w-full justify-start'>
+								<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
+									<label className='text-base text-bodyBlue'>Already have an account?</label>
+									<div
+										onClick={() => handleClick()}
+										className='cursor-pointer text-base text-pink_primary'
+									>
+										&nbsp; Log In{' '}
+									</div>
+								</div>
+							</div>
+							<Divider
+								className='m-0 mb-4 mt-1 p-0 '
+								style={{ borderTop: '1px solid #D2D8E0' }}
+							></Divider>
+							<div className='web3-button-container ml-auto flex justify-end'>
 								<Button
 									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
 									onClick={() => handleBackToSignUp()}
@@ -557,15 +576,6 @@ const Web3Signup: FC<Props> = ({
 							</AuthForm>
 						</>
 					)}
-					<div className='mt-6 flex items-center justify-center gap-x-2 font-semibold'>
-						<label className='text-md text-[#243A57]'>Already have an account?</label>
-						<div
-							onClick={() => handleClick()}
-							className='text-md text-pink_primary'
-						>
-							Login
-						</div>
-					</div>
 				</article>
 			)}
 			{showOptionalFields && (

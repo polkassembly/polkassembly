@@ -254,7 +254,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								<Input
 									disabled={loading}
 									placeholder='Type here'
-									className='rounded-md px-4 py-3'
+									className='border-grey_stroke text-grey_text rounded-md px-4 py-3'
 									id='username'
 								/>
 							</Form.Item>
@@ -274,7 +274,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								<Input.Password
 									disabled={loading}
 									placeholder='Type here'
-									className='rounded-md px-4 py-3'
+									className='border-grey_stroke text-grey_text rounded-md px-4 py-3'
 									id='password'
 								/>
 							</Form.Item>

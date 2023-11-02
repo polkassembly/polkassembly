@@ -158,7 +158,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				></Divider>
 			</div>
 			<Container className={`flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md ${className}`}>
-				<div className='flex grid-cols-2 gap-x-5 px-8'>
+				<div className='-mt-1 flex grid-cols-2 gap-x-2 px-8'>
 					<div
 						onClick={() => {
 							setIsPassword(false);
@@ -168,7 +168,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					>
 						<div className='flex gap-x-2 gap-y-2 '>
 							<span className={`flex h-4 w-4 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>01</span>
-							<span className='mt-[2px]'>Create Username</span>
+							<span className='mt-[2px] text-bodyBlue'>Create Username</span>
 						</div>
 						<div>
 							<Divider className={`${isPassword ? 'bg-green_primary' : 'bg-grey_stroke'}  m-0 mt-4 border-t-[2px] p-0`}></Divider>
@@ -177,10 +177,10 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<div className='w-[268px] flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'>
 						<div className='flex gap-x-2 gap-y-2 '>
 							<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-pink_primary' : 'bg-grey_secondary'} rounded-full`}>02</span>
-							<span className='mt-[2px]'>Set Password</span>
+							<span className='mt-[2px] text-bodyBlue'>Set Password</span>
 						</div>
 						<div>
-							<Divider className={`${inputPassword ? 'bg-green_primarye' : 'bg-grey_stroke'}  m-0 mt-4 border-t-[2px] p-0`}></Divider>
+							<Divider className={`${inputPassword ? 'bg-green_primarye' : 'bg-grey_stroke'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
 						</div>
 					</div>
 				</div>
@@ -300,7 +300,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder='John'
-										className='rounded-md px-4 py-2'
+										className='text-grey_text border-grey_stroke rounded-md px-4 py-2'
 										id='username'
 									/>
 								</Form.Item>
@@ -323,7 +323,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder='email@example.com'
-										className='rounded-md px-4 py-2'
+										className='text-grey_text border-grey_stroke rounded-md px-4 py-2'
 										id='email'
 									/>
 								</Form.Item>

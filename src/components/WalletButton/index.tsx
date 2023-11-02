@@ -30,9 +30,9 @@ const WalletButton = ({ disabled, onClick, icon, className, text, name, optional
 
 	return (
 		<Button
-			className={`flex ${optionalLogin ? `border-grey w-full ${availableWallets ? 'bg-white' : 'bg-grey_light'}` : 'justify-center border-[#F8E3EE]'} items-center rounded-[7px] ${
-				name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'
-			} ${className}`}
+			className={`flex ${
+				optionalLogin ? `border_grey_stroke w-full ${availableWallets ? 'bg-white' : 'bg-grey_stroke'}` : 'justify-center border-[#F8E3EE]'
+			} items-center rounded-[7px] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 			onClick={onClick}
 			disabled={disabled}
 		>

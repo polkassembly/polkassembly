@@ -30,7 +30,7 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 			closable={closable}
 			maskClosable={closable}
 			wrapClassName={className}
-			className={`${poppins.variable} ${poppins.className} ${isClosable ? '' : 'hide-close-button'} padding-0 max-w-full  shrink-0`}
+			className={`${poppins.variable} ${poppins.className} ${isClosable ? '' : 'hide-close-button'} padding-0 w-[605px]  max-w-full shrink-0`}
 			onCancel={() => {
 				if (isClosable) {
 					setModalOpen(false);

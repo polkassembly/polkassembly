@@ -44,7 +44,7 @@ export const GetCurrentTokenPriceV2 = async (network: string) => {
 		const { dailyChange, value } = await fetchTokenToUSDPriceV2(network);
 
 		return {
-			dailyChange: dailyChange,
+			dailyChange: network == 'cere' ? parseFloat(dailyChange).toFixed(4) : parseFloat(dailyChange).toFixed(2),
 			value: network == 'cere' ? parseFloat(value).toFixed(4) : parseFloat(value).toFixed(2)
 		};
 	} catch (error) {

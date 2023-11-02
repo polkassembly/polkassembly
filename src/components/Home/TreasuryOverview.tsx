@@ -255,7 +255,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	useEffect(() => {
 		if (!network) return;
 		(async () => {
-			if (currentTokenPrice.dailyChange !== 'N/A' && currentTokenPrice.value !== 'N/A') return;
+			if (currentTokenPrice.dailyChange && currentTokenPrice.value && currentTokenPrice.dailyChange !== 'N/A' && currentTokenPrice.value !== 'N/A') return;
 			try {
 				const result = await GetCurrentTokenPriceV2(network);
 				setCurrentTokenPrice(() => {
@@ -371,7 +371,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											'N/A'
 										) : currentTokenPrice.dailyChange ? (
 											<>
-												<span className='mr-1 sm:mr-2'>Weekly Change</span>
+												<span className='mr-1 sm:mr-2'>24hr Change</span>
 												<div className='flex items-center'>
 													<span className='font-semibold'>{Math.abs(Number(currentTokenPrice.dailyChange))}%</span>
 													{Number(currentTokenPrice.dailyChange) < 0 ? (

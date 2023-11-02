@@ -95,7 +95,7 @@ const AddressConnectModal = ({
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
-	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
+	const baseDeposit = new BN(chainProperties[network]?.preImageBaseDeposit || 0);
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
@@ -111,7 +111,7 @@ const AddressConnectModal = ({
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-		const submissionDeposite = api.consts.referenda.submissionDeposit;
+		const submissionDeposite = api.consts.referenda?.submissionDeposit || ZERO_BN;
 		setSubmissionDeposite(submissionDeposite);
 	}, [api, apiReady]);
 
@@ -315,7 +315,7 @@ const AddressConnectModal = ({
 		if (!api || !apiReady) {
 			return;
 		}
-		if (multisig) {
+		if (multisig && api.query?.system?.account) {
 			balanceStr = (await api.query.system.account(multisig)).data.free.toString();
 		}
 		const availableBalance = new BN(balanceStr);
@@ -352,8 +352,8 @@ const AddressConnectModal = ({
 			}
 			try {
 				//deposit balance
-				const depositBase = api.consts.multisig.depositBase?.toString() || '0';
-				const depositFactor = api.consts.multisig.depositFactor?.toString() || '0';
+				const depositBase = api.consts.multisig?.depositBase?.toString() || '0';
+				const depositFactor = api.consts.multisig?.depositFactor?.toString() || '0';
 				setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 			} catch (e) {
 				setTotalDeposit(ZERO_BN);

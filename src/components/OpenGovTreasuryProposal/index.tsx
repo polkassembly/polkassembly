@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -133,7 +132,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
 				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Treasury Proposal</p>
 			</div>
-			{/* {openAddressLinkedModal && (
+			{openAddressLinkedModal && (
 				<AddressConnectModal
 					open={openAddressLinkedModal}
 					setOpen={setOpenAddressLinkedModal}
@@ -147,7 +146,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
 				/>
-			)} */}
+			)}
 			<Modal
 				maskClosable={false}
 				open={closeConfirm}

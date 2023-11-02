@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Form, Input, Modal, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -381,13 +380,13 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 					</div>
 				</Spin>
 			</Modal>
-			{/* <AddressConnectModal
+			<AddressConnectModal
 				open={openAddressChangeModal}
 				onConfirm={handleConfirm}
 				setOpen={setOpenAddressChangeModal}
 				walletAlertTitle='Please install a web3 wallet to access Tipping'
 				isBalanceUpdated={isBalanceUpdated}
-			/> */}
+			/>
 		</div>
 	);
 };

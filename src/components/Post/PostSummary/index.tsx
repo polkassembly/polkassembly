@@ -34,7 +34,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 	return (
 		<section className={classNames(className, 'flex items-center justify-center')}>
 			<Divider
-				className='hidden md:block'
+				className='mr-3 hidden md:block'
 				type='vertical'
 				style={{ borderLeft: '1px solid #485F7D' }}
 			/>

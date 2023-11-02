@@ -12,7 +12,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
@@ -25,7 +24,7 @@ import queueNotification from './QueueNotification';
 import cleanError from '~src/util/cleanError';
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
 import { handleTokenChange } from '~src/services/auth.service';
-import { stringToHex } from '@polkadot/util';
+import { formatBalance, stringToHex } from '@polkadot/util';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
@@ -35,6 +34,9 @@ import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/type
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import AvailableWallets from './AvailableWallet';
+import { chainProperties } from '~src/global/networkConstants';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 interface Props {
 	className?: string;
@@ -49,6 +51,7 @@ interface Props {
 	walletAlertTitle: string;
 	accountAlertTitle?: string;
 	accountSelectionFormTitle?: string;
+	isProposalCreation?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -65,7 +68,8 @@ const AddressConnectModal = ({
 	usingMultisig = false,
 	walletAlertTitle,
 	accountAlertTitle = 'Wallet extension not detected.',
-	accountSelectionFormTitle = 'Select an address'
+	accountSelectionFormTitle = 'Select an address',
+	isProposalCreation = false
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
@@ -89,6 +93,25 @@ const AddressConnectModal = ({
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
+	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
+	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const [hideDetails, setHideDetails] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (!network) return;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		const submissionDeposite = api.consts.referenda.submissionDeposit;
+		setSubmissionDeposite(submissionDeposite);
+	}, [api, apiReady]);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
@@ -293,8 +316,8 @@ const AddressConnectModal = ({
 		if (multisig) {
 			balanceStr = (await api.query.system.account(multisig)).data.free.toString();
 		}
-		const [balance, isValid] = inputToBn(balanceStr, network, false);
-		isValid ? setAvailableBalance(balance) : setAvailableBalance(ZERO_BN);
+		const availableBalance = new BN(balanceStr);
+		setAvailableBalance(availableBalance);
 	};
 
 	useEffect(() => {
@@ -372,9 +395,17 @@ const AddressConnectModal = ({
 			footer={
 				<Button
 					onClick={handleSubmit}
-					disabled={!accounts || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
+					disabled={
+						!accounts ||
+						(showMultisig && !multisig) ||
+						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
+						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+					}
 					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
-						accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit) && 'opacity-50')
+						accounts.length === 0 ||
+						(showMultisig && !multisig) ||
+						(((showMultisig && initiatorBalance.lte(totalDeposit)) || (isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)) &&
+							'opacity-50')
 					}`}
 				>
 					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
@@ -398,141 +429,13 @@ const AddressConnectModal = ({
 						</div>
 					)}
 					<h3 className='text-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</h3>
-					<div className={`flex items-center justify-center gap-x-4 ${showMultisig ? 'mb-6' : ''}`}>
-						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
-							<>
-								{availableWallets[Wallet.TALISMAN] && (
-									<WalletButton
-										className={`${wallet === Wallet.TALISMAN ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.TALISMAN)}
-										name='Talisman'
-										icon={
-											<WalletIcon
-												which={Wallet.TALISMAN}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet && (
-									<WalletButton
-										disabled={!apiReady}
-										className={`${wallet === Wallet.METAMASK ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										onClick={(event) => handleWalletClick(event as any, Wallet.METAMASK)}
-										name='MetaMask'
-										icon={
-											<WalletIcon
-												which={Wallet.METAMASK}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] && (
-									<WalletButton
-										disabled={!apiReady}
-										className={`${wallet === Wallet.NOVAWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
-										name='Nova Wallet'
-										icon={
-											<WalletIcon
-												which={Wallet.NOVAWALLET}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-							</>
-						) : (
-							<>
-								{availableWallets[Wallet.POLKADOT] && (
-									<WalletButton
-										className={`${wallet === Wallet.POLKADOT ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.POLKADOT)}
-										name='Polkadot'
-										icon={
-											<WalletIcon
-												which={Wallet.POLKADOT}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{availableWallets[Wallet.TALISMAN] && (
-									<WalletButton
-										className={`${wallet === Wallet.TALISMAN ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.TALISMAN)}
-										name='Talisman'
-										icon={
-											<WalletIcon
-												which={Wallet.TALISMAN}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{availableWallets[Wallet.SUBWALLET] && (
-									<WalletButton
-										className={`${wallet === Wallet.SUBWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
-										name='Subwallet'
-										icon={
-											<WalletIcon
-												which={Wallet.SUBWALLET}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{availableWallets[Wallet.POLKAGATE] && (
-									<WalletButton
-										className={`${wallet === Wallet.POLKAGATE ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										disabled={!apiReady}
-										onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATE)}
-										name='PolkaGate'
-										icon={
-											<WalletIcon
-												which={Wallet.POLKAGATE}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] && (
-									<WalletButton
-										disabled={!apiReady}
-										className={`${wallet === Wallet.POLYWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										onClick={(event) => handleWalletClick(event as any, Wallet.POLYWALLET)}
-										name='PolyWallet'
-										icon={
-											<WalletIcon
-												which={Wallet.POLYWALLET}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-								{(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] && (
-									<WalletButton
-										disabled={!apiReady}
-										className={`${wallet === Wallet.NOVAWALLET ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
-										onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
-										name='Nova Wallet'
-										icon={
-											<WalletIcon
-												which={Wallet.NOVAWALLET}
-												className='h-6 w-6'
-											/>
-										}
-									/>
-								)}
-							</>
-						)}
-					</div>
+					<AvailableWallets
+						className='flex items-center justify-center gap-x-4'
+						handleWalletClick={handleWalletClick}
+						availableWallets={availableWallets}
+						isMetamaskWallet={isMetamaskWallet}
+						wallet={wallet}
+					/>
 					{usingMultisig && (
 						<div>
 							{canUsePolkasafe(network) && !showMultisig && usingMultisig && (
@@ -647,6 +550,44 @@ const AddressConnectModal = ({
 						) : null}
 					</Form>
 				</div>
+				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
+					<Alert
+						className='mt-6 rounded-[4px]'
+						type='info'
+						showIcon
+						message={
+							<span className='text-xs font-medium text-bodyBlue '>
+								Please maintain minimum balance for these transactions:
+								<span
+									className='ml-1 cursor-pointer text-xs text-pink_primary'
+									onClick={() => setHideDetails(!hideDetails)}
+								>
+									{hideDetails ? 'Show' : 'Hide'}
+								</span>
+							</span>
+						}
+						description={
+							hideDetails ? (
+								''
+							) : (
+								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs'>
+									<li className='flex w-full justify-between'>
+										<div className='mr-1 text-lightBlue'>Preimage Creation</div>
+										<span className='font-medium text-bodyBlue'>
+											{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
+										</span>
+									</li>
+									<li className='mt-0 flex w-full justify-between'>
+										<div className='mr-1 text-lightBlue'>Proposal Submission</div>
+										<span className='font-medium text-bodyBlue'>
+											{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
+										</span>
+									</li>
+								</div>
+							)
+						}
+					/>
+				)}
 			</Spin>
 		</Modal>
 	);
@@ -655,5 +596,17 @@ const AddressConnectModal = ({
 export default styled(AddressConnectModal)`
 	.radius .ant-modal-content {
 		border-radius: 4px !important;
+	}
+	.ant-alert-with-description {
+		padding-block: 12px !important;
+		padding-inline: 16px !important;
+	}
+	.ant-alert-with-description .ant-alert-icon {
+		font-size: 18px !important;
+		margin-top: 4px;
+	}
+	.ant-alert-with-description .ant-alert-icon {
+		font-size: 14px !important;
+		margin-top: 7px;
 	}
 `;

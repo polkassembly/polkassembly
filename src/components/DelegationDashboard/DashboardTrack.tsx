@@ -109,7 +109,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		!id && setOpenLoginModal(true);

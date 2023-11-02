@@ -64,4 +64,7 @@ export default styled(IdentityBadge)`
 	i.grey.circle.icon {
 		color: grey_primary !important;
 	}
+	.ant-tooltip-content .ant-tooltip-inner {
+		width: 363px !important;
+	}
 `;

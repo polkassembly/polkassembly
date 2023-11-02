@@ -71,7 +71,7 @@ const VoteInitiatedModal = ({
 			unit: chainProperties[network].tokenSymbol
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	const handleCurrentCommentAndTimeline = (postId: string, type: string, comment: IComment) => {
 		const key = `${postId}_${type}`;

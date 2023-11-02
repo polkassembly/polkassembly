@@ -68,7 +68,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;

@@ -25,6 +25,8 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { blake2AsHex } from '@polkadot/util-crypto';
+import { HexString } from '@polkadot/util/types';
 
 import Tip1Icon from '~assets/icons/tip-1.svg';
 import Tip2Icon from '~assets/icons/tip-2.svg';
@@ -38,6 +40,7 @@ import { setCurrentTokenPrice } from '~src/redux/currentTokenPrice';
 import { useDispatch } from 'react-redux';
 
 const ZERO_BN = new BN(0);
+const EMPTY_HASH = blake2AsHex('');
 
 interface Props {
 	open: boolean;
@@ -183,30 +186,19 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 			setTipAmount(balance);
 		}
 	};
-	const handleSetTip = async () => {
+	const handleSetTip = async (txHash: any) => {
 		const { error } = await nextApiClientFetch<MessageType>('/api/v1/Tipping', {
 			amount: Number(tipInput) || 0,
 			remark: `${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim(),
 			tipFrom: address,
-			tipTo: destinationAddress
+			tipTo: destinationAddress,
+			tx_hash: txHash
 		});
 		if (error) {
 			console.log(error);
 		}
 	};
 
-	const onSuccess = async () => {
-		await handleSetTip();
-		queueNotification({
-			header: 'Success!',
-			message: `You have successfully tipped to ${username.length > 10 ? `${username.slice(0, 10)}...` : username}`,
-			status: NotificationStatus.SUCCESS
-		});
-		setIsBalanceUpdated(true);
-		setOpen(false);
-		setLoadingStatus({ isLoading: false, message: '' });
-		handleCancel();
-	};
 	const onFailed = async (message: string) => {
 		queueNotification({
 			header: 'Failed!',
@@ -219,11 +211,31 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 
 	const handleTip = async () => {
 		if (!api || !apiReady || disable || !destinationAddress) return;
+
+		let txHash = EMPTY_HASH;
+		let encodedTx: HexString | null = null;
+
 		const destinationSubtrateAddress = getSubstrateAddress(destinationAddress) || destinationAddress;
 		const tipTx = api.tx.balances?.transferKeepAlive(destinationSubtrateAddress, tipAmount as any);
 		const remarkTx = api.tx.system.remarkWithEvent(`${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim().trim());
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 		const tx = api.tx.utility.batchAll([tipTx, remarkTx]);
+
+		encodedTx = tx?.method.toHex();
+		txHash = blake2AsHex(encodedTx);
+
+		const onSuccess = async () => {
+			await handleSetTip(txHash);
+			queueNotification({
+				header: 'Success!',
+				message: `You have successfully tipped to ${username.length > 10 ? `${username.slice(0, 10)}...` : username}`,
+				status: NotificationStatus.SUCCESS
+			});
+			setIsBalanceUpdated(true);
+			setOpen(false);
+			setLoadingStatus({ isLoading: false, message: '' });
+			handleCancel();
+		};
 
 		await executeTx({
 			address,

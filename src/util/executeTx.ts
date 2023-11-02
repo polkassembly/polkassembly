@@ -13,7 +13,7 @@ interface Props {
 	address: string;
 	params?: any;
 	errorMessageFallback: string;
-	onSuccess: () => Promise<void> | void;
+	onSuccess: (pre?: any) => Promise<void> | void;
 	onFailed: (errorMessageFallback: string) => Promise<void> | void;
 	onBroadcast?: () => void;
 	setStatus?: (pre: string) => void;
@@ -38,7 +38,7 @@ const executeTx = async ({ api, apiReady, network, tx, address, params = {}, err
 			for (const { event } of events) {
 				if (event.method === 'ExtrinsicSuccess') {
 					setStatus?.('Transaction Success');
-					await onSuccess();
+					await onSuccess(txHash);
 				} else if (event.method === 'ExtrinsicFailed') {
 					setStatus?.('Transaction failed');
 					console.log('Transaction failed');

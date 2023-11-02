@@ -5,12 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Form, Input, Modal, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
-import { LoadingStatusType, NotificationStatus, Wallet } from '~src/types';
-import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
-import { InjectedWindow } from '@polkadot/extension-inject/types';
-import AvailableWallets from '~src/ui-components/AvailableWallet';
-import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
+import { LoadingStatusType, NotificationStatus } from '~src/types';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import BalanceInput from '~src/ui-components/BalanceInput';
@@ -36,6 +31,9 @@ import TipIcon from '~assets/icons/tip-title.svg';
 import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
 import { setCurrentTokenPrice } from '~src/redux/currentTokenPrice';
 import { useDispatch } from 'react-redux';
+import AddressConnectModal from '~src/ui-components/AddressConnectModal';
+import Balance from '../Balance';
+import Address from '~src/ui-components/Address';
 
 const ZERO_BN = new BN(0);
 
@@ -45,6 +43,8 @@ interface Props {
 	className?: string;
 	destinationAddress: string;
 	username: string;
+	openAddressChangeModal: boolean;
+	setOpenAddressChangeModal: (pre: boolean) => void;
 }
 
 const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; value: number }[] = [
@@ -54,23 +54,20 @@ const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar';
 	{ key: 'fifteenDollar', value: 15 }
 ];
 
-const Tipping = ({ className, destinationAddress, open, setOpen, username }: Props) => {
+const Tipping = ({ className, destinationAddress, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { api, apiReady } = useApiContext();
 	const [form] = Form.useForm();
-	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
-	const [address, setAddress] = useState<string>('');
-	const [availableWallets, setAvailableWallets] = useState<any>({});
-	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
+	const [address, setAddress] = useState<string>(loginAddress);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [tipAmount, setTipAmount] = useState<BN>(ZERO_BN);
 	const [tipInput, setTipInput] = useState<string>('0');
 	const disable = loadingStatus.isLoading || availableBalance.lte(tipAmount) || !address || tipAmount.eq(ZERO_BN);
 	const [remark, setRemark] = useState<string>('');
-	const [existentialDeposit, setExistentialDeposi] = useState<BN>(ZERO_BN);
+	const [existentialDeposit, setExistentialDeposit] = useState<BN>(ZERO_BN);
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const dispatch = useDispatch();
@@ -87,6 +84,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 	};
 
 	const getCurrentTokenPrice = async () => {
+		if (currentTokenPrice !== 'N/A' && currentTokenPrice.length) return;
 		const price = await fetchTokenToUSDPrice(network);
 		if (price !== 'N/A') {
 			dispatch(setCurrentTokenPrice(price));
@@ -123,50 +121,14 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 		setOpen(false);
 	};
 
-	const getWallet = () => {
-		const injectedWindow = window as Window & InjectedWindow;
-		setAvailableWallets(injectedWindow.injectedWeb3);
-	};
-
 	useEffect(() => {
 		setIsBalanceUpdated(false);
-		getWallet();
-		const wallet = localStorage.getItem('loginWallet') || '';
-		const address = localStorage.getItem('loginAddress');
-		setWallet((loginWallet || wallet) as Wallet);
 		if (!api || !apiReady) return;
-		(async () => {
-			const accountData = await getAccountsFromWallet({
-				api,
-				apiReady,
-				chosenAddress: (loginAddress || address) as string,
-				chosenWallet: (loginWallet || wallet) as Wallet,
-				loginAddress,
-				network
-			});
-			setAccounts(accountData?.accounts || []);
-			setAddress(accountData?.account || '');
-		})();
+
 		const deposit = api.consts.balances.existentialDeposit;
-		setExistentialDeposi(deposit);
+		setExistentialDeposit(deposit);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginWallet, loginAddress, api, apiReady]);
-
-	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
-		if (!api || !apiReady) return;
-		setLoadingStatus({ isLoading: true, message: '' });
-		localStorage.setItem('selectedWallet', wallet);
-		setAccounts([]);
-		setAddress('');
-		event.preventDefault();
-		setWallet(wallet);
-		(async () => {
-			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network });
-			setAccounts(accountData?.accounts || []);
-			setAddress(accountData?.account || '');
-			setLoadingStatus({ isLoading: false, message: '' });
-		})();
-	};
 
 	const handleOnBalanceChange = (balanceStr: string, available: boolean) => {
 		let balance = ZERO_BN;
@@ -183,20 +145,21 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 			setTipAmount(balance);
 		}
 	};
-	const handleSetTip = async () => {
+	const handleSetTip = async (txHash: any) => {
 		const { error } = await nextApiClientFetch<MessageType>('/api/v1/Tipping', {
 			amount: Number(tipInput) || 0,
 			remark: `${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim(),
 			tipFrom: address,
-			tipTo: destinationAddress
+			tipTo: destinationAddress,
+			txHash
 		});
 		if (error) {
 			console.log(error);
 		}
 	};
 
-	const onSuccess = async () => {
-		await handleSetTip();
+	const onSuccess = async (txHash: any) => {
+		await handleSetTip(txHash);
 		queueNotification({
 			header: 'Success!',
 			message: `You have successfully tipped to ${username.length > 10 ? `${username.slice(0, 10)}...` : username}`,
@@ -232,11 +195,17 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 			errorMessageFallback: 'Tipping Failed!',
 			network,
 			onFailed,
-			onSuccess,
+			onSuccess: (hash) => onSuccess(hash),
 			setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
 			tx
 		});
 	};
+
+	const handleConfirm = (address: string) => {
+		setAddress(address);
+		setOpen(true);
+	};
+
 	return (
 		<div
 			onClick={(e) => {
@@ -284,78 +253,54 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 					spinning={loadingStatus.isLoading}
 					tip={loadingStatus.message}
 				>
+					{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
+						<Alert
+							className='mt-6 rounded-[4px] text-bodyBlue'
+							showIcon
+							type='error'
+							message='Insufficient Balance for Tipping'
+						/>
+					) : null}
+					<div className='mt-6 flex items-center justify-between text-lightBlue'>
+						<label className='text-sm text-lightBlue'>Your Address</label>
+						{address && (
+							<Balance
+								isBalanceUpdated={isBalanceUpdated}
+								address={address}
+								onChange={(balance) => handleOnBalanceChange(balance, true)}
+							/>
+						)}
+					</div>
+					<div className='flex w-full items-end gap-2 text-sm '>
+						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
+							<Address
+								address={address}
+								isTruncateUsername={false}
+								displayInline
+								disableTooltip
+							/>
+							<Button
+								onClick={() => {
+									setOpenAddressChangeModal(true);
+									setOpen(false);
+								}}
+								className='flex h-[26px] w-[70px] items-center justify-center rounded-[4px] border-none bg-pink_primary text-xs text-white'
+							>
+								Change
+							</Button>
+						</div>
+					</div>
 					<div
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
 						}}
 					>
-						<div className='flex flex-col items-center'>
-							<h3 className='text-sm font-normal tracking-wide text-lightBlue'>Select a wallet</h3>
-							<AvailableWallets
-								className='flex items-center justify-center gap-x-4'
-								handleWalletClick={handleWalletClick}
-								availableWallets={availableWallets}
-								isMetamaskWallet={false}
-								wallet={wallet}
-							/>
-							{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loadingStatus.isLoading && (
-								<Alert
-									message={'For using Tipping:'}
-									description={
-										<ul className='mt-[-5px] text-sm'>
-											<li>Give access to Polkassembly on your selected wallet.</li>
-											<li>Add an address to the selected wallet.</li>
-										</ul>
-									}
-									showIcon
-									className='mt-4 w-full'
-									type='info'
-								/>
-							)}
-							{Object.keys(availableWallets || {}).length === 0 && !loadingStatus.isLoading && (
-								<Alert
-									message={'Wallet extension not detected.'}
-									description={`${'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'}`}
-									type='info'
-									showIcon
-									className='changeColor text-md text-bodyBlue'
-								/>
-							)}
-						</div>
-						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
-							<Alert
-								className='mt-6 rounded-[4px] text-bodyBlue'
-								showIcon
-								type='error'
-								message='Insufficient Balance for Tipping'
-							/>
-						) : null}
 						<Form
 							form={form}
 							disabled={loadingStatus.isLoading || !network}
 						>
-							{accounts.length > 0 ? (
-								<AccountSelectionForm
-									isBalanceUpdated={isBalanceUpdated}
-									isTruncateUsername={false}
-									title='Tip with account'
-									accounts={accounts}
-									address={address}
-									withBalance={true}
-									onAccountChange={(address) => setAddress(address)}
-									onBalanceChange={(balance) => handleOnBalanceChange(balance, true)}
-									className='mt-6 text-sm text-lightBlue'
-								/>
-							) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
-								<Alert
-									type='info'
-									className='mt-4 rounded-[4px]'
-									showIcon
-									message='Please select a wallet.'
-								/>
-							) : null}
-							<div className='mt-6 border-0 border-t-[1px] border-dashed border-[#D2D8E0] pt-6'>
+							<div className='mt-0 border-0 pt-6'>
 								<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>
 									Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
 								</span>
@@ -435,6 +380,13 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username }: Pro
 					</div>
 				</Spin>
 			</Modal>
+			<AddressConnectModal
+				open={openAddressChangeModal}
+				onConfirm={handleConfirm}
+				setOpen={setOpenAddressChangeModal}
+				walletAlertTitle='Please install a web3 wallet to access Tipping'
+				isBalanceUpdated={isBalanceUpdated}
+			/>
 		</div>
 	);
 };

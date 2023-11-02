@@ -22,6 +22,7 @@ export interface ITip {
 	user_id: number;
 	amount: number;
 	token: string;
+	extrinsic_hash: any;
 }
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
@@ -36,7 +37,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { remark, tipFrom, tipTo, amount } = req.body;
+	const { remark, tipFrom, tipTo, amount, txHash } = req.body;
 
 	if (!remark || typeof remark !== 'string' || !tipFrom || !tipTo || typeof tipFrom !== 'string' || typeof tipTo !== 'string' || !amount || typeof amount !== 'number') {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
@@ -51,6 +52,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const newTip: ITip = {
 		amount,
 		created_at: new Date(),
+		extrinsic_hash: txHash,
 		network,
 		remark,
 		tip_from: substracteTipFrom,

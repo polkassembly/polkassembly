@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export const GET_CURVE_DATA_BY_INDEX = `
-query CurveDataByIndex($index_eq: Int, $limit: Int = 1000) {
-  curveData(limit: $limit, where: {index_eq: $index_eq}, orderBy: block_ASC) {
+query CurveDataByIndex($index_eq: Int, $block_gte: Int, $limit: Int = 1000) {
+  curveData(limit: $limit, where: {index_eq: $index_eq, block_gte: $block_gte}, orderBy: block_ASC) {
     approvalPercent
     block
     id

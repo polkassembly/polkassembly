@@ -277,6 +277,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 								address={address}
 								isTruncateUsername={false}
 								displayInline
+								disableTooltip
 							/>
 							<Button
 								onClick={() => {

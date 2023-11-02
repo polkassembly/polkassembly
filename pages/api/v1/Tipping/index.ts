@@ -22,7 +22,7 @@ export interface ITip {
 	user_id: number;
 	amount: number;
 	token: string;
-	tx_hash: any;
+	extrinsic_hash: any;
 }
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
@@ -52,12 +52,12 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const newTip: ITip = {
 		amount,
 		created_at: new Date(),
+		extrinsic_hash: txHash,
 		network,
 		remark,
 		tip_from: substracteTipFrom,
 		tip_to: substracteTipTo,
 		token: tokenSymbol,
-		tx_hash: txHash,
 		user_id: user.id
 	};
 

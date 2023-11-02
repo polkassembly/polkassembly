@@ -13,7 +13,8 @@ import { formatBalance } from '@polkadot/util';
 import HelperTooltip from './HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
-import InputSuffixIcon from '~assets/icons/balance-input-suffix.svg';
+import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
+import Image from 'next/image';
 
 const ZERO_BN = new BN(0);
 
@@ -131,8 +132,12 @@ const BalanceInput = ({
 				<Input
 					onBlur={() => onBlur?.()}
 					addonAfter={
-						<div className='flex items-center justify-center gap-[2px]'>
-							<InputSuffixIcon />
+						<div className='flex items-center justify-center gap-1'>
+							<Image
+								className='h-4 w-4 rounded-full object-contain'
+								src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
+								alt='Logo'
+							/>
 							{chainProperties[network]?.tokenSymbol}
 						</div>
 					}

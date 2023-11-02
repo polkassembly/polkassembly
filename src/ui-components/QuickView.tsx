@@ -45,15 +45,27 @@ interface Props {
 	socials?: ISocial[];
 	setOpen: (pre: boolean) => void;
 	setOpenTipping: (pre: boolean) => void;
+	setOpenAddressChangeModal: (pre: boolean) => void;
 }
-const QuickView = ({ className, address, identity, username, polkassemblyUsername, imgUrl, profileCreatedAt, setOpen, setOpenTipping, socials }: Props) => {
-	const { id } = useUserDetailsSelector();
+const QuickView = ({
+	className,
+	address,
+	identity,
+	username,
+	polkassemblyUsername,
+	imgUrl,
+	profileCreatedAt,
+	setOpen,
+	setOpenTipping,
+	socials,
+	setOpenAddressChangeModal
+}: Props) => {
+	const { id, loginAddress } = useUserDetailsSelector();
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 	const [messageApi, contextHolder] = message.useMessage();
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
-
 	const { network } = useNetworkSelector();
 	const identityArr = [
 		{ isVerified: !!identity?.email, key: 'Email', value: identity?.email || socials?.find((social) => social.type === 'Email')?.link || '' },
@@ -70,6 +82,16 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 			duration: 10,
 			type: 'success'
 		});
+	};
+
+	const handleTipping = () => {
+		if (!id) return;
+		if (!loginAddress || !address) {
+			setOpenAddressChangeModal(true);
+		} else {
+			setOpenTipping(true);
+		}
+		setOpen(false);
 	};
 
 	return (
@@ -204,11 +226,7 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 				>
 					<div className='flex w-full items-center'>
 						<Button
-							onClick={() => {
-								if (!id) return;
-								setOpenTipping(true);
-								setOpen(false);
-							}}
+							onClick={handleTipping}
 							className={`flex h-[32px] w-full items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
 								!id && 'cursor-not-allowed opacity-50'
 							}`}

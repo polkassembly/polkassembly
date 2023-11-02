@@ -110,6 +110,7 @@ const Address = (props: Props) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [socials, setSocials] = useState<ISocial[]>([]);
+	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
@@ -268,6 +269,7 @@ const Address = (props: Props) => {
 						username={addressPrefix}
 						polkassemblyUsername={username}
 						imgUrl={imgUrl}
+						setOpenAddressChangeModal={setOpenAddressChangeModal}
 					/>
 				}
 				open={!disableTooltip ? open : false}
@@ -377,6 +379,8 @@ const Address = (props: Props) => {
 					open={openTipping}
 					setOpen={setOpenTipping}
 					key={address}
+					setOpenAddressChangeModal={setOpenAddressChangeModal}
+					openAddressChangeModal={openAddressChangeModal}
 				/>
 			)}
 		</>

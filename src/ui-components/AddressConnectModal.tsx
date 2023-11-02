@@ -43,8 +43,8 @@ interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	closable?: boolean;
-	localStorageWalletKeyName: string;
-	localStorageAddressKeyName: string;
+	localStorageWalletKeyName?: string;
+	localStorageAddressKeyName?: string;
 	onConfirm?: (pre?: any) => void;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
@@ -52,6 +52,7 @@ interface Props {
 	accountAlertTitle?: string;
 	accountSelectionFormTitle?: string;
 	isProposalCreation?: boolean;
+	isBalanceUpdated?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -69,7 +70,8 @@ const AddressConnectModal = ({
 	walletAlertTitle,
 	accountAlertTitle = 'Wallet extension not detected.',
 	accountSelectionFormTitle = 'Select an address',
-	isProposalCreation = false
+	isProposalCreation = false,
+	isBalanceUpdated
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
@@ -274,8 +276,8 @@ const AddressConnectModal = ({
 			handleAddressLink(address, wallet as Wallet);
 		} else {
 			setLoading(true);
-			localStorage.setItem(localStorageWalletKeyName, String(wallet));
-			localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
+			localStorageWalletKeyName && localStorage.setItem(localStorageWalletKeyName, String(wallet));
+			localStorageAddressKeyName && localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
 			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('multisigDelegationAssociatedAddress', address);
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
@@ -376,7 +378,7 @@ const AddressConnectModal = ({
 	return (
 		<Modal
 			wrapClassName={className}
-			className={`${poppins.className} ${poppins.variable} radius`}
+			className={`${poppins.className} ${poppins.variable} radius w-[530px] max-sm:w-full`}
 			open={open}
 			title={
 				<div className='text-center text-[20px] font-semibold text-bodyBlue'>
@@ -404,7 +406,9 @@ const AddressConnectModal = ({
 					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||
-						(((showMultisig && initiatorBalance.lte(totalDeposit)) || (isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)) &&
+						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
+							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false) ||
+							(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
 							'opacity-50')
 					}`}
 				>
@@ -412,7 +416,7 @@ const AddressConnectModal = ({
 				</Button>
 			}
 			closable={closable}
-			onCancel={() => setOpen(!closable)}
+			onCancel={() => setOpen(false)}
 			closeIcon={<CloseIcon />}
 		>
 			<Spin
@@ -428,7 +432,7 @@ const AddressConnectModal = ({
 							</span>
 						</div>
 					)}
-					<h3 className='text-center text-sm font-normal text-lightBlue'>Select a wallet</h3>
+					{Object.keys(availableWallets || {}).length !== 0 && !loading && <h3 className='text-center text-sm font-normal text-lightBlue'>Select a wallet</h3>}{' '}
 					<AvailableWallets
 						className='flex items-center justify-center gap-x-4'
 						handleWalletClick={handleWalletClick}
@@ -473,7 +477,6 @@ const AddressConnectModal = ({
 							)}
 						</div>
 					)}
-
 					{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
 						<Alert
 							message={`For using ${walletAlertTitle}:`}
@@ -490,18 +493,19 @@ const AddressConnectModal = ({
 					)}
 					{Object.keys(availableWallets || {}).length === 0 && !loading && (
 						<Alert
-							message={accountAlertTitle}
-							description={`${
-								linkAddressNeeded
-									? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
-									: 'No web3 wallet was found with an active address.'
-							}`}
+							message={<div className='mt-1 text-[13px] font-medium'>{accountAlertTitle}</div>}
+							description={
+								<div className='-mt-1 pb-1 text-xs text-lightBlue'>
+									{linkAddressNeeded
+										? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
+										: 'Please login with a web3 wallet to access this feature.'}
+								</div>
+							}
 							type='info'
 							showIcon
-							className='changeColor text-md text-bodyBlue'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue'
 						/>
 					)}
-
 					<Form
 						form={form}
 						disabled={loading}
@@ -529,6 +533,7 @@ const AddressConnectModal = ({
 								/>
 							) : (
 								<AccountSelectionForm
+									isBalanceUpdated={isBalanceUpdated}
 									isTruncateUsername={false}
 									title={accountSelectionFormTitle}
 									accounts={accounts}
@@ -555,7 +560,7 @@ const AddressConnectModal = ({
 						type='info'
 						showIcon
 						message={
-							<span className='text-xs font-medium text-bodyBlue '>
+							<span className='text-[13px] font-medium text-bodyBlue '>
 								Please maintain minimum balance for these transactions:
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'

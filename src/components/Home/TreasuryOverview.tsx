@@ -7,9 +7,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
 import { Divider, Progress } from 'antd';
 import BN from 'bn.js';
-import { dayjs } from 'dayjs-init';
 import React, { FC, useEffect, useState } from 'react';
-import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { chainProperties } from 'src/global/networkConstants';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import blockToDays from 'src/util/blockToDays';
@@ -23,11 +21,10 @@ import CurrentPrice from '~assets/icons/currentprice.svg';
 import NextBurn from '~assets/icons/nextburn.svg';
 import SpendPeriod from '~assets/icons/spendperiod.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import { GetCurrentTokenPriceV2 } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
-
 const EMPTY_U8A_32 = new Uint8Array(32);
 
 interface ITreasuryOverviewProps {
@@ -39,8 +36,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const dispatch = useDispatch();
 	const blockTime: number = chainProperties?.[network]?.blockTime;
+	const dispatch = useDispatch();
 	const [available, setAvailable] = useState({
 		isLoading: true,
 		value: '',
@@ -52,10 +49,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		valueUSD: ''
 	});
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
-	const [priceWeeklyChange, setPriceWeeklyChange] = useState({
+		dailyChange: '',
 		isLoading: true,
 		value: ''
 	});
@@ -252,9 +246,6 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					}
 				});
 		});
-		if (currentTokenPrice.value !== 'N/A') {
-			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 
@@ -263,66 +254,32 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	// fetch current price of the token
 	useEffect(() => {
 		if (!network) return;
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
-	}, [network]);
-
-	// fetch a week ago price of the token and calc priceWeeklyChange
-	useEffect(() => {
-		let cancel = false;
-		if (cancel || !currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
-
-		setPriceWeeklyChange({
-			isLoading: true,
-			value: ''
-		});
-		async function fetchWeekAgoTokenPrice() {
-			if (cancel) return;
-			const weekAgoDate = dayjs().subtract(7, 'd').format('YYYY-MM-DD');
+		(async () => {
+			if (currentTokenPrice.dailyChange !== 'N/A' && currentTokenPrice.value !== 'N/A') return;
 			try {
-				const response = await fetch(`${chainProperties[network].externalLinks}/api/scan/price/history`, {
-					body: JSON.stringify({
-						end: weekAgoDate,
-						start: weekAgoDate
-					}),
-					headers: subscanApiHeaders,
-					method: 'POST'
-				});
-				const responseJSON = await response.json();
-				if (responseJSON['message'] == 'Success') {
-					const weekAgoPrice = responseJSON['data']['ema7_average'];
-					const currentTokenPriceNum: number = parseFloat(currentTokenPrice.value);
-					const weekAgoPriceNum: number = parseFloat(weekAgoPrice);
-					if (weekAgoPriceNum == 0) {
-						setPriceWeeklyChange({
-							isLoading: false,
-							value: 'N/A'
-						});
-						return;
-					}
-					const percentChange = ((currentTokenPriceNum - weekAgoPriceNum) / weekAgoPriceNum) * 100;
-					setPriceWeeklyChange({
+				const result = await GetCurrentTokenPriceV2(network);
+				setCurrentTokenPrice(() => {
+					return {
+						dailyChange: result?.dailyChange,
 						isLoading: false,
-						value: percentChange.toFixed(2)
-					});
-					return;
-				}
-				setPriceWeeklyChange({
-					isLoading: false,
-					value: 'N/A'
+						value: result?.value
+					};
 				});
-			} catch (err) {
-				setPriceWeeklyChange({
-					isLoading: false,
-					value: 'N/A'
+				if (currentTokenPrice.value !== 'N/A') {
+					dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
+				}
+			} catch (error) {
+				setCurrentTokenPrice(() => {
+					return {
+						dailyChange: 'N/A',
+						isLoading: false,
+						value: 'N/A'
+					};
 				});
 			}
-		}
-
-		fetchWeekAgoTokenPrice();
-		return () => {
-			cancel = true;
-		};
-	}, [currentTokenPrice, network]);
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentTokenPrice.dailyChange, currentTokenPrice.value, network]);
 
 	return (
 		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:gap-4`}>
@@ -384,7 +341,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
 							<CurrentPrice className='lg:hidden' />
 						</div>
-						{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
+						{!currentTokenPrice.isLoading ? (
 							<>
 								<div className='mb-4'>
 									<div className='my-1 flex items-center'>
@@ -410,14 +367,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										className='m-0 p-0'
 									/>
 									<div className='flex items-center text-xs text-lightBlue md:whitespace-pre'>
-										{priceWeeklyChange.value === 'N/A' ? (
+										{currentTokenPrice.dailyChange === 'N/A' ? (
 											'N/A'
-										) : priceWeeklyChange.value ? (
+										) : currentTokenPrice.dailyChange ? (
 											<>
 												<span className='mr-1 sm:mr-2'>Weekly Change</span>
 												<div className='flex items-center'>
-													<span className='font-semibold'>{Math.abs(Number(priceWeeklyChange.value))}%</span>
-													{Number(priceWeeklyChange.value) < 0 ? (
+													<span className='font-semibold'>{Math.abs(Number(currentTokenPrice.dailyChange))}%</span>
+													{Number(currentTokenPrice.dailyChange) < 0 ? (
 														<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
 													) : (
 														<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />

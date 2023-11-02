@@ -171,7 +171,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							<span className='mt-[2px] text-bodyBlue'>Create Username</span>
 						</div>
 						<div>
-							<Divider className={`${isPassword ? 'bg-green_primary' : 'bg-grey_stroke'}  m-0 mt-4 border-t-[2px] p-0`}></Divider>
+							<Divider className={`${isPassword ? 'bg-green_primary' : 'bg-grey_stroke'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
 						</div>
 					</div>
 					<div className='w-[268px] flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'>

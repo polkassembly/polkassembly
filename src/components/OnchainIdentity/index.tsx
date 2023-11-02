@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
@@ -338,7 +339,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 
 	return (
 		<>
-			{(addressModal ? addressModal : openAddressLinkedModal) && (
+			{/* {(addressModal ? addressModal : openAddressLinkedModal) && (
 				<AddressConnectModal
 					closable
 					open={addressModal ? addressModal : openAddressLinkedModal}
@@ -348,7 +349,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					localStorageAddressKeyName='identityAddress'
 					onConfirm={(address: string) => handleConfirm(address)}
 				/>
-			)}
+			)} */}
 			<Modal
 				maskClosable={false}
 				open={isExitModal}

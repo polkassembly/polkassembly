@@ -4,6 +4,7 @@
 
 // logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
@@ -398,7 +399,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					)}
 				</Spin>
 			</Modal>
-			<AddressConnectModal
+			{/* <AddressConnectModal
 				open={openChangeAddressModal}
 				setOpen={setOpenChangeAddressModal}
 				localStorageAddressKeyName='unlockAddress'
@@ -409,7 +410,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					setAddress(address);
 					setOpen(true);
 				}}
-			/>
+			/> */}
 			<VoteUnlockSuccessState
 				open={openSuccessState}
 				setOpen={setOpenSuccessState}

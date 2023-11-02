@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
@@ -301,7 +302,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 				<Skeleton />
 			)}
 
-			{!openLoginModal && !openSignupModal && !loginWallet && (
+			{/* {!openLoginModal && !openSignupModal && !loginWallet && (
 				<AddressConnectModal
 					walletAlertTitle='Delegation dashboard'
 					localStorageWalletKeyName='delegationWallet'
@@ -309,7 +310,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 					open={openModal}
 					setOpen={setOpenModal}
 				/>
-			)}
+			)} */}
 			<LoginPopup
 				closable={false}
 				setSignupOpen={setOpenSignupModal}

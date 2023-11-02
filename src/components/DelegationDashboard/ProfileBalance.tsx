@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useApiContext } from '~src/context';
 import { Divider } from 'antd';
@@ -141,7 +142,7 @@ const ProfileBalances = ({ className }: Props) => {
 					/>
 				)}
 			</div>
-			<AddressConnectModal
+			{/* <AddressConnectModal
 				localStorageWalletKeyName='delegationWallet'
 				usingMultisig
 				localStorageAddressKeyName='delegationDashboardAddress'
@@ -150,7 +151,7 @@ const ProfileBalances = ({ className }: Props) => {
 				walletAlertTitle={'Delegation'}
 				closable={true}
 				onConfirm={(address: string) => dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }))}
-			/>
+			/> */}
 		</div>
 	);
 };

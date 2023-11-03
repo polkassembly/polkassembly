@@ -308,7 +308,7 @@ const Address = (props: Props) => {
 										/>
 									))}
 
-								<div className={`flex items-center font-semibold text-bodyBlue dark:text-blue-dark-high ${!disableAddressClick ? 'hover:underline' : 'cursor-pointer'}`}>
+								<div className={`flex items-center font-semibold text-bodyBlue   dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
 									<div
 										onClick={(e) => handleClick(e)}
 										title={mainDisplay || encodedAddr}

@@ -378,7 +378,7 @@ const AddressConnectModal = ({
 	return (
 		<Modal
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.className} ${poppins.variable} radius dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${poppins.className} ${poppins.variable} radius w-[530px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={open}
 			title={
 				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
@@ -505,7 +505,7 @@ const AddressConnectModal = ({
 							}
 							type='info'
 							showIcon
-							className='changeColor text-md rounded-[4px] text-bodyBlue  dark:text-blue-dark-high'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
 						/>
 					)}
 					<Form

@@ -68,10 +68,6 @@ const QuickView = ({
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const identityArr = [
-		{ isVerified: !!identity?.email, key: 'Email', value: identity?.email || socials?.find((social) => social.type === 'Email')?.link || '' },
-		{ isVerified: !!identity?.judgements, key: 'Judgements', value: identity?.judgements || [] },
-		{ isVerified: !!identity?.legal, key: 'Legal', value: identity?.legal },
-		{ isVerified: !!identity?.riot, key: 'Riot', value: identity?.riot || socials?.find((social) => social.type === 'Riot')?.link || '' },
 		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
 		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' }
 	];

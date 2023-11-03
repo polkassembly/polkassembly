@@ -14,7 +14,6 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { checkIsProposer } from './utils/checkIsProposer';
-import IPFSScript from '~src/api-utils/ipfs';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -42,11 +41,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	const replyDoc = await replyRef.get();
 	if (!replyDoc.exists) return res.status(404).json({ message: 'Reply not found' });
-	const replyData = replyDoc.data();
 	const replyUserAddress = (
 		await firestore_db
 			.collection('addresses')
-			.where('user_id', '==', replyData?.user_id)
+			.where('user_id', '==', replyDoc.data()?.user_id)
 			.where('isMultisig', '==', true)
 			.get()
 	).docs.map((doc) => doc.data());
@@ -70,16 +68,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 					last_comment_at
 				})
 				.then(() => {});
-			const ipfsScript = new IPFSScript();
-			ipfsScript.run(
-				{
-					...replyData,
-					content,
-					isDeleted: false,
-					updated_at: last_comment_at
-				},
-				replyRef.path
-			);
 			return res.status(200).json({ message: 'Reply saved.' });
 		})
 		.catch((error) => {

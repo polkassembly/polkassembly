@@ -22,3 +22,30 @@ export default async function fetchTokenToUSDPrice(network: string) {
 		return 'N/A';
 	}
 }
+
+export async function fetchTokenToUSDPriceV2(network: string) {
+	try {
+		const response = await fetch(
+			'https://api.coingecko.com/api/v3/simple/price?' +
+				new URLSearchParams({ ids: coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network, include_24hr_change: 'true', vs_currencies: 'usd' })
+		);
+		const responseJSON = await response.json();
+		if (Object.keys(responseJSON[coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network] || {}).length == 0) {
+			return {
+				dailyChange: 'N/A',
+				value: 'N/A'
+			};
+		} else {
+			const obj = responseJSON[coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network];
+			return {
+				dailyChange: obj['usd_24h_change'],
+				value: formatUSDWithUnits(obj['usd'])
+			};
+		}
+	} catch (error) {
+		return {
+			dailyChange: 'N/A',
+			value: 'N/A'
+		};
+	}
+}

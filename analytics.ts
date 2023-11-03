@@ -13,7 +13,6 @@ export const logPageView = () => {
 };
 
 export const trackEvent = (category: string, action: string, label: object = {}) => {
-	console.log(category, action, label);
 	const serializedLabel = JSON.stringify(label);
 	ReactGA.event({
 		action,

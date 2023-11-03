@@ -570,3 +570,15 @@ z-index: 1050 !important;
 .hide-image img {
   display: none !important;
 }
+
+.dark .ant-popover-inner{
+  background-color: #1C1D1F;
+}
+
+.dark .ant-popover-arrow::before{
+  background-color: #1C1D1F;
+}
+
+.dark .ant-tabs-nav-list{
+  background-color: #0D0D0D !important;
+}

@@ -237,7 +237,7 @@ const WriteProposal = ({
 							className='icon-alert'
 							showIcon
 							message={
-								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<span className='text-sm font-medium text-bodyBlue'>
 									Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
 									<a
 										className='ml-1 text-xs text-pink_primary'

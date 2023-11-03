@@ -510,7 +510,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 				{/* Autocomplete results */}
 				{(autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && !searchInputErr?.err && !searchInputErr.clicked && (
-					<section className='absolute z-50 w-[94.3%] rounded-b-[4px] border-[1px] border-solid border-gray-200 bg-white dark:bg-section-dark-overlay max-md:w-[85.7%]'>
+					<section className='absolute z-50 w-[94.3%] rounded-b-[4px] border-[1px] border-solid border-gray-200 bg-white dark:border-gray-600 dark:bg-section-dark-overlay max-md:w-[85.7%]'>
 						{/* Posts List */}
 						<List
 							size='small'
@@ -523,7 +523,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 								return (
 									<List.Item
-										className='flex flex-wrap justify-start whitespace-nowrap hover:cursor-pointer hover:bg-[#FEF2F8] dark:bg-[#33071E] '
+										className='flex flex-wrap justify-start whitespace-nowrap hover:cursor-pointer hover:bg-[#FEF2F8] dark:bg-section-dark-overlay '
 										onClick={() => {
 											setFilterBy(!isPost ? EFilterBy.People : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
 											handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
@@ -557,7 +557,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<Radio
 							value={finalSearchInput.length > 0 && EFilterBy.Referenda}
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
-								filterBy === EFilterBy.Referenda && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue dark:bg-[#33071E] dark:text-blue-dark-high md:px-2' : 'text-[#667589]'
+								filterBy === EFilterBy.Referenda && finalSearchInput.length > 0
+									? 'bg-[#FEF2F8] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
+									: 'text-[#667589]'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
 							Referenda {finalSearchInput.length > 0 && `(${onchainPostResults?.total || 0})`}
@@ -565,7 +567,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<Radio
 							value={EFilterBy.People}
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
-								filterBy === EFilterBy.People && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue dark:bg-[#33071E] dark:text-blue-dark-high md:px-2' : 'text-[#667589]'
+								filterBy === EFilterBy.People && finalSearchInput.length > 0
+									? 'bg-[#FEF2F8] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
+									: 'text-[#667589]'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
 							People {finalSearchInput.length > 0 && `(${peoplePage.totalPeople || 0})`}
@@ -574,7 +578,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							value={EFilterBy.Discussions}
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
 								filterBy === EFilterBy.Discussions && finalSearchInput.length > 0
-									? 'bg-[#FEF2F8] text-bodyBlue dark:bg-[#33071E] dark:text-blue-dark-high md:px-2'
+									? 'bg-[#FEF2F8] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
 									: 'text-[#667589]'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
@@ -791,7 +795,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 					<div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue dark:text-blue-dark-high max-xs:flex-wrap'>
 						<div className='flex gap-1 max-sm:mb-2 max-sm:flex-wrap'>
 							{isSuperSearch && selectedNetworks.length > 0 && (
-								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-[#33071E]'>
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-section-dark-overlay'>
 									<span className='text-pink_primary'>Network:</span>
 									<span>
 										{selectedNetworks?.map((network, index) => (
@@ -804,19 +808,19 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								</div>
 							)}
 							{dateFilter && (
-								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 font-medium dark:bg-[#33071E]'>
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 font-medium dark:bg-section-dark-overlay'>
 									<span className='text-pink_primary'>Date:</span>
 									<span className='capitalize'>{dateFilter?.split('_')?.join(' ')}</span>
 								</div>
 							)}
 							{selectedTags.length > 0 && (
-								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-[#33071E]'>
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-section-dark-overlay'>
 									<span className='text-pink_primary'>Tags:</span>
 									<span className='capitalize'>{selectedTags?.join(', ')}</span>
 								</div>
 							)}
 							{(selectedOpengovTracks.length > 0 || selectedGov1Tracks.length > 0) && filterBy !== EFilterBy.Discussions && (
-								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-[#33071E]'>
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-section-dark-overlay'>
 									<span className='text-pink_primary'>Tracks:</span>
 									<span className='flex flex-wrap'>
 										{selectedOpengovTracks?.map((trackId, index) => (
@@ -843,7 +847,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								</div>
 							)}
 							{selectedTopics.length > 0 && (
-								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-[#33071E]'>
+								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-section-dark-overlay'>
 									<span className='text-pink_primary'>Topics:</span>
 									<span className='flex flex-wrap'>
 										{selectedTopics.map((topic, index) => (

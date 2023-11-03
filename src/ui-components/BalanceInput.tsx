@@ -193,6 +193,6 @@ export default styled(BalanceInput)`
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
+		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
 	}
 `;

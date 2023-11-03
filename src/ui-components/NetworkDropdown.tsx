@@ -42,11 +42,13 @@ for (const key of Object.keys(network)) {
 		key,
 		label: (
 			<div className='my-2 flex items-center'>
-				<Image
-					className='mr-3 h-5 w-5 rounded-full object-contain'
-					src={chainProperties[keyVal]?.logo ? chainProperties[keyVal].logo : chainLogo}
-					alt='Logo'
-				/>
+				<span>
+					<Image
+						className='mr-3 h-5 w-5 rounded-full bg-white object-contain'
+						src={chainProperties[keyVal]?.logo ? chainProperties[keyVal].logo : chainLogo}
+						alt='Logo'
+					/>
+				</span>
 				<span className='text-sm font-medium capitalize text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
 			</div>
 		),

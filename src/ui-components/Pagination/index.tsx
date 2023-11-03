@@ -18,6 +18,9 @@ const StyledPagination = styled(AntdPagination)`
 	.anticon-left {
 		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
+	.ant-pagination-item-ellipsis {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+	}
 `;
 
 export const Pagination = (props: any) => {

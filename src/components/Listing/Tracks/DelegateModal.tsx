@@ -445,6 +445,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									identiconSize={30}
 									inputClassName={' font-normal text-sm h-[40px]'}
 									skipFormatCheck={true}
+									theme={theme}
 								/>
 								{target
 									? (!(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) || isTargetAddressSame) && (
@@ -533,6 +534,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								<div className='mb-2 mt-6 flex items-center justify-between'>
 									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
 									<Popover
+										defaultOpen={true}
 										content={content}
 										placement='topLeft'
 										zIndex={1056}
@@ -541,6 +543,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 											indeterminate={indeterminate}
 											onChange={onCheckAllChange}
 											checked={checkAll}
+											className='dark:text-blue-dark-medium'
 										>
 											Select available tracks
 										</Checkbox>

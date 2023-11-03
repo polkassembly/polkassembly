@@ -482,7 +482,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 											Decision Deposit
 											<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.' />
 										</span>
-										<span className='rounded-[16px] bg-[#EDEFF3] px-3 py-0.5 text-sm font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>
+										<span className='rounded-[16px] bg-[#EDEFF3] px-3 py-0.5 text-sm font-semibold tracking-wide text-bodyBlue dark:bg-section-dark-background dark:text-blue-dark-high'>
 											{formatedBalance(balance.toString(), unit)} {unit}
 										</span>
 									</div>

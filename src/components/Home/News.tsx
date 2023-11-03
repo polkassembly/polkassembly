@@ -13,7 +13,6 @@ interface INewsProps {
 const News: FC<INewsProps> = (props) => {
 	const { twitter } = props;
 	const { resolvedTheme: theme } = useTheme();
-	console.log(theme, 'this is theme, in twitter');
 	let profile = 'polkadot';
 	if (twitter) {
 		profile = twitter.split('/')[3];

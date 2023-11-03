@@ -93,6 +93,7 @@ module.exports = {
 					dark: {
 						container: '#3B444F',
 						background: '#1C1D1F',
+						garyBackground: '#282A2D',
 						overlay: '#0D0D0D'
 					}
 				},

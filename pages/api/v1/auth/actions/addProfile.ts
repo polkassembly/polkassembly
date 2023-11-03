@@ -65,7 +65,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	}
 
 	const userEmailQuerySnapshot = await firestore.collection('users').where('email', '==', String(email).toLowerCase()).limit(1).get();
-	if (!userEmailQuerySnapshot.empty) {
+	if (userEmailQuerySnapshot.empty) {
 		throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
 	}
 

@@ -351,9 +351,6 @@ const Web3Login: FC<Props> = ({
 						setLoginOpen?.(false);
 						setShowOptionalFields(false);
 					}
-					//remove this before pushing
-					// setLoginOpen?.(true);
-					// setShowOptionalFields(true);
 					setIsClosable?.(false);
 					setLoading(false);
 					return;

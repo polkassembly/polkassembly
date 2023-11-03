@@ -54,7 +54,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	}
 
 	const user = await authServiceInstance.GetUser(token);
-	console.log(user);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	const userRef = firestore.collection('users').doc(String(user.id));

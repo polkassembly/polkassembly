@@ -233,7 +233,7 @@ const Details: FC<IDetailsProps> = (props) => {
 			visitedUserProfile: newUsername
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [bio, title, badges, username, image, social_links, addresses]);
+	}, [addresses]);
 
 	const items = [
 		{

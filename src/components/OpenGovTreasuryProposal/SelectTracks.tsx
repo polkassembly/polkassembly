@@ -27,7 +27,7 @@ const SelectTracks = ({ tracksArr, className, onTrackChange, selectedTrack }: Pr
 						return { label: track.split(/(?=[A-Z])/).join(' '), value: track };
 					}) || []
 				}
-				popupClassName={`${poppins.className} ${poppins.variable}`}
+				popupClassName={`${poppins.className} ${poppins.variable} z-[1059]`}
 			/>
 		</div>
 	);

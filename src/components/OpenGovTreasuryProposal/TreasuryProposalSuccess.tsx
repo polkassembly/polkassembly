@@ -72,7 +72,7 @@ const TreasuryProposalSuccessPopup = ({
 			unit: chainProperties[network].tokenSymbol
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return (
 		<Modal

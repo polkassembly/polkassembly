@@ -24,7 +24,7 @@ interface Props {
 	classname?: string;
 }
 const ZERO_BN = new BN(0);
-const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, classname }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);

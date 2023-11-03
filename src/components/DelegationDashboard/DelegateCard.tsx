@@ -50,7 +50,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !delegate?.address) return;

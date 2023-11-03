@@ -19,7 +19,6 @@ import LoginLogo from '~assets/icons/login-logo.svg';
 import { IAuthResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
-import { trackEvent } from 'analytics';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
@@ -85,7 +84,6 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			const { data, error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/login', { password, username });
 			if (error || !data) {
 				setError(error || 'Login failed. Please try again later.');
-				trackEvent('Login', 'Failed Login', 'Login');
 				setLoading(false);
 				return;
 			}
@@ -97,12 +95,10 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					setLoginOpen && setLoginOpen(false);
 					return;
 				}
-				trackEvent('Login', 'Successful Login', 'Login');
 				router.back();
 			} else if (data?.isTFAEnabled) {
 				if (!data?.tfa_token) {
 					setError(error || 'TFA token missing. Please try again.');
-					trackEvent('Login', 'Failed Login', 'Login');
 					setLoading(false);
 					return;
 				}

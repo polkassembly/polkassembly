@@ -33,8 +33,9 @@ import InputClearIcon from '~assets/icons/close-tags.svg';
 import LeftArrow from '~assets/icons/arrow-left.svg';
 import PaLogo from '../AppLayout/PaLogo';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
-import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -113,6 +114,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const [autoCompleteResults, setAutoCompleteResults] = useState<IAutocompleteResults>(initAutocompleteResults);
 	const [isFilter, setIsFilter] = useState<boolean>(false);
 	const [justStart, setJustStart] = useState<boolean>(true);
+	const currentUser = useUserDetailsSelector();
 
 	Object.keys(post_topic).map((topic) => topicOptions.push(topicToOptionText(topic)));
 
@@ -401,6 +403,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		setJustStart(false);
 		setAutoCompleteResults(initAutocompleteResults);
 		if (searchInput?.trim().length > 2) {
+			//GAEvent for user search
+			trackEvent('search_query_added', 'user_search_queries', {
+				searchInput: `${searchInput} keyword searched`,
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
+
 			setFinalSearchInput(searchInput?.trim());
 			setSearchInputErr({ err: false, clicked: true });
 		} else if (searchInput?.trim().length <= 2) {

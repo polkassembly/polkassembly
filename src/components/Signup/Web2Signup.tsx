@@ -80,10 +80,15 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 		setError('');
 
 		if (isPassword) {
-			trackEvent('Signup', 'Click', 'Sign Up');
 			const { second_password } = data;
 			if (second_password) {
 				const { email, username } = signUpInfo;
+
+				//GAEvent for new user registration
+				trackEvent('signup_activity', 'new_user_registration', {
+					email: email as String,
+					username: username
+				});
 
 				setLoading(true);
 				const { data, error } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/signup', {
@@ -113,7 +118,6 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				}
 			}
 		} else {
-			trackEvent('Signup', 'Click', 'Next');
 			const { username, email } = data;
 			setLoading(true);
 

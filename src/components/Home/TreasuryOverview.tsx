@@ -29,6 +29,8 @@ import SpendPeriodDark from '~assets/icons/SpendPeriodDark.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -41,10 +43,10 @@ interface ITreasuryOverviewProps {
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals, theme } = props;
 	const { network } = useNetworkSelector();
-
 	const { api, apiReady } = useApiContext();
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
 
+	const dispatch = useDispatch();
 	const blockTime: number = chainProperties?.[network]?.blockTime;
 	const [available, setAvailable] = useState({
 		isLoading: true,
@@ -257,6 +259,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					}
 				});
 		});
+		if (currentTokenPrice.value !== 'N/A') {
+			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, currentTokenPrice, network]);
 
 	// set availableUSD and nextBurnUSD whenever they or current price of the token changes

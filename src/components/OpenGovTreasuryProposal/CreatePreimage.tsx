@@ -72,6 +72,7 @@ interface Props {
 	setPreimageLength: (pre: number | null) => void;
 	availableBalance: BN;
 	setAvailableBalance: (pre: BN) => void;
+	isUpdatedAvailableBalance: boolean;
 }
 
 interface IAdvancedDetails {
@@ -100,6 +101,7 @@ const CreatePreimage = ({
 	setPreimage,
 	availableBalance,
 	setAvailableBalance,
+	isUpdatedAvailableBalance,
 	form
 }: Props) => {
 	const { api, apiReady } = useApiContext();
@@ -265,7 +267,7 @@ const CreatePreimage = ({
 		});
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	const onChangeLocalStorageSet = (changedKeyValueObj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
 		setTxFee(ZERO_BN);
@@ -699,6 +701,7 @@ const CreatePreimage = ({
 									Proposer Address
 									<span>
 										<Balance
+											isBalanceUpdated={isUpdatedAvailableBalance}
 											address={proposerAddress}
 											onChange={handleOnAvailableBalanceChange}
 										/>

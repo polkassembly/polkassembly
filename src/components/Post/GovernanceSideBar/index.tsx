@@ -437,123 +437,133 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								});
 							}
 						}
-						const subsquidRes = await fetchSubsquid({
-							network: network,
-							query: GET_CURVE_DATA_BY_INDEX,
-							variables: {
-								index_eq: Number(onchainId)
+
+						let newAPI: ApiPromise = api;
+						let approval: BigNumber | null = null;
+						let support: BigNumber | null = null;
+
+						try {
+							const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+
+							if (status) {
+								const blockNumber = status.block;
+								if (blockNumber) {
+									const hash = await api.rpc.chain.getBlockHash(blockNumber - 1);
+									newAPI = (await api.at(hash)) as ApiPromise;
+								}
 							}
-						});
-						if (subsquidRes && subsquidRes.data && subsquidRes.data.curveData && Array.isArray(subsquidRes.data.curveData)) {
-							const graph_points = subsquidRes.data.curveData || [];
-							if (graph_points?.length > 0) {
-								const lastGraphPoint = graph_points[graph_points.length - 1];
-								const proposalCreatedAt = dayjs(created_at);
-								const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'hour');
-								if (decisionPeriodMinutes > decisionPeriodHrs) {
-									labels = [];
-									approvalData = [];
-									supportData = [];
+							if (newAPI) {
+								const inactiveIssuance = await newAPI.query.balances.inactiveIssuance();
+								const totalIssuance = await newAPI.query.balances.totalIssuance();
+								const issuanceInfo = totalIssuance.sub(inactiveIssuance);
+								const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
+								const referendaInfoData = referendaInfo.toJSON() as any;
+								if (referendaInfoData?.ongoing?.tally) {
+									const ayesInfo = referendaInfoData.ongoing.tally.ayes;
+									const ayes = typeof ayesInfo === 'string' && ayesInfo.startsWith('0x') ? new BigNumber(ayesInfo.slice(2), 16) : new BigNumber(ayesInfo);
+									const naysInfo = referendaInfoData.ongoing.tally.nays;
+									const nays = typeof naysInfo === 'string' && naysInfo.startsWith('0x') ? new BigNumber(naysInfo.slice(2), 16) : new BigNumber(naysInfo);
+									const supportInfo = referendaInfoData.ongoing.tally.support;
+									const supportBigNumber = typeof supportInfo === 'string' && supportInfo.startsWith('0x') ? new BigNumber(supportInfo.slice(2), 16) : new BigNumber(supportInfo);
+									support = supportBigNumber.div(issuanceInfo as any).multipliedBy(100);
+									approval = ayes.div(ayes.plus(nays)).multipliedBy(100);
 								}
-								graph_points?.forEach((graph_point: any) => {
-									const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'hour');
-									const new_graph_point = {
-										...graph_point,
-										hour
-									};
-
+							}
+						} catch (error) {
+							// console.log(error);
+						}
+						const statusBlock = statusHistory?.find((s) => s?.status === 'Deciding');
+						if (statusBlock) {
+							const subsquidRes = await fetchSubsquid({
+								network: network,
+								query: GET_CURVE_DATA_BY_INDEX,
+								variables: {
+									block_gte: statusBlock?.block,
+									index_eq: Number(onchainId)
+								}
+							});
+							if (subsquidRes && subsquidRes.data && subsquidRes.data.curveData && Array.isArray(subsquidRes.data.curveData)) {
+								const graph_points = subsquidRes.data.curveData || [];
+								if (graph_points?.length > 0) {
+									const lastGraphPoint = graph_points[graph_points.length - 1];
+									const proposalCreatedAt = dayjs(statusBlock?.timestamp || created_at);
+									const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'hour');
 									if (decisionPeriodMinutes > decisionPeriodHrs) {
-										labels.push(hour);
-										approvalData.push({
-											x: hour,
-											y: approvalCalc(hour / decisionPeriodMinutes) * 100
-										});
-										supportData.push({
-											x: hour,
-											y: supportCalc(hour / decisionPeriodMinutes) * 100
-										});
+										labels = [];
+										approvalData = [];
+										supportData = [];
 									}
-									currentApprovalData.push({
-										x: hour,
-										y: new_graph_point.approvalPercent
-									});
-									currentSupportData.push({
-										x: hour,
-										y: new_graph_point.supportPercent
-									});
-									return new_graph_point;
-								});
+									graph_points?.forEach((graph_point: any) => {
+										const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'hour');
+										const new_graph_point = {
+											...graph_point,
+											hour
+										};
 
-								const currentApprovalDataLength = currentApprovalData.length;
-								const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
-								for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
-									const approval = approvalData[i];
-									if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'hour')) > 0) {
+										if (decisionPeriodMinutes > decisionPeriodHrs) {
+											labels.push(hour);
+											approvalData.push({
+												x: hour,
+												y: approvalCalc(hour / decisionPeriodMinutes) * 100
+											});
+											supportData.push({
+												x: hour,
+												y: supportCalc(hour / decisionPeriodMinutes) * 100
+											});
+										}
 										currentApprovalData.push({
-											...lastCurrentApproval,
-											x: approval.x
+											x: hour,
+											y: new_graph_point.approvalPercent
 										});
-									}
-								}
-								const currentSupportDataLength = currentSupportData.length;
-								const lastCurrentSupport = currentSupportData[currentSupportDataLength - 1];
-								for (let i = currentSupportDataLength; i < supportData.length; i++) {
-									const support = supportData[i];
-									if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'hour')) > 0) {
 										currentSupportData.push({
-											...lastCurrentSupport,
-											x: support.x
+											x: hour,
+											y: new_graph_point.supportPercent
 										});
-									}
-								}
+										return new_graph_point;
+									});
 
-								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
-								const currentSupport = currentSupportData[currentSupportData.length - 1];
-
-								let newAPI: ApiPromise = api;
-								let approval: BigNumber | null = null;
-								let support: BigNumber | null = null;
-
-								try {
-									const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
-
-									if (status) {
-										const blockNumber = status.block;
-										if (blockNumber) {
-											const hash = await api.rpc.chain.getBlockHash(blockNumber - 1);
-											newAPI = (await api.at(hash)) as ApiPromise;
+									const currentApprovalDataLength = currentApprovalData.length;
+									const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
+									for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
+										const approval = approvalData[i];
+										if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'hour')) > 0) {
+											currentApprovalData.push({
+												...lastCurrentApproval,
+												x: approval.x
+											});
 										}
 									}
-									if (newAPI) {
-										const inactiveIssuance = await newAPI.query.balances.inactiveIssuance();
-										const totalIssuance = await newAPI.query.balances.totalIssuance();
-										const issuanceInfo = totalIssuance.sub(inactiveIssuance);
-										const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
-										const referendaInfoData = referendaInfo.toJSON() as any;
-										if (referendaInfoData?.ongoing?.tally) {
-											const ayesInfo = referendaInfoData.ongoing.tally.ayes;
-											const ayes = typeof ayesInfo === 'string' && ayesInfo.startsWith('0x') ? new BigNumber(ayesInfo.slice(2), 16) : new BigNumber(ayesInfo);
-											const naysInfo = referendaInfoData.ongoing.tally.nays;
-											const nays = typeof naysInfo === 'string' && naysInfo.startsWith('0x') ? new BigNumber(naysInfo.slice(2), 16) : new BigNumber(naysInfo);
-											const supportInfo = referendaInfoData.ongoing.tally.support;
-											const supportBigNumber =
-												typeof supportInfo === 'string' && supportInfo.startsWith('0x') ? new BigNumber(supportInfo.slice(2), 16) : new BigNumber(supportInfo);
-											support = supportBigNumber.div(issuanceInfo as any).multipliedBy(100);
-											approval = ayes.div(ayes.plus(nays)).multipliedBy(100);
+									const currentSupportDataLength = currentSupportData.length;
+									const lastCurrentSupport = currentSupportData[currentSupportDataLength - 1];
+									for (let i = currentSupportDataLength; i < supportData.length; i++) {
+										const support = supportData[i];
+										if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'hour')) > 0) {
+											currentSupportData.push({
+												...lastCurrentSupport,
+												x: support.x
+											});
 										}
 									}
-								} catch (error) {
-									// console.log(error);
+
+									const currentApproval = currentApprovalData[currentApprovalData.length - 1];
+									const currentSupport = currentSupportData[currentSupportData.length - 1];
+									setProgress({
+										approval: approval ? approval.toFormat(2, BigNumber.ROUND_UP) : (currentApproval?.y?.toFixed(1) as any),
+										approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
+										support: support ? support.toFormat(2, BigNumber.ROUND_UP) : (currentSupport?.y?.toFixed(1) as any),
+										supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
+									});
 								}
-								setProgress({
-									approval: approval ? approval.toFormat(2, BigNumber.ROUND_UP) : (currentApproval?.y?.toFixed(1) as any),
-									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
-									support: support ? support.toFormat(2, BigNumber.ROUND_UP) : (currentSupport?.y?.toFixed(1) as any),
-									supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
-								});
+							} else {
+								setCurvesError(subsquidRes.errors?.[0]?.message || 'Something went wrong.');
 							}
 						} else {
-							setCurvesError(subsquidRes.errors?.[0]?.message || 'Something went wrong.');
+							setProgress({
+								approval: Number(approval?.toFormat(2, BigNumber.ROUND_UP) || 0),
+								approvalThreshold: 100,
+								support: Number(support?.toFormat(2, BigNumber.ROUND_UP) || 0),
+								supportThreshold: 50
+							});
 						}
 						const newData: ChartData<'line', (number | Point | null)[]> = {
 							datasets: [
@@ -645,7 +655,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			unit: chainProperties[network].tokenSymbol
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		getVotingHistory();

@@ -87,7 +87,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			form.setFieldValue('targetAddress', defaultTarget);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
 		if (!target) return;

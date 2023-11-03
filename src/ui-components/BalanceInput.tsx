@@ -13,6 +13,8 @@ import { formatBalance } from '@polkadot/util';
 import HelperTooltip from './HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
+import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
+import Image from 'next/image';
 
 const ZERO_BN = new BN(0);
 
@@ -34,6 +36,7 @@ interface Props {
 	setInputValue?: (pre: string) => void;
 	onBlur?: () => void;
 	theme?: string;
+	isBalanceUpdated?: boolean;
 }
 
 const BalanceInput = ({
@@ -53,7 +56,8 @@ const BalanceInput = ({
 	setInputValue,
 	onBlur,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	theme
+	theme,
+	isBalanceUpdated
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -67,7 +71,6 @@ const BalanceInput = ({
 			setInputValue?.('0');
 		}
 	};
-
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -76,7 +79,7 @@ const BalanceInput = ({
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return (
 		<div className={`${className} balance-input flex w-full flex-col`}>
@@ -97,6 +100,7 @@ const BalanceInput = ({
 						<span>
 							<Balance
 								address={address}
+								isBalanceUpdated={isBalanceUpdated}
 								onChange={onAccountBalanceChange}
 							/>
 						</span>
@@ -130,7 +134,16 @@ const BalanceInput = ({
 			>
 				<Input
 					onBlur={() => onBlur?.()}
-					addonAfter={chainProperties[network]?.tokenSymbol}
+					addonAfter={
+						<div className='flex items-center justify-center gap-1'>
+							<Image
+								className='h-4 w-4 rounded-full object-contain'
+								src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
+								alt='Logo'
+							/>
+							{chainProperties[network]?.tokenSymbol}
+						</div>
+					}
 					name={formItemName || 'balance'}
 					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 					onChange={(e) => onBalanceChange(e.target.value)}
@@ -144,10 +157,11 @@ const BalanceInput = ({
 };
 export default styled(BalanceInput)`
 	.suffixColor .ant-input-group .ant-input-group-addon {
-		background: var(--pink_primary);
-		color: white;
+		background: #edeff3;
+		color: var(--lightBlue) !important;
 		font-size: 12px !important;
-		border: 1px solid var(--pink_primary);
+		font-weight: 500 !important;
+		border: 0px 1px 1px 0px solid #d2d8e0;
 		border-radius: 0px 4px 4px 0px !important ;
 	}
 	.suffixColor .ant-input {

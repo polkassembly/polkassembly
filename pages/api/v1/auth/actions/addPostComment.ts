@@ -15,7 +15,6 @@ import { PostComment } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import { deleteKeys } from '~src/auth/redis';
-import IPFSScript from '~src/api-utils/ipfs';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -100,8 +99,6 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 				headers: firebaseFunctionsHeader(network),
 				method: 'POST'
 			});
-			const ipfsScript = new IPFSScript();
-			ipfsScript.run(newComment, newCommentRef.path);
 
 			return res.status(200).json({
 				id: newComment.id

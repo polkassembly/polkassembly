@@ -27,6 +27,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
+import { trackEvent } from 'analytics';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -224,6 +225,18 @@ const Details: FC<IDetailsProps> = (props) => {
 	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
+
+	useEffect(() => {
+		//GAEvent for profile viewed
+		trackEvent('user_profile_viewed', 'profile_viewed', {
+			isVisitedProfileVerified: isGood && onChainIdentity.judgements.length > 0 ? true : false,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || '',
+			visitedUserProfile: newUsername
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [addresses]);
 
 	const items = [
 		{

@@ -62,13 +62,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const userQuerySnapshot = await firestore.collection('users').where('username', '==', String(username).toLowerCase()).limit(1).get();
 	if (!userQuerySnapshot.empty && user?.username !== username) {
 		throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
-		return res.status(400).json({ message: messages.USERNAME_ALREADY_EXISTS });
 	}
 
 	const userEmailQuerySnapshot = await firestore.collection('users').where('email', '==', String(email).toLowerCase()).limit(1).get();
 	if (!userEmailQuerySnapshot.empty) {
 		throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
-		return res.status(400).json({ message: messages.USER_EMAIL_ALREADY_EXISTS });
 	}
 
 	//update profile field in userRef

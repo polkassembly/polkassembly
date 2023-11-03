@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
+import { trackEvent } from 'analytics';
 import { Button, Tooltip } from 'antd';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC } from 'react';
@@ -23,6 +24,7 @@ export interface IReactionButtonProps {
 	setLikeModalOpen?: (pre: boolean) => void;
 	setDislikeModalOpen?: (pre: boolean) => void;
 	importedReactions?: boolean;
+	isReactionButtonInPost?: boolean;
 }
 
 type IReaction = '👍' | '👎';
@@ -37,7 +39,8 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	reactionsDisabled,
 	setLikeModalOpen,
 	setDislikeModalOpen,
-	importedReactions = false
+	importedReactions = false,
+	isReactionButtonInPost
 }) => {
 	const {
 		postData: { postIndex, postType, track_number }
@@ -46,13 +49,23 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const reacted = username && usernames?.includes(username);
+	const currentUser = useUserDetailsSelector();
 
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if (reaction == '👍') {
 			return reacted ? (
 				<LikeFilled />
 			) : (
-				<div onClick={() => !id && setLikeModalOpen && setLikeModalOpen(true)}>
+				<div
+					onClick={() => {
+						!id && setLikeModalOpen && setLikeModalOpen(true);
+						trackEvent('like_icon_clicked', 'liked_icon_clicked', {
+							contentType: isReactionButtonInPost ? 'postLiked' : 'commentLiked',
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
+					}}
+				>
 					<LikeOutlined />
 				</div>
 			);
@@ -62,7 +75,16 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			return reacted ? (
 				<LikeFilled rotate={180} />
 			) : (
-				<div onClick={() => !id && setDislikeModalOpen && setDislikeModalOpen(true)}>
+				<div
+					onClick={() => {
+						!id && setDislikeModalOpen && setDislikeModalOpen(true);
+						trackEvent('dislike_icon_clicked', 'disliked_icon_clicked', {
+							contentType: isReactionButtonInPost ? 'postDisLiked' : 'commenDistLiked',
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
+					}}
+				>
 					<LikeOutlined rotate={180} />
 				</div>
 			);

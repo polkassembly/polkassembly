@@ -22,6 +22,7 @@ import TopicsRadio from './TopicsRadio';
 import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { trackEvent } from 'analytics';
 
 interface Props {
 	className?: string;
@@ -86,12 +87,19 @@ const CreatePost = ({ className, proposalType }: Props) => {
 
 	const handleSend = async () => {
 		if (!currentUser.id || !topicId) return;
-
 		try {
 			await form.validateFields();
 			// Validation is successful
 			const content = form.getFieldValue('content');
 			const title = form.getFieldValue('title');
+
+			// GAEvent for create post
+			trackEvent('create_post_clicked', 'discussion_post_creation', {
+				content: content,
+				title: title,
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
 
 			if (!title || !content) return;
 

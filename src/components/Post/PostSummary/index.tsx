@@ -14,12 +14,7 @@ interface IPostSummaryProps {
 }
 
 const sanitizeSummary = (md: string) => {
-	let newMd = (md || '').trim();
-	if (newMd.startsWith('-')) {
-		newMd = newMd.substring(1);
-	} else if (newMd.startsWith(':')) {
-		newMd = newMd.substring(1);
-	}
+	const newMd = (md || '').trim();
 	return newMd;
 };
 
@@ -48,7 +43,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				</p>
 			</button>
 			<Modal
-				className={classNames(className, 'ml-0 ml-4 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px]')}
+				className={classNames(className, 'ml-0 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px]')}
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}

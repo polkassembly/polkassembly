@@ -85,6 +85,7 @@ const Web3Signup: FC<Props> = ({
 	const [showSuccessModal, setShowSuccessModal] = useState(true);
 	const [isError, setIsError] = useState(false);
 	const [email, setEmail] = useState('');
+	const [emailError, setEmailError] = useState(false);
 	const userDetailsContext = useUserDetailsSelector();
 
 	const currentUser = useUserDetailsSelector();
@@ -306,53 +307,43 @@ const Web3Signup: FC<Props> = ({
 		if (optionalUsername && optionalUsername.trim() !== '') {
 			// Username is not empty, set user to true
 			if (!validateUsername(optionalUsername)) return;
-			setShowSuccessModal(false);
-			setIsError(false);
-		} else {
-			setIsError(true);
+			setLoading(true);
+			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
+				badges: JSON.stringify([]),
+				bio: '',
+				custom_username: true,
+				email: '',
+				image: currentUser.picture || '',
+				social_links: JSON.stringify([]),
+				title: '',
+				user_id: Number(currentUser.id),
+				username: optionalUsername
+			});
+
+			if (error || !data) {
+				console.error('Error updating profile: ', error);
+				setLoading(false);
+				setLoginOpen?.(true);
+				setShowSuccessModal(true);
+				setIsError(true);
+			}
+
+			if (data?.token) {
+				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
+				setLoading(false);
+				setShowSuccessModal(false);
+				setIsError(false);
+			}
 		}
 	};
 
 	const handleOptionalSkip = async () => {
-		const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
-			badges: JSON.stringify([]),
-			bio: '',
-			custom_username: true,
-			email: currentUser.email || '',
-			image: currentUser.picture || '',
-			social_links: JSON.stringify([]),
-			title: '',
-			user_id: Number(currentUser.id),
-			username: optionalUsername
-		});
-
-		if (error || !data) {
-			console.error('Error updating profile: ', error);
-			queueNotification({
-				header: 'Error!',
-				message: error || 'Your Username was not updated.',
-				status: NotificationStatus.ERROR
-			});
-			setSignupOpen && setSignupOpen(true);
-			setShowSuccessModal(true);
-			setIsError(true);
-		}
-
-		if (data?.token) {
-			queueNotification({
-				header: 'Success!',
-				message: 'Your Username is updated.',
-				status: NotificationStatus.SUCCESS
-			});
-			handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
-			setSignupOpen && setSignupOpen(false);
-			setShowSuccessModal(false);
-			setIsError(false);
-		}
+		setLoginOpen?.(false);
 	};
 
 	const handleOptionalDetails = async () => {
 		if (email && email.trim() !== '') {
+			setLoading(true);
 			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
 				badges: JSON.stringify([]),
 				bio: '',
@@ -367,25 +358,17 @@ const Web3Signup: FC<Props> = ({
 
 			if (error || !data) {
 				console.error('Error updating profile: ', error);
-				queueNotification({
-					header: 'Error!',
-					message: error || 'Your profile was not updated.',
-					status: NotificationStatus.ERROR
-				});
-				setShowSuccessModal(true);
-				setIsError(true);
+				setLoading(false);
+				setEmailError(true);
+				setShowSuccessModal(false);
 			}
 
 			if (data?.token) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Your profile was updated.',
-					status: NotificationStatus.SUCCESS
-				});
 				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
-				setSignupOpen && setSignupOpen(false);
+				setLoading(false);
+				setEmailError(false);
+				setLoginOpen?.(false);
 				setShowSuccessModal(false);
-				setIsError(false);
 			}
 		}
 	};
@@ -627,11 +610,18 @@ const Web3Signup: FC<Props> = ({
 											/>
 										</Form.Item>
 									</div>
-									{!isError && (
+									{!isError ? (
 										<Alert
 											className='mb-5 mt-1 p-3 text-sm '
 											message='You can update your username from the settings page.'
 											type='info'
+											showIcon
+										/>
+									) : (
+										<Alert
+											className='mb-5 mt-1 p-3 text-sm '
+											message='Username already exists. Please try again'
+											type='error'
 											showIcon
 										/>
 									)}
@@ -690,12 +680,21 @@ const Web3Signup: FC<Props> = ({
 											/>
 										</Form.Item>
 									</div>
-									<Alert
-										className='mb-5 mt-1 p-3 text-sm '
-										message='You can set your email later from the settings page.'
-										type='info'
-										showIcon
-									/>
+									{!emailError ? (
+										<Alert
+											className='mb-5 mt-1 p-3 text-sm '
+											message='You can set your email later from the settings page.'
+											type='info'
+											showIcon
+										/>
+									) : (
+										<Alert
+											className='mb-5 mt-1 p-3 text-sm '
+											message='Email already exists either use different email or link your address with the existing account'
+											type='error'
+											showIcon
+										/>
+									)}
 								</div>
 								<Divider
 									className='-mt-6 mb-5'

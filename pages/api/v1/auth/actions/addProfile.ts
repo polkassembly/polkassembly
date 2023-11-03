@@ -57,13 +57,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
 	}
 
-	const userEmailQuerySnapshot = await firestore.collection('users').where('email', '==', String(email).toLowerCase()).limit(1).get();
-	if (!userEmailQuerySnapshot.empty) {
-		throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
-	}
-
 	const network = String(req.headers['x-network']);
-	if (email) {
+	if (email.length > 0) {
+		const userEmailQuerySnapshot = await firestore.collection('users').where('email', '==', String(email).toLowerCase()).limit(1).get();
+		if (!userEmailQuerySnapshot.empty) {
+			throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
+		}
 		if (email == '' || !isValidEmail(email)) return res.status(400).json({ message: messages.INVALID_EMAIL });
 		await authServiceInstance.SendVerifyEmail(token, email, network);
 	}

@@ -372,7 +372,7 @@ const Web3Signup: FC<Props> = ({
 					message: error || 'Your profile was not updated.',
 					status: NotificationStatus.ERROR
 				});
-				setShowSuccessModal(false);
+				setShowSuccessModal(true);
 				setIsError(true);
 			}
 

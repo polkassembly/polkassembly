@@ -474,7 +474,7 @@ const Web3Login: FC<Props> = ({
 					status: NotificationStatus.ERROR
 				});
 				setLoading(false);
-				setShowSuccessModal(false);
+				setShowSuccessModal(true);
 				setIsError(true);
 			}
 

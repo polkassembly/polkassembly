@@ -193,7 +193,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 			})();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, votesData]);
+	}, [api, apiReady, votesData, network]);
 
 	return loading ? (
 		<Skeleton.Button active={loading} />

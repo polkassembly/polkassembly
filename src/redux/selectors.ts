@@ -4,10 +4,10 @@
 
 import { useSelector } from 'react-redux';
 import { TAppState } from './store';
-// import { IModalStore } from './modal/@types';
 import { INetworkStore } from './network/@types';
 import { IUserDetailsStore } from './userDetails/@types';
 import { IUnlockTokenskDataStore } from './tokenUnlocksData/@types';
+import { ICurrentTokenPriceStore } from './currentTokenPrice/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -20,5 +20,8 @@ const useUserDetailsSelector = () => {
 const useUserUnlockTokensDataSelector = () => {
 	return useSelector<TAppState, IUnlockTokenskDataStore>((state) => state.userUnlockTokensData);
 };
+const useCurrentTokenDataSelector = () => {
+	return useSelector<TAppState, ICurrentTokenPriceStore>((state) => state.currentTokenPrice);
+};
 
-export { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector };
+export { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector, useCurrentTokenDataSelector };

@@ -1,29 +1,39 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useState } from 'react';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import CopyIcon from '~assets/icons/content_copy_small.svg';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { poppins } from 'pages/_app';
 import Address from './Address';
 import dayjs from 'dayjs';
 import SocialLink from './SocialLinks';
 import { socialLinks } from '~src/components/UserProfile/Details';
-import { message } from 'antd';
+import { Button, Tooltip, message } from 'antd';
 import styled from 'styled-components';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { ISocial } from '~src/auth/types';
+import ImageComponent from 'src/components/ImageComponent';
+import Link from 'next/link';
+import { network as AllNetworks } from '~src/global/networkConstants';
+
+import PolkaverseIcon from '~assets/icons/polkaverse.svg';
 import VerifiedIcon from '~assets/icons/verified-tick.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { ISocial } from '~src/auth/types';
-import ImageComponent from 'src/components/ImageComponent';
-import PolkaverseIcon from '~assets/icons/polkaverse.svg';
+import CopyIcon from '~assets/icons/content_copy_small.svg';
 import WebIcon from '~assets/icons/web-icon.svg';
-import Link from 'next/link';
 
+export const TippingUnavailableNetworks = [
+	AllNetworks.MOONBASE,
+	AllNetworks.MOONRIVER,
+	AllNetworks.POLYMESH,
+	AllNetworks.COLLECTIVES,
+	AllNetworks.WESTENDCOLLECTIVES,
+	AllNetworks.MOONBEAM
+];
 interface Props {
 	className?: string;
 	address: string;
@@ -33,13 +43,29 @@ interface Props {
 	imgUrl?: string;
 	profileCreatedAt?: Date;
 	socials?: ISocial[];
+	setOpen: (pre: boolean) => void;
+	setOpenTipping: (pre: boolean) => void;
+	setOpenAddressChangeModal: (pre: boolean) => void;
 }
-const QuickView = ({ className, address, identity, username, polkassemblyUsername, imgUrl, profileCreatedAt, socials }: Props) => {
+const QuickView = ({
+	className,
+	address,
+	identity,
+	username,
+	polkassemblyUsername,
+	imgUrl,
+	profileCreatedAt,
+	setOpen,
+	setOpenTipping,
+	socials,
+	setOpenAddressChangeModal
+}: Props) => {
+	const { id, loginAddress } = useUserDetailsSelector();
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 	const [messageApi, contextHolder] = message.useMessage();
-
+	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const identityArr = [
 		{ isVerified: !!identity?.email, key: 'Email', value: identity?.email || socials?.find((social) => social.type === 'Email')?.link || '' },
@@ -58,6 +84,16 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 		});
 	};
 
+	const handleTipping = () => {
+		if (!id) return;
+		if (!loginAddress || !address) {
+			setOpenAddressChangeModal(true);
+		} else {
+			setOpenTipping(true);
+		}
+		setOpen(false);
+	};
+
 	return (
 		<div
 			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2`}
@@ -71,6 +107,7 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 					src={imgUrl}
 					alt='User Picture'
 					className='-mt-[50px] flex h-[98px] w-[98px] rounded-full border-[2px] border-solid border-white bg-white'
+					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
 				/>
 				<div className='mt-0 flex items-center justify-start gap-2'>
 					<span className='text-xl font-semibold tracking-wide text-bodyBlue'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
@@ -181,6 +218,24 @@ const QuickView = ({ className, address, identity, username, polkassemblyUsernam
 						?.split(',')?.[0] || 'None'}
 				</span>
 			</article>
+			{!TippingUnavailableNetworks.includes(network) && (
+				<Tooltip
+					open={!id ? openTooltip : false}
+					onOpenChange={(e) => setOpenTooltip(e)}
+					title='Login to tip user'
+				>
+					<div className='flex w-full items-center'>
+						<Button
+							onClick={handleTipping}
+							className={`flex h-[32px] w-full items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
+								!id && 'cursor-not-allowed opacity-50'
+							}`}
+						>
+							Tip
+						</Button>
+					</div>
+				</Tooltip>
+			)}
 		</div>
 	);
 };

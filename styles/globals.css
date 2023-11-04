@@ -662,8 +662,15 @@ z-index: 1050 !important;
   color: #909090 !important;
 }
 
-.dark .dark-text-white > p {
+.dark .dark-text-white > p, 
+.dark .dark-text-white > p:not(a),
+.dark .dark-text-white > p *:not(a) {
   color: white !important;
+}
+
+.dark .dark-text-white > p a *,
+.dark .dark-text-white > p a *:not(a) {
+  color: #FF60B5 !important;
 }
 
 .dark .ant-tag-close-icon{

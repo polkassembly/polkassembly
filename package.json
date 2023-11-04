@@ -136,7 +136,7 @@
       "yarn eslint --fix",
       "yarn prettier --write"
     ],
-    "**/*.(md|css|scss|html)": [
+    "**/*.(md|scss|html)": [
       "yarn prettier --write"
     ]
   },

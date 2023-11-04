@@ -91,7 +91,11 @@ const VoteInitiatedModal = ({
 			open={open}
 			className={`${poppins.variable} ${poppins.className} delegate w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			closeIcon={
+				<span onClick={() => setPosted(true)}>
+					<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+				</span>
+			}
 			onCancel={() => setOpen(false)}
 			centered
 			footer={false}

@@ -323,7 +323,7 @@ const Web3Signup: FC<Props> = ({
 			if (error || !data) {
 				console.error('Error updating profile: ', error);
 				setLoading(false);
-				setLoginOpen?.(true);
+				setSignupOpen && setSignupOpen(true);
 				setShowSuccessModal(true);
 				setIsError(true);
 			}
@@ -338,7 +338,7 @@ const Web3Signup: FC<Props> = ({
 	};
 
 	const handleOptionalSkip = async () => {
-		setLoginOpen?.(false);
+		setSignupOpen && setSignupOpen(false);
 	};
 
 	const handleOptionalDetails = async () => {
@@ -367,7 +367,7 @@ const Web3Signup: FC<Props> = ({
 				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
 				setLoading(false);
 				setEmailError(false);
-				setLoginOpen?.(false);
+				setSignupOpen && setSignupOpen(false);
 				setShowSuccessModal(false);
 			}
 		}

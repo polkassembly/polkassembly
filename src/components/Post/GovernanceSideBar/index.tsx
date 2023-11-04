@@ -741,7 +741,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						<Button
 							loading={loading}
 							onClick={handleRemoveVote}
-							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none'
+							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 						>
 							Remove Vote
 						</Button>
@@ -828,7 +828,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					<Button
 						loading={loading}
 						onClick={handleRemoveVote}
-						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
+						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 					>
 						Remove Vote
 					</Button>

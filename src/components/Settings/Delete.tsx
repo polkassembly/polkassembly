@@ -158,7 +158,8 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									}}
 									size='large'
 									placeholder='Select a reason'
-									className='select-reason rounded-md border-grey_border'
+									className='select-reason rounded-md border-grey_border dark:text-white'
+									popupClassName='z-[1060] dark:border-0 dark:border-none dark:bg-section-dark-background'
 								>
 									<Option value='I use another platform for my governance needs'>I use another platform for my governance needs</Option>
 									<Option value='I do not hold any DOT and would not be using Polkassembly anymore'>I do not hold any DOT and would not be using Polkassembly.</Option>
@@ -197,7 +198,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							>
 								<Input.Password
 									placeholder='Password'
-									className='rounded-md border-grey_border px-4 py-3 dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									className='rounded-md border-grey_border px-4 py-3 dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] [&>input]:bg-transparent dark:[&>input]:text-blue-dark-high'
 									id='password'
 								/>
 							</Form.Item>
@@ -228,5 +229,8 @@ export default styled(Delete)`
 	.ant-select-item-option-content {
 		white-space: unset !important;
 		background-color: red !important;
+	}
+	input::placeholder {
+		color: #909090;
 	}
 `;

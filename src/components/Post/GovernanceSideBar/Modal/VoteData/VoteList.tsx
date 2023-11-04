@@ -37,7 +37,12 @@ const StyledSegmented = styled(Segmented)`
 		border-radius: 20px !important;
 	}
 	.ant-segmented-item {
+		border-radius: 20px !important;
 		color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
+	}
+	.ant-segmented-item-selected > .ant-segmented-item-label {
+		border-radius: 20px !important;
+		background-color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
 	}
 `;
 
@@ -109,7 +114,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const decisionOptions = [
 		{
 			label: (
-				<div className='flex items-center justify-center gap-1'>
+				<div className='flex items-center justify-center gap-1 rounded-[20px] text-green-700'>
 					<LikeFilled /> <span>Ayes</span>
 				</div>
 			),
@@ -117,7 +122,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		},
 		{
 			label: (
-				<div className='flex items-center justify-center gap-1'>
+				<div className='flex items-center justify-center gap-1  rounded-[20px] text-red-600'>
 					<DislikeFilled /> <span>Nays</span>
 				</div>
 			),
@@ -128,7 +133,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	if (voteType === VoteType.REFERENDUM_V2) {
 		decisionOptions.push({
 			label: (
-				<div className='flex items-center justify-center gap-1'>
+				<div className='flex items-center justify-center gap-1 rounded-[20px] text-blue-400'>
 					<MinusCircleFilled /> <span>Abstain</span>
 				</div>
 			),

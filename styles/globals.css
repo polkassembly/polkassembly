@@ -610,3 +610,48 @@ z-index: 1050 !important;
 .dark .ant-segmented-item-selected > .ant-segmented-item-label{
   background-color: #0D0D0D;
 }
+
+.dark .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  background-color: #0D0D0D;
+}
+
+.dark .ant-select-item-option-content{
+  color: #909090;
+}
+
+.dark .dark-text-white > *{
+  color: white !important;
+}
+
+.dark .ant-modal-content {
+  background-color: #0D0D0D !important;
+}
+
+.dark .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: transparent;
+}
+
+.dark .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled):hover{
+  color: var(--pink_secondary);
+}
+
+.dark .ant-form-item-required{
+  color: #909090 !important;
+}
+
+.dark .ant-modal-close-x{
+  color: #909090 !important;
+}
+
+.dark textarea {
+  background-color: transparent;
+  color: white;
+}
+
+.dark .ant-select-selection-placeholder {
+  color: #909090 !important;
+}
+
+.dark input::placeholder{
+  color: #909090 !important;
+}

@@ -290,7 +290,7 @@ const WriteProposal = ({
 								{isDiscussionLinked ? (
 									<Markdown
 										imgHidden
-										className='post-content rounded-[4px] border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 '
+										className='post-content rounded-[4px] border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 dark:bg-section-dark-overlay dark:text-blue-dark-high'
 										md={`${content?.slice(0, 300)}...` || content}
 									/>
 								) : (

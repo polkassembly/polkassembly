@@ -634,7 +634,6 @@ export default styled(IdentityForm)`
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: #798aa2 !important;
 	}
 	input {
 		height: 40px !important;

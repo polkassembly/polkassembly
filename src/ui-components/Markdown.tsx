@@ -23,7 +23,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 
 	return (
 		<ReactMarkdown
-			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'}`}
+			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white`}
 			rehypePlugins={[rehypeRaw, remarkGfm]}
 			linkTarget='_blank'
 		>

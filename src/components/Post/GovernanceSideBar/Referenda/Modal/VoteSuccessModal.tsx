@@ -4,7 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'antd';
-import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
@@ -26,6 +25,7 @@ import RightQuote from '~assets/icons/chatbox-icons/icon-right-quote.svg';
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -91,11 +91,12 @@ const VoteInitiatedModal = ({
 			open={open}
 			className={`${poppins.variable} ${poppins.className} delegate w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={<CloseIcon onClick={() => setPosted(true)} />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => setOpen(false)}
 			centered
 			footer={false}
 			maskClosable={false}
+			closable
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
 				{icon}

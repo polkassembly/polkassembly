@@ -119,7 +119,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 				key: index + 2,
 				label: (
 					<div
-						className={`text-xs text-[#90A0B7]  ${poppins.className} ${poppins.className} tracking-wide`}
+						className={`text-xs text-[#90A0B7]  ${poppins.className} ${poppins.className} tracking-wide dark:text-blue-dark-high`}
 						onClick={() => {
 							selectedTag.current = tag?.name;
 							handleInputConfirm();
@@ -136,7 +136,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 		<div className={className}>
 			<div
 				className={`flex min-h-[40px] items-center justify-between rounded border border-solid border-gray-300 p-[10px] text-[#90A0B7] dark:border-separatorDark max-lg:h-auto ${
-					disabled && 'cursor-not-allowed bg-[#F5F5F5]'
+					disabled && 'cursor-not-allowed bg-[#F5F5F5] dark:bg-section-dark-overlay'
 				}`}
 			>
 				<Dropdown
@@ -187,7 +187,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 								<Tag
 									key={index}
 									className={`text-normal mt-1 rounded-xl border-[#90A0B7] bg-white px-[16px] py-[4px] text-xs tracking-wide text-[#90A0B7] dark:bg-section-dark-overlay ${
-										disabled ? 'bg-[#F5F5F5] dark:bg-disableStateDark' : 'hover:border-pink_primary'
+										disabled ? 'bg-[#F5F5F5] dark:bg-disableStateDark dark:text-blue-dark-high' : 'hover:border-pink_primary'
 									}`}
 									closable={!disabled}
 									onClose={(e) => {

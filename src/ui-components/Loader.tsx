@@ -31,7 +31,7 @@ const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', siz
 	return (
 		<>
 			<div className={`${className} flex items-center justify-center`}>
-				{!displayLoader ? (
+				{displayLoader ? (
 					<Spin
 						tip={text}
 						size={size}

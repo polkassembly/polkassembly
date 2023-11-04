@@ -182,29 +182,31 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 	});
 
 	return (
-		<Container
-			className={`${className} rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}
-			theme={theme}
-		>
-			<div className='flex items-center justify-between pl-1 pr-4'>
-				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>
-				{currentTab !== 'all' && (
-					<Link
-						className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
-						href={`/${currentTab}`}
-					>
-						View all
-					</Link>
-				)}
-			</div>
-			<Tabs
-				className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high  md:px-2'
-				type='card'
-				items={tabItems}
-				onChange={(key) => setCurrentTab(key)}
-			/>
-		</Container>
+		<>
+			<Container
+				className={`${className} rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}
+				theme={theme}
+			>
+				<div className='flex items-center justify-between pl-1 pr-4'>
+					<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>
+					{currentTab !== 'all' && (
+						<Link
+							className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+							href={`/${currentTab}`}
+						>
+							View all
+						</Link>
+					)}
+				</div>
+				<Tabs
+					className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high  md:px-2'
+					type='card'
+					items={tabItems}
+					onChange={(key) => setCurrentTab(key)}
+				/>
+			</Container>
+		</>
 	);
 };
 
-export default styled(LatestActivity);
+export default LatestActivity;

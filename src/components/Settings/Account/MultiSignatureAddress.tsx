@@ -20,6 +20,7 @@ import HelperTooltip from 'src/ui-components/HelperTooltip';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
+import styled from 'styled-components';
 
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -390,8 +391,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 					>
 						<Input
 							placeholder='Enter a valid multisig address'
-							className='rounded-md border-grey_border px-4 py-3'
-							id='multisigAddress dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='rounded-md border-grey_border px-4 py-3 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							id='multisigAddress'
 						/>
 					</Form.Item>
 				</section>
@@ -441,4 +442,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 	);
 };
 
-export default MultiSignatureAddress;
+export default styled(MultiSignatureAddress)`
+	input::placeholder {
+		color: #909090 !important;
+	}
+`;

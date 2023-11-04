@@ -22,6 +22,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -83,6 +84,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -141,6 +143,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				image='/assets/referenda-discussion.png'
 				title='Join Polkassembly to Start a New Discussion.'
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				theme={theme}
 			/>
 		</>
 	);

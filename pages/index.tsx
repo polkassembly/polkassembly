@@ -266,7 +266,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				)}
 				<div className='mx-1 mt-8'>
 					{network !== AllNetworks.COLLECTIVES ? (
-						//@ts-ignore
 						<LatestActivity latestPosts={latestPosts} />
 					) : (
 						<Gov2LatestActivity

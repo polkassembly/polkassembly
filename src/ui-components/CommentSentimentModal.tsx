@@ -73,7 +73,7 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 			zIndex={1002}
 		>
 			<div className='center-aligned flex flex-col items-center justify-center pl-5 pr-5 text-base font-medium text-[#334D6E]'>
-				<h5 className='mt-3 text-center'>
+				<h5 className='mt-3 text-center dark:text-blue-dark-high'>
 					Thank you for commenting on the post.
 					<br />
 					Move the slider to add your sentiment towards the discussion.

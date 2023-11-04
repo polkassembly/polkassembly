@@ -337,7 +337,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 									<textarea
 										name='content'
 										className={
-											'suffixColor input-container mt-2 max-h-10 w-full flex-1 resize-none rounded-[4px] border-[1px] text-sm hover:border-pink_primary focus:border-pink_primary'
+											'suffixColor input-container mt-2 max-h-10 w-full flex-1 resize-none rounded-[4px] border-[1px] text-sm hover:border-pink_primary focus:border-pink_primary dark:text-blue-dark-high'
 										}
 										onChange={(e) => {
 											onContentChange(e.target.value);

@@ -184,7 +184,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				)}
 			</button>
 			<Modal
-				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				className='dark:[&>.ant-modal-content>.ant-modal-header>.ant-modal-title]:bg-section-dark-overlay dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'
 				title={isDeleteModal ? <span className='dark:text-white'>Delete</span> : <span className='dark:text-white'>Report</span>}
 				open={showModal}
@@ -198,7 +198,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						key='back'
 						disabled={loading}
 						onClick={() => setShowModal(false)}
-						className='dark:bg-transparent'
+						className='dark:border-pink_primary dark:bg-transparent dark:text-pink_primary'
 					>
 						Cancel
 					</Button>,
@@ -238,9 +238,10 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						name='reason'
 						label='Reason'
 						rules={[{ required: true }]}
+						className='dark:'
 					>
 						<Select
-							popupClassName='z-[9999]'
+							popupClassName='z-[9999] dark:bg-section-dark-overlay'
 							defaultValue={"It's suspicious or spam"}
 							options={reasons.map((reason) => {
 								return {

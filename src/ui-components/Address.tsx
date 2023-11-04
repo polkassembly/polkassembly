@@ -340,7 +340,9 @@ const Address = (props: Props) => {
 											<Space className={'header'}>
 												<div
 													onClick={(e) => handleClick(e)}
-													className={`flex flex-col font-semibold text-bodyBlue  ${!disableAddressClick && 'cursor-pointer hover:underline'} hover:text-bodyBlue`}
+													className={`flex flex-col font-semibold text-bodyBlue  ${
+														!disableAddressClick && 'cursor-pointer hover:underline'
+													} hover:text-bodyBlue dark:text-blue-dark-high`}
 												>
 													{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 													{!extensionName && sub && isSubVisible && (

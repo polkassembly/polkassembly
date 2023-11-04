@@ -604,11 +604,17 @@ z-index: 1050 !important;
 }
 
 .dark .ant-segmented-item-label{
-  color: #FFF;
+  color: #fff;
+}
+
+.dark .ant-segmented-group label {
+  border-radius: 8px;
+  background-color: #1C1D1F;
 }
 
 .dark .ant-segmented-item-selected > .ant-segmented-item-label{
   background-color: #0D0D0D;
+  border-radius: 8px;
 }
 
 .dark .ant-select:not(.ant-select-customize-input) .ant-select-selector{
@@ -662,4 +668,8 @@ z-index: 1050 !important;
 
 .dark .ant-tag-close-icon{
   color: #909090 !important;
+}
+
+.dark .ant-select-arrow{
+  color: #fff !important;
 }

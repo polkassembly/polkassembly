@@ -14,7 +14,11 @@ import UserAvatar from './UserAvatar';
 // import { diffChars } from 'diff';
 import Markdown from './Markdown';
 import { useTheme } from 'next-themes';
-
+import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
+import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
+import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
+import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
+import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -47,15 +51,15 @@ export const getSentimentTitle = (sentiment: ESentiment) => {
 export const getSentimentIcon = (sentiment: ESentiment, theme: string) => {
 	switch (sentiment) {
 		case ESentiment.Against:
-			return theme === 'dark' ? <AgainstIcon className='min-[320px]:items-start' /> : <AgainstIcon className='min-[320px]:items-start' />;
+			return theme === 'dark' ? <DarkSentiment1 className='min-[320px]:items-start' /> : <AgainstIcon className='min-[320px]:items-start' />;
 		case ESentiment.SlightlyAgainst:
-			return theme === 'dark' ? <SlightlyAgainstIcon className='min-[320px]:items-start' /> : <SlightlyAgainstIcon className='min-[320px]:items-start' />;
+			return theme === 'dark' ? <DarkSentiment2 className='min-[320px]:items-start' /> : <SlightlyAgainstIcon className='min-[320px]:items-start' />;
 		case ESentiment.Neutral:
-			return theme === 'dark' ? <NeutralIcon className='min-[320px]:items-start' /> : <NeutralIcon className='min-[320px]:items-start' />;
+			return theme === 'dark' ? <DarkSentiment3 className='min-[320px]:items-start' /> : <NeutralIcon className='min-[320px]:items-start' />;
 		case ESentiment.SlightlyFor:
-			return theme === 'dark' ? <SlightlyForIcon className='min-[320px]:items-start' /> : <SlightlyForIcon className='min-[320px]:items-start' />;
+			return theme === 'dark' ? <DarkSentiment4 className='min-[320px]:items-start' /> : <SlightlyForIcon className='min-[320px]:items-start' />;
 		case ESentiment.For:
-			return theme === 'dark' ? <ForIcon className='min-[320px]:items-start' /> : <ForIcon className='min-[320px]:items-start' />;
+			return theme === 'dark' ? <DarkSentiment5 className='min-[320px]:items-start' /> : <ForIcon className='min-[320px]:items-start' />;
 		default:
 			return null;
 	}

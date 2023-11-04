@@ -303,7 +303,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const content = (
 		<div className='flex flex-col'>
 			<Checkbox.Group
-				className='flex h-[200px] flex-col overflow-y-scroll'
+				className='flex max-h-[200px] flex-col overflow-y-auto'
 				onChange={onChange}
 				value={checkedList}
 			>
@@ -533,12 +533,23 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								</div>
 								<div className='mb-2 mt-6 flex items-center justify-between'>
 									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
-									<Popover
-										defaultOpen={true}
-										content={content}
-										placement='topLeft'
-										zIndex={1056}
-									>
+									{trackArr.length ? (
+										<Popover
+											defaultOpen={true}
+											content={content}
+											placement='topLeft'
+											zIndex={1056}
+										>
+											<Checkbox
+												indeterminate={indeterminate}
+												onChange={onCheckAllChange}
+												checked={checkAll}
+												className='dark:text-blue-dark-medium'
+											>
+												Select available tracks
+											</Checkbox>
+										</Popover>
+									) : (
 										<Checkbox
 											indeterminate={indeterminate}
 											onChange={onCheckAllChange}
@@ -547,7 +558,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										>
 											Select available tracks
 										</Checkbox>
-									</Popover>
+									)}
 								</div>
 								{
 									<div className='mb-6 mt-0 flex flex-wrap gap-2 '>

@@ -215,7 +215,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					ownProposal && 'border-l-4 border-l-pink_primary'
 				} min-h-[120px] border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark xs:hidden sm:flex sm:p-3`}
 			>
-				<div className='flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
+				<div className='w-full flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
 							<span className={`flex-none text-center font-medium text-bodyBlue dark:text-white ${showSimilarPost ? 'mt-[2px] w-[76px]' : 'sm:w-[120px]'}`}>
@@ -227,7 +227,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								truncateUsername={truncateUsername}
 							/>
 						</div>
-						<div className={`${showSimilarPost ? '-mr-5' : ''} flex items-center justify-end`}>
+						<div className={' flex items-center justify-end'}>
 							{status && (
 								<StatusTag
 									className='sm:mr-10'

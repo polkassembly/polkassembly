@@ -72,6 +72,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import Web3 from 'web3';
+import { useTheme } from 'next-themes';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -142,6 +143,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -1185,6 +1187,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													referendumId={onchainId as number}
 													voteType={getVotingTypeFromProposalType(proposalType)}
 													proposalType={proposalType}
+													theme={theme}
 												/>
 											</Modal>
 										)}

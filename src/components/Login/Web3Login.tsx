@@ -706,7 +706,7 @@ const Web3Login: FC<Props> = ({
 														}
 													/>
 												)}
-												<div className='mt-2 flex items-center justify-center gap-x-2 px-4'>
+												<div className='my-2 flex items-center justify-center gap-x-2 px-4'>
 													<Button
 														className='text-md flex w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-5 py-5 font-normal leading-none text-[#E5007A] outline-none'
 														onClick={() => handleBackToLogin()}
@@ -722,20 +722,6 @@ const Web3Login: FC<Props> = ({
 													>
 														Login
 													</Button>
-												</div>
-												<div>
-													<Divider style={{ color: '#90A0B7' }}>
-														<div className='flex items-center gap-x-2 px-4'>
-															<span className='text-md text-grey_primary'>Or</span>
-															<Button
-																className='text-md border-none p-0 font-normal text-pink_primary outline-none'
-																disabled={loading}
-																onClick={handleToggle}
-															>
-																Choose different wallet
-															</Button>
-														</div>
-													</Divider>
 												</div>
 											</>
 										)

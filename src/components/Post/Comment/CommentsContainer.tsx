@@ -24,6 +24,16 @@ import SlightlyAgainstIcon from '~assets/overall-sentiment/pink-slightly-against
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
+import UnfilterDarkSentiment1 from '~assets/overall-sentiment/dark/dark(1).svg';
+import UnfilterDarkSentiment2 from '~assets/overall-sentiment/dark/dark(2).svg';
+import UnfilterDarkSentiment3 from '~assets/overall-sentiment/dark/dark(3).svg';
+import UnfilterDarkSentiment4 from '~assets/overall-sentiment/dark/dark(4).svg';
+import UnfilterDarkSentiment5 from '~assets/overall-sentiment/dark/dark(5).svg';
+import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
+import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
+import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
+import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
+import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import { ESentiments } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
@@ -210,36 +220,36 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const sentimentsData = [
 		{
-			iconActive: <AgainstIcon />,
-			iconInactive: <UnfilterAgainstIcon />,
+			iconActive: theme !== 'dark' ? <AgainstIcon /> : <DarkSentiment1 />,
+			iconInactive: theme !== 'dark' ? <UnfilterAgainstIcon /> : <UnfilterDarkSentiment1 />,
 			percentage: sentimentsPercentage?.against,
 			sentiment: ESentiments.Against,
 			title: 'Completely Against'
 		},
 		{
-			iconActive: <SlightlyAgainstIcon />,
-			iconInactive: <UnfilterSlightlyAgainstIcon />,
+			iconActive: theme !== 'dark' ? <SlightlyAgainstIcon /> : <DarkSentiment2 />,
+			iconInactive: theme !== 'dark' ? <UnfilterSlightlyAgainstIcon /> : <UnfilterDarkSentiment2 />,
 			percentage: sentimentsPercentage?.slightlyAgainst,
 			sentiment: ESentiments.SlightlyAgainst,
 			title: 'Slightly Against'
 		},
 		{
-			iconActive: <NeutralIcon className='text-[20px] font-medium' />,
-			iconInactive: <UnfilterNeutralIcon />,
+			iconActive: theme !== 'dark' ? <NeutralIcon className='text-[20px] font-medium' /> : <DarkSentiment3 />,
+			iconInactive: theme !== 'dark' ? <UnfilterNeutralIcon /> : <UnfilterDarkSentiment3 />,
 			percentage: sentimentsPercentage?.neutral,
 			sentiment: ESentiments.Neutral,
 			title: 'Neutral'
 		},
 		{
-			iconActive: <SlightlyForIcon />,
-			iconInactive: <UnfilterSlightlyForIcon />,
+			iconActive: theme !== 'dark' ? <SlightlyForIcon /> : <DarkSentiment4 />,
+			iconInactive: theme !== 'dark' ? <UnfilterSlightlyForIcon /> : <UnfilterDarkSentiment4 />,
 			percentage: sentimentsPercentage?.slightlyFor,
 			sentiment: ESentiments.SlightlyFor,
 			title: 'Slightly For'
 		},
 		{
-			iconActive: <ForIcon />,
-			iconInactive: <UnfilterForIcon />,
+			iconActive: theme !== 'dark' ? <ForIcon /> : <DarkSentiment5 />,
+			iconInactive: theme !== 'dark' ? <UnfilterForIcon /> : <UnfilterDarkSentiment5 />,
 			percentage: sentimentsPercentage?.for,
 			sentiment: ESentiments.For,
 			title: 'Completely For'

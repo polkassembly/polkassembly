@@ -228,10 +228,7 @@ const VoteInitiatedModal = ({
 				<div className='vector min-w-[250px]'>
 					<BackgroundImage className='background-image -ml-[15px] min-w-[250px] text-2xl' />
 				</div>
-				<span
-					className='quote quote--left -left-[23px] -top-[2px] h-[40px] w-[48px] justify-center pt-[10px] text-center'
-					style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}
-				>
+				<span className='quote quote--left -left-[23px] -top-[2px] h-[40px] w-[48px] justify-center rounded-br-xxl bg-white pt-[10px] text-center dark:bg-section-dark-overlay'>
 					<LeftQuote />
 				</span>
 				<p className='-mt-[155px] text-center'>
@@ -248,10 +245,7 @@ const VoteInitiatedModal = ({
 						voteReason={true}
 					/>
 				</div>
-				<span
-					className='quote quote--right -right-[24px] -top-[2px] h-[40px] w-[48px] pt-[10px] text-center'
-					style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}
-				>
+				<span className='quote quote--right -right-[24px] -top-[2px] h-[40px] w-[48px] rounded-bl-xxl bg-white pt-[10px] text-center dark:bg-section-dark-overlay'>
 					<RightQuote />
 				</span>
 			</div>

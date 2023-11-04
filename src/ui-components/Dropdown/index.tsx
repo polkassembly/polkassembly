@@ -10,7 +10,7 @@ export const Dropdown = (props: any) => {
 			{...props}
 			overlayClassName={`dark:bg-section-dark-overlay dark:border-separatorDark dark:rounded-lg dark:text-white ${
 				props.theme == 'dark'
-					? '[&>ul]:bg-section-dark-garyBackground [&>ul>li]:text-white [&>ul>.ant-dropdown-menu-item-selected]:bg-section-dark-garyBackground [&>ul>.ant-dropdown-menu-item-selected]:text-[#5A1138] hover:[&>ul>li]:bg-section-dark-garyBackground hover:[&>ul>li]:text-pink-dark-primary'
+					? '[&>ul]:bg-section-dark-garyBackground [&>ul>li]:text-white [&>ul>.ant-dropdown-menu-item-selected]:bg-section-dark-garyBackground [&>ul>.ant-dropdown-menu-item-selected]:text-pink_primary hover:[&>ul>li]:bg-section-dark-garyBackground hover:[&>ul>li]:text-pink_secondary'
 					: ''
 			} z-[2000] ${props.overflow ? '' : '[&>ul]:overflow-hidden'}`}
 		>

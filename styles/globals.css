@@ -579,6 +579,34 @@ z-index: 1050 !important;
   background-color: #1C1D1F;
 }
 
-.dark .ant-tabs-nav-list{
+.dark .ant-tabs-nav-list {
   background-color: #0D0D0D !important;
+}
+
+.dark .ant-tooltip-inner {
+  background-color: #282A2D !important;
+}
+
+.dark .ant-tooltip-arrow::before {
+  background-color: #282A2D;
+}
+
+.dark .ant-select-selection-item{
+  color: #909090 !important;
+}
+
+.dark .ant-select-dropdown{
+  color: #0D0D0D !important;
+}
+
+.dark .ant-spin-blur::after{
+  opacity: 0
+}
+
+.dark .ant-segmented-item-label{
+  color: #FFF;
+}
+
+.dark .ant-segmented-item-selected > .ant-segmented-item-label{
+  background-color: #0D0D0D;
 }

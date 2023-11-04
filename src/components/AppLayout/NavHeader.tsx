@@ -136,7 +136,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					className='custom-link'
 				>
 					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
-						{theme === 'dark' ? <PolkasafeWhiteIcon className='relative left-[2px] scale-[1.9]' /> : <PolkaSafe />}
+						{theme === 'dark' ? <PolkasafeWhiteIcon className='relative left-[3px] top-[-1px] scale-[2]' /> : <PolkaSafe />}
 						<span>Polkasafe</span>
 					</span>
 				</a>

@@ -8,6 +8,7 @@ import CountBadgePill from '~src/ui-components/CountBadgePill';
 import PostTab from './PostTab';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
+import { Empty } from 'antd';
 
 interface IPostsTabProps {
 	posts:
@@ -49,6 +50,7 @@ const PostsTab: FC<IPostsTabProps> = (props) => {
 					tabPosition='left'
 					type='card'
 					items={tabItems as any}
+					EmptyState={<Empty />}
 				/>
 			)}
 		</div>

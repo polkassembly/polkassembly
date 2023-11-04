@@ -411,7 +411,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					<Styled>
 						<HelperTooltip
 							text={
-								<span>
+								<span className='dark:text-blue-dark-high'>
 									This comment is imported from <span className='dark-pink'>Subsqaure</span>
 								</span>
 							}

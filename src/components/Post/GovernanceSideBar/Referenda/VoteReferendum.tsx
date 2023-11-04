@@ -45,7 +45,6 @@ import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
-
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -555,7 +554,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
 						showMultisig ? (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] '>
+							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<ArrowLeft
 									onClick={() => {
 										setShowMultisig(false);
@@ -564,7 +563,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									className='absolute left-[24px] mt-1 cursor-pointer'
 								/>
 								<div className='flex items-center gap-[8px]'>
-									<PolkasafeIcon className='ml-14' />
+									{theme === 'dark' ? (
+										<WalletIcon
+											which={Wallet.POLKASAFE}
+											className='ml-14 h-6 w-6'
+										/>
+									) : (
+										<PolkasafeIcon className='ml-14' />
+									)}
+
 									<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Vote with Polkasafe Multisig</span>
 								</div>
 							</div>
@@ -673,7 +680,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									</div>
 									{canUsePolkasafe(network) && !showMultisig && (
 										<div className='m-auto mt-3 flex w-[50%] flex-col gap-3'>
-											<Divider className='m-0'>OR</Divider>
+											<Divider className='m-0 dark:text-blue-dark-medium'>OR</Divider>
 											<div className='flex w-full justify-center'>
 												<WalletButton
 													className='!border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'

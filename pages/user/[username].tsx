@@ -216,6 +216,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						{isOpenGovSupported(network) && (
 							<Select
 								value={selectedGov}
+								className='dark:text-blue-dark-medium dark:[&>.ant-select-selector]:bg-section-dark-overlay'
 								style={{
 									width: 120
 								}}
@@ -224,14 +225,15 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 								}}
 								options={[
 									{
-										label: 'Gov1',
+										label: <span className='dark:text-blue-dark-high'>Gov1</span>,
 										value: 'gov1'
 									},
 									{
-										label: 'OpenGov',
+										label: <span className='dark:text-blue-dark-high'>OpenGov</span>,
 										value: 'open_gov'
 									}
 								]}
+								popupClassName='z-[1060] dark:border-0 dark:border-none dark:bg-section-dark-overlay'
 							/>
 						)}
 					</div>
@@ -239,7 +241,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						<div className='mb-2 flex justify-between'>
 							{!votesHistoryUnavailableNetworks.includes(network) && (
 								<Segmented
-									className='mb-4 h-[36px] w-[130px]'
+									className='mb-4 h-[36px] w-[130px] dark:bg-section-dark-background'
 									options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
 									onChange={(e) => setProfileHistory(e as EProfileHistory)}
 									value={profileHistory}

@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Pagination } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -24,6 +23,8 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import { Pagination } from '~src/components/Pagination';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -61,6 +62,7 @@ interface ITreasuryProps {
 
 const Treasury: FC<ITreasuryProps> = (props) => {
 	const { data, error } = props;
+	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -93,7 +95,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			/>
 
 			<div className='mt-3 flex w-full flex-col sm:flex-row sm:items-center'>
-				<h1 className='mx-2 mb-2 flex flex-1 text-2xl font-semibold leading-9 text-bodyBlue'>
+				<h1 className='mx-2 mb-2 flex flex-1 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
 					<DiamondIcon className='mr-2 justify-self-center' />
 					Treasury Proposals ({count})
 				</h1>
@@ -102,7 +104,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-8'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
 					This is the place to discuss on-chain treasury proposals. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able
 					to edit them.
 					{['moonbeam', 'moonriver', 'moonbase'].includes(network) ? (
@@ -121,9 +123,12 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			</div>
 
 			{/* Treasury Overview Cards */}
-			<TreasuryOverview className='my-6' />
+			<TreasuryOverview
+				theme={theme}
+				className='my-6'
+			/>
 
-			<div className='rounded-xxl bg-white px-0 py-5 shadow-md'>
+			<div className='rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center justify-between'>
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
 						<FilteredTags />
@@ -139,6 +144,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 					<div className='mt-6 flex justify-end'>
 						{!!count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
+								theme={theme}
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
 								total={count}

@@ -16,6 +16,7 @@ import { Caution } from '~src/ui-components/CustomIcons';
 import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTheme } from 'next-themes';
 
 import ReportButton from '../ActionsBar/ReportButton';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
@@ -47,6 +48,7 @@ const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.l
 const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const { comments, setComments } = useCommentDataContext();
 
@@ -538,13 +540,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								<Button
 									htmlType='button'
 									onClick={handleCancel}
-									className='mr-2 flex items-center'
+									className='mr-2 flex items-center dark:border-borderColorDark dark:bg-transparent dark:text-white'
 								>
 									<CloseOutlined /> Cancel
 								</Button>
 								<Button
 									htmlType='submit'
-									className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+									className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-borderColorDark'
 								>
 									<CheckOutlined /> Reply
 								</Button>
@@ -554,13 +556,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				) : (
 					<>
 						<Markdown
-							className='bg-blue-grey rounded-b-md px-2 py-2 text-sm md:px-4'
+							theme={theme}
+							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 							md={content}
 						/>
 						<div className='flex flex-wrap items-center gap-3'>
 							{isEditable && (
 								<Button
-									className={'flex items-center border-none p-0 text-pink_primary shadow-none'}
+									className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
 									disabled={loading}
 									onClick={toggleEdit}
 								>
@@ -570,14 +573,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										</span>
 									) : (
 										<span className='flex items-center text-xs'>
-											<FormOutlined className='mr-1' /> Edit
+											<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> Edit
 										</span>
 									)}
 								</Button>
 							)}
 							{id === userId ? (
 								<Button
-									className={'flex items-center border-none pl-1.5 pr-0 text-xs text-pink_primary shadow-none'}
+									className={'flex items-center border-none bg-transparent pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
 									onClick={deleteReply}
 								>
 									<DeleteOutlined />
@@ -589,7 +592,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 									<ReportButton
 										isDeleteModal={true}
 										proposalType={(reply.post_type as any) || postType}
-										className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}
+										className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${poppins.variable} ${poppins.className}`}
 										type={EReportType.REPLY}
 										onSuccess={removeReplyContent}
 										commentId={commentId}
@@ -600,7 +603,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							)}
 							{id && !isEditing && (
 								<ReportButton
-									className='text-xs text-pink_primary'
+									className='text-xs text-pink_primary dark:text-blue-dark-helper'
 									proposalType={postType}
 									postId={postIndex}
 									commentId={commentId}
@@ -616,7 +619,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										color='#E5007A'
 									>
 										<Button
-											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
+											className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
 												reply.reply_source ? 'disabled-reply' : ''
 											}`}
 										>
@@ -626,7 +629,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								) : (
 									!isReplying && (
 										<Button
-											className={'flex items-center border-none p-0 text-xs text-pink_primary shadow-none'}
+											className={'flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
 											onClick={() => setIsReplying(!isReplying)}
 										>
 											<ReplyIcon className='mr-1' />
@@ -636,7 +639,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								)
 							) : null}
 							{reply.isReplyError && (
-								<div className='ml-auto flex text-xs text-lightBlue'>
+								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
 									<Caution className='icon-container relative top-[4px] text-2xl' />
 									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
 									<div
@@ -671,14 +674,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										<Button
 											htmlType='button'
 											onClick={() => handleReplyCancel()}
-											className='mr-2 flex items-center'
+											className='mr-2 flex items-center dark:border-borderColorDark dark:bg-transparent dark:text-white'
 										>
 											<CloseOutlined /> Cancel
 										</Button>
 										<Button
 											loading={loading}
 											onClick={() => handleReplySave()}
-											className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+											className='flex items-center bg-pink_primary text-white hover:bg-pink_secondary dark:border-none'
 										>
 											<CheckOutlined />
 											Reply

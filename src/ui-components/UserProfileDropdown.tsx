@@ -28,7 +28,7 @@ const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX
 
 	return (
 		<div
-			className={`${className} user-container flex items-center justify-center gap-1 rounded-3xl bg-[#f6f7f9] px-3 font-semibold`}
+			className={`${className} user-container flex items-center justify-center gap-1 rounded-3xl border-[#d7dce3] bg-[#f6f7f9] px-3 font-semibold dark:border-separatorDark dark:bg-section-dark-overlay`}
 			style={{ border: '1px solid #d7dce3' }}
 		>
 			<ImageComponent
@@ -37,7 +37,7 @@ const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX
 				className='flex h-[16px] w-[16px] items-center justify-center bg-transparent'
 				iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 			/>
-			<div className='flex w-[85%] items-center gap-1 text-xs'>
+			<div className='flex w-[85%] items-center gap-1 text-xs dark:text-white'>
 				<span className={`normal-case ${isVerified && 'truncate'}`}>
 					{profileUsername && profileUsername?.length > 11 && !isVerified ? `${profileUsername?.slice(0, 11)}...` : profileUsername}
 				</span>

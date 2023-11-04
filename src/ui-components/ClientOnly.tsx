@@ -30,7 +30,7 @@ const Search: FC<{ network: string }> = (props) => {
 				className='gcse-search'
 				data-as_sitesearch={['moonbase', 'moonbeam', 'moonriver', 'kilt'].includes(network) ? `${network}.polkassembly.network` : `${network}.polkassembly.io`}
 			></div>
-			<div className='pb-2 pt-4 text-center text-sm font-medium text-bodyBlue'>
+			<div className='pb-2 pt-4 text-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 				{' '}
 				If you&apos;d like to enable search and super search for your chain, please reach out to us on{' '}
 				<a

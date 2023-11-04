@@ -12,6 +12,7 @@ import EthIdenticon from './EthIdenticon';
 import HelperTooltip from './HelperTooltip';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -29,6 +30,7 @@ interface Props {
 	disabled?: boolean;
 	name?: string;
 	onBlur?: () => void;
+	theme?: string;
 }
 
 const AddressInput = ({
@@ -152,7 +154,9 @@ const AddressInput = ({
 						value={address}
 						disabled={disabled}
 						name={name || 'address'}
-						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} h-[40px] w-full rounded-[4px] border-[1px] text-sm ${inputClassName}`}
+						className={`${
+							!isValid ? 'px-[0.5em]' : 'pl-[46px]'
+						} h-[40px] w-full rounded-[4px] border-[1px] text-sm ${inputClassName} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 						onChange={(e) => {
 							handleAddressChange(e.target.value);
 							onChange(e.target.value);
@@ -166,4 +170,8 @@ const AddressInput = ({
 	);
 };
 
-export default AddressInput;
+export default styled(AddressInput)`
+	.ant-input::placeholder {
+		color: ${(props) => (props.theme == 'dark' ? '#909090' : '')} !important;
+	}
+`;

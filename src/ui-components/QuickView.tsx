@@ -68,10 +68,6 @@ const QuickView = ({
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const identityArr = [
-		{ isVerified: !!identity?.email, key: 'Email', value: identity?.email || socials?.find((social) => social.type === 'Email')?.link || '' },
-		{ isVerified: !!identity?.judgements, key: 'Judgements', value: identity?.judgements || [] },
-		{ isVerified: !!identity?.legal, key: 'Legal', value: identity?.legal },
-		{ isVerified: !!identity?.riot, key: 'Riot', value: identity?.riot || socials?.find((social) => social.type === 'Riot')?.link || '' },
 		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
 		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' }
 	];
@@ -96,7 +92,7 @@ const QuickView = ({
 
 	return (
 		<div
-			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2`}
+			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2 dark:border-none`}
 			onClick={(e) => {
 				e.stopPropagation();
 				e.preventDefault();
@@ -106,11 +102,11 @@ const QuickView = ({
 				<ImageComponent
 					src={imgUrl}
 					alt='User Picture'
-					className='-mt-[50px] flex h-[98px] w-[98px] rounded-full border-[2px] border-solid border-white bg-white'
+					className='-mt-[50px] flex h-[98px] w-[98px] rounded-full border-[2px] border-solid border-white bg-white dark:border-none'
 					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
 				/>
 				<div className='mt-0 flex items-center justify-start gap-2'>
-					<span className='text-xl font-semibold tracking-wide text-bodyBlue'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
+					<span className='text-xl font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
 					<div className='flex items-center justify-center'>{isGood ? <VerifiedIcon /> : <MinusCircleFilled style={{ color }} />}</div>
 					<a
 						target='_blank'
@@ -128,13 +124,13 @@ const QuickView = ({
 						<ShareScreenIcon />
 					</a>
 				</div>
-				<div className='flex items-center gap-1 text-xs text-bodyBlue'>
+				<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 					<Address
 						address={address}
 						disableHeader
 						iconSize={20}
 						addressMaxLength={5}
-						addressClassName='text-sm'
+						addressClassName='text-sm dark:text-blue-dark-medium'
 						disableTooltip
 					/>
 					<span
@@ -149,10 +145,10 @@ const QuickView = ({
 						<CopyIcon />
 					</span>
 				</div>
-				<div className='mt-0.5 flex items-center justify-between gap-1 border-solid'>
+				<div className='mt-0.5 flex items-center justify-between gap-1 border-solid dark:border-none'>
 					{profileCreatedAt && (
-						<span className='flex items-center text-xs tracking-wide text-[#9aa7b9]'>
-							Since:<span className='ml-0.5 text-lightBlue '>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
+						<span className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959]'>
+							Since:<span className='ml-0.5 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
 						</span>
 					)}
 					<div className='flex items-center gap-1.5'>
@@ -206,12 +202,12 @@ const QuickView = ({
 					</div>
 				</div>
 			</div>
-			<article className='mt-2 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue'>
+			<article className='v mt-2 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-high'>
 				<div className='flex items-center gap-1 font-medium text-lightBlue'>
 					<JudgementIcon />
-					<span>Judgements:</span>
+					<span className='dark:text-[#9E9E9E]'>Judgements:</span>
 				</div>
-				<span className='text-bodyBlue'>
+				<span className='text-bodyBlue dark:text-blue-dark-high'>
 					{judgements
 						?.map(([, jud]) => jud.toString())
 						.join(', ')
@@ -229,7 +225,7 @@ const QuickView = ({
 							onClick={handleTipping}
 							className={`flex h-[32px] w-full items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
 								!id && 'cursor-not-allowed opacity-50'
-							}`}
+							} dark:bg-[#33071E]`}
 						>
 							Tip
 						</Button>

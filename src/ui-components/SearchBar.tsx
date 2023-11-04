@@ -11,6 +11,8 @@ import { Modal } from 'antd';
 import { allowedNetwork } from '~src/components/Search';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from './CustomIcons';
+import { useTheme } from 'next-themes';
 
 interface ISearchBarProps {
 	className?: string;
@@ -22,6 +24,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	return allowedNetwork.includes(network?.toUpperCase()) ? (
 		<div className={className}>
@@ -41,11 +44,12 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						className='flex cursor-pointer items-center gap-1 max-sm:gap-0'
 						onClick={() => setOpen(true)}
 					>
-						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none'>
+						<button className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none dark:text-blue-dark-medium'>
 							<SearchOutlined />
 						</button>
 					</div>
 					<NewSearch
+						theme={theme}
 						openModal={open}
 						setOpenModal={setOpen}
 						isSuperSearch={isSuperSearch}
@@ -66,18 +70,20 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 			) : (
 				<>
 					<button
-						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none'
+						className='flex cursor-pointer items-center justify-center border-none bg-transparent text-[18px] text-lightBlue outline-none dark:text-blue-dark-medium'
 						onClick={() => setOpen(true)}
 					>
 						<SearchOutlined />
 					</button>
 					<Modal
+						wrapClassName='dark:bg-modalOverlayDark [&>.ant-modal-content]:bg-section-dark-overlay'
 						title='Search'
 						closable={false}
+						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						open={open}
 						onCancel={() => setOpen(false)}
 						footer={[]}
-						className={`${className} ${poppins.className} ${poppins.variable}`}
+						className={`${className} ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						<div className='client'>
 							<ClientOnly>

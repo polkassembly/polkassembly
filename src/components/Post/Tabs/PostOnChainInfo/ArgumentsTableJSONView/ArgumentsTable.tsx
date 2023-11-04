@@ -33,16 +33,16 @@ const ArgumentsTable: FC<IArgumentsTableProps> = ({ argumentsJSON }) => {
 				// eslint-disable-next-line no-tabs
 				return (
 					<tr key={index}>
-						<td className='direct-data data-0'>{name}</td>
+						<td className='direct-data data-0 dark:bg-[#222] dark:text-white'>{name}</td>
 						{typeof value !== 'object' ? (
 							<td
 								dangerouslySetInnerHTML={{
 									__html: constructAnchorTag(value as any)
 								}}
-								className='direct-data data-2'
+								className='direct-data data-2 dark:bg-[#222] dark:text-white'
 							/>
 						) : (
-							<td className='indirect-data data-1'>
+							<td className='indirect-data data-1 dark:bg-[#020202] dark:text-white'>
 								<ArgumentsTable argumentsJSON={value} />
 							</td>
 						)}

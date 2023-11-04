@@ -13,10 +13,10 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
-import CloseIcon from '~assets/icons/close.svg';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import Link from 'next/link';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -77,9 +77,9 @@ const TreasuryProposalSuccessPopup = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full`}
-			wrapClassName={className}
-			closeIcon={<CloseIcon />}
+			className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={onCancel}
 			footer={
 				<Link
@@ -93,7 +93,7 @@ const TreasuryProposalSuccessPopup = ({
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
 				<SuccessIcon />
-				<label className='text-xl font-semibold text-bodyBlue'>Proposal created successfully for</label>
+				<label className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Proposal created successfully for</label>
 				{fundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
 						{formatedBalance(fundingAmount.toString(), unit)} {unit}
@@ -101,11 +101,11 @@ const TreasuryProposalSuccessPopup = ({
 				)}
 				{proposerAddress && beneficiaryAddress && selectedTrack && preimageHash && preimageLength && (
 					<div className='my-2 flex'>
-						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue'>
+						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 							<span className='flex'>
 								<span className='w-[172px]'>Proposer Address:</span>
 								<Address
-									addressClassName='text-bodyBlue font-semibold text-sm'
+									addressClassName='text-bodyBlue dark:text-blue-dark-high font-semibold text-sm'
 									address={proposerAddress}
 									isTruncateUsername={false}
 									iconSize={18}
@@ -123,24 +123,24 @@ const TreasuryProposalSuccessPopup = ({
 
 							<span className='flex'>
 								<span className='w-[172px]'>Track:</span>
-								<span className='font-medium text-bodyBlue'>
+								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									{selectedTrack}
 									<span className='ml-1 text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span>
 								</span>
 							</span>
 							<span className='flex'>
 								<span className='w-[172px]'>Funding Amount:</span>
-								<span className='font-medium text-bodyBlue'>
+								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									{formatedBalance(fundingAmount.toString(), unit)} {unit}
 								</span>
 							</span>
 							<span className='flex items-center'>
 								<span className='w-[172px]'>Preimage Hash:</span>
-								<span className='font-medium  text-bodyBlue'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
+								<span className='font-medium  text-bodyBlue dark:text-blue-dark-high'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
 							</span>
 							<span className='flex'>
 								<span className='w-[172px]'>Preimage Length:</span>
-								<span className='font-medium text-bodyBlue'>{preimageLength}</span>
+								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{preimageLength}</span>
 							</span>
 						</div>
 					</div>
@@ -150,7 +150,7 @@ const TreasuryProposalSuccessPopup = ({
 					type='warning'
 					className='m-2 w-full rounded-[4px] text-sm'
 					message={
-						<span className='text-sm font-medium text-bodyBlue'>
+						<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} to prevent your proposal from being
 							timed out.
 						</span>

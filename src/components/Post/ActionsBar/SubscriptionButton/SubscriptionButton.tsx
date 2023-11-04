@@ -87,7 +87,9 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 
 	const SubscribeButton = () => (
 		<Button
-			className={`${subscribed && id ? ' negative' : ''} flex items-center border-none px-1.5 text-pink_primary shadow-none disabled:bg-transparent disabled:opacity-[0.5]`}
+			className={`${
+				subscribed && id ? ' negative' : ''
+			} flex items-center border-none px-1.5 text-pink_primary shadow-none disabled:bg-transparent disabled:opacity-[0.5] dark:bg-transparent dark:text-blue-dark-helper`}
 			disabled={loading || !id}
 			onClick={handleSubscribe}
 		>

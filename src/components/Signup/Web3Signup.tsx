@@ -266,18 +266,20 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 		<>
 			<div className='flex items-center'>
 				<LoginLogo className='ml-6 mr-2' />
-				<h3 className='mt-3 text-[20px] font-semibold text-[#243A57]'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Sign Up'}</h3>
+				<h3 className='mt-3 text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Sign Up'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0]' />
-			<article className='flex flex-col rounded-md bg-white p-8 shadow-md '>
-				<h3 className='flex flex-col justify-center gap-y-1 text-2xl font-semibold text-[#1E232C]'>
+			<article className='flex flex-col rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay '>
+				<h3 className='flex flex-col justify-center gap-y-1 text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>
 					{/* <span>Sign Up</span> */}
 					{!withPolkasafe && (
 						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
 							<span className='mt-2'>
 								<WalletIcon which={chosenWallet} />
 							</span>
-							<span className='text-lg text-[#243A57] sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+							<span className='text-lg text-blue-light-high dark:text-blue-dark-high sm:text-xl'>
+								{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
+							</span>
 						</p>
 					)}
 					{Boolean(withPolkasafe) && (
@@ -293,7 +295,7 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 				</h3>
 				{fetchAccounts ? (
 					<div className='flex flex-col items-center justify-center'>
-						<p className='text-base text-[#243A57]'>
+						<p className='text-base text-blue-light-high dark:text-blue-dark-high'>
 							{withPolkasafe
 								? 'To fetch your Multisig details, please select a wallet extension'
 								: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
@@ -368,6 +370,7 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 													onAccountChange={onAccountChange}
 													walletAddress={multiWallet}
 													setWalletAddress={setMultiWallet}
+													linkAddressTextDisabled={false}
 												/>
 											) : (
 												<AccountSelectionForm
@@ -420,7 +423,7 @@ const Web3Signup: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, i
 					</>
 				)}
 				<div className='mt-6 flex items-center justify-center gap-x-2 font-semibold'>
-					<label className='text-md text-[#243A57]'>Already have an account?</label>
+					<label className='text-md text-blue-light-high dark:text-blue-dark-high'>Already have an account?</label>
 					<div
 						onClick={() => handleClick()}
 						className='text-md text-pink_primary'

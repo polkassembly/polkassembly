@@ -134,15 +134,16 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 	};
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			closable={false}
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
-					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue'>Link Proxy address</span>
-					<Divider />
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<span className='mb-0 ml-[24px] text-lg font-medium tracking-wide text-sidebarBlue dark:text-white'>Link Proxy address</span>
+					<Divider className='border-b-1 dark:border-separatorDark' />
 				</div>
 			}
 			open={open}
-			className='mb-8 md:min-w-[600px]'
+			className='mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			footer={
 				<div className='flex items-center justify-end'>
 					{[
@@ -163,7 +164,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 						<Button
 							key='cancel'
 							onClick={dismissModal}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none'
+							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none dark:bg-section-dark-overlay'
 						>
 							Cancel
 						</Button>
@@ -195,7 +196,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 						<>
 							<section>
 								<label
-									className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+									className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white dark:text-white'
 									htmlFor='proxiedAccount'
 								>
 									Proxied Address
@@ -206,7 +207,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 								>
 									<Input
 										placeholder='Enter a valid proxy address'
-										className='rounded-md border-grey_border px-4 py-3'
+										className='rounded-md border-grey_border px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										id='proxiedAccount'
 									/>
 								</Form.Item>

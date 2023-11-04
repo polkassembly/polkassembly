@@ -28,6 +28,7 @@ const PostTab: FC<IPostTabProps> = (props) => {
 							href={`/${getSinglePostLinkFromProposalType(post.type)}/${post.id}`}
 						>
 							<GovernanceCard
+								className={`${(i + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'dark:bg-section-dark-overlay'}`}
 								tip_index={posts.length - i}
 								isTip={post.type === 'tips'}
 								postReactionCount={post?.post_reactions}

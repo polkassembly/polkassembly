@@ -34,35 +34,110 @@ import { chainProperties } from '~src/global/networkConstants';
 export const handleTracksIcon = (index: string, size: number) => {
 	switch (index) {
 		case 'Root':
-			return <RootTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<RootTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Treasurer':
-			return <TreasurerTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<TreasurerTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Whitelisted Caller':
-			return <WhitelistedCallerTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<WhitelistedCallerTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Lease Admin':
-			return <LeaseAdminTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<LeaseAdminTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'General Admin':
-			return <GeneralAdminTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<GeneralAdminTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Staking Admin':
-			return <StakingAdminTrackTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<StakingAdminTrackTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Fellowship Admin':
-			return <FellowshipAdminTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<FellowshipAdminTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Small Tipper':
-			return <SmallTipperTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<SmallTipperTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Medium Spender':
-			return <MediumSpenderTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<MediumSpenderTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Small Spender':
-			return <SmallSpenderTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<SmallSpenderTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Auction Admin':
-			return <AuctionAdminTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<AuctionAdminTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Big Spender':
-			return <BigSpenderTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<BigSpenderTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Big Tipper':
-			return <BigTipperTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<BigTipperTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Referendum Killer':
-			return <ReferendumKillerTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<ReferendumKillerTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		case 'Referendum Canceller':
-			return <ReferendumCancellerTrackIcon style={{ fontSize: `${size}px` }} />;
+			return (
+				<ReferendumCancellerTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
 		default:
 			return null;
 	}
@@ -74,7 +149,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'index',
 			key: 1,
 			render: (index) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue'>{index}</div>;
+				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
 			},
 			title: '#',
 			width: '7%'
@@ -85,7 +160,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 2,
 			render: (track) => {
 				return (
-					<div className='flex shrink-0 items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
+					<div className='flex shrink-0 items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 						{handleTracksIcon(track, 24)}
 						<span className=' flex items-center'>{track}</span>
 					</div>
@@ -99,7 +174,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'description',
 			key: 3,
 			render: (des) => {
-				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue'>{des}</div>;
+				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
 			},
 			title: 'Description',
 			width: '40%'
@@ -109,7 +184,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'active_proposals',
 			key: 4,
 			render: (activeProposals) => {
-				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue'>{activeProposals}</div>;
+				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',
 			width: '10%'
@@ -120,12 +195,12 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 5,
 			render: (status) => {
 				return (
-					<div className='flex items-center justify-start gap-2 font-medium tracking-wider text-bodyBlue max-md:flex-col'>
+					<div className='flex items-center justify-start gap-2 font-medium tracking-wider text-bodyBlue dark:text-white max-md:flex-col'>
 						{status.map((item: ETrackDelegationStatus, index: number) => (
 							<h2
 								key={index}
 								className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${
-									item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'
+									item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'
 								} rounded-[26px] px-[12px] py-[6px] text-center ${item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'w-[95px] truncate'} `}
 							>
 								{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
@@ -144,7 +219,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'index',
 			key: 1,
 			render: (index) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue'>{index}</div>;
+				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
 			},
 			title: '#',
 			width: '7%'
@@ -155,7 +230,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 2,
 			render: (track) => {
 				return (
-					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
+					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 						{handleTracksIcon(track, 24)}
 						<span className=' flex items-center border-[1px]'>{track}</span>
 					</div>
@@ -169,7 +244,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'description',
 			key: 3,
 			render: (des) => {
-				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue'>{des}</div>;
+				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
 			},
 			title: 'Description',
 			width: '38%'
@@ -180,7 +255,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 4,
 			render: (addresses) => {
 				return (
-					<div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue'>
+					<div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>
 						<Address
 							address={addresses?.[0]?.to || ''}
 							displayInline
@@ -198,7 +273,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'active_proposals',
 			key: 5,
 			render: (activeProposals) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue'>{activeProposals}</div>;
+				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',
 			width: '15%'
@@ -210,7 +285,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'index',
 			key: 1,
 			render: (index) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue'>{index}</div>;
+				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
 			},
 			title: '#',
 			width: '7%'
@@ -221,7 +296,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 2,
 			render: (track) => {
 				return (
-					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
+					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 						{handleTracksIcon(track, 24)}
 						<span className=' flex items-center border-[1px]'>{track}</span>
 					</div>
@@ -235,7 +310,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'description',
 			key: 3,
 			render: (des) => {
-				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue'>{des}</div>;
+				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
 			},
 			title: 'Description',
 			width: '50%'
@@ -245,7 +320,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'active_proposals',
 			key: 4,
 			render: (activeProposals) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue'>{activeProposals}</div>;
+				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',
 			width: '15%'
@@ -257,7 +332,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'index',
 			key: 1,
 			render: (index) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue'>{index}</div>;
+				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
 			},
 			title: '#',
 			width: '7%'
@@ -268,7 +343,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 2,
 			render: (track) => {
 				return (
-					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
+					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 						{handleTracksIcon(track, 24)}
 						<span className=' flex items-center border-[1px]'>{track}</span>
 					</div>
@@ -282,7 +357,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'description',
 			key: 3,
 			render: (des) => {
-				return <h2 className='flex items-center justify-start text-sm font-normal tracking-wide text-bodyBlue'>{des}</h2>;
+				return <h2 className='flex items-center justify-start text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</h2>;
 			},
 			title: 'Description',
 			width: '38%'
@@ -293,14 +368,14 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 4,
 			render: (addresses) => {
 				return (
-					<div className='flex items-center justify-start gap-1 text-sm font-normal tracking-wide text-bodyBlue max-lg:flex-col'>
+					<div className='flex items-center justify-start gap-1 text-sm font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col'>
 						<Address
 							address={addresses?.[0].from || ''}
 							isTruncateUsername={false}
 							displayInline
 							iconSize={24}
 						/>{' '}
-						<span className='text-xs font-medium tracking-[0.0015em] text-bodyBlue'>{addresses.length - 1 !== 0 && `+ ${addresses.length - 1} more`} </span>
+						<span className='text-xs font-medium tracking-[0.0015em] text-bodyBlue dark:text-white'>{addresses.length - 1 !== 0 && `+ ${addresses.length - 1} more`} </span>
 					</div>
 				);
 			},
@@ -312,7 +387,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'active_proposals',
 			key: 4,
 			render: (activeProposals) => {
-				return <div className='flex items-center justify-center text-sm font-normal tracking-wide text-bodyBlue'>{activeProposals}</div>;
+				return <div className='flex items-center justify-center text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',
 			width: '15%'
@@ -338,12 +413,12 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 
 	if (status === ETrackDelegationStatus.Delegated) {
 		const TrackColumn: ColumnsType<ITrackRowData> = [
-			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-start text-sm font-normal text-bodyBlue'>{index}</div>, title: '#', width: '10%' },
+			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{index}</div>, title: '#', width: '10%' },
 			{
 				dataIndex: 'delegatedTo',
 				key: 1,
 				render: (address) => (
-					<div className='flex items-center justify-start text-center text-sm font-normal text-bodyBlue'>
+					<div className='flex items-center justify-start text-center text-sm font-normal text-bodyBlue dark:text-white'>
 						<Address
 							address={address || ''}
 							isTruncateUsername={false}
@@ -358,21 +433,21 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 			{
 				dataIndex: 'balance',
 				key: 1,
-				render: (balance) => <div className='text-start text-sm font-normal text-bodyBlue'>{formatBalance(balance.toString(), { forceUnit: unit })}</div>,
+				render: (balance) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{formatBalance(balance.toString(), { forceUnit: unit })}</div>,
 				title: 'Balance',
 				width: '15%'
 			},
 			{
 				dataIndex: 'lockPeriod',
 				key: 1,
-				render: (conviction) => <div className='text-start text-sm font-normal text-bodyBlue'>{Number(conviction) ? conviction : 0.1}x</div>,
+				render: (conviction) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{Number(conviction) ? conviction : 0.1}x</div>,
 				title: 'Conviction',
 				width: '15%'
 			},
 			{
 				dataIndex: 'delegatedOn',
 				key: 1,
-				render: (date) => <div className='ml-1 text-start text-sm font-normal text-bodyBlue'>{dayjs(date).format('DD MMM YYYY')}</div>,
+				render: (date) => <div className='ml-1 text-start text-sm font-normal text-bodyBlue dark:text-white'>{dayjs(date).format('DD MMM YYYY')}</div>,
 				title: 'Delegated on',
 				width: '20%'
 			},
@@ -383,7 +458,7 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 					<div className='flex items-start justify-center'>
 						<Button
 							onClick={() => setOpen(true)}
-							className='flex h-[40px] items-center justify-center gap-2 border-[1px] border-solid border-pink_primary px-2 text-sm font-normal text-bodyBlue max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
+							className='flex h-[40px] items-center justify-center gap-2 border-[1px] border-solid border-pink_primary px-2 text-sm font-normal text-bodyBlue dark:text-white max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
 						>
 							<UndelegatedProfileIcon />
 							<span className='text-sm font-medium tracking-wide text-pink_primary'>{action}</span>
@@ -397,12 +472,12 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 		return TrackColumn;
 	} else if (status === ETrackDelegationStatus.Received_Delegation) {
 		const TrackColumn: ColumnsType<ITrackRowData> = [
-			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-start text-sm font-normal text-bodyBlue'>{index}</div>, title: '#', width: '10%' },
+			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{index}</div>, title: '#', width: '10%' },
 			{
 				dataIndex: 'delegatedFrom',
 				key: 1,
 				render: (address) => (
-					<div className='flex items-center justify-start text-center text-sm font-normal text-bodyBlue'>
+					<div className='flex items-center justify-start text-center text-sm font-normal text-bodyBlue dark:text-white'>
 						<Address
 							address={address || ''}
 							isTruncateUsername={false}
@@ -417,21 +492,21 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 			{
 				dataIndex: 'balance',
 				key: 1,
-				render: (balance) => <div className='text-start text-sm font-normal text-bodyBlue'>{formatBalance(balance.toString(), { forceUnit: unit })}</div>,
+				render: (balance) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{formatBalance(balance.toString(), { forceUnit: unit })}</div>,
 				title: 'Balance',
 				width: '15%'
 			},
 			{
 				dataIndex: 'lockPeriod',
 				key: 1,
-				render: (conviction) => <div className='text-start text-sm font-normal text-bodyBlue'>{Number(conviction) ? conviction : 0.1}x</div>,
+				render: (conviction) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{Number(conviction) ? conviction : 0.1}x</div>,
 				title: 'Conviction',
 				width: '15%'
 			},
 			{
 				dataIndex: 'delegatedOn',
 				key: 1,
-				render: (date) => <div className='ml-1 text-start text-sm font-normal text-bodyBlue'>{dayjs(date).format('DD MMM YYYY')}</div>,
+				render: (date) => <div className='ml-1 text-start text-sm font-normal text-bodyBlue dark:text-white'>{dayjs(date).format('DD MMM YYYY')}</div>,
 				title: 'Delegated on',
 				width: '20%'
 			}

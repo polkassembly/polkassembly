@@ -90,10 +90,10 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 				className='-mt-16 h-full'
 			>
 				{
-					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
 						{token && userId ? (
 							<>
-								<h3 className='text-2xl font-semibold text-[#1E232C]'>Set new password</h3>
+								<h3 className='text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>Set new password</h3>
 								<AuthForm
 									onSubmit={handleSubmitForm}
 									className='flex flex-col gap-y-6'
@@ -121,7 +121,7 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 											<Input.Password
 												onChange={(e) => setNewPassword(e.target.value)}
 												placeholder='eg. password123'
-												className='rounded-md px-4 py-3'
+												className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 												id='password'
 											/>
 										</Form.Item>

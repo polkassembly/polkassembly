@@ -257,11 +257,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							indicator={<LoadingOutlined />}
 						>
 							<div className='flex items-center justify-between gap-x-2'>
-								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue'>Voting</h6>
+								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue dark:text-blue-dark-high'>Voting</h6>
 								<div className='flex items-center justify-center gap-x-2'>
 									<div
 										className={
-											'h-min truncate whitespace-nowrap rounded-full border border-solid border-bodyBlue px-3 py-1 text-xs text-bodyBlue xl:max-w-[120px] 2xl:max-w-[100%]'
+											'h-min truncate whitespace-nowrap rounded-full border border-solid border-bodyBlue px-3 py-1 text-xs text-bodyBlue dark:text-blue-dark-high xl:max-w-[120px] 2xl:max-w-[100%]'
 										}
 									>
 										{voteInfo?.voteThreshold}
@@ -275,20 +275,20 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								className='vote-progress'
 								nayVotes={voteInfo?.nay_amount}
 							/>
-							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue'>
+							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
 										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>
 									</div>
-									<div className='text-xs font-medium leading-[22px] text-lightBlue'>
+									<div className='text-xs font-medium leading-[22px] text-lightBlue dark:text-blue-dark-medium'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 									</div>
 								</article>
-								<article className='flex items-center justify-between gap-x-2 text-lightBlue'>
+								<article className='flex items-center justify-between gap-x-2 text-lightBlue dark:text-blue-dark-medium'>
 									<div className='flex items-center gap-x-1'>
 										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay</span>
 									</div>
-									<div className='text-xs font-medium leading-[22px] text-lightBlue'>
+									<div className='text-xs font-medium leading-[22px] text-lightBlue dark:text-blue-dark-medium'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 									</div>
 								</article>
@@ -296,7 +296,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 									<div className='flex items-center gap-x-1'>
 										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Turnout</span>
 									</div>
-									<div className='text-xs font-medium leading-[22px] text-lightBlue'>
+									<div className='text-xs font-medium leading-[22px] text-lightBlue dark:text-blue-dark-medium'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 									</div>
 								</article>
@@ -305,7 +305,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 										<div className='flex items-center gap-x-1'>
 											<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Issuance</span>
 										</div>
-										<div className='text-xs font-medium leading-[22px] text-lightBlue'>
+										<div className='text-xs font-medium leading-[22px] text-lightBlue dark:text-blue-dark-medium'>
 											{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
 									</article>
@@ -334,11 +334,13 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							indicator={<LoadingOutlined />}
 						>
 							<div className='flex items-center justify-between gap-x-2'>
-								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue'>Voting</h6>
+								<h6 className='m-0 p-0 text-xl font-medium leading-[24px] text-bodyBlue dark:text-blue-dark-high'>Voting</h6>
 								<div className='relative z-50 flex items-center justify-center gap-x-2'>
 									<div
 										title={voteInfo?.voteThreshold}
-										className={'h-min truncate whitespace-nowrap rounded-full border border-solid border-navBlue px-3 py-1 text-xs text-bodyBlue xl:max-w-[120px] 2xl:max-w-[100%]'}
+										className={
+											'h-min truncate whitespace-nowrap rounded-full border border-solid border-navBlue px-3 py-1 text-xs text-bodyBlue dark:text-blue-dark-high xl:max-w-[120px] 2xl:max-w-[100%]'
+										}
 									>
 										{voteInfo?.voteThreshold}
 									</div>
@@ -351,7 +353,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								className='vote-progress'
 								nayVotes={voteInfo?.nay_amount}
 							/>
-							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D]'>
+							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] dark:text-blue-dark-medium'>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
 										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>

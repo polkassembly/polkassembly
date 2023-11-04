@@ -77,18 +77,18 @@ const Motions: FC<IMotionsProps> = (props) => {
 			/>
 			<div className='mt-3 flex sm:items-center'>
 				<MotionsIcon className='xs:mt-0.5 sm:-mt-3.5' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>On Chain Motions ({count})</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Motions ({count})</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
 					This is the place to discuss on-chain motions. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able to edit
 					them.
 				</p>
 			</div>
 
-			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md'>
+			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center justify-between'>
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
 						<FilteredTags />

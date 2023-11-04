@@ -128,6 +128,8 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 				Claim Payout
 			</Button>
 			<Modal
+				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				wrapClassName='dark:bg-modalOverlayDark'
 				title='Confirm Payout Claim'
 				open={showModal}
 				onCancel={() => setShowModal(false)}

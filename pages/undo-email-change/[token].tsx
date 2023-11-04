@@ -82,7 +82,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 				className='-mt-16 h-full'
 			>
 				{error ? (
-					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
 						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
 							<WarningOutlined />
 							<FilteredError text={error} />

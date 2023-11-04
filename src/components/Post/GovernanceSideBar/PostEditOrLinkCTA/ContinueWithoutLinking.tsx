@@ -84,6 +84,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 	};
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={editModalOpen}
 			onCancel={() => setEditModalOpen(false)}
 			footer={[
@@ -103,7 +104,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 					</Button>
 				</div>
 			]}
-			className='md:min-w-[674px]'
+			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 		>
 			<section className='flex flex-col'>
 				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue'>Proposal Details</h2>
@@ -117,7 +118,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 				>
 					<Form.Item
 						name='title'
-						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Title</span>}
+						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Title</span>}
 						rules={[
 							{
 								required: true
@@ -129,15 +130,15 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 							name='title'
 							autoFocus
 							placeholder='Add your title here'
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE]'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-normal dark:text-white dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Description</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
 						<ContentForm />
 					</div>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Tags</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Tags</label>
 						<AddTags
 							tags={tags}
 							setTags={setTags}

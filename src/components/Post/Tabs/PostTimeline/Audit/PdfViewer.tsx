@@ -72,10 +72,11 @@ const PdfViewer: FC<IPdfViewerProps> = (props) => {
 				</div>
 			</button>
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={false}
-				className='w-full lg:max-w-[1024px]'
+				className='w-full lg:max-w-[1024px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				title={
 					<button
 						onClick={() => {

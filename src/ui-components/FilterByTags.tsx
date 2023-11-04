@@ -15,6 +15,7 @@ import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
 import { FilterIcon, NoTagFoundIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -34,7 +35,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 	const [trendingTags, setTrendingTags] = useState<IPostTag[]>([]);
 	const router = useRouter();
 	const [displayTags, setDisplayTags] = useState<string[]>([]);
-
+	const { resolvedTheme: theme } = useTheme();
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
 		if (error) console.error('Error in getting all-tags', error);
@@ -119,7 +120,9 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 	const content = (
 		<div className='min-h-[150px] w-[180px] '>
 			{!isSearch ? (
-				<div className={`mb-[-2px] mt-[-2px] flex cursor-auto justify-between text-sm font-medium tracking-wide text-sidebarBlue ${poppins.variable} ${poppins.className}`}>
+				<div
+					className={`mb-[-2px] mt-[-2px] flex cursor-auto justify-between text-sm font-medium tracking-wide text-sidebarBlue ${poppins.variable} ${poppins.className} dark:text-blue-dark-high`}
+				>
 					Tags
 					{!isSearch && (
 						<span
@@ -141,7 +144,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			<Input
 				allowClear={{ clearIcon: <ClearIcon /> }}
 				type='search'
-				className='mt-[4px]'
+				className='mt-[4px] dark:border-[#3B444F] dark:bg-section-dark-background dark:text-blue-dark-high dark:focus:border-[#91054F] [&>input]:dark:bg-section-dark-background [&>input]:dark:text-blue-dark-high'
 				value={searchInput}
 				onChange={(e) => setSearchInput(e.target.value)}
 				prefix={<SearchIcon />}
@@ -149,40 +152,40 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 
 			{searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0 ? (
 				<div className='flex-col'>
-					{isSearch && <div className={`mt-1 text-[10px] font-normal text-bodyBlue ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
+					{isSearch && <div className={`mt-1 text-[10px] font-normal text-[#243A57] ${poppins.variable} ${poppins.className} dark:text-white`}>Suggestion :</div>}
 
 					{trendingTags.slice(0, 5).map((tag, index) => (
 						<div
 							key={index}
 							onClick={() => handleSetTags(tag?.name)}
-							className={`flex cursor-pointer items-center gap-2 py-1 text-xs ${poppins.className} ${poppins.variable}`}
+							className={`flex cursor-pointer items-center gap-2 py-1 text-xs ${poppins.className} ${poppins.variable} dark:text-white`}
 						>
 							<TrendingIcon />
-							<span className='text-xs tracking-wide text-[#667589]'>{tag.name}</span>
+							<span className='text-xs tracking-wide text-[#667589] dark:text-white'>{tag.name}</span>
 						</div>
 					))}
 				</div>
 			) : (
 				<Checkbox.Group
-					className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
+					className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${poppins.className} ${poppins.variable} dark:text-white`}
 					value={tags}
 				>
 					{displayTags.map((item, index) => (
 						<Checkbox
 							onClick={() => (handleExits(item) ? handleRemoveTag(item) : handleSetTags(item))}
-							className={`ml-0 text-xs font-normal ${tags.includes(item) ? 'text-bodyBlue' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'}`}
+							className={`ml-0 text-xs font-normal ${tags.includes(item) ? 'text-[#243A57]' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'} dark:text-white`}
 							key={index}
 							value={item}
 						>
-							<div className='mt-[2px]'>{item}</div>
+							<div className='mt-[2px] dark:text-white'>{item}</div>
 						</Checkbox>
 					))}
 				</Checkbox.Group>
 			)}
 			{filteredTags.length === 0 && searchInput.length > 0 ? (
-				<div className='mt-2 flex h-[100%] flex-col items-center justify-center gap-2 text-[50px]'>
+				<div className='mt-2 flex h-[100%] flex-col items-center justify-center gap-2 text-[50px] dark:text-white'>
 					<NoTagFoundIcon />
-					<span className={`text-[10px] tracking-wide text-navBlue ${poppins.className} ${poppins.variable} `}>No tag found.</span>
+					<span className={`text-[10px] tracking-wide text-navBlue ${poppins.className} ${poppins.variable} dark:text-white`}>No tag found.</span>
 				</div>
 			) : null}
 		</div>
@@ -197,6 +200,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			onOpenChange={() => !disabled && setOpenFilter(!openFilter)}
 			placement='bottom'
 			arrow={isSearch}
+			overlayClassName={`dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
 		>
 			{!isSearch ? (
 				<div className={'mt-[3.5px] flex cursor-pointer items-center text-base font-normal tracking-wide text-pink_primary'}>

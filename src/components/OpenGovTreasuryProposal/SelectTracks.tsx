@@ -19,7 +19,7 @@ const SelectTracks = ({ tracksArr, className, onTrackChange, selectedTrack }: Pr
 			<Select
 				placeholder='Select a track'
 				suffixIcon={<DownArrow />}
-				className={`flex h-[40px] w-full flex-col items-center rounded-[4px]  ${poppins.className} ${poppins.variable} `}
+				className={`flex h-[40px] w-full flex-col items-center rounded-[4px]  ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay`}
 				value={selectedTrack.length > 0 ? selectedTrack : null}
 				onChange={onTrackChange}
 				options={
@@ -27,7 +27,7 @@ const SelectTracks = ({ tracksArr, className, onTrackChange, selectedTrack }: Pr
 						return { label: track.split(/(?=[A-Z])/).join(' '), value: track };
 					}) || []
 				}
-				popupClassName={`${poppins.className} ${poppins.variable} z-[1059]`}
+				popupClassName={`${poppins.className} ${poppins.variable} z-[2000] dark:bg-section-dark-overlay dark:[&>.ant-select-item-option-content]:text-blue-dark-high`}
 			/>
 		</div>
 	);

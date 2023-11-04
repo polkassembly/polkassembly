@@ -4,9 +4,9 @@
 
 import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
-import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
 
 type Props = {
 	icon: any;
@@ -35,21 +35,24 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 
 	return (
 		<Modal
+			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<h3 className='mb-5 flex items-center gap-3'>
+				<h3 className='mb-5 flex items-center gap-3 dark:bg-section-dark-overlay dark:text-white'>
 					{icon} {title}
 				</h3>
 			}
 			open={open}
 			closable
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={onClose}
 			footer={null}
 		>
 			<div className=''>
 				<ol>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Click this invite link
-						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
+						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'>
 							<a
 								href='https://t.me/PolkassemblyBot'
 								target='_blank'
@@ -62,49 +65,50 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 						or Add
 						<span
 							onClick={() => handleCopyClicked('@PolkassemblyBot')}
-							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 						>
-							<CopyIcon className='color-pink_primary relative top-[6px]' /> @PolkassemblyBot
+							<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> @PolkassemblyBot
 						</span>
 						to your Telegram Chat as a member
 					</li>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Send this command to the chat with the bot:
 						<br />
 						<span
 							onClick={() => handleCopyClicked('/add <username> <verificationToken>')}
-							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 						>
-							<CopyIcon className='relative top-[6px]' /> {'<username>'} {'<verificationToken>'}
+							<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {'<username>'} {'<verificationToken>'}
 						</span>
 						<Button
 							loading={loading}
 							onClick={handleGenerateToken}
-							className='bg-pink_primary font-normal text-white'
+							className='bg-pink_primary font-normal text-white dark:border-none'
 						>
 							Generate Token
 						</Button>
 						<br />
 						{token && (
-							<div className='flex items-center'>
+							<div className='flex items-center dark:text-white'>
 								<span>Username & Verification Token: </span>
 								<div
 									onClick={() => handleCopyClicked(`/add ${username} ${token}`)}
-									className='bg-bg-secondary border-text_secondary mx-2 flex h-[30px] max-w-[230px] cursor-pointer items-center rounded-md border border-solid p-0 text-pink_primary'
+									className='bg-bg-secondary border-text_secondary mx-2 flex h-[30px] max-w-[230px] cursor-pointer items-center rounded-md border border-solid p-0 text-pink_primary dark:text-blue-dark-helper'
 								>
-									<CopyIcon className='relative' /> <span className='mr-2 inline-block max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{username}</span>
+									<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' />{' '}
+									<span className='mr-2 inline-block max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{username}</span>
 									<span className='inline-block max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap'>{token}</span>
 								</div>
 							</div>
 						)}
 					</li>
-					<li className='list-inside'>
+					<li className='list-inside dark:text-white'>
 						(Optional) Send this command to get help:
 						<span
 							onClick={() => handleCopyClicked('/start')}
-							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 						>
-							<CopyIcon className='relative top-[6px]' /> /start
+							<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> /start
 						</span>
 					</li>
 				</ol>

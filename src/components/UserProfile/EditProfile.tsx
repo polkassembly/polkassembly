@@ -2,14 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CloseOutlined } from '@ant-design/icons';
-import { Button, Divider, Modal, Tabs } from 'antd';
+import { Button, Divider, Modal } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import { handleTokenChange } from 'src/services/auth.service';
 
-import { EditIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, EditIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BasicInformation from './BasicInformation';
@@ -21,6 +20,8 @@ import { poppins } from 'pages/_app';
 import validator from 'validator';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
 
 interface IEditProfileModalProps {
@@ -42,6 +43,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 };
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const { data, id, setProfileDetails, openModal, setOpenModal } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
@@ -196,13 +198,14 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	return (
 		<div>
 			<Modal
-				className={`h-full max-h-[774px] w-full max-w-[648px] ${poppins.variable} ${poppins.className}`}
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={`h-full max-h-[774px] w-full max-w-[648px] ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);
 				}}
-				title={<h3 className='text-xl font-semibold text-[#1D2632]'>Edit Profile</h3>}
-				closeIcon={<CloseOutlined className='text-sm text-[#485F7D]' />}
+				title={<div className='text-xl font-semibold text-[#1D2632] dark:bg-section-dark-overlay dark:text-white'>Edit Profile</div>}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				footer={
 					<div className='-mx-6 -mb-5 px-6 pb-4'>
 						<Divider className='mb-4 mt-6' />
@@ -215,7 +218,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								}}
 								disabled={loading}
 								size='middle'
-								className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm font-medium text-pink_primary'
+								className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm font-medium text-pink_primary dark:bg-section-dark-overlay'
 							>
 								Cancel
 							</Button>,
@@ -252,6 +255,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				open={openModal ? openModal : open}
 			>
 				<Tabs
+					theme={theme}
 					type='card'
 					className='ant-tabs-tab-bg-white mt-4 font-medium text-sidebarBlue'
 					items={[
@@ -272,6 +276,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						{
 							children: (
 								<Socials
+									theme={theme}
 									loading={loading}
 									profile={profile}
 									setProfile={setProfile}

@@ -81,7 +81,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 		<>
 			{tippers?.length > 0 ? (
 				<div className='flex flex-col gap-y-7'>
-					<h3 className='flex items-center gap-x-2 text-lg font-medium tracking-wide text-sidebarBlue'>
+					<h3 className='flex items-center gap-x-2 text-lg font-medium tracking-wide text-sidebarBlue dark:text-white'>
 						Receiver of Final Tip
 						<HelperTooltip
 							className='text-sm'
@@ -97,7 +97,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 						</Col>
 						<Col>{formatBnBalance(median, { numberAfterComma: 2, withUnit: true }, network)}</Col>
 					</Row>
-					<h3 className='flex items-center gap-x-2 text-lg font-medium tracking-wide text-sidebarBlue'>
+					<h3 className='flex items-center gap-x-2 text-lg font-medium tracking-wide text-sidebarBlue dark:text-white'>
 						Tippers{' '}
 						<HelperTooltip
 							className='text-sm'
@@ -118,7 +118,9 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 											address={tipper}
 										/>
 									</Col>
-									<Col className='text-sm font-medium text-navBlue'>{formatBnBalance(String(value), { numberAfterComma: 2, withUnit: true }, network)}</Col>
+									<Col className='text-sm font-medium text-navBlue dark:text-icon-dark-inactive'>
+										{formatBnBalance(String(value), { numberAfterComma: 2, withUnit: true }, network)}
+									</Col>
 								</Row>
 							);
 						})}

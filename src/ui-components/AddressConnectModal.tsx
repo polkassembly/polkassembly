@@ -377,11 +377,11 @@ const AddressConnectModal = ({
 
 	return (
 		<Modal
-			wrapClassName={className}
-			className={`${poppins.className} ${poppins.variable} radius w-[530px] max-sm:w-full`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			className={`${poppins.className} ${poppins.variable} radius w-[530px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={open}
 			title={
-				<div className='text-center text-[20px] font-semibold text-bodyBlue'>
+				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					{showMultisig && (
 						<ArrowLeft
 							className='absolute left-[24px] mt-1 cursor-pointer'
@@ -427,12 +427,14 @@ const AddressConnectModal = ({
 					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
 							<ConnectAddressIcon />
-							<span className='mt-6 text-center text-sm text-bodyBlue'>
+							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 								Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
 							</span>
 						</div>
 					)}
-					{Object.keys(availableWallets || {}).length !== 0 && !loading && <h3 className='text-center text-sm font-normal text-lightBlue'>Select a wallet</h3>}{' '}
+					{Object.keys(availableWallets || {}).length !== 0 && !loading && (
+						<h3 className='text-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</h3>
+					)}{' '}
 					<AvailableWallets
 						className='flex items-center justify-center gap-x-4'
 						handleWalletClick={handleWalletClick}
@@ -447,7 +449,7 @@ const AddressConnectModal = ({
 									<Divider className='m-0'>OR</Divider>
 									<div className='flex w-full justify-center'>
 										<WalletButton
-											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue'
+											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'
 											onClick={() => {
 												setShowMultisig(!showMultisig);
 											}}
@@ -503,7 +505,7 @@ const AddressConnectModal = ({
 							}
 							type='info'
 							showIcon
-							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
 						/>
 					)}
 					<Form
@@ -524,12 +526,13 @@ const AddressConnectModal = ({
 										setMultisig('');
 									}}
 									onBalanceChange={handleOnBalanceChange}
-									className='text-sm text-lightBlue'
+									className='text-sm text-lightBlue dark:text-blue-dark-medium'
 									walletAddress={multisig}
 									setWalletAddress={setMultisig}
 									containerClassName='gap-[20px]'
 									showMultisigBalance={true}
 									canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
+									linkAddressTextDisabled={false}
 								/>
 							) : (
 								<AccountSelectionForm
@@ -541,7 +544,7 @@ const AddressConnectModal = ({
 									withBalance={true}
 									onAccountChange={(address) => setAddress(address)}
 									onBalanceChange={handleOnBalanceChange}
-									className='mt-4 text-sm text-lightBlue'
+									className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
 								/>
 							)
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (

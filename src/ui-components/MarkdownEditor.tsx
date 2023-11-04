@@ -18,9 +18,10 @@ const StyledTextArea = styled.div`
 	textarea {
 		border-radius: 0rem;
 		border: none !important;
-		color: #000000 !important;
 		padding: 1rem 1.2rem !important;
 		line-height: 1.4 !important;
+		background-color: ${(props) => (props.theme == 'dark' ? '#0d0d0d' : 'white')} !important;
+		color: ${(props) => (props.theme == 'dark' ? '#ffffff' : '#000000')} !important;
 	}
 
 	@media only screen and (max-width: 768px) {
@@ -68,7 +69,7 @@ const StyledTextArea = styled.div`
 	}
 
 	.react-mde {
-		border-color: #ebf0f5;
+		border-color: ${(props) => (props.theme == 'dark' ? '#4B4B4B' : '#ebf0f5')} !important;
 		font-size: 0.85rem;
 
 		.grip {
@@ -81,10 +82,10 @@ const StyledTextArea = styled.div`
 		}
 
 		.mde-header {
-			background-color: #eaeef0;
+			background-color: ${(props) => (props.theme == 'dark' ? '#222222' : '#eaeef0')} !important;
 			border-bottom-style: solid;
 			border-bottom-width: 1px;
-			border-bottom-color: #ebf0f5;
+			border-bottom-color: ${(props) => (props.theme == 'dark' ? '#4B4B4B' : '#ebf0f5')} !important;
 
 			.mde-tabs {
 				margin: 0rem 0.5rem;
@@ -94,29 +95,29 @@ const StyledTextArea = styled.div`
 					font-size: 13.5px;
 					font-weight: 500;
 					padding: 0.6rem 0.8rem;
-					color: #000000;
-					background: #eaeef0;
+					color: ${(props) => (props.theme == 'dark' ? '#ebf0f5' : '#000000')} !important;
+					background: ${(props) => (props.theme == 'dark' ? '#4b4b4b' : '#eaeef0')} !important;
 					border-radius: 0.3em;
-					border-bottom-color: #ebf0f5;
+					border-bottom-color: ${(props) => (props.theme == 'dark' ? '#4B4B4B' : '#ebf0f5')} !important;
 					margin-bottom: -1px;
 
 					&.selected,
 					&:focus {
-						background: white;
-						color: #2e2f30;
+						background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+						color: ${(props) => (props.theme == 'dark' ? '#ebf0f5' : '#2e2f30')} !important;
 						padding: 0.2rem 0.8rem;
 						border-style: solid;
 						border-width: 1px;
-						border-color: #ebf0f5;
+						border-color: ${(props) => (props.theme == 'dark' ? '#4B4B4B' : '#ebf0f5')} !important;
 						outline: none;
-						border-bottom-color: white;
+						border-bottom-color: ${(props) => (props.theme == 'dark' ? '#4B4B4B' : '#ebf0f5')} !important;
 						border-bottom-right-radius: 0;
 						border-bottom-left-radius: 0;
 						margin-bottom: -1px;
 					}
 
 					&:hover {
-						color: #2e2f30;
+						color: ${(props) => (props.theme == 'dark' ? '#ebf0f5' : '#2e2f30')} !important;
 					}
 				}
 			}
@@ -170,6 +171,7 @@ interface Props {
 	name?: string;
 	onChange: ((value: string) => void) | undefined;
 	value: string;
+	theme?: string;
 }
 
 function MarkdownEditor(props: Props): React.ReactElement {
@@ -267,7 +269,10 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	};
 
 	return (
-		<StyledTextArea className='container'>
+		<StyledTextArea
+			theme={props.theme}
+			className='container'
+		>
 			<ReactMde
 				generateMarkdownPreview={(markdown) =>
 					Promise.resolve(

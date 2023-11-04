@@ -89,7 +89,7 @@ const BackToListingView = ({ postCategory, trackName }: Props) => {
 
 	return (
 		<Link
-			className='inline-flex items-center text-sidebarBlue hover:text-pink_primary'
+			className='inline-flex items-center text-sidebarBlue hover:text-pink_primary dark:text-white'
 			href={`/${path}`}
 		>
 			<div className='flex items-center'>

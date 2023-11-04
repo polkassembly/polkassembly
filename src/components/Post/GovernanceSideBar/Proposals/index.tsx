@@ -43,7 +43,7 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 
 	return (
 		<GovSidebarCard>
-			<h6 className='dashboard-heading mb-6'>Second this Proposal!</h6>
+			<h6 className='dashboard-heading mb-6 dark:text-white'>Second this Proposal!</h6>
 			{canVote && (
 				<>
 					{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (

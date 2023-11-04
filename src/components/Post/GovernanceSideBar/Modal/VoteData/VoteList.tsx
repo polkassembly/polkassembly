@@ -4,7 +4,7 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Divider, Modal as AntdModal, Pagination, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
+import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 import { LoadingStatusType } from 'src/types';
@@ -19,28 +19,32 @@ import VoterRow from './VoterRow';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 // import ChartIcon from '~assets/chart-icon.svg';
 // import ThresholdGraph from './ThresholdGraph';
-import VoteDataIcon from '~assets/icons/vote-data-icon.svg';
-import CloseIcon from '~assets/icons/close-icon.svg';
 import DelegationVotersList from './DelegateVoteList';
 // import GraphExpandIcon from '~assets/graph-expand.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { Pagination } from '~src/components/Pagination';
+import { useTheme } from 'next-themes';
+import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
 
 const StyledSegmented = styled(Segmented)`
+	background-color: ${(props) => (props.theme == 'dark' ? '#1C1D1F' : '')} !important;
 	.ant-segmented-group > label {
 		border-radius: 20px !important;
 	}
+	.ant-segmented-item {
+		border-radius: 20px !important;
+		color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
+	}
+	.ant-segmented-item-selected > .ant-segmented-item-label {
+		border-radius: 20px !important;
+		background-color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
+	}
 `;
-
-// const Container = styled.div`
-// @media (max-width: 1024px) {
-// display: none !important;
-// }
-// `;
 
 const VoteContainer = styled.div`
 	@media (max-width: 640px) {
@@ -77,6 +81,7 @@ const sortedCheck = {
 
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const firstRef = useRef(true);
 	const {
 		postData: { postType }
@@ -109,7 +114,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const decisionOptions = [
 		{
 			label: (
-				<div className='flex items-center justify-center gap-1'>
+				<div className='flex items-center justify-center gap-1 rounded-[20px] text-green-700'>
 					<LikeFilled /> <span>Ayes</span>
 				</div>
 			),
@@ -117,7 +122,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		},
 		{
 			label: (
-				<div className='flex items-center justify-center gap-1'>
+				<div className='flex items-center justify-center gap-1  rounded-[20px] text-red-600'>
 					<DislikeFilled /> <span>Nays</span>
 				</div>
 			),
@@ -128,7 +133,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	if (voteType === VoteType.REFERENDUM_V2) {
 		decisionOptions.push({
 			label: (
-				<div className='flex items-center justify-center gap-1'>
+				<div className='flex items-center justify-center gap-1 rounded-[20px] text-blue-400'>
 					<MinusCircleFilled /> <span>Abstain</span>
 				</div>
 			),
@@ -244,13 +249,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										setCurrentPage(1);
 									}}
 									options={decisionOptions}
+									theme={theme}
 								/>
 							</div>
 							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-									<div className={`w-[190px] text-sm font-medium text-lightBlue  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+									<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									<div
-										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue ${decision === 'abstain' ? 'w-[160px]' : ''}`}
+										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-white ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -263,7 +269,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
-											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue'}
+											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-high'}
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -276,7 +282,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</div>
 									) : null}
 
-									<div className='flex w-[120px] items-center gap-1 text-lightBlue'>
+									<div className='flex w-[120px] items-center gap-1 text-lightBlue dark:text-blue-dark-high'>
 										<span
 											className='flex cursor-pointer'
 											onClick={() => {
@@ -294,7 +300,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 												color='#E5007A'
 												title='Vote Power for delegated votes is the self vote power + delegated vote power.'
 											>
-												<InfoCircleOutlined className='text-xs text-lightBlue' />
+												<InfoCircleOutlined className='text-xs text-lightBlue dark:text-blue-dark-high' />
 											</Tooltip>
 										</span>
 									</div>
@@ -323,9 +329,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</div>
 							</VoteContainer>
 						</div>
-						<div className='z-10 flex justify-between bg-white pt-6 max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
-							<p className='m-0 text-xs text-bodyBlue'>d: Delegation s: Split sa: Split Abstain</p>
+						<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
+							<p className='m-0 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
 							<Pagination
+								theme={theme}
 								size='small'
 								defaultCurrent={1}
 								current={currentPage}
@@ -363,7 +370,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</p>
 								</p>
 							) : (
-								<p className='row m-0 flex gap-1 text-sm font-medium text-bodyBlue'>
+								<p className='row m-0 flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 									<span>
 										<ChartIcon />
 									</span>
@@ -373,7 +380,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</p>
 							)}
 							<button
-								className='absolute right-0 top-[50px] cursor-pointer border-0 bg-white'
+								className='absolute right-0 top-[50px] cursor-pointer border-0 bg-white dark:bg-section-dark-overlay'
 								onClick={() => setThresholdOpen(true)}
 							>
 								<GraphExpandIcon />
@@ -389,21 +396,20 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			</Spin>
 			{delegationVoteModal.isOpen && delegationVoteModal.voter && decision && (
 				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
 					title={
-						<div className='ml-[-24px] mr-[-24px] text-[18px]'>
-							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>
-								<span className='relative top-[3px]'>
-									<VoteDataIcon />
-								</span>
-								<span className='text-xl font-semibold text-bodyBlue'>Delegation Data</span>
+						<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
+							<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
+								<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+								<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Data</span>
 							</h3>
-							<Divider className='my-2 mb-5 text-[#D2D8E0]' />
+							<Divider className='my-2 mb-5 text-[#D2D8E0] dark:text-separatorDark' />
 						</div>
 					}
 					open={delegationVoteModal.isOpen}
 					closable
-					closeIcon={<CloseIcon />}
-					className={'sm:w-[600px]'}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+					className={'sm:w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 					onCancel={() => {
 						setDelegationVoteModal({ isOpen: false, voter: null });
 					}}

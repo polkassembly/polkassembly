@@ -21,7 +21,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 
 	return (
 		<div className='mb-2 flex flex-col'>
-			<h3 className='m-0 flex items-center gap-1 gap-2 text-base font-medium text-[#243A57]'>
+			<h3 className='m-0 flex items-center gap-1 gap-2 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>
 				<span>
 					<MailFilled /> Email Notifications{' '}
 					{!verified && (
@@ -39,13 +39,15 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 							onChange={(checked) => (!checked ? handleToggleClick() : handleEnableDisabled(CHANNEL.EMAIL, true))}
 						/>
 						<label>
-							<span className={`text-[14px] font-medium  ${notificationEnabled ? 'text-pink_primary' : 'text-[#485F7D]'}`}>{notificationEnabled ? 'Enabled' : 'Disabled'}</span>
+							<span className={`text-[14px] font-medium  ${notificationEnabled ? 'text-pink_primary' : 'text-[#485F7D] dark:text-blue-dark-medium'}`}>
+								{notificationEnabled ? 'Enabled' : 'Disabled'}
+							</span>
 						</label>
 					</span>
 				)}
 			</h3>
 			<div className='ml-5'>
-				<h3 className='m-0 text-[14px] text-[#243A57]'>{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}</h3>
+				<h3 className='m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}</h3>
 			</div>
 			<DisabledConfirmation
 				open={showModal}

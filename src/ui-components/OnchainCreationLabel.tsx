@@ -17,7 +17,7 @@ interface Props {
 
 const OnchainCreationLabel = ({ address, username, truncateUsername }: Props) => {
 	return (
-		<div className='flex w-full justify-between text-xs text-lightBlue min-[340px]:w-auto min-[340px]:flex-row min-[340px]:items-center'>
+		<div className='flex w-full justify-between text-xs text-lightBlue dark:text-blue-dark-medium min-[340px]:w-auto min-[340px]:flex-row min-[340px]:items-center'>
 			<div className='flex items-center'>
 				{username || address ? (
 					<>
@@ -31,7 +31,7 @@ const OnchainCreationLabel = ({ address, username, truncateUsername }: Props) =>
 								usernameClassName='font-semibold'
 							/>
 						) : (
-							<span className='max-w-[150px] overflow-hidden text-ellipsis font-semibold text-bodyBlue'>
+							<span className='max-w-[150px] overflow-hidden text-ellipsis font-semibold text-bodyBlue dark:text-blue-dark-high'>
 								<Link
 									href={`/user/${username}`}
 									target='_blank'

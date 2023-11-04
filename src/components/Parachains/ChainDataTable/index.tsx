@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Tooltip } from 'antd';
-import Table, { ColumnsType } from 'antd/lib/table';
+import { Table as AntdTable } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import Image from 'next/image';
 import React, { Key, useEffect, useState } from 'react';
 import { LoadingLatestActivity } from 'src/ui-components/LatestActivityStates';
@@ -17,6 +18,8 @@ import w3fGreenLogo from '~assets/parachains/w3f-green.png';
 import w3fRedLogo from '~assets/parachains/w3f-red.png';
 
 import Cards from './Cards';
+import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 interface Props {
 	chain: string;
@@ -37,12 +40,35 @@ interface ParachainRowData {
 	key: Key | null | undefined;
 }
 
-const columns: ColumnsType<ParachainRowData> = [
+const Table = styled(AntdTable)`
+	.ant-table-thead > tr > th {
+		background: ${(props) => (props.theme === 'dark' ? '#1C1D1F' : '#fafafa')} !important;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')} !important;
+		font-weight: 500 !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+	.ant-table-thead > tr > th::before {
+		background: none !important;
+	}
+	.ant-table-tbody > tr {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+	}
+	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
+	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+		background-color: none !important;
+	}
+	td {
+		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+`;
+
+const columns: ColumnsType<any> = [
 	{
 		dataIndex: 'index',
 		fixed: 'left',
 		key: 'index',
-		render: (index) => <div className='text-[#243A57]'>#{index}</div>,
+		render: (index) => <div className='text-blue-light-high dark:text-blue-dark-high'>#{index}</div>,
 		title: 'Index',
 		width: 75
 	},
@@ -60,7 +86,7 @@ const columns: ColumnsType<ParachainRowData> = [
 					alt={`${name} logo`}
 				/>
 				<div
-					className='text-[#243A57]'
+					className='text-blue-light-high dark:text-blue-dark-high'
 					style={{ marginRight: '16px' }}
 				>
 					{name}
@@ -85,7 +111,7 @@ const columns: ColumnsType<ParachainRowData> = [
 		render: (status) => (
 			<>
 				{status.search('auction') !== -1 ? (
-					<span className='flex items-center gap-4 text-[#243A57]'>
+					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
 						<Image
 							src={auctionIcon}
 							height={16}
@@ -95,7 +121,7 @@ const columns: ColumnsType<ParachainRowData> = [
 						In Auction
 					</span>
 				) : status.search('Testing') !== -1 ? (
-					<span className='flex items-center gap-4 text-[#243A57]'>
+					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
 						<Image
 							src={testingIcon}
 							height={16}
@@ -105,7 +131,7 @@ const columns: ColumnsType<ParachainRowData> = [
 						Testing
 					</span>
 				) : status.search('announced') !== -1 ? (
-					<span className='flex items-center gap-4 text-[#243A57]'>
+					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
 						<Image
 							src={announcedIcon}
 							height={16}
@@ -115,7 +141,7 @@ const columns: ColumnsType<ParachainRowData> = [
 						Announced
 					</span>
 				) : status.search('live') !== -1 ? (
-					<span className='flex items-center gap-4 text-[#243A57]'>
+					<span className='flex items-center gap-4 text-blue-light-high dark:text-blue-dark-high'>
 						<Image
 							src={liveIcon}
 							height={16}
@@ -132,7 +158,7 @@ const columns: ColumnsType<ParachainRowData> = [
 	{
 		dataIndex: 'token',
 		key: 'token',
-		render: (token) => <div className='text-[#243A57]'>{token}</div>,
+		render: (token) => <div className='text-blue-light-high dark:text-blue-dark-high'>{token}</div>,
 		title: 'Token'
 	},
 	{
@@ -190,7 +216,7 @@ const columns: ColumnsType<ParachainRowData> = [
 	{
 		dataIndex: 'investors',
 		key: 'investors',
-		render: (investors) => <div className='text-[#243A57]'>{!!investors && investors}</div>,
+		render: (investors) => <div className='text-blue-light-high dark:text-blue-dark-high'>{!!investors && investors}</div>,
 		title: 'Investors',
 		width: 'auto'
 	},
@@ -217,6 +243,7 @@ const columns: ColumnsType<ParachainRowData> = [
 
 const ChainDataTable = ({ chain, data }: Props) => {
 	const [chainData, setChainData] = useState<any>(null);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		const filteredData: any = data.filter((project: any) => {
@@ -254,6 +281,7 @@ const ChainDataTable = ({ chain, data }: Props) => {
 			<>
 				<div className='hidden lg:block'>
 					<Table
+						theme={theme}
 						columns={columns}
 						dataSource={tableData}
 						pagination={false}

@@ -20,6 +20,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { ProposalType } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (
@@ -53,6 +54,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { allowed_roles } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 	const isOffchainPost: Boolean = postType == ProposalType.DISCUSSIONS || postType == ProposalType.GRANTS;
 	//write a function which redirects to the proposalType page
 	const goToListingViewPath = (proposalType: ProposalType) => {
@@ -83,6 +85,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 				<Markdown
 					className='post-content'
 					md={content}
+					theme={theme}
 				/>
 			)}
 
@@ -104,7 +107,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					)}
 					{canEdit && (
 						<Button
-							className={'flex items-center border-none px-1.5 text-pink_primary shadow-none'}
+							className={'flex items-center border-none px-1.5 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
 							onClick={toggleEdit}
 						>
 							<FormOutlined />
@@ -115,7 +118,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 				<div className='flex flex-wrap items-center'>
 					{id && !isEditing && (
 						<ReportButton
-							className={'flex items-center border-none p-0 text-pink_primary shadow-none'}
+							className={'flex items-center border-none p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
 							proposalType={postType}
 							type='post'
 							postId={`${postIndex}`}

@@ -5,12 +5,12 @@ import React, { useEffect } from 'react';
 import { ESetIdentitySteps, ISocials } from '.';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
-import CloseIcon from '~assets/icons/close-icon.svg';
 import SuccessIcon from '~assets/icons/identity-success.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { ESocials } from '~src/types';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -44,9 +44,9 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 		<Modal
 			centered
 			open={open}
-			className={`${poppins.variable} ${poppins.className} w-[650px] max-sm:w-full`}
-			wrapClassName={className}
-			closeIcon={<CloseIcon />}
+			className={`${poppins.variable} ${poppins.className} w-[650px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
 				close(true);
 				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
@@ -58,7 +58,7 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 			<>
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
 					<SuccessIcon />
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>Email verification in progress</label>
+					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Email verification in progress</label>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>Check your email!</div>
 					<div className=' mt-4 flex w-full shrink-0 flex-col items-center justify-center text-center text-sm tracking-wide '>
 						<span className='flex shrink-0'>A verification link has been sent to your mail address</span>

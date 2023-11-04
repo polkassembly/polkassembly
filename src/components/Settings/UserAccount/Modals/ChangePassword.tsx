@@ -66,8 +66,9 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					<h3 className='md:text-md mb-0 ml-[24px] flex items-center gap-2 text-base'>
 						<ChangePasswordIcon /> Change your username
 					</h3>
@@ -76,7 +77,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 			}
 			open={open}
 			closable
-			className='min-w-[350px] md:min-w-[600px]'
+			className='min-w-[350px] md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
@@ -88,7 +89,12 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 					className='flex w-full flex-col gap-6'
 				>
 					<div>
-						<label htmlFor='currentPassword'>Current Password</label>
+						<label
+							className='dark:text-white'
+							htmlFor='currentPassword'
+						>
+							Current Password
+						</label>
 						<Form.Item
 							name='currentPassword'
 							className='m-0 w-full min-w-[250px]'
@@ -105,7 +111,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter current password'
 							/>
 						</Form.Item>
@@ -128,13 +134,18 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter new password'
 							/>
 						</Form.Item>
 					</div>
 					<div>
-						<label htmlFor='confirmPassword'>Confirm New Password</label>
+						<label
+							className='dark:text-white'
+							htmlFor='confirmPassword'
+						>
+							Confirm New Password
+						</label>
 						<Form.Item
 							name='confirmPassword'
 							className='m-0 w-full min-w-[250px]'
@@ -155,7 +166,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 						>
 							<Input
 								type='password'
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Confirm new password'
 							/>
 						</Form.Item>

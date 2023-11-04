@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton, Tabs } from 'antd';
+import { Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 
@@ -34,6 +34,8 @@ import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 import TrackListingAllTabContent from '../Listing/Tracks/TrackListingAllTabContent';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import { Tabs } from '~src/ui-components/Tabs';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
@@ -95,7 +97,7 @@ function formatDuration(duration: any) {
 
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
-
+	const { resolvedTheme: theme } = useTheme();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
@@ -371,7 +373,9 @@ const Post: FC<IPostProps> = (props) => {
 					<div className='audit flex items-center justify-center gap-2'>
 						Audit
 						{totalAuditCount + totalVideoCount > 0 && (
-							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue'>{totalAuditCount + totalVideoCount}</span>
+							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+								{totalAuditCount + totalVideoCount}
+							</span>
 						)}{' '}
 					</div>
 				)
@@ -503,13 +507,13 @@ const Post: FC<IPostProps> = (props) => {
 					)}
 				{proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) && (
 					<Link href={`/bounty/${post.parent_bounty_index}`}>
-						<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md md:p-6'>
-							This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
+						<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:font-normal dark:text-white md:p-6'>
+							This is a child bounty of <span className='text-pink_primary dark:text-blue-dark-helper'>Bounty #{post.parent_bounty_index}</span>
 						</div>
 					</Link>
 				)}
 				{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-					<div className='dashboard-heading mb-6 flex w-full items-center  gap-x-2 rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+					<div className='dashboard-heading mb-6 flex w-full items-center gap-x-2 rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
 						<span>The child bounty payout is ready to be claimed</span>
 						<ClaimPayoutModal
 							parentBountyId={post?.parentBountyId}
@@ -521,30 +525,31 @@ const Post: FC<IPostProps> = (props) => {
 				<div className={`${className} grid grid-cols-1 gap-9 xl:grid-cols-12`}>
 					<div className='xl:col-span-8'>
 						{proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) && (
-							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md md:p-6'>
+							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
 								This grant will be closed in <span className='text-pink_primary'>{formatDuration(duration)}</span>
 							</div>
 						)}
 
 						{/* Post Content */}
-						<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md md:p-4 lg:p-6 '>
+						<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
 							{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && (
 								<>
 									<PostHeading className='mb-5' />
 									<Tabs
+										theme={theme}
 										type='card'
-										className='ant-tabs-tab-bg-white font-medium text-bodyBlue'
+										className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 										items={tabItems}
 									/>
 								</>
 							)}
 						</div>
 						<div className='flex items-center'>
-							<hr className='seperation-border mr-2 flex-grow' />
-							<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue'>Discover similar proposals</p>
-							<hr className='seperation-border ml-2 flex-grow' />
+							<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
+							<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
+							<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
 						</div>
 						{isSimilarLoading ? (
 							<>

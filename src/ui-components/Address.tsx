@@ -22,6 +22,7 @@ import IdentityBadge from './IdentityBadge';
 import { Skeleton, Space, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
 
@@ -103,6 +104,8 @@ const Address = (props: Props) => {
 	const [flags, setFlags] = useState<DeriveAccountFlags>();
 	const [username, setUsername] = useState<string>(passedUsername || '');
 	const [kiltName, setKiltName] = useState<string>('');
+	const { resolvedTheme: theme } = useTheme();
+
 	const [imgUrl, setImgUrl] = useState<string>('');
 	const [profileCreatedAt, setProfileCreatedAt] = useState<Date>(new Date());
 	const encodedAddr = address ? getEncodedAddress(address, network) || '' : '';
@@ -254,9 +257,9 @@ const Address = (props: Props) => {
 	return (
 		<>
 			<Tooltip
+				arrow
 				color='#fff'
 				overlayClassName={className}
-				placement='topLeft'
 				title={
 					<QuickView
 						socials={socials}
@@ -273,7 +276,7 @@ const Address = (props: Props) => {
 				}
 				open={!disableTooltip ? open : false}
 				onOpenChange={(e) => {
-					!openTipping && setOpen(e);
+					setOpen(e);
 				}}
 			>
 				<div className={`${className} flex gap-1`}>
@@ -292,22 +295,26 @@ const Address = (props: Props) => {
 								theme={'polkadot'}
 							/>
 						))}
-					<div className='flex items-center text-bodyBlue'>
+					<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 						{displayInline ? (
 							<div className='inline-address flex items-center'>
 								{!!kiltName ||
 									(!!identity && !!mainDisplay && (
 										<IdentityBadge
+											theme={theme}
 											identity={identity}
 											flags={flags}
+											className='text-navBlue'
 										/>
 									))}
 
-								<div className={`flex items-center font-semibold text-bodyBlue ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
+								<div className={`flex items-center font-semibold text-bodyBlue   dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
 									<div
 										onClick={(e) => handleClick(e)}
 										title={mainDisplay || encodedAddr}
-										className={`flex gap-x-1 ${usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue'} hover:text-bodyBlue`}
+										className={`flex gap-x-1 ${
+											usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-blue-dark-high'
+										} hover:text-bodyBlue dark:text-blue-dark-high`}
 									>
 										{!!addressPrefix && (
 											<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -358,7 +365,7 @@ const Address = (props: Props) => {
 						)}
 					</div>
 					{addressOtherTextType ? (
-						<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue'}>
+						<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue dark:text-blue-dark-medium'}>
 							<span
 								className={classNames('h-[6px] w-[6px] rounded-full', {
 									'bg-aye_green ': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.COUNCIL_CONNECTED].includes(addressOtherTextType),
@@ -366,7 +373,7 @@ const Address = (props: Props) => {
 									'bg-nay_red': [EAddressOtherTextType.UNLINKED_ADDRESS].includes(addressOtherTextType)
 								})}
 							></span>
-							<span className='text-xs text-lightBlue'>{addressOtherTextType}</span>
+							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{addressOtherTextType}</span>
 						</p>
 					) : null}
 				</div>

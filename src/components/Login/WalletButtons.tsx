@@ -30,7 +30,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 		<div className='w-full'>
 			{!noHeader && (
 				<div className='flex items-center gap-x-2'>
-					<Divider className='text-grey_primary'>Or Login with</Divider>
+					<Divider className='text-grey_primary dark:text-blue-dark-medium'>Or Login with</Divider>
 				</div>
 			)}
 			<div className='m-auto mt-3 flex max-w-xs flex-col justify-center gap-4 sm:mx-2 sm:max-w-none sm:flex-row'>

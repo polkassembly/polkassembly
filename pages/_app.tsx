@@ -17,6 +17,14 @@ import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
 import getNetwork from '~src/util/getNetwork';
 import { initGA, logPageView } from '../analytics';
+import 'antd/dist/reset.css';
+import '../styles/globals.css';
+import ErrorBoundary from '~src/ui-components/ErrorBoundary';
+import { PersistGate } from 'redux-persist/integration/react';
+import { wrapper } from '~src/redux/store';
+import { useStore } from 'react-redux';
+import { chainProperties } from '~src/global/networkConstants';
+import { ThemeProvider } from 'next-themes';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -36,14 +44,6 @@ const workSans = Work_Sans({
 	display: 'swap',
 	subsets: ['latin']
 });
-
-import 'antd/dist/reset.css';
-import '../styles/globals.css';
-import ErrorBoundary from '~src/ui-components/ErrorBoundary';
-import { PersistGate } from 'redux-persist/integration/react';
-import { wrapper } from '~src/redux/store';
-import { useStore } from 'react-redux';
-import { chainProperties } from '~src/global/networkConstants';
 
 function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
@@ -84,25 +84,27 @@ function App({ Component, pageProps }: AppProps) {
 	return (
 		<PersistGate persistor={store.__persistor}>
 			{() => (
-				<ConfigProvider theme={antdTheme}>
-					<ModalProvider>
-						<ErrorBoundary>
-							<ApiContextProvider network={network}>
-								<>
-									{showSplashScreen && <SplashLoader />}
-									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-										<NextNProgress color='#E5007A' />
-										<CMDK />
-										<AppLayout
-											Component={Component}
-											pageProps={pageProps}
-										/>
-									</main>
-								</>
-							</ApiContextProvider>
-						</ErrorBoundary>
-					</ModalProvider>
-				</ConfigProvider>
+				<ThemeProvider attribute='class'>
+					<ConfigProvider theme={antdTheme}>
+						<ModalProvider>
+							<ErrorBoundary>
+								<ApiContextProvider network={network}>
+									<>
+										{showSplashScreen && <SplashLoader />}
+										<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+											<NextNProgress color='#E5007A' />
+											<CMDK />
+											<AppLayout
+												Component={Component}
+												pageProps={pageProps}
+											/>
+										</main>
+									</>
+								</ApiContextProvider>
+							</ErrorBoundary>
+						</ModalProvider>
+					</ConfigProvider>
+				</ThemeProvider>
 			)}
 		</PersistGate>
 	);

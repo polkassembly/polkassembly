@@ -6,7 +6,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Dropdown, Space, Tooltip } from 'antd';
+import { Button, Space, Tooltip } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -14,8 +15,10 @@ import React, { useEffect, useState } from 'react';
 import calendar_today from '~assets/calendar_today.png';
 
 import NetworkSelect from './NetworkSelect';
+import { useTheme } from 'next-themes';
 
 function CustomToolbar(props: any) {
+	const { resolvedTheme: theme } = useTheme();
 	let months: MenuProps['items'] = [
 		{ key: '0', label: 'January' },
 		{ key: '1', label: 'February' },
@@ -169,6 +172,7 @@ function CustomToolbar(props: any) {
 						<div className='select-div'>
 							<label>Type</label>
 							<Dropdown
+								theme={theme}
 								overlayClassName='z-[1056]'
 								trigger={['click']}
 								menu={{ items: viewStateOptions, onClick: onViewStateChange }}
@@ -180,7 +184,7 @@ function CustomToolbar(props: any) {
 							</Dropdown>
 						</div>
 						<div className='flex items-center'>
-							<span className='text-md ml-5 mr-5 w-[130px] text-sidebarBlue md:text-lg'>{dayjs(props.date).format('MMMM YYYY')}</span>
+							<span className='text-md ml-5 mr-5 w-[130px] text-sidebarBlue dark:text-white md:text-lg'>{dayjs(props.date).format('MMMM YYYY')}</span>
 							<LeftOutlined
 								onClick={goToBack}
 								className='mr-3 cursor-pointer text-sm hover:font-semibold hover:text-sidebarBlue'
@@ -194,7 +198,7 @@ function CustomToolbar(props: any) {
 						{/* <Button className='search-btn' icon='search' /> */}
 						<div className='ml-auto flex items-center'>
 							<Button
-								className='rounded-md'
+								className='rounded-md dark:bg-section-dark-overlay dark:text-white'
 								onClick={goToToday}
 							>
 								Today
@@ -221,6 +225,7 @@ function CustomToolbar(props: any) {
 						>
 							<div className='flex'>
 								<Dropdown
+									theme={theme}
 									overlayClassName='z-[1056]'
 									trigger={['click']}
 									className='select-month-dropdown'
@@ -258,6 +263,7 @@ function CustomToolbar(props: any) {
 									alt='Today'
 								/>
 								<Dropdown
+									theme={theme}
 									overlayClassName='z-[1056]'
 									trigger={['click']}
 									className='select-view-dropdown'

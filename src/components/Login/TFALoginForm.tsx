@@ -34,7 +34,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 				)}
 
 				<label
-					className='text-sm text-[#485F7D] '
+					className='text-sm text-[#485F7D] dark:text-blue-dark-medium '
 					htmlFor='authCode'
 				>
 					Authentication Code
@@ -60,7 +60,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 						placeholder='######'
 						name='authCode'
 						id='authCode'
-						className='rounded-md px-4 py-3'
+						className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					/>
 				</Form.Item>
 

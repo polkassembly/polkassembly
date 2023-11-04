@@ -69,7 +69,8 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 	return (
 		<>
 			<Modal
-				className={`${className} ${poppins.variable} ${poppins.className}`}
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={`${className} ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={Title}
 				open={showModal}
@@ -79,7 +80,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 						key='disable'
 						onClick={handleSubmit}
 						disabled={loading}
-						className='text-md inline-flex items-center justify-center rounded-lg border-solid border-pink_primary bg-white px-7 py-5 font-semibold leading-7 text-pink_primary outline-none'
+						className='text-md inline-flex items-center justify-center rounded-lg border-solid border-pink_primary bg-white px-7 py-5 font-semibold leading-7 text-pink_primary outline-none dark:bg-section-dark-overlay'
 					>
 						Disable
 					</Button>,
@@ -124,7 +125,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 			<Button
 				onClick={() => setShowModal(true)}
 				htmlType='submit'
-				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-[#243A57]'
+				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-blue-light-high dark:text-blue-dark-high'
 			>
 				<span className='align-center flex text-[16px] font-medium'>
 					Disable Two Factor Authentication <KeyboardDownIcon />

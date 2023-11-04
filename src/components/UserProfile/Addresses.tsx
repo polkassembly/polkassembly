@@ -2,11 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CloseOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import Address from '~src/ui-components/Address';
-import { WalletIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, WalletIcon } from '~src/ui-components/CustomIcons';
 
 interface IAddressesProps {
 	addresses: string[];
@@ -52,11 +51,13 @@ const Addresses: FC<IAddressesProps> = (props) => {
 						})}
 				</div>
 				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
 					title={<h3 className='text-xl font-semibold text-[#1D2632]'>Addresses</h3>}
-					closeIcon={<CloseOutlined className='text-sm text-bodyBlue' />}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}
+					className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				>
 					<div>
 						<p className='mt-4'>Accounts</p>

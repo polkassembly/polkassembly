@@ -192,7 +192,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const dispatch = useDispatch();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
 	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(Boolean(router.query.identityVerification) || false);
-
 	useEffect(() => {
 		dispatch(setNetwork(network));
 		if (!api || !apiReady) return;
@@ -251,7 +250,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 			/>
 			<main>
 				<div className='mr-2 flex justify-between'>
-					<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>Overview</h1>
+					<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
 					{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
 						<div className='flex  items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
 							<IdentityCaution />

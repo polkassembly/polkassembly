@@ -12,7 +12,7 @@ export const LoadingState = () => {
 	return (
 		<Result
 			icon={<LoadingOutlined className='text-pink_primary' />}
-			title={'Loading...'}
+			title={<div className='dark:text-white'>Loading...</div>}
 		/>
 	);
 };
@@ -58,11 +58,11 @@ export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, descriptio
 			imageStyle={imageStyle}
 			description={
 				postCategory ? (
-					<span className='text-md text-navBlue'>We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.</span>
+					<span className='text-md text-navBlue dark:text-white'>We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.</span>
 				) : description ? (
-					<span className='text-md text-navBlue'>{description}</span>
+					<span className='text-md text-navBlue dark:text-white'>{description}</span>
 				) : (
-					<span className='text-md text-navBlue'>{text}</span>
+					<span className='text-md text-navBlue dark:text-white'>{text}</span>
 				)
 			}
 		/>

@@ -24,6 +24,7 @@ const StyledAlert = styled(Alert)`
 const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: { open: boolean; onConfirm: () => void; onCancel: () => void; network: string }) => {
 	return (
 		<Modal
+			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			title='Confirmation'
 			titleIcon={<CheckOutlineIcon />}
 			open={open}
@@ -33,7 +34,7 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 				<Button
 					key='1'
 					onClick={onCancel}
-					className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
+					className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
 				>
 					Cancel
 				</Button>,
@@ -46,7 +47,7 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 				</Button>
 			]}
 		>
-			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-[#243A57]'>
+			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
 				{`Are you sure you want ${network} as your Primary Network for
                 settings?`}
 			</p>
@@ -58,7 +59,7 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 				message={'Primary Network Settings allow you to copy settings to other networks by just one click. You can also change the Primary Network later.'}
 			/>
 			<div className='ml-[-24px] mr-[-24px]'>
-				<Divider className='my-4' />
+				<Divider className='border-b-1 my-4 dark:border-separatorDark' />
 			</div>
 		</Modal>
 	);

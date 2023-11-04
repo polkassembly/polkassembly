@@ -172,8 +172,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		<div className={className}>
 			<BackToListingView postCategory={proposalType === ProposalType.DISCUSSIONS ? PostCategory.DISCUSSION : PostCategory.GRANT} />
 
-			<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
-				<h2 className='dashboard-heading mb-8 text-bodyBlue'>New Post</h2>
+			<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md dark:bg-section-dark-overlay md:p-8'>
+				<h2 className='dashboard-heading mb-8 text-bodyBlue dark:text-blue-dark-high'>New Post</h2>
 				{error && (
 					<ErrorAlert
 						errorMsg={error}
@@ -189,7 +189,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 					disabled={formDisabled || loading}
 					validateMessages={{ required: "Please add the '${name}'" }}
 				>
-					<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue'>
+					<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue dark:text-white'>
 						Title<span className='ml-1 text-red-500'>*</span>
 					</label>
 					<Form.Item
@@ -201,7 +201,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							name='title'
 							autoFocus
 							placeholder='Enter Title'
-							className='text-bodyBlue'
+							className='text-bodyBlue dark:border-[#4b4b4b] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<ContentForm onChange={(v) => savePostFormCacheValue('content', v)} />
@@ -214,7 +214,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 								setHasPoll(checked);
 							}}
 						/>
-						<span className='ml-2 text-sm text-sidebarBlue'>Add poll to {proposalType === ProposalType.DISCUSSIONS ? 'discussion' : 'grant'}</span>
+						<span className='ml-2 text-sm text-sidebarBlue dark:text-white'>Add poll to {proposalType === ProposalType.DISCUSSIONS ? 'discussion' : 'grant'}</span>
 					</div>
 					{proposalType === ProposalType.DISCUSSIONS && (
 						<Form.Item
@@ -234,7 +234,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							]}
 						>
 							<>
-								<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue'>
+								<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue dark:text-white'>
 									Select Topic <span className='ml-1 text-red-500'>*</span>
 								</label>
 								<TopicsRadio
@@ -248,7 +248,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							</>
 						</Form.Item>
 					)}
-					<h5 className='text-color mt-8 text-sm font-normal'>Add Tags</h5>
+					<h5 className='text-color mt-8 text-sm font-normal dark:text-white'>Add Tags</h5>
 					<AddTags
 						tags={tags}
 						setTags={setTags}
@@ -258,7 +258,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						<Button
 							htmlType='submit'
 							disabled={!currentUser.id || formDisabled || loading}
-							className='mt-10 flex h-[50px] w-[215px] items-center justify-center rounded-md border-white bg-pink_primary text-lg text-white hover:bg-pink_secondary'
+							className='mt-10 flex h-[50px] w-[215px] items-center justify-center rounded-md border-white bg-pink_primary text-lg text-white hover:bg-pink_secondary dark:border-none'
 						>
 							Create Post
 						</Button>

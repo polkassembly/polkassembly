@@ -29,6 +29,7 @@ import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -44,6 +45,7 @@ const TreasuryProposalFormButton = ({
 	className // setTipModalOpen,
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const [extensionNotAvailable, setExtensionNotAvailable] = useState(false);
@@ -331,7 +333,7 @@ const TreasuryProposalFormButton = ({
 			{' '}
 			<button
 				disabled={true}
-				className='cursor-pointer rounded-[4px] border-none bg-grey_secondary p-4 text-sm font-medium text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)]  outline-none'
+				className='cursor-pointer rounded-[4px] border-none bg-grey_secondary p-4 text-sm font-medium text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none  dark:bg-[#1D1D1D]'
 			>
 				+ Add New Proposal
 			</button>
@@ -339,7 +341,7 @@ const TreasuryProposalFormButton = ({
 	);
 	return loadingStatus.isLoading ? (
 		<Spin indicator={<LoadingOutlined />}>
-			<div className='flex h-[75px] min-w-[226px] cursor-not-allowed items-center justify-center rounded-[4px] border-none bg-white px-[19x] py-6 text-sm font-medium leading-[27px] text-pink_primary shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'>
+			<div className='flex h-[75px] min-w-[226px] cursor-not-allowed items-center justify-center rounded-[4px] border-none bg-white px-[19x] py-6 text-sm font-medium leading-[27px] text-pink_primary shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none dark:bg-section-dark-overlay'>
 				{loadingStatus.message}
 			</div>
 		</Spin>
@@ -348,10 +350,10 @@ const TreasuryProposalFormButton = ({
 			{!id ? triggerBtnLoginDisabled : triggerBtn}
 
 			<Modal
-				className={className}
+				wrapClassName='dark:bg-modalOverlayDark p-5 before:h-0 md:p-10'
+				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => setModalOpen(false)}
 				centered
-				wrapClassName='p-5 before:h-0 md:p-10'
 				zIndex={1002}
 				title='Create Treasury Proposal'
 				footer={[
@@ -400,7 +402,9 @@ const TreasuryProposalFormButton = ({
 											{errorsFound.includes('submitWithAccount') && <span className='text-red-800'>Please select an address</span>}
 											<Input
 												value={submitWithAccount}
-												className={`${submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'}`}
+												className={`${
+													submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'
+												} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 												onChange={(e) => setSubmitWithAccount(e.target.value)}
 												placeholder='Account Address'
 											/>
@@ -455,7 +459,9 @@ const TreasuryProposalFormButton = ({
 												{errorsFound.includes('beneficiaryAccount') && <span className='text-red-800'>Please select an address</span>}
 												<Input
 													value={beneficiaryAccount}
-													className={`${beneficiaryAccount === '' ? 'px-[0.5em]' : 'pl-10'}`}
+													className={`${
+														beneficiaryAccount === '' ? 'px-[0.5em]' : 'pl-10'
+													} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 													onChange={(e) => setBeneficiaryAccount(e.target.value)}
 													placeholder='Account Address'
 												/>
@@ -486,6 +492,7 @@ const TreasuryProposalFormButton = ({
 										placeholder={'0'}
 										className=' m-0 w-full'
 										onChange={onBalanceChange}
+										theme={theme}
 									/>
 								</div>
 
@@ -501,7 +508,7 @@ const TreasuryProposalFormButton = ({
 										</label>
 
 										<Input
-											className=' hide-pointer'
+											className=' hide-pointer dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 											value={treasuryProposal.bondPercent}
 										/>
 									</div>
@@ -519,7 +526,7 @@ const TreasuryProposalFormButton = ({
 										</label>
 
 										<Input
-											className=' hide-pointer'
+											className='hide-pointer dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 											value={minimumBond}
 										/>
 									</div>

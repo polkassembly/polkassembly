@@ -5,6 +5,7 @@
 import { formatBalance } from '@polkadot/util';
 import { Progress, Skeleton, Tooltip } from 'antd';
 import BN from 'bn.js';
+import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import { useApiContext } from '~src/context';
@@ -34,7 +35,8 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 		ayes: ZERO,
 		nays: ZERO
 	});
-
+	const { resolvedTheme: theme } = useTheme();
+	const trailColor = theme === 'dark' ? 'transparent' : index % 2 === 0 ? '#fbfbfc' : 'white';
 	const [loading, setLoading] = useState<boolean>(true);
 	const [tallyAyeNayVotes, setTallyAyeNayVotes] = useState({
 		ayes: 0,
@@ -231,7 +233,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 							className='progress-rotate mt-3'
 							gapPosition='bottom'
 							strokeWidth={16}
-							trailColor={index % 2 === 0 ? '#fbfbfc' : 'white'}
+							trailColor={trailColor}
 						/>
 					</div>
 				</Tooltip>
@@ -245,7 +247,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 					className='progress-rotate mt-3'
 					gapPosition='bottom'
 					strokeWidth={16}
-					trailColor={index % 2 === 0 ? '#fbfbfc' : 'white'}
+					trailColor={trailColor}
 				/>
 			</div>
 		</>

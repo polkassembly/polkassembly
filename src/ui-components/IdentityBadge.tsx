@@ -11,6 +11,8 @@ interface Props {
 	className?: string;
 	identity?: DeriveAccountRegistration | null;
 	flags?: DeriveAccountFlags;
+	web3Name?: string;
+	theme?: string;
 }
 
 export interface INetworkWalletErr {

@@ -21,6 +21,7 @@ import MailFilled from '~assets/icons/email-notification.svg';
 import TelegramIcon from '~assets/icons/telegram-notification.svg';
 import DiscordIcon from '~assets/icons/discord-notification.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = { handleEnableDisabled: any; handleReset: any };
@@ -42,6 +43,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	const handleClick = (channelName: CHANNEL) => {
 		setShowModal(channelName);
 	};
+	const { resolvedTheme: theme } = useTheme();
 
 	const getVerifyToken = async (channel: CHANNEL) => {
 		try {
@@ -83,7 +85,8 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -95,7 +98,9 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					<div className='flex items-center justify-between gap-[8px]'>
 						<div className='channel-header flex items-center gap-[6px]'>
 							<NotificationChannelsIcon />
-							<h3 className='mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Notification Channels</h3>
+							<h3 className='mb-0 pt-1 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
+								Notification Channels
+							</h3>
 						</div>
 						{!!active && (
 							<div className='hidden items-center gap-4 md:flex'>
@@ -117,7 +122,9 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-[#243A57]'>Please select the socials where you would like to receive notifications:</p>
+					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
+						Please select the socials where you would like to receive notifications:
+					</p>
 					<EmailNotificationCard
 						verifiedEmail={networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.handle || email || ''}
 						verified={email_verified || false}
@@ -125,7 +132,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						handleEnableDisabled={handleEnableDisabled}
 					/>
 					<Divider
-						className='my-[30px] border-2 border-[#D2D8E0]'
+						className='my-[30px] border-2 border-[#D2D8E0] dark:border-separatorDark dark:border-separatorDark'
 						dashed
 					/>
 					{Bots.map((bot, i) => (
@@ -140,7 +147,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 							/>
 							{Bots.length - 1 > i && (
 								<Divider
-									className='my-[30px] border-[2px] border-[#D2D8E0]'
+									className='my-[30px] border-[2px] border-[#D2D8E0] dark:border-separatorDark'
 									dashed
 								/>
 							)}

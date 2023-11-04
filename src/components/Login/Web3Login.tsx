@@ -19,6 +19,7 @@ import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -33,6 +34,7 @@ import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -56,6 +58,7 @@ const initAuthResponse: IAuthResponse = {
 
 const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, isModal, setLoginOpen, setSignupOpen, withPolkasafe, setChosenWallet, onWalletUpdate }) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
@@ -384,18 +387,18 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 	return (
 		<>
 			<div className='flex items-center'>
-				<LoginLogo className='ml-6 mr-2' />
-				<h3 className='mt-3 text-xl font-semibold text-bodyBlue'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
+				{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
+				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />
-			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md'>
-				<h3 className='flex flex-col gap-y-2 text-2xl font-semibold text-[#1E232C]'>
+			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
+				<h3 className='flex flex-col gap-y-2 text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>
 					{!withPolkasafe && (
 						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
 							<span className='mt-2'>
 								<WalletIcon which={chosenWallet} />
 							</span>
-							<span className='text-lg text-bodyBlue sm:text-xl'>
+							<span className='text-lg text-bodyBlue dark:text-blue-dark-high sm:text-xl sm:text-xl'>
 								{chosenWallet === Wallet.SUBWALLET
 									? chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).split('-')[0]
 									: chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
@@ -414,14 +417,14 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 				</h3>
 				{fetchAccounts ? (
 					<div className='flex flex-col items-center justify-center'>
-						<p className='text-base text-bodyBlue'>
+						<p className='text-base text-bodyBlue dark:text-blue-dark-high'>
 							{withPolkasafe
 								? 'To fetch your Multisig details, please select a wallet extension'
 								: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 						</p>
 						<div className='flex'>
 							<Button
-								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 								onClick={() => handleBackToLogin()}
 							>
 								Go Back
@@ -500,6 +503,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 														onAccountChange={onAccountChange}
 														walletAddress={multisigAddress}
 														setWalletAddress={setMultisigAddress}
+														linkAddressTextDisabled
 													/>
 												) : (
 													<AccountSelectionForm
@@ -547,7 +551,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 													<div className='flex items-center gap-x-2'>
 														<span className='text-md text-grey_primary'>Or</span>
 														<Button
-															className='text-md border-none p-0 font-semibold text-pink_primary outline-none'
+															className='text-md border-none p-0 font-semibold text-pink_primary outline-none dark:bg-transparent'
 															disabled={loading}
 															onClick={handleToggle}
 														>
@@ -566,7 +570,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 						{!authResponse.isTFAEnabled && (
 							<div className='flex items-center justify-center'>
 								<Button
-									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 									onClick={() => handleBackToLogin()}
 								>
 									Go Back
@@ -576,7 +580,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 					</>
 				)}
 				<div className='mt-6 flex items-center justify-center pb-5 font-medium'>
-					<label className='text-lg text-bodyBlue'>Don&apos;t have an account?</label>
+					<label className='text-lg text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 					<div
 						onClick={handleClick}
 						className='cursor-pointer text-lg text-pink_primary'

@@ -85,7 +85,7 @@ const NotificationSettings = () => {
 	return (
 		<Form
 			onFinish={() => updatePreference()}
-			className='flex w-full flex-col gap-y-8 rounded-md bg-white p-8 shadow-md'
+			className='flex w-full flex-col gap-y-8 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'
 		>
 			<header>
 				<h3 className='text-lg font-medium tracking-wide text-sidebarBlue'>Notification Settings</h3>

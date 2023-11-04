@@ -32,11 +32,11 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 	};
 
 	return (
-		<div className='flex w-full items-start justify-between gap-2 text-[#243A57]'>
-			<div className='flex items-start gap-2 text-[#243A57]'>
+		<div className='flex w-full items-start justify-between gap-2 text-blue-light-high dark:text-blue-dark-high'>
+			<div className='flex items-start gap-2 text-blue-light-high dark:text-blue-dark-high'>
 				<div className={'relative mt-[2px] [&>svg]:mt-0'}>{Icon}</div>
 				<div>
-					<h3 className='m-0 flex gap-2 text-base font-medium text-[#243A57]'>
+					<h3 className='m-0 flex gap-2 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>
 						{title} Notifications{' '}
 						{!description && (
 							<div>
@@ -51,7 +51,9 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 									onChange={(checked) => (!checked ? handleClick() : handleEnableDisabled(channel, true))}
 								/>
 								<label>
-									<span className={`text-[14px] font-medium ${enabled ? 'text-pink_primary' : 'text-[#485F7D]'}`}>{enabled ? 'Enabled' : 'Disabled'}</span>
+									<span className={`text-[14px] font-medium ${enabled ? 'text-pink_primary' : 'text-[#485F7D] dark:text-blue-dark-medium'}`}>
+										{enabled ? 'Enabled' : 'Disabled'}
+									</span>
 								</label>
 							</span>
 						)}

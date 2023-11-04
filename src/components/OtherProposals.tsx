@@ -59,7 +59,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 	}, [proposerAddress]);
 	return (
 		<div className={className}>
-			<h4 className='dashboard-heading mb-6 flex items-center'>
+			<h4 className='dashboard-heading mb-6 flex items-center dark:text-white'>
 				Other Proposals by{' '}
 				<span className='ml-2'>
 					<Address

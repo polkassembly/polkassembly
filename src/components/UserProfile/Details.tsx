@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Skeleton, Tabs } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { CheckCircleFilled } from '@ant-design/icons';
 import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
@@ -25,6 +25,8 @@ import OnChainIdentity from './OnChainIdentity';
 import SocialLink from '~src/ui-components/SocialLinks';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
+import { useTheme } from 'next-themes';
+import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
@@ -96,6 +98,7 @@ export const TitleBio: FC<ITitleBioProps> = (props) => {
 export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
 const Details: FC<IDetailsProps> = (props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const { userProfile, userPosts } = props;
 	const userDetails = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -305,7 +308,7 @@ const Details: FC<IDetailsProps> = (props) => {
 						{isGood && onChainIdentity.judgements.length > 0 && (
 							<CheckCircleFilled
 								style={{ color: 'green' }}
-								className='mt-[7px] h-[20px] rounded-[50%] border-solid border-[#910365] bg-white'
+								className='mt-[7px] h-[20px] rounded-[50%] border-solid border-[#910365] bg-white dark:bg-section-dark-overlay'
 							/>
 						)}
 					</div>
@@ -358,8 +361,9 @@ const Details: FC<IDetailsProps> = (props) => {
 					) : null}
 				</div>
 			</article>
-			<div className='flex-1 rounded-[4px] bg-white px-4 md:hidden'>
+			<div className='flex-1 rounded-[4px] bg-white px-4 dark:bg-section-dark-overlay md:hidden'>
 				<Tabs
+					theme={theme}
 					type='card'
 					className='ant-tabs-tab-bg-white my-4 font-medium text-sidebarBlue'
 					items={items}

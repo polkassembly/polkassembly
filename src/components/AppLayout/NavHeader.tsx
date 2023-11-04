@@ -6,7 +6,8 @@
 import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Dropdown, Skeleton, Space } from 'antd';
+import { Button, Divider, Skeleton, Space } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -21,6 +22,7 @@ import Mail from '~assets/icons/mail.svg';
 import Arrow from '~assets/icons/arrow.svg';
 import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
+import PaLogoDark from '~assets/PALogoDark.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -34,6 +36,8 @@ import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
+import { useTheme } from 'next-themes';
+import PolkasafeWhiteIcon from '~assets/polkasafe-white-logo.svg';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -65,6 +69,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -113,9 +118,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary '>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
 						<TownHall />
-						<div className='ml-2 '> TownHall </div>
+						<span>TownHall</span>
 					</span>
 				</a>
 			)
@@ -130,9 +135,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					rel='noreferrer'
 					className='custom-link'
 				>
-					<span className='flex text-sm font-medium text-bodyBlue hover:text-pink_primary'>
-						<PolkaSafe />
-						<span className='ml-2'>Polkasafe</span>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
+						{theme === 'dark' ? <PolkasafeWhiteIcon className='relative left-[3px] top-[-1px] scale-[2]' /> : <PolkaSafe />}
+						<span>Polkasafe</span>
 					</span>
 				</a>
 			)
@@ -144,7 +149,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -156,7 +161,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
 					href='/settings?tab=account'
 				>
 					<IconSettings className='userdropdown-icon text-2xl' />
@@ -169,7 +174,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					href='/'
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -188,7 +193,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'set on-chain identity',
 			label: (
 				<Link
-					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary ${className}`}
+					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
 					href={''}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -215,6 +220,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			menu={{ items: dropdownMenuItems }}
 			trigger={['click']}
 			overlayClassName='navbar-dropdowns'
+			theme={theme}
 		>
 			{children}
 		</Dropdown>
@@ -222,9 +228,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 	const MenuDropdown = ({ children }: { children: ReactNode }) => (
 		<Dropdown
+			overflow={false}
 			menu={{ items: menudropDownItems }}
 			trigger={['click']}
 			overlayClassName='navbar-dropdowns'
+			theme={theme}
 		>
 			{children}
 		</Dropdown>
@@ -234,7 +242,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		<Header
 			className={`${className} shadow-md ${
 				sidedrawer && !isMobile ? 'z-[500]' : isMobile ? 'z-[1010]' : 'z-[1000]'
-			} navbar-container sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal`}
+			} navbar-container sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
 		>
 			<span
 				onClick={() => {
@@ -249,15 +257,19 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						className='logo-size flex'
 						href={'/'}
 					>
-						<PaLogo
-							className='logo-container -ml-[2px]'
-							sidedrawer={isMobile}
-						/>
+						{theme === 'dark' && isMobile ? (
+							<PaLogoDark className='logo-container -ml-[2px]' />
+						) : (
+							<PaLogo
+								className='logo-container -ml-[2px]'
+								sidedrawer={isMobile}
+							/>
+						)}
 					</Link>
 
 					<div className='type-container flex items-center'>
 						<span className='line-container ml-[16px] mr-[8px] h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
-						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:text-blue-dark-high lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
@@ -274,7 +286,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							<div className='flex items-center lg:gap-x-2'>
 								<Button
 									id='login-btn'
-									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
+									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white dark:border-none md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
 										setSidedrawer(false);
 										setLoginOpen(true);
@@ -323,7 +335,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								}
 								isClicked.current = false;
 							}}
-							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none md:hidden'
+							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:bg-section-dark-overlay md:hidden'
 						>
 							<CloseOutlined className='h-[15px] w-[15px]' />
 							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
@@ -335,14 +347,14 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								>
 									<div className='flex flex-col'>
 										<div>
-											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Network</p>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Network</p>
 											<NetworkDropdown
 												setSidedrawer={() => {}}
 												isSmallScreen={true}
 											/>
 										</div>
 										<div className='mt-6'>
-											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue'>Node</p>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
 											<RPCDropdown isSmallScreen={true} />
 										</div>
 										<div className={`${username ? 'hidden' : 'block'}`}>
@@ -353,7 +365,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/signup');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
+													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
 												>
 													Sign Up
 												</button>

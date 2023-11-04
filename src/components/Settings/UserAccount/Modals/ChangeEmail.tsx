@@ -50,8 +50,9 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 	};
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[#243A57]'>
+				<div className='ml-[-24px] mr-[-24px] text-blue-light-high dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					<h3 className='md:text-md mb-0 ml-[24px] flex items-center gap-2 text-base'>
 						<ChangeEmailIcon /> Change your email
 					</h3>
@@ -60,7 +61,7 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 			}
 			open={open}
 			closable
-			className='min-w-[350px] md:min-w-[600px]'
+			className='min-w-[350px] md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={null}
@@ -76,16 +77,26 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 							name='old-email'
 							className='m-0 w-full min-w-[250px]'
 						>
-							<label htmlFor='old-email'>Old Email</label>
+							<label
+								className='dark:text-white'
+								htmlFor='old-email'
+							>
+								Old Email
+							</label>
 							<Input
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								value={email}
 								disabled
 							/>
 						</Form.Item>
 					)}
 					<div>
-						<label htmlFor='new-email'>New Email</label>
+						<label
+							className='dark:text-white'
+							htmlFor='new-email'
+						>
+							New Email
+						</label>
 						<Form.Item
 							name={'newEmail'}
 							className='m-0 w-full min-w-[250px]'
@@ -99,7 +110,7 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 						>
 							<Input
 								disabled={loading}
-								className='p-2 text-sm leading-[21px]'
+								className='p-2 text-sm leading-[21px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								placeholder='Enter your email'
 							/>
 						</Form.Item>
@@ -112,7 +123,7 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 							<Button
 								key='1'
 								onClick={onCancel}
-								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
+								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
 							>
 								Cancel
 							</Button>

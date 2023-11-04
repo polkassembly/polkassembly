@@ -14,6 +14,7 @@ import ChangeEmail from '../Modals/ChangeEmail';
 import ChangePassword from '../Modals/ChangePassword';
 import TwoFactorAuth from '../../TwoFactorAuth';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 
@@ -21,12 +22,12 @@ const Row = ({ label, data, handleEdit }: { label: string; data: string; handleE
 	<div className='flex items-baseline justify-between'>
 		<div>
 			<label
-				className='text-[14px] text-[#485F7D]'
+				className='text-[14px] text-[#485F7D] dark:text-blue-dark-medium'
 				htmlFor={label}
 			>
 				{label}
 			</label>
-			<p className='font-medium text-[#243A57]'>
+			<p className='font-medium text-blue-light-high dark:text-blue-dark-high'>
 				{label === 'Password' ? (
 					<div className='mt-2 flex gap-1'>
 						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => (
@@ -41,7 +42,7 @@ const Row = ({ label, data, handleEdit }: { label: string; data: string; handleE
 			</p>
 		</div>
 		<span
-			className='flex cursor-pointer items-center gap-1 text-[14px] font-medium text-[#485F7D] text-pink_primary'
+			className='flex cursor-pointer items-center gap-1 text-[14px] font-medium text-[#485F7D] text-pink_primary dark:text-blue-dark-high'
 			onClick={handleEdit}
 		>
 			<EditPencilIcon /> Edit
@@ -58,20 +59,22 @@ export enum ModalType {
 export default function ProfileSettings() {
 	const { username, email, web3signup, id } = useUserDetailsSelector();
 	const [showModal, setShowModal] = useState<ModalType | null>(null);
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			expandIconPosition='end'
+			theme={theme}
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
 		>
 			<Panel
 				header={
-					<div className='channel-header flex items-center gap-[6px]'>
+					<div className='channel-header flex items-center gap-[6px] dark:bg-section-dark-overlay'>
 						<ProfileIcon />
-						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Profile Settings</h3>
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Profile Settings</h3>
 					</div>
 				}
 				key='1'

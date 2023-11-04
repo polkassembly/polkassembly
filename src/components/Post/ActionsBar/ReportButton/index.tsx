@@ -172,15 +172,21 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				className={`${type === 'comment' ? 'm-0 p-0' : 'm-0 px-1'} flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent shadow-none`}
 				onClick={() => setShowModal(true)}
 			>
-				{isDeleteModal ? <DeleteOutlined className={`${className} text-pink_primary`} /> : <FlagOutlined className={`${className} p-0 text-pink_primary`} />}
 				{isDeleteModal ? (
-					<span className={`${className} break-keep text-pink_primary`}>Delete</span>
+					<DeleteOutlined className={`${className} text-pink_primary dark:text-blue-dark-helper`} />
 				) : (
-					<span className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary`}>Report</span>
+					<FlagOutlined className={`${className} p-0 text-pink_primary dark:text-blue-dark-helper`} />
+				)}
+				{isDeleteModal ? (
+					<span className={`${className} break-keep text-pink_primary dark:text-blue-dark-helper`}>Delete</span>
+				) : (
+					<span className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary dark:text-blue-dark-helper`}>Report</span>
 				)}
 			</button>
 			<Modal
-				title={isDeleteModal ? 'Delete' : 'Report'}
+				className='dark:[&>.ant-modal-content>.ant-modal-header>.ant-modal-title]:bg-section-dark-overlay dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				wrapClassName='dark:bg-modalOverlayDark'
+				title={isDeleteModal ? <span className='dark:text-white'>Delete</span> : <span className='dark:text-white'>Report</span>}
 				open={showModal}
 				onOk={isDeleteModal ? handleDelete : handleReport}
 				confirmLoading={loading}
@@ -192,6 +198,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						key='back'
 						disabled={loading}
 						onClick={() => setShowModal(false)}
+						className='dark:border-pink_primary dark:bg-transparent dark:text-pink_primary'
 					>
 						Cancel
 					</Button>,
@@ -231,9 +238,10 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						name='reason'
 						label='Reason'
 						rules={[{ required: true }]}
+						className='dark:'
 					>
 						<Select
-							popupClassName='z-[9999]'
+							popupClassName='z-[9999] dark:bg-section-dark-overlay'
 							defaultValue={"It's suspicious or spam"}
 							options={reasons.map((reason) => {
 								return {
@@ -253,6 +261,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							showCount
 							rows={4}
 							maxLength={300}
+							className='dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 				</Form>

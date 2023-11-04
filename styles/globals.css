@@ -655,3 +655,11 @@ z-index: 1050 !important;
 .dark input::placeholder{
   color: #909090 !important;
 }
+
+.dark .dark-text-white > p {
+  color: white !important;
+}
+
+.dark .ant-tag-close-icon{
+  color: #909090 !important;
+}

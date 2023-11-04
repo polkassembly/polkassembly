@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import styled from 'styled-components';
 import remarkGfm from 'remark-gfm';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -17,28 +18,14 @@ interface Props {
 	theme?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, theme }: Props) => {
-	const sanitisedMd = md?.replace(/\\n/g, '\n');
-
-	return (
-		<ReactMarkdown
-			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white`}
-			rehypePlugins={[rehypeRaw, remarkGfm]}
-			linkTarget='_blank'
-		>
-			{sanitisedMd}
-		</ReactMarkdown>
-	);
-};
-
-export default styled(Markdown)`
+const StyledMarkdown = styled(ReactMarkdown)`
 	&,
 	&.mde-preview-content {
 		font-size: 14px;
 		margin-bottom: 0;
 		overflow-wrap: break-word;
 		overflow-x: auto;
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 
 		.hide-image img {
 			display: none !important;
@@ -180,7 +167,7 @@ export default styled(Markdown)`
 
 	&.mde-autocomplete-content {
 		margin-top: 4px !important;
-		color: var(--bodyBlue);
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : ' var(--bodyBlue)')} !important;
 		font-weight: 700;
 
 		mark {
@@ -196,3 +183,22 @@ export default styled(Markdown)`
 		}
 	}
 `;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
+	const sanitisedMd = md?.replace(/\\n/g, '\n');
+	const { resolvedTheme: theme } = useTheme();
+
+	return (
+		<StyledMarkdown
+			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white`}
+			rehypePlugins={[rehypeRaw, remarkGfm]}
+			linkTarget='_blank'
+			theme={theme}
+		>
+			{sanitisedMd}
+		</StyledMarkdown>
+	);
+};
+
+export default Markdown;

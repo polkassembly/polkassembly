@@ -732,7 +732,7 @@ const Web3Login: FC<Props> = ({
 																disabled={loading}
 																onClick={handleToggle}
 															>
-																Login with Username
+																Choose different wallet
 															</Button>
 														</div>
 													</Divider>

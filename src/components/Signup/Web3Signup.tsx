@@ -690,7 +690,7 @@ const Web3Signup: FC<Props> = ({
 									) : (
 										<Alert
 											className='mb-5 mt-1 p-3 text-sm '
-											message='Email already exists either use different email or link your address with the existing account'
+											message='Email already exists. Please use a different email or link your address with the existing account.'
 											type='error'
 											showIcon
 										/>

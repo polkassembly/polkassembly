@@ -32,13 +32,13 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			className={`${poppins.variable} ${poppins.className} ${
 				isClosable ? '' : 'hide-close-button'
-			} padding-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay w-[605px] max-w-full shrink-0`}
+			} padding-0 w-[605px] max-w-full shrink-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => {
 				if (isClosable) {
 					setModalOpen(false);
 				}
 			}}
-			closeIcon={isClosable ? <CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' /> : null}
+			closeIcon={isClosable ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : null}
 		>
 			<Signup
 				network={network}

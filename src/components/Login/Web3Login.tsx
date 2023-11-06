@@ -534,19 +534,19 @@ const Web3Login: FC<Props> = ({
 			{!showOptionalFields && (
 				<div className='mb-1 mt-2 flex items-center'>
 					{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
-					<h3 className='dark:text-blue-dark-high mt-3 text-xl font-semibold text-bodyBlue'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
+					<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 				</div>
 			)}
 			{!showOptionalFields && <hr className='text-[#D2D8E0] ' />}
 			{!showOptionalFields && (
-				<article className='dark:bg-section-dark-overlay flex flex-col gap-y-3 rounded-md bg-white px-8 py-4 shadow-md'>
-					<h3 className='dark:text-blue-dark-medium flex flex-col gap-y-2'>
+				<article className='flex flex-col gap-y-3 rounded-md bg-white px-8 py-4 shadow-md dark:bg-section-dark-overlay'>
+					<h3 className='flex flex-col gap-y-2 dark:text-blue-dark-medium'>
 						{!withPolkasafe && (
 							<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
 								<span className='-ml-2 mt-2 scale-75'>
 									<WalletIcon which={chosenWallet} />
 								</span>
-								<span className='dark:text-blue-dark-high text-xl text-bodyBlue sm:text-xl'>
+								<span className='text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>
 									{chosenWallet === Wallet.SUBWALLET
 										? chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).split('-')[0]
 										: chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
@@ -565,7 +565,7 @@ const Web3Login: FC<Props> = ({
 					</h3>
 					{fetchAccounts ? (
 						<div className='-mt-3 flex flex-col items-center justify-center'>
-							<p className='dark:text-blue-dark-high m-0 p-0 text-base text-bodyBlue'>
+							<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>
 								{withPolkasafe
 									? 'To fetch your Multisig details, please select a wallet extension'
 									: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
@@ -576,7 +576,7 @@ const Web3Login: FC<Props> = ({
 							></Divider>
 							<div className='flex w-full justify-start'>
 								<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
-									<label className='dark:text-blue-dark-high text-bodyBlue` text-base'>Don&apos;t have an account?</label>
+									<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 									<div
 										onClick={handleClick}
 										className='cursor-pointer text-base text-pink_primary'
@@ -743,14 +743,14 @@ const Web3Login: FC<Props> = ({
 					{showSuccessModal && (
 						<AuthForm onSubmit={handleOptionalUsername}>
 							<div>
-								<div className='dark:bg-section-dark-overlay px-8 pb-2 pt-8'>
+								<div className='px-8 pb-2 pt-8 dark:bg-section-dark-overlay'>
 									<div className='flex justify-center'>
 										<ConfirmationIcon className='confirm-logo-conatiner absolute -top-[78px]' />
 									</div>
 									<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>You are successfully logged in</p>
 									<div className='flex flex-col gap-y-1'>
 										<label
-											className='dark:text-blue-dark-medium text-base text-lightBlue '
+											className='text-base text-lightBlue dark:text-blue-dark-medium '
 											htmlFor='username'
 										>
 											Enter Username
@@ -782,7 +782,7 @@ const Web3Login: FC<Props> = ({
 												// disabled={loading}
 												onChange={(e) => setOptionalUsername(e.target.value)}
 												placeholder='Type here'
-												className='dark:text-blue-dark-high rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+												className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 												id='username'
 											/>
 										</Form.Item>
@@ -834,7 +834,7 @@ const Web3Login: FC<Props> = ({
 									<div className='flex flex-col gap-y-1'>
 										<label
 											htmlFor='email'
-											className='dark:text-blue-dark-medium text-base text-lightBlue'
+											className='text-base text-lightBlue dark:text-blue-dark-medium'
 										>
 											Email
 										</label>
@@ -852,7 +852,7 @@ const Web3Login: FC<Props> = ({
 													setEmail(e.target.value);
 												}}
 												placeholder='email@example.com'
-												className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+												className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 												id='email'
 											/>
 										</Form.Item>

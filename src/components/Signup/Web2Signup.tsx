@@ -27,7 +27,7 @@ import { IconSignup } from '~src/ui-components/CustomIcons';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
-		<div className='dark:bg-section-dark-overlay mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
+		<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md dark:bg-section-dark-overlay md:p-8'>
 			<Skeleton
 				className='mt-8'
 				active
@@ -164,7 +164,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				></Divider>
 			</div>
 			<Container
-				className={`dark:bg-section-dark-overlay flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md ${className}`}
+				className={`flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md dark:bg-section-dark-overlay ${className}`}
 				theme={theme}
 			>
 				<div className='-mt-1 flex grid-cols-2 gap-x-5 px-8'>
@@ -200,7 +200,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 						type='info'
 						showIcon
-						className='changeColor dark:text-blue-dark-high px-8 text-[#243A57]'
+						className='changeColor px-8 text-[#243A57] dark:text-blue-dark-high'
 					/>
 				)}
 				{walletError && (
@@ -218,7 +218,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						<>
 							<div className='flex flex-col gap-y-1 px-8'>
 								<label
-									className='dark:text-blue-dark-medium text-base text-[#485F7D]'
+									className='text-base text-[#485F7D] dark:text-blue-dark-medium'
 									htmlFor='first_password'
 								>
 									Set Password
@@ -241,14 +241,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 											setFirstPassword(e.target.value);
 										}}
 										placeholder='Password'
-										className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 										id='first_password'
 									/>
 								</Form.Item>
 							</div>
 							<div className='-mt-6 flex flex-col gap-y-1 px-8'>
 								<label
-									className='dark:text-blue-dark-medium text-base text-[#485F7D] '
+									className='text-base text-[#485F7D] dark:text-blue-dark-medium '
 									htmlFor='second_password'
 								>
 									Re-enter Password
@@ -271,7 +271,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									<Input.Password
 										onChange={() => setInputPassword(true)}
 										placeholder='Password'
-										className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 										id='second_password'
 									/>
 								</Form.Item>
@@ -279,9 +279,9 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						</>
 					) : (
 						<>
-							<div className='dark:text-blue-dark-medium flex flex-col gap-y-1 px-8'>
+							<div className='flex flex-col gap-y-1 px-8 dark:text-blue-dark-medium'>
 								<label
-									className='dark:text-blue-dark-medium text-sm tracking-wide text-[#485F7D]'
+									className='text-sm tracking-wide text-[#485F7D] dark:text-blue-dark-medium'
 									htmlFor='username'
 								>
 									Enter Username
@@ -309,7 +309,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder='John'
-										className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										id='username'
 									/>
 								</Form.Item>
@@ -317,7 +317,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							<div className='-mt-6 flex flex-col gap-y-1 px-8'>
 								<label
 									htmlFor='email'
-									className='dark:text-blue-dark-medium text-sm tracking-wide text-[#485F7D]'
+									className='text-sm tracking-wide text-[#485F7D] dark:text-blue-dark-medium'
 								>
 									Enter Email
 								</label>
@@ -332,7 +332,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder='email@example.com'
-										className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										id='email'
 									/>
 								</Form.Item>
@@ -355,7 +355,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						/>
 					)}
 					<div className='flex items-center justify-center gap-x-2 px-8 font-semibold '>
-						<label className='text-md dark:text-blue-dark-high text-[#243A57]'>Already have an account?</label>
+						<label className='text-md text-[#243A57] dark:text-blue-dark-high'>Already have an account?</label>
 						<div
 							onClick={() => handleClick()}
 							className='text-md cursor-pointer text-pink_primary'
@@ -380,7 +380,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				</AuthForm>
 				<Modal
 					wrapClassName='dark:bg-modalOverlayDark'
-					className='dark:[&>.ant-modal-content]:bg-section-dark-overlay rounded-md px-8'
+					className='rounded-md px-8 dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 					centered={true}
 					title={"You've got some mail"}
 					open={open}

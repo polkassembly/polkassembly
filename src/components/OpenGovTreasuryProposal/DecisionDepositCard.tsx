@@ -232,18 +232,18 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	};
 	return (
 		<GovSidebarCard className='overflow-y-hidden'>
-			<h2 className='dark:text-blue-dark-high text-xl font-medium tracking-[0.015em]'>Decision Deposit</h2>
+			<h2 className='text-xl font-medium tracking-[0.015em] dark:text-blue-dark-high'>Decision Deposit</h2>
 			<div className='mt-6 flex gap-2'>
 				<span>
 					<CautionIcon />
 				</span>
-				<span className='dark:text-blue-dark-high text-sm tracking-wide'>
+				<span className='text-sm tracking-wide dark:text-blue-dark-high'>
 					This should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.
 				</span>
 			</div>
 			<Button
 				onClick={() => setOpenModal(true)}
-				className='dark:text-blue-dark-high mt-4 h-[40px] w-full rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white dark:border-none'
+				className='mt-4 h-[40px] w-full rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white dark:border-none dark:text-blue-dark-high'
 			>
 				Pay Decision Deposit
 			</Button>
@@ -251,10 +251,10 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				className={`${poppins.className} ${poppins.variable} pay-decision-deposite dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				open={openModal}
-				closeIcon={<CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => setOpenModal(false)}
 				title={
-					<div className='dark:bg-section-dark-overlay dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Pay Decision Deposit
 					</div>
 				}
@@ -271,7 +271,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							disabled={!accounts.length || availableBalance.lte(amount)}
 							className={`h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wider text-white ${
 								!accounts.length || (availableBalance.lte(amount) && 'opacity-50')
-							} dark:text-blue-dark-high dark:border-none`}
+							} dark:border-none dark:text-blue-dark-high`}
 						>
 							Continue
 						</Button>
@@ -283,7 +283,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 					indicator={<LoadingOutlined />}
 				>
 					<div className='flex flex-col px-6'>
-						<h3 className='dark:text-blue-dark-medium text-center text-sm font-normal text-[#485F7D]'>Select a wallet</h3>
+						<h3 className='text-center text-sm font-normal text-[#485F7D] dark:text-blue-dark-medium'>Select a wallet</h3>
 						<div className='mb-6 flex items-center justify-center gap-x-4'>
 							{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
 								<>
@@ -423,7 +423,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							<Alert
 								showIcon
 								type='error'
-								className='dark:text-blue-dark-high mb-4 h-10 rounded-[4px] text-sm text-bodyBlue'
+								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
 								message='Insufficient available balance.'
 							/>
 						)}
@@ -467,7 +467,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 											withBalance={true}
 											onAccountChange={(address) => setAddress(address)}
 											onBalanceChange={handleOnBalanceChange}
-											className='dark:text-blue-dark-medium text-sm text-[#485F7D]'
+											className='text-sm text-[#485F7D] dark:text-blue-dark-medium'
 										/>
 									) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 										<Alert
@@ -478,11 +478,11 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 									) : null}
 
 									<div className='mb-4 mt-6 flex items-center gap-4'>
-										<span className='dark:text-blue-dark-medium flex gap-1.5 text-sm tracking-wide text-lightBlue'>
+										<span className='flex gap-1.5 text-sm tracking-wide text-lightBlue dark:text-blue-dark-medium'>
 											Decision Deposit
 											<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.' />
 										</span>
-										<span className='dark:bg-section-dark-background dark:text-blue-dark-high rounded-[16px] bg-[#EDEFF3] px-3 py-0.5 text-sm font-semibold tracking-wide text-bodyBlue'>
+										<span className='rounded-[16px] bg-[#EDEFF3] px-3 py-0.5 text-sm font-semibold tracking-wide text-bodyBlue dark:bg-section-dark-background dark:text-blue-dark-high'>
 											{formatedBalance(balance.toString(), unit)} {unit}
 										</span>
 									</div>

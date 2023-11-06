@@ -26,7 +26,7 @@ import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (
-		<div className='dark:bg-section-dark-overlay mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
+		<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md dark:bg-section-dark-overlay md:p-8'>
 			<Skeleton
 				className='mt-8'
 				active
@@ -159,14 +159,14 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	}, [onWalletSelect, walletError, isModal, setLoginOpen, isDelegation, setSignupOpen, className, setWithPolkasafe]);
 
 	return (
-		<Container className={`dark:bg-section-dark-overlay flex flex-col rounded-md bg-white shadow-md ${className} `}>
+		<Container className={`flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay ${className} `}>
 			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
 				{theme === 'dark' ? <LoginLogoDark className='mr-3' /> : <LoginLogo className='mr-3' />}
-				<span className='dark:text-blue-dark-high text-[20px] font-semibold text-bodyBlue'>Login to Polkassembly</span>
+				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>Login to Polkassembly</span>
 			</div>
 			<Divider
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
-				className='dark:bg-separatorDark mt-1 px-0'
+				className='mt-1 px-0 dark:bg-separatorDark'
 			/>
 			{web3Login && (
 				<AuthForm
@@ -200,7 +200,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 					type='info'
 					showIcon
-					className='changeColor  dark:text-blue-dark-high mx-8 mb-5 text-bodyBlue'
+					className='changeColor  mx-8 mb-5 text-bodyBlue dark:text-blue-dark-high'
 				/>
 			)}
 			{walletError && (
@@ -227,7 +227,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					>
 						<div className='flex flex-col gap-y-1'>
 							<label
-								className='dark:text-blue-dark-medium text-base text-lightBlue '
+								className='text-base text-lightBlue dark:text-blue-dark-medium '
 								htmlFor='username'
 							>
 								Enter Username or Email
@@ -253,7 +253,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								<Input
 									disabled={loading}
 									placeholder='Type here'
-									className='dark:text-blue-dark-high rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
+									className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									id='username'
 								/>
 							</Form.Item>
@@ -261,7 +261,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 						<div className='-mt-4 flex flex-col gap-y-1'>
 							<label
-								className='dark:text-blue-dark-medium text-base text-lightBlue'
+								className='text-base text-lightBlue dark:text-blue-dark-medium'
 								htmlFor='password'
 							>
 								Enter Password
@@ -273,11 +273,11 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								<Input.Password
 									disabled={loading}
 									placeholder='Type here'
-									className='dark:text-blue-dark-high rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+									className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 									id='password'
 								/>
 							</Form.Item>
-							<div className='dark:text-blue-dark-helper mt-[-20px] text-right text-pink_primary'>
+							<div className='mt-[-20px] text-right text-pink_primary dark:text-blue-dark-helper'>
 								<div
 									className='cursor-pointer'
 									onClick={() => {
@@ -313,10 +313,10 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						{error && <FilteredError text={error} />}
 
 						<div className='mb-5 mt-2 flex items-center justify-center gap-x-2 font-semibold dark:font-medium'>
-							<label className='text-md dark:text-blue-dark-high text-bodyBlue'>Don&apos;t have an account?</label>
+							<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 							<div
 								onClick={handleClick}
-								className='text-md dark:text-blue-dark-helper cursor-pointer text-pink_primary'
+								className='text-md cursor-pointer text-pink_primary dark:text-blue-dark-helper'
 							>
 								{' '}
 								Sign Up{' '}

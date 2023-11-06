@@ -36,7 +36,7 @@ export const TippingUnavailableNetworks = [
 ];
 interface Props {
 	className?: string;
-	address: string;
+	address?: string;
 	identity?: DeriveAccountRegistration | null;
 	polkassemblyUsername?: string;
 	username: string;
@@ -44,8 +44,9 @@ interface Props {
 	profileCreatedAt?: Date | null;
 	socials?: ISocial[];
 	setOpen: (pre: boolean) => void;
-	setOpenTipping: (pre: boolean) => void;
-	setOpenAddressChangeModal: (pre: boolean) => void;
+	setOpenTipping?: (pre: boolean) => void;
+	setOpenAddressChangeModal?: (pre: boolean) => void;
+	enableTipping?: boolean;
 }
 const QuickView = ({
 	className,
@@ -58,7 +59,8 @@ const QuickView = ({
 	setOpen,
 	setOpenTipping,
 	socials,
-	setOpenAddressChangeModal
+	setOpenAddressChangeModal,
+	enableTipping = true
 }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
@@ -83,9 +85,9 @@ const QuickView = ({
 	const handleTipping = () => {
 		if (!id) return;
 		if (!loginAddress || !address) {
-			setOpenAddressChangeModal(true);
+			setOpenAddressChangeModal?.(true);
 		} else {
-			setOpenTipping(true);
+			setOpenTipping?.(true);
 		}
 		setOpen(false);
 	};
@@ -113,7 +115,7 @@ const QuickView = ({
 						rel='noreferrer'
 						className='flex text-pink_primary'
 						onClick={() => {
-							const substrateAddress = getSubstrateAddress(address);
+							const substrateAddress = address?.length ? getSubstrateAddress(address) : '';
 							if (!polkassemblyUsername?.length) {
 								window.open(`https://${network}.polkassembly.io/address/${substrateAddress || address}`, '_blank');
 							} else {
@@ -125,27 +127,29 @@ const QuickView = ({
 					</a>
 				</div>
 				<div className={`flex  gap-1.5 ${profileCreatedAt ? 'flex-col' : 'justify-between'}`}>
-					<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-						<Address
-							address={address}
-							disableHeader
-							iconSize={20}
-							addressMaxLength={5}
-							addressClassName='text-sm dark:text-blue-dark-medium'
-							disableTooltip
-						/>
-						<span
-							className='flex cursor-pointer items-center'
-							onClick={(e) => {
-								e.preventDefault();
-								copyToClipboard(address);
-								success();
-							}}
-						>
-							{contextHolder}
-							<CopyIcon />
-						</span>
-					</div>
+					{!!address && (
+						<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+							<Address
+								address={address}
+								disableHeader
+								iconSize={20}
+								addressMaxLength={5}
+								addressClassName='text-sm dark:text-blue-dark-medium'
+								disableTooltip
+							/>
+							<span
+								className='flex cursor-pointer items-center'
+								onClick={(e) => {
+									e.preventDefault();
+									copyToClipboard(address);
+									success();
+								}}
+							>
+								{contextHolder}
+								<CopyIcon />
+							</span>
+						</div>
+					)}
 					<div className='mt-0.5 flex items-center justify-between gap-1 border-solid dark:border-none'>
 						{profileCreatedAt && (
 							<span className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959]'>
@@ -187,36 +191,40 @@ const QuickView = ({
 									<WebIcon />
 								</Link>
 							)}
-							<Link
-								target='_blank'
-								onClick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
-								}}
-								title={`https://polkaverse.com/accounts/${address}`}
-								href={`https://polkaverse.com/accounts/${address}`}
-								className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
-							>
-								<PolkaverseIcon />
-							</Link>
+							{address && (
+								<Link
+									target='_blank'
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
+									}}
+									title={`https://polkaverse.com/accounts/${address}`}
+									href={`https://polkaverse.com/accounts/${address}`}
+									className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
+								>
+									<PolkaverseIcon />
+								</Link>
+							)}
 						</div>
 					</div>
 				</div>
 			</div>
-			<article className='v mt-2 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-high'>
-				<div className='flex items-center gap-1 font-medium text-lightBlue'>
-					<JudgementIcon />
-					<span className='dark:text-[#9E9E9E]'>Judgements:</span>
-				</div>
-				<span className='text-bodyBlue dark:text-blue-dark-high'>
-					{judgements
-						?.map(([, jud]) => jud.toString())
-						.join(', ')
-						?.split(',')?.[0] || 'None'}
-				</span>
-			</article>
-			{!TippingUnavailableNetworks.includes(network) && (
+			{!!judgements && (
+				<article className='v mt-2 flex h-11 items-center justify-center gap-1 rounded-lg border-[0.5px] border-solid border-[#EEF2F6] bg-[#F4F8FF] px-3 text-xs text-bodyBlue dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-high'>
+					<div className='flex items-center gap-1 font-medium text-lightBlue'>
+						<JudgementIcon />
+						<span className='dark:text-[#9E9E9E]'>Judgements:</span>
+					</div>
+					<span className='text-bodyBlue dark:text-blue-dark-high'>
+						{judgements
+							?.map(([, jud]) => jud.toString())
+							.join(', ')
+							?.split(',')?.[0] || 'None'}
+					</span>
+				</article>
+			)}
+			{!TippingUnavailableNetworks.includes(network) && enableTipping && (
 				<Tooltip
 					open={!id ? openTooltip : false}
 					onOpenChange={(e) => setOpenTooltip(e)}

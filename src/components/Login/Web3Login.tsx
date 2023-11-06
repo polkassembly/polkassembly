@@ -628,7 +628,7 @@ const Web3Login: FC<Props> = ({
 										<div>{error && <FilteredError text={error} />}</div>
 									</AuthForm>
 								)}
-								{!authResponse.isTFAEnabled && (
+								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>
 										<Button
 											className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
@@ -645,7 +645,7 @@ const Web3Login: FC<Props> = ({
 			)}
 			{showOptionalFields && (
 				<LoginSuccessModal
-					setLoading={setLoading}
+					// setLoading={setLoading}
 					setLoginOpen={setLoginOpen}
 				/>
 			)}

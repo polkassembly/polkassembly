@@ -454,6 +454,16 @@ const Web3Signup: FC<Props> = ({
 									)}
 									{error && <FilteredError text={error} />}
 								</AuthForm>
+								{!!chosenWallet && !accounts.length && (
+									<div className='flex items-center justify-center'>
+										<Button
+											className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+											onClick={() => handleBackToSignUp()}
+										>
+											Go Back
+										</Button>
+									</div>
+								)}
 							</>
 						)}
 					</article>
@@ -461,7 +471,7 @@ const Web3Signup: FC<Props> = ({
 			)}
 			{showOptionalFields && (
 				<LoginSuccessModal
-					setLoading={setLoading}
+					// setLoading={setLoading}
 					setSignupOpen={setSignupOpen}
 				/>
 			)}

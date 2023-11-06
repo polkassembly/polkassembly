@@ -20,12 +20,12 @@ import { handleTokenChange } from '~src/services/auth.service';
 import { useDispatch } from 'react-redux';
 
 interface Props {
-	setLoading: (pre: boolean) => void;
+	// setLoading: (pre: boolean) => void;
 	setLoginOpen?: (pre: boolean) => void;
 	setSignupOpen?: (pre: boolean) => void;
 }
 
-const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) => {
+const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [optionalUsername, setOptionalUsername] = useState('');
 	const [showSuccessModal, setShowSuccessModal] = useState(true);
@@ -35,6 +35,7 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 	const userDetailsContext = useUserDetailsSelector();
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false);
 
 	const validateUsername = (optionalUsername: string) => {
 		let errorUsername = 0;
@@ -161,7 +162,7 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 									validateTrigger='onSubmit'
 								>
 									<Input
-										// disabled={loading}
+										disabled={loading}
 										onChange={(e) => setOptionalUsername(e.target.value)}
 										placeholder='Type here'
 										className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
@@ -192,6 +193,7 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 						<div className='mb-6 flex px-8'>
 							<Button
 								size='large'
+								loading={loading}
 								htmlType='submit'
 								className='ml-auto w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
 							>
@@ -233,6 +235,7 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 										onChange={(e) => {
 											setEmail(e.target.value);
 										}}
+										disabled={loading}
 										placeholder='email@example.com'
 										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										id='email'
@@ -271,6 +274,7 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 							)}
 							{email && (
 								<Button
+									loading={loading}
 									size='large'
 									htmlType='submit'
 									className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'

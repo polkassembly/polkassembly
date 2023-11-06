@@ -341,7 +341,7 @@ const Web3Signup: FC<Props> = ({
 										<label className='text-base text-bodyBlue dark:text-blue-dark-high'>Already have an account?</label>
 										<div
 											onClick={() => handleClick()}
-											className='cursor-pointer text-base text-pink_primary'
+											className='login-button cursor-pointer text-base text-pink_primary'
 										>
 											&nbsp; Log In{' '}
 										</div>
@@ -353,7 +353,7 @@ const Web3Signup: FC<Props> = ({
 								></Divider>
 								<div className='web3-button-container ml-auto flex justify-end'>
 									<Button
-										className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+										className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 										onClick={() => handleBackToSignUp()}
 									>
 										Go Back
@@ -362,7 +362,7 @@ const Web3Signup: FC<Props> = ({
 										<Button
 											key='got-it'
 											icon={<CheckOutlined />}
-											className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
+											className='web3-button flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
 											onClick={() => {
 												getAccounts(chosenWallet)
 													.then(() => {
@@ -494,9 +494,12 @@ export default styled(Web3Signup)`
 			margin-left: 0 !important;
 		}
 	}
-	@media (max-width: 365px) and (min-width: 319px) {
+	@media (max-width: 330px) and (min-width: 319px) {
 		.no-account-text-container {
 			display: block !important;
+		}
+		.login-button {
+			margin-left: -8px !important;
 		}
 	}
 `;

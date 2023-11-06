@@ -471,7 +471,7 @@ const Web3Login: FC<Props> = ({
 										<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 										<div
 											onClick={handleClick}
-											className='cursor-pointer text-base text-pink_primary'
+											className='signup-button cursor-pointer text-base text-pink_primary'
 										>
 											&nbsp; Sign Up{' '}
 										</div>
@@ -670,6 +670,9 @@ export default styled(Web3Login)`
 	@media (max-width: 365px) and (min-width: 319px) {
 		.no-account-text-container {
 			display: block !important;
+		}
+		.signup-button {
+			margin-left: -8px !important;
 		}
 	}
 `;

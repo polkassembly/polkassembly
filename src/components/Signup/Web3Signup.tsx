@@ -469,12 +469,7 @@ const Web3Signup: FC<Props> = ({
 					</article>
 				</div>
 			)}
-			{showOptionalFields && (
-				<LoginSuccessModal
-					// setLoading={setLoading}
-					setSignupOpen={setSignupOpen}
-				/>
-			)}
+			{showOptionalFields && <LoginSuccessModal setSignupOpen={setSignupOpen} />}
 		</div>
 	);
 };

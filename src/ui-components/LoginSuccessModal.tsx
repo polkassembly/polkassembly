@@ -63,23 +63,45 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 		return errorUsername === 0;
 	};
 
-	const handleOptionalUsername = async () => {
-		if (optionalUsername && optionalUsername.trim() !== '') {
-			// Username is not empty, set user to true
-			if (!validateUsername(optionalUsername)) return;
-			setLoading(true);
-			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
-				badges: JSON.stringify([]),
-				bio: '',
-				custom_username: true,
-				email: '',
-				image: currentUser.picture || '',
-				social_links: JSON.stringify([]),
-				title: '',
-				user_id: Number(currentUser.id),
-				username: optionalUsername
-			});
+	const handleOptionalSkip = async () => {
+		setLoginOpen?.(false);
+		setSignupOpen && setSignupOpen(false);
+	};
 
+	const handleOptionalDetails = async () => {
+		if (optionalUsername && optionalUsername.trim() !== '') {
+			if (!validateUsername(optionalUsername)) return;
+		}
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
+			badges: JSON.stringify([]),
+			bio: '',
+			custom_username: true,
+			email: email ? email : '',
+			image: currentUser.picture || '',
+			social_links: JSON.stringify([]),
+			title: '',
+			user_id: Number(currentUser.id),
+			username: optionalUsername
+		});
+
+		if (email && email.length > 0) {
+			if (error || !data) {
+				console.error('Error updating profile: ', error);
+				setLoading(false);
+				setEmailError(true);
+				setShowSuccessModal(false);
+			}
+
+			if (data?.token) {
+				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
+				setLoading(false);
+				setEmailError(false);
+				setLoginOpen?.(false);
+				setSignupOpen && setSignupOpen(false);
+				setShowSuccessModal(false);
+			}
+		} else {
 			if (error || !data) {
 				console.error('Error updating profile: ', error);
 				setLoading(false);
@@ -98,48 +120,10 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 		}
 	};
 
-	const handleOptionalSkip = async () => {
-		setLoginOpen?.(false);
-		setSignupOpen && setSignupOpen(false);
-	};
-
-	const handleOptionalDetails = async () => {
-		if (email && email.trim() !== '') {
-			setLoading(true);
-			const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
-				badges: JSON.stringify([]),
-				bio: '',
-				custom_username: true,
-				email: email,
-				image: currentUser.picture || '',
-				social_links: JSON.stringify([]),
-				title: '',
-				user_id: Number(currentUser.id),
-				username: optionalUsername
-			});
-
-			if (error || !data) {
-				console.error('Error updating profile: ', error);
-				setLoading(false);
-				setEmailError(true);
-				setShowSuccessModal(false);
-			}
-
-			if (data?.token) {
-				handleTokenChange(data?.token, { ...userDetailsContext }, dispatch);
-				setLoading(false);
-				setEmailError(false);
-				setLoginOpen?.(false);
-				setSignupOpen && setSignupOpen(false);
-				setShowSuccessModal(false);
-			}
-		}
-	};
-
 	return (
 		<div>
 			{showSuccessModal && (
-				<AuthForm onSubmit={handleOptionalUsername}>
+				<AuthForm onSubmit={handleOptionalDetails}>
 					<div>
 						<div className='px-8 pb-2 pt-8 dark:bg-section-dark-overlay'>
 							<div className='flex justify-center'>

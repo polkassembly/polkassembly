@@ -60,11 +60,11 @@ const AccountSelectionForm = ({
 	}, [address]);
 	return (
 		<article className={`flex w-full flex-col ${className}`}>
-			<div className='ml-[-6px] flex items-center gap-x-2'>
+			<div className='ml-[-6px] mb-1 flex items-center gap-x-2'>
 				<h3 className='inner-headings mb-[1px] ml-1.5 dark:text-blue-dark-medium'>{title}</h3>
 				{!withoutInfo && (
 					<HelperTooltip
-						className='-mt-1'
+						className='-mt-1 dark:text-grey_primary'
 						text='You can choose an account from the extension.'
 					/>
 				)}

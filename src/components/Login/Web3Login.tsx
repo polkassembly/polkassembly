@@ -34,7 +34,7 @@ import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { IconMail } from '~src/ui-components/CustomIcons';
+import { IconMail, WhiteIconMail } from '~src/ui-components/CustomIcons';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';
 import * as validation from 'src/util/validation';
@@ -823,7 +823,7 @@ const Web3Login: FC<Props> = ({
 						<AuthForm onSubmit={handleOptionalDetails}>
 							<div>
 								<div className='my-4 ml-7 flex dark:text-white'>
-									<IconMail className='mr-2 text-2xl' />
+									{theme === 'dark' ? <WhiteIconMail className='mr-2 text-2xl' /> : <IconMail className='mr-2 text-2xl' />}
 									<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
 								</div>
 								<Divider

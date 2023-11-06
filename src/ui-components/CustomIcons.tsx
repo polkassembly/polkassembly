@@ -6,7 +6,7 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 import MailIcon from '~assets/icons/mailIcon.svg';
-
+import MailIconWhite from '~assets/icons/mailIconWhite.svg';
 import PolkasafeWhiteIconSVG from '~assets/polkasafe-white-logo.svg';
 import CautionIcon from '~assets/icons/Caution 2.svg';
 import SignupIcon from '~assets/icons/userSignup.svg';
@@ -141,6 +141,12 @@ export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => 
 export const IconMail = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={MailIcon}
+		{...props}
+	/>
+);
+export const WhiteIconMail = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={MailIconWhite}
 		{...props}
 	/>
 );

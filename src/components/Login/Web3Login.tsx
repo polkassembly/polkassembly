@@ -19,8 +19,8 @@ import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
-import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -34,7 +34,12 @@ import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { decodeToken } from 'react-jwt';
+import { JWTPayloadType } from '~src/auth/types';
+import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { useTheme } from 'next-themes';
+import LoginSuccessModal from '~src/ui-components/LoginSuccessModal';
+import styled from 'styled-components';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -47,6 +52,8 @@ interface Props {
 	onWalletUpdate?: () => void;
 	withPolkasafe?: boolean;
 	setChosenWallet: any;
+	setIsClosable?: (pre: boolean) => void;
+	className?: string;
 }
 
 const initAuthResponse: IAuthResponse = {
@@ -56,7 +63,19 @@ const initAuthResponse: IAuthResponse = {
 	user_id: 0
 };
 
-const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, isModal, setLoginOpen, setSignupOpen, withPolkasafe, setChosenWallet, onWalletUpdate }) => {
+const Web3Login: FC<Props> = ({
+	chosenWallet,
+	setDisplayWeb2,
+	setIsClosable,
+	setWalletError,
+	isModal,
+	setLoginOpen,
+	setSignupOpen,
+	withPolkasafe,
+	setChosenWallet,
+	onWalletUpdate,
+	className
+}) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -76,6 +95,7 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 	const [isSignUp, setIsSignUp] = useState(false);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
+	const [showOptionalFields, setShowOptionalFields] = useState(false);
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -275,7 +295,17 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 							localStorage.setItem('multisigAssociatedAddress', address);
 							handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 							if (isModal) {
-								setLoginOpen && setLoginOpen(false);
+								const localCurrentUser: any = decodeToken<JWTPayloadType>(confirmData.token);
+								if (localCurrentUser?.web3signup && localCurrentUser?.username.length === 25 && !MANUAL_USERNAME_25_CHAR.includes(localCurrentUser?.username)) {
+									setLoginOpen?.(true);
+									setShowOptionalFields(true);
+								} else {
+									setLoginOpen?.(false);
+									setShowOptionalFields(false);
+								}
+								setLoginOpen?.(true);
+								setShowOptionalFields(true);
+								setIsClosable?.(false);
 								setLoading(false);
 								return;
 							}
@@ -308,8 +338,17 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 
 				localStorage.setItem('multisigAssociatedAddress', address);
 				handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
+
 				if (isModal) {
-					setLoginOpen?.(false);
+					const localCurrentUser: any = decodeToken<JWTPayloadType>(addressLoginData.token);
+					if (localCurrentUser?.web3signup && localCurrentUser?.username.length === 25 && !MANUAL_USERNAME_25_CHAR.includes(localCurrentUser?.username)) {
+						setLoginOpen?.(true);
+						setShowOptionalFields(true);
+					} else {
+						setLoginOpen?.(false);
+						setShowOptionalFields(false);
+					}
+					setIsClosable?.(false);
 					setLoading(false);
 					return;
 				}
@@ -385,211 +424,232 @@ const Web3Login: FC<Props> = ({ chosenWallet, setDisplayWeb2, setWalletError, is
 	}, [accounts.length, chosenWallet, withPolkasafe]);
 
 	return (
-		<>
-			<div className='flex items-center'>
-				{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
-				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
-			</div>
-			<hr className='text-[#D2D8E0] ' />
-			<article className='flex flex-col gap-y-3 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
-				<h3 className='flex flex-col gap-y-2 text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>
-					{!withPolkasafe && (
-						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
-							<span className='mt-2'>
-								<WalletIcon which={chosenWallet} />
-							</span>
-							<span className='text-lg text-bodyBlue dark:text-blue-dark-high sm:text-xl sm:text-xl'>
-								{chosenWallet === Wallet.SUBWALLET
-									? chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).split('-')[0]
-									: chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
-							</span>
-						</p>
-					)}
-					{withPolkasafe && (
-						<WalletButtons
-							disabled={loading}
-							onWalletSelect={handleChangeWalletWithPolkasafe}
-							showPolkasafe={false}
-							noHeader={true}
-							selectedWallet={chosenWallet}
-						/>
-					)}
-				</h3>
-				{fetchAccounts ? (
-					<div className='flex flex-col items-center justify-center'>
-						<p className='text-base text-bodyBlue dark:text-blue-dark-high'>
-							{withPolkasafe
-								? 'To fetch your Multisig details, please select a wallet extension'
-								: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
-						</p>
-						<div className='flex'>
-							<Button
-								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
-								onClick={() => handleBackToLogin()}
-							>
-								Go Back
-							</Button>
-							{!withPolkasafe && (
-								<Button
-									key='got-it'
-									icon={<CheckOutlined />}
-									className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
-									onClick={() => {
-										getAccounts(chosenWallet)
-											.then(() => {
-												setFetchAccounts(false);
-											})
-											.catch((err) => {
-												console.error(err);
-											});
-									}}
-								>
-									Got it!
-								</Button>
-							)}
-						</div>
+		<div className={`${className}`}>
+			{!showOptionalFields && (
+				<div>
+					<div className='mb-1 mt-2 flex items-center'>
+						{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
+						<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 					</div>
-				) : (
-					<>
-						{authResponse.isTFAEnabled ? (
-							<TFALoginForm
-								onBack={() => {
-									setAuthResponse(initAuthResponse);
-									setError('');
-								}}
-								onSubmit={handleSubmitAuthCode}
-								error={error || ''}
-								loading={loading}
-							/>
+					<hr className='text-[#D2D8E0] ' />
+
+					<article className='flex flex-col gap-y-3 rounded-md bg-white px-8 py-4 shadow-md dark:bg-section-dark-overlay'>
+						<h3 className='flex flex-col gap-y-2 dark:text-blue-dark-medium'>
+							{!withPolkasafe && (
+								<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
+									<span className='-ml-2 mt-2 scale-75'>
+										<WalletIcon which={chosenWallet} />
+									</span>
+									<span className='text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>
+										{chosenWallet === Wallet.SUBWALLET
+											? chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).split('-')[0]
+											: chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
+									</span>
+								</p>
+							)}
+							{withPolkasafe && (
+								<WalletButtons
+									disabled={loading}
+									onWalletSelect={handleChangeWalletWithPolkasafe}
+									showPolkasafe={false}
+									noHeader={true}
+									selectedWallet={chosenWallet}
+								/>
+							)}
+						</h3>
+						{fetchAccounts ? (
+							<div className='-mt-3 flex flex-col items-center justify-center'>
+								<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>
+									{withPolkasafe
+										? 'To fetch your Multisig details, please select a wallet extension'
+										: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
+								</p>
+								<Divider
+									className='m-0 mt-5 p-0 '
+									style={{ borderTop: '1px dashed #D2D8E0' }}
+								></Divider>
+								<div className='flex w-full justify-start'>
+									<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
+										<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Don&apos;t have an account?</label>
+										<div
+											onClick={handleClick}
+											className='cursor-pointer text-base text-pink_primary'
+										>
+											&nbsp; Sign Up{' '}
+										</div>
+									</div>
+								</div>
+								<Divider
+									className='m-0 mb-4 p-0 '
+									style={{ borderTop: '1px solid #E1E6EB' }}
+								></Divider>
+								<div className='web3-button-container ml-auto flex'>
+									<Button
+										className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+										onClick={() => handleBackToLogin()}
+									>
+										Go Back
+									</Button>
+									{!withPolkasafe && (
+										<Button
+											key='got-it'
+											icon={<CheckOutlined />}
+											className='web3-button flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-sm font-medium leading-none text-white outline-none'
+											onClick={() => {
+												getAccounts(chosenWallet)
+													.then(() => {
+														setFetchAccounts(false);
+													})
+													.catch((err) => {
+														console.error(err);
+													});
+											}}
+										>
+											Got it!
+										</Button>
+									)}
+								</div>
+							</div>
 						) : (
-							<AuthForm
-								onSubmit={handleLogin}
-								className='flex flex-col px-4'
-							>
-								{extensionNotFound ? (
-									<div className='my-5 flex items-center justify-center'>
-										<ExtensionNotDetected chosenWallet={chosenWallet} />
-									</div>
-								) : null}
-								{accountsNotFound && (
-									<div className='my-5 flex items-center justify-center'>
-										<Alert
-											message='You need at least one account in Polkadot-js extension to login.'
-											description='Please reload this page after adding accounts.'
-											type='info'
-											showIcon
-										/>
-									</div>
-								)}
-								{isAccountLoading ? (
-									<div className='my-5'>
-										<Loader
-											size='large'
-											timeout={3000}
-											text='Requesting Web3 accounts'
-										/>
-									</div>
+							<>
+								{authResponse.isTFAEnabled ? (
+									<TFALoginForm
+										onBack={() => {
+											setAuthResponse(initAuthResponse);
+											setError('');
+										}}
+										onSubmit={handleSubmitAuthCode}
+										error={error || ''}
+										loading={loading}
+									/>
 								) : (
-									accounts.length > 0 && (
-										<>
-											<div className='my-5 flex items-center justify-center'>
-												{withPolkasafe ? (
-													<MultisigAccountSelectionForm
-														multisigBalance={multisigBalance}
-														setMultisigBalance={setMultisigBalance}
-														title='Choose linked account'
-														accounts={accounts}
-														address={address}
-														onAccountChange={onAccountChange}
-														walletAddress={multisigAddress}
-														setWalletAddress={setMultisigAddress}
-														linkAddressTextDisabled
-													/>
-												) : (
-													<AccountSelectionForm
-														isTruncateUsername={false}
-														title='Choose linked account'
-														accounts={accounts}
-														address={address}
-														onAccountChange={onAccountChange}
-														linkAddressTextDisabled
-													/>
-												)}
-											</div>
-											{isSignUp && (
-												<Alert
-													showIcon
-													className='mb-2'
-													type='info'
-													message={
-														<>
-															By Signing up you agree to the terms of the{' '}
-															<Link
-																href='/terms-and-conditions'
-																className='text-pink_primary'
-															>
-																Polkassembly end user agreement
-															</Link>
-															.
-														</>
-													}
-												/>
-											)}
-											<div className='flex items-center justify-center'>
-												<Button
-													loading={loading}
-													disabled={withPolkasafe && !multisigAddress}
-													htmlType='submit'
-													size='large'
-													className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
-												>
-													Login
-												</Button>
-											</div>
+									<AuthForm
+										onSubmit={handleLogin}
+										className='flex flex-col'
+									>
+										{extensionNotFound ? (
 											<div>
-												<Divider>
-													<div className='flex items-center gap-x-2'>
-														<span className='text-md text-grey_primary'>Or</span>
+												<div className='-mt-1 mb-5 flex items-center justify-center'>
+													<ExtensionNotDetected chosenWallet={chosenWallet} />
+												</div>
+												<div className='flex justify-end'>
+													<Button
+														className='flex items-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+														onClick={() => handleBackToLogin()}
+													>
+														Go Back
+													</Button>
+												</div>
+											</div>
+										) : null}
+										{accountsNotFound && (
+											<div className='my-5 flex items-center justify-center px-4'>
+												<Alert
+													message='You need at least one account in Polkadot-js extension to login.'
+													description='Please reload this page after adding accounts.'
+													type='info'
+													showIcon
+												/>
+											</div>
+										)}
+										{isAccountLoading ? (
+											<div className='my-5 px-4'>
+												<Loader
+													size='large'
+													timeout={3000}
+													text='Requesting Web3 accounts'
+												/>
+											</div>
+										) : (
+											accounts.length > 0 && (
+												<>
+													<div className='mb-4 flex items-center justify-center'>
+														{withPolkasafe ? (
+															<MultisigAccountSelectionForm
+																multisigBalance={multisigBalance}
+																setMultisigBalance={setMultisigBalance}
+																title='Choose linked account'
+																accounts={accounts}
+																address={address}
+																onAccountChange={onAccountChange}
+																walletAddress={multisigAddress}
+																setWalletAddress={setMultisigAddress}
+															/>
+														) : (
+															<AccountSelectionForm
+																isTruncateUsername={false}
+																title='Choose linked account'
+																accounts={accounts}
+																address={address}
+																onAccountChange={onAccountChange}
+																linkAddressTextDisabled
+															/>
+														)}
+													</div>
+													{isSignUp && (
+														<Alert
+															showIcon
+															className='mb-2 px-4'
+															type='info'
+															message={
+																<>
+																	By Signing up you agree to the terms of the{' '}
+																	<Link
+																		href='/terms-and-conditions'
+																		className='text-pink_primary'
+																	>
+																		Polkassembly end user agreement
+																	</Link>
+																	.
+																</>
+															}
+														/>
+													)}
+													<div className='my-2 flex items-center justify-center gap-x-2 px-4'>
 														<Button
-															className='text-md border-none p-0 font-semibold text-pink_primary outline-none dark:bg-transparent'
-															disabled={loading}
-															onClick={handleToggle}
+															className='text-md flex w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-5 py-5 font-normal leading-none text-[#E5007A] outline-none dark:bg-transparent'
+															onClick={() => handleBackToLogin()}
 														>
-															Login with Username
+															Go Back
+														</Button>
+														<Button
+															loading={loading}
+															disabled={withPolkasafe && !multisigAddress}
+															htmlType='submit'
+															size='large'
+															className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+														>
+															Login
 														</Button>
 													</div>
-												</Divider>
-											</div>
-										</>
-									)
+												</>
+											)
+										)}
+										<div>{error && <FilteredError text={error} />}</div>
+									</AuthForm>
 								)}
-								<div>{error && <FilteredError text={error} />}</div>
-							</AuthForm>
+								{!!chosenWallet && !accounts.length && (
+									<div className='flex items-center justify-center'>
+										<Button
+											className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+											onClick={() => handleBackToLogin()}
+										>
+											Go Back
+										</Button>
+									</div>
+								)}
+							</>
 						)}
-
-						{!authResponse.isTFAEnabled && (
-							<div className='flex items-center justify-center'>
-								<Button
-									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
-									onClick={() => handleBackToLogin()}
-								>
-									Go Back
-								</Button>
-							</div>
-						)}
-					</>
-				)}
-				<div className='mt-6 flex items-center justify-center pb-5 font-medium'>
-					<label className='text-lg text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
-					<div
-						onClick={handleClick}
-						className='cursor-pointer text-lg text-pink_primary'
-					>
-						&nbsp; Sign Up{' '}
-					</div>
+					</article>
 				</div>
-			</article>
-		</>
+			)}
+			{showOptionalFields && (
+				<LoginSuccessModal
+					// setLoading={setLoading}
+					setLoginOpen={setLoginOpen}
+				/>
+			)}
+		</div>
 	);
 };
 
@@ -605,4 +665,13 @@ const PolkasafeWithIcon = () => (
 	</>
 );
 
-export default Web3Login;
+export default styled(Web3Login)`
+	@media (max-width: 392px) and (min-width: 319px) {
+		.web3-button {
+			padding: 20px 15px !important;
+		}
+		.web3-button-container {
+			margin-left: 0 !important;
+		}
+	}
+`;

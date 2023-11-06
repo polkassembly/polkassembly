@@ -7,6 +7,7 @@ import Signup from 'pages/signup';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useState } from 'react';
 import { CloseIcon } from './CustomIcons';
 
 interface Props {
@@ -21,6 +22,7 @@ interface Props {
 
 const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className, closable, isDelegation }: Props) => {
 	const { network } = useNetworkSelector();
+	const [isClosable, setIsClosable] = useState(true);
 	return (
 		<Modal
 			open={modalOpen}
@@ -28,9 +30,15 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 			closable={closable}
 			maskClosable={closable}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.variable} ${poppins.className} padding-0 max-w-full  shrink-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-			onCancel={() => setModalOpen(false)}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			className={`${poppins.variable} ${poppins.className} ${
+				isClosable ? '' : 'hide-close-button'
+			} padding-0 w-[605px] max-w-full shrink-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			onCancel={() => {
+				if (isClosable) {
+					setModalOpen(false);
+				}
+			}}
+			closeIcon={isClosable ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : null}
 		>
 			<Signup
 				network={network}
@@ -38,6 +46,7 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 				setLoginOpen={setLoginOpen}
 				setSignupOpen={setModalOpen}
 				isDelegation={isDelegation}
+				setIsClosable={setIsClosable}
 			/>
 		</Modal>
 	);
@@ -46,5 +55,9 @@ export default styled(SignupPopup)`
 	.padding-0 .ant-modal-content {
 		padding: 0px !important;
 		border-radius: 4px;
+	}
+
+	.hide-close-button .ant-modal-close {
+		display: none;
 	}
 `;

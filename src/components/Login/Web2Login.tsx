@@ -67,6 +67,8 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [web2LoginClicked, setWeb2LoginClicked] = useState<boolean>(false);
+	const [web3Login, setWeb3Login] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
@@ -151,16 +153,47 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 		isDelegation && getWallet();
 	}, [isDelegation]);
 
+	useEffect(() => {
+		setWeb3Login(true);
+		setWeb2LoginClicked(false);
+	}, [onWalletSelect, walletError, isModal, setLoginOpen, isDelegation, setSignupOpen, className, setWithPolkasafe]);
+
 	return (
 		<Container className={`flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay ${className} `}>
 			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
 				{theme === 'dark' ? <LoginLogoDark className='mr-3' /> : <LoginLogo className='mr-3' />}
-				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>Login</span>
+				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>Login to Polkassembly</span>
 			</div>
 			<Divider
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
 				className='mt-1 px-0 dark:bg-separatorDark'
 			/>
+			{web3Login && (
+				<AuthForm
+					onSubmit={handleSubmitForm}
+					className='web3-login-container flex flex-col px-24'
+				>
+					<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Select a wallet</p>
+					<div>
+						<WalletButtons
+							disabled={loading}
+							onWalletSelect={onWalletSelect}
+							showPolkasafe={canUsePolkasafe(network)}
+							onPolkasafeSelect={setWithPolkasafe}
+							isOptionalLogin={true}
+						/>
+					</div>
+					<p
+						className='mb-5 mt-3 cursor-pointer text-center text-sm text-lightBlue'
+						onClick={() => {
+							setWeb2LoginClicked(true);
+							setWeb3Login(false);
+						}}
+					>
+						Or <span className='font-semibold text-pink_primary'>Login with Username/Email</span>
+					</p>
+				</AuthForm>
+			)}
 			{defaultWallets.length === 0 && isDelegation && (
 				<Alert
 					message='Wallet extension not detected.'
@@ -170,7 +203,6 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					className='changeColor  mx-8 mb-5 text-bodyBlue dark:text-blue-dark-high'
 				/>
 			)}
-
 			{walletError && (
 				<Alert
 					message={walletError}
@@ -188,108 +220,110 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					loading={loading}
 				/>
 			) : (
-				<AuthForm
-					onSubmit={handleSubmitForm}
-					className='flex flex-col gap-y-3 px-8'
-				>
-					<div className='flex flex-col gap-y-1'>
-						<label
-							className='text-base text-lightBlue dark:text-blue-dark-medium '
-							htmlFor='username'
-						>
-							Enter Username or Email
-						</label>
-						<Form.Item
-							name='username'
-							rules={[
-								{
-									message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
-									required: username.required
-								},
-								{
-									max: username.maxLength,
-									message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
-								},
-								{
-									message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
-									min: username.minLength
-								}
-							]}
-							validateTrigger='onSubmit'
-						>
-							<Input
-								disabled={loading}
-								placeholder='Type here'
-								className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-								id='username'
-							/>
-						</Form.Item>
-					</div>
-
-					<div className='-mt-4 flex flex-col gap-y-1'>
-						<label
-							className='text-base text-lightBlue dark:text-blue-dark-medium'
-							htmlFor='password'
-						>
-							Enter Password
-						</label>
-						<Form.Item
-							name='password'
-							validateTrigger='onSubmit'
-						>
-							<Input.Password
-								disabled={loading}
-								placeholder='Type here'
-								className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
-								id='password'
-							/>
-						</Form.Item>
-						<div className='mt-[-20px] text-right text-pink_primary dark:text-blue-dark-helper'>
-							<div
-								className='cursor-pointer'
-								onClick={() => {
-									isModal && setLoginOpen && setLoginOpen(false);
-									router.push('/request-reset-password');
-								}}
+				web2LoginClicked && (
+					<AuthForm
+						onSubmit={handleSubmitForm}
+						className='flex flex-col gap-y-3 px-8'
+					>
+						<div className='flex flex-col gap-y-1'>
+							<label
+								className='text-base text-lightBlue dark:text-blue-dark-medium '
+								htmlFor='username'
 							>
-								Forgot Password?
+								Enter Username or Email
+							</label>
+							<Form.Item
+								name='username'
+								rules={[
+									{
+										message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
+										required: username.required
+									},
+									{
+										max: username.maxLength,
+										message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
+									},
+									{
+										message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
+										min: username.minLength
+									}
+								]}
+								validateTrigger='onSubmit'
+							>
+								<Input
+									disabled={loading}
+									placeholder='Type here'
+									className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									id='username'
+								/>
+							</Form.Item>
+						</div>
+
+						<div className='-mt-4 flex flex-col gap-y-1'>
+							<label
+								className='text-base text-lightBlue dark:text-blue-dark-medium'
+								htmlFor='password'
+							>
+								Enter Password
+							</label>
+							<Form.Item
+								name='password'
+								validateTrigger='onSubmit'
+							>
+								<Input.Password
+									disabled={loading}
+									placeholder='Type here'
+									className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+									id='password'
+								/>
+							</Form.Item>
+							<div className='mt-[-20px] text-right text-pink_primary dark:text-blue-dark-helper'>
+								<div
+									className='cursor-pointer'
+									onClick={() => {
+										isModal && setLoginOpen && setLoginOpen(false);
+										router.push('/request-reset-password');
+									}}
+								>
+									Forgot Password?
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<div className='flex items-center justify-center'>
-						<Button
-							loading={loading}
-							htmlType='submit'
-							size='large'
-							className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
-						>
-							Login
-						</Button>
-					</div>
-
-					<div>
-						<WalletButtons
-							disabled={loading}
-							onWalletSelect={onWalletSelect}
-							showPolkasafe={canUsePolkasafe(network)}
-							onPolkasafeSelect={setWithPolkasafe}
-						/>
-					</div>
-
-					{error && <FilteredError text={error} />}
-
-					<div className='mb-5 mt-2 flex items-center justify-center gap-x-2 font-semibold dark:font-medium'>
-						<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
-						<div
-							onClick={handleClick}
-							className='text-md cursor-pointer text-pink_primary dark:text-blue-dark-helper'
-						>
-							{' '}
-							Sign Up{' '}
+						<div className='flex items-center justify-center'>
+							<Button
+								loading={loading}
+								htmlType='submit'
+								size='large'
+								className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+							>
+								Login
+							</Button>
 						</div>
-					</div>
-				</AuthForm>
+
+						<div>
+							<WalletButtons
+								disabled={loading}
+								onWalletSelect={onWalletSelect}
+								showPolkasafe={canUsePolkasafe(network)}
+								onPolkasafeSelect={setWithPolkasafe}
+							/>
+						</div>
+
+						{error && <FilteredError text={error} />}
+
+						<div className='mb-5 mt-2 flex items-center justify-center gap-x-2 font-semibold dark:font-medium'>
+							<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
+							<div
+								onClick={handleClick}
+								className='text-md cursor-pointer text-pink_primary dark:text-blue-dark-helper'
+							>
+								{' '}
+								Sign Up{' '}
+							</div>
+						</div>
+					</AuthForm>
+				)
 			)}
 		</Container>
 	);

@@ -34,6 +34,7 @@ interface Props {
 	isModal?: boolean;
 	setLoginOpen?: (pre: boolean) => void;
 	setSignupOpen?: (pre: boolean) => void;
+	setIsClosable?: (pre: boolean) => void;
 	isDelegation?: boolean;
 }
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
@@ -44,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
-const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }: Props) => {
+const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, isDelegation }: Props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -93,7 +94,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 				align='middle'
 				className='-mt-5 h-full'
 			>
-				<Col className='w-full sm:max-w-[600px]'>
+				<Col className='w-full sm:max-w-[605px]'>
 					{displayWeb === 2 ? (
 						<Web2Signup
 							theme={theme}
@@ -135,6 +136,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 									onWalletUpdate={onWalletUpdate}
 									withPolkasafe={withPolkasafe}
 									setChosenWallet={setChosenWallet}
+									setIsClosable={setIsClosable}
 								/>
 							)}
 						</>

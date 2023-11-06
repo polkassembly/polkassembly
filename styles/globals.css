@@ -15,6 +15,8 @@
   --green_secondary: #399969;
   --grey_app_background: #eaeef0;
   --grey_border: #dde4ed;
+  --grey_stroke: #D2D8E0;
+  --grey_text: #78849c;
   --grey_light: #ebf0f5;
   --grey_primary: #777b80;
   --grey_secondary: #a6acb3;
@@ -567,6 +569,18 @@ z-index: 1050 !important;
     margin-right: 4px !important;
   }
 }
+
+@media (max-width: 365px) and (min-width: 319px) {
+  .web3-login-container {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+  
+  .no-account-text-container {
+    display: block !important;
+  }
+}
+
 .hide-image img {
   display: none !important;
 }

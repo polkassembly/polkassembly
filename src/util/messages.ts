@@ -14,7 +14,7 @@ const messages = {
 	VALIDATION_TITLE_ERROR: 'Did you forget to add a title?',
 	VALIDATION_USERNAME_MAXLENGTH_ERROR: 'Username cannot be larger than 30 characters.',
 	VALIDATION_USERNAME_MINLENGTH_ERROR: 'Username should be at least 3 characters long.',
-	VALIDATION_USERNAME_PATTERN_ERROR: 'Invalid character found. Please use only letters, numbers and the following characters:  . - _ ',
+	VALIDATION_USERNAME_PATTERN_ERROR: 'Username must be between 3 to 30 characters long, letters and numbers are allowed.',
 	VALIDATION_USERNAME_REQUIRED_ERROR: 'Username is mandatory.',
 	WALLET_NOT_FOUND: 'Wallet not found'
 };

@@ -173,7 +173,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							setIsPassword(false);
 							if (error) setError('');
 						}}
-						className='w-[258px] cursor-pointer flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'
+						className='w-[268px] cursor-pointer flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'
 					>
 						<div className='flex gap-x-2 gap-y-2 '>
 							<span className={`flex h-4 w-4 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>01</span>

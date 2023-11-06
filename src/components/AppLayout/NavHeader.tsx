@@ -229,7 +229,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 	const MenuDropdown = ({ children }: { children: ReactNode }) => (
 		<Dropdown
-			overflow={false}
+			hideOverflow={true}
 			menu={{ items: menudropDownItems }}
 			trigger={['click']}
 			overlayClassName='navbar-dropdowns'

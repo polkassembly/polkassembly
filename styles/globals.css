@@ -581,23 +581,6 @@ z-index: 1050 !important;
   }
 }
 
-@media (max-width: 428px) and (min-width: 319px) {
-  .wallet-text-container {
-    width:100px !important;
-    text-overflow: ellipsis;
-    overflow-x: hidden;
-  }
-}
-
-@media (max-width: 392px) and (min-width: 319px) {
-  .web3-button {
-    padding:20px 15px !important;
-  }
-  .web3-button-container {
-    margin-left: 0 !important;
-  }
-}
-
 .hide-image img {
   display: none !important;
 }

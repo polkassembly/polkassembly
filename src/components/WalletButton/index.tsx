@@ -5,6 +5,7 @@
 import { Button } from 'antd';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 interface Props {
 	onClick: React.MouseEventHandler<HTMLAnchorElement> & React.MouseEventHandler<HTMLButtonElement>;
@@ -13,10 +14,10 @@ interface Props {
 	disabled?: boolean;
 	className?: string;
 	text?: string;
-	optionalLogin?: boolean;
+	isOptionalLogin?: boolean;
 }
 
-const WalletButton = ({ disabled, onClick, icon, className, text, name, optionalLogin }: Props) => {
+const WalletButton = ({ disabled, onClick, icon, className, text, name, isOptionalLogin }: Props) => {
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 
 	const getWallet = () => {
@@ -31,16 +32,24 @@ const WalletButton = ({ disabled, onClick, icon, className, text, name, optional
 	return (
 		<Button
 			className={`flex ${
-				optionalLogin ? `border_grey_stroke w-full ${availableWallets ? 'bg-white' : 'bg-grey_stroke'}` : 'justify-center border-[#F8E3EE]'
+				isOptionalLogin ? `border_grey_stroke w-full ${availableWallets ? 'bg-white' : 'bg-grey_stroke'}` : 'justify-center border-[#F8E3EE]'
 			} items-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 			onClick={onClick}
 			disabled={disabled}
 		>
 			<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
-			{text && optionalLogin && <p className='wallet-text-container m-0 ml-4 p-0 text-lightBlue dark:text-white'>{text}</p>}
-			{optionalLogin && !availableWallets && <p className='m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
+			{text && isOptionalLogin && <p className='wallet-text-container m-0 ml-4 p-0 text-lightBlue dark:text-white'>{text}</p>}
+			{isOptionalLogin && !availableWallets && <p className='m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
 		</Button>
 	);
 };
 
-export default WalletButton;
+export default styled(WalletButton)`
+	@media (max-width: 428px) and (min-width: 319px) {
+		.wallet-text-container {
+			width: 100px !important;
+			text-overflow: ellipsis;
+			overflow-x: hidden;
+		}
+	}
+`;

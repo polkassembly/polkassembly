@@ -77,7 +77,7 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 			badges: JSON.stringify([]),
 			bio: '',
 			custom_username: true,
-			email: email ? email : '',
+			email: email || '',
 			image: currentUser.picture || '',
 			social_links: JSON.stringify([]),
 			title: '',

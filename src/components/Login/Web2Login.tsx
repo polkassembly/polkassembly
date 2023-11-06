@@ -180,7 +180,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							onWalletSelect={onWalletSelect}
 							showPolkasafe={canUsePolkasafe(network)}
 							onPolkasafeSelect={setWithPolkasafe}
-							optionalLogin={true}
+							isOptionalLogin={true}
 						/>
 					</div>
 					<p

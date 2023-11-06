@@ -39,6 +39,7 @@ import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { username } from '~src/util/validation';
 import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 import * as validation from 'src/util/validation';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -87,6 +88,7 @@ const Web3Signup: FC<Props> = ({
 	const [email, setEmail] = useState('');
 	const [emailError, setEmailError] = useState(false);
 	const userDetailsContext = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
@@ -648,7 +650,7 @@ const Web3Signup: FC<Props> = ({
 						<AuthForm onSubmit={handleOptionalDetails}>
 							<div>
 								<div className='my-4 ml-7 flex dark:text-white'>
-								{theme === 'dark' ? <WhiteIconMail className='mr-2 text-2xl' /> : <IconMail className='mr-2 text-2xl' />}
+									{theme === 'dark' ? <WhiteIconMail className='mr-2 text-2xl' /> : <IconMail className='mr-2 text-2xl' />}
 									<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
 								</div>
 								<Divider

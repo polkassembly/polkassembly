@@ -572,10 +572,10 @@ const Web3Signup: FC<Props> = ({
 									<div className='flex justify-center'>
 										<ConfirmationIcon className='confirm-logo-conatiner absolute -top-[78px]' />
 									</div>
-									<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-blue-dark-medium'>You are successfully logged in</p>
+									<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>You are successfully logged in</p>
 									<div className='flex flex-col gap-y-1'>
 										<label
-											className='text-sm text-lightBlue dark:text-blue-dark-high '
+											className='text-base text-lightBlue dark:text-blue-dark-medium '
 											htmlFor='username'
 										>
 											Enter Username
@@ -647,9 +647,9 @@ const Web3Signup: FC<Props> = ({
 					{!showSuccessModal && (
 						<AuthForm onSubmit={handleOptionalDetails}>
 							<div>
-								<div className='my-4 ml-6 flex'>
+								<div className='my-4 ml-7 flex dark:text-white'>
 									<IconMail className='mr-2 text-2xl' />
-									<p className='m-0 p-0 text-xl font-semibold text-bodyBlue'>Add your email</p>
+									<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
 								</div>
 								<Divider
 									className='-mt-1 mb-5'
@@ -659,7 +659,7 @@ const Web3Signup: FC<Props> = ({
 									<div className='flex flex-col gap-y-1'>
 										<label
 											htmlFor='email'
-											className='text-base tracking-wide text-[#485F7D] dark:text-blue-dark-high'
+											className='text-base text-lightBlue dark:text-blue-dark-medium'
 										>
 											Email
 										</label>

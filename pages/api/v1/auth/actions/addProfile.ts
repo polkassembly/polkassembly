@@ -63,7 +63,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		if (!userEmailQuerySnapshot.empty) {
 			throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
 		}
-		if (email == '' || !isValidEmail(email)) return res.status(400).json({ message: messages.INVALID_EMAIL });
+		if (!isValidEmail(email)) throw apiErrorWithStatusCode(messages.INVALID_EMAIL, 400);
 		await authServiceInstance.SendVerifyEmail(token, email, network);
 	}
 
@@ -76,13 +76,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		social_links: newSocialLinks || [],
 		title: title || ''
 	};
-
-	const updated_token = await authServiceInstance.getSignedToken({ ...user, custom_username, email, profile, username });
+	let updatedToken: any;
+	if (email.length) {
+		updatedToken = await authServiceInstance.getSignedToken({ ...user, custom_username, email, profile, username });
+	} else {
+		updatedToken = await authServiceInstance.getSignedToken({ ...user, custom_username, profile, username });
+	}
 
 	await userRef
 		.update({ custom_username, profile, username })
 		.then(() => {
-			return res.status(200).json({ token: updated_token });
+			return res.status(200).json({ token: updatedToken });
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.

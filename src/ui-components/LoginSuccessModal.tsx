@@ -7,7 +7,7 @@ import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 import { Alert, Button, Divider, Form, Input } from 'antd';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';
-import { IconMail, WhiteIconMail } from '~src/ui-components/CustomIcons';
+import { MailIcon, WhiteMailIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import * as validation from 'src/util/validation';
 import queueNotification from './QueueNotification';
@@ -205,7 +205,7 @@ const LoginSuccessModal = ({ setLoading, setLoginOpen, setSignupOpen }: Props) =
 				<AuthForm onSubmit={handleOptionalDetails}>
 					<div>
 						<div className='my-4 ml-7 flex dark:text-white'>
-							{theme === 'dark' ? <WhiteIconMail className='mr-2 text-2xl' /> : <IconMail className='mr-2 text-2xl' />}
+							{theme === 'dark' ? <WhiteMailIcon className='mr-2 text-2xl' /> : <MailIcon className='mr-2 text-2xl' />}
 							<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
 						</div>
 						<Divider

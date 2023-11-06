@@ -41,7 +41,7 @@ interface Props {
 	polkassemblyUsername?: string;
 	username: string;
 	imgUrl?: string;
-	profileCreatedAt?: Date;
+	profileCreatedAt?: Date | null;
 	socials?: ISocial[];
 	setOpen: (pre: boolean) => void;
 	setOpenTipping: (pre: boolean) => void;
@@ -124,81 +124,83 @@ const QuickView = ({
 						<ShareScreenIcon />
 					</a>
 				</div>
-				<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-					<Address
-						address={address}
-						disableHeader
-						iconSize={20}
-						addressMaxLength={5}
-						addressClassName='text-sm dark:text-blue-dark-medium'
-						disableTooltip
-					/>
-					<span
-						className='flex cursor-pointer items-center'
-						onClick={(e) => {
-							e.preventDefault();
-							copyToClipboard(address);
-							success();
-						}}
-					>
-						{contextHolder}
-						<CopyIcon />
-					</span>
-				</div>
-				<div className='mt-0.5 flex items-center justify-between gap-1 border-solid dark:border-none'>
-					{profileCreatedAt && (
-						<span className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959]'>
-							Since:<span className='ml-0.5 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
+				<div className={`flex  gap-1.5 ${profileCreatedAt ? 'flex-col' : 'justify-between'}`}>
+					<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+						<Address
+							address={address}
+							disableHeader
+							iconSize={20}
+							addressMaxLength={5}
+							addressClassName='text-sm dark:text-blue-dark-medium'
+							disableTooltip
+						/>
+						<span
+							className='flex cursor-pointer items-center'
+							onClick={(e) => {
+								e.preventDefault();
+								copyToClipboard(address);
+								success();
+							}}
+						>
+							{contextHolder}
+							<CopyIcon />
 						</span>
-					)}
-					<div className='flex items-center gap-1.5'>
-						{socialLinks?.map((social: any, index: number) => {
-							const link = identityArr?.find((s) => s.key === social)?.value || '';
-							const isVerified = identityArr.find((s) => s.key === social)?.isVerified || false;
-							return (
-								link && (
-									<div
-										title={link ? String(link) : ''}
-										key={index}
-									>
-										<SocialLink
-											className={`flex h-[24px] w-[24px] items-center justify-center rounded-full text-base hover:text-[#576D8B] ${isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
-											link={link as string}
-											type={social}
-											iconClassName={`text-sm ${isVerified ? 'text-white' : 'text-[#96A4B6]'}`}
-										/>
-									</div>
-								)
-							);
-						})}
-						{!!identity?.web && (
+					</div>
+					<div className='mt-0.5 flex items-center justify-between gap-1 border-solid dark:border-none'>
+						{profileCreatedAt && (
+							<span className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959]'>
+								Since:<span className='ml-0.5 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
+							</span>
+						)}
+						<div className='flex items-center gap-1.5'>
+							{socialLinks?.map((social: any, index: number) => {
+								const link = identityArr?.find((s) => s.key === social)?.value || '';
+								const isVerified = identityArr.find((s) => s.key === social)?.isVerified || false;
+								return (
+									link && (
+										<div
+											title={link ? String(link) : ''}
+											key={index}
+										>
+											<SocialLink
+												className={`flex h-[24px] w-[24px] items-center justify-center rounded-full text-base hover:text-[#576D8B] ${isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
+												link={link as string}
+												type={social}
+												iconClassName={`text-sm ${isVerified ? 'text-white' : 'text-[#96A4B6]'}`}
+											/>
+										</div>
+									)
+								);
+							})}
+							{!!identity?.web && (
+								<Link
+									target='_blank'
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										window.open(identity?.web, '_blank');
+									}}
+									href={identity?.web}
+									title={identity?.web}
+									className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#51D36E] text-white'
+								>
+									<WebIcon />
+								</Link>
+							)}
 							<Link
 								target='_blank'
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									window.open(identity?.web, '_blank');
+									window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
 								}}
-								href={identity?.web}
-								title={identity?.web}
-								className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#51D36E] text-white'
+								title={`https://polkaverse.com/accounts/${address}`}
+								href={`https://polkaverse.com/accounts/${address}`}
+								className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
 							>
-								<WebIcon />
+								<PolkaverseIcon />
 							</Link>
-						)}
-						<Link
-							target='_blank'
-							onClick={(e) => {
-								e.preventDefault();
-								e.stopPropagation();
-								window.open(`https://polkaverse.com/accounts/${address}`, '_blank');
-							}}
-							title={`https://polkaverse.com/accounts/${address}`}
-							href={`https://polkaverse.com/accounts/${address}`}
-							className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
-						>
-							<PolkaverseIcon />
-						</Link>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -218,7 +220,7 @@ const QuickView = ({
 				<Tooltip
 					open={!id ? openTooltip : false}
 					onOpenChange={(e) => setOpenTooltip(e)}
-					title='Login to tip user'
+					title='Login to tip'
 				>
 					<div className='flex w-full items-center'>
 						<Button

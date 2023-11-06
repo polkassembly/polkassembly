@@ -39,11 +39,8 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 		}
 
 		const postsColRef = postsByTypeRef(network, strProposalType as ProposalType);
-		const postsSnapshotArr = await postsColRef
-			.orderBy('created_at', 'desc')
-			.limit(numListingLimit)
-			.get();
-		const count = (await postsColRef.count().get()).data().count;
+		const postsSnapshotArr = await postsColRef.where('isDeleted', '==', false).orderBy('created_at', 'desc').limit(numListingLimit).get();
+		const count = (await postsColRef.where('isDeleted', '==', false).count().get()).data().count;
 
 		let posts: any[] = [];
 		const idsSet = new Set<number>();
@@ -64,15 +61,22 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 						}
 					}
 					posts.push({
-						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
+						created_at: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						post_id: data?.id,
 						proposer: '',
+						spam_users_count:
+							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title,
-						topic: topic? topic: isTopicIdValid(topic_id)? {
-							id: topic_id,
-							name: getTopicNameFromTopicId(topic_id)
-						}: getTopicFromType(ProposalType.DISCUSSIONS),
+						topic: topic
+							? topic
+							: isTopicIdValid(topic_id)
+							? {
+									id: topic_id,
+									name: getTopicNameFromTopicId(topic_id)
+							  }
+							: getTopicFromType(ProposalType.DISCUSSIONS),
 						type: proposalType,
 						user_id,
 						username: data?.username
@@ -85,9 +89,13 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 		if (newIds.length > 0) {
 			const newIdsLen = newIds.length;
 			let lastIndex = 0;
-			for (let i = 0; i < newIdsLen; i+=30) {
+			for (let i = 0; i < newIdsLen; i += 30) {
 				lastIndex = i;
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
+				const addressesQuery = await firestore_db
+					.collection('addresses')
+					.where('user_id', 'in', newIds.slice(i, newIdsLen > i + 30 ? i + 30 : newIdsLen))
+					.where('default', '==', true)
+					.get();
 				addressesQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -104,7 +112,11 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 				});
 			}
 			if (lastIndex <= newIdsLen) {
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
+				const addressesQuery = await firestore_db
+					.collection('addresses')
+					.where('user_id', 'in', newIds.slice(lastIndex, lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen))
+					.where('default', '==', true)
+					.get();
 				addressesQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -146,7 +158,7 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 	const { proposalType = OffChainProposalType.DISCUSSIONS, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getLatestActivityOffChainPosts({
 		listingLimit,
@@ -154,10 +166,10 @@ const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: str
 		proposalType
 	});
 
-	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
-		res.status(status).json(data);
+	if (error || !data) {
+		return res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+	} else {
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

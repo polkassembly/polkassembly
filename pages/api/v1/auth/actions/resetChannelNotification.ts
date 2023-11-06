@@ -12,13 +12,7 @@ import messages from '~src/auth/utils/messages';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { IUserNotificationSettings } from '~src/types';
 
-const channelArray =[
-	'telegram',
-	'discord',
-	'email',
-	'slack',
-	'element'
-];
+const channelArray = ['telegram', 'discord', 'email', 'slack', 'element'];
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const firestore = firebaseAdmin.firestore();
@@ -44,18 +38,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const newNotificationSettings: IUserNotificationSettings = {
 		...(userData?.notification_preferences || {}),
-		channelPreferences:{
+		channelPreferences: {
 			...(userData?.notification_preferences?.channelPreferences || {}),
-			[channel]:{}
+			[channel]: {}
 		}
 	};
 
-	await userRef.update({ notification_preferences: newNotificationSettings }).then(() => {
-		return res.status(200).json({ message: 'Success' });
-	}).catch((error) => {
-		console.error('Error updating network preferences: ', error);
-		return res.status(500).json({ message: 'Error updating  network preferences' });
-	});
+	await userRef
+		.update({ notification_preferences: newNotificationSettings })
+		.then(() => {
+			return res.status(200).json({ message: 'Success' });
+		})
+		.catch((error) => {
+			console.error('Error updating network preferences: ', error);
+			return res.status(500).json({ message: 'Error updating  network preferences' });
+		});
 }
 
 export default withErrorHandling(handler);

@@ -16,25 +16,25 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 });
 
 interface IBasicInformationProps {
-    profile?: ProfileDetails;
-	setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>
-    loading: boolean;
-    setUsername: (pre: string) => void;
-    username: string;
-    className?: string;
+	profile?: ProfileDetails;
+	setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>;
+	loading: boolean;
+	setUsername: (pre: string) => void;
+	username: string;
+	className?: string;
 	errorCheck?: string | undefined;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
-	const { profile, loading, setProfile, setUsername, username, className , errorCheck } = props;
+	const { profile, loading, setProfile, setUsername, username, className, errorCheck } = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
-		if(!newBadge || loading){
+		if (!newBadge || loading) {
 			return;
 		}
 		const badges = profile?.badges || [];
-		if(!(badges.includes(newBadge.toLowerCase()))) {
+		if (!badges.includes(newBadge.toLowerCase())) {
 			setProfile((prev) => {
 				return {
 					...prev,
@@ -47,7 +47,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 
 	function removeBadge(badge: string) {
 		const badges = profile?.badges;
-		const badgesArr = [...(badges && Array.isArray(badges)? badges: [])];
+		const badgesArr = [...(badges && Array.isArray(badges) ? badges : [])];
 		const index = badgesArr.indexOf(badge);
 		if (index !== -1) {
 			badgesArr.splice(index, 1);
@@ -60,57 +60,65 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 		}
 	}
 
-	function handleNewBadgeKeyPress(e:any) {
-		if(e.key === 'Enter'){
+	function handleNewBadgeKeyPress(e: any) {
+		if (e.key === 'Enter') {
 			e.preventDefault();
 			addNewBadge();
 		}
 	}
 	return (
-		<div className={`flex flex-col justify-between max-h-[552px] overscroll-y-scroll ${className}`}>
-			<article className='flex flex-col md:flex-row gap-x-6 items-center'>
+		<div className={`overscroll-y-scroll flex max-h-[552px] flex-col justify-between ${className}`}>
+			<article className='flex flex-col items-center gap-x-6 md:flex-row'>
 				<div className='relative flex items-center justify-center'>
 					<ImageComponent
-						src={profile?.image }
+						src={profile?.image}
 						alt='User Picture'
-						className='bg-white flex items-center justify-center w-[103px] h-[103px]'
+						className='flex h-[103px] w-[103px] items-center justify-center bg-white dark:bg-section-dark-overlay'
 						iconClassName='flex items-center justify-center text-[#A0A6AE] text-5xl w-full h-full rounded-full'
 					/>
 				</div>
-				<div
-					className='flex flex-col'
-				>
-					<h4 className='text-sm text-[#485F7D] font-medium '>Profile Image</h4>
-					<p className='font-normal text-sm -mt-1'>
+				<div className='flex flex-col'>
+					<h4 className='text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium '>Profile Image</h4>
+					<p className='-mt-1 text-sm font-normal'>
 						Please provide a url of your profile photo using a service such as
-						<a href='https://postimages.org/' target='_blank' rel="noreferrer">
-							{' '}postimages.org{' '}
+						<a
+							href='https://postimages.org/'
+							target='_blank'
+							rel='noreferrer'
+						>
+							{' '}
+							postimages.org{' '}
 						</a>
-							to upload and generate a direct link.
+						to upload and generate a direct link.
 					</p>
 					<Input
 						placeholder='Profile Picture URL'
-						className='rounded-[4px] border border-solid h-10 border-[#d2d8e0] text-[#7788a0] text-sm -mt-2'
+						className='-mt-2 h-10 rounded-[4px] border border-solid border-[#d2d8e0] text-sm text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						size='large'
 						type='url'
-						onChange={(e) => setProfile((prev) => {
-							return {
-								...prev,
-								image: e.target.value
-							};
-						})}
+						onChange={(e) =>
+							setProfile((prev) => {
+								return {
+									...prev,
+									image: e.target.value
+								};
+							})
+						}
 						value={profile?.image}
 						disabled={loading}
+						classNames={{
+							input: 'dark:placeholder:text-borderColorDark dark:text-white'
+						}}
 					/>
 				</div>
 			</article>
 			<div className='flex gap-x-6'>
-				<div className='hidden md:block max-w-[103px] w-full'></div>
+				<div className='hidden w-full max-w-[103px] md:block'></div>
 				<div className='flex-1'>
-					<Divider className='my-6' style={{ borderColor: '#d2d8e0' }}/>
+					<Divider className='my-6 border-[#d2d8e0] dark:border-separatorDark' />
 					<article>
 						<label
-							className='text-sm cursor-pointer font-medium text-[#485F7D]'
+							className='cursor-pointer text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='title'
 						>
 							Job Title
@@ -119,31 +127,39 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							id='title'
 							value={profile?.title}
 							placeholder='eg. Manager'
-							onChange={(e) => setProfile((prev) => {
-								return {
-									...prev,
-									title: e.target.value
-								};
-							})}
+							onChange={(e) =>
+								setProfile((prev) => {
+									return {
+										...prev,
+										title: e.target.value
+									};
+								})
+							}
 							disabled={loading}
-							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px]"
+							className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							classNames={{
+								input: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
-					<article className='text-sm cursor-pointer mt-4 text-[#485F7D]' >
-						<label className='text-sm text-[#485F7D] font-medium mb-0'>Username</label>
+					<article className='mt-4 cursor-pointer text-sm text-[#485F7D] dark:text-blue-dark-medium'>
+						<label className='mb-0 text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'>Username</label>
 						<Input
-							className='rounded-[4px] border border-solid border-[#d2d8e0] text-[#7788a0] h-10 text-sm px-[14px] py-1'
+							className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-1 text-sm text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							placeholder='eg. John'
 							size='large'
 							type='text'
 							onChange={(e) => setUsername(e.target.value)}
 							value={username}
 							disabled={loading}
+							classNames={{
+								input: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
 					<article className='mt-4'>
 						<label
-							className='text-sm cursor-pointer font-medium text-[#485F7D]'
+							className='cursor-pointer text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='bio'
 						>
 							Bio
@@ -152,36 +168,47 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							id='bio'
 							value={profile?.bio}
 							placeholder='eg. I am a Web Developer'
-							onChange={(e) => setProfile((prev) => {
-								return {
-									...prev,
-									bio: e.target.value
-								};
-							})}
+							onChange={(e) =>
+								setProfile((prev) => {
+									return {
+										...prev,
+										bio: e.target.value
+									};
+								})
+							}
 							disabled={loading}
-							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] px-[14px] py-[10px]"
+							className='rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-[10px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							classNames={{
+								textarea: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
 					<article className='mt-4'>
 						<label
-							className='text-sm cursor-pointer font-medium text-[#485F7D]'
+							className='cursor-pointer text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='badges'
 						>
 							Badges
 						</label>
-						<HelperTooltip className='ml-1 cursor-pointer text-xs font-normal text-[#485F7D] m-0 mb-1 leading-[18px]' text='Badges indicate individual successes, abilities, skills and/or interests' />
-						<div className='flex gap-x-2 items-center'>
+						<HelperTooltip
+							className='m-0 mb-1 ml-1 cursor-pointer text-xs font-normal leading-[18px] text-[#485F7D] dark:text-blue-dark-medium'
+							text='Badges indicate individual successes, abilities, skills and/or interests'
+						/>
+						<div className='flex items-center gap-x-2'>
 							<Input
 								id='badges'
 								value={newBadge}
 								placeholder='eg. Council Member, Voter, etc.'
 								onChange={(e) => setNewBadge(e.target.value)}
 								onKeyPress={(e: any) => handleNewBadgeKeyPress(e)}
-								className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px] mt-[2px]"
+								className='mt-[2px] h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								disabled={loading}
+								classNames={{
+									input: 'dark:placeholder:text-borderColorDark dark:text-white'
+								}}
 							/>
 							<Button
-								className='bg-transparent border border-solid rounded border-pink_primary text-pink_primary h-10 font-medium text-sm'
+								className='h-10 rounded border border-solid border-pink_primary bg-transparent text-sm font-medium text-pink_primary'
 								icon={<PlusOutlined />}
 								onClick={() => addNewBadge()}
 								disabled={loading}
@@ -189,53 +216,47 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								Add Badge
 							</Button>
 						</div>
-						{
-							profile && profile?.badges && Array.isArray(profile?.badges) && profile?.badges.length >= 0 ?
-								<div>
-									{
-										profile?.badges.map((badge) => {
-											return (
-												<Tag
-													closeIcon={
-														<CloseOutlined
-															className={`m-0 p-0 flex text-white ${loading? 'cursor-not-allowed': ''}`}
-														/>
-													}
-													className={`capitalize rounded-full inline-flex font-medium outline-none border-none shadow-none px-3 py-0.5 gap-x-1 items-center bg-pink_primary text-white m-0 mt-2 mr-2 ${loading? 'cursor-not-allowed': ''}`}
-													key={badge}
-													closable
-													onClose={(e) => {
-														e.preventDefault();
-														if (!loading) {
-															removeBadge(badge);
-														}
-													}}
-												>
-													{badge}
-												</Tag>
-											);
-										})
-									}
-								</div>
-								: null
-						}
+						{profile && profile?.badges && Array.isArray(profile?.badges) && profile?.badges.length >= 0 ? (
+							<div>
+								{profile?.badges.map((badge) => {
+									return (
+										<Tag
+											closeIcon={<CloseOutlined className={`m-0 flex p-0 text-white ${loading ? 'cursor-not-allowed' : ''}`} />}
+											className={`m-0 mr-2 mt-2 inline-flex items-center gap-x-1 rounded-full border-none bg-pink_primary px-3 py-0.5 font-medium capitalize text-white shadow-none outline-none ${
+												loading ? 'cursor-not-allowed' : ''
+											}`}
+											key={badge}
+											closable
+											onClose={(e) => {
+												e.preventDefault();
+												if (!loading) {
+													removeBadge(badge);
+												}
+											}}
+										>
+											{badge}
+										</Tag>
+									);
+								})}
+							</div>
+						) : null}
 					</article>
 				</div>
 			</div>
-			{
-				errorCheck &&
-					<Alert
-						className='mt-4 h-[40px] py-2 px-5 text-bodyBlue text-sm rounded-[4px]'
-						message={errorCheck}
-						type='info'
-						showIcon
-					/>
-			}
+			{errorCheck && (
+				<Alert
+					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue dark:text-blue-dark-high'
+					message={errorCheck}
+					type='info'
+					showIcon
+				/>
+			)}
 		</div>
 	);
 };
 
 export default styled(BasicInformation)`
-.ant-input:placeholder-shown {
-  // color: #7788a0 !important;
-}`;
+	.ant-input:placeholder-shown {
+		// color: #7788a0 !important;
+	}
+`;

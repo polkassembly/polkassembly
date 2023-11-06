@@ -10,38 +10,31 @@ import ImportIcon from '~assets/icons/import-icon.svg';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
 import NetworkTags from './NetworkTags';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
 import AddNetworkModal from './AddNetworkModal';
 import ImportPrimaryNetworkSettingModal from './ImportPrinaryBetwork';
 import SetPrimaryNetworkSettingModal from './PrimaryNetworkConfirmModal';
 import { ISelectedNetwork } from '../types';
 import Image from 'next/image';
 import { Collapse } from '../common-ui/Collapse';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = {
 	primaryNetwork: string;
 	onSetPrimaryNetwork: (network: string) => Promise<void>;
 	onSetNetworkPreferences: (networks: Array<string>) => Promise<void>;
-	onCopyPrimaryNetworkNotification: (
-		selectedNetwork: Array<string>
-	) => Promise<void>;
+	onCopyPrimaryNetworkNotification: (selectedNetwork: Array<string>) => Promise<void>;
 	selectedNetwork: ISelectedNetwork;
 	setSelectedNetwork: React.Dispatch<React.SetStateAction<ISelectedNetwork>>;
 };
 
 // eslint-disable-next-line no-empty-pattern
-export default function Parachain({
-	primaryNetwork,
-	onSetPrimaryNetwork,
-	onSetNetworkPreferences,
-	onCopyPrimaryNetworkNotification,
-	selectedNetwork,
-	setSelectedNetwork
-}: Props) {
-	const { network } = useNetworkContext();
+export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNetworkPreferences, onCopyPrimaryNetworkNotification, selectedNetwork, setSelectedNetwork }: Props) {
+	const { network } = useNetworkSelector();
 	const [openModal, setOpenModal] = useState(false);
 	const [active, setActive] = useState<boolean | undefined>(false);
+	const { resolvedTheme: theme } = useTheme();
 	const handleModalConfirm = (networks: ISelectedNetwork) => {
 		setSelectedNetwork(networks);
 		setOpenModal(false);
@@ -54,8 +47,7 @@ export default function Parachain({
 	};
 
 	const [copyPreferencesModal, setCopyPreferencesModal] = useState(false);
-	const [primaryPreferencesModal, setPrimaryPreferencesModal] =
-		useState(false);
+	const [primaryPreferencesModal, setPrimaryPreferencesModal] = useState(false);
 
 	const handlePrimaryNetworkChange = () => {
 		onSetPrimaryNetwork(network);
@@ -63,9 +55,7 @@ export default function Parachain({
 	};
 
 	const handleClose = (name: string) => {
-		const networks = selectedNetwork[chainProperties[name].category].map(
-			(net) => (net.name == name ? { ...net, selected: false } : net)
-		);
+		const networks = selectedNetwork[chainProperties[name].category].map((net) => (net.name == name ? { ...net, selected: false } : net));
 		setSelectedNetwork({
 			...selectedNetwork,
 			[chainProperties[name].category]: networks
@@ -78,7 +68,8 @@ export default function Parachain({
 
 	return (
 		<Collapse
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			theme={theme}
 			size='large'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -88,35 +79,32 @@ export default function Parachain({
 		>
 			<Panel
 				header={
-					<div className='flex justify-between gap-[8px] items-center'>
-						<div className='flex items-center gap-[6px] channel-header'>
+					<div className='flex items-center justify-between gap-[8px]'>
+						<div className='channel-header flex items-center gap-[6px]'>
 							<ParachainNotification />
-							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
-								Parachains
-							</h3>
+							<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Parachains</h3>
 						</div>
 						{!!active && (
-							<div className='gap-2 hidden md:flex'>
+							<div className='hidden gap-2 md:flex'>
 								{selectedNetworkArray.slice(0, 5).map((net) => (
 									<Image
 										key={net.name}
-										className='w-[20px] h-[20px] rounded-full'
+										className='h-[20px] w-[20px] rounded-full'
 										src={chainProperties[net.name].logo}
 										alt='Logo'
 									/>
 								))}
-								{selectedNetworkArray.length > 5 && (
-									<span className='text-[10px] bg-[#D2D8E080] px-2 py-[3px] rounded-xl'>
-										+{selectedNetworkArray.length - 5}
-									</span>
-								)}
+								{selectedNetworkArray.length > 5 && <span className='rounded-xl bg-[#D2D8E080] px-2 py-[3px] text-[10px]'>+{selectedNetworkArray.length - 5}</span>}
 							</div>
 						)}
 					</div>
 				}
 				key={13}
 			>
-				<Space size={[16, 16]} wrap>
+				<Space
+					size={[16, 16]}
+					wrap
+				>
 					{selectedNetworkArray.map(({ name }: { name: string }) => (
 						<NetworkTags
 							key={name}
@@ -131,8 +119,11 @@ export default function Parachain({
 						onActionClick={() => setOpenModal(true)}
 					/>
 				</Space>
-				<Divider className='border-[#D2D8E0] border-2' dashed />
-				<div className='flex flex-col item-center gap-6'>
+				<Divider
+					className='border-2 border-[#D2D8E0] dark:border-separatorDark'
+					dashed
+				/>
+				<div className='item-center flex flex-col gap-6'>
 					<Checkbox
 						value={false}
 						onChange={() => {
@@ -142,23 +133,25 @@ export default function Parachain({
 							setPrimaryPreferencesModal(true);
 						}}
 						checked={primaryNetwork === network}
-						className='text-pink_primary text-[16px] flex item-center'
+						className='item-center flex text-[16px] text-pink_primary'
 					>
 						Set as Primary Network Settings
 					</Checkbox>
 					<div
-						className={`flex item-center gap-2 max-w-[300px] text-[16px] ${primaryNetwork !== network
-							? 'text-pink_primary cursor-pointer'
-							: 'text-[#96A4B6] cursor-not-allowed'} whitespace-normal md:whitespace-nowrap`}
+						className={`item-center flex max-w-[300px] gap-2 text-[16px] ${
+							primaryNetwork !== network ? 'cursor-pointer text-pink_primary' : 'cursor-not-allowed text-[#96A4B6]'
+						} whitespace-normal md:whitespace-nowrap`}
 					>
-						<span onClick={primaryNetwork !== network ? () => {
-							setCopyPreferencesModal(true);
-						} : () => { }}>
-							{primaryNetwork !== network ? (
-								<ImportIcon />
-							) : (
-								<DisabledImportIcon />
-							)}
+						<span
+							onClick={
+								primaryNetwork !== network
+									? () => {
+											setCopyPreferencesModal(true);
+									  }
+									: () => {}
+							}
+						>
+							{primaryNetwork !== network ? <ImportIcon /> : <DisabledImportIcon />}
 						</span>
 						Importing Primary Network Settings
 					</div>
@@ -180,7 +173,8 @@ export default function Parachain({
 						}
 						onCopyPrimaryNetworkNotification(
 							Object.values(selectedNetwork)
-								.flatMap((chain) => chain).filter((network) => network.selected)
+								.flatMap((chain) => chain)
+								.filter((network) => network.selected)
 								.map(({ name }: { name: string }) => name)
 						);
 						setCopyPreferencesModal(false);

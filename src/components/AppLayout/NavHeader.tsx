@@ -3,229 +3,570 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
+import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Button, Divider, Skeleton, Space } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useRef, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
-import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 import { chainProperties } from '~src/global/networkConstants';
-
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SearchBar from '~src/ui-components/SearchBar';
-
-import GovernanceSwitchButton from './GovernanceSwitchButton';
+import TownHall from '~assets/icons/TownHall.svg';
+import Mail from '~assets/icons/mail.svg';
+import Arrow from '~assets/icons/arrow.svg';
+import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
+import PaLogoDark from '~assets/PALogoDark.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { EGovType } from '~src/global/proposalType';
+import UserProfileDropdown from '../../ui-components/UserProfileDropdown';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
+import { onchainIdentitySupportedNetwork } from '.';
+import IdentityCaution from '~assets/icons/identity-caution.svg';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { logout, setUserDetailsState } from '~src/redux/userDetails';
+import { useTheme } from 'next-themes';
+import PolkasafeWhiteIcon from '~assets/polkasafe-white-logo.svg';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
+const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+	ssr: false
+});
 
 interface Props {
-	className?: string
-	sidedrawer: boolean
-  previousRoute?: string;
-	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
+	className?: string;
+	sidedrawer: boolean;
+	previousRoute?: string;
+	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
+	displayName?: string;
+	isVerified?: boolean;
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Props) => {
-	const { network } = useNetworkContext();
-	const currentUser = useUserDetailsContext();
+const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified }: Props) => {
+	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
+	const { username, id } = currentUser;
 	const router = useRouter();
-	const { pathname, query } = router;
-	const { username } = currentUser;
+	const { web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
-	const [openLogin,setLoginOpen]=useState<boolean>(false);
-	const [openSignup,setSignupOpen]=useState<boolean>(false);
-
-	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isClicked = useRef(false);
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
+
+	const handleLogout = async (username: string) => {
+		dispatch(logout());
+		if (!router.query?.username) return;
+		if (router.query?.username.includes(username)) {
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
+		}
+	};
+	const setGovTypeToContext = (govType: EGovType) => {
+		dispatch(
+			setUserDetailsState({
+				...currentUser,
+				govType
+			})
+		);
+	};
+
+	useEffect(() => {
+		if (network && !isOpenGovSupported(network)) {
+			setGovTypeToContext(EGovType.GOV1);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
+	const handleIdentityButtonClick = () => {
+		const address = localStorage.getItem('identityAddress');
+		if (isMobile) {
+			return;
+		} else {
+			if (address?.length) {
+				setOpen(!open);
+			} else {
+				setOpenAddressLinkedModal(true);
+			}
+		}
+	};
+
+	const menudropDownItems: ItemType[] = [
+		{
+			className: 'logo-class',
+			key: 'Townhall',
+			label: (
+				<a
+					href='https://townhallgov.com/'
+					target='_blank'
+					rel='noreferrer'
+					className='custom-link'
+				>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
+						<TownHall />
+						<span>TownHall</span>
+					</span>
+				</a>
+			)
+		},
+		{
+			className: 'logo-class',
+			key: 'Polkasafe',
+			label: (
+				<a
+					href='https://polkasafe.xyz/'
+					target='_blank'
+					rel='noreferrer'
+					className='custom-link'
+				>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
+						{theme === 'dark' ? <PolkasafeWhiteIcon className='relative left-[3px] top-[-1px] scale-[2]' /> : <PolkaSafe />}
+						<span>Polkasafe</span>
+					</span>
+				</a>
+			)
+		}
+	];
+
+	const dropdownMenuItems: ItemType[] = [
+		{
+			key: 'view profile',
+			label: (
+				<Link
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					href={`/user/${username}`}
+				>
+					<IconProfile className='userdropdown-icon text-2xl' />
+					<span>View Profile</span>
+				</Link>
+			)
+		},
+		{
+			key: 'settings',
+			label: (
+				<Link
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					href='/settings?tab=account'
+				>
+					<IconSettings className='userdropdown-icon text-2xl' />
+					<span>Settings</span>
+				</Link>
+			)
+		},
+		{
+			key: 'logout',
+			label: (
+				<Link
+					href='/'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white'
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						handleLogout(username || '');
+						window.location.reload();
+					}}
+				>
+					<IconLogout className='userdropdown-icon text-2xl' />
+					<span>Logout</span>
+				</Link>
+			)
+		}
+	];
+
+	if (onchainIdentitySupportedNetwork.includes(network)) {
+		dropdownMenuItems.splice(1, 0, {
+			key: 'set on-chain identity',
+			label: (
+				<Link
+					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
+					href={''}
+					onClick={(e) => {
+						e.stopPropagation();
+						e.preventDefault();
+						handleIdentityButtonClick();
+					}}
+				>
+					<span className='text-2xl'>
+						<ApplayoutIdentityIcon />
+					</span>
+					<span>Set on-chain identity</span>
+					{!isVerified && (
+						<span className='flex items-center'>
+							<IdentityCaution />
+						</span>
+					)}
+				</Link>
+			)
+		});
+	}
+
+	const AuthDropdown = ({ children }: { children: ReactNode }) => (
+		<Dropdown
+			menu={{ items: dropdownMenuItems }}
+			trigger={['click']}
+			overlayClassName='navbar-dropdowns'
+			theme={theme}
+		>
+			{children}
+		</Dropdown>
+	);
+
+	const MenuDropdown = ({ children }: { children: ReactNode }) => (
+		<Dropdown
+			hideOverflow={true}
+			menu={{ items: menudropDownItems }}
+			trigger={['click']}
+			overlayClassName='navbar-dropdowns'
+			theme={theme}
+		>
+			{children}
+		</Dropdown>
+	);
 
 	return (
-		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
-			<MenuOutlined className='lg:hidden mr-5' onClick={() => {
-				setSidedrawer(!sidedrawer);
-			}} />
-			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
+		<Header
+			className={`${className} shadow-md ${
+				sidedrawer && !isMobile ? 'z-[500]' : isMobile ? 'z-[1010]' : 'z-[1000]'
+			} navbar-container sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
+		>
+			<span
+				onClick={() => {
+					setSidedrawer(!sidedrawer);
+				}}
+			>
+				<Dashboard className='dashboard-container mr-5 mt-1 text-2xl lg:hidden' />
+			</span>
+			<nav className='flex h-[60px] max-h-[60px] w-full items-center justify-between'>
 				<div className='flex items-center'>
-					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' /></Link>
-					<div className='flex items-center'>
-						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[10px]'></span>
-						<h2 className='m-0 p-0 text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
-							{
-								isGov2Route? 'OpenGov': 'Gov1'
-							}
+					<Link
+						className='logo-size flex'
+						href={'/'}
+					>
+						{theme === 'dark' && isMobile ? (
+							<PaLogoDark className='logo-container -ml-[2px]' />
+						) : (
+							<PaLogo
+								className='logo-container -ml-[2px]'
+								sidedrawer={isMobile}
+							/>
+						)}
+					</Link>
+
+					<div className='type-container flex items-center'>
+						<span className='line-container ml-[16px] mr-[8px] h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
+						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:text-blue-dark-high lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
 				</div>
 
-				{
-					isOpenGovSupported(network)?
-						<>
-							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
-						</> :
-						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
-				}
-				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
-					<SearchBar/>
+				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
+					<SearchBar className='searchbar-container' />
 
-					<Space className='hidden md:flex items-center justify-between gap-x-2 md:gap-x-4'>
-						{/* <Link className='text-navBlue hidden hover:text-pink_primary text-lg items-center' href='/notification-settings'>
-							<BellOutlined />
-						</Link> */}
+					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
-						{
-							['kusama', 'polkadot'].includes(network)?
-								<RPCDropdown />
-								: null
-						}
-						{!username
-							&& <div className='flex items-center lg:gap-x-2'>
-								<Button className='w-[74px] h-[33px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
-							</div>
-						}
-					</Space>
-					{
-						open?
-							<button
-								onBlur={() => {
-									setTimeout(() => {
-										setOpen(false);
-									}, 100);
-								}}
-								onClick={() => {
-									if (!isClicked.current) {
-										setOpen(false);
-									}
-									isClicked.current = false;
-								}}
-								className='ml-auto outline-none bg-[rgba(210,216,224,0.2)] border border-solid border-[#D2D8E0] rounded-[4px] flex items-center justify-center h-8 w-8 md:hidden'
-							>
-								<CloseOutlined className='w-[15px] h-[15px]' />
-								<div
-									className={`absolute w-screen bg-black bg-opacity-50 top-[60px] left-0 overflow-hidden h-[calc(100vh-60px)] ${(!sidedrawer && open)? 'block': 'hidden'}`}
+
+						{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
+						{!id ? (
+							<div className='flex items-center lg:gap-x-2'>
+								<Button
+									id='login-btn'
+									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white dark:border-none md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
+									onClick={() => {
+										setSidedrawer(false);
+										setLoginOpen(true);
+									}}
 								>
-									<div
-										onClick={() => {
-											isClicked.current = true;
-										}}
-										className='p-4 bg-white'
-									>
-										<div className='flex flex-col'>
-											<SearchBar  />
-											<div>
-												<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em] text-left'>Network</p>
-												<NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} />
-											</div>
-											<div className='mt-6'>
-												<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em] text-left'>Node</p>
-												<RPCDropdown isSmallScreen={true} />
-											</div>
-											<div className={`${username? 'hidden': 'block'}`}>
-												<Divider className='my-8'/>
-												<div className='flex flex-col gap-y-4'>
-													<button
-														onClick={() => {
-															setOpen(false);
-															router.push('/signup');
-														}}
-														className='rounded-[6px] bg-white flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize h-10'
-													>
-														Sign Up
-													</button>
-													<button
-														onClick={() => {
-															setOpen(false);
-															router.push('/login');
-														}}
-														className='h-10 rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
-													>
-														Log In
-													</button>
-												</div>
+									Login
+								</Button>
+							</div>
+						) : (
+							<AuthDropdown>
+								{!web3signup ? (
+									<div className='border-1px-solid-#d7dce3 flex items-center justify-between gap-x-2 rounded-3xl bg-[#f6f7f9] px-3  '>
+										<Mail />
+										<div className='flex items-center justify-between gap-x-1'>
+											<span className='w-[85%] truncate normal-case'>{displayName || username || ''}</span>
+											<Arrow />
+										</div>
+									</div>
+								) : (
+									<div className={'flex items-center justify-between gap-x-2'}>
+										<UserProfileDropdown
+											className='navbar-user-dropdown h-[32px] max-w-[165px]'
+											displayName={displayName}
+											isVerified={isVerified}
+										/>
+									</div>
+								)}
+							</AuthDropdown>
+						)}
+						<div className='mr-0 lg:mr-10'>
+							<MenuDropdown>
+								<OptionMenu className='mt-[6px] text-2xl' />
+							</MenuDropdown>
+						</div>
+					</Space>
+					{open ? (
+						<button
+							onBlur={() => {
+								setTimeout(() => {
+									setOpen(false);
+								}, 100);
+							}}
+							onClick={() => {
+								if (!isClicked.current) {
+									setOpen(false);
+								}
+								isClicked.current = false;
+							}}
+							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:bg-section-dark-overlay md:hidden'
+						>
+							<CloseOutlined className='h-[15px] w-[15px]' />
+							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
+								<div
+									onClick={() => {
+										isClicked.current = true;
+									}}
+									className='bg-white p-4'
+								>
+									<div className='flex flex-col'>
+										<div>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Network</p>
+											<NetworkDropdown
+												setSidedrawer={() => {}}
+												isSmallScreen={true}
+											/>
+										</div>
+										<div className='mt-6'>
+											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
+											<RPCDropdown isSmallScreen={true} />
+										</div>
+										<div className={`${username ? 'hidden' : 'block'}`}>
+											<Divider className='my-8' />
+											<div className='flex flex-col gap-y-4'>
+												<button
+													onClick={() => {
+														setOpen(false);
+														router.push('/signup');
+													}}
+													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
+												>
+													Sign Up
+												</button>
+												<button
+													onClick={() => {
+														setOpen(false);
+														router.push('/login');
+													}}
+													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+												>
+													Log In
+												</button>
 											</div>
 										</div>
 									</div>
 								</div>
-							</button>
-							: <button
-								onClick={() => {
-									setSidedrawer(false);
-									setOpen(true);
-								}}
-								className='outline-none flex md:hidden items-center justify-center w-8 h-8 p-[6px] rounded-[4px] bg-[rgba(210,216,224,0.2)] border-solid border border-[#D2D8E0]'
-							>
-								<Image
-									className='w-[20px] h-[20px] rounded-full'
-									src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
-									alt='Logo'
-								/>
-							</button>
-					}
+							</div>
+						</button>
+					) : (
+						<button
+							onClick={() => {
+								setSidedrawer(false);
+								setOpen(true);
+							}}
+							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-[6px] outline-none md:hidden'
+						>
+							<Image
+								className='h-[20px] w-[20px] rounded-full'
+								src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
+								alt='Logo'
+							/>
+						</button>
+					)}
 				</div>
 
-				<SignupPopup setLoginOpen={setLoginOpen} modalOpen={openSignup} setModalOpen={setSignupOpen} isModal={true} />
-				<LoginPopup setSignupOpen={setSignupOpen} modalOpen={openLogin} setModalOpen={setLoginOpen} isModal={true} />
+				<SignupPopup
+					setLoginOpen={setLoginOpen}
+					modalOpen={openSignup}
+					setModalOpen={setSignupOpen}
+					isModal={true}
+				/>
+				<LoginPopup
+					setSignupOpen={setSignupOpen}
+					modalOpen={openLogin}
+					setModalOpen={setLoginOpen}
+					isModal={true}
+				/>
 			</nav>
+			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
+				<OnChainIdentity
+					open={open}
+					setOpen={setOpen}
+					openAddressLinkedModal={openAddressLinkedModal}
+					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+				/>
+			)}
 		</Header>
 	);
 };
 
 export default styled(NavHeader)`
-.padding-zero .ant-modal-content {
-	padding: 0 !important;
-}
-.gsc-control-cse {
-	background: transparent !important;
-	border: none !important;
-	padding: 0 !important;
-}
-.gsc-search-button {
-	display: none;
-}
-.gsc-input-box {
-	border: none !important;
-	background: none !important;
-	width: 15rem;
-	margin-right: 1em;
-}
-table.gsc-search-box {
-	margin-bottom: 0 !important;
-}
-table.gsc-search-box td.gsc-input {
-	padding-right: 0 !important;
-}
-.gsib_a {
-	padding: 0 !important;
-	position: relative !important;
-}
-.gsib_a input.gsc-input {
-	background-color: #f0f2f5 !important;
-	padding: 10px 10px 10px 30px !important;
-	font-size: 1em !important;
-	height: 40px !important;
-	border-radius: 6px !important;
-	color: #334d6e !important;
-}
-.gsib_b {
-	display: none !important;
-}
-form.gsc-search-box {
-	margin-bottom: 0 !important;
-}
+	svg:hover {
+		cursor: pointer;
+	}
+	.drop .ant-select-selector {
+		box-sizing: none;
+		border: none !important;
+		box-shadow: none !important;
+	}
+	.padding-zero .ant-modal-content {
+		padding: 0 !important;
+	}
 
-p {
-margin: 0;
-}
+	.gsc-control-cse {
+		background: transparent !important;
+		border: none !important;
+		padding: 0 !important;
+	}
+	.gsc-search-button {
+		display: none;
+	}
+	.gsc-input-box {
+		border: none !important;
+		background: none !important;
+		width: 15rem;
+		margin-right: 1em;
+	}
+	table.gsc-search-box {
+		margin-bottom: 0 !important;
+	}
+	table.gsc-search-box td.gsc-input {
+		padding-right: 0 !important;
+	}
+	.gsib_a {
+		padding: 0 !important;
+		position: relative !important;
+	}
+	.gsib_a input.gsc-input {
+		background-color: #f0f2f5 !important;
+		padding: 10px 10px 10px 30px !important;
+		font-size: 1em !important;
+		height: 40px !important;
+		border-radius: 6px !important;
+		color: #334d6e !important;
+	}
+	.gsib_b {
+		display: none !important;
+	}
+	form.gsc-search-box {
+		margin-bottom: 0 !important;
+	}
 
+	p {
+		margin: 0;
+	}
+
+	navbar-user-dropdown {
+		display: inline-block !important;
+	}
+
+	.line-container {
+		display: none !important;
+	}
+
+	.userdropdown-icon {
+		transform: scale(0.9);
+	}
+	.text-container {
+		font-size: 16px !important;
+		font-style: normal;
+		font-weight: 600 !important;
+	}
+
+	@media (max-width: 1023px) and (min-width: 468px) {
+		.text-container {
+			margin-left: -2px !important;
+		}
+
+		.line-container {
+			display: block !important;
+			margin-left: -15px !important;
+		}
+	}
+
+	@media (max-width: 468px) and (min-width: 380px) {
+		.logo-size {
+			transform: scale(0.9) !important;
+			margin-left: -12px !important;
+		}
+
+		.type-container {
+			margin-left: 5px !important;
+		}
+
+		.logo-container {
+			margin-left: -8px !important;
+		}
+
+		.type-container {
+			margin-left: -24px !important;
+		}
+
+		.text-container {
+			font-size: 12px !important;
+			font-style: normal;
+			font-weight: 600 !important;
+			margin-left: -2px !important;
+		}
+
+		.line-container {
+			display: block !important;
+			margin-left: 4px !important;
+		}
+	}
+
+	@media (max-width: 380px) and (min-width: 319px) {
+		.logo-container {
+			margin-left: -15px !important;
+		}
+
+		.type-container {
+			margin-left: -38px !important;
+		}
+
+		.text-container {
+			font-size: 12px !important;
+			margin-left: -4px !important;
+		}
+
+		.line-container {
+			display: block !important;
+		}
+
+		.logo-size {
+			transform: scale(0.9) !important;
+			margin-left: -25px !important;
+		}
+
+		.dashboard-container {
+			margin-left: -15px !important;
+		}
+	}
 `;

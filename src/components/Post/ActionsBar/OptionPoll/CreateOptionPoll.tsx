@@ -17,7 +17,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface ICreatePollProps {
 	postId: number | string;
-	proposalType: ProposalType
+	proposalType: ProposalType;
 }
 
 const daysOptions: React.ReactElement[] = [];
@@ -25,20 +25,35 @@ const hoursOptions: React.ReactElement[] = [];
 const minutesOptions: React.ReactElement[] = [];
 
 for (let i = 0; i < 59; i++) {
-	if(i<10) {
+	if (i < 10) {
 		daysOptions.push(
-			<Select.Option key={i + 1} value={i + 1}>{i + 1}</Select.Option>
+			<Select.Option
+				key={i + 1}
+				value={i + 1}
+			>
+				{i + 1}
+			</Select.Option>
 		);
 	}
 
-	if(i<23) {
+	if (i < 23) {
 		hoursOptions.push(
-			<Select.Option key={i + 1} value={i + 1}>{i + 1}</Select.Option>
+			<Select.Option
+				key={i + 1}
+				value={i + 1}
+			>
+				{i + 1}
+			</Select.Option>
 		);
 	}
 
 	minutesOptions.push(
-		<Select.Option key={i + 1} value={i + 1}>{i + 1}</Select.Option>
+		<Select.Option
+			key={i + 1}
+			value={i + 1}
+		>
+			{i + 1}
+		</Select.Option>
 	);
 }
 
@@ -61,10 +76,10 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 			const hours = form.getFieldValue('hours') || 0;
 			const minutes = form.getFieldValue('minutes') || 0;
 
-			const endAt = Math.round(Date.now()/1000) + (days*24*60*60) + (hours*60*60) + (minutes*60);
+			const endAt = Math.round(Date.now() / 1000) + days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60;
 
 			setLoading(true);
-			const { data , error: apiError } = await nextApiClientFetch<ICreatePollResponse>( 'api/v1/auth/actions/createPoll', {
+			const { data, error: apiError } = await nextApiClientFetch<ICreatePollResponse>('api/v1/auth/actions/createPoll', {
 				endAt,
 				options: JSON.stringify(options),
 				pollType: POLL_TYPE.OPTION,
@@ -125,46 +140,78 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 
 	return (
 		<>
-			<Button className={'text-pink_primary flex items-center border-none shadow-none px-1.5'} onClick={() => setShowModal(true)}>
-				<AuditOutlined /><span className='ml-1'>Create Poll</span>
+			<Button
+				className={'flex items-center border-none px-1.5 text-pink_primary shadow-none dark:border-none dark:bg-transparent dark:text-blue-dark-helper'}
+				onClick={() => setShowModal(true)}
+			>
+				<AuditOutlined />
+				<span className='ml-1'>Create Poll</span>
 			</Button>
 
 			<Modal
-				title="Create Poll"
+				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				wrapClassName='dark:bg-modalOverlayDark'
+				title='Create Poll'
 				open={showModal}
 				onOk={handleCreate}
-				onCancel={() => { form.resetFields(); setShowModal(false);}}
+				onCancel={() => {
+					form.resetFields();
+					setShowModal(false);
+				}}
 				confirmLoading={loading}
 				footer={[
-					<Button key="back" disabled={loading} onClick={() => { form.resetFields(); setShowModal(false);}}>
-            Cancel
+					<Button
+						key='back'
+						disabled={loading}
+						onClick={() => {
+							form.resetFields();
+							setShowModal(false);
+						}}
+					>
+						Cancel
 					</Button>,
-					<Button htmlType='submit' key="submit" className='bg-pink_primary hover:bg-pink_secondary text-white' disabled={loading} onClick={handleCreate}>
-            Create Poll
+					<Button
+						htmlType='submit'
+						key='submit'
+						className='bg-pink_primary text-white hover:bg-pink_secondary'
+						disabled={loading}
+						onClick={handleCreate}
+					>
+						Create Poll
 					</Button>
 				]}
 			>
 				<Form
 					form={form}
-					name="report-post-form"
+					name='report-post-form'
 					onFinish={handleCreate}
-					layout="vertical"
+					layout='vertical'
 					disabled={loading || formDisabled}
-					validateMessages={
-						{ required: "Please add the '${name}'" }
-					}
-					initialValues={
-						{ options: [undefined, undefined] }
-					}
+					validateMessages={{ required: "Please add the '${name}'" }}
+					initialValues={{ options: [undefined, undefined] }}
 				>
-					{error && <ErrorAlert errorMsg={error} className='mb-4' />}
+					{error && (
+						<ErrorAlert
+							errorMsg={error}
+							className='mb-4'
+						/>
+					)}
 
-					<Form.Item name="question" label="Question" rules={[{ required: true }]}>
-						<Input name='question' autoFocus placeholder='Ask a question...' className='text-black' />
+					<Form.Item
+						name='question'
+						label='Question'
+						rules={[{ required: true }]}
+					>
+						<Input
+							name='question'
+							autoFocus
+							placeholder='Ask a question...'
+							className='text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+						/>
 					</Form.Item>
 
 					<Form.List
-						name="options"
+						name='options'
 						rules={[
 							{
 								validator: async (_, options) => {
@@ -195,11 +242,15 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 											]}
 											noStyle
 										>
-											<Input placeholder={`Option ${index + 1}`} name='linkPostId' className='w-[90%] text-black' />
+											<Input
+												placeholder={`Option ${index + 1}`}
+												name='linkPostId'
+												className='w-[90%] text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+											/>
 										</Form.Item>
 										{fields.length > 2 ? (
 											<MinusCircleOutlined
-												className="ml-3"
+												className='ml-3'
 												onClick={() => remove(field.name)}
 											/>
 										) : null}
@@ -208,7 +259,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 
 								<Form.Item>
 									<Button
-										type="dashed"
+										type='dashed'
 										onClick={() => add()}
 										icon={<PlusOutlined />}
 										className='flex items-center'
@@ -221,35 +272,29 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 						)}
 					</Form.List>
 
-					<div className="flex items-center justify-between">
+					<div className='flex items-center justify-between'>
 						<Form.Item
-							name="days"
-							label="Days"
-							className='w-full mx-2'
+							name='days'
+							label='Days'
+							className='mx-2 w-full'
 						>
-							<Select>
-								{daysOptions}
-							</Select>
+							<Select>{daysOptions}</Select>
 						</Form.Item>
 
 						<Form.Item
-							name="hours"
-							label="Hours"
-							className='w-full mx-2'
+							name='hours'
+							label='Hours'
+							className='mx-2 w-full'
 						>
-							<Select>
-								{hoursOptions}
-							</Select>
+							<Select>{hoursOptions}</Select>
 						</Form.Item>
 
 						<Form.Item
-							name="minutes"
-							label="Minutes"
-							className='w-full mx-2'
+							name='minutes'
+							label='Minutes'
+							className='mx-2 w-full'
 						>
-							<Select>
-								{minutesOptions}
-							</Select>
+							<Select>{minutesOptions}</Select>
 						</Form.Item>
 					</div>
 				</Form>

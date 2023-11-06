@@ -10,18 +10,31 @@ import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.
 import CopyContentIcon from '~assets/icons/content-copy.svg';
 import copyToClipboard from 'src/util/copyToClipboard';
 import { message } from 'antd';
-import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	if (!['kusama', 'polkadot'].includes(network)) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/'
+			}
+		};
+	}
 	return { props: { network } };
 };
 
-const Delegation = ( props : { network: string } ) => {
-
-	const { setNetwork } = useNetworkContext();
+const Delegation = (props: { network: string }) => {
+	const dispatch = useDispatch();
 	const { asPath } = useRouter();
 
 	const handleCopylink = () => {
@@ -33,22 +46,36 @@ const Delegation = ( props : { network: string } ) => {
 	};
 
 	useEffect(() => {
-		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		dispatch(setNetwork(props.network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return <>
-		<SEOHead title='Delegation Dashboard' network={props.network} />
-		<div className='hidden sm:block'><DelegationDashboard/></div>
-		<div className='sm:hidden w-full'>
-			<h1 className='text-bodyBlue text-center text-2xl font-semibold'>Delegation Dashboard</h1>
-			<div className='flex flex-col justify-center items-center mt-12'>
-				<DelegationDashboardEmptyState />
-				<p className='text-center text-bodyBlue text-base mt-6'>Please visit Delegation Dashboard from your Dekstop computer</p>
-				<button className='mt-5 px-3.5 py-1.5 rounded-full text-bodyBlue bg-transparent border border-[#D2D8E0] border-solid flex justify-center items-center' onClick={() => {handleCopylink();}}>Copy Page Link <CopyContentIcon className='ml-1'/></button>
+	return (
+		<>
+			<SEOHead
+				title='Delegation Dashboard'
+				network={props.network}
+			/>
+			<div className='hidden sm:block'>
+				<DelegationDashboard />
 			</div>
-		</div>
-	</>;
+			<div className='w-full sm:hidden'>
+				<h1 className='text-center text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Dashboard</h1>
+				<div className='mt-12 flex flex-col items-center justify-center'>
+					<DelegationDashboardEmptyState />
+					<p className='mt-6 text-center text-base text-bodyBlue dark:text-blue-dark-high'>Please visit Delegation Dashboard from your Dekstop computer</p>
+					<button
+						className='mt-5 flex items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent px-3.5 py-1.5 text-bodyBlue dark:text-blue-dark-high'
+						onClick={() => {
+							handleCopylink();
+						}}
+					>
+						Copy Page Link <CopyContentIcon className='ml-1' />
+					</button>
+				</div>
+			</div>
+		</>
+	);
 };
 
-export default Delegation ;
+export default Delegation;

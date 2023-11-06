@@ -674,4 +674,9 @@ export default styled(Web3Login)`
 			margin-left: 0 !important;
 		}
 	}
+	@media (max-width: 365px) and (min-width: 319px) {
+		.no-account-text-container {
+			display: block !important;
+		}
+	}
 `;

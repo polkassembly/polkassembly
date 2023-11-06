@@ -303,8 +303,6 @@ const Web3Login: FC<Props> = ({
 									setLoginOpen?.(false);
 									setShowOptionalFields(false);
 								}
-								setLoginOpen?.(true);
-								setShowOptionalFields(true);
 								setIsClosable?.(false);
 								setLoading(false);
 								return;

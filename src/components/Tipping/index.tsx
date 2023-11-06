@@ -276,7 +276,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 					<div className='flex w-full items-end gap-2 text-sm '>
 						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:bg-transparent'>
 							<Address
-								address={address}
+								address={address || loginAddress}
 								isTruncateUsername={false}
 								displayInline
 								disableTooltip

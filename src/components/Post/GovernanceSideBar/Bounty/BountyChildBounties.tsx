@@ -14,7 +14,7 @@ import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import { useTheme } from 'next-themes';
-import { Pagination } from '~src/components/Pagination';
+import { Pagination } from '~src/ui-components/Pagination';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;

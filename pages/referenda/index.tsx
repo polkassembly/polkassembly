@@ -21,7 +21,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
-import { Pagination } from '~src/components/Pagination';
+import { Pagination } from '~src/ui-components/Pagination';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

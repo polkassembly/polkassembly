@@ -24,7 +24,7 @@ import DelegationVotersList from './DelegateVoteList';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { Pagination } from '~src/components/Pagination';
+import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 

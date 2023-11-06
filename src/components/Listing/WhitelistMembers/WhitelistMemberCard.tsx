@@ -14,7 +14,9 @@ interface Props {
 
 const WhitelistMemberCard = ({ className, member }: Props) => {
 	return (
-		<div className={`${className} rounded-md border-2 border-solid border-grey_light p-3 transition-all duration-200 hover:border-pink_primary hover:shadow-xl md:p-4`}>
+		<div
+			className={`${className} rounded-md border-2 border-solid border-grey_light p-3 transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark md:p-4`}
+		>
 			<div className='flex items-center'>
 				{member.rank && (
 					<div className='mr-4 font-semibold text-navBlue'>

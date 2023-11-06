@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { SwapOutlined } from '@ant-design/icons';
-import { Dropdown } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
@@ -13,6 +13,7 @@ import { OffChainProposalType } from '~src/global/proposalType';
 import OffChainPostsListingContainer from './OffChainPostsListingContainer';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
+import { useTheme } from 'next-themes';
 
 interface IOffChainContainerProps {
 	posts: any[];
@@ -34,6 +35,7 @@ export function getTitle(proposalType: OffChainProposalType): string {
 
 const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType, defaultPage }) => {
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 
 	const handleSortByClick = ({ key }: { key: string }) => {
@@ -47,6 +49,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	const sortByOptions: ItemType[] = sortOptions;
 	const sortByDropdown = (
 		<Dropdown
+			theme={theme}
 			menu={{
 				defaultSelectedKeys: [sortValues.COMMENTED],
 				items: sortByOptions,
@@ -67,7 +70,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	);
 
 	return (
-		<div className={`${className} rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] xs:px-0 xs:py-3 md:p-0`}>
+		<div className={`${className} rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay xs:px-0 xs:py-3 md:p-0`}>
 			<div className='flex items-center justify-between py-5 align-middle'>
 				<div className='mx-1 xs:mt-1 sm:mx-12 sm:mt-3'>
 					<FilteredTags />

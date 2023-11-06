@@ -4,7 +4,7 @@
 
 import React, { FC, useState, useEffect } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
-import { IconVoteHistory } from '~src/ui-components/CustomIcons';
+import { CloseIcon, IconVoteHistory } from '~src/ui-components/CustomIcons';
 import ThresholdGraph from '../Modal/VoteData/ThresholdGraph';
 import GraphExpandIcon from '~assets/graph-expand.svg';
 import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
@@ -12,7 +12,6 @@ import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
 import { Modal } from 'antd';
-import CloseIcon from '~assets/icons/close.svg';
 import Curves from './Curves';
 import Loader from '~src/ui-components/Loader';
 
@@ -38,7 +37,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 		<>
 			<GovSidebarCard className={className}>
 				<div className='relative z-50 flex items-center justify-between'>
-					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue'>Voting Details</h6>
+					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Voting Details</h6>
 					<div className='flex items-center gap-x-2'>
 						<button
 							onClick={() => {
@@ -59,7 +58,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 						<div>
 							<div className='relative flex justify-center border-[#D2D8E0]'>
 								<button
-									className='absolute right-1 top-0 -mt-5 cursor-pointer border-0 bg-white'
+									className='absolute right-1 top-0 -mt-5 cursor-pointer border-0 bg-white dark:bg-section-dark-overlay'
 									onClick={() => setThresholdOpen(true)}
 								>
 									<GraphExpandIcon />
@@ -72,13 +71,13 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 							<div className='flex justify-center'>
 								<div className='flex justify-between gap-5 md:w-[350px]'>
 									<div className='mt-4 flex flex-col gap-x-5'>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<span>
 												<AyeApprovalIcon />
 											</span>
 											Current Approval
 										</span>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<span>
 												<AyeThresholdIcon />
 											</span>
@@ -86,13 +85,13 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 										</span>
 									</div>
 									<div className='mt-4 flex flex-col gap-x-5'>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<span>
 												<NayApprovalIcon />
 											</span>
 											Current Support
 										</span>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue'>
+										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 											<span>
 												<NayThresholdIcon />
 											</span>
@@ -106,14 +105,15 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				</div>
 			</GovSidebarCard>
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				onCancel={() => {
 					setThresholdOpen(false);
 				}}
 				open={thresholdOpen}
 				footer={[]}
-				className='md:min-w-[700px]'
-				closeIcon={<CloseIcon />}
-				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue'>Threshold Curves</h2>}
+				className='md:min-w-[700px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>Threshold Curves</h2>}
 			>
 				<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>
 					{isCurvesRender ? (

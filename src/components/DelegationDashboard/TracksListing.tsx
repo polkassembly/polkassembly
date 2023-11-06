@@ -22,6 +22,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 interface Props {
 	className?: string;
 	address: string;
+	theme?: string;
 }
 
 export interface ITrackDataType {
@@ -182,8 +183,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className={`flex items-center gap-2 border-l-0 border-r-0 border-t-0 px-8 py-6 text-xl font-medium text-sidebarBlue max-lg:gap-0 ${
-					showTable && 'border-b-[1px] border-solid border-[#e7ebf0]'
+				className={`flex items-center gap-2 border-l-0 border-r-0 border-t-0 px-8 py-6 text-xl font-medium text-sidebarBlue dark:text-white max-lg:gap-0 ${
+					showTable && 'border-b-[1px] border-solid border-[#e7ebf0] dark:text-blue-dark-high'
 				} max-lg:px-4`}
 			>
 				Tracks
@@ -199,28 +200,36 @@ const DashboardTrackListing = ({ className }: Props) => {
 				>
 					<Radio
 						disabled={loading}
-						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] ${ETrackDelegationStatus.All === status && 'rounded-[26px] bg-[#FEF2F8]'}`}
+						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] dark:text-blue-dark-high ${
+							ETrackDelegationStatus.All === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'
+						}`}
 						value={ETrackDelegationStatus.All}
 					>
 						All ({allCount})
 					</Radio>
 					<Radio
 						disabled={loading}
-						className={`px-[12px] py-[6px] text-xs text-[rgba(36,58,87,0.7)] ${ETrackDelegationStatus.Delegated === status && 'rounded-[26px] bg-[#FEF2F8]'}`}
+						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] dark:text-blue-dark-high ${
+							ETrackDelegationStatus.Delegated === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'
+						}`}
 						value={ETrackDelegationStatus.Delegated}
 					>
 						Delegated ({delegatedCount})
 					</Radio>
 					<Radio
 						disabled={loading}
-						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] ${ETrackDelegationStatus.Undelegated === status && 'rounded-[26px] bg-[#FEF2F8]'}`}
+						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] dark:text-blue-dark-high ${
+							ETrackDelegationStatus.Undelegated === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'
+						}`}
 						value={ETrackDelegationStatus.Undelegated}
 					>
 						Undelegated ({undelegatedCount})
 					</Radio>
 					<Radio
 						disabled={loading}
-						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] ${ETrackDelegationStatus.Received_Delegation === status && 'rounded-[26px] bg-[#FEF2F8]'}`}
+						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] dark:text-blue-dark-high ${
+							ETrackDelegationStatus.Received_Delegation === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'
+						}`}
 						value={ETrackDelegationStatus.Received_Delegation}
 					>
 						Received delegation ({receivedDelegationCount})
@@ -244,8 +253,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 			)}
 
 			{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
-					<div className='mt-5 text-center text-bodyBlue'>
+				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
+					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<DelegateDelegationIcon />
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegated Tracks</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
@@ -256,7 +265,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 									setStatusValue(ETrackDelegationStatus.Undelegated);
 									filterByStatus(ETrackDelegationStatus.Undelegated);
 								}}
-								className={`ml-[17px] flex cursor-pointer items-center justify-center border-none text-sm font-normal  tracking-wide text-[#E5007A] shadow-none max-md:mt-[10px] ${
+								className={`ml-[17px] flex cursor-pointer items-center justify-center border-none text-sm font-normal  tracking-wide text-[#E5007A] shadow-none dark:bg-transparent max-md:mt-[10px] ${
 									!api || (!apiReady && 'opacity-50')
 								}`}
 							>
@@ -269,9 +278,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 			)}
 
 			{status === ETrackDelegationStatus.Undelegated && undelegatedCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
+				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
 					<UnDelegatedIcon />
-					<div className='mt-5 text-center text-bodyBlue'>
+					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Undelegated Tracks</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 							All tracks have been delegated. Undelegate a track to view here
@@ -281,9 +290,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 			)}
 
 			{status === ETrackDelegationStatus.Received_Delegation && receivedDelegationCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px]'>
+				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
 					<ReceivedDelegationIcon />
-					<div className='mt-5 text-center text-bodyBlue'>
+					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegation Received</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 							You have not received delegations for any of the tracks
@@ -296,14 +305,23 @@ const DashboardTrackListing = ({ className }: Props) => {
 };
 export default styled(DashboardTrackListing)`
 	.column .ant-table-thead > tr > th {
-		color: var(--lightBlue) !important;
+		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#485F7D')} !important;
 		font-size: 14px;
-		font-weight: 600px;
+		font-weight: ${(props) => (props.theme === 'dark' ? '500' : '600')} !important;
 		line-height: 21px;
 		white-space: nowrap;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 	.column .ant-table-thead > tr > th:nth-child(1) {
 		text-align: center;
+	}
+	.ant-table-cell {
+		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+	}
+	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
+	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+		background-color: transparent !important;
 	}
 	@media only screen and (max-width: 1024px) {
 		.column .ant-table-thead > tr > th:nth-child(2) {

@@ -100,9 +100,9 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 					<div className='overflow-x-auto md:overflow-visible'>
 						<div className='flex flex-col overflow-x-auto px-0 text-xs text-sidebarBlue'>
 							<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-								<div className={'w-[190px] text-sm font-medium text-lightBlue'}>Delegator</div>
+								<div className={'w-[190px] text-sm font-medium text-lightBlue dark:text-blue-dark-medium'}>Delegator</div>
 								<div
-									className={'flex w-[110px] items-center gap-1 text-lightBlue'}
+									className={'flex w-[110px] items-center gap-1 text-lightBlue dark:text-blue-dark-medium'}
 									onClick={() => {
 										handleSortByClick({
 											key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -115,7 +115,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 								</div>
 								{network !== AllNetworks.COLLECTIVES ? (
 									<div
-										className={'flex w-[110px] items-center gap-1 text-lightBlue'}
+										className={'flex w-[110px] items-center gap-1 text-lightBlue dark:text-blue-dark-medium'}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -129,7 +129,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 								) : null}
 
 								<div
-									className='flex w-[110px] items-center gap-1 whitespace-nowrap text-lightBlue'
+									className='flex w-[110px] items-center gap-1 whitespace-nowrap text-lightBlue dark:text-blue-dark-medium'
 									onClick={() => {
 										handleSortByClick({
 											key: orderBy.votingIsAsc ? votesSortValues.VOTING_POWER_ASC : votesSortValues.VOTING_POWER_DESC
@@ -145,7 +145,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 							{votesRes && decision && !!votesRes?.votes?.length ? (
 								votesRes?.votes.map((voteData: any, index: number) => (
 									<VoterRow
-										className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes?.votes.length - 1 ? 'border-b' : ''}`}
+										className={`${index % 2 == 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'bg-white'} ${index === votesRes?.votes.length - 1 ? 'border-b' : ''}`}
 										key={index}
 										voteType={voteType}
 										voteData={voteData}
@@ -159,7 +159,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 							)}
 						</div>
 
-						<div className='z-10 flex items-center justify-between bg-white pt-6'>
+						<div className='z-10 flex items-center justify-between bg-white pt-6 dark:bg-section-dark-overlay'>
 							<Pagination
 								size='small'
 								defaultCurrent={1}

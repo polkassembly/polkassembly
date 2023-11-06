@@ -22,7 +22,7 @@ const OpenGovOverviewBanner = () => {
 				<div className='absolute bottom-56 flex items-center justify-center md:bottom-96 lg:bottom-80'>
 					<OpenGovBannerIcon className='text-[134px] md:text-[300px]' />
 				</div>
-				<h2 className='m-0 mb-3 flex flex-col items-center justify-center gap-x-2 p-0 text-center text-[18px] font-medium leading-[27px] text-[#243A57] md:mb-8 md:text-[32px] md:leading-[48px] lg:flex-row'>
+				<h2 className='m-0 mb-3 flex flex-col items-center justify-center gap-x-2 p-0 text-center text-[18px] font-medium leading-[27px] text-blue-light-high dark:text-blue-dark-high md:mb-8 md:text-[32px] md:leading-[48px] lg:flex-row'>
 					<span>OpenGov expected to go live on</span> <span>Polkadot in</span>
 				</h2>
 				<div className='opengov_banner flex items-center justify-center gap-x-2 rounded-[14px] px-[35px] py-[9px] md:gap-x-[38px] md:rounded-[20px] md:px-[70px] md:py-[19px]'>
@@ -46,7 +46,7 @@ const OpenGovOverviewBanner = () => {
 						<span className='text-xs font-medium leading-[18px] text-[rgba(255,255,255,0.8)] md:text-[18px] md:leading-[27px]'>Seconds</span>
 					</p>
 				</div>
-				<div className='mt-4 flex items-center gap-x-2 text-xs font-medium leading-[18px] text-[#243A57] md:mt-8 md:text-2xl md:leading-[36px]'>
+				<div className='mt-4 flex items-center gap-x-2 text-xs font-medium leading-[18px] text-blue-light-high dark:text-blue-dark-high md:mt-8 md:text-2xl md:leading-[36px]'>
 					<p className='m-0'>Vote on proposal </p>
 					<Link
 						href={'/referendum/121'}

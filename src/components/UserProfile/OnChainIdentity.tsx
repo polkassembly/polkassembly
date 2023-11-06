@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CloseOutlined, RightOutlined, CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
+import { RightOutlined, CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import { Col, Modal, Row } from 'antd';
 import React, { FC, useState } from 'react';
 import Address from '~src/ui-components/Address';
-import { EmailIcon, IdentityIcon, RiotIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, EmailIcon, IdentityIcon, RiotIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { TOnChainIdentity } from './Details';
 
 interface IOnChainIdentityProps {
@@ -38,9 +38,10 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 					<RightOutlined className='ml-auto text-base text-[#D6DBE2]' />
 				</button>
 				<Modal
-					className='min-w-[648px]'
-					title={<h3 className='text-xl font-semibold text-[#1D2632]'>On-chain identity</h3>}
-					closeIcon={<CloseOutlined className='text-sm text-bodyBlue' />}
+					wrapClassName='dark:bg-modalOverlayDark'
+					className='min-w-[648px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+					title={<div className='text-xl font-semibold text-[#1D2632] dark:bg-section-dark-overlay dark:text-white'>On-chain identity</div>}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					onCancel={toggleOpen}
 					open={open}
 					footer={[]}
@@ -51,7 +52,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 								{onChainIdentity && (
 									<Row gutter={[8, 40]}>
 										<Col span={8}>
-											<div className='text-sm font-medium text-bodyBlue'>Account</div>
+											<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Account</div>
 											<Address
 												className='mt-1'
 												usernameClassName='text-xs'
@@ -62,13 +63,13 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										</Col>
 										{onChainIdentity?.legal && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>Legal</div>
-												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>{onChainIdentity.legal}</p>
+												<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Legal</div>
+												<p className=' mt-1 text-sm font-normal text-[#5E7087] dark:text-icon-dark-inactive'>{onChainIdentity.legal}</p>
 											</Col>
 										)}
 										{onChainIdentity?.email && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>
+												<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													<EmailIcon className='mr-1' />
 													<span>Email</span>
 												</div>
@@ -76,7 +77,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 													target='_blank'
 													rel='noreferrer'
 													href={`mailto:${onChainIdentity.email}`}
-													className=' mt-1 text-sm font-normal text-[#5E7087]'
+													className=' mt-1 text-sm font-normal text-[#5E7087] dark:text-icon-dark-inactive'
 												>
 													{onChainIdentity.email}
 												</a>
@@ -84,7 +85,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										)}
 										{onChainIdentity?.riot && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>
+												<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													<RiotIcon className='mr-1' />
 													<span>Riot</span>
 												</div>
@@ -92,7 +93,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 													target='_blank'
 													rel='noreferrer'
 													href={`https://matrix.to/#/${onChainIdentity.riot}`}
-													className=' mt-1 text-sm font-normal text-[#5E7087]'
+													className=' mt-1 text-sm font-normal text-[#5E7087] dark:text-icon-dark-inactive'
 												>
 													{onChainIdentity.riot}
 												</a>
@@ -100,7 +101,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										)}
 										{onChainIdentity?.twitter && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>
+												<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													<TwitterIcon className='mr-1' />
 													<span>Twitter</span>
 												</div>
@@ -108,7 +109,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 													target='_blank'
 													rel='noreferrer'
 													href={`https://twitter.com/${onChainIdentity.twitter.substring(1)}`}
-													className='mt-1 text-sm font-normal text-[#5E7087]'
+													className='mt-1 text-sm font-normal text-[#5E7087] dark:text-icon-dark-inactive'
 												>
 													{onChainIdentity.twitter}
 												</a>
@@ -116,16 +117,16 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										)}
 										{judgements?.length > 0 && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>Judgements</div>
-												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>
+												<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Judgements</div>
+												<p className=' mt-1 text-sm font-normal text-[#5E7087] dark:text-icon-dark-inactive'>
 													{icon} {displayJudgements}
 												</p>
 											</Col>
 										)}
 										{onChainIdentity?.web && (
 											<Col span={8}>
-												<div className='text-sm font-medium text-bodyBlue'>Web</div>
-												<p className=' mt-1 text-sm font-normal text-[#5E7087]'>{onChainIdentity.web}</p>
+												<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Web</div>
+												<p className=' mt-1 text-sm font-normal text-[#5E7087] dark:text-icon-dark-inactive'>{onChainIdentity.web}</p>
 											</Col>
 										)}
 									</Row>

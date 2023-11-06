@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Button, Dropdown, Tag } from 'antd';
+import { Button, Tag } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
@@ -13,6 +14,7 @@ import { EAddressOtherTextType } from '~src/types';
 import { useDispatch } from 'react-redux';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -35,7 +37,7 @@ interface Props {
 
 const AddressDropdown = ({
 	defaultAddress,
-	className = 'px-3 py-1 border-solid border-gray-300 border-[1px] rounded-md h-[48px]',
+	className = 'px-3 py-1 border-solid border-gray-300 dark:border-separatorDark border-[1px] rounded-md h-[48px]',
 	accounts,
 	filterAccounts,
 	isDisabled,
@@ -56,7 +58,7 @@ const AddressDropdown = ({
 	const dispatch = useDispatch();
 	const substrate_address = getSubstrateAddress(selectedAddress || '');
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
-
+	const { resolvedTheme: theme } = useTheme();
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
 		if (linkAddressTextDisabled) return;
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
@@ -82,7 +84,7 @@ const AddressDropdown = ({
 				<Address
 					className={`flex items-center ${poppins.className} ${poppins.className}`}
 					addressOtherTextType={getOtherTextType(account)}
-					addressClassName='text-lightBlue text-xs'
+					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 					extensionName={account.name}
 					address={account.address}
 					disableAddressClick
@@ -114,13 +116,14 @@ const AddressDropdown = ({
 		});
 	return (
 		<Dropdown
+			theme={theme}
 			trigger={['click']}
-			className={`${className} -mx-[18px]`}
+			className={`${className} dark:border-separatorDark`}
 			disabled={isDisabled}
-			overlayClassName='z-[1056]'
+			overlayClassName='z-[2000]'
 			menu={{
 				items: addressItems,
-				onClick: (e) => {
+				onClick: (e: any) => {
 					if (e.key !== '1') {
 						setSelectedAddress(e.key);
 						onAccountChange(e.key);
@@ -148,7 +151,7 @@ const AddressDropdown = ({
 						)
 					)}
 					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
-					addressClassName='text-lightBlue text-xs'
+					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 					disableAddressClick
 					isTruncateUsername={isTruncateUsername}
 					disableTooltip

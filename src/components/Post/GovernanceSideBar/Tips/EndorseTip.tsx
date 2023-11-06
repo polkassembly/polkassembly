@@ -169,7 +169,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 
 	const NotCouncil = () => (
 		<>
-			<h3 className='dashboard-heading mb-6'>Endorse with account!</h3>
+			<h3 className='dashboard-heading mb-6 dark:text-white'>Endorse with account!</h3>
 			<Alert
 				className='mb-6'
 				type='warning'
@@ -185,7 +185,12 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 					</div>
 				}
 			/>
-			<Button onClick={() => setForceEndorse(true)}>Let me try still.</Button>
+			<Button
+				className='dark:bg-section-dark-overlay dark:text-white'
+				onClick={() => setForceEndorse(true)}
+			>
+				Let me try still.
+			</Button>
 		</>
 	);
 

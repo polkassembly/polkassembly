@@ -76,17 +76,17 @@ const UpgradePIPs: FC<ITechCommProposalsProps> = (props) => {
 				network={network}
 			/>
 			<div className='mt-3 flex sm:items-center'>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>On-chain Upgrade PIPs</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On-chain Upgrade PIPs</h1>
 			</div>
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
 					This is the place to discuss on-chain Upgrade PIPs. Upgrade Committee PIPs are proposed by the Upgrade Committee and approved by the Polymesh Governance Council. Only the
 					Upgrade Committee can amend these PIPs
 				</p>
 			</div>
 
-			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md'>
+			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center justify-between'>
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
 						<FilteredTags />

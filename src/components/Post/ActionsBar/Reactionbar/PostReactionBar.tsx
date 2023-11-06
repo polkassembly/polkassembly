@@ -36,6 +36,7 @@ const PostReactionBar: FC<IPostReactionBarProps> = ({ className, post_reactions 
 							setLikeModalOpen={setLikeModalOpen}
 							setDislikeModalOpen={setDislikeModalOpen}
 							setReactions={setReactions}
+							isReactionButtonInPost={true}
 						/>
 					</div>
 				);

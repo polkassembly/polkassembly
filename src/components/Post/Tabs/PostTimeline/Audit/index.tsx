@@ -77,7 +77,9 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 							<span className='flex items-center justify-center'>
 								<CautionSVG />
 							</span>
-							<p className='m-0 text-sm font-normal leading-[21px] text-[#243A57]'>Reports provided here represent the auditor&apos;s views and are not endorsed by Polkassembly</p>
+							<p className='m-0 text-sm font-normal leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
+								Reports provided here represent the auditor&apos;s views and are not endorsed by Polkassembly
+							</p>
 						</div>
 					) : (
 						<NoAuditReport />
@@ -95,7 +97,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 								>
 									<div className='flex items-center'>
 										<PdfIcon className='bg-cover bg-center bg-no-repeat' />
-										<span className='pl-1 text-[#243A57]'>
+										<span className='pl-1 text-blue-light-high dark:text-blue-dark-high'>
 											<span className='hidden md:inline-block'>Reports</span> ({pdfCount})
 										</span>
 									</div>
@@ -108,7 +110,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 								>
 									<div className='flex items-center'>
 										<YouTubeIcon className='bg-cover bg-center bg-no-repeat' />
-										<span className='pl-1 text-[#243A57]'>
+										<span className='pl-1 text-blue-light-high dark:text-blue-dark-high'>
 											<span className='hidden md:inline-block'>Videos</span> ({videoData.length})
 										</span>
 									</div>
@@ -127,7 +129,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 											key={item.sha}
 											className={`flex flex-col gap-y-6 py-[26px] ${index !== 0 ? 'border-0 border-t border-solid border-[#D2D8E0]' : ''}`}
 										>
-											<p className='m-0 flex items-center gap-x-2 text-sm font-normal leading-[18px] text-[#485F7D]'>
+											<p className='m-0 flex items-center gap-x-2 text-sm font-normal leading-[18px] text-[#485F7D] dark:text-blue-dark-medium'>
 												<span>{item.name.split(' - ')[0]}</span>
 												{date.includes('NaN') ? null : (
 													<>
@@ -153,7 +155,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 									key={item.title}
 									className={`flex flex-col gap-y-6 py-[26px] ${index !== 0 ? 'border-0 border-t border-solid border-[#D2D8E0]' : ''}`}
 								>
-									<p className='m-0 flex items-center gap-x-2 text-sm font-normal leading-[18px] text-[#485F7D]'>
+									<p className='m-0 flex items-center gap-x-2 text-sm font-normal leading-[18px] text-[#485F7D] dark:text-blue-dark-medium'>
 										<span>{item.name}</span> |
 										<ClockCircleOutlined />
 										<span>{formatDate(item.date)}</span>

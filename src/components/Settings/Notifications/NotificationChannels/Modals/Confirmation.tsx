@@ -24,6 +24,7 @@ const StyledAlert = styled(Alert)`
 const DisabledConfirmation = ({ open, onConfirm, onCancel, channel }: { open: boolean; onConfirm: () => void; onCancel: () => void; channel: string }) => {
 	return (
 		<Modal
+			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			title='Confirmation'
 			titleIcon={<CheckOutlineIcon />}
 			open={open}
@@ -46,7 +47,7 @@ const DisabledConfirmation = ({ open, onConfirm, onCancel, channel }: { open: bo
 				</Button>
 			]}
 		>
-			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-[#243A57]'>{`Are you sure you want to disable Polkassembly bot from your ${channel} channel chat?`}</p>
+			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>{`Are you sure you want to disable Polkassembly bot from your ${channel} channel chat?`}</p>
 			<StyledAlert
 				icon={<InfoCircleOutlined />}
 				showIcon

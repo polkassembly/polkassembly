@@ -401,20 +401,22 @@ const Web3Signup: FC<Props> = ({
 			{!showOptionalFields && (
 				<div className='flex items-center'>
 					<LoginLogo className='ml-6 mr-2' />
-					<h3 className='mt-3 text-[20px] font-semibold text-[#243A57]'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Sign Up'}</h3>
+					<h3 className='dark:text-blue-dark-high mt-3 text-[20px] font-semibold text-[#243A57]'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Sign Up'}</h3>
 				</div>
 			)}
 			{!showOptionalFields && <hr className='text-[#D2D8E0]' />}
 			{!showOptionalFields && (
-				<article className='flex flex-col rounded-md bg-white p-8 shadow-md '>
-					<h3 className='flex flex-col justify-center gap-y-1 text-2xl font-semibold text-[#1E232C]'>
+				<article className='dark:bg-section-dark-overlay flex flex-col rounded-md bg-white p-8 shadow-md '>
+					<h3 className='dark:text-blue-dark-medium flex flex-col justify-center gap-y-1 text-2xl font-semibold text-[#1E232C]'>
 						{/* <span>Sign Up</span> */}
 						{!withPolkasafe && (
 							<p className='m-0 -mt-2 flex items-center justify-start gap-x-2 p-0'>
 								<span className='mt-2'>
 									<WalletIcon which={chosenWallet} />
 								</span>
-								<span className='text-lg text-[#243A57] sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+								<span className='text-blue-light-high dark:text-blue-dark-high text-lg sm:text-xl'>
+									{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
+								</span>
 							</p>
 						)}
 						{Boolean(withPolkasafe) && (
@@ -430,7 +432,7 @@ const Web3Signup: FC<Props> = ({
 					</h3>
 					{fetchAccounts ? (
 						<div className='flex flex-col items-center justify-center'>
-							<p className='text-base text-[#243A57]'>
+							<p className='dark:text-blue-dark-high text-base text-[#243A57]'>
 								{withPolkasafe
 									? 'To fetch your Multisig details, please select a wallet extension'
 									: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
@@ -441,7 +443,7 @@ const Web3Signup: FC<Props> = ({
 							></Divider>
 							<div className='flex w-full justify-start'>
 								<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
-									<label className='text-base text-bodyBlue'>Already have an account?</label>
+									<label className='dark:text-blue-dark-high text-base text-bodyBlue'>Already have an account?</label>
 									<div
 										onClick={() => handleClick()}
 										className='cursor-pointer text-base text-pink_primary'
@@ -456,7 +458,7 @@ const Web3Signup: FC<Props> = ({
 							></Divider>
 							<div className='web3-button-container ml-auto flex justify-end'>
 								<Button
-									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+									className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 									onClick={() => handleBackToSignUp()}
 								>
 									Go Back
@@ -485,7 +487,7 @@ const Web3Signup: FC<Props> = ({
 						<>
 							<AuthForm
 								onSubmit={handleSignup}
-								className='flex flex-col gap-y-6 px-4 pt-3'
+								className='flex flex-col gap-y-6 pt-3'
 							>
 								{extensionNotFound ? (
 									<div className='my-5 flex items-center justify-center'>
@@ -513,7 +515,7 @@ const Web3Signup: FC<Props> = ({
 								) : (
 									accounts.length > 0 && (
 										<>
-											<div className='my-5 flex items-center justify-center'>
+											<div className='-mt-2 flex items-center justify-center'>
 												{withPolkasafe ? (
 													<MultisigAccountSelectionForm
 														multisigBalance={multisigBalance}
@@ -538,7 +540,7 @@ const Web3Signup: FC<Props> = ({
 											</div>
 											<div className='flex items-center justify-center'>
 												<Button
-													className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+													className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 													onClick={() => handleBackToSignUp()}
 												>
 													Go Back
@@ -566,14 +568,14 @@ const Web3Signup: FC<Props> = ({
 					{showSuccessModal && (
 						<AuthForm onSubmit={handleOptionalUsername}>
 							<div>
-								<div className='px-8 pb-2 pt-8'>
+								<div className='dark:bg-section-dark-overlay px-8 pb-2 pt-8'>
 									<div className='flex justify-center'>
 										<ConfirmationIcon className='confirm-logo-conatiner absolute -top-[78px]' />
 									</div>
-									<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue'>You are successfully logged in</p>
+									<p className='dark:text-blue-dark-medium mt-20 justify-center text-center text-xl font-semibold text-bodyBlue'>You are successfully logged in</p>
 									<div className='flex flex-col gap-y-1'>
 										<label
-											className='text-sm text-lightBlue '
+											className='dark:text-blue-dark-high text-sm text-lightBlue '
 											htmlFor='username'
 										>
 											Enter Username
@@ -605,7 +607,7 @@ const Web3Signup: FC<Props> = ({
 												// disabled={loading}
 												onChange={(e) => setOptionalUsername(e.target.value)}
 												placeholder='Type here'
-												className='rounded-md px-4 py-3'
+												className='dark:text-blue-dark-high rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
 												id='username'
 											/>
 										</Form.Item>
@@ -657,7 +659,7 @@ const Web3Signup: FC<Props> = ({
 									<div className='flex flex-col gap-y-1'>
 										<label
 											htmlFor='email'
-											className='text-base tracking-wide text-[#485F7D]'
+											className='dark:text-blue-dark-high text-base tracking-wide text-[#485F7D]'
 										>
 											Email
 										</label>
@@ -675,7 +677,7 @@ const Web3Signup: FC<Props> = ({
 													setEmail(e.target.value);
 												}}
 												placeholder='email@example.com'
-												className='rounded-md px-4 py-2'
+												className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
 												id='email'
 											/>
 										</Form.Item>
@@ -705,7 +707,7 @@ const Web3Signup: FC<Props> = ({
 										<Button
 											size='large'
 											onClick={handleOptionalSkip}
-											className='w-[144px] rounded-md border border-solid border-pink_primary text-pink_primary outline-none'
+											className='w-[144px] rounded-md border border-solid border-pink_primary text-pink_primary outline-none dark:bg-transparent'
 										>
 											Skip
 										</Button>

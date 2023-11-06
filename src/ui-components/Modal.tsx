@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { PropsWithChildren, ReactElement } from 'react';
 import { Modal as AntdModal, Divider } from 'antd';
-import CloseIcon from '~assets/icons/close-icon.svg';
 import styled from 'styled-components';
+import { CloseIcon } from './CustomIcons';
 
 type Props = PropsWithChildren<{
 	title: string | ReactElement;
@@ -27,18 +27,19 @@ const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, className,
 	return (
 		<StyledModal
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[18px]'>
-					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-[#243A57]'>
+				<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
+					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						{' '}
 						{titleIcon} {title}{' '}
 					</h3>
-					<Divider className='text-[#D2D8E0]' />
+					<Divider className='text-[#D2D8E0] dark:text-separatorDark' />
 				</div>
 			}
 			open={open}
 			closable
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			className={`min-w-[350px] md:min-w-[600px] ${className}`}
+			wrapClassName='dark:bg-modalOverlayDark'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={footer || null}

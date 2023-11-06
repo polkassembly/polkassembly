@@ -138,11 +138,11 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 
 	return (
 		<Link href={`/referenda/${proposal?.post_id}`}>
-			<div className={'rounded-[6px] rounded-t-[6px] border-[1px] border-solid border-[#D2D8E0] hover:border-pink_primary'}>
+			<div className={'rounded-[6px] rounded-t-[6px] border-[1px] border-solid border-[#D2D8E0] hover:border-pink_primary dark:border-separatorDark'}>
 				<div className='flex justify-between border-[1px] px-6 py-6 hover:border-pink_primary max-sm:flex-col max-sm:items-start max-sm:gap-2'>
 					<div className='flex flex-col '>
-						<h2 className='text-medium text-sm text-bodyBlue'>{mainTitle}</h2>
-						<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-lightBlue max-lg:flex-col max-lg:items-start max-lg:gap-2'>
+						<h2 className='text-medium text-sm text-bodyBlue dark:text-white'>{mainTitle}</h2>
+						<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium max-lg:flex-col max-lg:items-start max-lg:gap-2'>
 							{
 								<div className='flex items-center gap-1'>
 									By:
@@ -159,7 +159,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							<div className='flex items-center justify-center gap-2'>
 								<Divider
 									type='vertical'
-									style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}
+									className='border-l-1 ml-[4px] mr-[4px] border-lightBlue dark:border-icon-dark-inactive'
 								/>
 								{relativeCreatedAt && (
 									<>
@@ -175,7 +175,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 										type='vertical'
 										style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}
 									/>
-									<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-bodyBlue'}`}>
+									<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-bodyBlue dark:text-white'}`}>
 										<ClockCircleOutlined className='mr-1' />
 										{remainingTime}
 										Remaining
@@ -185,7 +185,9 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						</div>
 					</div>
 					<Button
-						className={`mt-2 flex justify-center gap-2 border-none bg-white shadow-none ${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'}`}
+						className={`mt-2 flex justify-center gap-2 border-none bg-white shadow-none dark:bg-section-dark-overlay ${
+							status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'
+						}`}
 						disabled={status.includes(ETrackDelegationStatus.Delegated)}
 					>
 						<VoteIcon />
@@ -212,14 +214,15 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									{isAye && <AyeIcon />} {isNay && <NayIcon />}
 								</span>
 								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799]'>
-									Balance:<span className='font-medium text-bodyBlue'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
+									Balance:<span className='font-medium text-bodyBlue dark:text-white'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
 								</div>
 								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799]'>
-									Conviction:<span className='font-medium text-bodyBlue'>{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
+									Conviction:{' '}
+									<span className='font-medium text-bodyBlue dark:text-white'>{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
 								</div>
 							</div>
 						) : (
-							<div className='ml-1 flex items-center text-xs font-medium text-lightBlue'>Abstain</div>
+							<div className='ml-1 flex items-center text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Abstain</div>
 						)}
 					</div>
 				) : (
@@ -232,7 +235,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									displayInline
 								/>
 							)}
-							<div className='flex items-center justify-center text-xs text-lightBlue'>
+							<div className='flex items-center justify-center text-xs text-lightBlue dark:text-blue-dark-medium'>
 								Not Voted yet <CautionIcon className='ml-1' />
 							</div>
 						</div>

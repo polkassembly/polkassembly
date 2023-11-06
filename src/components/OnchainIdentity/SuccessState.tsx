@@ -6,11 +6,11 @@ import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
 import Address from '~src/ui-components/Address';
-import CloseIcon from '~assets/icons/close-icon.svg';
 import SuccessIcon from '~assets/icons/identity-success.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -42,9 +42,9 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 		<Modal
 			centered
 			open={open}
-			className={`${poppins.variable} ${poppins.className} w-[600px] max-sm:w-full`}
-			wrapClassName={className}
-			closeIcon={<CloseIcon />}
+			className={`${poppins.variable} ${poppins.className} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
 				close(true);
 				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
@@ -56,11 +56,11 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 			<>
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
 					<SuccessIcon />
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue'>On-chain identity registration initiated</label>
+					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>On-chain identity registration initiated</label>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>{displayName}</div>
 					<div className='mt-4 flex flex-col gap-2'>
 						<span className='flex items-center gap-1'>
-							<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue'>Address:</span>
+							<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Address:</span>
 							<span>
 								<Address
 									address={address}
@@ -71,26 +71,26 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 						</span>
 						{email?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue'>Email:</span>
-								<span className='text-sm font-medium text-bodyBlue'>{email?.value}</span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Email:</span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{email?.value}</span>
 							</span>
 						)}
 						{web?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue'>Web: </span>
-								<span className='text-sm font-medium text-bodyBlue'>{web?.value?.slice(0, 15)}...</span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Web: </span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{web?.value?.slice(0, 15)}...</span>
 							</span>
 						)}
 						{twitter?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue'>Twitter:</span>
-								<span className='text-sm font-medium text-bodyBlue'>{twitter?.value}</span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Twitter:</span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{twitter?.value}</span>
 							</span>
 						)}
 						{riot?.value?.length > 0 && (
 							<span className='flex items-center gap-1'>
-								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue'>Riot: </span>
-								<span className='text-sm font-medium text-bodyBlue'>{riot?.value}</span>
+								<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Riot: </span>
+								<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{riot?.value}</span>
 							</span>
 						)}
 					</div>

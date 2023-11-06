@@ -27,7 +27,7 @@ import { IconSignup } from '~src/ui-components/CustomIcons';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
-		<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
+		<div className='dark:bg-section-dark-overlay mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md md:p-8'>
 			<Skeleton
 				className='mt-8'
 				active
@@ -39,7 +39,7 @@ const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'
 
 const Container = styled.article`
 	.changeColor .ant-alert-message {
-		color: #243a57;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
 	}
 `;
 interface Props {
@@ -51,9 +51,10 @@ interface Props {
 	isDelegation?: boolean;
 	className?: string;
 	setWithPolkasafe?: any;
+	theme?: string;
 }
 
-const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe }) => {
+const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe, theme }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
@@ -70,6 +71,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	const [firstPassword, setFirstPassword] = useState('');
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
 	const { network } = useNetworkSelector();
+
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
@@ -79,10 +81,15 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 		setError('');
 
 		if (isPassword) {
-			trackEvent('Signup', 'Click', 'Sign Up');
 			const { second_password } = data;
 			if (second_password) {
 				const { email, username } = signUpInfo;
+
+				//GAEvent for new user registration
+				trackEvent('signup_activity', 'new_user_registration', {
+					email: email as String,
+					username: username
+				});
 
 				setLoading(true);
 				const { data, error } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/signup', {
@@ -112,7 +119,6 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				}
 			}
 		} else {
-			trackEvent('Signup', 'Click', 'Next');
 			const { username, email } = data;
 			setLoading(true);
 
@@ -150,37 +156,40 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 			<div>
 				<div className='mt-4 flex gap-x-2 px-8'>
 					<IconSignup className='m-0 p-0 text-2xl' />
-					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue'>Sign Up</p>
+					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Sign Up</p>
 				</div>
 				<Divider
 					className='m-0 mt-4 p-0 '
 					style={{ borderTop: '1px solid #E1E6EB' }}
 				></Divider>
 			</div>
-			<Container className={`flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md ${className}`}>
-				<div className='-mt-1 flex grid-cols-2 gap-x-2 px-8'>
+			<Container
+				className={`dark:bg-section-dark-overlay flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md ${className}`}
+				theme={theme}
+			>
+				<div className='-mt-1 flex grid-cols-2 gap-x-5 px-8'>
 					<div
 						onClick={() => {
 							setIsPassword(false);
 							if (error) setError('');
 						}}
-						className='w-[268px] cursor-pointer flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'
+						className='w-[258px] cursor-pointer flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'
 					>
 						<div className='flex gap-x-2 gap-y-2 '>
 							<span className={`flex h-4 w-4 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>01</span>
-							<span className='mt-[2px] text-bodyBlue'>Create Username</span>
+							<span className='mt-[2px] text-bodyBlue dark:text-grey_primary'>Create Username</span>
 						</div>
 						<div>
-							<Divider className={`${isPassword ? 'bg-green_primary' : 'bg-grey_stroke'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
+							<Divider className={`${isPassword ? 'bg-green_primary' : 'bg-grey_stroke dark:bg-grey_primary'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
 						</div>
 					</div>
 					<div className='w-[268px] flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'>
 						<div className='flex gap-x-2 gap-y-2 '>
 							<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-pink_primary' : 'bg-grey_secondary'} rounded-full`}>02</span>
-							<span className='mt-[2px] text-bodyBlue'>Set Password</span>
+							<span className='mt-[2px] text-bodyBlue dark:text-grey_primary'>Set Password</span>
 						</div>
 						<div>
-							<Divider className={`${inputPassword ? 'bg-green_primarye' : 'bg-grey_stroke'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
+							<Divider className={`${inputPassword ? 'bg-green_primarye' : 'bg-grey_stroke dark:bg-grey_primary'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
 						</div>
 					</div>
 				</div>
@@ -191,7 +200,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 						type='info'
 						showIcon
-						className='changeColor px-8 text-[#243A57]'
+						className='changeColor dark:text-blue-dark-high px-8 text-[#243A57]'
 					/>
 				)}
 				{walletError && (
@@ -209,7 +218,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						<>
 							<div className='flex flex-col gap-y-1 px-8'>
 								<label
-									className='text-base text-[#485F7D]'
+									className='dark:text-blue-dark-medium text-base text-[#485F7D]'
 									htmlFor='first_password'
 								>
 									Set Password
@@ -232,14 +241,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 											setFirstPassword(e.target.value);
 										}}
 										placeholder='Password'
-										className='rounded-md px-4 py-2'
+										className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 										id='first_password'
 									/>
 								</Form.Item>
 							</div>
 							<div className='-mt-6 flex flex-col gap-y-1 px-8'>
 								<label
-									className='text-base text-[#485F7D] '
+									className='dark:text-blue-dark-medium text-base text-[#485F7D] '
 									htmlFor='second_password'
 								>
 									Re-enter Password
@@ -262,7 +271,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 									<Input.Password
 										onChange={() => setInputPassword(true)}
 										placeholder='Password'
-										className='rounded-md px-4 py-2'
+										className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 										id='second_password'
 									/>
 								</Form.Item>
@@ -270,9 +279,9 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						</>
 					) : (
 						<>
-							<div className='flex flex-col gap-y-1 px-8'>
+							<div className='dark:text-blue-dark-medium flex flex-col gap-y-1 px-8'>
 								<label
-									className='text-sm tracking-wide  text-[#485F7D]'
+									className='dark:text-blue-dark-medium text-sm tracking-wide text-[#485F7D]'
 									htmlFor='username'
 								>
 									Enter Username
@@ -300,7 +309,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder='John'
-										className='text-grey_text border-grey_stroke rounded-md px-4 py-2'
+										className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
 										id='username'
 									/>
 								</Form.Item>
@@ -308,7 +317,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							<div className='-mt-6 flex flex-col gap-y-1 px-8'>
 								<label
 									htmlFor='email'
-									className='text-sm tracking-wide text-[#485F7D]'
+									className='dark:text-blue-dark-medium text-sm tracking-wide text-[#485F7D]'
 								>
 									Enter Email
 								</label>
@@ -323,7 +332,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder='email@example.com'
-										className='text-grey_text border-grey_stroke rounded-md px-4 py-2'
+										className='dark:text-blue-dark-high rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:focus:border-[#91054F]'
 										id='email'
 									/>
 								</Form.Item>
@@ -346,7 +355,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						/>
 					)}
 					<div className='flex items-center justify-center gap-x-2 px-8 font-semibold '>
-						<label className='text-md text-[#243A57]'>Already have an account?</label>
+						<label className='text-md dark:text-blue-dark-high text-[#243A57]'>Already have an account?</label>
 						<div
 							onClick={() => handleClick()}
 							className='text-md cursor-pointer text-pink_primary'
@@ -370,7 +379,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					</div>
 				</AuthForm>
 				<Modal
-					className='rounded-md px-8'
+					wrapClassName='dark:bg-modalOverlayDark'
+					className='dark:[&>.ant-modal-content]:bg-section-dark-overlay rounded-md px-8'
 					centered={true}
 					title={"You've got some mail"}
 					open={open}
@@ -400,4 +410,12 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	);
 };
 
-export default Web2Signup;
+export default styled(Web2Signup)`
+	.ant-input {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '')} !important;
+	}
+	.ant-input::placeholder {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+	}
+`;

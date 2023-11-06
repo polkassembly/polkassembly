@@ -6,7 +6,7 @@ import { LinkOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 import { usePostDataContext } from '~src/context';
-import { EditIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, EditIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import PostEditIcon from 'public/assets/icons/post-edit.svg';
 import PostLinkingIcon from 'public/assets/icons/post-linking.svg';
@@ -17,7 +17,6 @@ import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';
-import CloseIcon from '~assets/icons/close-icon.svg';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
@@ -37,7 +36,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 		<GovSidebarCard>
 			<div className='flex flex-col items-center py-3'>
 				<div>{isEditCTA ? <PostEditIcon /> : <PostLinkingIcon />}</div>
-				<span className='mt-4 text-center text-sm text-bodyBlue'>Please add contextual information for voters to make an informed decision.</span>
+				<span className='mt-4 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>Please add contextual information for voters to make an informed decision.</span>
 				<button
 					className='mt-5 flex h-[40px] w-full cursor-pointer items-center justify-center gap-x-2 rounded-[4px] border-none bg-pink_primary px-9 py-1 text-lg leading-[27px] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'
 					onClick={() => {
@@ -62,11 +61,12 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 				</button>
 			</div>
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={[]}
-				className={`${poppins.className} ${poppins.variable}`}
-				closeIcon={<CloseIcon />}
+				className={`${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
 					<PostEditLinkingIcon />
@@ -85,7 +85,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 							+ Link Existing Discussion Post
 						</button>
 						<button
-							className='h-[40px] cursor-pointer rounded-[4px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-pink_primary outline-none md:min-w-[314px]'
+							className='h-[40px] cursor-pointer rounded-[4px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-pink_primary outline-none dark:bg-section-dark-overlay md:min-w-[314px]'
 							onClick={() => {
 								setOpen(false);
 								setEditModalOpen(true);

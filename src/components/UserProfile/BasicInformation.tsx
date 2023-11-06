@@ -73,12 +73,12 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					<ImageComponent
 						src={profile?.image}
 						alt='User Picture'
-						className='flex h-[103px] w-[103px] items-center justify-center bg-white'
+						className='flex h-[103px] w-[103px] items-center justify-center bg-white dark:bg-section-dark-overlay'
 						iconClassName='flex items-center justify-center text-[#A0A6AE] text-5xl w-full h-full rounded-full'
 					/>
 				</div>
 				<div className='flex flex-col'>
-					<h4 className='text-sm font-medium text-[#485F7D] '>Profile Image</h4>
+					<h4 className='text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium '>Profile Image</h4>
 					<p className='-mt-1 text-sm font-normal'>
 						Please provide a url of your profile photo using a service such as
 						<a
@@ -93,7 +93,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					</p>
 					<Input
 						placeholder='Profile Picture URL'
-						className='-mt-2 h-10 rounded-[4px] border border-solid border-[#d2d8e0] text-sm text-[#7788a0]'
+						className='-mt-2 h-10 rounded-[4px] border border-solid border-[#d2d8e0] text-sm text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						size='large'
 						type='url'
 						onChange={(e) =>
@@ -106,19 +106,19 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						}
 						value={profile?.image}
 						disabled={loading}
+						classNames={{
+							input: 'dark:placeholder:text-borderColorDark dark:text-white'
+						}}
 					/>
 				</div>
 			</article>
 			<div className='flex gap-x-6'>
 				<div className='hidden w-full max-w-[103px] md:block'></div>
 				<div className='flex-1'>
-					<Divider
-						className='my-6'
-						style={{ borderColor: '#d2d8e0' }}
-					/>
+					<Divider className='my-6 border-[#d2d8e0] dark:border-separatorDark' />
 					<article>
 						<label
-							className='cursor-pointer text-sm font-medium text-[#485F7D]'
+							className='cursor-pointer text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='title'
 						>
 							Job Title
@@ -136,24 +136,30 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								})
 							}
 							disabled={loading}
-							className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0]'
+							className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							classNames={{
+								input: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
-					<article className='mt-4 cursor-pointer text-sm text-[#485F7D]'>
-						<label className='mb-0 text-sm font-medium text-[#485F7D]'>Username</label>
+					<article className='mt-4 cursor-pointer text-sm text-[#485F7D] dark:text-blue-dark-medium'>
+						<label className='mb-0 text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'>Username</label>
 						<Input
-							className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-1 text-sm text-[#7788a0]'
+							className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-1 text-sm text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							placeholder='eg. John'
 							size='large'
 							type='text'
 							onChange={(e) => setUsername(e.target.value)}
 							value={username}
 							disabled={loading}
+							classNames={{
+								input: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
 					<article className='mt-4'>
 						<label
-							className='cursor-pointer text-sm font-medium text-[#485F7D]'
+							className='cursor-pointer text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='bio'
 						>
 							Bio
@@ -171,18 +177,21 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								})
 							}
 							disabled={loading}
-							className='rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-[10px] text-[#7788a0]'
+							className='rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-[10px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							classNames={{
+								textarea: 'dark:placeholder:text-borderColorDark dark:text-white'
+							}}
 						/>
 					</article>
 					<article className='mt-4'>
 						<label
-							className='cursor-pointer text-sm font-medium text-[#485F7D]'
+							className='cursor-pointer text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor='badges'
 						>
 							Badges
 						</label>
 						<HelperTooltip
-							className='m-0 mb-1 ml-1 cursor-pointer text-xs font-normal leading-[18px] text-[#485F7D]'
+							className='m-0 mb-1 ml-1 cursor-pointer text-xs font-normal leading-[18px] text-[#485F7D] dark:text-blue-dark-medium'
 							text='Badges indicate individual successes, abilities, skills and/or interests'
 						/>
 						<div className='flex items-center gap-x-2'>
@@ -192,8 +201,11 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								placeholder='eg. Council Member, Voter, etc.'
 								onChange={(e) => setNewBadge(e.target.value)}
 								onKeyPress={(e: any) => handleNewBadgeKeyPress(e)}
-								className='mt-[2px] h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0]'
+								className='mt-[2px] h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								disabled={loading}
+								classNames={{
+									input: 'dark:placeholder:text-borderColorDark dark:text-white'
+								}}
 							/>
 							<Button
 								className='h-10 rounded border border-solid border-pink_primary bg-transparent text-sm font-medium text-pink_primary'
@@ -233,7 +245,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			</div>
 			{errorCheck && (
 				<Alert
-					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue'
+					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue dark:text-blue-dark-high'
 					message={errorCheck}
 					type='info'
 					showIcon

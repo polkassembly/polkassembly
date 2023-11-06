@@ -29,11 +29,11 @@ import VoteUnlockSuccessState from './VoteUnlockSuccessState';
 import { network as AllNetworks } from '~src/global/networkConstants';
 
 import UnlockBoxIcon from '~assets/icons/unlock-box.svg';
-import CloseIcon from '~assets/icons/close.svg';
 import WhiteUnlockIcon from '~assets/icons/white-lock.svg';
 import { setUserUnlockTokensData } from '~src/redux/tokenUnlocksData';
 import { useDispatch } from 'react-redux';
 import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 interface Props {
 	className?: string;
 	addresses: string[];
@@ -350,8 +350,9 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} ${className}`}
-				closeIcon={<CloseIcon />}
+				className={`${poppins.className} ${poppins.variable} ${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			>
 				<Spin
 					spinning={loadingStatus.isLoading}
@@ -361,7 +362,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					<div className='-mt-[100px] flex items-center justify-center'>
 						<UnlockBoxIcon />
 					</div>
-					<div className='mt-6 flex h-10 w-full items-center justify-between rounded-[4px] border-none bg-[#F6F7F9] px-3'>
+					<div className='mt-6 flex h-10 w-full items-center justify-between rounded-[4px] border-none bg-[#F6F7F9] px-3 dark:bg-inactiveIconDark'>
 						<Address
 							address={address}
 							isTruncateUsername={false}
@@ -383,7 +384,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 						totalUnlockableBalance={totalUnlockableBalance}
 					/>
 					{![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network) && (
-						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6'>
+						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 dark:border-separatorDark'>
 							<Button
 								onClick={() => handleUnlock()}
 								disabled={totalUnlockableBalance.eq(ZERO_BN)}

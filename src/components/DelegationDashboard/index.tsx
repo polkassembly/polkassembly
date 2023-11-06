@@ -11,6 +11,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import { Skeleton } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -28,7 +29,7 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const isLoggedOut = !userDetails.id;
-
+	const { resolvedTheme: theme } = useTheme();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
@@ -60,7 +61,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw]'>
 				<ProfileBalances />
 			</div>
-			<h2 className=' mb-6 mt-5 text-[24px] font-semibold text-bodyBlue max-lg:pt-[60px] md:mb-5'>Delegation dashboard</h2>
+			<h2 className=' mb-6 mt-5 text-[24px] font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation dashboard</h2>
 			<DelegationProfile
 				address={userDetails?.delegationDashboardAddress}
 				username={userDetails?.username || ''}
@@ -69,7 +70,8 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			<div>
 				{userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (
 					<DashboardTrackListing
-						className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] mt-8 rounded-[14px] bg-white'
+						theme={theme}
+						className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] mt-8 rounded-[14px] bg-white dark:bg-section-dark-overlay'
 						address={String(userDetails.delegationDashboardAddress)}
 					/>
 				) : (

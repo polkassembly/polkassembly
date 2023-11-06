@@ -72,6 +72,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import Web3 from 'web3';
+import { useTheme } from 'next-themes';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -142,6 +143,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -728,7 +730,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, network, apiReady]);
 
-	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod, isDelegated }) => {
+	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod }) => {
 		const unit = `${chainProperties[network]?.tokenSymbol}`;
 		return (
 			<Spin
@@ -736,19 +738,19 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				indicator={<LoadingOutlined />}
 			>
 				<div className='mb-1.5 flex items-center justify-between'>
-					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue'>Last Vote:</span>
-					{!isDelegated && (
+					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
+					{
 						<Button
 							loading={loading}
 							onClick={handleRemoveVote}
-							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
+							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 						>
 							Remove Vote
 						</Button>
-					)}
+					}
 				</div>
 
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -771,7 +773,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							) : decision == 'abstain' && (balance as any).abstain ? (
 								<p className='flex justify-center align-middle'>
 									<AbstainGray className='mb-[-8px] mr-1' />
-									<span className='font-medium capitalize  text-bodyBlue'>{'Abstain'}</span>
+									<span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -824,16 +826,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		return (
 			<div>
 				<div className='mb-1.5 flex items-center justify-between'>
-					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue'>Last Vote:</span>
+					<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
 					<Button
 						loading={loading}
 						onClick={handleRemoveVote}
-						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none'
+						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
 					>
 						Remove Vote
 					</Button>
 				</div>
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue'>
+				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
 					<Tooltip
 						placement='bottom'
 						title='Decision'
@@ -855,7 +857,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								</p>
 							) : decision === EVoteDecisionType.ABSTAIN ? (
 								<p className='flex justify-center align-middle'>
-									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue'>{'Abstain'}</span>
+									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
 								</p>
 							) : null}
 						</span>
@@ -922,7 +924,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							trackName && <DecisionDepositCard trackName={String(trackName)} />}
 
 						{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && (
-							<div className=' mb-8 rounded-[14px] bg-white pb-[36px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)]'>
+							<div className=' mb-8 rounded-[14px] bg-white pb-[36px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay'>
 								<div
 									className='flex items-center justify-end px-[20px] py-[17px]'
 									onClick={() => setGraphicOpen(false)}
@@ -1028,7 +1030,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
 															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue'>Cast your Vote!</h6>
+																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
 																<VoteReferendumEth
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -1041,7 +1043,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</>
 												) : (
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue'>Cast your Vote!</h6>
+														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -1077,7 +1079,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
 															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue'>Cast your Vote!</h6>
+																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
 																<VoteReferendumEthV2
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -1092,7 +1094,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</>
 												) : (
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue'>Cast your Vote!</h6>
+														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
 														{['polymesh'].includes(network) ? (
 															<PIPsVote
 																address={address}
@@ -1169,6 +1171,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											/>
 										) : (
 											<Modal
+												className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+												wrapClassName='dark:bg-modalOverlayDark'
 												closeIcon={false}
 												onCancel={() => {
 													setOpen(false);
@@ -1183,6 +1187,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													referendumId={onchainId as number}
 													voteType={getVotingTypeFromProposalType(proposalType)}
 													proposalType={proposalType}
+													theme={theme}
 												/>
 											</Modal>
 										)}
@@ -1244,7 +1249,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							proposalType === ProposalType.TECHNICAL_PIPS || proposalType === ProposalType.UPGRADE_PIPS ? (
 								<GovSidebarCard>
 									<div className='mt-1 flex gap-2'>
-										<span className='text-sm tracking-wide text-bodyBlue'>
+										<span className='text-sm tracking-wide text-bodyBlue dark:text-blue-dark-high'>
 											This PIP is proposed via
 											{proposalType === ProposalType.TECHNICAL_PIPS ? ' Technical Committee ' : ' Upgrade Committee '}& is not open to community voting
 										</span>

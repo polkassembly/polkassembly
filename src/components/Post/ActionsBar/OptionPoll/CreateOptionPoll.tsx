@@ -141,7 +141,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 	return (
 		<>
 			<Button
-				className={'flex items-center border-none px-1.5 text-pink_primary shadow-none'}
+				className={'flex items-center border-none px-1.5 text-pink_primary shadow-none dark:border-none dark:bg-transparent dark:text-blue-dark-helper'}
 				onClick={() => setShowModal(true)}
 			>
 				<AuditOutlined />
@@ -149,6 +149,8 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 			</Button>
 
 			<Modal
+				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				wrapClassName='dark:bg-modalOverlayDark'
 				title='Create Poll'
 				open={showModal}
 				onOk={handleCreate}
@@ -204,7 +206,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 							name='question'
 							autoFocus
 							placeholder='Ask a question...'
-							className='text-black'
+							className='text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 
@@ -243,7 +245,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 											<Input
 												placeholder={`Option ${index + 1}`}
 												name='linkPostId'
-												className='w-[90%] text-black'
+												className='w-[90%] text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 											/>
 										</Form.Item>
 										{fields.length > 2 ? (

@@ -4,12 +4,12 @@
 
 import { Button, Modal } from 'antd';
 import React, { useState } from 'react';
-import CloseIcon from 'public/assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import SignupPopup from './SignupPopup';
 import LoginPopup from './loginPopup';
 import Image from 'next/image';
 import styled from 'styled-components';
+import { CloseIcon } from './CustomIcons';
 
 interface Props {
 	image: String;
@@ -18,6 +18,7 @@ interface Props {
 	modalOpen: boolean;
 	setModalOpen: (pre: boolean) => void;
 	className?: string;
+	theme?: string;
 }
 
 const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen, className }: Props) => {
@@ -37,12 +38,12 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 		<div>
 			<Modal
 				open={modalOpen}
-				className={`${poppins.variable} ${poppins.className} text w-[570px] max-w-full shrink-0 max-sm:w-[100%]`}
+				className={`${poppins.variable} ${poppins.className} text w-[570px] max-w-full shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				onCancel={() => setModalOpen(false)}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				centered
 				zIndex={1002}
-				wrapClassName={className}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				footer={
 					<div className='center-aligned mt-[32px] flex flex-col items-center justify-center gap-4 pb-8'>
 						<Button
@@ -52,7 +53,7 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 							Login
 						</Button>
 						<Button
-							className='-ml-0 flex h-[40px] w-[60%] items-center justify-center rounded border-pink_primary p-5 text-sm font-medium leading-5 text-pink_primary hover:border-pink_primary hover:bg-pink_secondary hover:text-white'
+							className='-ml-0 flex h-[40px] w-[60%] items-center justify-center rounded border-pink_primary p-5 text-sm font-medium leading-5 text-pink_primary hover:border-pink_primary hover:bg-pink_secondary hover:text-white dark:bg-transparent'
 							onClick={() => handleClick('signup')}
 						>
 							Signup
@@ -67,8 +68,8 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 						src={`${image}`}
 						alt=''
 					/>
-					<h5 className='leading-24 traking-normal mt-8 text-center text-xl font-semibold max-sm:text-base'>{title}</h5>
-					<h5 className='leading-21 text-center font-poppins text-sm font-medium tracking-normal max-sm:text-xs'>{subtitle}</h5>
+					<h5 className='leading-24 traking-normal mt-8 text-center text-xl font-semibold dark:text-white max-sm:text-base'>{title}</h5>
+					<h5 className='leading-21 text-center font-poppins text-sm font-medium tracking-normal dark:text-white max-sm:text-xs'>{subtitle}</h5>
 				</div>
 			</Modal>
 			<SignupPopup
@@ -90,5 +91,6 @@ export default styled(ReferendaLoginPrompts)`
 	.text .ant-modal-content {
 		color: var(--bodyBlue) !important;
 		border-radius: 4px !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 	}
 `;

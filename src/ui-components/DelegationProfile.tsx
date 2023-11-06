@@ -10,7 +10,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from './Address';
 import { EditIcon } from './CustomIcons';
 import copyToClipboard from '~src/util/copyToClipboard';
-import CopyIcon from '~assets/icons/content-copy.svg';
+import { CopyIcon } from '~src/ui-components/CustomIcons';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
@@ -72,7 +72,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 	};
 
 	return username?.length > 0 ? (
-		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white ${className}`}>
+		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
 			<div className='flex justify-center gap-[34px] '>
 				<ImageComponent
 					src={image}
@@ -80,8 +80,8 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
 					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 				/>
-				<div className='text-bodyBlue'>
-					<span className='mb-4 text-lg font-semibold tracking-wide text-bodyBlue'>{username || userName}</span>
+				<div className='text-bodyBlue dark:text-blue-dark-high'>
+					<span className='mb-4 text-lg font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username || userName}</span>
 					{address && address.length > 0 && (
 						<div className='flex items-center gap-2'>
 							<Address
@@ -98,14 +98,14 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 								}}
 							>
 								{contextHolder}
-								<CopyIcon />
+								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</div>
 					)}
 
 					{!bio ? (
 						<h2
-							className={`mt-2 text-sm font-normal text-[#576D8BCC] ${username === userProfile.username && 'cursor-pointer'}`}
+							className={`mt-2 text-sm font-normal text-[#576D8BCC] dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
 							onClick={() => setOpenEditModal(true)}
 						>
 							{username === userProfile.username ? 'Click here to add bio' : 'No Bio'}
@@ -113,23 +113,27 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					) : (
 						<h2
 							onClick={() => setOpenEditModal(true)}
-							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue ${username === userProfile.username && 'cursor-pointer'}`}
+							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
+								username === userProfile.username && 'cursor-pointer'
+							}`}
 						>
 							{bio}
 						</h2>
 					)}
 
-					<div className={`mt-[10px] flex flex-wrap items-center gap-x-5 text-xl text-bodyBlue md:gap-x-3 ${isSearch && 'mt-0'}`}>
+					<div className={`mt-[10px] flex flex-wrap items-center gap-x-5 text-xl text-bodyBlue dark:text-blue-dark-high md:gap-x-3 ${isSearch && 'mt-0'}`}>
 						{socialLinks?.map((social: any, index: number) => {
 							const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
 							return (
 								<SocialLink
-									className={`flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-2xl hover:text-[#576D8B] ${isSearch ? 'mt-2' : 'mt-4'}`}
+									className={`flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-2xl hover:text-[#576D8B] dark:bg-inactiveIconDark ${
+										isSearch ? 'mt-2' : 'mt-4'
+									}`}
 									key={index}
 									link={link}
 									disable={!link}
 									type={social}
-									iconClassName={`text-lg ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
+									iconClassName={`text-lg ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6] dark:text-[#424141]'}`}
 								/>
 							);
 						})}
@@ -150,7 +154,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 						{username === userProfile.username && (
 							<Button
 								onClick={() => setOpenEditModal(true)}
-								className='h-[40px] w-[87px] border-[1px] border-solid border-pink_primary font-medium text-pink_primary max-lg:w-auto'
+								className='h-[40px] w-[87px] border-[1px] border-solid border-pink_primary font-medium text-pink_primary dark:bg-section-dark-overlay max-lg:w-auto'
 							>
 								<EditIcon className='text-[14px] tracking-wide text-pink_primary ' />
 								<span className='max-md:hidden'>Edit</span>

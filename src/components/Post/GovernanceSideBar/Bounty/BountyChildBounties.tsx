@@ -6,7 +6,6 @@ import Link from 'next/link';
 import React, { FC, useState, useEffect } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import StatusTag from 'src/ui-components/StatusTag';
-import Pagination from 'antd/lib/pagination';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IChildBountiesResponse } from 'pages/api/v1/child_bounties';
@@ -14,6 +13,8 @@ import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { PostEmptyState } from '~src/ui-components/UIStates';
+import { useTheme } from 'next-themes';
+import { Pagination } from '~src/components/Pagination';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -24,6 +25,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [bountiesRes, setBountiesRes] = useState<IChildBountiesResponse>();
 	const [loading, setLoading] = useState(true);
+	const { resolvedTheme: theme } = useTheme();
 
 	const handlePageChange = (pageNumber: any) => {
 		setCurrentPage(pageNumber);
@@ -48,7 +50,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 				indicator={<LoadingOutlined />}
 				spinning={loading}
 			>
-				<h4 className='dashboard-heading mb-6'>{bountiesRes?.child_bounties_count} Child Bounties</h4>
+				<h4 className='dashboard-heading mb-6 dark:text-white'>{bountiesRes?.child_bounties_count} Child Bounties</h4>
 				{bountiesRes && bountiesRes.child_bounties_count > 0 ? (
 					bountiesRes?.child_bounties.map(
 						(childBounty) =>
@@ -58,15 +60,16 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 									key={childBounty.index}
 									className='mb-6'
 								>
-									<div className='my-4 rounded-md border-2 border-solid border-grey_light p-2 transition-all duration-200 hover:border-pink_primary hover:shadow-xl md:p-4'>
+									<div className='my-4 rounded-md border-2 border-solid border-grey_light p-2 transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark md:p-4'>
 										<div className='flex justify-between gap-x-4'>
 											<div className='w-[70%] break-words p-1'>
-												<h5 className='m-auto h-[60px] overflow-hidden p-0 text-sm'>
+												<h5 className='m-auto h-[60px] overflow-hidden p-0 text-sm dark:text-white'>
 													{childBounty.description} || {`#${childBounty.index} Untitled`}
 												</h5>
 											</div>
 											{childBounty.status && (
 												<StatusTag
+													theme={theme}
 													className='statusTag m-auto'
 													status={childBounty.status}
 												/>
@@ -81,6 +84,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 				)}
 				<PaginationContainer className='mt-4 flex items-center justify-end'>
 					<Pagination
+						theme={theme}
 						size='small'
 						className='pagination-container'
 						current={currentPage}

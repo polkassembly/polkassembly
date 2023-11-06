@@ -9,7 +9,6 @@ import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Trac
 import { useApiContext, usePostDataContext } from '~src/context';
 import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
-import CloseIcon from 'public/assets/icons/close.svg';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IProgress } from './Curves';
 import { IPeriod } from '~src/types';
@@ -17,6 +16,9 @@ import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import ConfirmationAttemptsRow from '~src/ui-components/ConfirmationAttemptsRow';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import styled from 'styled-components';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -54,6 +56,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		postData: { track_name, track_number, created_at, status, timeline, requested }
 	} = usePostDataContext();
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const trackData = getTrackData(network, track_name, track_number);
 	const proposalCreatedAt = dayjs(created_at);
@@ -77,7 +80,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		return (
 			<button
 				onClick={() => setOpen(true)}
-				className={`flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-[#FEF2F8] text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue outline-none ${className}`}
+				className={`flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full border-none bg-[#FEF2F8] text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue outline-none dark:bg-[#E5007A] dark:text-white ${className}`}
 			>
 				{children}
 			</button>
@@ -142,10 +145,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{!decidingStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>Prepare Period</h3>
+						<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Prepare Period</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
 							<p
-								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 								style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 							>
 								<Button className='-ml-[3px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>1</Button>
@@ -159,14 +162,14 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							showInfo={false}
 							percent={prepare.periodPercent}
 							strokeColor='#E5007A'
-							trailColor='#FEF2F8'
 							size='small'
+							trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue text-sm font-normal text-bodyBlue'>Prepare Period</span>
-							<span className='text-xs text-lightBlue'>
+							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Prepare Period</span>
+							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}
 							</span>
 						</>
@@ -177,10 +180,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>Voting has Started</h3>
+						<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
+							Voting has Started
+						</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
 							<p
-								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 								style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 							>
 								<Button className='-ml-[3px] mr-[2px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>2</Button>
@@ -194,13 +199,13 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							showInfo={false}
 							percent={decision.periodPercent}
 							strokeColor='#E5007A'
-							trailColor='#FEF2F8'
+							trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 							size='small'
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-						<span className='text-bodyblue text-sm font-normal text-bodyBlue'>Decision Period</span>
-						<span className='text-xs text-lightBlue'>
+						<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Decision Period</span>
+						<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 							{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}
 						</span>
 					</p>
@@ -210,14 +215,14 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							showInfo={false}
 							percent={confirm.periodPercent}
 							strokeColor='#E5007A'
-							trailColor='#FEF2F8'
+							trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 							size='small'
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue text-sm font-normal text-bodyBlue'>Confirmation Period</span>
-							<span className='text-xs text-lightBlue'>
+							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Confirmation Period</span>
+							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}
 							</span>
 						</>
@@ -230,10 +235,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					{isDisbursalPeriodCardVisible || minEnactment.periodCardVisible ? (
 						<GovSidebarCard>
 							<div className='flex items-center justify-between'>
-								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>Proposal Passed</h3>
+								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
 								<div className='w-13 flex h-[33px] gap-1'>
 									<p
-										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 										style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 									>
 										<Button className='-ml-[3px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>3</Button>
@@ -247,13 +252,13 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									showInfo={false}
 									percent={minEnactment.periodPercent}
 									strokeColor='#E5007A'
-									trailColor='#FEF2F8'
+									trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 									size='small'
 								/>
 							</div>
 							<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-								<span className='text-bodyblue text-sm font-normal text-bodyBlue'>Enactment Period</span>
-								<span className='text-xs text-lightBlue'>
+								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Enactment Period</span>
+								<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 									{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}
 								</span>
 							</p>
@@ -264,14 +269,14 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 											className='m-0 flex items-center p-0'
 											percent={spend.periodPercent}
 											strokeColor='#E5007A'
-											trailColor='#FEF2F8'
+											trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 											size='small'
 										/>
 									</div>
 									<p className='m-0 mt-2 flex items-center justify-between p-0 leading-[22px]'>
 										<>
-											<span className='text-sm font-normal text-bodyBlue'>Funds Disbursal Period</span>
-											<span className='text-xs text-lightBlue'>{spend.period}</span>
+											<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
+											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{spend.period}</span>
 										</>
 									</p>
 								</>
@@ -281,10 +286,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					) : (
 						<GovSidebarCard>
 							<div className='flex items-center justify-between'>
-								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue'>Proposal Passed</h3>
+								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
 								<div className='w-13 flex h-[33px] gap-1'>
 									<p
-										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue'
+										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 										style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 									>
 										<Button className='-ml-[3px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>3</Button>
@@ -300,12 +305,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-xl font-medium leading-6 tracking-[0.0015em] text-bodyBlue'>
+							<h3 className='m-0 text-xl font-medium leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 								Proposal {status === 'Cancelled' ? 'Cancelled' : status === 'Killed' ? 'Killer' : status === 'TimedOut' ? 'Timed Out' : 'Failed'}
 							</h3>
 							<Button>3</Button>
 						</div>
-						<div className='mt-[18px] text-sm font-normal leading-[22px] tracking-[0.01em] text-bodyBlue'>
+						<div className='mt-[18px] text-sm font-normal leading-[22px] tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 							<FailedReferendaText
 								progress={progress}
 								network={network}
@@ -319,23 +324,25 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			)}
 
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
 				title={
-					<div className='flex items-center justify-between gap-x-5 px-2 py-3'>
-						<h3 className='m-0 p-0 text-xl font-medium leading-[24px] tracking-[0.0015em] text-bodyBlue'>Status</h3>
+					<div className='flex items-center justify-between gap-x-5 px-2 py-3 dark:bg-section-dark-overlay'>
+						<h3 className='m-0 p-0 text-xl font-medium leading-[24px] tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Status</h3>
 						<button
 							onClick={() => setOpen(false)}
 							className='flex cursor-pointer items-center justify-center border-none bg-transparent outline-none'
 						>
-							<CloseIcon />
+							<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 						</button>
 					</div>
 				}
 				onCancel={() => setOpen(false)}
 				closable={false}
 				footer={[]}
+				className={'dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 			>
-				<section className='mt-[24px] pl-[21px] text-sidebarBlue'>
+				<section className='mt-[24px] pl-[21px] text-sidebarBlue dark:text-white'>
 					<article className='flex gap-x-[23px]'>
 						<div className='h-[150px] w-[4.5px] rounded-full bg-[#FCE5F2]'>
 							<div
@@ -427,7 +434,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	);
 };
 
-export default ReferendaV2Messages;
+export default styled(ReferendaV2Messages)`
+	.ant-modal .ant-modal-header {
+		background-color: ${({ theme }) => (theme === 'dark' ? '#1E1E1E' : '#fff')};
+	}
+`;
 
 const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[]; progress: IProgress }> = (props) => {
 	const { status, timeline, network, progress } = props;

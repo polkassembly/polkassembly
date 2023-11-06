@@ -8,16 +8,19 @@ import React, { FC } from 'react';
 import { ProfileDetails } from '~src/auth/types';
 import { socialLinks } from './Details';
 import { SocialIcon } from '~src/ui-components/SocialLinks';
+import styled from 'styled-components';
 
 interface ISocialsProps {
 	loading: boolean;
 	setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>;
 	profile: ProfileDetails;
 	errorCheck?: string | undefined;
+	theme?: string;
 }
 
 const Socials: FC<ISocialsProps> = (props) => {
-	const { loading, profile, setProfile, errorCheck } = props;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { loading, profile, setProfile, errorCheck, theme } = props;
 	return (
 		<div className='flex max-h-[552px] flex-col gap-y-4'>
 			{socialLinks.map((socialLink) => {
@@ -25,17 +28,20 @@ const Socials: FC<ISocialsProps> = (props) => {
 				return (
 					<article key={strLink}>
 						<label
-							className='flex cursor-pointer items-center gap-x-[6px] text-base font-normal text-[#485F7D]'
+							className='flex cursor-pointer items-center gap-x-[6px] text-base font-normal text-[#485F7D] dark:text-blue-dark-medium'
 							htmlFor={strLink}
 						>
 							<SocialIcon type={socialLink} />
 							<span>{strLink}</span>
 						</label>
 						<Input
-							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632]'
+							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							size='large'
 							type='url'
-							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)]' />}
+							classNames={{
+								input: 'dark:bg-transparent dark:placeholder:text-borderColorDark dark:text-white'
+							}}
+							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)] dark:text-borderColorDark' />}
 							placeholder={`Enter ${strLink} ${strLink === 'Email' ? '' : 'URL'}`}
 							onChange={(e) => {
 								const value = e.target.value.trim();
@@ -74,7 +80,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 			})}
 			{errorCheck && (
 				<Alert
-					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue'
+					className='mt-4 h-[40px] rounded-[4px] border-none px-5 py-2 text-sm text-bodyBlue outline-none dark:bg-borderColorDark dark:text-white '
 					message={errorCheck}
 					type='info'
 					showIcon
@@ -84,4 +90,9 @@ const Socials: FC<ISocialsProps> = (props) => {
 	);
 };
 
-export default Socials;
+export default styled(Socials)`
+	.ant-input .ant-input-lg {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#1D2632')} !important;
+	}
+`;

@@ -17,6 +17,7 @@ import { ISelectedNetwork } from '../types';
 import Image from 'next/image';
 import { Collapse } from '../common-ui/Collapse';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = {
@@ -33,6 +34,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 	const { network } = useNetworkSelector();
 	const [openModal, setOpenModal] = useState(false);
 	const [active, setActive] = useState<boolean | undefined>(false);
+	const { resolvedTheme: theme } = useTheme();
 	const handleModalConfirm = (networks: ISelectedNetwork) => {
 		setSelectedNetwork(networks);
 		setOpenModal(false);
@@ -66,7 +68,8 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 
 	return (
 		<Collapse
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			theme={theme}
 			size='large'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -79,7 +82,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 					<div className='flex items-center justify-between gap-[8px]'>
 						<div className='channel-header flex items-center gap-[6px]'>
 							<ParachainNotification />
-							<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Parachains</h3>
+							<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Parachains</h3>
 						</div>
 						{!!active && (
 							<div className='hidden gap-2 md:flex'>
@@ -117,7 +120,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 					/>
 				</Space>
 				<Divider
-					className='border-2 border-[#D2D8E0]'
+					className='border-2 border-[#D2D8E0] dark:border-separatorDark'
 					dashed
 				/>
 				<div className='item-center flex flex-col gap-6'>

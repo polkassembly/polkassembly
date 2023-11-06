@@ -34,6 +34,8 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 
 	return (
 		<Modal
+			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+			wrapClassName='dark:bg-modalOverlayDark'
 			title={
 				<h3 className='mb-5 flex items-center gap-3'>
 					{icon} {title}

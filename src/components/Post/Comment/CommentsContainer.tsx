@@ -24,12 +24,23 @@ import SlightlyAgainstIcon from '~assets/overall-sentiment/pink-slightly-against
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
+import UnfilterDarkSentiment1 from '~assets/overall-sentiment/dark/dark(1).svg';
+import UnfilterDarkSentiment2 from '~assets/overall-sentiment/dark/dark(2).svg';
+import UnfilterDarkSentiment3 from '~assets/overall-sentiment/dark/dark(3).svg';
+import UnfilterDarkSentiment4 from '~assets/overall-sentiment/dark/dark(4).svg';
+import UnfilterDarkSentiment5 from '~assets/overall-sentiment/dark/dark(5).svg';
+import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
+import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
+import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
+import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
+import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import { ESentiments } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
 import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -99,6 +110,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments | null>(null);
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
+	const { resolvedTheme: theme } = useTheme();
 
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -208,36 +220,36 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const sentimentsData = [
 		{
-			iconActive: <AgainstIcon />,
-			iconInactive: <UnfilterAgainstIcon />,
+			iconActive: theme !== 'dark' ? <AgainstIcon /> : <DarkSentiment1 />,
+			iconInactive: theme !== 'dark' ? <UnfilterAgainstIcon /> : <UnfilterDarkSentiment1 />,
 			percentage: sentimentsPercentage?.against,
 			sentiment: ESentiments.Against,
 			title: 'Completely Against'
 		},
 		{
-			iconActive: <SlightlyAgainstIcon />,
-			iconInactive: <UnfilterSlightlyAgainstIcon />,
+			iconActive: theme !== 'dark' ? <SlightlyAgainstIcon /> : <DarkSentiment2 />,
+			iconInactive: theme !== 'dark' ? <UnfilterSlightlyAgainstIcon /> : <UnfilterDarkSentiment2 />,
 			percentage: sentimentsPercentage?.slightlyAgainst,
 			sentiment: ESentiments.SlightlyAgainst,
 			title: 'Slightly Against'
 		},
 		{
-			iconActive: <NeutralIcon className='text-[20px] font-medium' />,
-			iconInactive: <UnfilterNeutralIcon />,
+			iconActive: theme !== 'dark' ? <NeutralIcon className='text-[20px] font-medium' /> : <DarkSentiment3 />,
+			iconInactive: theme !== 'dark' ? <UnfilterNeutralIcon /> : <UnfilterDarkSentiment3 />,
 			percentage: sentimentsPercentage?.neutral,
 			sentiment: ESentiments.Neutral,
 			title: 'Neutral'
 		},
 		{
-			iconActive: <SlightlyForIcon />,
-			iconInactive: <UnfilterSlightlyForIcon />,
+			iconActive: theme !== 'dark' ? <SlightlyForIcon /> : <DarkSentiment4 />,
+			iconInactive: theme !== 'dark' ? <UnfilterSlightlyForIcon /> : <UnfilterDarkSentiment4 />,
 			percentage: sentimentsPercentage?.slightlyFor,
 			sentiment: ESentiments.SlightlyFor,
 			title: 'Slightly For'
 		},
 		{
-			iconActive: <ForIcon />,
-			iconInactive: <UnfilterForIcon />,
+			iconActive: theme !== 'dark' ? <ForIcon /> : <DarkSentiment5 />,
+			iconInactive: theme !== 'dark' ? <UnfilterForIcon /> : <UnfilterDarkSentiment5 />,
 			percentage: sentimentsPercentage?.for,
 			sentiment: ESentiments.For,
 			title: 'Completely For'
@@ -262,14 +274,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					)}
 				</>
 			) : (
-				<div className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md'>
+				<div className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md dark:bg-alertColorDark'>
 					<Image
 						src='/assets/icons/alert-login.svg'
 						width={20}
 						height={20}
 						alt={''}
 					/>
-					<div className='text-sm font-medium text-bodyBlue'>
+					<div className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 						Please{' '}
 						<span
 							className='cursor-pointer text-pink_primary'
@@ -285,7 +297,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			)}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div className='tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-					<span className='text-lg font-medium text-bodyBlue'>
+					<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
 						{allComments.length || 0}
 						<span className='ml-1'>Comments</span>
 					</span>
@@ -304,12 +316,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								>
 									<div
 										onClick={() => getFilteredComments(data.sentiment)}
-										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8] ${
-											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary'
-										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} ${overallSentiments[data.sentiment] == 0 ? 'pointer-events-none' : ''}`}
+										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8]  ${
+											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary dark:bg-[#33071E]'
+										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} ${
+											overallSentiments[data.sentiment] == 0 ? 'pointer-events-none' : ''
+										} dark:hover:bg-[#33071E]`}
 									>
 										{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
-										<span className={'flex justify-center font-medium'}>{data.percentage}%</span>
+										<span className={'flex justify-center font-medium dark:font-normal dark:text-[#ffffff99]'}>{data.percentage}%</span>
 									</div>
 								</Tooltip>
 							))}
@@ -335,7 +349,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											<AnchorLink
 												href={`#${comments[`${timeline.index}_${timeline.type}`]?.[0]?.id}`}
 												title={
-													<div className='sticky top-10 flex flex-col text-lightBlue'>
+													<div className='sticky top-10 flex flex-col text-lightBlue dark:text-blue-dark-high'>
 														<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
 														<div className='text-xs'>({comments[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
@@ -343,7 +357,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 												}
 											/>
 										) : (
-											<div className='sticky top-10 ml-5 flex cursor-pointer flex-col text-lightBlue'>
+											<div className='sticky top-10 ml-5 flex cursor-pointer flex-col text-lightBlue dark:text-blue-dark-high'>
 												<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 												<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
 												<div className='text-xs'>({timeline.commentsCount})</div>
@@ -353,7 +367,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								) : (
 									<div
 										key={timeline.id}
-										className='sticky top-10 ml-5 flex cursor-default flex-col text-lightBlue'
+										className='sticky top-10 ml-5 flex cursor-default flex-col text-lightBlue dark:text-blue-dark-high'
 									>
 										<div className='mb-1 text-xs'>{timeline.date.format('MMM Do')}</div>
 										<div className='mb-1 whitespace-pre-wrap break-words font-medium'>{timeline.status}</div>
@@ -381,6 +395,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					)}
 					{
 						<RefendaLoginPrompts
+							theme={theme}
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
 							image='/assets/post-comment.png'

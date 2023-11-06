@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Modal } from 'antd';
-import CloseIcon from 'public/assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import Login from 'pages/login';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useState } from 'react';
+import { CloseIcon } from './CustomIcons';
 
 interface Props {
 	modalOpen: boolean;
@@ -30,14 +30,16 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 			closable={closable}
 			maskClosable={closable}
 			zIndex={1008}
-			wrapClassName={className}
-			className={`${poppins.variable} ${poppins.className} ${isClosable ? '' : 'hide-close-button'} padding-0 w-[605px]`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			className={`${poppins.variable} ${poppins.className} ${
+				isClosable ? '' : 'hide-close-button'
+			} padding-0 padding-0 dark:[&>.ant-modal-content]:bg-section-dark-overlay w-[605px]`}
 			onCancel={() => {
 				if (isClosable) {
 					setModalOpen && setModalOpen(false);
 				}
 			}}
-			closeIcon={isClosable ? <CloseIcon /> : null}
+			closeIcon={isClosable ? <CloseIcon className='dark:text-icon-dark-inactive text-lightBlue' /> : null}
 		>
 			<Login
 				network={network}

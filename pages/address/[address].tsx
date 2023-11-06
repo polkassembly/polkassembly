@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Segmented, Select, Tabs } from 'antd';
+import { Segmented, Select } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getUserIdWithAddress, getUserProfileWithUserId } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -25,6 +25,8 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getOnChainUserPosts } from 'pages/api/v1/listing/get-on-chain-user-post';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { Tabs } from '~src/ui-components/Tabs';
+import { useTheme } from 'next-themes';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -107,6 +109,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	const dispatch = useDispatch();
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(isOpenGovSupported(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -215,6 +218,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
 								type='card'
 								items={tabItems as any}
+								theme={theme}
 							/>
 						</div>
 					)}

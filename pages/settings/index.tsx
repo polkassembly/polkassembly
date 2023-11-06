@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Col, Tabs } from 'antd';
+import { Col } from 'antd';
 import { GetServerSideProps } from 'next';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
@@ -20,6 +20,8 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { Tabs } from '~src/ui-components/Tabs';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	network: string;
@@ -41,7 +43,7 @@ const Settings: FC<Props> = (props) => {
 	const tab = router.query?.tab as string;
 	const { id } = useUserDetailsSelector();
 	const [searchQuery, setSearchQuery] = useState<string>('');
-
+	const { resolvedTheme: theme } = useTheme();
 	const handleTabClick = (key: string) => {
 		router.push(`/settings?tab=${key}`);
 	};
@@ -93,14 +95,15 @@ const Settings: FC<Props> = (props) => {
 			)}
 
 			<Col className='h-full w-full'>
-				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md'>
-					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue'>Settings</h3>
+				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
+					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue dark:text-white'>Settings</h3>
 					<Tabs
 						className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
 						type='card'
 						defaultActiveKey={tab || 'account'}
 						onTabClick={handleTabClick}
 						items={tabItems}
+						theme={theme}
 					/>
 				</div>
 			</Col>

@@ -106,7 +106,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-8 flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md md:p-8 md:text-base'>
+				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
 					This is the place to discuss grants for {network}. Anyone can start a new grants discussion.{' '}
 					<a
 						className='text-pink_primary'

@@ -57,7 +57,7 @@ const TwitterCallback = ({ error, network, twitterHandle }: { network: string; e
 				className='-mt-16 h-full'
 			>
 				{error ? (
-					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md md:min-w-[500px]'>
+					<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay md:min-w-[500px]'>
 						<h2 className='flex flex-col items-center gap-y-2 text-xl font-medium'>
 							<WarningOutlined />
 							{/* TODO: Check error message from BE when email already verified */}

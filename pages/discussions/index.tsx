@@ -15,13 +15,14 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
-import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
+import { DiscussionsIcon } from '~src/ui-components/CustomIcons';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -83,6 +84,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -110,8 +112,8 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			/>
 
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
-				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue'>
-					<DiscussionsIcon className='mt-2 xs:mr-3 sm:mr-2 sm:mt-1.5' />
+				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
+					<DiscussionsIcon className='text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-1.5' />
 					Latest Discussions({count})
 				</div>
 				<button
@@ -124,7 +126,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-3 flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
 					This is the place to discuss all things polkadot. Anyone can start a new discussion.
 				</p>
 			</div>
@@ -141,6 +143,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				image='/assets/referenda-discussion.png'
 				title='Join Polkassembly to Start a New Discussion.'
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+				theme={theme}
 			/>
 		</>
 	);

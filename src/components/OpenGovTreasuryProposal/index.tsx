@@ -13,16 +13,16 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import CloseIcon from '~assets/icons/close.svg';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import { BN_HUNDRED } from '@polkadot/util';
-import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useApiContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
+	theme?: string;
 }
 
 export interface ISteps {
@@ -126,7 +126,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue'
+				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
 				onClick={handleClick}
 			>
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
@@ -155,23 +155,23 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px]`}
-				wrapClassName={className}
+				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Exit Treasury Proposal Creation
 					</div>
 				}
 			>
 				<div className='mt-6 px-6'>
-					<span className='text-sm text-bodyBlue'>
+					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
 					</span>
-					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
+					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-separatorDark'>
 						<Button
 							onClick={handleClose}
-							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary'
+							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Yes, Exit
 						</Button>
@@ -210,11 +210,11 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px]`}
-				wrapClassName={className}
-				closeIcon={<CloseIcon />}
+				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark`}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
-					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>
+					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						<CreateProposalIcon />
 						Create Treasury Proposal
 					</div>
@@ -222,7 +222,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			>
 				<div className='mt-6 px-6'>
 					<Steps
-						className='font-medium text-bodyBlue'
+						className='font-medium text-bodyBlue dark:text-blue-dark-high'
 						percent={steps.percent}
 						current={steps.step}
 						size='default'
@@ -373,9 +373,9 @@ export default styled(OpenGovTreasuryProposal)`
 	.opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
 		color: white !important;
 	}
-	.ant-input {
-		color: var(--bodyBlue) !important;
-		font-weight: 400;
+	.opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.opengov-proposals .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
 	}
 	input::placeholder {
 		color: #7c899b;

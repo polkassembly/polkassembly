@@ -4,7 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'antd';
-import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
@@ -26,6 +25,7 @@ import RightQuote from '~assets/icons/chatbox-icons/icon-right-quote.svg';
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -89,13 +89,18 @@ const VoteInitiatedModal = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate w-[604px]`}
-			wrapClassName={className}
-			closeIcon={<CloseIcon onClick={() => setPosted(true)} />}
+			className={`${poppins.variable} ${poppins.className} delegate w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			closeIcon={
+				<span onClick={() => setPosted(true)}>
+					<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+				</span>
+			}
 			onCancel={() => setOpen(false)}
 			centered
 			footer={false}
 			maskClosable={false}
+			closable
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
 				{icon}
@@ -106,7 +111,7 @@ const VoteInitiatedModal = ({
 						{` ${unit}`}
 					</div>
 					{vote === EVoteDecisionType.SPLIT && (
-						<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue'>
+						<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 							{' '}
 							<span className='mr-3'>
 								<span className='font-semibold'> Aye: </span>
@@ -125,7 +130,7 @@ const VoteInitiatedModal = ({
 						</div>
 					)}
 					{vote === EVoteDecisionType.ABSTAIN && (
-						<div className='flex flex-wrap justify-center text-sm font-normal text-bodyBlue'>
+						<div className='flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 							{' '}
 							<span className='mr-3'>
 								<span className='font-semibold'> Abstain:</span>{' '}
@@ -153,7 +158,7 @@ const VoteInitiatedModal = ({
 						</div>
 					)}
 					<div className='flex flex-col items-start justify-center gap-[10px]'>
-						<div className='flex gap-3 text-sm font-normal text-lightBlue'>
+						<div className='flex gap-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							With address:{' '}
 							<span className='font-medium'>
 								<Address
@@ -166,7 +171,7 @@ const VoteInitiatedModal = ({
 						</div>
 
 						{multisig && (
-							<div className='flex gap-[17px] text-sm font-normal text-lightBlue'>
+							<div className='flex gap-[17px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 								With Multisig:{' '}
 								<span className='font-medium'>
 									<Address
@@ -179,37 +184,37 @@ const VoteInitiatedModal = ({
 							</div>
 						)}
 
-						<div className='flex h-[21px] gap-[70px] text-sm font-normal text-lightBlue'>
+						<div className='flex h-[21px] gap-[70px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Vote :
 							{vote === EVoteDecisionType.AYE ? (
 								<p>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue'>{vote}</span>
+									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (
 								<div>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-bodyBlue'>{vote}</span>
+									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
 								</div>
 							) : vote === EVoteDecisionType.SPLIT ? (
 								<p>
-									<SplitYellow /> <span className='font-medium capitalize text-bodyBlue'>{vote}</span>
+									<SplitYellow /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
 								</p>
 							) : vote === EVoteDecisionType.ABSTAIN ? (
 								<p className='flex align-middle'>
-									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue'>{vote}</span>
+									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
 								</p>
 							) : null}
 						</div>
-						<div className='flex gap-[30px] text-sm font-normal text-lightBlue'>
+						<div className='flex gap-[30px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Conviction:
-							<span className='font-medium text-bodyBlue'>{conviction || '0.1'}x</span>
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x</span>
 						</div>
-						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue'>
-							Time of Vote : <span className='font-medium text-bodyBlue'>{votedAt}</span>
+						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
 						</div>
 						{multisig && (
-							<div className='flex h-[21px] gap-11 text-sm font-normal text-lightBlue'>
+							<div className='flex h-[21px] gap-11 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 								Vote Link:{' '}
-								<span className='font-medium text-bodyBlue'>
+								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									<a
 										className='text-pink_primary'
 										href='https://app.polkasafe.xyz/transactions'
@@ -228,10 +233,7 @@ const VoteInitiatedModal = ({
 				<div className='vector min-w-[250px]'>
 					<BackgroundImage className='background-image -ml-[15px] min-w-[250px] text-2xl' />
 				</div>
-				<span
-					className='quote quote--left -left-[23px] -top-[2px] h-[40px] w-[48px] justify-center pt-[10px] text-center'
-					style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}
-				>
+				<span className='quote quote--left -left-[23px] -top-[2px] h-[40px] w-[48px] justify-center rounded-br-xxl bg-white pt-[10px] text-center dark:bg-section-dark-overlay'>
 					<LeftQuote />
 				</span>
 				<p className='-mt-[155px] text-center'>
@@ -248,10 +250,7 @@ const VoteInitiatedModal = ({
 						voteReason={true}
 					/>
 				</div>
-				<span
-					className='quote quote--right -right-[24px] -top-[2px] h-[40px] w-[48px] pt-[10px] text-center'
-					style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}
-				>
+				<span className='quote quote--right -right-[24px] -top-[2px] h-[40px] w-[48px] rounded-bl-xxl bg-white pt-[10px] text-center dark:bg-section-dark-overlay'>
 					<RightQuote />
 				</span>
 			</div>

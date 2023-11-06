@@ -305,12 +305,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			{isPosted ? (
 				<div className='comment-message -mt-[4px]'>
 					<div className='h-30 mt-[35px] w-[500px] overflow-hidden text-center'>
-						<p className='truncate text-lightBlue'>&apos;{formContent}&apos;</p>
+						<p className='truncate text-lightBlue dark:text-blue-dark-medium'>&apos;{formContent}&apos;</p>
 					</div>
 					<div className='-mt-[4px] mb-5 ml-[140px] text-green-600'>Comment posted successfully.</div>
 				</div>
 			) : (
-				<div className={isUsedInSuccessModal ? 'w-[95%] p-[1rem]' : 'comment-box bg-white p-[1rem]'}>
+				<div className={isUsedInSuccessModal ? 'w-[95%] p-[1rem]' : 'comment-box bg-white p-[1rem] dark:bg-section-dark-overlay'}>
 					{error && (
 						<ErrorAlert
 							errorMsg={error}
@@ -337,7 +337,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 									<textarea
 										name='content'
 										className={
-											'suffixColor input-container mt-2 max-h-10 w-full flex-1 resize-none rounded-[4px] border-[1px] text-sm hover:border-pink_primary focus:border-pink_primary'
+											'suffixColor input-container mt-2 max-h-10 w-full flex-1 resize-none rounded-[4px] border-[1px] text-sm hover:border-pink_primary focus:border-pink_primary dark:text-blue-dark-high'
 										}
 										onChange={(e) => {
 											onContentChange(e.target.value);
@@ -429,7 +429,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 											disabled={!content}
 											loading={loading}
 											htmlType='submit'
-											className={`my-0 mt-3 flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
+											className={`my-0 mt-3 flex items-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}
 										>
 											<CheckOutlined /> Comment
 										</Button>

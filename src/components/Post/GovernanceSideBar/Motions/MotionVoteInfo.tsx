@@ -22,7 +22,7 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 
 	return (
 		<GovSidebarCard className={`${className} px-1 md:px-9`}>
-			<h3 className='dashboard-heading flex items-center'>
+			<h3 className='dashboard-heading flex items-center dark:text-white'>
 				Council Votes{' '}
 				<HelperTooltip
 					className='ml-2 font-normal'

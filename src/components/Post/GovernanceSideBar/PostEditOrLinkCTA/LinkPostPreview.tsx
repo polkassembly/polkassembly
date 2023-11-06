@@ -17,7 +17,7 @@ const LinkPostPreview: FC<{ post?: ILinkPostStartResponse; className?: string }>
 			<h3 className=' text-sm font-medium leading-[21px] tracking-[0.01em] text-sidebarBlue'>{post.title}</h3>
 			<div className='my-3'>
 				<CreationLabel
-					className='md'
+					className='md dark:bg-section-dark-overlay'
 					created_at={dayjs(post.created_at).toDate()}
 					defaultAddress={post.proposer}
 					username={post.username}

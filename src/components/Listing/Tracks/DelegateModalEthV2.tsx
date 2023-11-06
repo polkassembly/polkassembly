@@ -8,6 +8,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Button, Form, Modal, Select, Spin } from 'antd';
 import BN from 'bn.js';
+import { useTheme } from 'next-themes';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ApiContext } from 'src/context/ApiContext';
@@ -37,6 +38,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
+	const { resolvedTheme: theme } = useTheme();
 
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const { walletConnectProvider } = useUserDetailsSelector();
@@ -301,7 +303,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 		<>
 			<button
 				type='button'
-				className='ml-auto flex items-center rounded border border-pink_primary bg-white px-5 py-1 text-xs font-medium uppercase leading-tight text-pink_primary transition duration-150 ease-in-out hover:bg-pink_secondary hover:bg-opacity-5 hover:text-white focus:outline-none focus:ring-0'
+				className='ml-auto flex items-center rounded border border-pink_primary bg-white px-5 py-1 text-xs font-medium uppercase leading-tight text-pink_primary transition duration-150 ease-in-out hover:bg-pink_secondary hover:bg-opacity-5 hover:text-white focus:outline-none focus:ring-0 dark:bg-section-dark-overlay'
 				onClick={() => setShowModal(true)}
 			>
 				<PlusOutlined />
@@ -310,8 +312,10 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 			</button>
 
 			<Modal
+				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				wrapClassName='dark:bg-modalOverlayDark'
 				title={
-					<div className='flex items-center'>
+					<div className='flex items-center dark:bg-section-dark-overlay'>
 						Delegate
 						<span className='ml-2 rounded-md border border-pink_secondary px-2 py-0.5 text-xs text-pink_secondary'>Delegation dashboard coming soon 🚀</span>
 					</div>
@@ -385,6 +389,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 									className='mt-4'
 									onChange={(balance) => setBnBalance(balance)}
 									size='large'
+									theme={theme}
 								/>
 
 								<div className='-mt-2'>

@@ -223,6 +223,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 	};
 	return (
 		<Modal
+			wrapClassName='dark:bg-modalOverlayDark'
 			open={linkingAndEditingOpen}
 			onCancel={() => setLinkingAndEditingOpen(false)}
 			footer={[
@@ -250,10 +251,10 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					</Button>
 				</div>
 			]}
-			className='md:min-w-[674px]'
+			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 		>
 			<section className='flex flex-col'>
-				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue'>Edit Proposal Details</h2>
+				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue dark:text-white'>Edit Proposal Details</h2>
 				<Form
 					form={form}
 					name='edit-post-form'
@@ -268,7 +269,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 				>
 					<Form.Item
 						name='title'
-						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Title</span>}
+						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Title</span>}
 						rules={[
 							{
 								required: true
@@ -286,11 +287,11 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								}))
 							}
 							placeholder='Add your title here'
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE]'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-normal dark:text-white dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Description</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
 						<ContentForm
 							onChange={(content) => {
 								setEditPostValue((prev) => ({
@@ -302,7 +303,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						/>
 					</div>
 					<div className='mt-[30px]'>
-						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Tags</label>
+						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Tags</label>
 						<AddTags
 							tags={tags}
 							setTags={setTags}
@@ -311,7 +312,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					</div>
 					{post_link ? (
 						<article>
-							<h3 className='mb-2 text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Linked Discussion</h3>
+							<h3 className='mb-2 text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Linked Discussion</h3>
 							<LinkPostPreview post={post} />
 							<div className='my-2 flex items-center justify-end'>
 								<Button
@@ -332,7 +333,11 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						<article className='flex flex-col gap-y-3'>
 							<Form.Item
 								name='url'
-								label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-[#475F7D]'>Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post</span>}
+								label={
+									<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>
+										Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post
+									</span>
+								}
 								className='mb-0 mt-5'
 							>
 								<Input
@@ -344,7 +349,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 									}}
 									autoFocus
 									placeholder='Enter your post URL here'
-									className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE]'
+									className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-normal dark:text-white dark:focus:border-[#91054F]'
 								/>
 							</Form.Item>
 							<LinkPostPreview post={post} />

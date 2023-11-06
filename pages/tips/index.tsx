@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Pagination } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
@@ -21,6 +20,8 @@ import TipIcon from '~assets/icons/tip-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { useTheme } from 'next-themes';
+import { Pagination } from '~src/components/Pagination';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -51,6 +52,7 @@ interface ITipsProps {
 const Tips: FC<ITipsProps> = (props) => {
 	const { data, error, page, network } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -80,17 +82,17 @@ const Tips: FC<ITipsProps> = (props) => {
 			/>
 			<div className='mt-3 flex items-center'>
 				<TipIcon className='-mt-3.5' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>On Chain Tips ({count})</h1>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Tips ({count})</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md md:p-8'>
+				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
 					This is the place to discuss on-chain tips. Tip posts are automatically generated as soon as they are created on-chain. Only the proposer is able to edit them.
 				</p>
 			</div>
 
-			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md'>
+			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center justify-between'>
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
 						<FilteredTags />
@@ -108,6 +110,7 @@ const Tips: FC<ITipsProps> = (props) => {
 					<div className='mt-6 flex justify-end'>
 						{!!count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
+								theme={theme}
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
 								total={count}

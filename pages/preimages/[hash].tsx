@@ -56,13 +56,13 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 				title='PreImages'
 				network={network}
 			/>
-			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue'>Preimage</h1>
+			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Preimage</h1>
 
 			{/* <div className="mt-8 mx-1">
 				<PreImagesTable tableData={tableData} />
 			</div> */}
 
-			<div className='rounded-xxl bg-white p-3 shadow-md md:p-8'>
+			<div className='rounded-xxl bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8'>
 				<div>
 					<PreImagesTable preimages={[data]} />
 				</div>

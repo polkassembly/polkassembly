@@ -118,7 +118,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 							columns={columns}
 							pagination={false}
 						/>
-						<div className='z-10 mt-6 flex justify-end bg-white'>
+						<div className='z-10 mt-6 flex justify-end bg-white dark:bg-section-dark-overlay'>
 							<Pagination
 								size='small'
 								defaultCurrent={1}

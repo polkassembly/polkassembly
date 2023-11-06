@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
+import { Button, Form, MenuProps, Tooltip } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -27,7 +28,6 @@ import { IComment } from './Comment';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import DeleteIcon from '~assets/icons/delete.svg';
 import EditIcon from '~assets/icons/edit-i.svg';
-import CopyIcon from '~assets/icons/copy.svg';
 import ReplyIcon from '~assets/icons/reply.svg';
 import {
 	AgainstIcon,
@@ -39,7 +39,8 @@ import {
 	SlightlyAgainstUnfilledIcon,
 	NeutralUnfilledIcon,
 	SlightlyForUnfilledIcon,
-	ForUnfilledIcon
+	ForUnfilledIcon,
+	CopyIcon
 } from '~src/ui-components/CustomIcons';
 
 import { poppins } from 'pages/_app';
@@ -53,6 +54,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { checkIsProposer } from '../utils/checkIsProposer';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import { useTheme } from 'next-themes';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -83,6 +85,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { resolvedTheme: theme } = useTheme();
 
 	const [replyForm] = Form.useForm();
 	const [form] = Form.useForm();
@@ -524,7 +527,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						copyLink();
 					}}
 				>
-					<CopyIcon className='mr-1' /> Copy link
+					<CopyIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' /> Copy link
 				</div>
 			)
 		},
@@ -624,7 +627,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}}
 							className='mb-0'
 						/>
-						<div className='background mb-[10px] mt-[-25px] h-[70px] rounded-e-md bg-gray-100 p-2'>
+						<div className='background mb-[10px] mt-[-25px] h-[70px] rounded-md rounded-e-md border-0 border-solid bg-gray-100 p-2 dark:border dark:border-[#3B444F] dark:bg-transparent'>
 							<div className='flex gap-[2px] text-[12px] text-[#334D6E]'>
 								Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5>
 							</div>
@@ -665,13 +668,13 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									<Button
 										htmlType='button'
 										onClick={handleCancel}
-										className='mr-2 flex h-[26px] items-center'
+										className='mr-2 flex h-[26px] items-center dark:border-borderColorDark dark:bg-transparent dark:text-white'
 									>
 										<CloseOutlined />
 									</Button>
 									<Button
 										htmlType='submit'
-										className='flex h-[26px] items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+										className='flex h-[26px] items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-transparent'
 									>
 										<CheckOutlined />
 									</Button>
@@ -682,11 +685,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				) : (
 					<>
 						<Markdown
+							theme={theme}
 							md={content}
-							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm md:px-4'
+							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 						/>
 
-						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white'>
+						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>
 							<CommentReactionBar
 								className='reactions mr-0'
 								commentId={commentId}
@@ -703,10 +707,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											disabled={props.disableEdit}
 											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
 												props.isSubsquareUser ? 'disabled-reply' : ''
-											}`}
+											} dark:bg-transparent dark:text-blue-dark-helper`}
 											onClick={props.isSubsquareUser ? () => {} : toggleReply}
 										>
-											<ReplyIcon className='mr-1' /> Reply
+											<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper' /> Reply
 										</Button>
 									</Tooltip>
 								) : (
@@ -714,22 +718,23 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 										disabled={props.disableEdit}
 										className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
 											props.isSubsquareUser ? 'disabled-reply' : ''
-										}`}
+										} dark:bg-transparent dark:text-blue-dark-helper`}
 										onClick={props.isSubsquareUser ? () => {} : toggleReply}
 									>
-										<ReplyIcon className='mr-1' /> Reply
+										<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper' /> Reply
 									</Button>
 								))}
 							<Dropdown
+								theme={theme}
 								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
 								overlayClassName='sentiment-dropdown z-[1056]'
 								placement='bottomRight'
 								menu={{ items }}
 							>
-								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100 dark:text-blue-dark-helper' />
 							</Dropdown>
 							{comment.isError && (
-								<div className='ml-auto flex text-xs text-lightBlue'>
+								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
 									<Caution className='icon-container relative top-[4px] text-2xl' />
 									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Comment not posted</span>
 									<div
@@ -770,14 +775,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											htmlType='button'
 											disabled={loadingReply}
 											onClick={handleReplyCancel}
-											className='mr-2 flex items-center'
+											className='mr-2 flex items-center dark:border-[#3B444F] dark:bg-transparent dark:text-white'
 										>
 											<CloseOutlined /> Cancel
 										</Button>
 										<Button
 											htmlType='submit'
 											disabled={loadingReply}
-											className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+											className='flex items-center border-none bg-pink_primary text-white hover:bg-pink_secondary'
 										>
 											<CheckOutlined /> Reply
 										</Button>

@@ -34,6 +34,7 @@ import { useDispatch } from 'react-redux';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import Balance from '../Balance';
 import Address from '~src/ui-components/Address';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -60,6 +61,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { api, apiReady } = useApiContext();
 	const [form] = Form.useForm();
+	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>(loginAddress);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
@@ -215,7 +217,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 		>
 			<Modal
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<TipIcon className='mr-[6px]' />
 						Give a Tip
 					</div>
@@ -229,7 +231,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 text-sm'>
 						<Button
 							key='back'
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary font-semibold tracking-wide text-pink_primary'
+							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary font-semibold tracking-wide text-pink_primary dark:bg-transparent'
 							onClick={handleCancel}
 							disabled={loadingStatus.isLoading}
 						>
@@ -255,14 +257,14 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 				>
 					{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
 						<Alert
-							className='mt-6 rounded-[4px] text-bodyBlue'
+							className='mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-medium'
 							showIcon
 							type='error'
 							message='Insufficient Balance for Tipping'
 						/>
 					) : null}
-					<div className='mt-6 flex items-center justify-between text-lightBlue'>
-						<label className='text-sm text-lightBlue'>Your Address</label>
+					<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 						{address && (
 							<Balance
 								isBalanceUpdated={isBalanceUpdated}
@@ -272,7 +274,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 						)}
 					</div>
 					<div className='flex w-full items-end gap-2 text-sm '>
-						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2'>
+						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:bg-transparent'>
 							<Address
 								address={address}
 								isTruncateUsername={false}
@@ -301,10 +303,10 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 							disabled={loadingStatus.isLoading || !network}
 						>
 							<div className='mt-0 border-0 pt-6'>
-								<span className='text-[15px] font-medium tracking-wide text-bodyBlue'>
+								<span className='text-[15px] font-medium tracking-wide text-bodyBlue dark:text-blue-dark-medium'>
 									Please select a tip you would like to give to {username.length > 20 ? `${username.slice(0, 20)}...` : username} :
 								</span>
-								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue'>
+								<div className='mt-3 flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium'>
 									{TIPS.map((tip) => {
 										const [tipBlance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
 										return (
@@ -339,6 +341,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 									isBalanceUpdated={open}
 									className='mt-6'
 									noRules
+									theme={theme}
 								/>
 								{!!form.getFieldValue('balance')?.length &&
 								(isNaN(Number(form.getFieldValue('balance'))) ||
@@ -365,14 +368,14 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 						</Form>
 						{!!existentialDeposit && (
 							<div className='mt-4 flex items-center gap-4 text-sm'>
-								<span className='font-medium tracking-wide text-lightBlue'>
+								<span className='font-medium tracking-wide text-lightBlue dark:text-blue-dark-medium'>
 									Existential Deposit
 									<HelperTooltip
 										className='ml-1'
 										text='Minimum balance to keep address live'
 									/>
 								</span>
-								<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue'>
+								<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue dark:text-blue-dark-medium'>
 									{formatedBalance(existentialDeposit.toString(), unit, 2)} {unit}
 								</span>
 							</div>
@@ -397,7 +400,6 @@ export default styled(Tipping)`
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: rgba(87, 109, 139, 0.8) !important;
 	}
 	.ant-form-item {
 		margin-bottom: 0px !important;

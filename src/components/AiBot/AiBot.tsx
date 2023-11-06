@@ -18,6 +18,7 @@ import FabButton from '~assets/icons/fab-icon.svg';
 import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -47,6 +48,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const { id } = useUserDetailsSelector();
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	// useEffect(() => {
 	// if (!isAIChatBotOpen) return;
@@ -91,7 +93,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		{
 			component: (
 				<div
-					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue'
+					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
 					<CreateDiscussionIcon className='ml-[-53px] mt-[5px] cursor-pointer' />
@@ -100,7 +102,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			)
 		},
 		// {
-		// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+		// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue dark:text-blue-dark-medium hover:text-bodyBlue dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 		// onClick={() => {
 		// if (!grillChat)
 		// (window as any).DocsBotAI.toggle();
@@ -117,7 +119,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					href='https://polkassembly.hellonext.co/'
 					target='_blank'
 					rel='noreferrer'
-					className='ml-[-34px] text-lightBlue hover:text-bodyBlue'
+					className='ml-[-34px] text-lightBlue hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
 				>
 					<div className='flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle transition delay-150  duration-300 hover:bg-[#e5007a12]'>
 						<CautionIcon className='ml-[-105px] mt-[5px] cursor-pointer' />
@@ -130,7 +132,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	if (treasuryProposalCreationAllowedNetwork.includes(network?.toUpperCase())) {
 		data.splice(0, 0, {
-			component: <OpenGovTreasuryProposal />
+			component: <OpenGovTreasuryProposal theme={theme} />
 		});
 	}
 
@@ -138,7 +140,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		data.splice(data.length - 1, 0, {
 			component: (
 				<div
-					className='ml-[-34px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue'
+					className='ml-[-34px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
 					onClick={() => {
 						if (!isAIChatBotOpen) setGrillChat(!grillChat);
 					}}
@@ -199,7 +201,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				<List
 					style={{ bottom: '85px', position: 'fixed', right: '20px', zIndex: '999' }}
 					header={
-						<div className='flex h-[38px] justify-between text-xl font-semibold text-lightBlue'>
+						<div className='flex h-[38px] justify-between text-xl font-semibold text-lightBlue dark:text-white'>
 							<p className='mt-2 h-[25px]'>Menu</p>
 							<CloseIcon
 								className='mt-4 cursor-pointer'
@@ -215,8 +217,8 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					className={`${className}
 					${
 						floatButtonOpen
-							? 'max-h-[384px] w-[311px] translate-y-0 rounded-3xl bg-white opacity-100 shadow-[0_15px_35px_-20px_rgba(178,59,123,1)] transition-all delay-200 duration-500 max-[350px]:right-[5px]'
-							: 'max-h-[384px] w-[311px] -translate-y-2 rounded-3xl bg-white opacity-0 shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)] transition-all duration-500 max-[350px]:right-[5px]'
+							? 'max-h-[384px] w-[311px] translate-y-0 rounded-3xl bg-white opacity-100 shadow-[0_15px_35px_-20px_rgba(178,59,123,1)] transition-all delay-200 duration-500 dark:bg-section-dark-overlay max-[350px]:right-[5px]'
+							: 'max-h-[384px] w-[311px] -translate-y-2 rounded-3xl bg-white opacity-0 shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)] transition-all duration-500 dark:bg-section-dark-overlay max-[350px]:right-[5px]'
 					}
 					${floatButtonOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
 					renderItem={(item) => <List.Item>{item.component}</List.Item>}

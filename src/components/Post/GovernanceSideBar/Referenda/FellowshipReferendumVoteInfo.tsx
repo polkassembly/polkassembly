@@ -18,7 +18,7 @@ const FellowshipReferendumVoteInfo: FC<IFellowshipReferendumVoteInfoProps> = (pr
 
 	return (
 		<GovSidebarCard className={className}>
-			<h6 className='dashboard-heading mb-6'>Voting Status</h6>
+			<h6 className='dashboard-heading mb-6 dark:text-white'>Voting Status</h6>
 
 			{tally && (
 				<>
@@ -27,7 +27,7 @@ const FellowshipReferendumVoteInfo: FC<IFellowshipReferendumVoteInfoProps> = (pr
 						className='vote-progress'
 						naysNum={Number(tally?.nays)}
 					/>
-					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D]'>
+					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] dark:text-blue-dark-medium'>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
 								<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Ayes</span>

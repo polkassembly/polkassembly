@@ -110,6 +110,8 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 				Second
 			</Button>
 			<Modal
+				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+				wrapClassName='dark:bg-modalOverlayDark'
 				title='Second Proposal'
 				open={showModal}
 				onCancel={() => setShowModal(false)}

@@ -33,6 +33,8 @@ import TFALoginForm from './TFALoginForm';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useTheme } from 'next-themes';
+import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 import Image from 'next/image';
 
 interface Props {
@@ -58,6 +60,7 @@ const initAuthResponse: IAuthResponse = {
 };
 
 export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
+	const { resolvedTheme: theme } = useTheme();
 	switch (which) {
 		case Wallet.POLKADOT:
 			return <PolkadotJSIcon className={`h-8 w-8 ${className}`} />;
@@ -82,7 +85,11 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 		case Wallet.METAMASK:
 			return <MetamaskIcon className={`h-8 w-8 ${className}`} />;
 		case Wallet.POLKASAFE:
-			return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
+			if (theme === 'dark') {
+				return <PolkaSafeDarkIcon className={`relative -top-1 scale-[2] ${className}`} />;
+			} else {
+				return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
+			}
 		default:
 			return null;
 	}
@@ -381,8 +388,8 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 	};
 
 	return (
-		<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md'>
-			<h3 className='flex flex-col gap-y-4 text-2xl font-semibold text-[#1E232C]'>
+		<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
+			<h3 className='flex flex-col gap-y-4 text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>
 				<span>Login</span>
 				<p className='flex items-center justify-center gap-x-2'>
 					<span className='mt-2'>

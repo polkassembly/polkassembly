@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CalendarFilled } from '@ant-design/icons';
-import { Calendar, List, Spin, Tooltip } from 'antd';
+import { Calendar as StyledCalendar, List, Spin, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -26,15 +26,50 @@ import {
 } from '~src/util/getCalendarEvents';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 dayjs.extend(localizedFormat);
 interface Props {
 	className?: string;
 }
+const Calendar = styled(StyledCalendar)`
+	.ant-picker-panel {
+		background: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+	}
+	th {
+		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#000')} !important;
+	}
+	.ant-picker-cell {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+	}
+	.ant-select-selector {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+	}
+	.ant-select-item {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+	}
+	.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+	}
+	.ant-radio-button-wrapper {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+	}
+	.ant-select-dropdown {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+	}
+	.ant-select-selection-item {
+		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#0d0d0d')} !important;
+	}
+`;
 
 const UpcomingEvents = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const [showCalendar, setShowCalendar] = useState<boolean>(false);
 	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
@@ -378,7 +413,7 @@ const UpcomingEvents = ({ className }: Props) => {
 					color='#E5007A'
 					title={eventList}
 				>
-					<div className='calenderDate'>{value.format('D')}</div>
+					<div className='calenderDate dark:bg-[#FF0088]'>{value.format('D')}</div>
 				</Tooltip>
 			);
 		}
@@ -387,9 +422,10 @@ const UpcomingEvents = ({ className }: Props) => {
 	const CalendarElement = () => (
 		<Spin spinning={loading}>
 			<Calendar
-				className='mb-4 rounded-xl border border-solid border-gray-200'
+				className='mb-4 rounded-xl border border-solid border-gray-200 dark:border-separatorDark dark:bg-section-dark-overlay'
 				fullscreen={false}
 				cellRender={dateCellRender}
+				theme={theme}
 			/>
 		</Spin>
 	);
@@ -402,20 +438,20 @@ const UpcomingEvents = ({ className }: Props) => {
 				dataSource={calendarEvents.sort((a, b) => (a?.end_time?.getTime() || a?.start_time?.getTime()) - (b?.end_time?.getTime() || b?.start_time?.getTime())).reverse()}
 				renderItem={(item) => {
 					return (
-						<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>
+						<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-blue-light-high dark:text-blue-dark-high dark:text-blue-dark-high`}>
 							<a
 								{...(item.url ? { href: item.url } : {})}
 								target='_blank'
 								rel='noreferrer'
 								className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}
 							>
-								<div className='mb-1 flex items-center text-xs text-lightBlue'>
+								<div className='mb-1 flex items-center text-xs text-lightBlue dark:text-blue-dark-medium'>
 									{dayjs(item.end_time).format('MMM D, YYYY')}
-									<span className='mx-2 inline-block h-[4px] w-[4px] rounded-full bg-bodyBlue'></span>
+									<span className='mx-2 inline-block h-[4px] w-[4px] rounded-full bg-bodyBlue dark:bg-blue-dark-medium'></span>
 									{dayjs(item.end_time).format('h:mm a')}
 								</div>
 
-								<div className='text-sm text-bodyBlue'>{item.content}</div>
+								<div className='text-sm text-bodyBlue dark:font-normal dark:text-blue-dark-high'>{item.content}</div>
 							</a>
 						</List.Item>
 					);
@@ -429,9 +465,9 @@ const UpcomingEvents = ({ className }: Props) => {
 	}
 
 	return (
-		<div className={`${className} h-[520px] rounded-xxl bg-white p-4 drop-shadow-md lg:h-[550px] lg:p-6`}>
+		<div className={`${className} h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:border-[#29323C] dark:bg-section-dark-overlay lg:h-[550px] lg:p-6`}>
 			<div className='mb-5 flex items-center justify-between'>
-				<h2 className='text-xl font-medium leading-8 text-bodyBlue xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>Upcoming Events</h2>
+				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>Upcoming Events</h2>
 				<CalendarFilled
 					className='inline-block cursor-pointer lg:hidden'
 					onClick={() => setShowCalendar(!showCalendar)}
@@ -442,7 +478,7 @@ const UpcomingEvents = ({ className }: Props) => {
 			<div className='hidden h-[520px] lg:flex lg:h-[450px] lg:flex-row'>
 				<div className='w-full p-3 lg:w-[55%]'>
 					<CalendarElement />
-					<span className='text-xs text-navBlue'>*DateTime in UTC</span>
+					<span className='text-xs text-navBlue dark:text-blue-dark-medium'>*DateTime in UTC</span>
 				</div>
 
 				<div className='ml-4 w-[45%] p-2'>

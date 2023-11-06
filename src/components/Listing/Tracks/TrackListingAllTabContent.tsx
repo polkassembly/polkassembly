@@ -60,7 +60,9 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 										target={showSimilarPost ? '_blank' : '_self'}
 									>
 										<GovernanceCard
-											className={`${showSimilarPost ? 'mb-6 rounded-2xl bg-white' : (index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
+											className={`${showSimilarPost ? 'mb-6 rounded-2xl bg-white dark:bg-section-dark-overlay' : (index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${
+												poppins.variable
+											} ${poppins.className}`}
 											postReactionCount={post?.post_reactions}
 											address={post.proposer}
 											commentsCount={post.comments_count || 0}

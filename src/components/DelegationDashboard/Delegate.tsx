@@ -77,14 +77,14 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	}, [address, delegationDashboardAddress, api, apiReady]);
 
 	return (
-		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6`}>
+		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6 dark:bg-section-dark-overlay`}>
 			<div
 				onClick={() => setExpandProposals(!expandProposals)}
 				className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex cursor-pointer items-center justify-between'
 			>
 				<div className='jutify-center flex items-center gap-2'>
 					<DelegatedIcon className='mr-[4px]' />
-					<span className='text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue'>Delegate</span>
+					<span className='text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Delegate</span>
 				</div>
 				<div className='p-2'>{!expandProposals ? <ExpandIcon /> : <CollapseIcon />}</div>
 			</div>
@@ -93,23 +93,23 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 				<div className='mt-[24px]'>
 					{disabled && (
 						<Alert
-							className='text-sm font-normal text-bodyBlue'
+							className='text-sm font-normal text-bodyBlue dark:text-white'
 							showIcon
 							message='You have already delegated for this track.'
 						/>
 					)}
-					<h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue ${disabled && 'opacity-50'}`}>
+					<h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white ${disabled && 'opacity-50'}`}>
 						Enter an address or Select from the list below to delegate your voting power
 					</h4>
 
 					<div className='flex items-center gap-4'>
-						<div className='flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-[#D2D8E0] text-[14px] font-normal text-[#576D8BCC]'>
+						<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-[#D2D8E0] text-[14px] font-normal text-[#576D8BCC] dark:border-separatorDark dark:text-white'>
 							<Input
 								disabled={disabled}
 								placeholder='Enter address to Delegate vote'
 								onChange={(e) => setAddress(e.target.value)}
 								value={address}
-								className='h-[44px] border-none'
+								className='h-[44px] border-none dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							/>
 
 							<Button

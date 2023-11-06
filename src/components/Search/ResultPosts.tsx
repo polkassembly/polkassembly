@@ -50,8 +50,8 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 						>
 							<div
 								className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] min-h-[150px] cursor-pointer flex-col rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-6 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 ${
-									index % 2 === 1 && 'bg-[#fafafb]'
-								} ${index === postsData.length - 1 && 'border-b-[1px]'} max-md:flex-wrap`}
+									index % 2 === 1 && 'bg-[#fafafb] dark:bg-[#161616]'
+								} ${index === postsData.length - 1 && 'border-b-[1px]'} dark:border-none max-md:flex-wrap`}
 							>
 								<div className='flex items-center gap-2 '>
 									{post?.proposer_address ? (
@@ -61,9 +61,9 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 											usernameClassName='text-xs'
 										/>
 									) : (
-										<div className='mb-1 text-xs font-medium text-lightBlue'>{post?.username}</div>
+										<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>{post?.username}</div>
 									)}
-									<div className='flex items-center gap-2 text-xs text-lightBlue md:hidden'>
+									<div className='flex items-center gap-2 text-xs text-lightBlue dark:text-blue-dark-medium md:hidden'>
 										<Divider
 											style={{ border: '1px solid var(--lightBlue)' }}
 											type='vertical'
@@ -72,23 +72,23 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 										{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 									</div>
 								</div>
-								<div className='mt-2 text-sm font-medium text-bodyBlue'>{titleString}</div>
+								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</div>
 								<Markdown
 									imgHidden
 									md={post?.content?.slice(0, 250) + ' .....'}
 									className='expand-content my-2 text-sm font-normal tracking-[0.01em] text-[#8696a9]'
 								/>
 								<div className='my-2 flex flex-shrink-0 flex-wrap gap-1 max-sm:mt-2'>
-									<div className='flex items-center gap-2 text-xs text-lightBlue max-sm:hidden'>
-										<div className='flex items-center gap-1 text-xs text-lightBlue'>
+									<div className='flex items-center gap-2 text-xs text-lightBlue dark:text-blue-dark-medium max-sm:hidden'>
+										<div className='flex items-center gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
 											<LikeIcon />
 											<span>{post?.reaction_count?.['👍'] || 0}</span>
 										</div>
-										<div className='flex items-center gap-1 text-xs text-lightBlue'>
+										<div className='flex items-center gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
 											<DislikeIcon />
 											<span>{post?.reaction_count?.['👎'] || 0}</span>
 										</div>
-										<div className='flex items-center gap-1 text-xs text-lightBlue'>
+										<div className='flex items-center gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
 											<CommentIcon />
 											<span>{post?.comments_count || 0}</span>
 										</div>
@@ -102,19 +102,23 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 											{post?.tags?.slice(0, 2).map((tag: string, index: number) => (
 												<div
 													key={index}
-													className='rounded-[50px] border-[1px] border-solid border-[#D2D8E0] bg-white px-[14px] py-1 text-[10px] font-medium text-lightBlue'
+													className='rounded-[50px] border-[1px] border-solid border-[#D2D8E0] bg-white px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:bg-section-dark-overlay dark:text-blue-dark-medium'
 												>
 													{tag}
 												</div>
 											))}
-											{post?.tags.length > 2 && <span className='rounded-[50px] bg-[#e7e9ee] px-2 py-1 text-[10px] font-medium text-bodyBlue'>+{post?.tags.length - 2}</span>}
+											{post?.tags.length > 2 && (
+												<span className='rounded-[50px] bg-[#e7e9ee] px-2 py-1 text-[10px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+													+{post?.tags.length - 2}
+												</span>
+											)}
 											<Divider
 												style={{ border: '1px solid var(--lightBlue)' }}
 												type='vertical'
 											/>
 										</div>
 									)}
-									<div className='flex items-center gap-2 text-xs text-lightBlue max-sm:hidden'>
+									<div className='flex items-center gap-2 text-xs text-lightBlue dark:text-blue-dark-medium max-sm:hidden'>
 										<ClockCircleOutlined className='-mr-1' />
 										{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 										<Divider
@@ -143,7 +147,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 											/>
 										</div>
 									)}
-									<div className='flex items-center gap-2 text-xs text-lightBlue'>
+									<div className='flex items-center gap-2 text-xs text-lightBlue dark:text-blue-dark-medium'>
 										in{' '}
 										<span className='capitalize text-pink_primary'>
 											{post?.post_type === 'referendums_v2' ? 'Opengov referenda' : (post?.post_type as ProposalType)?.split('_')?.join(' ')}

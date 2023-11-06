@@ -5,6 +5,7 @@
 /* eslint-disable sort-keys */
 module.exports = {
 	important: true,
+	darkMode: 'class',
 	content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{jsx,tsx}'],
 	theme: {
 		extend: {
@@ -13,7 +14,7 @@ module.exports = {
 			},
 			colors: {
 				navBlue: 'var(--navBlue)',
-				blue: 'var(--blue)',
+				// blue: 'var(--blue)',
 				sidebarBlue: 'var(--sidebarBlue)',
 				bodyBlue: 'var(--bodyBlue)',
 				lightBlue: 'var(--lightBlue)',
@@ -36,14 +37,77 @@ module.exports = {
 				red_primary: 'var(--red_primary)',
 				red_secondary: 'var(--red_secondary)',
 				aye_green: 'var(--aye_green)',
+				aye_green_Dark: 'var(--aye_green_Dark)',
 				nay_red: 'var(--nay_red)',
-				comment_bg: 'var(--comment_bg)'
+				nay_red_Dark: 'var(--nay_red_Dark)',
+				comment_bg: 'var(--comment_bg)',
+				separatorDark: 'var(--separatorDark)',
+				inactiveIconDark: 'var(--inactiveIconDark)',
+				modalOverlayDark: 'var(--modalOverlayDark)',
+				alertColorDark: 'var(--alertColorDark)',
+				disableStateDark: 'var(--disableStateDark)',
+				helperTextColorDark: 'var(--helperTextColorDark)',
+				borderColorDark: 'var(--borderColorDark)',
+				blue: {
+					light: {
+						disabled: '#96A4B6',
+						helper: '#576D8B',
+						medium: '#485F7D',
+						high: '#243A57'
+					},
+					dark: {
+						helper: '#FF60B5',
+						medium: '#909090',
+						high: '#FFFFFF'
+					}
+				},
+				red: {
+					light: {
+						text: '#A8071A',
+						medium: '#E91C26',
+						high: '#CF1322'
+					},
+					dark: {
+						text: '#A8071A',
+						medium: '#E91C26',
+						high: '#CF1322'
+					}
+				},
+				icon: {
+					light: {
+						active: '#243A57',
+						inactive: '#485F7D',
+						disabled: '#96A4B6'
+					},
+					dark: {
+						active: '#FF0088',
+						inactive: '#9E9E9E'
+					}
+				},
+				section: {
+					light: {
+						container: '#D2D8E0',
+						background: '#F5F6F8',
+						overlay: '#0000004D'
+					},
+					dark: {
+						container: '#3B444F',
+						background: '#1C1D1F',
+						garyBackground: '#282A2D',
+						overlay: '#0D0D0D'
+					}
+				},
+				pink: {
+					dark: {
+						primary: '#33071E'
+					}
+				}
 			},
 			screens: {
 				xs: '320px'
 			},
 			borderRadius: {
-				'xxl': '0.875rem'
+				xxl: '0.875rem'
 			}
 		}
 	},

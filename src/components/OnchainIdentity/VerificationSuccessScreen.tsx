@@ -4,9 +4,9 @@
 import React, { useState } from 'react';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
-import CloseIcon from '~assets/icons/close-icon.svg';
 import SuccessIcon from '~assets/icons/success-verification.svg';
 import { useRouter } from 'next/router';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -23,9 +23,9 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 		<Modal
 			zIndex={100000}
 			open={open}
-			className={`${poppins.variable} ${poppins.className} h-[300px] w-[600px] max-sm:w-full`}
-			wrapClassName={className}
-			closeIcon={<CloseIcon />}
+			className={`${poppins.variable} ${poppins.className} h-[300px] w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
 				onClose(false);
 			}}
@@ -35,7 +35,7 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 		>
 			<div className='-mt-[110px] flex flex-col items-center justify-center'>
 				<SuccessIcon />
-				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue'>{social} verified successfully</label>
+				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue dark:text-blue-dark-high'>{social} verified successfully</label>
 				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}
 				<Button
 					className='mt-6 h-[40px] rounded-[4px] border-none bg-pink_primary text-sm text-white'

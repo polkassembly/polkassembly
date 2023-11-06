@@ -34,7 +34,7 @@ export default function GroupCheckbox({ categoryOptions = [], title, classname, 
 	return (
 		<div className={classname}>
 			{!!title && (
-				<div className='mb-[16px] flex items-center gap-[8px] text-[#243A57]'>
+				<div className='mb-[16px] flex items-center gap-[8px] text-blue-light-high dark:text-blue-dark-high'>
 					{title && Icon ? <Icon /> : <Tips className='h-[20px] w-[20px]' />}
 
 					<h3 className='mb-[1px] text-[14px] font-semibold leading-[21px] tracking-wide'>{title}</h3>
@@ -45,7 +45,7 @@ export default function GroupCheckbox({ categoryOptions = [], title, classname, 
 					/>
 				</div>
 			)}
-			<div className='flex flex-col gap-[19px] text-[#243A57]'>
+			<div className='flex flex-col gap-[19px] text-blue-light-high dark:text-blue-dark-high'>
 				{categoryOptions.map((item: any) => (
 					<Row
 						key={item.value}
@@ -57,7 +57,7 @@ export default function GroupCheckbox({ categoryOptions = [], title, classname, 
 								name={item.value}
 								onChange={(e) => handleChange(e, item.value)}
 								checked={item.selected}
-								className='text-[#243A57]'
+								className='text-blue-light-high dark:text-blue-dark-high'
 							>
 								{item.label}
 							</Checkbox>

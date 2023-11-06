@@ -40,10 +40,10 @@ const SearchErrorsCard = ({
 
 	return ((filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && postResultsCounts === 0) || (filterBy === EFilterBy.People && peopleResultsCounts === 0) ? (
 		<div className='mb-5 mt-6 flex flex-col items-center justify-center'>
-			<div className='text-sm font-medium tracking-[0.01em] text-bodyBlue'>
+			<div className='text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 				<div className='mt-5 flex flex-col items-center justify-center'>
 					<EmptyResultsIcon />
-					<span className='mt-6 text-center text-sm font-medium tracking-[0.01em] text-bodyBlue'>
+					<span className='mt-6 text-center text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 						{!isSearchErr ? 'No search results found. You may want to try using different keywords.' : 'Please enter at least 3 characters to proceed.'}
 					</span>
 				</div>
@@ -56,7 +56,7 @@ const SearchErrorsCard = ({
 						setPeoplePage({ page: 1, totalPeople: 0 });
 						setIsSuperSearch(true);
 					}}
-					className='mt-6 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white'
+					className='mt-6 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:border-none'
 				>
 					<SuperSearchIcon />
 					<span>Use Super Search</span>
@@ -67,7 +67,7 @@ const SearchErrorsCard = ({
 					<span className='text-[10px] font-medium'>OR</span>
 				</Divider>
 			</div>
-			<div className='flex gap-1 text-sm font-medium tracking-[0.01em] text-bodyBlue'>
+			<div className='flex gap-1 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 				<span>See </span>
 				<span
 					onClick={() => {
@@ -83,7 +83,7 @@ const SearchErrorsCard = ({
 		</div>
 	) : !isSuperSearch ? (
 		<div className='mb-2 flex flex-col items-center justify-center'>
-			<label className='text-sm font-medium tracking-[0.01em] text-bodyBlue'>Didn’t find what you were looking for?</label>
+			<label className='text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>Didn’t find what you were looking for?</label>
 			<Button
 				onClick={() => {
 					setFilterBy(EFilterBy.Referenda);
@@ -91,7 +91,7 @@ const SearchErrorsCard = ({
 					setPeoplePage({ page: 1, totalPeople: 0 });
 					setIsSuperSearch(true);
 				}}
-				className='mt-4 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white'
+				className='mt-4 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:border-none'
 			>
 				<SuperSearchIcon />
 				<span>Use Super Search</span>

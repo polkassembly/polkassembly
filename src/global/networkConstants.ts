@@ -1182,7 +1182,7 @@ export const chainProperties: types.ChainPropType = {
 export const chainLinks: types.ChainLinksType = {
 	[network.POLKADOT]: {
 		blockExplorer: 'https://polkadot.api.subscan.io/',
-		discord: 'https://discord.gg/wGUDt2p',
+		discord: 'https://discord.gg/polkadot',
 		github: 'https://github.com/paritytech/polkadot',
 		homepage: 'https://polkadot.network/',
 		reddit: 'https://www.reddit.com/r/polkadot',

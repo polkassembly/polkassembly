@@ -11,6 +11,8 @@ import { iconMapper, pipNotification, postOriginMapper, titleMapper } from './ut
 import { ACTIONS } from '../Reducer/action';
 import { INotificationObject } from '../types';
 import { Collapse } from '../common-ui/Collapse';
+import { useTheme } from 'next-themes';
+
 // import { ProposalType } from '~src/global/proposalType';
 
 const { Panel } = Collapse;
@@ -36,6 +38,7 @@ export default function PipNotification({ onSetNotification, userNotification, d
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
 	const pipTwoOptions = getConsecutiveKeys();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleAllClick = (checked: boolean) => {
 		dispatch({
@@ -129,7 +132,8 @@ export default function PipNotification({ onSetNotification, userNotification, d
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -140,7 +144,7 @@ export default function PipNotification({ onSetNotification, userNotification, d
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<OverallPostsNotification />
-						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Pip Notifications</h3>
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Pip Notifications</h3>
 						{!!active && (
 							<>
 								<span className='flex items-center gap-[8px]'>
@@ -153,7 +157,7 @@ export default function PipNotification({ onSetNotification, userNotification, d
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D]'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
 								</span>
 							</>
 						)}
@@ -171,7 +175,11 @@ export default function PipNotification({ onSetNotification, userNotification, d
 											<GroupCheckbox
 												categoryOptions={options[postType]}
 												title={postOriginMapper(postType)}
-												classname={i === category.length - 1 ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]' : 'md:basis-[50%]'}
+												classname={
+													i === category.length - 1
+														? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px] dark:border-separatorDark'
+														: 'md:basis-[50%]'
+												}
 												Icon={iconMapper(postType)}
 												onChange={handleChange}
 												handleCategoryAllClick={handleCategoryAllClick}
@@ -188,7 +196,7 @@ export default function PipNotification({ onSetNotification, userNotification, d
 							</div>
 							{i !== pipTwoOptions.length - 1 && (
 								<Divider
-									className='border-2 border-[#D2D8E0]'
+									className='border-2 border-[#D2D8E0] dark:border-separatorDark'
 									dashed
 								/>
 							)}

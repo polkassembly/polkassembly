@@ -9,7 +9,7 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import TotalAmountBreakdown from './TotalAmountBreakdown';
-import CloseIcon from '~assets/icons/close-icon.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import OnChainIdentityIcon from '~assets/icons/onchain-identity.svg';
 import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
@@ -350,6 +350,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				/>
 			)}
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				maskClosable={false}
 				open={isExitModal}
 				onCancel={() => {
@@ -357,14 +358,16 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					setIsExitModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px]`}
+				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={
-					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue'>Exit Verification</div>
+					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+						Exit Verification
+					</div>
 				}
 			>
 				<div className='mt-6'>
-					<span className='text-sm text-bodyBlue'>Your verification is pending. Are you sure you want to exit verification process? </span>
+					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>Your verification is pending. Are you sure you want to exit verification process? </span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
 						<Button
 							onClick={() => {
@@ -391,14 +394,15 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			</Modal>
 
 			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
 				footer={false}
 				open={open}
 				onCancel={handleCancel}
 				maskClosable={false}
-				closeIcon={<CloseIcon />}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
-					<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>
+					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (
 							<span className='text-2xl'>
 								<SetIdentityIcon />
@@ -406,14 +410,14 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						) : (
 							<OnChainIdentityIcon />
 						)}
-						<span className='text-bodyBlue'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
+						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
 						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
-							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue'>
+							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue dark:text-blue-dark-high'>
 								<IdentityProgressIcon />
 								In Progress
 							</span>
 						)}
-					</span>
+					</div>
 				}
 			>
 				<Spin

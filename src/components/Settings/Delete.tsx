@@ -18,6 +18,7 @@ import { Collapse } from './Notifications/common-ui/Collapse';
 import DeleteIcon from '~assets/icons/delete-icon-settings.svg';
 import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
+import { useTheme } from 'next-themes';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 const { Panel } = Collapse;
@@ -32,6 +33,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	const [form] = Form.useForm();
 	const router = useRouter();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleLogout = async () => {
 		dispatch(logout());
@@ -72,22 +74,23 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 		setError('');
 		setShowModal(false);
 	};
-	const Title = <span className='text-lg font-medium tracking-wide text-sidebarBlue'>Delete Account</span>;
+	const Title = <div className='text-lg font-medium tracking-wide text-sidebarBlue dark:bg-section-dark-overlay dark:text-white'>Delete Account</div>;
 	const { Option } = Select;
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
+			theme={theme}
 		>
 			<Panel
 				header={
 					<div className='channel-header flex items-center gap-[6px]'>
 						<DeleteIcon />
-						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-[#243A57] md:text-[18px]'>Delete Account</h3>
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Delete Account</h3>
 					</div>
 				}
 				key='1'
@@ -97,8 +100,11 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 					form={form}
 					onFinish={handleSubmit}
 				>
-					<p className='text-[14px] text-[#243A57]'>Please note that this action is irreversible and all the data associated with your account will be permanently deleted.</p>
+					<p className='text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+						Please note that this action is irreversible and all the data associated with your account will be permanently deleted.
+					</p>
 					<Modal
+						wrapClassName='dark:bg-modalOverlayDark'
 						closable={false}
 						title={Title}
 						open={showModal}
@@ -122,7 +128,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								Cancel
 							</Button>
 						]}
-						className={className}
+						className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						{error && (
 							<div className='mb-4'>
@@ -131,7 +137,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						)}
 						<article>
 							<label
-								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'
 								htmlFor='reason'
 							>
 								Why are you deleting your account?
@@ -152,7 +158,8 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									}}
 									size='large'
 									placeholder='Select a reason'
-									className='select-reason rounded-md border-grey_border'
+									className='select-reason rounded-md border-grey_border dark:text-white'
+									popupClassName='z-[1060] dark:border-0 dark:border-none dark:bg-section-dark-background'
 								>
 									<Option value='I use another platform for my governance needs'>I use another platform for my governance needs</Option>
 									<Option value='I do not hold any DOT and would not be using Polkassembly anymore'>I do not hold any DOT and would not be using Polkassembly.</Option>
@@ -173,13 +180,14 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									<Input.TextArea
 										placeholder='Other reason'
 										id='other'
+										className='dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									/>
 								</Form.Item>
 							) : null}
 						</article>
 						<article className='mt-12'>
 							<label
-								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue'
+								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'
 								htmlFor='password'
 							>
 								To continue, re-enter your password
@@ -190,7 +198,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							>
 								<Input.Password
 									placeholder='Password'
-									className='rounded-md border-grey_border px-4 py-3'
+									className='rounded-md border-grey_border px-4 py-3 dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] [&>input]:bg-transparent dark:[&>input]:text-blue-dark-high'
 									id='password'
 								/>
 							</Form.Item>
@@ -221,5 +229,8 @@ export default styled(Delete)`
 	.ant-select-item-option-content {
 		white-space: unset !important;
 		background-color: red !important;
+	}
+	input::placeholder {
+		color: #909090;
 	}
 `;

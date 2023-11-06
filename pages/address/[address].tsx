@@ -165,17 +165,18 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				title='User Profile'
 				network={network}
 			/>
-			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 md:bg-white md:pb-0 md:shadow-md ${className}`}>
+			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 dark:bg-section-dark-overlay md:bg-white md:pb-0 md:shadow-md ${className}`}>
 				<Details
 					userPosts={userPosts.data}
 					userProfile={userProfile || null}
 				/>
-				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 md:flex'>
+				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 dark:bg-section-dark-overlay md:flex'>
 					<div className='flex items-start justify-between'>
-						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue '>Activity</h2>
+						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue dark:text-white'>Activity</h2>
 						{isOpenGovSupported(network) && (
 							<Select
 								value={selectedGov}
+								className='dark:text-blue-dark-medium dark:[&>.ant-select-selector]:bg-section-dark-overlay'
 								style={{
 									width: 120
 								}}
@@ -184,20 +185,22 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 								}}
 								options={[
 									{
-										label: 'Gov1',
+										label: <span className='dark:text-blue-dark-high'>Gov1</span>,
 										value: 'gov1'
 									},
 									{
-										label: 'OpenGov',
+										label: <span className='dark:text-blue-dark-high'>OpenGov</span>,
 										value: 'open_gov'
 									}
 								]}
+								popupClassName='z-[1060] dark:border-0 dark:border-none dark:bg-section-dark-overlay'
 							/>
 						)}
 					</div>
 					{!votesHistoryUnavailableNetworks.includes(network) && (
 						<div className='mb-6'>
 							<Segmented
+								className='mb-4 h-[36px] w-[130px] dark:bg-section-dark-background'
 								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
 								onChange={(e) => setProfileHistory(e as EProfileHistory)}
 								value={profileHistory}
@@ -215,7 +218,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 					) : (
 						<div className='fullHeight'>
 							<Tabs
-								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue dark:bg-section-dark-overlay'
 								type='card'
 								items={tabItems as any}
 								theme={theme}

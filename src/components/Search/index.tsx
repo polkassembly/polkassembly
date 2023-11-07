@@ -36,6 +36,7 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import PaLogoDark from '~assets/PALogoDark.svg';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -935,7 +936,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<span className='mt-8 text-center tracking-[0.01em]'>Welcome to the all new & supercharged search!</span>
 						<div className='mt-2 flex items-center gap-1 text-xs font-medium tracking-[0.01em]'>
 							powered by
-							<PaLogo className='h-[30px] w-[99px]' />
+							{theme === 'dark' ? <PaLogoDark /> : <PaLogo className='h-[30px] w-[99px]' />}
 						</div>
 					</div>
 				)}

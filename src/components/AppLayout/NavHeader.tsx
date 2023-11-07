@@ -179,6 +179,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						e.preventDefault();
 						e.stopPropagation();
 						handleLogout(username || '');
+						window.location.reload();
 					}}
 				>
 					<IconLogout className='userdropdown-icon text-2xl' />

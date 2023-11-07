@@ -4,7 +4,7 @@
 
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Form, Input, Modal, Skeleton } from 'antd';
+import { Alert, Button, Divider, Form, Input, Modal, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
@@ -23,6 +23,7 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import { IconSignup } from '~src/ui-components/CustomIcons';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
@@ -59,8 +60,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState(false);
 	const dispatch = useDispatch();
-
 	const [isPassword, setIsPassword] = useState(false);
+	const [inputPassword, setInputPassword] = useState(false);
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [signUpInfo, setSignUpInfo] = useState({
@@ -151,235 +152,261 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	}, [isDelegation]);
 
 	return (
-		<Container
-			className={`flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay ${className}`}
-			theme={theme}
-		>
-			<div className='grid grid-cols-2'>
-				<div
-					onClick={() => {
-						setIsPassword(false);
-						if (error) setError('');
-					}}
-					className={`flex cursor-pointer flex-col items-center justify-center gap-x-2 gap-y-2 border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm ${
-						!isPassword && 'border-pink_primary'
-					}`}
-				>
-					<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-8 sm:w-8 ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>1</span>
-					<span>Create Username</span>
+		<div>
+			<div>
+				<div className='mt-4 flex gap-x-2 px-8'>
+					<IconSignup className='m-0 p-0 text-2xl' />
+					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Sign Up</p>
 				</div>
-				<div
-					className={`flex flex-col items-center justify-center gap-x-2 gap-y-2 border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm ${
-						isPassword && 'border-pink_primary'
-					}`}
-				>
-					<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-8 sm:w-8 ${isPassword ? 'bg-pink_primary' : 'bg-grey_secondary'} rounded-full`}>2</span>
-					<span>Set Password</span>
-				</div>
+				<Divider
+					className='m-0 mt-4 p-0 '
+					style={{ borderTop: '1px solid #E1E6EB' }}
+				></Divider>
 			</div>
-
-			<h3 className='text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>{isPassword ? 'Set Password' : 'Sign Up'}</h3>
-
-			{defaultWallets.length === 0 && isDelegation && (
-				<Alert
-					message='Wallet extension not detected.'
-					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
-					type='info'
-					showIcon
-					className='changeColor text-blue-light-high dark:text-blue-dark-high'
-				/>
-			)}
-			{walletError && (
-				<Alert
-					message={walletError}
-					type='error'
-				/>
-			)}
-			<AuthForm
-				onSubmit={handleSubmitForm}
-				className='flex flex-col gap-y-6'
+			<Container
+				className={`flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md dark:bg-section-dark-overlay ${className}`}
+				theme={theme}
 			>
-				{isPassword ? (
-					<>
-						<div className='flex flex-col gap-y-1'>
-							<label
-								className='text-base text-[#485F7D] dark:text-blue-dark-medium'
-								htmlFor='first_password'
-							>
-								Set Password
-							</label>
-							<Form.Item
-								name='first_password'
-								rules={[
-									{
-										message: messages.VALIDATION_PASSWORD_ERROR,
-										required: password.required
-									},
-									{
-										message: messages.VALIDATION_PASSWORD_ERROR,
-										min: password.minLength
-									}
-								]}
-							>
-								<Input.Password
-									onChange={(e) => {
-										setFirstPassword(e.target.value);
-									}}
-									placeholder='Password'
-									className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
-									id='first_password'
-								/>
-							</Form.Item>
+				<div className='-mt-1 flex grid-cols-2 gap-x-5 px-8'>
+					<div
+						onClick={() => {
+							setIsPassword(false);
+							if (error) setError('');
+						}}
+						className='w-[268px] cursor-pointer flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'
+					>
+						<div className='flex gap-x-2 gap-y-2 '>
+							<span className={`flex h-4 w-4 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>01</span>
+							<span className='mt-[2px] text-bodyBlue dark:text-grey_primary'>Create Username</span>
 						</div>
-						<div className='-mt-6 flex flex-col gap-y-1'>
-							<label
-								className='text-base text-[#485F7D] dark:text-blue-dark-medium '
-								htmlFor='second_password'
-							>
-								Re-enter Password
-							</label>
-							<Form.Item
-								name='second_password'
-								rules={[
-									{
-										message: "Password don't match",
-										validator(rule, value, callback) {
-											if (callback && value !== firstPassword) {
-												callback(rule?.message?.toString());
-											} else {
-												callback();
+						<div>
+							<Divider className={`${isPassword ? 'bg-green_primary' : 'bg-grey_stroke dark:bg-grey_primary'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
+						</div>
+					</div>
+					<div className='w-[268px] flex-col items-center border-b-2 pb-2 text-xs font-medium text-grey_primary sm:flex-row sm:text-sm'>
+						<div className='flex gap-x-2 gap-y-2 '>
+							<span className={`flex h-6 w-6 items-center justify-center text-white sm:h-6 sm:w-6 ${isPassword ? 'bg-pink_primary' : 'bg-grey_secondary'} rounded-full`}>02</span>
+							<span className='mt-[2px] text-bodyBlue dark:text-grey_primary'>Set Password</span>
+						</div>
+						<div>
+							<Divider className={`${inputPassword ? 'bg-green_primarye' : 'bg-grey_stroke dark:bg-grey_primary'}  m-0 mt-2 border-t-[2px] p-0`}></Divider>
+						</div>
+					</div>
+				</div>
+
+				{defaultWallets.length === 0 && isDelegation && (
+					<Alert
+						message='Wallet extension not detected.'
+						description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
+						type='info'
+						showIcon
+						className='changeColor px-8 text-[#243A57] dark:text-blue-dark-high'
+					/>
+				)}
+				{walletError && (
+					<Alert
+						message={walletError}
+						type='error'
+						className='px-8'
+					/>
+				)}
+				<AuthForm
+					onSubmit={handleSubmitForm}
+					className='flex flex-col gap-y-6'
+				>
+					{isPassword ? (
+						<>
+							<div className='flex flex-col gap-y-1 px-8'>
+								<label
+									className='text-base text-[#485F7D] dark:text-blue-dark-medium'
+									htmlFor='first_password'
+								>
+									Set Password
+								</label>
+								<Form.Item
+									name='first_password'
+									rules={[
+										{
+											message: messages.VALIDATION_PASSWORD_ERROR,
+											required: password.required
+										},
+										{
+											message: messages.VALIDATION_PASSWORD_ERROR,
+											min: password.minLength
+										}
+									]}
+								>
+									<Input.Password
+										onChange={(e) => {
+											setFirstPassword(e.target.value);
+										}}
+										placeholder='Password'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+										id='first_password'
+									/>
+								</Form.Item>
+							</div>
+							<div className='-mt-6 flex flex-col gap-y-1 px-8'>
+								<label
+									className='text-base text-[#485F7D] dark:text-blue-dark-medium '
+									htmlFor='second_password'
+								>
+									Re-enter Password
+								</label>
+								<Form.Item
+									name='second_password'
+									rules={[
+										{
+											message: "Password don't match",
+											validator(rule, value, callback) {
+												if (callback && value !== firstPassword) {
+													callback(rule?.message?.toString());
+												} else {
+													callback();
+												}
 											}
 										}
-									}
-								]}
-							>
-								<Input.Password
-									placeholder='Password'
-									className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
-									id='second_password'
-								/>
-							</Form.Item>
-						</div>
-					</>
-				) : (
-					<>
-						<div className='flex flex-col gap-y-1'>
-							<label
-								className='text-base tracking-wide  text-[#485F7D] dark:text-blue-dark-medium'
-								htmlFor='username'
-							>
-								Username
-							</label>
-							<Form.Item
-								name='username'
-								rules={[
-									{
-										message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
-										required: username.required
-									},
-									{
-										message: messages.VALIDATION_USERNAME_PATTERN_ERROR,
-										pattern: username.pattern
-									},
-									{
-										max: username.maxLength,
-										message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
-									},
-									{
-										message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
-										min: username.minLength
-									}
-								]}
-							>
-								<Input
-									placeholder='John'
-									className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-									id='username'
-								/>
-							</Form.Item>
-						</div>
-						<div className='-mt-6 flex flex-col gap-y-1'>
-							<label
-								htmlFor='email'
-								className='text-base tracking-wide text-[#485F7D] dark:text-blue-dark-medium'
-							>
-								Email
-							</label>
-							<Form.Item
-								name='email'
-								rules={[
-									{
-										message: messages.VALIDATION_EMAIL_ERROR,
-										pattern: validation.email.pattern
-									}
-								]}
-							>
-								<Input
-									placeholder='email@example.com'
-									className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-									id='email'
-								/>
-							</Form.Item>
-						</div>
-					</>
-				)}
-				<div className='flex items-center justify-center'>
-					<Button
-						disabled={loading}
-						htmlType='submit'
-						size='large'
-						className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
-					>
-						{isPassword ? 'Sign Up' : 'Next'}
-					</Button>
-				</div>
-				<div>
-					<WalletButtons
-						disabled={loading}
-						onWalletSelect={onWalletSelect}
-						showPolkasafe={canUsePolkasafe(network)}
-						onPolkasafeSelect={setWithPolkasafe}
-					/>
-				</div>
-				{error && <FilteredError text={error} />}
-				<div className='flex items-center justify-center gap-x-2 font-semibold'>
-					<label className='text-md text-blue-light-high dark:text-blue-dark-high'>Already have an account?</label>
-					<div
-						onClick={() => handleClick()}
-						className='text-md cursor-pointer text-pink_primary'
-					>
-						Login
+									]}
+								>
+									<Input.Password
+										onChange={() => setInputPassword(true)}
+										placeholder='Password'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+										id='second_password'
+									/>
+								</Form.Item>
+							</div>
+						</>
+					) : (
+						<>
+							<div className='flex flex-col gap-y-1 px-8 dark:text-blue-dark-medium'>
+								<label
+									className='text-sm tracking-wide text-[#485F7D] dark:text-blue-dark-medium'
+									htmlFor='username'
+								>
+									Enter Username
+								</label>
+								<Form.Item
+									name='username'
+									rules={[
+										{
+											message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
+											required: username.required
+										},
+										{
+											message: messages.VALIDATION_USERNAME_PATTERN_ERROR,
+											pattern: username.pattern
+										},
+										{
+											max: username.maxLength,
+											message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
+										},
+										{
+											message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
+											min: username.minLength
+										}
+									]}
+								>
+									<Input
+										placeholder='John'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										id='username'
+									/>
+								</Form.Item>
+							</div>
+							<div className='-mt-6 flex flex-col gap-y-1 px-8'>
+								<label
+									htmlFor='email'
+									className='text-sm tracking-wide text-[#485F7D] dark:text-blue-dark-medium'
+								>
+									Enter Email
+								</label>
+								<Form.Item
+									name='email'
+									rules={[
+										{
+											message: messages.VALIDATION_EMAIL_ERROR,
+											pattern: validation.email.pattern
+										}
+									]}
+								>
+									<Input
+										placeholder='email@example.com'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										id='email'
+									/>
+								</Form.Item>
+							</div>
+						</>
+					)}
+					<div className='px-8'>
+						<WalletButtons
+							disabled={loading}
+							onWalletSelect={onWalletSelect}
+							showPolkasafe={canUsePolkasafe(network)}
+							onPolkasafeSelect={setWithPolkasafe}
+							isSigningUp={true}
+						/>
 					</div>
-				</div>
-			</AuthForm>
-			<Modal
-				wrapClassName='dark:bg-modalOverlayDark'
-				className='rounded-md dark:[&>.ant-modal-content]:bg-section-dark-overlay'
-				centered={true}
-				title={"You've got some mail"}
-				open={open}
-				closable={false}
-				footer={[
-					<div
-						className='flex w-full justify-center'
-						key='got-it'
-					>
-						<Button
-							icon={<CheckOutlined />}
-							className='flex items-center justify-center rounded-md border-none bg-pink_primary px-5 text-lg font-medium leading-none text-white outline-none'
-							onClick={() => {
-								setOpen(false);
-								!isModal && router.back();
-							}}
+					{error && (
+						<FilteredError
+							className='px-8 '
+							text={error}
+						/>
+					)}
+					<div className='flex items-center justify-center gap-x-2 px-8 font-semibold '>
+						<label className='text-md text-[#243A57] dark:text-blue-dark-high'>Already have an account?</label>
+						<div
+							onClick={() => handleClick()}
+							className='text-md cursor-pointer text-pink_primary'
 						>
-							Got it!
+							Login
+						</div>
+					</div>
+					<Divider
+						className='m-0 p-0'
+						style={{ borderTop: '1px solid #E1E6EB' }}
+					></Divider>
+					<div className='-mt-1 flex items-center justify-end px-8'>
+						<Button
+							disabled={loading}
+							htmlType='submit'
+							size='large'
+							className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+						>
+							{isPassword ? 'Sign Up' : 'Next'}
 						</Button>
 					</div>
-				]}
-			>
-				We sent you an email to verify your address. Click on the link in the email.
-			</Modal>
-		</Container>
+				</AuthForm>
+				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
+					className='rounded-md px-8 dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+					centered={true}
+					title={"You've got some mail"}
+					open={open}
+					closable={false}
+					footer={[
+						<div
+							className='flex w-full justify-center'
+							key='got-it'
+						>
+							<Button
+								icon={<CheckOutlined />}
+								className='flex items-center justify-center rounded-md border-none bg-pink_primary px-5 text-lg font-medium leading-none text-white outline-none'
+								onClick={() => {
+									setOpen(false);
+									!isModal && router.back();
+								}}
+							>
+								Got it!
+							</Button>
+						</div>
+					]}
+				>
+					We sent you an email to verify your address. Click on the link in the email.
+				</Modal>
+			</Container>
+		</div>
 	);
 };
 

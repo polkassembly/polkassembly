@@ -494,7 +494,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 												loading={loading}
 												htmlType='submit'
 												size='large'
-												className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
+												className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
 											>
 												Login
 											</Button>

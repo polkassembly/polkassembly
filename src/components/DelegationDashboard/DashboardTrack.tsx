@@ -9,7 +9,7 @@ import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
-import { Button, Skeleton, Table } from 'antd';
+import { Button, Skeleton, Table as AntdTable } from 'antd';
 import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import { ETrackDelegationStatus, IDelegation } from '~src/types';
@@ -22,6 +22,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
+import { useTheme } from 'next-themes';
 interface Props {
 	className?: string;
 	posts: any[];
@@ -52,6 +53,29 @@ const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
+
+const Table: any = styled(AntdTable)`
+	.ant-table-thead > tr > th {
+		background: ${(props) => (props.theme === 'dark' ? '#1C1D1F' : '#fafafa')} !important;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')} !important;
+		font-weight: 500 !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+	.ant-table-thead > tr > th::before {
+		background: none !important;
+	}
+	.ant-table-tbody > tr {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+	}
+	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
+	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+		background-color: none !important;
+	}
+	td {
+		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+`;
 
 export interface ITrackRowData {
 	index: number;
@@ -90,6 +114,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setIsSelectedAddressMultisig(false);
@@ -212,9 +237,9 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 							status.map((item: ETrackDelegationStatus, index: number) => (
 								<span
 									key={index}
-									className={`text-sm ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${
-										item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'
-									} rounded-[26px] px-[12px] py-[6px] text-center`}
+									className={`text-sm ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${
+										item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8] dark:bg-[#69600B]'
+									} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'} rounded-[26px] px-[12px] py-[6px] text-center`}
 								>
 									{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 								</span>
@@ -233,6 +258,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 									</span>
 									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white pl-[3px] pr-[3px] dark:border-[#3B444F] dark:bg-section-dark-overlay'>
 										<Table
+											theme={theme}
 											className='column'
 											columns={GetTracksColumns(item, setOpenUndelegateModal, network)}
 											dataSource={

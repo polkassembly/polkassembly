@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { DislikeFilled, LeftOutlined, LikeFilled, LoadingOutlined, RightOutlined } from '@ant-design/icons';
-import { PaginationProps, Spin, Table } from 'antd';
+import { PaginationProps, Spin, Table as AntdTable } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import React, { FC, useEffect, useState } from 'react';
@@ -23,6 +24,29 @@ interface ICouncilVotesProps {
 	className?: string;
 }
 
+const Table: any = styled(AntdTable)`
+	.ant-table-thead > tr > th {
+		background: ${(props) => (props.theme === 'dark' ? '#1C1D1F' : '#fafafa')} !important;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')} !important;
+		font-weight: 500 !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+	.ant-table-thead > tr > th::before {
+		background: none !important;
+	}
+	.ant-table-tbody > tr {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+	}
+	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
+	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+		background-color: none !important;
+	}
+	td {
+		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+`;
+
 const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const { className, address } = props;
 	const { network } = useNetworkSelector();
@@ -31,6 +55,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const [votesHistory, setVotesHistory] = useState<IVoteHistory[]>([]);
 	const [count, setCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
+	const { resolvedTheme: theme } = useTheme();
 
 	const url = getBlockLink(network);
 
@@ -115,6 +140,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 				{votesHistory.length > 0 ? (
 					<div>
 						<Table
+							theme={theme}
 							dataSource={votesHistory}
 							columns={columns}
 							pagination={false}

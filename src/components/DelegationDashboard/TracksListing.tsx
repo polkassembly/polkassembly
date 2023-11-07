@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Button, Radio, Table } from 'antd';
+import { Button, Radio, Table as AntdTable } from 'antd';
 
 import styled from 'styled-components';
 
@@ -18,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import { IDelegation } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -36,6 +37,28 @@ export interface ITrackDataType {
 	trackNo: number;
 }
 
+const Table: any = styled(AntdTable)`
+	.ant-table-thead > tr > th {
+		background: ${(props) => (props.theme === 'dark' ? '#1C1D1F' : '#fafafa')} !important;
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')} !important;
+		font-weight: 500 !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+	.ant-table-thead > tr > th::before {
+		background: none !important;
+	}
+	.ant-table-tbody > tr {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+	}
+	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
+	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+		background-color: none !important;
+	}
+	td {
+		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
+	}
+`;
 const DashboardTrackListing = ({ className }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
@@ -50,7 +73,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const [rowsData, setRowsData] = useState<ITrackDataType[]>([]);
 	const [data, setData] = useState<ITrackDataType[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-
+	const { resolvedTheme: theme } = useTheme();
 	const filterTrackDataByTrackNumber = (trackNo: number) => {
 		if (network) {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -238,6 +261,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 			</div>
 			{showTable && status && delegationDashboardAddress && (
 				<Table
+					theme={theme}
 					className='column'
 					columns={GetColumns(status)}
 					dataSource={rowsData}

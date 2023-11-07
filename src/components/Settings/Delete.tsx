@@ -167,6 +167,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							className='my-4'
 							style={{ borderTop: '1px solid #E1E6EB' }}
 						></Divider>
+
 						<article className='px-6'>
 							<label
 								className='text-sm font-normal text-lightBlue dark:text-white'

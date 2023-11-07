@@ -11,16 +11,16 @@ import { MessageType } from '~src/auth/types';
 import { approvalStatus } from '~src/global/statuses';
 import { NetworkEvent } from '~src/types';
 
-const handler: NextApiHandler<NetworkEvent[] | MessageType > = async (req, res) => {
+const handler: NextApiHandler<NetworkEvent[] | MessageType> = async (req, res) => {
 	const { approval_status = approvalStatus.APPROVED } = req.body;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const eventsColSnapshot = await networkDocRef(network).collection('events').where('status', '==', approval_status ).get();
+	const eventsColSnapshot = await networkDocRef(network).collection('events').where('status', '==', approval_status).get();
 	const events: NetworkEvent[] = eventsColSnapshot.docs.reduce((events, doc) => {
 		if (doc && doc.exists) {
-			return [...events, (doc.data() as NetworkEvent)];
+			return [...events, doc.data() as NetworkEvent];
 		}
 		return events;
 	}, [] as NetworkEvent[]);

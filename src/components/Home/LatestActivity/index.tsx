@@ -161,6 +161,7 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 					type='card'
 					items={tabItems}
 					onChange={(key: any) => setCurrentTab(key)}
+					theme={theme}
 				/>
 			</Container>
 		</>

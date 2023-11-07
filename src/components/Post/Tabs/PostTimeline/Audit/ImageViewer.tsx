@@ -32,7 +32,7 @@ const ImageViewer: FC<IImageViewerProps> = (props) => {
 
 	return (
 		<button
-			className={`flex items-center justify-center overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] ${className}`}
+			className={`flex items-center justify-center overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] dark:border-[#3B444F] ${className}`}
 			onClick={() => downloadImage(item.download_url, 'image.png')}
 		>
 			<div>

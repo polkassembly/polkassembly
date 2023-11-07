@@ -35,12 +35,12 @@ const PdfViewer: FC<IPdfViewerProps> = (props) => {
 	return (
 		<>
 			<button
-				className={`flex items-center justify-center overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] bg-transparent outline-none ${className}`}
+				className={`flex items-center justify-center overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] bg-transparent outline-none dark:border-[#3B444F] ${className}`}
 				onClick={() => setOpen(true)}
 			>
 				<div className='w-full flex-1'>
 					<article className='relative p-2'>
-						<div className='relative h-[300px] overflow-hidden rounded-md border border-solid border-[#D2D8E0]'>
+						<div className='relative h-[300px] overflow-hidden rounded-md border border-solid border-[#D2D8E0] dark:border-[#3B444F]'>
 							<Document
 								file={item.download_url}
 								loading={

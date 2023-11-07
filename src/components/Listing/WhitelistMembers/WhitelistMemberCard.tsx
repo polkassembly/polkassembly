@@ -6,6 +6,7 @@ import React from 'react';
 import Address from 'src/ui-components/Address';
 
 import { WhitelistMember } from './WhitelistMembersContainer';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -27,10 +28,13 @@ const WhitelistMemberCard = ({ className, member }: Props) => {
 				<Address
 					address={member.accountId}
 					addressMaxLength={7}
+					iconSize={45}
+					ethIdenticonSize={45}
+					addressClassName={'text-xs mt-1'}
 				/>
 			</div>
 		</div>
 	);
 };
 
-export default WhitelistMemberCard;
+export default styled(WhitelistMemberCard)``;

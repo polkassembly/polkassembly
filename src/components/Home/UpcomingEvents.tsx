@@ -422,7 +422,7 @@ const UpcomingEvents = ({ className }: Props) => {
 	const CalendarElement = () => (
 		<Spin spinning={loading}>
 			<Calendar
-				className='mb-4 rounded-xl border border-solid border-gray-200 dark:border-separatorDark dark:bg-section-dark-overlay'
+				className='mb-4 rounded-xl border border-solid border-gray-300 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'
 				fullscreen={false}
 				cellRender={dateCellRender}
 				theme={theme}

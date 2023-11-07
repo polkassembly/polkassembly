@@ -127,7 +127,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 									return (
 										<article
 											key={item.sha}
-											className={`flex flex-col gap-y-6 py-[26px] ${index !== 0 ? 'border-0 border-t border-solid border-[#D2D8E0]' : ''}`}
+											className={`flex flex-col gap-y-6 py-[26px] ${index !== 0 ? 'border-0 border-t border-solid border-[#D2D8E0] dark:border-[#3B444F]' : ''}`}
 										>
 											<p className='m-0 flex items-center gap-x-2 text-sm font-normal leading-[18px] text-[#485F7D] dark:text-blue-dark-medium'>
 												<span>{item.name.split(' - ')[0]}</span>
@@ -153,7 +153,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 							{videoData.map((item, index) => (
 								<article
 									key={item.title}
-									className={`flex flex-col gap-y-6 py-[26px] ${index !== 0 ? 'border-0 border-t border-solid border-[#D2D8E0]' : ''}`}
+									className={`flex flex-col gap-y-6 py-[26px] ${index !== 0 ? 'border-0 border-t border-solid border-[#D2D8E0] dark:border-[#3B444F]' : ''}`}
 								>
 									<p className='m-0 flex items-center gap-x-2 text-sm font-normal leading-[18px] text-[#485F7D] dark:text-blue-dark-medium'>
 										<span>{item.name}</span> |

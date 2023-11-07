@@ -325,7 +325,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
-						<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
+						<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 							<CastVoteIcon className='ml-6' />
 							<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 						</div>
@@ -474,7 +474,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
 									block
-									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:bg-section-dark-overlay`}
+									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:border-[#3B444F] dark:bg-section-dark-overlay`}
 									size='large'
 									value={vote}
 									onChange={(value) => {
@@ -496,12 +496,12 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 												helpText={'Amount of you are willing to lock for this vote.'}
 												placeholder={'Add balance'}
 												onChange={onBalanceChange}
-												className='border-[#D2D8E0] text-sm font-medium'
+												className='border-[#D2D8E0] text-sm font-medium dark:border-[#3B444F]'
 												theme={theme}
 											/>
 										)}
 
-										<div className='ml-[-24px] mr-[-24px] mt-[-3px] flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] pt-5'>
+										<div className='ml-[-24px] mr-[-24px] mt-[-3px] flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] pt-5 dark:border-[#3B444F]'>
 											<Button
 												className='mr-[15px] h-[40px] w-[134px] rounded-[4px] border-[#E5007A] bg-[white] font-semibold text-[#E5007A]'
 												onClick={() => setShowModal(false)}

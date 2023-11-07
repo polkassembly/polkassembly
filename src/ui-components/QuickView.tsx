@@ -102,7 +102,7 @@ const QuickView = ({
 				<ImageComponent
 					src={imgUrl}
 					alt='User Picture'
-					className='-mt-[50px] flex h-[98px] w-[98px] rounded-full border-[2px] border-solid border-white bg-white dark:border-none'
+					className='-mt-[50px] flex h-[98px] w-[98px] rounded-full border-[2px] border-solid border-white bg-white dark:border-none dark:border-[#3B444F]'
 					iconClassName='flex items-center justify-center text-[#FCE5F2] text-2xl w-full h-full rounded-full'
 				/>
 				<div className='mt-0 flex items-center justify-start gap-2'>

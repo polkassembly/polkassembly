@@ -54,7 +54,7 @@ export const VoteProgressLegacy = ({ ayeVotes, className, nayVotes, ayesNum, nay
 				id='smallCircle'
 				className={`${
 					ayeVotesNumber < nayVotesNumber ? 'bg-aye_green' : 'bg-nay_red'
-				} z-20 -mt-8 flex h-[75px] w-[75px] items-center justify-center rounded-full border-2 border-white`}
+				} z-20 -mt-8 flex h-[75px] w-[75px] items-center justify-center rounded-full border-2 border-white dark:border-[#3B444F]`}
 			>
 				{ayeVotesNumber == 0 && nayVotesNumber == 0 ? '0' : ayeVotesNumber < nayVotesNumber ? ayePercent.toFixed(1) : nayPercent.toFixed(1)}%
 			</div>

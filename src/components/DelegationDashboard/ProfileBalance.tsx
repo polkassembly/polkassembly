@@ -133,7 +133,7 @@ const ProfileBalances = ({ className }: Props) => {
 							setAddress(address);
 							dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
 						}}
-						inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
+						inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] dark:border-[#3B444F] bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
 						isSwitchButton={true}
 						setSwitchModalOpen={setOpenModal}
 						withoutInfo={true}

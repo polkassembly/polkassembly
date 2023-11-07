@@ -83,7 +83,11 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 
 		return {
 			children: (
-				<div className={`ml-2 rounded-[4px] bg-[#FAFAFC] py-3 pl-3 pr-1 max-sm:ml-0 max-sm:w-full ${item?.expanded && 'active-timeline'} ${poppins.variable} ${poppins.className}`}>
+				<div
+					className={`ml-2 rounded-[4px] bg-[#FAFAFC] py-3 pl-3 pr-1 max-sm:ml-0 max-sm:w-full ${item?.expanded && 'active-timeline'} ${poppins.variable} ${
+						poppins.className
+					} dark:bg-section-dark-background`}
+				>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center'>
 							<NameLabel
@@ -172,10 +176,10 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 			open={open}
 			onCancel={() => setOpen(false)}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`closeIcon ${poppins.variable} ${poppins.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`closeIcon ${poppins.variable} ${poppins.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px]  max-sm:w-full dark:[&>.ant-modal-content>.ant-modal-header]:bg-section-dark-overlay`}
 			footer={false}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] '>Comment Edit History</label>}
+			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-blue-dark-high'>Comment Edit History</label>}
 		>
 			<div className='post-history-timeline -mb-5 mt-9 flex flex-col px-4'>
 				<Timeline items={items} />

@@ -62,17 +62,19 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 			overlayClassName={`${className} navbar-dropdowns text-sm font-medium text-bodyBlue dark:text-blue-dark-high hover:text-pink_primary z-[1056]`}
 		>
 			{isSmallScreen ? (
-				<span className='flex h-10 items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-[18px] dark:bg-[#29323C33]'>
+				<span className='flex h-10 items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-[18px] dark:border-[#3B444F] dark:bg-section-dark-overlay'>
 					<div className='flex items-center gap-x-[6px]'>
 						<SignalTowerIcon className='m-0 h-[20px] w-[20px] p-0' />
-						<span className='text-xs font-semibold leading-[18px] tracking-[0.02em]'>{dropdownLabel(wsProvider || chainProperties?.[network!]?.rpcEndpoint, network)}</span>
+						<span className='text-xs font-semibold leading-[18px] tracking-[0.02em] dark:text-blue-dark-high'>
+							{dropdownLabel(wsProvider || chainProperties?.[network!]?.rpcEndpoint, network)}
+						</span>
 					</div>
 					<span className='text-[#485F7D] dark:text-blue-dark-medium'>
 						<ArrowDownIcon />
 					</span>
 				</span>
 			) : (
-				<span className='flex cursor-pointer items-center justify-center rounded-[2px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-1 dark:border-separatorDark dark:bg-[#29323C33] md:rounded-[4px] md:p-[8.5px]'>
+				<span className='flex cursor-pointer items-center justify-center rounded-[2px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-1 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] md:rounded-[4px] md:p-[8.5px]'>
 					<SignalTowerIcon className='m-0 p-0 text-xs md:text-sm' />
 				</span>
 			)}

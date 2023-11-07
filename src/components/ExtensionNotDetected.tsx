@@ -31,7 +31,7 @@ const ExtensionNotDetected: React.FC<Props> = ({ chosenWallet }) => {
 			}
 			type='info'
 			showIcon
-			className='changeColor text-blue-light-high dark:text-blue-dark-high'
+			className='changeColor text-blue-light-high'
 		/>
 	);
 };

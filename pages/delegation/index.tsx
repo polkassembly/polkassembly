@@ -65,7 +65,7 @@ const Delegation = (props: { network: string }) => {
 					<DelegationDashboardEmptyState />
 					<p className='mt-6 text-center text-base text-bodyBlue dark:text-blue-dark-high'>Please visit Delegation Dashboard from your Dekstop computer</p>
 					<button
-						className='mt-5 flex items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent px-3.5 py-1.5 text-bodyBlue dark:text-blue-dark-high'
+						className='mt-5 flex items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent px-3.5 py-1.5 text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
 						onClick={() => {
 							handleCopylink();
 						}}

@@ -315,7 +315,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
@@ -587,7 +587,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										{tags?.slice(0, 2).map((tag, index) => (
 											<div
 												key={index}
-												className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:text-blue-dark-medium'
+												className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 											>
 												{tag}
 											</div>
@@ -622,7 +622,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				}}
 				footer={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${poppins.variable} ${poppins.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay h-[120px]  max-w-full shrink-0 max-sm:w-[100%]`}
 				title={
 					<>
 						<label className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
@@ -642,7 +642,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{tags?.map((tag, index) => (
 								<div
 									key={index}
-									className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium'
+									className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-1 text-xs font-normal text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 								>
 									{tag}
 								</div>

@@ -25,7 +25,6 @@ import { IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
 import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import styled from 'styled-components';
 import { Pagination } from '~src/ui-components/Pagination';
 
 interface IVotersListProps {
@@ -38,22 +37,6 @@ interface IVotersListProps {
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
-
-const StyledSegmented = styled(Segmented)`
-	background-color: ${(props) => (props.theme == 'dark' ? '#1C1D1F' : '')} !important;
-	border-radius: 24px !important;
-	.ant-segmented-group > label {
-		border-radius: 20px !important;
-	}
-	.ant-segmented-item {
-		border-radius: 20px !important;
-		color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
-	}
-	.ant-segmented-item-selected > .ant-segmented-item-label {
-		border-radius: 20px !important;
-		background-color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
-	}
-`;
 
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
@@ -287,7 +270,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				</div>
 
 				<div className='mb-8 flex w-full items-center justify-center'>
-					<StyledSegmented
+					<Segmented
 						block
 						className='w-full rounded-md px-3 py-2'
 						size='large'
@@ -297,7 +280,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							onChange(1, 10);
 						}}
 						options={decisionOptions}
-						theme={theme}
 					/>
 				</div>
 

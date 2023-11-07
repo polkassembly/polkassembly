@@ -379,7 +379,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
-					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
+					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 						<CastVoteIcon className='mt-1' />
 						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 					</div>
@@ -469,7 +469,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>
 						<Segmented
 							block
-							className={'mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white hover:bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+							className={
+								'mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white hover:bg-white dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'
+							}
 							size='large'
 							value={vote}
 							onChange={(value) => {

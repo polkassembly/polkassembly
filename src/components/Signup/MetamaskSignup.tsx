@@ -14,6 +14,8 @@ import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AuthForm from 'src/ui-components/AuthForm';
 import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
+import LoginLogo from '~assets/icons/login-logo.svg';
 
 import { ChallengeMessage, TokenType } from '~src/auth/types';
 import addEthereumChain from '~src/util/addEthereumChain';
@@ -23,6 +25,7 @@ import ExtensionNotDetected from '../ExtensionNotDetected';
 import { WalletIcon } from '../Login/MetamaskLogin';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -31,9 +34,10 @@ interface Props {
 	isModal?: boolean;
 	setSignupOpen?: (pre: boolean) => void;
 	setLoginOpen?: (pre: boolean) => void;
+	onWalletUpdate?: () => void;
 }
 
-const MetamaskSignup: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setSignupOpen, setLoginOpen }) => {
+const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, setDisplayWeb2, isModal, setSignupOpen, setLoginOpen }) => {
 	const [error, setErr] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [address, setAddress] = useState<string>('');
@@ -47,6 +51,7 @@ const MetamaskSignup: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setS
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -180,38 +185,71 @@ const MetamaskSignup: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setS
 		}
 	};
 
+	const handleBackToLogin = (): void => {
+		onWalletUpdate?.();
+	};
+
 	const handleToggle = () => setDisplayWeb2();
 
 	return (
-		<article className='flex flex-col gap-y-6 rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
-			<h3 className='flex flex-col gap-y-4 text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>
-				<span>Sign Up</span>
-				<p className='flex items-center justify-center gap-x-2'>
-					<span>
-						<WalletIcon which={chosenWallet} />
-					</span>
-					<span className='text-lg text-navBlue sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
-				</p>
-			</h3>
+		<article className='flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay'>
+			<div className='mb-1 mt-1 flex items-center'>
+				{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
+				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Sign Up</h3>
+			</div>
+			<hr className='text-[#D2D8E0] ' />
 			{fetchAccounts ? (
-				<div className='flex flex-col items-center justify-center'>
-					<p className='text-base'>For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.</p>
-					<Button
-						key='got-it'
-						icon={<CheckOutlined />}
-						className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-3 text-lg font-medium leading-none text-white outline-none'
-						onClick={() => {
-							getAccounts()
-								.then(() => {
-									setFetchAccounts(false);
-								})
-								.catch((err) => {
-									console.error(err);
-								});
-						}}
-					>
-						Got it!
-					</Button>
+				<div className='-mt-6 flex flex-col p-8'>
+					<div className='my-4 flex justify-start gap-x-2'>
+						<span className=''>
+							<WalletIcon which={chosenWallet} />
+						</span>
+						<span className='mt-1 text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
+					</div>
+					<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>
+						For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
+					</p>
+					<Divider
+						className='m-0 mt-5 p-0 '
+						style={{ borderTop: '1px dashed #D2D8E0' }}
+					></Divider>
+					<div className='mt-4 flex w-full justify-start gap-x-2 font-normal'>
+						<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Already have an account?</label>
+						<div
+							onClick={handleClick}
+							className='cursor-pointer text-base text-pink_primary'
+						>
+							Login
+						</div>
+					</div>
+					<Divider
+						className='my-4 p-0 '
+						style={{ borderTop: '1px solid #E1E6EB' }}
+					></Divider>
+					<div className='flex justify-end'>
+						<Button
+							className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+							onClick={() => handleBackToLogin()}
+						>
+							Go Back
+						</Button>
+						<Button
+							key='got-it'
+							icon={<CheckOutlined />}
+							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-5 text-sm font-medium leading-none text-white outline-none'
+							onClick={() => {
+								getAccounts()
+									.then(() => {
+										setFetchAccounts(false);
+									})
+									.catch((err) => {
+										console.error(err);
+									});
+							}}
+						>
+							Got it!
+						</Button>
+					</div>
 				</div>
 			) : (
 				<>
@@ -283,17 +321,18 @@ const MetamaskSignup: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setS
 						)}
 						{error && <FilteredError text={error} />}
 					</AuthForm>
+					{!!chosenWallet && !accounts.length && (
+						<div className='my-6 flex items-center justify-center'>
+							<Button
+								className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+								onClick={() => handleBackToLogin()}
+							>
+								Go Back
+							</Button>
+						</div>
+					)}
 				</>
 			)}
-			<div className='mt-6 flex items-center justify-center gap-x-2 font-semibold'>
-				<label className='text-md text-grey_primary'>Already have an account?</label>
-				<div
-					onClick={() => handleClick()}
-					className='text-md text-pink_primary'
-				>
-					Login
-				</div>
-			</div>
 		</article>
 	);
 };

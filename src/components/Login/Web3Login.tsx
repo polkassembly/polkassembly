@@ -531,12 +531,12 @@ const Web3Login: FC<Props> = ({
 													<ExtensionNotDetected chosenWallet={chosenWallet} />
 												</div>
 												<div className='flex justify-end'>
-													<Button
+													{/* <Button
 														className='flex items-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 														onClick={() => handleBackToLogin()}
 													>
 														Go Back
-													</Button>
+													</Button> */}
 												</div>
 											</div>
 										) : null}
@@ -629,7 +629,7 @@ const Web3Login: FC<Props> = ({
 								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>
 										<Button
-											className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+											className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 											onClick={() => handleBackToLogin()}
 										>
 											Go Back

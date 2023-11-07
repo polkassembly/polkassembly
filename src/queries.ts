@@ -1677,6 +1677,8 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
         abstain
       }
     }
+    createdAt
+    createdAtBlock
     proposal {
       description
       createdAt
@@ -1715,6 +1717,68 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
     }
   }
   flattenedConvictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, voter_in: $voter_in, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+}
+`;
+
+export const GET_VOTE_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_INDEX = `
+query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_eq: String!, $proposalIndex: Int!, $limit: Int = 10, $offset: Int = 0, $orderBy: [FlattenedConvictionVotesOrderByInput!]) {
+  flattenedConvictionVotes(where: {type_eq: $type_eq, voter_eq: $voter_eq, removedAtBlock_isNull: true, proposalIndex_eq: $proposalIndex}, limit: $limit, offset: $offset, orderBy: $orderBy) {
+    type
+    voter
+    lockPeriod
+    decision
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    createdAt
+    createdAtBlock
+    proposal {
+      description
+      createdAt
+      index
+      proposer
+      status
+      statusHistory {
+        id
+        status
+      }
+    }
+    proposalIndex
+    delegatedTo
+    isDelegated
+    parentVote {
+      selfVotingPower
+      type
+      voter
+      lockPeriod
+      delegatedVotingPower
+      delegatedVotes(where: {removedAtBlock_isNull: true}) {
+        voter
+        balance {
+          ... on StandardVoteBalance {
+            value
+          }
+          ... on SplitVoteBalance {
+            aye
+            nay
+            abstain
+          }
+        }
+        lockPeriod
+        votingPower
+      }
+    }
+  }
+  flattenedConvictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, voter_eq: $voter_eq, removedAtBlock_isNull: true, proposalIndex_eq: $proposalIndex}) {
     totalCount
   }
 }

@@ -281,53 +281,74 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						userPosts.gov1.collective.tech_comm_proposals.push(value);
 					} else if (ProposalType.REFERENDUM_V2 === type) {
 						const track_number = value.track_number;
+						//FIXME: This implemenation needs to be refactored. Trackgroups should be passed from FE using js API and should not be hardcoded here
 						if (track_number !== undefined && track_number !== null) {
-							switch (track_number) {
-								case 0:
-									userPosts.open_gov.root.push(value);
-									break;
-								case 1:
-									userPosts.open_gov.fellowship.whitelisted_caller.push(value);
-									break;
-								case 10:
-									userPosts.open_gov.staking_admin.push(value);
-									break;
-								case 11:
-									userPosts.open_gov.treasury.treasurer.push(value);
-									break;
-								case 12:
-									userPosts.open_gov.governance.lease_admin.push(value);
-									break;
-								case 13:
-									userPosts.open_gov.fellowship.fellowship_admin.push(value);
-									break;
-								case 14:
-									userPosts.open_gov.governance.general_admin.push(value);
-									break;
-								case 15:
-									userPosts.open_gov.auction_admin.push(value);
-									break;
-								case 20:
-									userPosts.open_gov.governance.referendum_canceller.push(value);
-									break;
-								case 21:
-									userPosts.open_gov.governance.referendum_killer.push(value);
-									break;
-								case 30:
-									userPosts.open_gov.treasury.small_tipper.push(value);
-									break;
-								case 31:
-									userPosts.open_gov.treasury.big_tipper.push(value);
-									break;
-								case 32:
-									userPosts.open_gov.treasury.small_spender.push(value);
-									break;
-								case 33:
-									userPosts.open_gov.treasury.medium_spender.push(value);
-									break;
-								case 34:
-									userPosts.open_gov.treasury.big_spender.push(value);
-									break;
+							if (!['moonbeam', 'moonriver', ',moonbase'].includes(network)) {
+								switch (track_number) {
+									case 0:
+										userPosts.open_gov.root.push(value);
+										break;
+									case 1:
+										userPosts.open_gov.fellowship.whitelisted_caller.push(value);
+										break;
+									case 10:
+										userPosts.open_gov.staking_admin.push(value);
+										break;
+									case 11:
+										userPosts.open_gov.treasury.treasurer.push(value);
+										break;
+									case 12:
+										userPosts.open_gov.governance.lease_admin.push(value);
+										break;
+									case 13:
+										userPosts.open_gov.fellowship.fellowship_admin.push(value);
+										break;
+									case 14:
+										userPosts.open_gov.governance.general_admin.push(value);
+										break;
+									case 15:
+										userPosts.open_gov.auction_admin.push(value);
+										break;
+									case 20:
+										userPosts.open_gov.governance.referendum_canceller.push(value);
+										break;
+									case 21:
+										userPosts.open_gov.governance.referendum_killer.push(value);
+										break;
+									case 30:
+										userPosts.open_gov.treasury.small_tipper.push(value);
+										break;
+									case 31:
+										userPosts.open_gov.treasury.big_tipper.push(value);
+										break;
+									case 32:
+										userPosts.open_gov.treasury.small_spender.push(value);
+										break;
+									case 33:
+										userPosts.open_gov.treasury.medium_spender.push(value);
+										break;
+									case 34:
+										userPosts.open_gov.treasury.big_spender.push(value);
+										break;
+								}
+							} else {
+								switch (track_number) {
+									case 0:
+										userPosts.open_gov.root.push(value);
+										break;
+									case 1:
+										userPosts.open_gov.fellowship.whitelisted_caller.push(value);
+										break;
+									case 2:
+										userPosts.open_gov.governance.general_admin.push(value);
+										break;
+									case 3:
+										userPosts.open_gov.governance.referendum_canceller.push(value);
+										break;
+									case 4:
+										userPosts.open_gov.governance.referendum_killer.push(value);
+										break;
+								}
 							}
 						}
 					} else if (ProposalType.FELLOWSHIP_REFERENDUMS === type) {

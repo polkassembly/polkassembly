@@ -165,7 +165,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 				{(voteData.totalVotingPower || voteData.votingPower) && (
 					<div className='w-[90px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'>
 						{parseBalance(
-							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (Number(voteData?.balance?.abstain) || 0) * 0.1,
+							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (BigInt(voteData?.balance?.abstain || 0) / BigInt(10)).toString(),
 							2,
 							true,
 							network

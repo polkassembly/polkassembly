@@ -130,10 +130,26 @@ import ProposalsIconSVG from '~assets/icons/proposals-icon.svg';
 import TechComIconSVG from '~assets/icons/tech-com-icon.svg';
 import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import VoteDataSVG from '~assets/icons/vote-data-icon.svg';
+import DeleteIconSVG from '~assets/icons/deleteIcon.svg';
+import WhiteDeleteIconSVG from '~assets/icons/deleteWhiteIcon.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={PolkasafeWhiteIconSVG}
+		{...props}
+	/>
+);
+
+export const DeleteBlueIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DeleteIconSVG}
+		{...props}
+	/>
+);
+
+export const DeleteWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={WhiteDeleteIconSVG}
 		{...props}
 	/>
 );

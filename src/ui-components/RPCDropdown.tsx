@@ -10,7 +10,6 @@ import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import { TRPCEndpoint } from '~src/types';
 import { ArrowDownIcon, SignalTowerIcon } from './CustomIcons';
-import Loader from './Loader';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -35,7 +34,7 @@ export const dropdownLabel = (wsProvider: string, network: string) => {
 
 const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	const { className, isSmallScreen } = props;
-	const { isApiLoading, setWsProvider, wsProvider } = useApiContext();
+	const { setWsProvider, wsProvider } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [rpcEndpoints, setRPCEndpoints] = useState<TRPCEndpoint[]>([]);
 	const { resolvedTheme: theme } = useTheme();
@@ -48,7 +47,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 		setWsProvider(`${key}`);
 	};
 
-	return !isApiLoading ? (
+	return (
 		<Dropdown
 			theme={theme}
 			trigger={['click']}
@@ -79,8 +78,6 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 				</span>
 			)}
 		</Dropdown>
-	) : (
-		<Loader />
 	);
 };
 

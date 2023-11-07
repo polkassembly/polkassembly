@@ -7,6 +7,7 @@ import { ProfileOutlined } from '@ant-design/icons';
 import { Button, Modal, Table as AntdTable } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
+import { poppins } from 'pages/_app';
 import React, { FC, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
@@ -49,6 +50,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const router = useRouter();
 	const { preimages, theme } = props;
 	const [modalArgs, setModalArgs] = useState<any>(null);
+	const [open, setOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!router?.query?.hash) return;
@@ -85,7 +87,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'proposedCall',
 			key: 'proposedCall',
 			width: 265,
-			render: (proposedCall) =>
+			render: (proposedCall, length) =>
 				proposedCall &&
 				proposedCall.section &&
 				proposedCall.method && (
@@ -96,7 +98,9 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 						{proposedCall.args && (
 							<ProfileOutlined
 								className='ml-2 cursor-pointer rounded-md p-1 text-base hover:text-pink_primary dark:font-normal dark:text-white dark:hover:text-blue-dark-helper'
-								onClick={() => setModalArgs(proposedCall.args)}
+								onClick={() => {
+									length.length > 1000 ? setOpen(true) : setModalArgs(proposedCall.args);
+								}}
 							/>
 						)}
 					</div>
@@ -150,8 +154,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 							key='back'
 							onClick={() => setModalArgs(null)}
 						>
-							{' '}
-							Close{' '}
+							Close
 						</Button>
 					]}
 				>
@@ -166,6 +169,14 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 							/>
 						</div>
 					)}
+				</Modal>
+				<Modal
+					open={open}
+					onCancel={() => setOpen(false)}
+					footer={false}
+					className={`${poppins.className} ${poppins.variable}`}
+				>
+					<div className='text-sm font-medium text-bodyBlue'>Large data (Please check on Subscan)</div>
 				</Modal>
 			</div>
 		);

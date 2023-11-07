@@ -124,10 +124,9 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						title={Title}
 						open={showModal}
 						closeIcon={
-							<CloseIcon
-								className='text-lightBlue dark:text-icon-dark-inactive'
-								onClick={dismissModal} // This should trigger the function to close the modal
-							/>
+							<div onClick={dismissModal}>
+								<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+							</div>
 						}
 						footer={[
 							<Divider

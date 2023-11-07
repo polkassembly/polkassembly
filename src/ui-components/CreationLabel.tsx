@@ -154,9 +154,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	};
 
 	const renderVoteContent = (vote: any, network: any, idx: number) => {
-		const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
-		const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
-		const powerValue = conviction * (vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0);
+		const lockPeriod = vote.lockPeriod === 0 || vote?.decision === 'abstain' ? 0.1 : vote.lockPeriod;
+		const value = vote?.decision === 'abstain' ? BigInt(vote?.balance?.abstain || 0) : BigInt(vote?.balance?.value || 0);
+		const powerValue = lockPeriod === 0.1 ? value / BigInt(10) : value * BigInt(lockPeriod);
 		const power = parseBalance(powerValue.toString(), 2, true, network);
 
 		return (

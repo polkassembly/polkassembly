@@ -46,7 +46,9 @@ interface IUserProfileProps {
 	className?: string;
 }
 
-export const votesHistoryUnavailableNetworks = [
+export const votesHistoryUnavailableNetworks = [AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES];
+
+export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBASE,
 	AllNetworks.MOONRIVER,
 	AllNetworks.POLYMESH,
@@ -226,7 +228,9 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 									value={profileHistory}
 								/>
 							)}
-							{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && <VoteUnlock addresses={userProfile.data.addresses} />}
+							{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && (
+								<VoteUnlock addresses={userProfile.data.addresses} />
+							)}
 						</div>
 					)}
 

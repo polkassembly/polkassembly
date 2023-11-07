@@ -730,7 +730,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, network, apiReady]);
 
-	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod }) => {
+	const LastVoteInfoOnChain: FC<IVoteHistory> = ({ createdAt, decision, lockPeriod, isDelegated }) => {
 		const unit = `${chainProperties[network]?.tokenSymbol}`;
 		return (
 			<Spin
@@ -739,7 +739,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			>
 				<div className='mb-1.5 flex items-center justify-between'>
 					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
-					{
+					{!isDelegated && (
 						<Button
 							loading={loading}
 							onClick={handleRemoveVote}
@@ -747,7 +747,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						>
 							Remove Vote
 						</Button>
-					}
+					)}
 				</div>
 
 				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>

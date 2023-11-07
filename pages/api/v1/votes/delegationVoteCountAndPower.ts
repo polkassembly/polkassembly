@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import BN from 'bn.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -54,10 +55,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 	});
 
 	const subsquidData = result?.data;
-	const voteCapital = subsquidData?.convictionVotes?.[0]?.delegatedVotes.map((cap: any) => cap?.balance?.value).reduce((a: string, b: string) => Number(a) + Number(b), 0);
+	const voteCapital = subsquidData?.convictionVotes?.[0]?.delegatedVotes.map((cap: any) => cap?.balance?.value).reduce((a: string, b: string) => new BN(a).add(new BN(b)), 0);
 	return res.status(200).json({
 		count: subsquidData?.convictionDelegatedVotesConnection?.totalCount,
-		voteCapital
+		voteCapital: voteCapital.toString()
 	});
 }
 

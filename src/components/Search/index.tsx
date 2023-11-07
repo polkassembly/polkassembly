@@ -887,6 +887,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								className='mt-3'
 								postsPage={postsPage}
 								setPostsPage={setPostsPage}
+								searchInput={searchInput}
 							/>
 						)}
 

@@ -7,9 +7,7 @@ import { poppins } from 'pages/_app';
 
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { NotificationStatus } from 'src/types';
 import FilteredError from 'src/ui-components/FilteredError';
-import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import styled from 'styled-components';
 import ExpandIcon from '~assets/icons/expand.svg';
@@ -50,27 +48,21 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	const handleSubmit = async (formData: any) => {
 		if (formData?.password) {
 			setLoading(true);
-
 			const { data, error } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteAccount', { password: formData?.password });
 			if (error) {
 				setError(cleanError(error));
-				queueNotification({
-					header: 'Failed!',
-					message: cleanError(error),
-					status: NotificationStatus.ERROR
-				});
+				setLoading(false);
 				console.error('Delete account error', error);
 			}
 
 			if (data) {
 				handleLogout();
 			}
-
-			setLoading(true);
 		}
 	};
 	const openModal = () => {
 		setShowModal(true);
+		setLoading(false);
 		setIsFormValid(false);
 	};
 
@@ -78,6 +70,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 		form.resetFields();
 		setError('');
 		setShowModal(false);
+		setLoading(false);
 		setIsFormValid(false);
 	};
 	const Title = (
@@ -159,11 +152,6 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						]}
 						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
-						{error && (
-							<div className='mb-4'>
-								<FilteredError text={error} />
-							</div>
-						)}
 						<Divider
 							className='my-4'
 							style={{ borderTop: '1px solid #E1E6EB' }}
@@ -244,6 +232,11 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									Forgot Password?
 								</Link>
 							</div>
+							{error && (
+								<div className='mb-4'>
+									<FilteredError text={error} />
+								</div>
+							)}
 						</article>
 					</Modal>
 					<Button

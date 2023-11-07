@@ -157,7 +157,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							style={{ borderTop: '1px solid #E1E6EB' }}
 						></Divider>
 
-						<article className='mt-6 px-6'>
+						<article className='mt-5 px-6'>
 							<label
 								className='text-sm font-normal text-lightBlue dark:text-white'
 								htmlFor='reason'
@@ -166,7 +166,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							</label>
 							<Form.Item
 								name='reason'
-								className='m-0 mt-1.5'
+								className='m-0 mt-0.5'
 							>
 								<Select
 									onChange={(value) => {
@@ -216,11 +216,11 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							</label>
 							<Form.Item
 								name='password'
-								className='m-0 mt-1.5'
+								className='m-0 mt-0.5'
 							>
 								<Input.Password
 									placeholder='Enter Password'
-									className='rounded-md border-grey_border px-4 py-3 dark:border-white dark:bg-transparent dark:text-blue-dark-high dark:hover:border-[#91054f] dark:focus:border-[#91054F] [&>input]:bg-transparent dark:[&>input]:text-blue-dark-high'
+									className='h-[40px] rounded-md border-grey_border px-4 py-3 dark:border-white dark:bg-transparent dark:text-blue-dark-high dark:hover:border-[#91054f] dark:focus:border-[#91054F] [&>input]:bg-transparent dark:[&>input]:text-blue-dark-high'
 									id='password'
 								/>
 							</Form.Item>
@@ -264,12 +264,6 @@ export default styled(Delete)`
 		padding: 20px 0 !important;
 	}
 	.ant-select-selector {
-		height: 48px !important;
-	}
-	.ant-select-selection-placeholder {
-		margin-top: 2px !important;
-	}
-	.ant-select-selection-item {
-		margin-top: 2px !important;
+		height: 40px !important;
 	}
 `;

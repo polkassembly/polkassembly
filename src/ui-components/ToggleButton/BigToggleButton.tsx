@@ -12,13 +12,13 @@ const BigToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();
 
 	return (
-		<div className='flex items-center justify-center pb-[15px]'>
+		<div className='flex w-full items-center justify-center pb-[15px] pt-[40px]'>
 			<button
 				onClick={(e) => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
 				}}
-				className={classNames('flex cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-3 py-[6px] outline-none', {
+				className={classNames('flex w-[75.5%] cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-4 py-2 outline-none', {
 					'border-[#3B444F]': theme === 'dark',
 					'border-[#D2D8E0]': theme === 'light'
 				})}

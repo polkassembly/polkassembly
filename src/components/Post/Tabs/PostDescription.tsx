@@ -103,6 +103,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						<SubscriptionButton
 							postId={postIndex}
 							proposalType={postType}
+							title={title}
 						/>
 					)}
 					{canEdit && (
@@ -131,7 +132,11 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						/>
 					)}
 					{TrackerButtonComp}
-					<ShareButton title={title} />
+					<ShareButton
+						title={title}
+						postId={postIndex}
+						proposalType={postType}
+					/>
 					{allowed_roles && allowed_roles.includes('moderator') && isOffchainPost && ['polkadot', 'kusama'].includes(network) && (
 						<ReportButton
 							className={`flex w-[100%] items-center rounded-none leading-4 text-pink_primary shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className}`}

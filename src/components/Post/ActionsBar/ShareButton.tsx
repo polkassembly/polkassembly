@@ -3,14 +3,31 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ShareAltOutlined } from '@ant-design/icons';
+import { trackEvent } from 'analytics';
 import { Button } from 'antd';
-import React from 'react';
-import { useNetworkSelector } from '~src/redux/selectors';
+import React, { FC } from 'react';
+import { ProposalType } from '~src/global/proposalType';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
-const ShareButton = function ({ title }: { title?: string | null }) {
+interface IShareButtonProps {
+	postId: number | string;
+	proposalType: ProposalType;
+	title?: string;
+}
+const ShareButton: FC<IShareButtonProps> = (props) => {
+	const { postId, proposalType, title } = props;
 	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
 
 	const share = () => {
+		// GAEvent for post sharing
+		trackEvent('post_share_clicked', 'share_post', {
+			postId: postId,
+			postTitle: title,
+			proposalType: proposalType,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		const twitterParameters = [];
 
 		twitterParameters.push(`url=${encodeURI(global.window.location.href)}`);

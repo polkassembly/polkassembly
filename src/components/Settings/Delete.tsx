@@ -219,7 +219,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								className='m-0 mt-1.5'
 							>
 								<Input.Password
-									placeholder='Password'
+									placeholder='Enter Password'
 									className='rounded-md border-grey_border px-4 py-3 dark:border-white dark:bg-transparent dark:text-blue-dark-high dark:hover:border-[#91054f] dark:focus:border-[#91054F] [&>input]:bg-transparent dark:[&>input]:text-blue-dark-high'
 									id='password'
 								/>

@@ -752,9 +752,9 @@ z-index: 1050 !important;
   color: #909090 !important;
 }
 
-.dark input:focus{
+/* .dark input:focus{
   border: 1px solid var(--pink_primary) !important;
-}
+} */
 
 .dark .ant-input-password input:focus{
   border: none !important;

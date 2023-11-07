@@ -336,15 +336,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								}
 								isClicked.current = false;
 							}}
-							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:bg-section-dark-overlay md:hidden'
+							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:border-[#3B444F] dark:bg-section-dark-overlay md:hidden'
 						>
-							<CloseOutlined className='h-[15px] w-[15px]' />
+							<CloseOutlined className='h-[15px] w-[15px] dark:text-white' />
 							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
 								<div
 									onClick={() => {
 										isClicked.current = true;
 									}}
-									className='bg-white p-4'
+									className='bg-white p-4 dark:bg-section-dark-overlay'
 								>
 									<div className='flex flex-col'>
 										<div>
@@ -366,7 +366,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/signup');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
+													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
 												>
 													Sign Up
 												</button>
@@ -391,7 +391,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								setSidedrawer(false);
 								setOpen(true);
 							}}
-							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-[6px] outline-none md:hidden'
+							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-[6px] outline-none dark:border-[#3B444F] md:hidden'
 						>
 							<Image
 								className='h-[20px] w-[20px] rounded-full'
@@ -518,15 +518,11 @@ export default styled(NavHeader)`
 		}
 
 		.type-container {
-			margin-left: 5px !important;
+			margin-left: -10px !important;
 		}
 
 		.logo-container {
 			margin-left: -8px !important;
-		}
-
-		.type-container {
-			margin-left: -24px !important;
 		}
 
 		.text-container {
@@ -548,7 +544,7 @@ export default styled(NavHeader)`
 		}
 
 		.type-container {
-			margin-left: -38px !important;
+			margin-left: -10px !important;
 		}
 
 		.text-container {

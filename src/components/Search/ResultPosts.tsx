@@ -102,7 +102,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 											{post?.tags?.slice(0, 2).map((tag: string, index: number) => (
 												<div
 													key={index}
-													className='rounded-[50px] border-[1px] border-solid border-[#D2D8E0] bg-white px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:bg-section-dark-overlay dark:text-blue-dark-medium'
+													className='rounded-[50px] border-[1px] border-solid border-[#D2D8E0] bg-white px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'
 												>
 													{tag}
 												</div>

@@ -26,7 +26,7 @@ const Fallback: FC<IFallbackProps> = (props) => {
 					<Link
 						onClick={props.onReset}
 						href='/'
-						className='h-[50px] w-[215px] rounded-md border-white bg-pink_primary px-6 py-2 text-lg text-white hover:bg-pink_secondary'
+						className='h-[50px] w-[215px] rounded-md border-white bg-pink_primary px-6 py-2 text-lg text-white hover:bg-pink_secondary dark:border-[#3B444F]'
 					>
 						Go To Home
 					</Link>

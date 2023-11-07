@@ -628,7 +628,7 @@ z-index: 1050 !important;
 
 .dark .ant-segmented-item-selected > .ant-segmented-item-label{
   background-color: #0D0D0D;
-  border-radius: 8px;
+  border-radius: 20px;
 }
 
 .dark .ant-select:not(.ant-select-customize-input) .ant-select-selector{
@@ -637,10 +637,6 @@ z-index: 1050 !important;
 
 .dark .ant-select-item-option-content{
   color: #909090;
-}
-
-.dark .dark-text-white > *{
-  color: white !important;
 }
 
 .dark .ant-modal-content {
@@ -676,6 +672,65 @@ z-index: 1050 !important;
   color: #909090 !important;
 }
 
+.dark .ant-tag-close-icon{
+  color: #909090 !important;
+}
+
+.dark .ant-select-arrow{
+  color: #fff !important;
+}
+
+.dark .ant-tabs-dropdown-menu .ant-tabs-dropdown-menu-root .ant-tabs-dropdown-menu-vertical {
+  background-color: #0D0D0D !important;
+}
+
+.dark .ant-tabs-dropdown {
+  background-color: #282A2D;
+  border-radius: 10px;
+  padding: 8px;
+  padding-left: 0px;
+}
+
+.dark .ant-tabs-dropdown > ul {
+  background-color: #282A2D;
+}
+
+.dark .ant-tabs-dropdown > ul {
+  background-color: #282A2D;
+}
+
+.dark .ant-tabs-dropdown > ul > li {
+  color: #fff !important;
+}
+
+.dark .ant-tabs-dropdown .ant-tabs-dropdown-menu-item:hover{
+  color: var(--pink_primary) !important;
+}
+
+.dark .ant-segmented-block {
+  background-color: #1C1D1F
+}
+
+.dark .ant-segmented-item {
+  transition: none !important;
+}
+.dark .ant-segmented-item-selected {
+  background-color: #1C1D1F;
+}
+
+.dark .ant-segmented-thumb {
+  background-color: #1C1D1F;
+}
+
+.dark .dark-text-white *{
+  color: white !important;
+}
+
+.dark .dark-text-white a,
+.dark .dark-text-white a > span {
+  color: #FF60B5 !important;
+}
+
 .dark .dark-text-white > p, 
 .dark .dark-text-white > p:not(a),
 .dark .dark-text-white > p *:not(a) {
@@ -687,10 +742,32 @@ z-index: 1050 !important;
   color: #FF60B5 !important;
 }
 
-.dark .ant-tag-close-icon{
+.dark .dark-text-white span[style*="background-color: rgb(255, 255, 255)"],
+.dark .dark-text-white span[style*="background-color: rgb(255, 255, 255)"] * {
+  color: black !important;
+  font-weight: 600 !important;
+}
+
+.dark .ant-input::placeholder {
   color: #909090 !important;
 }
 
-.dark .ant-select-arrow{
-  color: #fff !important;
+.dark input:focus{
+  border: 1px solid var(--pink_primary) !important;
+}
+
+.dark .ant-input-password input:focus{
+  border: none !important;
+}
+
+.dark .anticon.ant-input-password-icon{
+  color: #909090 !important;
+}
+
+.dark .ant-collapse-expand-icon{
+  color: #909090 !important;
+}
+
+.dark .ant-collapse-content{
+  background-color: #0D0D0D;
 }

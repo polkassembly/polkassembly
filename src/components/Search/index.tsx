@@ -510,7 +510,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 				{/* Autocomplete results */}
 				{(autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && !searchInputErr?.err && !searchInputErr.clicked && (
-					<section className='absolute z-50 w-[94.3%] rounded-b-[4px] border-[1px] border-solid border-gray-200 bg-white dark:border-gray-600 dark:bg-section-dark-overlay max-md:w-[85.7%]'>
+					<section className='absolute z-50 w-[94.3%] rounded-b-[4px] border-[1px] border-solid border-gray-300 bg-white dark:border-[#3B444F] dark:border-gray-600 dark:bg-section-dark-overlay max-md:w-[85.7%]'>
 						{/* Posts List */}
 						<List
 							size='small'

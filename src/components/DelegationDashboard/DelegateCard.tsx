@@ -73,7 +73,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 	return (
 		<div
-			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0]  dark:border-separatorDark  ${
+			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
 				delegate?.dataSource === 'nova' ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
 			} ${className}`}
 		>
@@ -142,7 +142,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</span>
 				)}
 			</div>
-			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0]  dark:border-separatorDark '>
+			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 					<div className='flex items-end justify-center gap-1'>
 						{formatedBalance(balance.toString(), unit, 2)}
@@ -150,7 +150,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 					<div className='font-normaltext-[#576D8B] mt-[4px] text-xs dark:text-blue-dark-medium'>Voting power</div>
 				</div>
-				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0]  pt-4 text-[20px] font-semibold text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
 					{delegate?.voted_proposals_count}
 					<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-xs dark:text-blue-dark-medium'>Voted proposals </span>
 					<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>(Past 30 days)</span>
@@ -206,7 +206,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
 						<p className='w-[90%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
 					</div>
-					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0]  dark:border-separatorDark '>
+					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							<div className='flex items-end justify-center gap-1'>
 								{formatedBalance(balance.toString(), unit, 2)}
@@ -214,7 +214,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							</div>
 							<div className='font-normaltext-[#576D8B] mt-[4px] text-xs dark:text-blue-dark-medium'>Voting power</div>
 						</div>
-						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0]  pt-4 text-[20px] font-semibold text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
 							{delegate?.voted_proposals_count}
 							<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-xs dark:text-blue-dark-medium'>Voted proposals </span>
 							<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>(Past 30 days)</span>

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Pagination } from 'antd';
+import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import { ProfileDetails } from '~src/auth/types';

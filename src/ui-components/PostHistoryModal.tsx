@@ -54,7 +54,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 				</div>
 			) : (
 				<div
-					className={`ml-3 mt-1 rounded-[4px] border-[0.5px] border-solid border-[#D2D8E0] bg-white px-3 py-3 dark:bg-section-dark-overlay max-sm:ml-0 max-sm:w-full ${
+					className={`ml-3 mt-1 rounded-[4px] border-[0.5px] border-solid border-[#D2D8E0] bg-white px-3 py-3 dark:border-[#3B444F] dark:bg-section-dark-overlay max-sm:ml-0 max-sm:w-full ${
 						item?.expanded && 'active-timeline'
 					}`}
 				>

@@ -61,7 +61,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 			{profileHistory === EProfileHistory.POSTS && (
 				<>
 					<Select
-						suffixIcon={<ArrowDownIcon className='text-[#90A0B7]' />}
+						suffixIcon={<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />}
 						value={selectedPostsType}
 						className='select'
 						onChange={(v) => {
@@ -75,9 +75,10 @@ const GovTab: FC<IGovTabProps> = (props) => {
 							}
 						}}
 						options={Object.keys((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any).map((key) => ({
-							label: getLabel(key),
+							label: <span className='dark:text-blue-dark-medium'>{getLabel(key)}</span>,
 							value: key
 						}))}
+						popupClassName='z-[1060] dark:border-0 dark:border-none dark:bg-section-dark-overlay'
 					/>
 					<div className='scroll-hidden my-5 flex max-w-full items-center gap-x-2 overflow-x-auto'>
 						{((EGovType.GOV1 === govType ? posts?.gov1 : posts?.open_gov) as any)?.[selectedPostsType] &&
@@ -91,7 +92,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 										}}
 										className={`flex items-center justify-center whitespace-nowrap rounded-[50px] border border-solid px-3 py-1 text-xs font-medium leading-[18px] outline-none ${
 											selectedPost === key ? 'border-pink_primary bg-pink_primary text-white' : 'border-[#90A0B7] bg-transparent text-[#90A0B7]'
-										}`}
+										} dark:text-blue-dark-medium`}
 									>
 										{getLabel(key)}
 									</button>

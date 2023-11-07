@@ -67,7 +67,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 				{showBalances && (
 					<div
 						className={`flex items-center justify-between text-sm tracking-[0.25%] text-lightBlue dark:text-white ${
-							tokensData.length > 0 && ' border-0 border-b-[1px] border-solid border-[#D2D8E0] pb-2'
+							tokensData.length > 0 && ' border-0 border-b-[1px] border-solid border-[#D2D8E0] pb-2 dark:border-[#3B444F]'
 						}`}
 					>
 						<span className='flex gap-2'>
@@ -110,7 +110,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 							<div className='max-h-[150px] overflow-y-auto'>
 								{tokensData.slice(1).map((lock, index) => (
 									<div
-										className='flex items-center justify-between border-0 border-t-[1px] border-dotted border-[#D2D8E0] border-[#D2D8E0] py-3 text-sm tracking-[0.25%] text-lightBlue'
+										className='flex items-center justify-between border-0 border-t-[1px] border-dotted border-[#D2D8E0] border-[#D2D8E0] py-3 text-sm tracking-[0.25%] text-lightBlue dark:border-[#3B444F] dark:border-[#3B444F]'
 										key={index}
 									>
 										<div className='flex items-center gap-2'>

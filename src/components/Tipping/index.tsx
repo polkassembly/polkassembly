@@ -217,7 +217,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 		>
 			<Modal
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<TipIcon className='mr-[6px]' />
 						Give a Tip
 					</div>
@@ -228,7 +228,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 				closeIcon={<CloseIcon />}
 				className={`${poppins.className} ${poppins.variable} w-[604px] max-sm:w-full ${className}`}
 				footer={
-					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 text-sm'>
+					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 text-sm dark:border-[#3B444F]'>
 						<Button
 							key='back'
 							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary font-semibold tracking-wide text-pink_primary dark:bg-transparent'
@@ -274,7 +274,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 						)}
 					</div>
 					<div className='flex w-full items-end gap-2 text-sm '>
-						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:bg-transparent'>
+						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:bg-transparent'>
 							<Address
 								address={address}
 								isTruncateUsername={false}
@@ -312,7 +312,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 										return (
 											<span
 												className={`flex h-[36px] w-[102px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid ${
-													tipBlance.eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0]'
+													tipBlance.eq(tipAmount) ? 'border-pink_primary bg-[#FAE7EF]' : 'border-[#D2D8E0] dark:border-[#3B444F]'
 												}`}
 												key={tip.key}
 												onClick={() => {

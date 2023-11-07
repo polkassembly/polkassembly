@@ -132,14 +132,14 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 								htmlType='button'
 								loading={loading}
 								onClick={toggleEdit}
-								className='mr-2 flex items-center'
+								className='mr-2 flex items-center dark:border-pink_primary dark:bg-transparent dark:text-pink_primary'
 							>
 								<CloseOutlined /> Cancel
 							</Button>
 							<Button
 								htmlType='submit'
 								loading={loading}
-								className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary'
+								className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-[#3B444F]'
 							>
 								<CheckOutlined /> Submit
 							</Button>

@@ -107,14 +107,14 @@ const VotingForm = ({
 						helpText={'Amount of you are willing to lock for this vote.'}
 						placeholder={'Add balance'}
 						onChange={onBalanceChange}
-						className='border-[#D2D8E0] text-sm font-medium'
+						className='border-[#D2D8E0] text-sm font-medium dark:border-[#3B444F]'
 						formItemName='balance'
 						theme={theme}
 					/>
 					<ConvictionSelect className={`${convictionClassName}`} />
 				</>
 			)}
-			<div className='-ml-6 -mr-6 mt-[-1px] flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] pt-5'>
+			<div className='-ml-6 -mr-6 mt-[-1px] flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] pt-5 dark:border-[#3B444F]'>
 				<Button
 					className={`mr-[24px] h-[40px] w-[134px] rounded-[4px] border-0 bg-pink_primary font-semibold text-[white] ${disabled && 'opacity-50'}`}
 					htmlType='submit'

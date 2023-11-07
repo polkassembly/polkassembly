@@ -674,7 +674,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									</Button>
 									<Button
 										htmlType='submit'
-										className='flex h-[26px] items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-transparent'
+										className='flex h-[26px] items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-[#3B444F] dark:border-transparent'
 									>
 										<CheckOutlined />
 									</Button>

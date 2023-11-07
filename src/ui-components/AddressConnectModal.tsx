@@ -449,7 +449,7 @@ const AddressConnectModal = ({
 									<Divider className='m-0'>OR</Divider>
 									<div className='flex w-full justify-center'>
 										<WalletButton
-											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'
+											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
 											onClick={() => {
 												setShowMultisig(!showMultisig);
 											}}

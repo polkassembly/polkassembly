@@ -276,7 +276,7 @@ const Details: FC<IDetailsProps> = (props) => {
 		});
 	}
 	return (
-		<div className='flex h-full w-full flex-col gap-y-5 bg-[#F5F5F5] md:w-auto'>
+		<div className='flex h-full w-full flex-col gap-y-5 bg-[#F5F5F5] dark:bg-section-dark-overlay md:w-auto'>
 			<article className='rounded-l-[4px] bg-[#910365] px-4 py-[22px] md:w-[330px] md:flex-1 md:py-8'>
 				<div className='flex w-full flex-col items-center'>
 					<div className='grid w-full grid-cols-3'>

@@ -244,7 +244,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 			<Button
 				onClick={handleModalOpen}
 				htmlType='submit'
-				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-blue-light-high dark:border-separatorDark dark:bg-section-dark-container dark:text-blue-dark-high dark:text-blue-dark-high'
+				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-blue-light-high dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-container dark:text-blue-dark-high dark:text-blue-dark-high'
 			>
 				<span className='align-center flex text-[16px] font-medium '>
 					Enable Two Factor Authentication <KeyboardDownIcon />

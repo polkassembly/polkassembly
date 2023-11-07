@@ -258,7 +258,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						<Button
 							htmlType='submit'
 							disabled={!currentUser.id || formDisabled || loading}
-							className='mt-10 flex h-[50px] w-[215px] items-center justify-center rounded-md border-white bg-pink_primary text-lg text-white hover:bg-pink_secondary dark:border-none'
+							className='mt-10 flex h-[50px] w-[215px] items-center justify-center rounded-md border-white bg-pink_primary text-lg text-white hover:bg-pink_secondary dark:border-none dark:border-[#3B444F]'
 						>
 							Create Post
 						</Button>

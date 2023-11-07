@@ -18,10 +18,13 @@ const ToggleButton = () => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
 				}}
-				className={classNames('flex cursor-pointer items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent p-2 outline-none', {
-					'border-[#3B444F]': theme === 'dark',
-					'border-[#D2D8E0]': theme === 'light'
-				})}
+				className={classNames(
+					'flex cursor-pointer items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent p-2 outline-none dark:border-[#3B444F]',
+					{
+						'border-[#3B444F]': theme === 'dark',
+						'border-[#D2D8E0] dark:border-[#3B444F]': theme === 'light'
+					}
+				)}
 			>
 				{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}
 			</button>

@@ -291,7 +291,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			</Modal>
 			{!setOpenModal && (
 				<button
-					className='flex cursor-pointer items-center justify-center gap-x-1.5 rounded-[4px] border-0 border-solid border-white bg-transparent text-sm font-medium text-[#fff] outline-none md:h-[40px] md:w-[87px] md:border'
+					className='flex cursor-pointer items-center justify-center gap-x-1.5 rounded-[4px] border-0 border-solid border-white bg-transparent text-sm font-medium text-[#fff] outline-none dark:border-[#3B444F] md:h-[40px] md:w-[87px] md:border'
 					onClick={() => {
 						setOpen(true);
 						populateData();

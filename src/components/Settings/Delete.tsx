@@ -3,6 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Form, Input, Modal, Select, Divider } from 'antd';
 import Link from 'next/link';
+import { poppins } from 'pages/_app';
+
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -90,7 +92,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	return (
 		<Collapse
 			size='large'
-			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			className={`bg-white dark:border-separatorDark dark:bg-section-dark-overlay ${className}`}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
@@ -155,7 +157,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								Delete
 							</Button>
 						]}
-						className={`${className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						{error && (
 							<div className='mb-4'>
@@ -167,7 +169,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							style={{ borderTop: '1px solid #E1E6EB' }}
 						></Divider>
 
-						<article className='px-6'>
+						<article className='mt-6 px-6'>
 							<label
 								className='text-sm font-normal text-lightBlue dark:text-white'
 								htmlFor='reason'

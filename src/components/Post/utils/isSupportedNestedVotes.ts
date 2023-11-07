@@ -3,13 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { network as AllNetworks } from '~src/global/networkConstants';
 export const isSupportedNestedVoteNetwork = (network: string) => {
-	const votesHistoryUnavailableNetworks = [
-		AllNetworks.MOONBASE,
-		AllNetworks.MOONRIVER,
-		AllNetworks.POLYMESH,
-		AllNetworks.COLLECTIVES,
-		AllNetworks.WESTENDCOLLECTIVES,
-		AllNetworks.MOONBEAM
-	];
+	const votesHistoryUnavailableNetworks = [AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES];
 	return !votesHistoryUnavailableNetworks.includes(network);
 };

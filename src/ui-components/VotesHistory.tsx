@@ -248,7 +248,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 												<Link
 													target='_blank'
 													href={`https:${network}.polkassembly.io/${govType === EGovType.OPEN_GOV ? 'referenda' : 'referendum'}/${data?.proposal?.id}`}
-													className='flex w-[45%] truncate font-medium text-bodyBlue hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-high max-md:w-[95%]'
+													className='flex w-[45%] truncate font-medium text-bodyBlue hover:text-bodyBlue dark:text-blue-dark-high max-md:w-[95%]'
 												>
 													<span className='flex w-[60px] items-center gap-1 '>
 														{`#${data?.proposal?.id}`}

@@ -827,7 +827,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: moonriverLogo,
 		rpcEndpoint: 'wss://wss.moonriver.moonbeam.network',
 		ss58Format: 1285,
-		subsquidUrl: 'https://squid.subsquid.io/moonriver-polkassembly/graphql',
+		subsquidUrl: 'https://squid.subsquid.io/moonriver-polkassembly/v/v1/graphql',
 		tokenDecimals: 18,
 		tokenSymbol: tokenSymbol.MOVR,
 		treasuryProposalBondPercent: '5%',

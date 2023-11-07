@@ -46,7 +46,8 @@ interface IUserProfileProps {
 	className?: string;
 }
 
-export const votesHistoryUnavailableNetworks = [
+export const votesHistoryUnavailableNetworks = [AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES];
+export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBASE,
 	AllNetworks.MOONRIVER,
 	AllNetworks.POLYMESH,
@@ -54,7 +55,6 @@ export const votesHistoryUnavailableNetworks = [
 	AllNetworks.WESTENDCOLLECTIVES,
 	AllNetworks.MOONBEAM
 ];
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const req = context.req;
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -216,19 +216,20 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							/>
 						)}
 					</div>
-					{(profileHistory === EProfileHistory.POSTS || !votesHistoryUnavailableNetworks.includes(network)) && (
-						<div className='mb-2 flex justify-between'>
-							{!votesHistoryUnavailableNetworks.includes(network) && (
-								<Segmented
-									className='mb-4 h-[36px] w-[130px] dark:bg-section-dark-background'
-									options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
-									onChange={(e) => setProfileHistory(e as EProfileHistory)}
-									value={profileHistory}
-								/>
-							)}
-							{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && <VoteUnlock addresses={userProfile.data.addresses} />}
-						</div>
-					)}
+
+					<div className='mb-2 flex justify-between'>
+						{!votesHistoryUnavailableNetworks.includes(network) && (
+							<Segmented
+								className='mb-4 h-[36px] w-[130px] dark:bg-section-dark-background'
+								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
+								onChange={(e) => setProfileHistory(e as EProfileHistory)}
+								value={profileHistory}
+							/>
+						)}
+						{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && (
+							<VoteUnlock addresses={userProfile.data.addresses} />
+						)}
+					</div>
 
 					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>

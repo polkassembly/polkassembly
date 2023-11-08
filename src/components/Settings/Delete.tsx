@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Form, Input, Modal, Select } from 'antd';
+import { Button, Form, Input, Modal, Select, Divider } from 'antd';
 import Link from 'next/link';
+import { poppins } from 'pages/_app';
+
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { NotificationStatus } from 'src/types';
 import FilteredError from 'src/ui-components/FilteredError';
-import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import styled from 'styled-components';
 import ExpandIcon from '~assets/icons/expand.svg';
@@ -21,6 +21,7 @@ import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { CloseIcon, DeleteBlueIcon, DeleteWhiteIcon } from '~src/ui-components/CustomIcons';
 const { Panel } = Collapse;
 
 const Delete: FC<{ className?: string }> = ({ className }) => {
@@ -34,6 +35,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	const router = useRouter();
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const [isFormValid, setIsFormValid] = useState(false);
 
 	const handleLogout = async () => {
 		dispatch(logout());
@@ -46,40 +48,44 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 	const handleSubmit = async (formData: any) => {
 		if (formData?.password) {
 			setLoading(true);
-
 			const { data, error } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteAccount', { password: formData?.password });
 			if (error) {
 				setError(cleanError(error));
-				queueNotification({
-					header: 'Failed!',
-					message: cleanError(error),
-					status: NotificationStatus.ERROR
-				});
+				setLoading(false);
 				console.error('Delete account error', error);
 			}
 
 			if (data) {
 				handleLogout();
 			}
-
-			setLoading(true);
 		}
 	};
 	const openModal = () => {
 		setShowModal(true);
+		setLoading(false);
+		setIsFormValid(false);
 	};
 
 	const dismissModal = () => {
 		form.resetFields();
 		setError('');
 		setShowModal(false);
+		setLoading(false);
+		setIsFormValid(false);
 	};
-	const Title = <div className='text-lg font-medium tracking-wide text-sidebarBlue dark:bg-section-dark-overlay dark:text-white'>Delete Account</div>;
+	const Title = (
+		<div>
+			<div className='-mt-1 flex gap-x-2 px-6 text-xl font-semibold tracking-wide text-bodyBlue dark:bg-section-dark-overlay dark:text-white'>
+				{theme === 'dark' ? <DeleteWhiteIcon className='text-2xl' /> : <DeleteBlueIcon className='text-2xl' />}
+				<p className='m-0 p-0'>Delete Account</p>
+			</div>
+		</div>
+	);
 	const { Option } = Select;
 	return (
 		<Collapse
 			size='large'
-			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			className={`bg-white dark:border-separatorDark dark:bg-section-dark-overlay ${className}`}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
@@ -99,16 +105,37 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 					className={className}
 					form={form}
 					onFinish={handleSubmit}
+					onValuesChange={(_, allValues) => {
+						setIsFormValid(!!allValues.reason && !!allValues.password);
+					}}
 				>
 					<p className='text-[14px] text-blue-light-high dark:text-blue-dark-high'>
 						Please note that this action is irreversible and all the data associated with your account will be permanently deleted.
 					</p>
 					<Modal
 						wrapClassName='dark:bg-modalOverlayDark'
-						closable={false}
+						closable={true}
+						maskClosable={true}
 						title={Title}
 						open={showModal}
+						closeIcon={
+							<div onClick={dismissModal}>
+								<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+							</div>
+						}
 						footer={[
+							<Divider
+								key='divider'
+								className='my-4'
+								style={{ borderTop: '1px solid #E1E6EB' }}
+							></Divider>,
+							<Button
+								key='cancel'
+								onClick={dismissModal}
+								className='inline-flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-semibold leading-7 text-pink_primary outline-none dark:bg-transparent'
+							>
+								Cancel
+							</Button>,
 							<Button
 								htmlType='submit'
 								key='delete'
@@ -116,35 +143,30 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									form.submit();
 								}}
 								loading={loading}
-								className='inline-flex items-center justify-center rounded-lg border-none bg-pink_primary px-7 py-5 text-lg font-semibold leading-7 text-white outline-none'
+								disabled={!isFormValid}
+								style={{ opacity: !isFormValid ? 0.6 : 1 }}
+								className='mr-6 inline-flex items-center justify-center rounded-md border-none bg-pink_primary px-8 py-5 text-sm font-semibold leading-7 text-white outline-none'
 							>
 								Delete
-							</Button>,
-							<Button
-								key='cancel'
-								onClick={dismissModal}
-								className='inline-flex items-center justify-center rounded-lg border-none bg-pink_primary px-7 py-5 text-lg font-semibold leading-7 text-white outline-none'
-							>
-								Cancel
 							</Button>
 						]}
-						className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
-						{error && (
-							<div className='mb-4'>
-								<FilteredError text={error} />
-							</div>
-						)}
-						<article>
+						<Divider
+							className='my-4'
+							style={{ borderTop: '1px solid #E1E6EB' }}
+						></Divider>
+
+						<article className='mt-5 px-6'>
 							<label
-								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'
+								className='text-sm font-normal text-lightBlue dark:text-white'
 								htmlFor='reason'
 							>
-								Why are you deleting your account?
+								Reason for deleting account
 							</label>
 							<Form.Item
 								name='reason'
-								className='m-0 mt-2.5'
+								className='m-0 mt-0.5'
 							>
 								<Select
 									onChange={(value) => {
@@ -185,20 +207,20 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								</Form.Item>
 							) : null}
 						</article>
-						<article className='mt-12'>
+						<article className='mt-6 px-6'>
 							<label
-								className='text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white'
+								className='text-sm font-normal text-lightBlue dark:text-white'
 								htmlFor='password'
 							>
-								To continue, re-enter your password
+								Please enter your password to continue
 							</label>
 							<Form.Item
 								name='password'
-								className='m-0 mt-2.5'
+								className='m-0 mt-0.5'
 							>
 								<Input.Password
-									placeholder='Password'
-									className='rounded-md border-grey_border px-4 py-3 dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] [&>input]:bg-transparent dark:[&>input]:text-blue-dark-high'
+									placeholder='Enter Password'
+									className='h-[40px] rounded-md border-grey_border px-4 py-3 dark:border-white dark:bg-transparent dark:text-blue-dark-high dark:hover:border-[#91054f] dark:focus:border-[#91054F] [&>input]:bg-transparent dark:[&>input]:text-blue-dark-high'
 									id='password'
 								/>
 							</Form.Item>
@@ -210,6 +232,11 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									Forgot Password?
 								</Link>
 							</div>
+							{error && (
+								<div className='mb-4'>
+									<FilteredError text={error} />
+								</div>
+							)}
 						</article>
 					</Modal>
 					<Button
@@ -232,5 +259,11 @@ export default styled(Delete)`
 	}
 	input::placeholder {
 		color: #909090;
+	}
+	.ant-modal-content {
+		padding: 20px 0 !important;
+	}
+	.ant-select-selector {
+		height: 40px !important;
 	}
 `;

@@ -15,26 +15,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const body = JSON.parse(req.body);
 	const { address, title, content, signature, proposalType } = body;
-	if(!body || !address || !title || !content || !signature || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!body || !address || !title || !content || !signature || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type "${proposalType}" is invalid.` });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-	await authServiceInstance.CreatePostConfirm(
-		network,
-		address,
-		title,
-		content,
-		signature,
-		strProposalType as ProposalType
-	);
+	await authServiceInstance.CreatePostConfirm(network, address, title, content, signature, strProposalType as ProposalType);
 
 	return res.status(200).json({ message: 'Post created successfully' });
 }

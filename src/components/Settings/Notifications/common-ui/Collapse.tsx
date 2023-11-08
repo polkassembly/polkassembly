@@ -4,21 +4,37 @@
 import styled from 'styled-components';
 import { Collapse as AntDCollapse } from 'antd';
 export const Collapse = styled(AntDCollapse)`
+	.channel-header {
+		svg {
+			width: 24px;
+			height: 24px;
+		}
+	}
 
-.channel-header{
-    svg{
-        width:24px;
-        height:24px
-    }
-}
+	.ant-collapse-header {
+		padding: 16px 20px !important;
+	}
 
-.ant-collapse-header{
-    padding: 16px 20px !important;
-}
+	.ant-collapse-header {
+		padding: 16px 20px !important;
+	}
 
-@media (max-width: 768px){
-    &.ant-collapse-large >.ant-collapse-item >.ant-collapse-header{
-        padding:8px 12px !important;
-    }
-}
+	.ant-collapse-content-box {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+	}
+
+	.ant-collapse-item {
+		border-bottom: 1px solid ${(props) => (props.theme === 'dark' ? '#90909060' : 'none')} !important;
+	}
+
+	.ant-collapse .ant-collapse-content {
+		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
+		border-top: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+	}
+
+	@media (max-width: 768px) {
+		&.ant-collapse-large > .ant-collapse-item > .ant-collapse-header {
+			padding: 8px 12px !important;
+		}
+	}
 `;

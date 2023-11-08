@@ -58,7 +58,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	}
 
 	const network = String(req.headers['x-network']);
-	if (email) {
+	if (email && email?.length) {
 		const userEmailQuerySnapshot = await firestore.collection('users').where('email', '==', String(email).toLowerCase()).limit(1).get();
 		if (!userEmailQuerySnapshot.empty) {
 			throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
@@ -77,7 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		title: title || ''
 	};
 	let updatedToken: any;
-	if (email) {
+	if (email && email?.length) {
 		updatedToken = await authServiceInstance.getSignedToken({ ...user, custom_username, email, profile, username });
 	} else {
 		updatedToken = await authServiceInstance.getSignedToken({ ...user, custom_username, profile, username });

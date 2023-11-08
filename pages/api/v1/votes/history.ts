@@ -67,7 +67,7 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 		if (isNaN(Number(proposalIndex))) {
 			throw apiErrorWithStatusCode(`No proposal found for "${proposalIndex}." .`, 400);
 		}
-		if (!isProposalTypeValid(String(proposalType))) {
+		if (!isProposalTypeValid(String(proposalType)) || !['referendums', 'referendums_v2'].includes(String(proposalType))) {
 			throw apiErrorWithStatusCode(`Invalid proposal type "${proposalType}." .`, 400);
 		}
 

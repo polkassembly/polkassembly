@@ -27,6 +27,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
+import { ApiPromise } from '@polkadot/api';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -67,6 +68,9 @@ const sortedCheck = {
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const {
+		postData: { statusHistory }
+	} = usePostDataContext();
 	const firstRef = useRef(true);
 	const {
 		postData: { postType }
@@ -135,8 +139,18 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const getReferendumV2VoteInfo = useCallback(async () => {
 		if (!api || !apiReady || !network) return;
+		let newAPI: ApiPromise = api;
+		const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+
+		if (status) {
+			const blockNumber = status.block;
+			if (blockNumber) {
+				const hash = await api.rpc.chain.getBlockHash(blockNumber - 1);
+				newAPI = (await api.at(hash)) as ApiPromise;
+			}
+		}
 		if (isReferendum2) {
-			const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
+			const referendumInfoOf = await newAPI.query.referenda.referendumInfoFor(referendumId);
 			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 			if (parsedReferendumInfo?.ongoing?.tally) {
 				setTallyData({
@@ -161,7 +175,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				nays: new BN(tally?.nays || 0, 'hex').toString()
 			});
 		}
-	}, [api, apiReady, isReferendum2, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]);
+	}, [api, apiReady, isReferendum2, network, referendumId, statusHistory, tally?.abstain, tally?.ayes, tally?.nays]);
 
 	useEffect(() => {
 		setLoadingStatus({

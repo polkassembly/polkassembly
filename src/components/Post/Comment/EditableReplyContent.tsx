@@ -29,6 +29,8 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import { IComment } from './Comment';
+import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 
 interface Props {
 	userId: number;
@@ -40,12 +42,14 @@ interface Props {
 	userName?: string;
 	is_custom_username?: boolean;
 	proposer?: string;
+	isSubsquareUser: boolean;
+	comment: IComment;
 }
 
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
+const EditableReplyContent = ({ isSubsquareUser, comment, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -505,9 +509,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				status: NotificationStatus.ERROR
 			});
 		}
-		// if (data) {
-		// removeReplyContent();
-		// }
 		setLoading(false);
 	};
 
@@ -561,6 +562,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							md={content}
 						/>
 						<div className='flex flex-wrap items-center gap-3'>
+							<CommentReactionBar
+								className='reactions mr-0'
+								commentId={commentId}
+								comment_reactions={comment.comment_reactions}
+								importedReactions={isSubsquareUser}
+								replyId={replyId}
+							/>
 							{isEditable && (
 								<Button
 									className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}

@@ -9,14 +9,17 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
+import { IComment } from './Comment';
 interface Props {
 	className?: string;
 	reply: any;
 	commentId: string;
 	userName?: string;
+	isSubsquareUser: boolean;
+	comment: IComment;
 }
 
-export const Reply = ({ className, commentId, reply, userName }: Props) => {
+export const Reply = ({ className, commentId, reply, userName, comment, isSubsquareUser }: Props) => {
 	const { user_id, username, content, created_at, id, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
@@ -64,6 +67,8 @@ export const Reply = ({ className, commentId, reply, userName }: Props) => {
 					userName={userName}
 					proposer={proposer}
 					is_custom_username={is_custom_username}
+					comment={comment}
+					isSubsquareUser={isSubsquareUser}
 				/>
 			</div>
 		</div>

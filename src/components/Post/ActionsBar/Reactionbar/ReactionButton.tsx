@@ -25,6 +25,7 @@ export interface IReactionButtonProps {
 	setDislikeModalOpen?: (pre: boolean) => void;
 	importedReactions?: boolean;
 	isReactionButtonInPost?: boolean;
+	replyId?: string;
 }
 
 type IReaction = '👍' | '👎';
@@ -40,7 +41,8 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	setLikeModalOpen,
 	setDislikeModalOpen,
 	importedReactions = false,
-	isReactionButtonInPost
+	isReactionButtonInPost,
+	replyId
 }) => {
 	const {
 		postData: { postIndex, postType, track_number }
@@ -118,18 +120,36 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 				});
 			}
 			setReactions(newReactions);
-			const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
-			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
-				commentId: commentId || null,
-				postId: postIndex,
-				postType,
-				reaction,
-				trackNumber: track_number,
-				userId: id
-			});
+			if (commentId === 'reply') {
+				console.log(replyId);
+				const actionName = `${reacted ? 'remove' : 'add'}ReplyReaction`;
+				const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
+					commentId: commentId || null,
+					postId: postIndex,
+					postType,
+					reaction,
+					replyId: replyId || null,
+					trackNumber: track_number,
+					userId: id
+				});
 
-			if (error || !data) {
-				console.error('Error while reacting', error);
+				if (error || !data) {
+					console.error('Error while reacting', error);
+				}
+			} else {
+				const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
+				const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
+					commentId: commentId || null,
+					postId: postIndex,
+					postType,
+					reaction,
+					trackNumber: track_number,
+					userId: id
+				});
+
+				if (error || !data) {
+					console.error('Error while reacting', error);
+				}
 			}
 		}
 	};

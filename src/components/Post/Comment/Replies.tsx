@@ -6,14 +6,17 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 
 import Reply from './Reply';
+import { IComment } from './Comment';
 
 interface Props {
 	className?: string;
 	repliesArr: any[];
 	commentId: string;
+	isSubsquareUser: boolean;
+	comment: IComment;
 }
 
-const Replies = ({ className, commentId, repliesArr }: Props) => {
+const Replies = ({ className, commentId, repliesArr, isSubsquareUser, comment }: Props) => {
 	const [showReplies, setShowReplies] = useState<boolean>(true);
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
@@ -44,6 +47,8 @@ const Replies = ({ className, commentId, repliesArr }: Props) => {
 								key={reply.id}
 								commentId={commentId}
 								userName={reply.username}
+								comment={comment}
+								isSubsquareUser={isSubsquareUser}
 							/>
 						</div>
 					);

@@ -549,14 +549,14 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 									</>
 								)
 							)}
-							<div>{error ? <FilteredError text={error} /> : <></>}</div>
+							<div className='mt-4'>{error ? <FilteredError text={error} /> : <></>}</div>
 						</AuthForm>
 					)}
 
 					{!authResponse.isTFAEnabled && (
-						<div className='flex items-center justify-center'>
+						<div className='my-6 flex items-center justify-center'>
 							<Button
-								className='dakr:bg-transparent flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none'
+								className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 								onClick={() => handleBackToLogin()}
 							>
 								Go Back

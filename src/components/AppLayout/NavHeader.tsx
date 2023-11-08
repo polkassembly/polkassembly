@@ -268,9 +268,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						)}
 					</Link>
 
-					<div className='type-container flex items-center'>
-						<span className='line-container ml-[16px] mr-[8px] h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
-						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:text-blue-dark-high lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+					<div className='type-container flex items-center gap-1'>
+						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
+						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
@@ -503,6 +503,9 @@ export default styled(NavHeader)`
 	@media (max-width: 1023px) and (min-width: 468px) {
 		.text-container {
 			margin-left: -2px !important;
+		}
+		.dark .text-container {
+			margin-left: 2px !important;
 		}
 
 		.line-container {

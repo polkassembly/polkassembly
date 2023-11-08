@@ -439,9 +439,12 @@ const Web3Login: FC<Props> = ({
 						{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
 						<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 					</div>
-					<hr className='text-[#D2D8E0] ' />
+					<Divider
+						style={{ background: '#D2D8E0', flexGrow: 1 }}
+						className='mt-2 dark:bg-separatorDark'
+					/>
 
-					<article className='flex flex-col gap-y-3 rounded-md bg-white px-8 py-4 shadow-md dark:bg-section-dark-overlay'>
+					<article className='-mt-1 flex flex-col gap-y-3 rounded-md bg-white px-8 pb-4 shadow-md dark:bg-section-dark-overlay'>
 						<h3 className='flex flex-col gap-y-2 dark:text-blue-dark-medium'>
 							{!withPolkasafe && (
 								<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
@@ -473,9 +476,9 @@ const Web3Login: FC<Props> = ({
 										: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 								</p>
 								<Divider
-									className='m-0 mt-5 p-0 '
-									style={{ borderTop: '1px dashed #D2D8E0' }}
-								></Divider>
+									style={{ background: '#D2D8E0', flexGrow: 1 }}
+									className='m-0 mt-5 p-0 dark:bg-separatorDark'
+								/>
 								<div className='flex w-full justify-start'>
 									<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
 										<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Don&apos;t have an account?</label>
@@ -488,9 +491,9 @@ const Web3Login: FC<Props> = ({
 									</div>
 								</div>
 								<Divider
-									className='m-0 mb-4 p-0 '
-									style={{ borderTop: '1px solid #E1E6EB' }}
-								></Divider>
+									style={{ background: '#D2D8E0', flexGrow: 1 }}
+									className='m-0 mb-4 p-0 dark:bg-separatorDark'
+								/>
 								<div className='web3-button-container ml-auto flex'>
 									<Button
 										className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'

@@ -73,7 +73,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						icon={
 							<WalletIcon
 								which={Wallet.SUBWALLET}
-								className={`h-8 w-8 px-1 ${isOptionalLogin ? 'mr-[6px]' : ''}`}
+								className={`h-8 w-8 px-1 ${isOptionalLogin ? 'mr-1' : ''}`}
 							/>
 						}
 						isOptionalLogin={isOptionalLogin}

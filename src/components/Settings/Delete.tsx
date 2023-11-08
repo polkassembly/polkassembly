@@ -126,9 +126,9 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						footer={[
 							<Divider
 								key='divider'
-								className='my-4'
-								style={{ borderTop: '1px solid #E1E6EB' }}
-							></Divider>,
+								style={{ background: '#D2D8E0', flexGrow: 1 }}
+								className='my-4 dark:bg-separatorDark'
+							/>,
 							<Button
 								key='cancel'
 								onClick={dismissModal}
@@ -153,13 +153,13 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						<Divider
-							className='my-4'
-							style={{ borderTop: '1px solid #E1E6EB' }}
-						></Divider>
+							style={{ background: '#D2D8E0', flexGrow: 1 }}
+							className='my-4 dark:bg-separatorDark'
+						/>
 
 						<article className='mt-5 px-6'>
 							<label
-								className='text-sm font-normal text-lightBlue dark:text-white'
+								className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 								htmlFor='reason'
 							>
 								Reason for deleting account
@@ -209,7 +209,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						</article>
 						<article className='mt-6 px-6'>
 							<label
-								className='text-sm font-normal text-lightBlue dark:text-white'
+								className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 								htmlFor='password'
 							>
 								Please enter your password to continue

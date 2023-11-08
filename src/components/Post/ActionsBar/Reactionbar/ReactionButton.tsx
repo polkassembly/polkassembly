@@ -26,6 +26,7 @@ export interface IReactionButtonProps {
 	importedReactions?: boolean;
 	isReactionButtonInPost?: boolean;
 	replyId?: string;
+	isPostReaction?: boolean;
 }
 
 type IReaction = '👍' | '👎';
@@ -42,7 +43,8 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	setDislikeModalOpen,
 	importedReactions = false,
 	isReactionButtonInPost,
-	replyId
+	replyId,
+	isPostReaction
 }) => {
 	const {
 		postData: { postIndex, postType, track_number }
@@ -120,8 +122,8 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 				});
 			}
 			setReactions(newReactions);
-			if (commentId === 'reply') {
-				console.log(replyId);
+			if (isPostReaction) {
+				console.log(replyId, commentId);
 				const actionName = `${reacted ? 'remove' : 'add'}ReplyReaction`;
 				const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
 					commentId: commentId || null,

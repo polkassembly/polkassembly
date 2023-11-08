@@ -13,10 +13,11 @@ interface Props {
 	repliesArr: any[];
 	commentId: string;
 	isSubsquareUser: boolean;
+	isPostReaction: boolean;
 	comment: IComment;
 }
 
-const Replies = ({ className, commentId, repliesArr, isSubsquareUser, comment }: Props) => {
+const Replies = ({ className, commentId, repliesArr, isSubsquareUser, isPostReaction, comment }: Props) => {
 	const [showReplies, setShowReplies] = useState<boolean>(true);
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
@@ -49,6 +50,7 @@ const Replies = ({ className, commentId, repliesArr, isSubsquareUser, comment }:
 								userName={reply.username}
 								comment={comment}
 								isSubsquareUser={isSubsquareUser}
+								isPostReaction={isPostReaction}
 							/>
 						</div>
 					);

@@ -14,9 +14,10 @@ interface ICommentReactionBarProps {
 	comment_reactions: IReactions;
 	importedReactions?: boolean;
 	replyId?: string;
+	isPostReaction?: boolean;
 }
 
-const CommentReactionBar: FC<ICommentReactionBarProps> = ({ className, replyId, comment_reactions, commentId, importedReactions = false }) => {
+const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isPostReaction, className, replyId, comment_reactions, commentId, importedReactions = false }) => {
 	const [reactionsDisabled, setReactionsDisabled] = useState(false);
 	const [reactions, setReactions] = useState<IReactions>(comment_reactions);
 	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
@@ -37,6 +38,7 @@ const CommentReactionBar: FC<ICommentReactionBarProps> = ({ className, replyId, 
 						setDislikeModalOpen={setDislikeModalOpen}
 						importedReactions={importedReactions}
 						replyId={replyId}
+						isPostReaction={isPostReaction}
 					/>
 				);
 			})}

@@ -143,10 +143,11 @@ export const Comment: FC<ICommentProps> = (props) => {
 				{replies && replies.length > 0 && (
 					<Replies
 						className='comment-content'
-						commentId='reply'
+						commentId={id}
 						repliesArr={replies}
 						comment={comment}
 						isSubsquareUser={comment_source === 'subsquare'}
+						isPostReaction={true}
 					/>
 				)}
 			</div>

@@ -32,6 +32,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	// yeh change hoga
 	const reactionsCollRef = postRef.collection('comments').doc(String(commentId)).collection('comment_reactions');
 
+	const commentCollRef = await postRef.collection('comments').doc(String(commentId)).get();
+	console.log(commentCollRef.data());
+
 	const userReactionQuery = reactionsCollRef.where('user_id', '==', user.id);
 
 	let reactionDoc;

@@ -43,13 +43,27 @@ interface Props {
 	is_custom_username?: boolean;
 	proposer?: string;
 	isSubsquareUser: boolean;
+	isPostReaction?: boolean;
 	comment: IComment;
 }
 
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({ isSubsquareUser, comment, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
+const EditableReplyContent = ({
+	isSubsquareUser,
+	isPostReaction,
+	comment,
+	userId,
+	className,
+	commentId,
+	content,
+	replyId,
+	userName,
+	reply,
+	proposer,
+	is_custom_username
+}: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -568,6 +582,7 @@ const EditableReplyContent = ({ isSubsquareUser, comment, userId, className, com
 								comment_reactions={comment.comment_reactions}
 								importedReactions={isSubsquareUser}
 								replyId={replyId}
+								isPostReaction={isPostReaction}
 							/>
 							{isEditable && (
 								<Button

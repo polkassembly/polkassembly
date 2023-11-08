@@ -238,7 +238,7 @@ const QuickView = ({
 						<Button
 							onClick={handleTipping}
 							className={`flex h-[32px] w-full items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
-								!id && 'cursor-not-allowed opacity-50'
+								(!id || !enableTipping) && 'cursor-not-allowed opacity-50'
 							} dark:bg-[#33071E]`}
 						>
 							Tip

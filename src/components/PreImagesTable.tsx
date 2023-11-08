@@ -60,11 +60,9 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 		Object.entries(args).map(([name, value]) => {
 			if (typeof value === 'string' && value.length > 1000) {
 				args[name] = 'Large data. Please check on subscan';
-			}
-			if (Array.isArray(value) && value.length > 1000) {
+			} else if (Array.isArray(value) && value.length > 1000) {
 				args[name] = 'Large data. Please check on subscan';
-			}
-			if (typeof value === 'object') {
+			} else if (typeof value === 'object') {
 				handleModalArgs(value);
 			}
 		});

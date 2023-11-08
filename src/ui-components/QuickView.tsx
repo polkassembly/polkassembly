@@ -83,7 +83,7 @@ const QuickView = ({
 	};
 
 	const handleTipping = () => {
-		if (!id) return;
+		if (!id || !enableTipping) return;
 		if (!loginAddress || !address) {
 			setOpenAddressChangeModal?.(true);
 		} else {
@@ -228,11 +228,11 @@ const QuickView = ({
 					</span>
 				</article>
 			)}
-			{!TippingUnavailableNetworks.includes(network) && enableTipping && (
+			{!TippingUnavailableNetworks.includes(network) && (
 				<Tooltip
-					open={!id ? openTooltip : false}
+					open={!id || !enableTipping ? openTooltip : false}
 					onOpenChange={(e) => setOpenTooltip(e)}
-					title='Login to tip'
+					title={!id ? 'Login to tip' : 'No Web3 Wallet Detected'}
 				>
 					<div className='flex w-full items-center'>
 						<Button

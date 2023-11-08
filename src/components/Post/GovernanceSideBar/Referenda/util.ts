@@ -12,15 +12,9 @@ export function makeReciprocalCurve(reciprocal: any) {
 	return function (percentage: number) {
 		const x = percentage * Math.pow(10, 9);
 
-		const v = new BigNumber(factor)
-			.div(new BigNumber(x).plus(xOffset))
-			.multipliedBy(Math.pow(10, 9))
-			.toFixed(0, BigNumber.ROUND_DOWN);
+		const v = new BigNumber(factor).div(new BigNumber(x).plus(xOffset)).multipliedBy(Math.pow(10, 9)).toFixed(0, BigNumber.ROUND_DOWN);
 
-		const calcValue = new BigNumber(v)
-			.plus(yOffset)
-			.div(Math.pow(10, 9))
-			.toString();
+		const calcValue = new BigNumber(v).plus(yOffset).div(Math.pow(10, 9)).toString();
 		return BigNumber.max(calcValue, 0).toNumber();
 	};
 }
@@ -37,9 +31,7 @@ export function makeLinearCurve(linearDecreasing: any) {
 		const slope = new BigNumber(ceil).minus(floor).dividedBy(length);
 		const deducted = slope.multipliedBy(xValue).toString();
 
-		const perbill = new BigNumber(ceil)
-			.minus(deducted)
-			.toFixed(0, BigNumber.ROUND_DOWN);
+		const perbill = new BigNumber(ceil).minus(deducted).toFixed(0, BigNumber.ROUND_DOWN);
 		const calcValue = new BigNumber(perbill).div(Math.pow(10, 9)).toString();
 		return BigNumber.max(calcValue, 0).toNumber();
 	};

@@ -4,7 +4,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const WalletModalButton = ({ onClick, icon, name }: { onClick: () => void, icon?: JSX.Element, name: string }) => {
+const WalletModalButton = ({ onClick, icon, name }: { onClick: () => void; icon?: JSX.Element; name: string }) => {
 	return (
 		<StyledButton onClick={onClick}>
 			{icon} <StyledName>{name}</StyledName>
@@ -13,23 +13,23 @@ const WalletModalButton = ({ onClick, icon, name }: { onClick: () => void, icon?
 };
 
 const StyledButton = styled.div`
-    padding: 1.25rem 1rem;
-    border-radius: 0.75rem;
-    border: 1.5px solid #A9A9A9;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: 0.3s;
-    &:hover {
-        border: 1.5px solid #E5007A;
-    }
-    margin-bottom: 16px;
+	padding: 1.25rem 1rem;
+	border-radius: 0.75rem;
+	border: 1.5px solid #a9a9a9;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	transition: 0.3s;
+	&:hover {
+		border: 1.5px solid #e5007a;
+	}
+	margin-bottom: 16px;
 `;
 
 const StyledName = styled.span`
-    font-size: 16px;
-    margin-left: 8px;
-    font-weight: 500;
+	font-size: 16px;
+	margin-left: 8px;
+	font-weight: 500;
 `;
 
 export default WalletModalButton;

@@ -15,15 +15,17 @@ interface Props {
 	status?: string;
 }
 
-const PassingInfoTag = ({ className, isPassing }:Props ) => {
+const PassingInfoTag = ({ className, isPassing }: Props) => {
 	const NO_INFO_TEXT = '-';
 
 	const [text, setText] = useState(NO_INFO_TEXT);
-	const { postData: { status, postType } } = usePostDataContext();
+	const {
+		postData: { status, postType }
+	} = usePostDataContext();
 
 	useEffect(() => {
 		if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.OPEN_GOV].includes(postType)) {
-			if (isPassing !== null){
+			if (isPassing !== null) {
 				setText(isPassing ? 'Passed' : 'Failed');
 			}
 		} else {
@@ -44,9 +46,16 @@ const PassingInfoTag = ({ className, isPassing }:Props ) => {
 	}, [isPassing, status, postType]);
 
 	return (
-		<Spin spinning={text === NO_INFO_TEXT} indicator={<LoadingOutlined />}>
-			<div className={`${className} ${text === NO_INFO_TEXT ? null : text.toLowerCase()} ml-auto text-white border-0 border-solid text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min w-min`}>
-				{(text === 'Failed' && status)? status === 'Cancelled'? 'Cancelled': status === 'TimedOut'? 'Timed Out': status === 'Killed'? 'Killed': 'Failed': text}
+		<Spin
+			spinning={text === NO_INFO_TEXT}
+			indicator={<LoadingOutlined />}
+		>
+			<div
+				className={`${className} ${
+					text === NO_INFO_TEXT ? null : text.toLowerCase()
+				} ml-auto h-min w-min truncate whitespace-nowrap rounded-full border-0 border-solid px-3 py-1 text-xs text-white`}
+			>
+				{text === 'Failed' && status ? (status === 'Cancelled' ? 'Cancelled' : status === 'TimedOut' ? 'Timed Out' : status === 'Killed' ? 'Killed' : 'Failed') : text}
 			</div>
 		</Spin>
 	);
@@ -54,17 +63,17 @@ const PassingInfoTag = ({ className, isPassing }:Props ) => {
 
 export default styled(PassingInfoTag)`
 	&.passing {
-		background-color: #5BC044;
+		background-color: #5bc044;
 	}
 
 	&.failing {
-		background-color: #FF0000;
+		background-color: #ff0000;
 	}
 	&.passed {
-		background-color: #5BC044;
+		background-color: #5bc044;
 	}
 
 	&.failed {
-		background-color: #FF0000;
+		background-color: #ff0000;
 	}
 `;

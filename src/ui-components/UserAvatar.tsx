@@ -10,39 +10,51 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
-	className?: string
-	username: string | null
-	id: number | null
+	className?: string;
+	username: string | null;
+	id: number | null;
 	size?: AvatarSize;
-	profile?:ProfileDetailsResponse
+	profile?: ProfileDetailsResponse;
 }
 
 const UserAvatar = ({ className, id, username, size, profile }: Props) => {
 	const [userProfileData, setUserProfileData] = useState<ProfileDetailsResponse | null>(null);
 	const getRandomColorClass = () => {
-		const colors = ['#E97451', '#FC80A5', '#C9A0DC', '#FCD667', '#FF4466','#A0E6FF','#DA8A67'];
+		const colors = ['#E97451', '#FC80A5', '#C9A0DC', '#FCD667', '#FF4466', '#A0E6FF', '#DA8A67'];
 		const randomIndex = Math.floor(Math.random() * colors.length);
 		return colors[randomIndex];
 	};
 	const color = getRandomColorClass();
 	const getUserDetails = useCallback(async () => {
-		const { data , error } = await nextApiClientFetch<ProfileDetailsResponse>( 'api/v1/events', { userId: id });
+		const { data, error } = await nextApiClientFetch<ProfileDetailsResponse>('api/v1/events', { userId: id });
 		if (error || !data) return;
 
-		if(data) {
+		if (data) {
 			setUserProfileData(data);
 		}
 	}, [id]);
 
 	useEffect(() => {
-		if(profile === undefined){
+		if (profile === undefined) {
 			getUserDetails();
 		}
 	}, [getUserDetails, profile]);
 
-	return (
-		(profile?.image || userProfileData?.image) ? <Avatar className={className} src={profile?.image || userProfileData?.image} size={size} />
-			: <Avatar className={`${className}`} style={{ backgroundColor: color }} size={size} shape='circle'>{username?.substring(0, 1).toUpperCase()}</Avatar>
+	return profile?.image || userProfileData?.image ? (
+		<Avatar
+			className={className}
+			src={profile?.image || userProfileData?.image}
+			size={size}
+		/>
+	) : (
+		<Avatar
+			className={`${className}`}
+			style={{ backgroundColor: color }}
+			size={size}
+			shape='circle'
+		>
+			{username?.substring(0, 1).toUpperCase()}
+		</Avatar>
 	);
 };
 

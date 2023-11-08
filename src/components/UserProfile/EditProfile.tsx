@@ -231,7 +231,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 										await updateProfileData();
 
 										//GAEvent to track user profile edit
-										trackEvent('user_profile_update', 'user_profile_edit', {
+										trackEvent('user_profile_updated', 'user_profile_edit', {
 											userId: currentUser?.id || '',
 											username: username || currentUser.username || ''
 										});
@@ -293,6 +293,13 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				<button
 					className='flex cursor-pointer items-center justify-center gap-x-1.5 rounded-[4px] border-0 border-solid border-white bg-transparent text-sm font-medium text-[#fff] outline-none dark:border-[#3B444F] md:h-[40px] md:w-[87px] md:border'
 					onClick={() => {
+						// GAEvent when user clicks on profile edit button
+						trackEvent('profile_edit_clicked', 'edit_profile', {
+							address: currentUser?.loginAddress || '',
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
+
 						setOpen(true);
 						populateData();
 					}}

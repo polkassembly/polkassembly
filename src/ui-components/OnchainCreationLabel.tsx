@@ -74,12 +74,15 @@ const OnchainCreationLabel = ({ address, username, truncateUsername, className }
 								overlayClassName={className}
 								title={
 									<QuickView
+										address={profileAddress}
 										socials={socials}
 										setOpen={setOpen}
 										profileCreatedAt={profileCreatedAt}
 										username={username || ''}
 										polkassemblyUsername={username}
 										enableTipping={!!profileAddress}
+										setOpenAddressChangeModal={setOpenAddressChangeModal}
+										setOpenTipping={setOpenTipping}
 									/>
 								}
 								open={!address ? open : false}

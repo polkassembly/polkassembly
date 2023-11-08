@@ -138,6 +138,20 @@ const AvailableWallets = ({ className, handleWalletClick, isMetamaskWallet, wall
 							}
 						/>
 					)}
+					{(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] && (
+						<WalletButton
+							disabled={!apiReady}
+							className={` h-[44px] w-[70px] rounded-[7px] ${wallet === Wallet.NOVAWALLET && 'border border-solid border-pink_primary'}`}
+							onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
+							name='Nova Wallet'
+							icon={
+								<WalletIcon
+									which={Wallet.NOVAWALLET}
+									className='h-6 w-6'
+								/>
+							}
+						/>
+					)}
 				</>
 			)}
 		</div>

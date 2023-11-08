@@ -344,7 +344,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						<DelegateModalIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive' />
 						Delegate
 					</div>
@@ -354,7 +354,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				confirmLoading={loading}
 				onCancel={handleCloseModal}
 				footer={
-					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-separatorDark'>
+					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<Button
 							key='back'
 							disabled={loading}
@@ -565,7 +565,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 										{checkedTrack && (
 											<div
 												key={checkedTrack?.trackId}
-												className='flex items-center justify-center gap-2 rounded-[20px] border-[1px] border-solid border-[#D2D8E0] px-3 py-2 text-sm text-[#7c899b] dark:border-separatorDark dark:text-white'
+												className='flex items-center justify-center gap-2 rounded-[20px] border-[1px] border-solid border-[#D2D8E0] px-3 py-2 text-sm text-[#7c899b] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'
 											>
 												{checkedTrack?.name}
 											</div>
@@ -576,7 +576,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 												.map((list, index) => (
 													<div
 														key={index}
-														className='flex items-center justify-center gap-2 rounded-[20px] border-[1px] border-solid border-[#D2D8E0] px-3 py-2 text-sm text-[#7c899b] dark:border-separatorDark dark:text-white'
+														className='flex items-center justify-center gap-2 rounded-[20px] border-[1px] border-solid border-[#D2D8E0] px-3 py-2 text-sm text-[#7c899b] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'
 													>
 														{list}
 														<span

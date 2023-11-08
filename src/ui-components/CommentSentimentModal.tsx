@@ -8,6 +8,8 @@ import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
 import { ESentiment } from '~src/types';
 import { CloseIcon } from './CustomIcons';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 interface Props {
 	setIsComment: (pre: boolean) => void;
@@ -20,7 +22,17 @@ interface Props {
 }
 
 const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSentimentPost, className, sentiment, setSentiment }: Props) => {
+	const currentUser = useUserDetailsSelector();
+
 	const handleClick = () => {
+		// GAEvent for comment creation
+		trackEvent('comment_creation_successful', 'creation_comment', {
+			address: currentUser?.loginAddress || '',
+			sentimentSet: handleSentimentText(),
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
+
 		setIsSentimentPost(true);
 		setIsComment(true);
 		setModalOpen(false);

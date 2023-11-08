@@ -21,6 +21,8 @@ import LikeIcon from '~assets/search/search-like.svg';
 import DislikeIcon from '~assets/search/search-dislike.svg';
 import CommentIcon from '~assets/search/search-comment.svg';
 import dayjs from 'dayjs';
+import { trackEvent } from 'analytics';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -30,8 +32,10 @@ interface Props {
 	setPostsPage: (postsPage: any) => void;
 	postsPage: number;
 	totalPage: number;
+	searchInput?: string;
 }
-const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsPage, totalPage }: Props) => {
+const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
+	const currentUser = useUserDetailsSelector();
 	return postsData.length > 0 ? (
 		<>
 			<div className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 && 'overflow-y-scroll'}`}>
@@ -52,6 +56,15 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 								className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] min-h-[150px] cursor-pointer flex-col rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-6 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 ${
 									index % 2 === 1 && 'bg-[#fafafb] dark:bg-[#161616]'
 								} ${index === postsData.length - 1 && 'border-b-[1px]'} dark:border-none max-md:flex-wrap`}
+								onClick={() => {
+									// GAEvent when user clicks on search result
+									trackEvent('search_results_clicked', 'clicked_search_result', {
+										address: currentUser?.loginAddress || '',
+										searchInput: `${searchInput} keyword searched`,
+										userId: currentUser?.id || '',
+										userName: currentUser?.username || ''
+									});
+								}}
 							>
 								<div className='flex items-center gap-2 '>
 									{post?.proposer_address ? (
@@ -102,7 +115,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 											{post?.tags?.slice(0, 2).map((tag: string, index: number) => (
 												<div
 													key={index}
-													className='rounded-[50px] border-[1px] border-solid border-[#D2D8E0] bg-white px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:bg-section-dark-overlay dark:text-blue-dark-medium'
+													className='rounded-[50px] border-[1px] border-solid border-[#D2D8E0] bg-white px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'
 												>
 													{tag}
 												</div>

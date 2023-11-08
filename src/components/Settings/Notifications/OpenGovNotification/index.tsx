@@ -184,7 +184,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 												title={postOriginMapper(postType)}
 												classname={
 													i === category.length - 1
-														? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px] dark:border-separatorDark'
+														? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-[#3B444F] md:pl-[48px] dark:border-separatorDark'
 														: 'md:basis-[50%]'
 												}
 												Icon={iconMapper(postType)}
@@ -193,7 +193,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 											/>
 											{i !== category.length - 1 && (
 												<Divider
-													className='border-[2px] border-[#D2D8E0] md:hidden'
+													className='border-[2px] border-[#D2D8E0] dark:border-[#3B444F] md:hidden'
 													dashed
 												/>
 											)}
@@ -203,7 +203,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 							</div>
 							{i !== openGovTwoOptions.length - 1 && (
 								<Divider
-									className='border-2 border-[#D2D8E0] dark:border-separatorDark'
+									className='border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
 									dashed
 								/>
 							)}

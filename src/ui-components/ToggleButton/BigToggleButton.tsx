@@ -20,7 +20,7 @@ const BigToggleButton = () => {
 				}}
 				className={classNames('flex cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-3 py-[6px] outline-none', {
 					'border-[#3B444F]': theme === 'dark',
-					'border-[#D2D8E0]': theme === 'light'
+					'border-[#D2D8E0] dark:border-[#3B444F]': theme === 'light'
 				})}
 			>
 				{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}

@@ -40,6 +40,7 @@ import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { useTheme } from 'next-themes';
 import LoginSuccessModal from '~src/ui-components/LoginSuccessModal';
 import styled from 'styled-components';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -339,6 +340,15 @@ const Web3Login: FC<Props> = ({
 
 				if (isModal) {
 					const localCurrentUser: any = decodeToken<JWTPayloadType>(addressLoginData.token);
+
+					// GAEvent for login successful
+					trackEvent('user_login_successful', 'successful_user_login', {
+						address: localCurrentUser?.default_address || '',
+						isWeb3Login: localCurrentUser?.web3signup,
+						userId: localCurrentUser?.id || currentUser?.id || '',
+						userName: localCurrentUser?.username || currentUser?.username || ''
+					});
+
 					if (localCurrentUser?.web3signup && localCurrentUser?.username.length === 25 && !MANUAL_USERNAME_25_CHAR.includes(localCurrentUser?.username)) {
 						setLoginOpen?.(true);
 						setShowOptionalFields(true);

@@ -24,27 +24,13 @@ import DelegationVotersList from './DelegateVoteList';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { Pagination } from '~src/components/Pagination';
+import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
+import { ApiPromise } from '@polkadot/api';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
-
-const StyledSegmented = styled(Segmented)`
-	background-color: ${(props) => (props.theme == 'dark' ? '#1C1D1F' : '')} !important;
-	.ant-segmented-group > label {
-		border-radius: 20px !important;
-	}
-	.ant-segmented-item {
-		border-radius: 20px !important;
-		color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
-	}
-	.ant-segmented-item-selected > .ant-segmented-item-label {
-		border-radius: 20px !important;
-		background-color: ${(props) => (props.theme == 'dark' ? '#fff' : '')} !important;
-	}
-`;
 
 const VoteContainer = styled.div`
 	@media (max-width: 640px) {
@@ -82,6 +68,9 @@ const sortedCheck = {
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const {
+		postData: { statusHistory }
+	} = usePostDataContext();
 	const firstRef = useRef(true);
 	const {
 		postData: { postType }
@@ -150,8 +139,18 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const getReferendumV2VoteInfo = useCallback(async () => {
 		if (!api || !apiReady || !network) return;
+		let newAPI: ApiPromise = api;
+		const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+
+		if (status) {
+			const blockNumber = status.block;
+			if (blockNumber) {
+				const hash = await api.rpc.chain.getBlockHash(blockNumber - 1);
+				newAPI = (await api.at(hash)) as ApiPromise;
+			}
+		}
 		if (isReferendum2) {
-			const referendumInfoOf = await api.query.referenda.referendumInfoFor(referendumId);
+			const referendumInfoOf = await newAPI.query.referenda.referendumInfoFor(referendumId);
 			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 			if (parsedReferendumInfo?.ongoing?.tally) {
 				setTallyData({
@@ -176,7 +175,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				nays: new BN(tally?.nays || 0, 'hex').toString()
 			});
 		}
-	}, [api, apiReady, isReferendum2, network, referendumId, tally?.abstain, tally?.ayes, tally?.nays]);
+	}, [api, apiReady, isReferendum2, network, referendumId, statusHistory, tally?.abstain, tally?.ayes, tally?.nays]);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -239,7 +238,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					<div className='flex w-full flex-col justify-between'>
 						<div className='w-full'>
 							<div className='mb-8 flex w-full items-center justify-center'>
-								<StyledSegmented
+								<Segmented
 									block
 									className='w-full rounded-[30px] px-3 py-2'
 									size='large'
@@ -249,7 +248,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										setCurrentPage(1);
 									}}
 									options={decisionOptions}
-									theme={theme}
 								/>
 							</div>
 							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
@@ -358,7 +356,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						</div>
 					</div>
 					{/* {thresholdData && (
-						<Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] pl-4'>
+						<Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] dark:border-[#3B444F] pl-4'>
 							{thresholdData.progress.approval >= thresholdData.progress.approvalThreshold.toFixed(1) &&
 							thresholdData.progress.support >= thresholdData.progress.supportThreshold.toFixed(1) ? (
 								<p className='row m-0 flex gap-1 text-sm font-medium'>

@@ -21,7 +21,7 @@ import DollarIcon from '~assets/icons/dollar-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
-import { Pagination } from '~src/components/Pagination';
+import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {

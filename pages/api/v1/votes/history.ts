@@ -7,18 +7,11 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import { ProposalType, TSubsquidProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
-import {
-	CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
-	MOONBEAM_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
-	VOTING_HISTORY_BY_VOTER_ADDRESS,
-	VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
-	VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM
-} from '~src/queries';
+import { GET_VOTE_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_INDEX } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 
 export enum EDecision {
@@ -48,6 +41,7 @@ export interface IVoteHistory {
 	removedAt?: null | string;
 	voter?: string;
 	delegatedVotes?: Array<any>;
+	parentVote?: Array<any>;
 }
 
 export interface IVotesHistoryResponse {
@@ -77,31 +71,15 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 			throw apiErrorWithStatusCode(`Invalid proposal type "${proposalType}." .`, 400);
 		}
 
-		let query = VOTING_HISTORY_BY_VOTER_ADDRESS;
-
-		if ([AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)) {
-			query = VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM;
-		}
+		const query = GET_VOTE_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_INDEX;
 
 		const variables = {
-			index_eq: Number(proposalIndex),
 			limit: Number(listingLimit),
 			offset: Number(listingLimit) * (numPage - 1),
+			proposalIndex: Number(proposalIndex),
 			type_eq: getSubsquidProposalType(proposalType as any),
 			voter_eq: String(voterAddress)
 		};
-
-		if (proposalType === ProposalType.REFERENDUM_V2) {
-			if (![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)) {
-				query = CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX;
-			}
-		} else {
-			if (network === AllNetworks.MOONBEAM) {
-				query = MOONBEAM_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX;
-			} else {
-				query = VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX;
-			}
-		}
 
 		const subsquidRes = await fetchSubsquid({
 			network,
@@ -110,17 +88,19 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 		});
 
 		const subsquidData = subsquidRes?.data;
-		const isDataAbsent = proposalType === ProposalType.REFERENDUM_V2 ? !subsquidData?.convictionVotes : !subsquidData?.votes;
+		const isDataAbsent = !subsquidData?.flattenedConvictionVotes;
 		if (!subsquidData || isDataAbsent) {
 			throw apiErrorWithStatusCode(`Votes history of voter "${voterAddress}" is not found.`, 404);
 		}
 
-		const votes = proposalType === ProposalType.REFERENDUM_V2 ? subsquidData?.convictionVotes : subsquidData?.votes;
+		const votes = subsquidData?.flattenedConvictionVotes;
+
 		const res: IVotesHistoryResponse = {
 			count: 0,
 			votes: []
 		};
-		const count = proposalType === ProposalType.REFERENDUM_V2 ? subsquidData?.convictionVotesConnection?.totalCount : subsquidData?.votesConnection?.totalCount;
+
+		const count = subsquidData?.flattenedConvictionVotesConnection?.totalCount;
 		const numCount = Number(count);
 		if (!isNaN(numCount)) {
 			res.count = numCount;
@@ -129,11 +109,11 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 			votes.forEach((vote) => {
 				if (vote) {
 					const currentVote = {
-						isDelegated: vote?.isDelegated || vote?.delegatedVotes ? vote?.delegatedVotes?.length > 0 : false,
+						isDelegated: vote?.isDelegated,
 						proposalType: vote?.proposal?.type,
 						...vote
 					} as IVoteHistory;
-					delete currentVote.delegatedVotes;
+					delete currentVote.parentVote;
 					res.votes.push(currentVote);
 				}
 			});

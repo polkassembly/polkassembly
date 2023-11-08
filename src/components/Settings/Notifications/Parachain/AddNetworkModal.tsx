@@ -164,7 +164,9 @@ const AddNetworkModal = ({
 												<Tag
 													onClick={() => handleClick(name, chain)}
 													className={`items-center rounded-[34px] px-[12px] py-[8px] text-navBlue ${
-														selected ? 'border border-solid border-[#E5007A] bg-[#FEF2F8] dark:bg-[#33071E]' : 'border-[#fff] bg-white dark:bg-section-dark-overlay'
+														selected
+															? 'border border-solid border-[#E5007A] bg-[#FEF2F8] dark:bg-[#33071E]'
+															: 'border-white bg-white dark:border-[#3B444F] dark:bg-section-dark-overlay'
 													} max-w-[200px] cursor-pointer pb-[5px] hover:bg-[#FEF2F8] dark:bg-[#33071E]`}
 												>
 													<Image
@@ -186,7 +188,7 @@ const AddNetworkModal = ({
 								</div>
 								{i < Object.keys(allNetworks).length - 1 && (
 									<Divider
-										className='border-2 border-[#D2D8E0] dark:border-separatorDark dark:border-separatorDark'
+										className='border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:border-separatorDark'
 										dashed
 									/>
 								)}

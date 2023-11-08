@@ -4,7 +4,7 @@
 
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Pagination, Spin } from 'antd';
+import { Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
 import { usePostDataContext } from '~src/context';
@@ -16,6 +16,7 @@ import VoterRow from './VoterRow';
 import { votesSortValues } from '~src/global/sortOptions';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { Pagination } from '~src/ui-components/Pagination';
 
 interface IVotersListProps {
 	className?: string;

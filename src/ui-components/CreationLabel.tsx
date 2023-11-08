@@ -154,9 +154,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	};
 
 	const renderVoteContent = (vote: any, network: any, idx: number) => {
-		const lockPeriod = vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod;
-		const conviction = vote?.decision === 'abstain' ? '0.1' : lockPeriod;
-		const powerValue = conviction * (vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0);
+		const lockPeriod = vote.lockPeriod === 0 || vote?.decision === 'abstain' ? 0.1 : vote.lockPeriod;
+		const value = vote?.decision === 'abstain' ? BigInt(vote?.balance?.abstain || 0) : BigInt(vote?.balance?.value || 0);
+		const powerValue = lockPeriod === 0.1 ? value / BigInt(10) : value * BigInt(lockPeriod);
 		const power = parseBalance(powerValue.toString(), 2, true, network);
 
 		return (
@@ -330,11 +330,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`w-[400px] ${poppins.variable} ${poppins.className} max-h-[675px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+								className={`${poppins.variable} ${poppins.className} max-h-[675px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 								wrapClassName={`${className} dark:bg-modalOverlayDark`}
 								title={
-									<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-separatorDark dark:bg-section-dark-overlay'>
+									<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 										<span className='ml-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Votes</span>
 									</div>
 								}
@@ -346,7 +346,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 										<p className='conviction-container relative m-0 ml-[64px] p-0'>Conviction</p>
 										<p className='m-0 ml-auto p-0'>Voting Power</p>
 									</div>
-									<div className='border-container my-3 -ml-6 w-[560px]  border-0 border-b-[1px] border-solid border-[#D2D8E0]'></div>
+									<div className='border-container my-3 -ml-6 w-[560px]  border-0 border-b-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]'></div>
 									{votesArr.length > 0 &&
 										votesArr.slice(0, 1).map((vote: any, idx: any) => {
 											return renderVoteContent(vote, network, idx);
@@ -354,7 +354,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									<div>
 										{votesArr.length > 1 && (
 											<div className='vote-history-container'>
-												<div className='-ml-6 mb-2 w-[560px] border-0 border-b-[1px] border-dashed border-[#D2D8E0]'></div>
+												<div className='-ml-6 mb-2 w-[560px] border-0 border-b-[1px] border-dashed border-[#D2D8E0] dark:border-[#3B444F]'></div>
 												<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>Vote History</p>
 											</div>
 										)}

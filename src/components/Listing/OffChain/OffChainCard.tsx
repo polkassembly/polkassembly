@@ -99,7 +99,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 										<div
 											key={index}
 											style={{ fontSize: '10px' }}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
@@ -173,7 +173,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								{tags?.map((tag, index) => (
 									<div
 										key={index}
-										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:text-blue-dark-medium'
+										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 									>
 										{tag}
 									</div>
@@ -256,7 +256,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 										<div
 											key={index}
 											style={{ fontSize: '10px' }}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:border-separatorDark dark:text-blue-dark-high'
+											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
 										>
 											{tag}
 										</div>
@@ -302,7 +302,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								{tags?.map((tag, index) => (
 									<div
 										key={index}
-										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'
+										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-medium'
 									>
 										{tag}
 									</div>

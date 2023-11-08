@@ -47,7 +47,7 @@ const FellowshipReferendumVoteInfo: FC<IFellowshipReferendumVoteInfoProps> = (pr
 							<div className='text-xs font-medium leading-[22px] text-navBlue'>{tally.nays}</div>
 						</article>
 					</section>
-					<section className='mt-[18px] flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] pb-[14px] pt-[18px]'>
+					<section className='mt-[18px] flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] pb-[14px] pt-[18px] dark:border-[#3B444F]'>
 						<button
 							className='m-0 flex cursor-pointer items-center gap-x-1 border-none bg-transparent p-0 text-xs font-medium leading-[22px] text-pink_primary outline-none'
 							onClick={() => {

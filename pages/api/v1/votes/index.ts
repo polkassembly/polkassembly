@@ -8,18 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { VoteType, voteTypes } from '~src/global/proposalType';
 import { isVotesSortOptionsValid, votesSortValues } from '~src/global/sortOptions';
-import {
-	GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX,
-	GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX,
-	GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
-	GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX,
-	GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX,
-	GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
-	GET_VOTES_LISTING_BY_TYPE_AND_INDEX,
-	GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE,
-	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
-	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
-} from '~src/queries';
+import { GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getOrderBy } from './utils/votesSorted';
 import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
@@ -69,7 +58,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 	}
 
 	const strSortBy = String(sortBy);
-	const nestedSupported = voteType === VoteType.REFERENDUM_V2 || (voteType === VoteType.REFERENDUM && isSupportedNestedVoteNetwork(network));
+	const nestedSupported = isSupportedNestedVoteNetwork(network);
 
 	if (!isVotesSortOptionsValid(strSortBy)) {
 		return res.status(400).json({ error: `The sortBy "${sortBy}" is invalid.` });
@@ -82,36 +71,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 		type_eq: voteType
 	};
 
-	let votesQuery = ['moonbeam'].includes(network)
-		? GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
-		: ['moonriver', 'moonbeam'].includes(network)
-		? GET_VOTES_LISTING_BY_TYPE_AND_INDEX
-		: GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
+	let votesQuery = GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
 
 	if (address) {
-		votesQuery = ['moonbeam'].includes(network)
-			? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE
-			: ['moonriver', 'moonbeam'].includes(network)
-			? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX
-			: GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
-
+		votesQuery = GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
 		variables['voter_eq'] = address;
-	}
-
-	if (voteType === VoteType.REFERENDUM_V2) {
-		votesQuery = isSupportedNestedVoteNetwork(network) ? GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX : GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
-		if (address) {
-			votesQuery = isSupportedNestedVoteNetwork(network)
-				? GET_NESTED_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX
-				: GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
-		}
-
-		if (['moonbase', 'moonriver', 'moonbeam'].includes(network)) {
-			votesQuery = GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX;
-			if (address) {
-				votesQuery = GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX;
-			}
-		}
 	}
 
 	const decisions = ['yes', 'no', 'abstain'];
@@ -146,18 +110,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse 
 		const decision = i === 0 ? 'yes' : i === 1 ? 'no' : 'abstain';
 		if (result && result.status === 'fulfilled' && result.value) {
 			const subsquidData = result.value?.data;
-			resObj[decision].votes = subsquidData?.votes;
-			resObj[decision].count = subsquidData?.votesConnection?.totalCount;
-			if ((voteType === VoteType.REFERENDUM_V2 || voteType === VoteType.REFERENDUM) && isSupportedNestedVoteNetwork(network)) {
-				resObj[decision].votes = subsquidData?.convictionVotes;
-				resObj[decision].count = subsquidData?.convictionVotesConnection?.totalCount;
-				return;
-			}
-			if (['moonbase', 'moonriver', 'moonbeam'].includes(network) && voteType == VoteType.REFERENDUM_V2) {
-				resObj[decision].votes = subsquidData?.convictionVotes;
-				resObj[decision].count = subsquidData?.convictionVotesConnection?.totalCount;
-				return;
-			}
+			resObj[decision].votes = subsquidData?.convictionVotes;
+			resObj[decision].count = subsquidData?.convictionVotesConnection?.totalCount;
 		}
 	});
 	return res.status(200).json(resObj);

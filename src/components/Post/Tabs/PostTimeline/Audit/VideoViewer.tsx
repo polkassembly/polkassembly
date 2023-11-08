@@ -14,7 +14,7 @@ interface IVideoViewerProps {
 const VideoViewer: FC<IVideoViewerProps> = (props) => {
 	const { item, className } = props;
 	return (
-		<section className={`flex flex-col overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] ${className}`}>
+		<section className={`flex flex-col overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] dark:border-[#3B444F] ${className}`}>
 			<div>
 				<article className='flex items-center justify-center pt-6 '>
 					<ReactPlayer

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Segmented, Select, Tabs as AntdTabs } from 'antd';
+import { Segmented, Select } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -27,6 +27,7 @@ import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { Tabs } from '~src/ui-components/Tabs';
 
 const VoteUnlock = dynamic(() => import('~src/components/VoteUnlock'), {
 	ssr: false
@@ -45,7 +46,9 @@ interface IUserProfileProps {
 	className?: string;
 }
 
-export const votesHistoryUnavailableNetworks = [
+export const votesHistoryUnavailableNetworks = [AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES];
+
+export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBASE,
 	AllNetworks.MOONRIVER,
 	AllNetworks.POLYMESH,
@@ -115,28 +118,6 @@ export enum EProfileHistory {
 	VOTES = 'Votes',
 	POSTS = 'Posts'
 }
-
-const Tabs = styled(AntdTabs)`
-	.ant-tabs-tab-active > .ant-tabs-tab-btn {
-		color: ${(props) => (props.theme === 'dark' ? '#FF60B5' : '')} !important;
-	}
-	.ant-tabs-tab {
-		border: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important;
-		font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
-		color: ${(props) => (props.theme == 'dark' ? '#FFFFFF' : '')} !important;
-	}
-	.ant-tabs-nav::before {
-		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '')} !important;
-	}
-	.ant-tabs-tab-active {
-		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
-		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '')} !important;
-		border-bottom: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important;
-	}
-	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {
-		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
-	}
-`;
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
@@ -247,7 +228,9 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 									value={profileHistory}
 								/>
 							)}
-							{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && <VoteUnlock addresses={userProfile.data.addresses} />}
+							{profileHistory === EProfileHistory.VOTES && userId === id && addresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && (
+								<VoteUnlock addresses={userProfile.data.addresses} />
+							)}
 						</div>
 					)}
 

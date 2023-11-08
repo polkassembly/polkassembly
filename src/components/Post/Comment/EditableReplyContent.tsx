@@ -546,7 +546,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 								</Button>
 								<Button
 									htmlType='submit'
-									className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-borderColorDark'
+									className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-[#3B444F] dark:border-borderColorDark'
 								>
 									<CheckOutlined /> Reply
 								</Button>

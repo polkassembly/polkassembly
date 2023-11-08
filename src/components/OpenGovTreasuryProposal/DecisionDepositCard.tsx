@@ -254,12 +254,12 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => setOpenModal(false)}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Pay Decision Deposit
 					</div>
 				}
 				footer={
-					<div className='border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4'>
+					<div className='border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
 						<Button
 							onClick={() => setOpenModal(false)}
 							className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm  font-medium tracking-wider text-pink_primary dark:bg-transparent'

@@ -56,7 +56,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				<div className='mt-7'>
 					{thresholdData && (
 						<div>
-							<div className='relative flex justify-center border-[#D2D8E0]'>
+							<div className='relative flex justify-center border-[#D2D8E0] dark:border-[#3B444F]'>
 								<button
 									className='absolute right-1 top-0 -mt-5 cursor-pointer border-0 bg-white dark:bg-section-dark-overlay'
 									onClick={() => setThresholdOpen(true)}

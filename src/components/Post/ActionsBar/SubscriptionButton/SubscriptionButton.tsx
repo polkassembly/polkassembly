@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { BookFilled, BookOutlined } from '@ant-design/icons';
+import { trackEvent } from 'analytics';
 import { Button } from 'antd';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -18,10 +19,12 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 interface ISubscriptionButtonProps {
 	postId: number | string;
 	proposalType: ProposalType;
+	title?: string;
 }
 
 const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
-	const { postId, proposalType } = props;
+	const { postId, proposalType, title } = props;
+	const currentUser = useUserDetailsSelector();
 
 	const {
 		postData: { subscribers },
@@ -34,6 +37,14 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 
 	const handleSubscribe = async () => {
 		if (!id) return;
+		// GAEvent for post subscribe
+		trackEvent('post_subscribe_clicked', 'subscribe_post', {
+			postId: postId,
+			postTitle: title,
+			proposalType: proposalType,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		setLoading(true);
 
 		if (subscribed) {

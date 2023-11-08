@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
-import { Pagination } from 'antd';
+import { Pagination } from '~src/ui-components/Pagination';
 import { useRouter } from 'next/router';
 import { getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect } from 'react';

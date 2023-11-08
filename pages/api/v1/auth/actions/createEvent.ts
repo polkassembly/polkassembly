@@ -16,26 +16,17 @@ import { NetworkEvent } from '~src/types';
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { content,
-		end_time,
-		event_type,
-		location,
-		module,
-		network,
-		start_time,
-		title,
-		url,
-		user_id } = req.body;
+	const { content, end_time, event_type, location, module, network, start_time, title, url, user_id } = req.body;
 
-	if(!end_time  || !event_type   || !network  || !start_time  || !title  || !user_id ) {
+	if (!end_time || !event_type || !network || !start_time || !title || !user_id) {
 		return res.status(400).json({ message: 'Missing parameters in request body' });
 	}
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user || user.id !== Number(user_id)) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user || user.id !== Number(user_id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 	const firestore = firebaseAdmin.firestore();
 
 	const eventDocRef = firestore.collection('networks').doc(network).collection('events').doc();
@@ -55,12 +46,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		user_id: Number(user_id)
 	};
 
-	await eventDocRef.set(newEvent).then(() => {
-		return res.status(200).json({ message: 'Event added.' });
-	}).catch((error) => {
-		console.error('Error adding event : ', error);
-		return res.status(500).json({ message: 'Error adding event' });
-	});
+	await eventDocRef
+		.set(newEvent)
+		.then(() => {
+			return res.status(200).json({ message: 'Event added.' });
+		})
+		.catch((error) => {
+			console.error('Error adding event : ', error);
+			return res.status(500).json({ message: 'Error adding event' });
+		});
 }
 
 export default withErrorHandling(handler);

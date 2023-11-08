@@ -16,15 +16,15 @@ export interface ChallengeMessage extends MessageType {
 export interface TokenType {
 	token: string;
 }
-export interface IAddProfileResponse{
-  message?: string;
-  token?: string;
+export interface IAddProfileResponse {
+	message?: string;
+	token?: string;
 }
 
 export interface ChangeResponseType extends MessageType, TokenType {}
 
 export interface UpdatedDataResponseType<T> extends MessageType {
-	updated: T
+	updated: T;
 }
 
 export interface UndoEmailChangeResponseType extends ChangeResponseType {
@@ -55,7 +55,7 @@ export enum ESocialType {
 	RIOT = 'Riot',
 	TWITTER = 'Twitter',
 	TELEGRAM = 'Telegram',
-	DISCORD = 'Discord',
+	DISCORD = 'Discord'
 }
 
 export interface ISocial {
@@ -68,7 +68,7 @@ export interface ProfileDetails {
 	badges?: string[];
 	title?: string;
 	image?: string;
-	social_links?: ISocial[]
+	social_links?: ISocial[];
 }
 
 export interface ProfileDetailsResponse extends ProfileDetails {
@@ -87,7 +87,7 @@ export interface Address {
 	verified: boolean;
 	is_erc20?: boolean;
 	wallet?: string;
-	isMultisig?:boolean
+	isMultisig?: boolean;
 }
 
 export interface NotificationSettings {
@@ -102,15 +102,15 @@ export interface IUserPreference {
 	notification_preferences: NotificationSettings;
 	post_subscriptions: {
 		[key in ProposalType]?: (number | string)[];
-	}
+	};
 }
 
 export interface UndoEmailChangeToken {
 	user_id: number;
 	email: string;
-  valid: boolean;
-  created_at: Date;
-  token: string;
+	valid: boolean;
+	created_at: Date;
+	token: string;
 }
 
 export interface IUser2FADetails {
@@ -121,8 +121,8 @@ export interface IUser2FADetails {
 }
 
 export interface User {
-	created_at?:Date,
-	custom_username?:boolean,
+	created_at?: Date;
+	custom_username?: boolean;
 	email: string;
 	email_verified: boolean;
 	id: number;
@@ -133,12 +133,13 @@ export interface User {
 	web3_signup: boolean;
 	primary_network?: string;
 	notification_preferences?: IUserNotificationSettings;
-	two_factor_auth?: IUser2FADetails
+	two_factor_auth?: IUser2FADetails;
+	roles?: Role[];
 }
 
-export  interface Roles {
+export interface Roles {
 	allowedRoles: Role[];
-	currentRole: Role.PROPOSAL_BOT | Role.USER | Role.EVENT_BOT
+	currentRole: Role.PROPOSAL_BOT | Role.USER | Role.EVENT_BOT | Role.MODERATOR;
 }
 
 export interface JWTPayloadType {
@@ -158,7 +159,7 @@ export interface JWTPayloadType {
 }
 
 export interface IAuthResponse {
-	token?: string
+	token?: string;
 	user_id?: number;
 	isTFAEnabled?: boolean;
 	tfa_token?: string;
@@ -178,7 +179,7 @@ export enum PostTypeEnum {
 	REFERENDUM = 'referendum',
 	TECH = 'tech',
 	CHILD_BOUNTY = 'child_bounty',
-	REFERENDA = 'referenda',
+	REFERENDA = 'referenda'
 }
 
 export type PostType = PostTypeEnum;

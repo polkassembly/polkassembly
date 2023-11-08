@@ -4,8 +4,7 @@
 import BN from 'bn.js';
 import { chainProperties } from 'src/global/networkConstants';
 
-export default function blockToDays (blocks: BN |  number, network: string, blocktime?: number ): number {
-
+export default function blockToDays(blocks: BN | number, network: string, blocktime?: number): number {
 	if (!blocktime) {
 		blocktime = chainProperties?.[network]?.blockTime / 1000;
 	} else {
@@ -17,7 +16,7 @@ export default function blockToDays (blocks: BN |  number, network: string, bloc
 		blocks = Number(blocks);
 	}
 
-	let time = (blocks * blocktime) / (3600*24);
+	let time = (blocks * blocktime) / (3600 * 24);
 	time = time >= 1 ? Math.floor(time) : Math.round((time + Number.EPSILON) * 100) / 100;
 
 	return time;

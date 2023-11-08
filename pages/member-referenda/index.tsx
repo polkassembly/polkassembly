@@ -5,25 +5,32 @@
 import { GetServerSideProps } from 'next';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import TrackListing from '~src/components/Listing/FellowshipReferendum/TrackListing';
-import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import { setNetwork } from '~src/redux/network';
 import { IApiResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
 export interface IFellowshipReferendumPostsByTrackName {
 	[key: string]: IApiResponse<IPostsListingResponse> | undefined;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST,filterBy, trackName } = query;
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackName } = query;
 	if (!trackName) {
 		return {
 			props: {},
@@ -32,7 +39,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
-	const network = getNetworkFromReqHeaders(req.headers);
 	const fellowshipReferendumPostOrigins: string[] = [];
 	if (networkTrackInfo?.[network]) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
@@ -50,7 +56,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		const trackId: any = networkTrackInfo?.[network]?.[currTrackName]?.trackId;
 		if (trackName === currTrackName) {
 			prev[currTrackName] = getOnChainPosts({
-				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
@@ -101,8 +107,12 @@ interface IFellowshipReferendumProps {
 
 const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 	const { posts, error, network } = props;
-	const { setNetwork } = useNetworkContext();
-	setNetwork(network);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(setNetwork(network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 	const fellowshipReferendumPostOrigins: string[] = [];
@@ -113,13 +123,18 @@ const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 			}
 		});
 	}
-	return <>
-		<SEOHead title={'Fellowship Referendum'} network={network}/>
-		<TrackListing
-			posts={posts}
-			fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
-		/>
-	</>;
+	return (
+		<>
+			<SEOHead
+				title={'Fellowship Referendum'}
+				network={network}
+			/>
+			<TrackListing
+				posts={posts}
+				fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
+			/>
+		</>
+	);
 };
 
 export default FellowshipAdmin;

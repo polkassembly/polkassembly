@@ -12,6 +12,7 @@ import { username as usernameValidation } from 'src/util/validation';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import nameBlacklist from '~src/auth/utils/nameBlacklist';
 
 const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean; onConfirm?: () => void; onCancel: () => void; username: string }) => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -23,7 +24,17 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 			const values = await form.validateFields();
 			const { newUsername } = values;
 			setLoading(true);
-
+			for (let i = 0; i < nameBlacklist.length; i++) {
+				if (newUsername.toLowerCase().includes(nameBlacklist[i])) {
+					queueNotification({
+						header: 'Error',
+						message: 'Entered Username is Banned',
+						status: NotificationStatus.ERROR
+					});
+					setLoading(false);
+					return;
+				}
+			}
 			const { data, error } = await nextApiClientFetch<any>('api/v1/auth/actions/changeUsername', {
 				username: newUsername
 			});

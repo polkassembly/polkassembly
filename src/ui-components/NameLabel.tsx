@@ -75,12 +75,15 @@ const NameLabel = ({
 						overlayClassName={className}
 						title={
 							<QuickView
+								address={address}
 								socials={socials}
 								setOpen={setOpen}
 								profileCreatedAt={profileCreatedAt}
 								username={username || ''}
 								polkassemblyUsername={username}
 								enableTipping={!!address}
+								setOpenAddressChangeModal={setOpenAddressChangeModal}
+								setOpenTipping={setOpenTipping}
 							/>
 						}
 						open={!defaultAddress ? open : false}

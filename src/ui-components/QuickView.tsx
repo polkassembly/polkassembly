@@ -36,7 +36,7 @@ export const TippingUnavailableNetworks = [
 ];
 interface Props {
 	className?: string;
-	address?: string;
+	address: string;
 	identity?: DeriveAccountRegistration | null;
 	polkassemblyUsername?: string;
 	username: string;
@@ -44,8 +44,8 @@ interface Props {
 	profileCreatedAt?: Date | null;
 	socials?: ISocial[];
 	setOpen: (pre: boolean) => void;
-	setOpenTipping?: (pre: boolean) => void;
-	setOpenAddressChangeModal?: (pre: boolean) => void;
+	setOpenTipping: (pre: boolean) => void;
+	setOpenAddressChangeModal: (pre: boolean) => void;
 	enableTipping?: boolean;
 }
 const QuickView = ({

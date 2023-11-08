@@ -230,6 +230,7 @@ const QuickView = ({
 			)}
 			{!TippingUnavailableNetworks.includes(network) && (
 				<Tooltip
+					color='#E5007A'
 					open={!id || !enableTipping ? openTooltip : false}
 					onOpenChange={(e) => setOpenTooltip(e)}
 					title={!id ? 'Login to tip' : 'No Web3 Wallet Detected'}

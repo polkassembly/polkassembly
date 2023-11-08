@@ -2,14 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Button, Dropdown, Tag } from 'antd';
+import { Button, Tag } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
-import Address, { EAddressOtherTextType } from 'src/ui-components/Address';
-import { useUserDetailsContext } from '~src/context';
+import Address from 'src/ui-components/Address';
 import DownIcon from '~assets/icons/down-icon.svg';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { EAddressOtherTextType } from '~src/types';
+import { useDispatch } from 'react-redux';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -19,19 +24,20 @@ interface Props {
 	defaultAddress?: string;
 	accounts: InjectedTypeWithCouncilBoolean[];
 	className?: string;
-	filterAccounts?: string[]
+	filterAccounts?: string[];
 	onAccountChange: (address: string) => void;
 	isDisabled?: boolean;
 	isSwitchButton?: boolean;
-	setSwitchModalOpen?: (pre: boolean)=> void;
-	isMultisig?:boolean
-	linkAddressTextDisabled?: boolean
+	setSwitchModalOpen?: (pre: boolean) => void;
+	isMultisig?: boolean;
+	linkAddressTextDisabled?: boolean;
 	addressTextClassName?: string;
+	isTruncateUsername?: boolean;
 }
 
 const AddressDropdown = ({
 	defaultAddress,
-	className = 'px-3 py-1 border-solid border-gray-300 border-[1px] rounded-md h-[48px]',
+	className = 'px-3 py-1 border-solid border-gray-300 dark:border-[#3B444F] dark:border-separatorDark border-[1px] rounded-md h-[48px]',
 	accounts,
 	filterAccounts,
 	isDisabled,
@@ -39,24 +45,22 @@ const AddressDropdown = ({
 	isSwitchButton,
 	setSwitchModalOpen,
 	isMultisig,
-	linkAddressTextDisabled=false,
-	addressTextClassName
+	linkAddressTextDisabled = false,
+	addressTextClassName,
+	isTruncateUsername = true
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
-	const filteredAccounts = !filterAccounts
-		? accounts
-		: accounts.filter( elem =>
-			filterAccounts.includes(elem.address)
-		);
-
-	const dropdownList: {[index: string]: string} = {};
+	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
+	const dropdownList: { [index: string]: string } = {};
 	const addressItems: ItemType[] = [];
-	const { setUserDetailsContextState, loginAddress, addresses } = useUserDetailsContext();
-	const substrate_address = getSubstrateAddress(loginAddress);
+	const currentUser = useUserDetailsSelector();
+	const { addresses } = currentUser;
+	const dispatch = useDispatch();
+	const substrate_address = getSubstrateAddress(selectedAddress || '');
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
-
+	const { resolvedTheme: theme } = useTheme();
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
-		if(linkAddressTextDisabled) return;
+		if (linkAddressTextDisabled) return;
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
 		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
 		if (account?.isCouncil) {
@@ -66,74 +70,91 @@ const AddressDropdown = ({
 			return EAddressOtherTextType.COUNCIL;
 		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
-		}else if(isConnected && !substrate_addresses.includes(account_substrate_address)){
-			return EAddressOtherTextType.CONNECTED;
-		}
-		else if (substrate_addresses.includes(account_substrate_address)) {
+		} else if (substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
-		}else{
+		} else {
 			return EAddressOtherTextType.UNLINKED_ADDRESS;
 		}
 	};
 
-	filteredAccounts.forEach(account => {
+	filteredAccounts.forEach((account) => {
 		addressItems.push({
 			key: account.address,
 			label: (
 				<Address
-					disableAddressClick={true}
 					className={`flex items-center ${poppins.className} ${poppins.className}`}
-					otherTextType={ getOtherTextType(account)}
-					otherTextClassName='ml-auto'
-					addressClassName='text-lightBlue'
+					addressOtherTextType={getOtherTextType(account)}
+					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 					extensionName={account.name}
 					address={account.address}
+					disableAddressClick
+					isTruncateUsername={isTruncateUsername}
+					disableTooltip
 				/>
 			)
 		});
 
-		if (account.address && account.name){
+		if (account.address && account.name) {
 			dropdownList[account.address] = account.name;
 		}
-	}
-	);
-
-	isSwitchButton && setSwitchModalOpen && addressItems.push({
-		key: 1,
-		label: (
-			<div className='flex items-center justify-center mt-2'>
-				<Button onClick={() => setSwitchModalOpen(true)} className={`w-full h-[40px] rounded-[8px] text-sm text-[#fff] bg-pink_primary font-medium flex justify-center items-center tracking-wide ${poppins.variable} ${poppins.className}`}>Switch Wallet</Button>
-			</div>
-		)
 	});
+
+	isSwitchButton &&
+		setSwitchModalOpen &&
+		addressItems.push({
+			key: 1,
+			label: (
+				<div className='mt-2 flex items-center justify-center'>
+					<Button
+						onClick={() => setSwitchModalOpen(true)}
+						className={`flex h-[40px] w-full items-center justify-center rounded-[8px] bg-pink_primary text-sm font-medium tracking-wide text-[#fff] ${poppins.variable} ${poppins.className}`}
+					>
+						Switch Wallet
+					</Button>
+				</div>
+			)
+		});
 	return (
 		<Dropdown
+			theme={theme}
 			trigger={['click']}
-			className={className}
+			className={`${className} dark:border-separatorDark`}
 			disabled={isDisabled}
+			overlayClassName='z-[2000]'
 			menu={{
 				items: addressItems,
-				onClick: (e) => {
-					if(e.key !== '1'){
+				onClick: (e: any) => {
+					if (e.key !== '1') {
 						setSelectedAddress(e.key);
 						onAccountChange(e.key);
-						setSwitchModalOpen && setUserDetailsContextState((prev) =>
-						{
-							return { ...prev, delegationDashboardAddress: e.key };
-						});}
+						setSwitchModalOpen && dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: e.key }));
+					}
 				}
 			}}
 		>
-			<div className="flex justify-between items-center ">
-				{isMultisig && <Tag color="blue" className='absolute h-[18px] text-[8px] z-10 -ml-2 -mt-4 rounded-xl'>Multi</Tag>}
+			<div className='flex items-center justify-between '>
+				{isMultisig && (
+					<Tag
+						color='blue'
+						className='absolute z-10 -ml-2 -mt-4 h-[18px] rounded-xl text-[8px]'
+					>
+						Multi
+					</Tag>
+				)}
 				<Address
-					textClassName={addressTextClassName}
-					disableAddressClick={true}
+					usernameClassName={addressTextClassName}
 					extensionName={dropdownList[selectedAddress]}
 					address={defaultAddress || selectedAddress}
-					otherTextType={getOtherTextType(filteredAccounts.find(account => account.address === selectedAddress || account.address === defaultAddress))}
-					className={`flex items-center flex-1 ${isMultisig ? 'ml-4':''}`}
-					otherTextClassName='ml-auto'
+					addressOtherTextType={getOtherTextType(
+						filteredAccounts.find(
+							(account) => account.address === getSubstrateAddress(selectedAddress) || getSubstrateAddress(account.address) === getSubstrateAddress(defaultAddress || '')
+						)
+					)}
+					className={`flex flex-1 items-center ${isMultisig ? 'ml-4' : ''}`}
+					addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
+					disableAddressClick
+					isTruncateUsername={isTruncateUsername}
+					disableTooltip
 				/>
 				<span className='mx-2 mb-1'>
 					<DownIcon />

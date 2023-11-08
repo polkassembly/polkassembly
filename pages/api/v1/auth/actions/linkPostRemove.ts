@@ -22,17 +22,17 @@ const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (re
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { postId, postType, currPostId, currPostType } = req.body;
 
-	if((!postId && postId !== 0) || (!currPostId && currPostId !== 0) || !postType || !currPostType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if ((!postId && postId !== 0) || (!currPostId && currPostId !== 0) || !postType || !currPostType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if(!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	try {
 		[postType, currPostType].filter((type) => {
@@ -102,7 +102,6 @@ const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (re
 	} catch (error) {
 		return res.status(error.name).json({ message: error.message });
 	}
-
 };
 
 export default withErrorHandling(handler);

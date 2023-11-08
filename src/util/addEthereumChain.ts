@@ -5,8 +5,8 @@
 import { chainProperties } from '~src/global/networkConstants';
 
 interface IAddEthereumChainParams {
-    network: string;
-    ethereum: any;
+	network: string;
+	ethereum: any;
 }
 
 type TAddEthereumChainFn = (params: IAddEthereumChainParams) => Promise<void>;
@@ -29,14 +29,14 @@ const addEthereumChain: TAddEthereumChainFn = async (params) => {
 					method: 'wallet_addEthereumChain',
 					params: [
 						{
-							'chainId': newChainId,
-							'chainName': network,
-							'nativeCurrency': {
-								'decimals': tokenDecimals,
-								'name': network,
-								'symbol': tokenSymbol
+							chainId: newChainId,
+							chainName: network,
+							nativeCurrency: {
+								decimals: tokenDecimals,
+								name: network,
+								symbol: tokenSymbol
 							},
-							'rpcUrls': rpcUrls
+							rpcUrls: rpcUrls
 						}
 					]
 				});

@@ -24,9 +24,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 			const values = await form.validateFields();
 			const { newUsername } = values;
 			setLoading(true);
-			console.log(newUsername);
 			for (let i = 0; i < nameBlacklist.length; i++) {
-				console.log(nameBlacklist[i]);
 				if (newUsername.toLowerCase().includes(nameBlacklist[i])) {
 					queueNotification({
 						header: 'Error',

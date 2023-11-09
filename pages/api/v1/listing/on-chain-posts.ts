@@ -60,7 +60,7 @@ export interface IPostListing {
 		'👎': number;
 	};
 	proposedCall?: any;
-	requestedAmount?: String;
+	requestedAmount?: string;
 	proposer?: string;
 	curator?: string;
 	parent_bounty_index?: number;

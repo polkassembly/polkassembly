@@ -862,7 +862,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,
-			requested: requested.toString(),
+			requested: requested ? requested.toString() : undefined,
 			reward: postData?.reward,
 			status,
 			statusHistory: postData?.statusHistory,

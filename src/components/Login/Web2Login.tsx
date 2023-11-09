@@ -334,4 +334,13 @@ export default styled(Web2Login)`
 		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
 		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '')} !important;
 	}
+	.ant-input::placeholder {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+	}
+	@media (max-width: 365px) and (min-width: 319px) {
+		.web3-login-container {
+			padding-left: 40px !important;
+			padding-right: 40px !important;
+		}
+	}
 `;

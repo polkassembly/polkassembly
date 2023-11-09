@@ -18,6 +18,8 @@ import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
+
 import { ChallengeMessage, JWTPayloadType, TokenType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -34,6 +36,7 @@ import { decodeToken } from 'react-jwt';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import LoginSuccessModal from '~src/ui-components/LoginSuccessModal';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -81,6 +84,7 @@ const Web3Signup: FC<Props> = ({
 
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -296,6 +300,7 @@ const Web3Signup: FC<Props> = ({
 				<div>
 					<div className='mt-1 flex items-center'>
 						<LoginLogo className='ml-6 mr-2' />
+						{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
 						<h3 className='mt-3 text-[20px] font-semibold text-[#243A57] dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Sign Up'}</h3>
 					</div>
 					<Divider
@@ -343,7 +348,7 @@ const Web3Signup: FC<Props> = ({
 										<label className='text-base text-bodyBlue dark:text-blue-dark-high'>Already have an account?</label>
 										<div
 											onClick={() => handleClick()}
-											className='cursor-pointer text-base text-pink_primary'
+											className='login-button cursor-pointer text-base text-pink_primary'
 										>
 											&nbsp; Log In{' '}
 										</div>
@@ -355,7 +360,7 @@ const Web3Signup: FC<Props> = ({
 								/>
 								<div className='web3-button-container ml-auto flex justify-end'>
 									<Button
-										className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+										className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 										onClick={() => handleBackToSignUp()}
 									>
 										Go Back
@@ -364,7 +369,7 @@ const Web3Signup: FC<Props> = ({
 										<Button
 											key='got-it'
 											icon={<CheckOutlined />}
-											className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
+											className='web3-button flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
 											onClick={() => {
 												getAccounts(chosenWallet)
 													.then(() => {
@@ -459,7 +464,7 @@ const Web3Signup: FC<Props> = ({
 								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>
 										<Button
-											className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+											className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 											onClick={() => handleBackToSignUp()}
 										>
 											Go Back
@@ -494,6 +499,14 @@ export default styled(Web3Signup)`
 		}
 		.web3-button-container {
 			margin-left: 0 !important;
+		}
+	}
+	@media (max-width: 330px) and (min-width: 319px) {
+		.no-account-text-container {
+			display: block !important;
+		}
+		.login-button {
+			margin-left: -8px !important;
 		}
 	}
 `;

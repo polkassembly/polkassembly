@@ -197,9 +197,12 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, setDisplayWeb
 				{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
 				<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Sign Up</h3>
 			</div>
-			<hr className='text-[#D2D8E0] ' />
+			<Divider
+				style={{ background: '#D2D8E0', flexGrow: 1 }}
+				className='mt-2 dark:bg-separatorDark'
+			/>
 			{fetchAccounts ? (
-				<div className='-mt-6 flex flex-col p-8'>
+				<div className='-mt-6 flex flex-col px-8 pb-8'>
 					<div className='my-4 flex justify-start gap-x-2'>
 						<span className=''>
 							<WalletIcon which={chosenWallet} />
@@ -210,9 +213,9 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, setDisplayWeb
 						For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
 					</p>
 					<Divider
-						className='m-0 mt-5 p-0 '
-						style={{ borderTop: '1px dashed #D2D8E0' }}
-					></Divider>
+						style={{ background: '#D2D8E0', flexGrow: 1 }}
+						className='m-0 mt-5 p-0 dark:bg-separatorDark'
+					/>
 					<div className='mt-4 flex w-full justify-start gap-x-2 font-normal'>
 						<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Already have an account?</label>
 						<div
@@ -223,9 +226,9 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, setDisplayWeb
 						</div>
 					</div>
 					<Divider
-						className='my-4 p-0 '
-						style={{ borderTop: '1px solid #E1E6EB' }}
-					></Divider>
+						style={{ background: '#D2D8E0', flexGrow: 1 }}
+						className='my-4 p-0 dark:bg-separatorDark'
+					/>
 					<div className='flex justify-end'>
 						<Button
 							className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'

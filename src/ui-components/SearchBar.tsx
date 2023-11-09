@@ -77,7 +77,11 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 					</button>
 					<Modal
 						wrapClassName='dark:bg-modalOverlayDark [&>.ant-modal-content]:bg-section-dark-overlay'
-						title='Search'
+						title={
+							<div className='-mx-6 flex items-center px-6 text-base font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
+								Search
+							</div>
+						}
 						closable={false}
 						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						open={open}
@@ -168,6 +172,9 @@ export default styled(SearchBar)`
 	}
 	.client .gsc-results-wrapper-overlay {
 		top: 100px !important;
+	}
+	.client .gsc-input {
+		background: transparent !important;
 	}
 	.ant-modal-footer {
 		margin: 0px !important;

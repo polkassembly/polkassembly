@@ -782,7 +782,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const proposalArguments = postData?.proposalArguments || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
 		let remark = '';
-		let requested: any;
+		let requested = BigInt(0);
 		if (proposedCall?.args) {
 			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
 			if (proposedCall.args.amount) {
@@ -790,13 +790,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			} else {
 				const calls = proposedCall.args.calls;
 				if (calls && Array.isArray(calls) && calls.length > 0) {
-					const requestedCall = calls.find((call) => !!call.amount);
-					if (requestedCall) {
-						requested = requestedCall.amount;
-					}
 					calls.forEach((call) => {
 						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
 							remark += call.remark + '\n';
+						}
+						if (call && call.amount) {
+							requested += BigInt(call.amount);
 						}
 					});
 				}
@@ -863,7 +862,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,
-			requested: requested,
+			requested: requested ? requested.toString() : undefined,
 			reward: postData?.reward,
 			status,
 			statusHistory: postData?.statusHistory,

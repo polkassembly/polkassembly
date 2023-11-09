@@ -570,17 +570,6 @@ z-index: 1050 !important;
   }
 }
 
-@media (max-width: 365px) and (min-width: 319px) {
-  .web3-login-container {
-    padding-left: 40px !important;
-    padding-right: 40px !important;
-  }
-  
-  .no-account-text-container {
-    display: block !important;
-  }
-}
-
 .hide-image img {
   display: none !important;
 }

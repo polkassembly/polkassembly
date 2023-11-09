@@ -10,6 +10,7 @@ import { networkStore } from './network';
 import { userDetailsStore } from './userDetails';
 import { userUnlockTokensDataStore } from './tokenUnlocksData';
 import { currentTokenPriceStore } from './currentTokenPrice';
+import { curvesInformationStore } from './curvesInformation';
 
 export const makeStore = () => {
 	const isServer = typeof window === 'undefined';
@@ -18,7 +19,8 @@ export const makeStore = () => {
 		[networkStore.name]: networkStore.reducer,
 		[userDetailsStore.name]: userDetailsStore.reducer,
 		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer,
-		[currentTokenPriceStore.name]: currentTokenPriceStore.reducer
+		[currentTokenPriceStore.name]: currentTokenPriceStore.reducer,
+		[curvesInformationStore.name]: curvesInformationStore.reducer
 	});
 
 	if (isServer) {

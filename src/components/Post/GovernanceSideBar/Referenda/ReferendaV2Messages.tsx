@@ -19,6 +19,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import ConfirmMessage from './ConfirmMessage';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -210,6 +211,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</span>
 					</p>
 					<div className='mt-[20px]'>
+						<ConfirmMessage />
 						<Progress
 							className='m-0 flex items-center p-0'
 							showInfo={false}

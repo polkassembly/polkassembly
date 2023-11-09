@@ -20,7 +20,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const { userId, postId, commentId, reaction, postType, replyId, setReplyReaction } = req.body;
 
-	console.log(setReplyReaction);
 	if (setReplyReaction) {
 		if (!userId || isNaN(postId) || (!commentId && !replyId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 	} else {

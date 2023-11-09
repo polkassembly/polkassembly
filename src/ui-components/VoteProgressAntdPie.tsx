@@ -37,12 +37,12 @@
 // 		<div className={`${className} flex justify-center items-end gap-x-2 relative`}>
 // 			<div className='mb-12 flex flex-col justify-center'>
 // 				<span className='text-[#2ED47A] text-[20px] leading-6 font-semibold'>{ayePercent.toFixed(1)}%</span>
-// 				<span className='text-[#485F7D] font-medium text-xs leading-[18px] tracking-[0.01em]'>Aye</span>
+// 				<span className='text-[#485F7D] dark:text-blue-dark-medium font-medium text-xs leading-[18px] tracking-[0.01em]'>Aye</span>
 // 			</div>
 // 			{/* {
 // 				turnoutPercentage?
 // 					<div className='absolute top-6 z-50 w-full flex items-center justify-center flex-col'>
-// 						<p className='m-0 p-0 text-[#485F7D] font-medium text-xs leading-[22px]'>
+// 						<p className='m-0 p-0 text-[#485F7D] dark:text-blue-dark-medium font-medium text-xs leading-[22px]'>
 // 					Threshold {turnoutPercentage?.toFixed(1)}%
 // 						</p>
 // 						<div className='h-[43px] border border-dashed border-navBlue'></div>
@@ -91,7 +91,7 @@
 // 			</div>
 // 			<div className='mb-12 flex flex-col justify-center'>
 // 				<span className='text-[#E84865] text-[20px] leading-6 font-semibold'>{nayPercent.toFixed(1)}%</span>
-// 				<span className='text-[#485F7D] font-medium text-xs leading-[18px] tracking-[0.01em]'>Nay</span>
+// 				<span className='text-[#485F7D] dark:text-blue-dark-medium font-medium text-xs leading-[18px] tracking-[0.01em]'>Nay</span>
 // 			</div>
 // 		</div>
 // 	);
@@ -107,9 +107,7 @@
 import React from 'react';
 
 const VoteProgressAntdPie = () => {
-	return (
-		<div>VoteProgressAntdPie</div>
-	);
+	return <div>VoteProgressAntdPie</div>;
 };
 
 export default VoteProgressAntdPie;

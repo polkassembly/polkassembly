@@ -6,26 +6,28 @@ import React, { FC } from 'react';
 import Comment, { IComment } from './Comment';
 
 interface ICommentsProps {
-	className?: string
-	disableEdit?: boolean
-	comments: IComment[]
+	className?: string;
+	disableEdit?: boolean;
+	comments: IComment[];
 }
 
 const Comments: FC<ICommentsProps> = (props) => {
 	const { className, comments } = props;
-	const uniqueComments:Array<IComment> = Object.values(comments.reduce((acc: any, obj) => {
-		acc[obj.id] = obj;
-		return acc;
-	}, {}));
+	const uniqueComments: Array<IComment> = Object.values(
+		comments.reduce((acc: any, obj) => {
+			acc[obj.id] = obj;
+			return acc;
+		}, {})
+	);
 	return (
 		<div className={className}>
-			{uniqueComments.map((comment) =>
+			{uniqueComments.map((comment) => (
 				<Comment
 					disableEdit={props.disableEdit}
 					comment={comment}
 					key={comment.id}
 				/>
-			)}
+			))}
 		</div>
 	);
 };

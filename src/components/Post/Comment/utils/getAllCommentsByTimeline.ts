@@ -7,10 +7,7 @@ import { ITimelineData } from '~src/context/PostDataContext';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
-export const getAllCommentsByTimeline = async (
-	postTimeline:Array<ITimelineData>,
-	network: string
-) => {
+export const getAllCommentsByTimeline = async (postTimeline: Array<ITimelineData>, network: string) => {
 	try {
 		const { data, error } = await nextApiClientFetch<ITimelineComments>('api/v1/posts/comments/getCommentsByTimeline', {
 			network,

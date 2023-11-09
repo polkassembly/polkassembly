@@ -39,15 +39,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<I2FAGenerateRes
 		.collection('users')
 		.doc(String(user.id))
 		.update({
-			two_factor_auth : {
+			two_factor_auth: {
 				base32_secret: base32_secret,
 				enabled: false,
 				url: otpauth_url,
 				verified: false
 			}
-		}).then(() => {
+		})
+		.then(() => {
 			return res.status(200).json({ base32_secret: base32_secret, url: otpauth_url });
-		}).catch((error) => {
+		})
+		.catch((error) => {
 			console.error('Error updating primary network: ', error);
 			return res.status(500).json({ message: 'Error generating two factor auth secret.' });
 		});

@@ -12,11 +12,11 @@ import { ProposalType } from '~src/global/proposalType';
 import { IOptionPoll, IPoll } from '~src/types';
 
 export function getPollCollectionName(pollType: string): string {
-	switch(pollType) {
-	case 'normal':
-		return 'polls';
-	case 'option':
-		return 'option_polls';
+	switch (pollType) {
+		case 'normal':
+			return 'polls';
+		case 'option':
+			return 'option_polls';
 	}
 	return '';
 }
@@ -34,7 +34,7 @@ const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | MessageTyp
 	if (isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid post ID.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type of the name "${proposalType}" does not exist.` });
@@ -47,7 +47,7 @@ const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | MessageTyp
 		.collection(getPollCollectionName(strPollType))
 		.get();
 
-	if(pollsQuery.empty) return res.status(404).json({ message: 'No polls found for this post.' });
+	if (pollsQuery.empty) return res.status(404).json({ message: 'No polls found for this post.' });
 
 	const polls: IPoll[] = [];
 	const optionPolls: IOptionPoll[] = [];
@@ -78,11 +78,11 @@ const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | MessageTyp
 		}
 	});
 	if (strPollType === POLL_TYPE.OPTION) {
-		res.status(200).json({
+		return res.status(200).json({
 			optionPolls
 		});
 	} else if (strPollType === POLL_TYPE.NORMAL) {
-		res.status(200).json({
+		return res.status(200).json({
 			polls
 		});
 	} else {

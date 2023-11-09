@@ -8,21 +8,23 @@ import { isValidNetwork } from '~src/api-utils';
 export const SUBSCAN_API_KEY = '056b677410ac226bea971a3e03de66fa';
 
 export const SUBSCAN_API_HEADERS = {
-	'Accept': 'application/json',
+	Accept: 'application/json',
 	'Content-Type': 'application/json',
 	'X-API-Key': SUBSCAN_API_KEY
 };
 
 export const getOnChainAddressDetails = async (address: string | string[] | undefined, network: string | string[] | undefined) => {
 	try {
-		const data = await (await fetch(`https://${network}.api.subscan.io/api/v2/scan/search`, {
-			body: JSON.stringify({
-				'key': address,
-				'row': 1
-			}),
-			headers: SUBSCAN_API_HEADERS,
-			method: 'POST'
-		})).json();
+		const data = await (
+			await fetch(`https://${network}.api.subscan.io/api/v2/scan/search`, {
+				body: JSON.stringify({
+					key: address,
+					row: 1
+				}),
+				headers: SUBSCAN_API_HEADERS,
+				method: 'POST'
+			})
+		).json();
 
 		return data;
 	} catch (error) {

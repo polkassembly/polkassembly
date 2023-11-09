@@ -11,11 +11,14 @@ export const getContentSummary = async (post: any, network: string, isExternalAp
 			const summary = await fetchContentSummary(post.content, post.type);
 			if (summary) {
 				post.summary = summary;
-				const postRef = postsByTypeRef(network, getFirestoreProposalType(post.type || '') as ProposalType).doc(String(post.type === 'Tips'? post.hash: post.post_id));
+				const postRef = postsByTypeRef(network, getFirestoreProposalType(post.type || '') as ProposalType).doc(String(post.type === 'Tips' ? post.hash : post.post_id));
 				if (postRef && summary) {
 					postRef.get().then((doc) => {
 						if (doc.exists) {
-							postRef.set({ summary: summary }, { merge: true }).then(() => {}).catch(() => {});
+							postRef
+								.set({ summary: summary }, { merge: true })
+								.then(() => {})
+								.catch(() => {});
 						}
 					});
 				}
@@ -25,27 +28,28 @@ export const getContentSummary = async (post: any, network: string, isExternalAp
 };
 
 export const fetchContentSummary = async (content: string, type: string) => {
+	const prompt = process.env.AI_PROMPT?.replace('{type}', type);
 	const res = await fetch('https://api.openai.com/v1/chat/completions', {
 		body: JSON.stringify({
 			frequency_penalty: 0.0,
-			max_tokens: 256,
+			max_tokens: 1024,
 			messages: [
 				{
-					'content': `Summarize polkassembly ${type} post content you are provided with for a second-grade student in 5 bullet points and don't give any redundant markdown.`,
-					'role': 'system'
+					content: prompt,
+					role: 'system'
 				},
 				{
-					'content': `${content}\n\nTl;dr`,
-					'role': 'user'
+					content: `${content}\n\nTl;dr`,
+					role: 'user'
 				}
 			],
-			model: 'gpt-3.5-turbo',
+			model: 'gpt-4',
 			presence_penalty: 0.0,
 			temperature: 0,
 			top_p: 1.0
 		}),
 		headers: {
-			'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
+			Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
 			'Content-Type': 'application/json'
 		},
 		method: 'POST'

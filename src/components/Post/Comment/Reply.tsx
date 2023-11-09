@@ -16,11 +16,11 @@ interface Props {
 	commentId: string;
 	userName?: string;
 	isSubsquareUser: boolean;
-	isPostReaction: boolean;
+	isReactionOnReply: boolean;
 	comment: IComment;
 }
 
-export const Reply = ({ className, commentId, reply, userName, comment, isSubsquareUser, isPostReaction }: Props) => {
+export const Reply = ({ className, commentId, reply, userName, comment, isSubsquareUser, isReactionOnReply }: Props) => {
 	const { user_id, username, content, created_at, id, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
@@ -70,7 +70,7 @@ export const Reply = ({ className, commentId, reply, userName, comment, isSubsqu
 					is_custom_username={is_custom_username}
 					comment={comment}
 					isSubsquareUser={isSubsquareUser}
-					isPostReaction={isPostReaction}
+					isReactionOnReply={isReactionOnReply}
 				/>
 			</div>
 		</div>

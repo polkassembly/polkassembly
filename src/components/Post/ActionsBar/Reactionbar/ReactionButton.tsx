@@ -26,7 +26,7 @@ export interface IReactionButtonProps {
 	importedReactions?: boolean;
 	isReactionButtonInPost?: boolean;
 	replyId?: string;
-	isPostReaction?: boolean;
+	isReactionOnReply?: boolean;
 }
 
 type IReaction = '👍' | '👎';
@@ -44,7 +44,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	importedReactions = false,
 	isReactionButtonInPost,
 	replyId,
-	isPostReaction
+	isReactionOnReply
 }) => {
 	const {
 		postData: { postIndex, postType, track_number }
@@ -58,13 +58,14 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if (reaction == '👍') {
 			return reacted ? (
-				<LikeFilled />
+				<LikeFilled className='-mt-1' />
 			) : (
 				<div
 					onClick={() => {
 						!id && setLikeModalOpen && setLikeModalOpen(true);
+						const likedItem = isReactionOnReply ? 'replyLiked' : 'postLiked';
 						trackEvent('like_icon_clicked', 'liked_icon_clicked', {
-							contentType: isReactionButtonInPost ? 'postLiked' : 'commentLiked',
+							contentType: isReactionButtonInPost ? likedItem : 'commentLiked',
 							userId: currentUser?.id || '',
 							userName: currentUser?.username || ''
 						});
@@ -77,13 +78,17 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 		if (reaction == '👎') {
 			return reacted ? (
-				<LikeFilled rotate={180} />
+				<LikeFilled
+					rotate={180}
+					className='-mt-1'
+				/>
 			) : (
 				<div
 					onClick={() => {
 						!id && setDislikeModalOpen && setDislikeModalOpen(true);
+						const dislikedItem = isReactionOnReply ? 'replyDisliked' : 'postDisliked';
 						trackEvent('dislike_icon_clicked', 'disliked_icon_clicked', {
-							contentType: isReactionButtonInPost ? 'postDisLiked' : 'commenDistLiked',
+							contentType: isReactionButtonInPost ? dislikedItem : 'commenDistLiked',
 							userId: currentUser?.id || '',
 							userName: currentUser?.username || ''
 						});
@@ -122,36 +127,20 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 				});
 			}
 			setReactions(newReactions);
-			if (isPostReaction) {
-				console.log(replyId, commentId);
-				const actionName = `${reacted ? 'remove' : 'add'}ReplyReaction`;
-				const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
-					commentId: commentId || null,
-					postId: postIndex,
-					postType,
-					reaction,
-					replyId: replyId || null,
-					trackNumber: track_number,
-					userId: id
-				});
+			const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'CommentOrReply' : 'Post'}Reaction`;
+			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
+				commentId: commentId,
+				postId: postIndex,
+				postType,
+				reaction,
+				replyId: replyId || null,
+				setReplyReaction: isReactionOnReply ? true : false,
+				trackNumber: track_number,
+				userId: id
+			});
 
-				if (error || !data) {
-					console.error('Error while reacting', error);
-				}
-			} else {
-				const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
-				const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
-					commentId: commentId || null,
-					postId: postIndex,
-					postType,
-					reaction,
-					trackNumber: track_number,
-					userId: id
-				});
-
-				if (error || !data) {
-					console.error('Error while reacting', error);
-				}
+			if (error || !data) {
+				console.error('Error while reacting', error);
 			}
 		}
 	};

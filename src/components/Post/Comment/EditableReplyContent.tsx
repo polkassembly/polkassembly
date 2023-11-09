@@ -43,27 +43,14 @@ interface Props {
 	is_custom_username?: boolean;
 	proposer?: string;
 	isSubsquareUser: boolean;
-	isPostReaction?: boolean;
+	isReactionOnReply?: boolean;
 	comment: IComment;
 }
 
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({
-	isSubsquareUser,
-	isPostReaction,
-	comment,
-	userId,
-	className,
-	commentId,
-	content,
-	replyId,
-	userName,
-	reply,
-	proposer,
-	is_custom_username
-}: Props) => {
+const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -322,6 +309,16 @@ const EditableReplyContent = ({
 										created_at: new Date(),
 										id: replyId,
 										proposer: loginAddress,
+										reply_reactions: {
+											'👍': {
+												count: 0,
+												usernames: []
+											},
+											'👎': {
+												count: 0,
+												usernames: []
+											}
+										},
 										updated_at: new Date(),
 										user_id: id,
 										user_profile_img: picture || '',
@@ -579,10 +576,10 @@ const EditableReplyContent = ({
 							<CommentReactionBar
 								className='reactions mr-0'
 								commentId={commentId}
-								comment_reactions={comment.comment_reactions}
+								comment_reactions={reply.reply_reactions}
 								importedReactions={isSubsquareUser}
 								replyId={replyId}
-								isPostReaction={isPostReaction}
+								isReactionOnReply={isReactionOnReply}
 							/>
 							{isEditable && (
 								<Button

@@ -298,6 +298,16 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									postIndex: postIndex,
 									postType,
 									proposer: loginAddress,
+									reply_reactions: {
+										'👍': {
+											count: 0,
+											usernames: []
+										},
+										'👎': {
+											count: 0,
+											usernames: []
+										}
+									},
 									updated_at: new Date(),
 									user_id: id,
 									user_profile_img: picture || '',

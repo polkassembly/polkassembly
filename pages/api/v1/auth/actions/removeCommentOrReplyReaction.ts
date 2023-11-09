@@ -18,8 +18,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, postId, commentId, reaction, postType } = req.body;
-	if (!userId || isNaN(postId) || !commentId || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { userId, postId, commentId, reaction, postType, replyId, setReplyReaction } = req.body;
+	if (setReplyReaction) {
+		if (!userId || isNaN(postId) || (!commentId && !replyId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	} else {
+		if (!userId || isNaN(postId) || !commentId || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	}
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
@@ -28,7 +32,22 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postRef = postsByTypeRef(network, postType).doc(String(postId));
-	const userReactionsSnapshot = await postRef.collection('comments').doc(String(commentId)).collection('comment_reactions').where('user_id', '==', user.id).limit(1).get();
+
+	let userReactionsSnapshot;
+	if (setReplyReaction) {
+		userReactionsSnapshot = await postRef
+			.collection('comments')
+			.doc(String(commentId))
+			.collection('replies')
+			.doc(String(replyId))
+			.collection('reply_reactions')
+			.where('user_id', '==', user.id)
+			.limit(1)
+			.get();
+	} else {
+		userReactionsSnapshot = await postRef.collection('comments').doc(String(commentId)).collection('comment_reactions').where('user_id', '==', user.id).limit(1).get();
+	}
+	// const userReactionsSnapshot = await postRef.collection('comments').doc(String(commentId)).collection('comment_reactions').where('user_id', '==', user.id).limit(1).get();
 
 	if (!userReactionsSnapshot.empty) {
 		const reactionDocRef = userReactionsSnapshot.docs[0].ref;

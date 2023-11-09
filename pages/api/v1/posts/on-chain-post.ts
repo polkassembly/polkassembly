@@ -432,7 +432,7 @@ export async function getComments(
 
 			const replyIds: string[] = [];
 			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
-			repliesSnapshot.docs.forEach((doc) => {
+			for (const doc of repliesSnapshot.docs) {
 				if (doc && doc.exists) {
 					const data = doc.data();
 					if (data) {
@@ -448,6 +448,7 @@ export async function getComments(
 								userIds.add(numUserId);
 							}
 						}
+						const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
 						comment.replies.push({
 							comment_id,
 							content: data.isDeleted ? '[Deleted]' : content,
@@ -458,6 +459,7 @@ export async function getComments(
 							post_index: postIndex,
 							post_type: postType,
 							proposer: '',
+							reply_reactions: getReactions(replyReactionSnapshot),
 							spam_users_count: 0,
 							updated_at: getUpdatedAt(data),
 							user_id: user_id,
@@ -465,7 +467,7 @@ export async function getComments(
 						});
 					}
 				}
-			});
+			}
 
 			if (replyIds.length > 0) {
 				const chunkSize = 30;

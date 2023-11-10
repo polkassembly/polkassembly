@@ -29,6 +29,8 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import { IComment } from './Comment';
+import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 
 interface Props {
 	userId: number;
@@ -40,12 +42,15 @@ interface Props {
 	userName?: string;
 	is_custom_username?: boolean;
 	proposer?: string;
+	isSubsquareUser: boolean;
+	isReactionOnReply?: boolean;
+	comment: IComment;
 }
 
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({ userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
+const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -304,6 +309,16 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 										created_at: new Date(),
 										id: replyId,
 										proposer: loginAddress,
+										reply_reactions: {
+											'👍': {
+												count: 0,
+												usernames: []
+											},
+											'👎': {
+												count: 0,
+												usernames: []
+											}
+										},
 										updated_at: new Date(),
 										user_id: id,
 										user_profile_img: picture || '',
@@ -505,9 +520,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 				status: NotificationStatus.ERROR
 			});
 		}
-		// if (data) {
-		// removeReplyContent();
-		// }
 		setLoading(false);
 	};
 
@@ -560,98 +572,108 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId, 
 							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 							md={content}
 						/>
-						<div className='flex flex-wrap items-center gap-3'>
-							{isEditable && (
-								<Button
-									className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
-									disabled={loading}
-									onClick={toggleEdit}
-								>
-									{loading ? (
-										<span className='flex items-center text-xs'>
-											<LoadingOutlined className='mr-1' /> Editing
-										</span>
-									) : (
-										<span className='flex items-center text-xs'>
-											<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> Edit
-										</span>
-									)}
-								</Button>
-							)}
-							{id === userId ? (
-								<Button
-									className={'flex items-center border-none bg-transparent pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
-									onClick={deleteReply}
-								>
-									<DeleteOutlined />
-									<span className='m-0 p-1'>Delete</span>
-								</Button>
-							) : (
-								allowed_roles?.includes('moderator') &&
-								['polkadot', 'kusama'].includes(network) && (
-									<ReportButton
-										isDeleteModal={true}
-										proposalType={(reply.post_type as any) || postType}
-										className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${poppins.variable} ${poppins.className}`}
-										type={EReportType.REPLY}
-										onSuccess={removeReplyContent}
-										commentId={commentId}
-										replyId={replyId}
-										postId={(reply.post_index as any) || postIndex}
-									/>
-								)
-							)}
-							{id && !isEditing && (
-								<ReportButton
-									className='text-xs text-pink_primary dark:text-blue-dark-helper'
-									proposalType={postType}
-									postId={postIndex}
-									commentId={commentId}
-									type='reply'
-									replyId={replyId}
-								/>
-							)}
-
-							{id ? (
-								reply.reply_source === 'subsquare' ? (
-									<Tooltip
-										title='Reply are disabled for imported comments.'
-										color='#E5007A'
+						<div className='replies-buttons-container flex flex-wrap items-center gap-3'>
+							<CommentReactionBar
+								className='reactions mr-0'
+								commentId={commentId}
+								comment_reactions={reply.reply_reactions}
+								importedReactions={isSubsquareUser}
+								replyId={replyId}
+								isReactionOnReply={isReactionOnReply}
+							/>
+							<div className='reply-buttons-container item-center flex flex-wrap gap-3'>
+								{isEditable && (
+									<Button
+										className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
+										disabled={loading}
+										onClick={toggleEdit}
 									>
-										<Button
-											className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
-												reply.reply_source ? 'disabled-reply' : ''
-											}`}
-										>
-											<ReplyIcon className='mr-1' /> Reply
-										</Button>
-									</Tooltip>
+										{loading ? (
+											<span className='flex items-center text-xs'>
+												<LoadingOutlined className='mr-1' /> Editing
+											</span>
+										) : (
+											<span className='flex items-center text-xs'>
+												<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> Edit
+											</span>
+										)}
+									</Button>
+								)}
+								{id === userId ? (
+									<Button
+										className={'flex items-center border-none bg-transparent pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
+										onClick={deleteReply}
+									>
+										<DeleteOutlined />
+										<span className='m-0 p-1'>Delete</span>
+									</Button>
 								) : (
-									!isReplying && (
-										<Button
-											className={'flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
-											onClick={() => setIsReplying(!isReplying)}
-										>
-											<ReplyIcon className='mr-1' />
-											Reply
-										</Button>
+									allowed_roles?.includes('moderator') &&
+									['polkadot', 'kusama'].includes(network) && (
+										<ReportButton
+											isDeleteModal={true}
+											proposalType={(reply.post_type as any) || postType}
+											className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${poppins.variable} ${poppins.className}`}
+											type={EReportType.REPLY}
+											onSuccess={removeReplyContent}
+											commentId={commentId}
+											replyId={replyId}
+											postId={(reply.post_index as any) || postIndex}
+										/>
 									)
-								)
-							) : null}
-							{reply.isReplyError && (
-								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
-									<Caution className='icon-container relative top-[4px] text-2xl' />
-									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
-									<div
-										onClick={handleRetry}
-										className='retry-container relative flex w-[66px] cursor-pointer px-1'
-										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
-									>
-										<IconRetry className='relative top-[3px] text-2xl' />
-										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+								)}
+								{id !== userId && id && !isEditing && (
+									<ReportButton
+										className='text-xs text-pink_primary dark:text-blue-dark-helper'
+										proposalType={postType}
+										postId={postIndex}
+										commentId={commentId}
+										type='reply'
+										replyId={replyId}
+									/>
+								)}
+
+								{id ? (
+									reply.reply_source === 'subsquare' ? (
+										<Tooltip
+											title='Reply are disabled for imported comments.'
+											color='#E5007A'
+										>
+											<Button
+												className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
+													reply.reply_source ? 'disabled-reply' : ''
+												}`}
+											>
+												<ReplyIcon className='mr-1' /> Reply
+											</Button>
+										</Tooltip>
+									) : (
+										!isReplying && (
+											<Button
+												className={'flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
+												onClick={() => setIsReplying(!isReplying)}
+											>
+												<ReplyIcon className='mr-1' />
+												Reply
+											</Button>
+										)
+									)
+								) : null}
+								{reply.isReplyError && (
+									<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+										<Caution className='icon-container relative top-[4px] text-2xl' />
+										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
+										<div
+											onClick={handleRetry}
+											className='retry-container relative flex w-[66px] cursor-pointer px-1'
+											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+										>
+											<IconRetry className='relative top-[3px] text-2xl' />
+											<span className='relative top-[3px] m-0 p-0'>Retry</span>
+										</div>
 									</div>
-								</div>
-							)}
+								)}
+							</div>
 						</div>
 						{isReplying && (
 							<Form
@@ -731,5 +753,16 @@ export default styled(EditableReplyContent)`
 
 	.bg-blue-grey {
 		background: #ebf0f5 !important;
+	}
+	@media (max-width: 442px) and (min-width: 319px) {
+		.replies-buttons-container {
+			gap: 0 4px !important;
+			display: block !important;
+		}
+		.reply-buttons-container {
+			gap: 0 4px !important;
+			margin-left: 6px !important;
+			margin-top: -12px !important;
+		}
 	}
 `;

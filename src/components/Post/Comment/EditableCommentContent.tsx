@@ -298,6 +298,16 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									postIndex: postIndex,
 									postType,
 									proposer: loginAddress,
+									reply_reactions: {
+										'👍': {
+											count: 0,
+											usernames: []
+										},
+										'👎': {
+											count: 0,
+											usernames: []
+										}
+									},
 									updated_at: new Date(),
 									user_id: id,
 									user_profile_img: picture || '',
@@ -512,7 +522,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						>
 							<span className='flex items-center'>
 								<EditIcon className='mr-1' />
-								Edit
+								<p className='m-0 -ml-[3px] p-0'>Edit</p>
 							</span>
 						</div>
 					)
@@ -531,7 +541,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				</div>
 			)
 		},
-		id && !isEditing
+		id && id !== userId && !isEditing
 			? {
 					key: 3,
 					label: (
@@ -541,6 +551,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							type='comment'
 							commentId={commentId}
 							postId={postIndex}
+							isButtonOnComment={true}
 						/>
 					)
 			  }

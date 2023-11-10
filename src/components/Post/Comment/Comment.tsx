@@ -145,6 +145,9 @@ export const Comment: FC<ICommentProps> = (props) => {
 						className='comment-content'
 						commentId={id}
 						repliesArr={replies}
+						comment={comment}
+						isSubsquareUser={comment_source === 'subsquare'}
+						isReactionOnReply={true}
 					/>
 				)}
 			</div>

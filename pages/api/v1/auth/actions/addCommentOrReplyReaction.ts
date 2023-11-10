@@ -18,8 +18,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, postId, commentId, reaction, postType } = req.body;
-	if (!userId || isNaN(postId) || !commentId || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { userId, postId, commentId, reaction, postType, replyId, setReplyReaction } = req.body;
+
+	if (setReplyReaction) {
+		if (!userId || isNaN(postId) || (!commentId && !replyId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	} else {
+		if (!userId || isNaN(postId) || !commentId || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	}
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
@@ -29,7 +34,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const postRef = postsByTypeRef(network, postType).doc(String(postId));
 
-	const reactionsCollRef = postRef.collection('comments').doc(String(commentId)).collection('comment_reactions');
+	let reactionsCollRef;
+	if (setReplyReaction) {
+		reactionsCollRef = postRef.collection('comments').doc(String(commentId)).collection('replies').doc(String(replyId)).collection('reply_reactions');
+	} else {
+		reactionsCollRef = postRef.collection('comments').doc(String(commentId)).collection('comment_reactions');
+	}
 
 	const userReactionQuery = reactionsCollRef.where('user_id', '==', user.id);
 
@@ -45,8 +55,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			updated_at: new Date()
 		};
 	} else {
-		reactionDoc = postRef.collection('comments').doc(String(commentId)).collection('comment_reactions').doc();
-
+		reactionDoc = reactionsCollRef.doc();
 		reactionData = {
 			created_at: new Date(),
 			id: reactionDoc.id,

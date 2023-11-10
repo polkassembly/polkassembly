@@ -13,31 +13,37 @@ interface ICommentReactionBarProps {
 	commentId: string;
 	comment_reactions: IReactions;
 	importedReactions?: boolean;
+	replyId?: string;
+	isReactionOnReply?: boolean;
 }
 
-const CommentReactionBar: FC<ICommentReactionBarProps> = ({ className, comment_reactions, commentId, importedReactions = false }) => {
+const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isReactionOnReply, className, replyId, comment_reactions, commentId, importedReactions = false }) => {
 	const [reactionsDisabled, setReactionsDisabled] = useState(false);
 	const [reactions, setReactions] = useState<IReactions>(comment_reactions);
 	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
 	const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
 	return (
 		<div className={className}>
-			{Object.keys(comment_reactions).map((reaction) => {
-				return (
-					<ReactionButton
-						key={reaction}
-						reaction={reaction}
-						reactions={reactions}
-						commentId={commentId}
-						reactionsDisabled={reactionsDisabled || importedReactions}
-						setReactionsDisabled={setReactionsDisabled}
-						setReactions={setReactions}
-						setLikeModalOpen={setLikeModalOpen}
-						setDislikeModalOpen={setDislikeModalOpen}
-						importedReactions={importedReactions}
-					/>
-				);
-			})}
+			<div>
+				{Object?.keys(comment_reactions || {}).map((reaction) => {
+					return (
+						<ReactionButton
+							key={reaction}
+							reaction={reaction}
+							reactions={reactions}
+							commentId={commentId}
+							reactionsDisabled={reactionsDisabled || importedReactions}
+							setReactionsDisabled={setReactionsDisabled}
+							setReactions={setReactions}
+							setLikeModalOpen={setLikeModalOpen}
+							setDislikeModalOpen={setDislikeModalOpen}
+							importedReactions={importedReactions}
+							replyId={replyId}
+							isReactionOnReply={isReactionOnReply}
+						/>
+					);
+				})}
+			</div>
 			<ReferendaLoginPrompts
 				modalOpen={openLikeModal}
 				setModalOpen={setLikeModalOpen}

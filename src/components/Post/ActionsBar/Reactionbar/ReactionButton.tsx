@@ -25,6 +25,8 @@ export interface IReactionButtonProps {
 	setDislikeModalOpen?: (pre: boolean) => void;
 	importedReactions?: boolean;
 	isReactionButtonInPost?: boolean;
+	replyId?: string;
+	isReactionOnReply?: boolean;
 }
 
 type IReaction = '👍' | '👎';
@@ -40,7 +42,9 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	setLikeModalOpen,
 	setDislikeModalOpen,
 	importedReactions = false,
-	isReactionButtonInPost
+	isReactionButtonInPost,
+	replyId,
+	isReactionOnReply
 }) => {
 	const {
 		postData: { postIndex, postType, track_number }
@@ -54,13 +58,14 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if (reaction == '👍') {
 			return reacted ? (
-				<LikeFilled />
+				<LikeFilled className='-mt-1' />
 			) : (
 				<div
 					onClick={() => {
 						!id && setLikeModalOpen && setLikeModalOpen(true);
+						const likedItem = isReactionOnReply ? 'replyLiked' : 'postLiked';
 						trackEvent('like_icon_clicked', 'liked_icon_clicked', {
-							contentType: isReactionButtonInPost ? 'postLiked' : 'commentLiked',
+							contentType: isReactionButtonInPost ? likedItem : 'commentLiked',
 							userId: currentUser?.id || '',
 							userName: currentUser?.username || ''
 						});
@@ -73,13 +78,17 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 		if (reaction == '👎') {
 			return reacted ? (
-				<LikeFilled rotate={180} />
+				<LikeFilled
+					rotate={180}
+					className='-mt-1'
+				/>
 			) : (
 				<div
 					onClick={() => {
 						!id && setDislikeModalOpen && setDislikeModalOpen(true);
+						const dislikedItem = isReactionOnReply ? 'replyDisliked' : 'postDisliked';
 						trackEvent('dislike_icon_clicked', 'disliked_icon_clicked', {
-							contentType: isReactionButtonInPost ? 'postDisLiked' : 'commenDistLiked',
+							contentType: isReactionButtonInPost ? dislikedItem : 'commenDistLiked',
 							userId: currentUser?.id || '',
 							userName: currentUser?.username || ''
 						});
@@ -118,12 +127,14 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 				});
 			}
 			setReactions(newReactions);
-			const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
+			const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'CommentOrReply' : 'Post'}Reaction`;
 			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
-				commentId: commentId || null,
+				commentId: commentId,
 				postId: postIndex,
 				postType,
 				reaction,
+				replyId: replyId || null,
+				setReplyReaction: isReactionOnReply ? true : false,
 				trackNumber: track_number,
 				userId: id
 			});

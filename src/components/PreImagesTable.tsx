@@ -56,6 +56,18 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
+	const handleModalArgs = async (args: any) => {
+		Object.entries(args).map(([name, value]) => {
+			if (typeof value === 'string' && value.length > 1000) {
+				args[name] = 'Large data. Please check on subscan';
+			} else if (Array.isArray(value) && value.length > 1000) {
+				args[name] = 'Large data. Please check on subscan';
+			} else if (typeof value === 'object') {
+				handleModalArgs(value);
+			}
+		});
+	};
+
 	const columns: ColumnsType<any> = [
 		{
 			title: 'Hash',
@@ -96,7 +108,10 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 						{proposedCall.args && (
 							<ProfileOutlined
 								className='ml-2 cursor-pointer rounded-md p-1 text-base hover:text-pink_primary dark:font-normal dark:text-white dark:hover:text-blue-dark-helper'
-								onClick={() => setModalArgs(proposedCall.args)}
+								onClick={async () => {
+									await handleModalArgs(proposedCall.args);
+									setModalArgs(proposedCall.args);
+								}}
 							/>
 						)}
 					</div>
@@ -158,7 +173,8 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					{modalArgs && (
 						<div className='max-h-[60vh] w-full overflow-auto'>
 							<ReactJson
-								theme={theme === 'dark' ? 'monokai' : 'rjv-default'}
+								theme={theme === 'dark' ? 'bright' : 'rjv-default'}
+								style={{ color: 'white', background: 'var(--section-dark-overlay)' }}
 								src={modalArgs}
 								iconStyle='circle'
 								enableClipboard={false}

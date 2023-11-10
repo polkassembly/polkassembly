@@ -187,9 +187,9 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							)}
 						</div>
 						<Divider
-							className='-mt-2'
-							style={{ borderTop: '1px solid #E1E6EB' }}
-						></Divider>
+							style={{ background: '#D2D8E0', flexGrow: 1 }}
+							className='-mt-2 dark:bg-separatorDark'
+						/>
 						<div className='mb-6 flex px-8'>
 							<Button
 								size='large'
@@ -211,9 +211,9 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
 						</div>
 						<Divider
-							className='-mt-1 mb-5'
-							style={{ borderTop: '1px solid #E1E6EB' }}
-						></Divider>
+							style={{ background: '#D2D8E0', flexGrow: 1 }}
+							className='-mt-1 mb-5 dark:bg-separatorDark'
+						/>
 						<div className='px-8 pb-8'>
 							<div className='flex flex-col gap-y-1'>
 								<label
@@ -259,9 +259,9 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							)}
 						</div>
 						<Divider
-							className='-mt-6 mb-5'
-							style={{ borderTop: '1px solid #E1E6EB' }}
-						></Divider>
+							style={{ background: '#D2D8E0', flexGrow: 1 }}
+							className='-mt-6 mb-5 dark:bg-separatorDark'
+						/>
 						<div className='mb-6 flex justify-end gap-x-5 px-8'>
 							{!email && (
 								<Button

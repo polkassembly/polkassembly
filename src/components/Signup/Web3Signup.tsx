@@ -18,6 +18,8 @@ import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
+import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
+
 import { ChallengeMessage, JWTPayloadType, TokenType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -34,6 +36,7 @@ import { decodeToken } from 'react-jwt';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import LoginSuccessModal from '~src/ui-components/LoginSuccessModal';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -81,6 +84,7 @@ const Web3Signup: FC<Props> = ({
 
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleClick = () => {
 		if (isModal && setSignupOpen && setLoginOpen) {
@@ -294,14 +298,17 @@ const Web3Signup: FC<Props> = ({
 		<div className={`${className}`}>
 			{!showOptionalFields && (
 				<div>
-					<div className='flex items-center'>
+					<div className='mt-1 flex items-center'>
 						<LoginLogo className='ml-6 mr-2' />
+						{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
 						<h3 className='mt-3 text-[20px] font-semibold text-[#243A57] dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Sign Up'}</h3>
 					</div>
+					<Divider
+						style={{ background: '#D2D8E0', flexGrow: 1 }}
+						className='mt-2 dark:bg-separatorDark'
+					/>
 
-					<hr className='text-[#D2D8E0]' />
-
-					<article className='flex flex-col rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay '>
+					<article className='flex flex-col rounded-md bg-white px-8 pb-8 shadow-md dark:bg-section-dark-overlay '>
 						<h3 className='flex flex-col justify-center gap-y-1 text-2xl font-semibold text-[#1E232C] dark:text-blue-dark-medium'>
 							{/* <span>Sign Up</span> */}
 							{!withPolkasafe && (
@@ -333,27 +340,27 @@ const Web3Signup: FC<Props> = ({
 										: 'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 								</p>
 								<Divider
-									className='m-0 mb-1 mt-1 p-0 '
-									style={{ borderTop: '1px dashed #D2D8E0' }}
-								></Divider>
+									style={{ background: '#D2D8E0', flexGrow: 1 }}
+									className='m-0 mb-1 mt-1 p-0 dark:bg-separatorDark'
+								/>
 								<div className='flex w-full justify-start'>
 									<div className='no-account-text-container mt-4 flex pb-5 font-normal'>
 										<label className='text-base text-bodyBlue dark:text-blue-dark-high'>Already have an account?</label>
 										<div
 											onClick={() => handleClick()}
-											className='cursor-pointer text-base text-pink_primary'
+											className='login-button cursor-pointer text-base text-pink_primary'
 										>
 											&nbsp; Log In{' '}
 										</div>
 									</div>
 								</div>
 								<Divider
-									className='m-0 mb-4 mt-1 p-0 '
-									style={{ borderTop: '1px solid #D2D8E0' }}
-								></Divider>
+									style={{ background: '#D2D8E0', flexGrow: 1 }}
+									className='m-0 mb-4 mt-1 p-0 dark:bg-separatorDark'
+								/>
 								<div className='web3-button-container ml-auto flex justify-end'>
 									<Button
-										className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+										className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 										onClick={() => handleBackToSignUp()}
 									>
 										Go Back
@@ -362,7 +369,7 @@ const Web3Signup: FC<Props> = ({
 										<Button
 											key='got-it'
 											icon={<CheckOutlined />}
-											className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
+											className='web3-button flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-8 py-5 text-lg font-medium leading-none text-white outline-none'
 											onClick={() => {
 												getAccounts(chosenWallet)
 													.then(() => {
@@ -457,7 +464,7 @@ const Web3Signup: FC<Props> = ({
 								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>
 										<Button
-											className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+											className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 											onClick={() => handleBackToSignUp()}
 										>
 											Go Back
@@ -492,6 +499,14 @@ export default styled(Web3Signup)`
 		}
 		.web3-button-container {
 			margin-left: 0 !important;
+		}
+	}
+	@media (max-width: 330px) and (min-width: 319px) {
+		.no-account-text-container {
+			display: block !important;
+		}
+		.login-button {
+			margin-left: -8px !important;
 		}
 	}
 `;

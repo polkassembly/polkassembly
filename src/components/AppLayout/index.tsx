@@ -422,18 +422,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						? [
 								...[
 									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-									getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+									getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />)
 								]
 						  ]
 						: [
 								...gov1Items.treasuryItems,
 								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-								getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+								getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />)
 						  ]
 					: [
 							...gov1Items.treasuryItems,
 							getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-							getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />)
+							getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />)
 					  ]
 			),
 

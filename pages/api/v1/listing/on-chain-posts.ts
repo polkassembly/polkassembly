@@ -28,6 +28,7 @@ import { checkReportThreshold, getReactions, getTimeline } from '../posts/on-cha
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
+import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track: number) => {
 	try {
@@ -59,7 +60,7 @@ export interface IPostListing {
 		'👎': number;
 	};
 	proposedCall?: any;
-	requestedAmount?: Number;
+	requestedAmount?: string;
 	proposer?: string;
 	curator?: string;
 	parent_bounty_index?: number;
@@ -708,6 +709,23 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 					const postDoc = await postDocRef.get();
+					let args = preimage?.proposedCall?.args;
+					let requested = BigInt(0);
+					if (args) {
+						args = convertAnyHexToASCII(args, network);
+						if (args?.amount) {
+							requested = args.amount;
+						} else {
+							const calls = args.calls;
+							if (calls && Array.isArray(calls) && calls.length > 0) {
+								calls.forEach((call) => {
+									if (call && call.amount) {
+										requested += BigInt(call.amount);
+									}
+								});
+							}
+						}
+					}
 					if (postDoc && postDoc.exists) {
 						const data = postDoc.data();
 						if (data) {
@@ -736,7 +754,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								post_id: postId,
 								post_reactions,
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
-								requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
+								requestedAmount: requested ? requested.toString() : undefined,
 								spam_users_count:
 									data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 								status,
@@ -776,7 +794,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						post_id: postId,
 						post_reactions,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
-						requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
+						requestedAmount: requested ? requested.toString() : undefined,
 						status: status,
 						status_history: statusHistory || [],
 						tally,

@@ -113,6 +113,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, 
 							{chosenWallet === Wallet.METAMASK ? (
 								<MetamaskSignup
 									isModal={isModal}
+									onWalletUpdate={onWalletUpdate}
 									setSignupOpen={setSignupOpen}
 									setLoginOpen={setLoginOpen}
 									setWalletError={setWalletError}

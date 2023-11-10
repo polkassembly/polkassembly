@@ -26,12 +26,13 @@ interface IReportButtonProps {
 	proposalType: ProposalType;
 	isDeleteModal?: boolean;
 	onSuccess?: () => void;
+	isButtonOnComment?: boolean;
 }
 
 const reasons = ["It's suspicious or spam", "It's abusive or harmful", 'It expresses intentions of self-harm or suicide', 'other (please let us know in the field below)'];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment } = props;
 	const { allowed_roles } = useUserDetailsSelector();
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
@@ -173,14 +174,20 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				onClick={() => setShowModal(true)}
 			>
 				{isDeleteModal ? (
-					<DeleteOutlined className={`${className} text-pink_primary dark:text-blue-dark-helper`} />
+					<DeleteOutlined className={`${className} text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`} />
 				) : (
-					<FlagOutlined className={`${className} p-0 text-pink_primary dark:text-blue-dark-helper`} />
+					<FlagOutlined className={`${className} p-0 text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`} />
 				)}
 				{isDeleteModal ? (
-					<span className={`${className} break-keep text-pink_primary dark:text-blue-dark-helper`}>Delete</span>
+					<span className={`${className} break-keep text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`}>Delete</span>
 				) : (
-					<span className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary dark:text-blue-dark-helper`}>Report</span>
+					<span
+						className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary ${
+							isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'
+						}`}
+					>
+						Report
+					</span>
 				)}
 			</button>
 			<Modal

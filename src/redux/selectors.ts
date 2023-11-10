@@ -8,6 +8,7 @@ import { INetworkStore } from './network/@types';
 import { IUserDetailsStore } from './userDetails/@types';
 import { IUnlockTokenskDataStore } from './tokenUnlocksData/@types';
 import { ICurrentTokenPriceStore } from './currentTokenPrice/@types';
+import { ICurvesInformationStore } from './curvesInformation/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -23,5 +24,8 @@ const useUserUnlockTokensDataSelector = () => {
 const useCurrentTokenDataSelector = () => {
 	return useSelector<TAppState, ICurrentTokenPriceStore>((state) => state.currentTokenPrice);
 };
+const useCurvesInformationSelector = () => {
+	return useSelector<TAppState, ICurvesInformationStore>((state) => state.curvesInformation);
+};
 
-export { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector, useCurrentTokenDataSelector };
+export { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector, useCurrentTokenDataSelector, useCurvesInformationSelector };

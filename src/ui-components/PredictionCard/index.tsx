@@ -43,6 +43,10 @@ const Container = styled.div`
 	svg {
 		color: #243a57;
 	}
+	@media (max-width: 500px) {
+		bottom: 100px;
+		right: 26px;
+	}
 `;
 
 const PredictionCard = ({ predictCount }: Props) => {

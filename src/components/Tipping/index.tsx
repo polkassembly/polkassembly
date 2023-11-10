@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Form, Input, Modal, Spin } from 'antd';
+import { Alert, Button, Form, Input, Modal, Select, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
@@ -35,6 +35,8 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import Balance from '../Balance';
 import Address from '~src/ui-components/Address';
 import { useTheme } from 'next-themes';
+import DownArrow from '~assets/icons/down-icon.svg';
+// import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 
 const ZERO_BN = new BN(0);
 
@@ -42,10 +44,11 @@ interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	className?: string;
-	destinationAddress: string;
+	receiverAddress: string;
 	username: string;
 	openAddressChangeModal: boolean;
 	setOpenAddressChangeModal: (pre: boolean) => void;
+	paUsername: string;
 }
 
 const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; value: number }[] = [
@@ -55,7 +58,7 @@ const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar';
 	{ key: 'fifteenDollar', value: 15 }
 ];
 
-const Tipping = ({ className, destinationAddress, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal }: Props) => {
+const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
@@ -73,12 +76,29 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const dispatch = useDispatch();
+	const [userAddresses, setUserAddresses] = useState<string[]>([]);
+	const [beneficiaryAddress, setBeneficiaryAddress] = useState<string>(receiverAddress);
 	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
 		fifteenDollar: '0',
 		fiveDollar: '0',
 		tenDollar: '0',
 		threeDollar: '0'
 	});
+
+	const getUserProfile = async () => {
+		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${paUsername}`);
+		if (data) {
+			if (data?.addresses) {
+				setUserAddresses(data?.addresses);
+			}
+		}
+	};
+
+	useEffect(() => {
+		if (!paUsername) return;
+		getUserProfile();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [paUsername]);
 
 	const handleTipChangeToDollar = (value: number) => {
 		const tip = value / Number(currentTokenPrice || 1);
@@ -92,7 +112,6 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 			dispatch(setCurrentTokenPrice(price));
 		}
 	};
-
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -152,7 +171,7 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 			amount: Number(tipInput) || 0,
 			remark: `${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim(),
 			tipFrom: address,
-			tipTo: destinationAddress,
+			tipTo: beneficiaryAddress || receiverAddress,
 			txHash
 		});
 		if (error) {
@@ -183,8 +202,8 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 	};
 
 	const handleTip = async () => {
-		if (!api || !apiReady || disable || !destinationAddress) return;
-		const destinationSubtrateAddress = getSubstrateAddress(destinationAddress) || destinationAddress;
+		if (!api || !apiReady || disable || !(beneficiaryAddress || receiverAddress)) return;
+		const destinationSubtrateAddress = getSubstrateAddress(beneficiaryAddress || receiverAddress) || beneficiaryAddress || receiverAddress;
 		const tipTx = api.tx.balances?.transferKeepAlive(destinationSubtrateAddress, tipAmount as any);
 		const remarkTx = api.tx.system.remarkWithEvent(`${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim().trim());
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
@@ -292,6 +311,36 @@ const Tipping = ({ className, destinationAddress, open, setOpen, username, openA
 							</Button>
 						</div>
 					</div>
+
+					{userAddresses.length > 1 && (
+						<div className='mt-6 '>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Receiver Address</label>
+							<Select
+								placeholder='Select recriver address'
+								suffixIcon={<DownArrow />}
+								className={`flex h-full w-full items-center justify-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay ${className}`}
+								value={userAddresses.length > 0 ? beneficiaryAddress || receiverAddress : null}
+								onChange={setBeneficiaryAddress}
+								options={
+									userAddresses?.map((userAddress) => {
+										return {
+											label: (
+												<Address
+													address={userAddress}
+													key={userAddress}
+													disableTooltip
+													displayInline
+													disableAddressClick
+												/>
+											),
+											value: userAddress
+										};
+									}) || []
+								}
+								popupClassName={`${poppins.className} ${poppins.variable} z-[2000] dark:bg-section-dark-overlay dark:[&>.ant-select-item-option-content]:text-blue-dark-high`}
+							/>
+						</div>
+					)}
 					<div
 						onClick={(e) => {
 							e.preventDefault();
@@ -403,5 +452,22 @@ export default styled(Tipping)`
 	}
 	.ant-form-item {
 		margin-bottom: 0px !important;
+	}
+	.ant-select .ant-select-selector {
+		height: 40px !important;
+		display: flex;
+		align-items: center;
+		color: var(--bodyBlue) !important;
+		border-radius: 4px !important;
+	}
+	.ant-select .ant-select-selector .ant-select-selection-item {
+		display: flex;
+		align-items: center;
+		color: var(--bodyBlue);
+		font-size: 14px;
+	}
+	.ant-select .ant-select-selection-placeholder {
+		font-weight: 400;
+		color: #7c899b;
 	}
 `;

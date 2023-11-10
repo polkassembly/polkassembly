@@ -103,7 +103,7 @@ const IdentityForm = ({
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
-	const totalFee = gasFee.add(bondFee.add(registerarFee.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
+	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');

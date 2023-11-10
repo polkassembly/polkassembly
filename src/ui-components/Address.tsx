@@ -384,10 +384,11 @@ const Address = (props: Props) => {
 			</Tooltip>
 			{!TippingUnavailableNetworks.includes(network) && (
 				<Tipping
-					destinationAddress={address}
+					receiverAddress={address}
 					username={addressPrefix}
 					open={openTipping}
 					setOpen={setOpenTipping}
+					paUsername={username}
 					key={address}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}

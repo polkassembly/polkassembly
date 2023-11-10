@@ -37,9 +37,6 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
-import PredictionCard from '~src/ui-components/PredictionCard';
-
-import { network as allNetworks } from '~src/global/networkConstants';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -591,8 +588,6 @@ const Post: FC<IPostProps> = (props) => {
 					open={sidebarOpen}
 					closeSidebar={() => setSidebarOpen(false)}
 				></SidebarRight>
-				{/* // Added Pridiction card on proposal id 213 */}
-				{post_id === 213 && network === allNetworks.POLKADOT && <PredictionCard predictCount={154} />}
 			</CommentsDataContextProvider>
 		</PostDataContextProvider>
 	);

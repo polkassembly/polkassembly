@@ -13,12 +13,9 @@ interface Props {
 
 const Container = styled.div`
 	border-radius: 14px;
-	width: 350px;
+	max-width: 500px;
 	height: 100px;
 	padding: 20px;
-	bottom: 20px;
-	right: 140px;
-	position: fixed;
 	background: linear-gradient(92deg, #ff9494 2.08%, #ffc471 97.09%);
 	color: #243a57;
 	display: flex;
@@ -43,10 +40,10 @@ const Container = styled.div`
 	svg {
 		color: #243a57;
 	}
-	@media (max-width: 500px) {
+	/* @media (max-width: 500px) {
 		bottom: 100px;
 		right: 26px;
-	}
+	} */
 `;
 
 const PredictionCard = ({ predictCount }: Props) => {
@@ -58,9 +55,9 @@ const PredictionCard = ({ predictCount }: Props) => {
 			<div className='flex items-center justify-between'>
 				<h1 className='relative'>
 					Prediction
-					<span className='absolute '>
+					{/* <span className='absolute '>
 						<InfoIcon />
-					</span>
+					</span> */}
 				</h1>
 				{/* TODO:Aleem ==> Will uncomment this when get the pridiction count from API */}
 				{/* <p className='text-xs'>

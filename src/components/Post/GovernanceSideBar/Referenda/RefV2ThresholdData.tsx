@@ -14,6 +14,7 @@ import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
 import { Modal } from 'antd';
 import Curves from './Curves';
 import Loader from '~src/ui-components/Loader';
+import { useCurvesInformationSelector } from '~src/redux/selectors';
 
 interface IRefV2ThresholdDataProps {
 	canVote: boolean;
@@ -24,6 +25,7 @@ interface IRefV2ThresholdDataProps {
 const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, thresholdData, canVote }) => {
 	const [thresholdOpen, setThresholdOpen] = useState(false);
 	const [isCurvesRender, setIsCurvesRender] = useState(true);
+	const { approval, support, approvalThreshold, supportThreshold } = useCurvesInformationSelector();
 	useEffect(() => {
 		if (thresholdOpen && isCurvesRender) {
 			setTimeout(() => {
@@ -68,36 +70,38 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									forGovSidebar={true}
 								/>
 							</div>
-							<div className='flex justify-center'>
-								<div className='flex justify-between gap-5 md:w-[350px]'>
-									<div className='mt-4 flex flex-col gap-x-5'>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-											<span>
-												<AyeApprovalIcon />
-											</span>
+							<div className='mt-4 flex justify-between gap-x-0'>
+								<div className='flex flex-col gap-x-0'>
+									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<span className='flex gap-[6px] '>
+											<AyeApprovalIcon />
 											Current Approval
 										</span>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-											<span>
-												<AyeThresholdIcon />
-											</span>
+										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approval)?.toFixed(2)}%</span>
+									</span>
+									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<span className='flex gap-[6px] '>
+											<AyeThresholdIcon />
 											Threshold
 										</span>
-									</div>
-									<div className='mt-4 flex flex-col gap-x-5'>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-											<span>
-												<NayApprovalIcon />
-											</span>
+										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approvalThreshold)?.toFixed(2)}%</span>
+									</span>
+								</div>
+								<div className='flex flex-col gap-x-0'>
+									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<span className='flex gap-[6px] '>
+											<NayApprovalIcon />
 											Current Support
 										</span>
-										<span className='flex gap-[6px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-											<span>
-												<NayThresholdIcon />
-											</span>
+										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(support)?.toFixed(2)}%</span>
+									</span>
+									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+										<span className='flex gap-[6px] '>
+											<NayThresholdIcon />
 											Threshold
 										</span>
-									</div>
+										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(supportThreshold)?.toFixed(2)}%</span>
+									</span>
 								</div>
 							</div>
 						</div>

@@ -75,6 +75,8 @@ import Web3 from 'web3';
 import { useTheme } from 'next-themes';
 import PredictionCard from '~src/ui-components/PredictionCard';
 import { network as allNetworks } from '~src/global/networkConstants';
+import { setCurvesInformation } from '~src/redux/curvesInformation';
+import { useDispatch } from 'react-redux';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -171,6 +173,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 	const isRun = useRef(false);
+	const dispatch = useDispatch();
 
 	const canVote =
 		Boolean(post.status) &&
@@ -476,6 +479,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						} catch (error) {
 							// console.log(error);
 						}
+						let progress = {
+							approval: 0,
+							approvalThreshold: 0,
+							support: 0,
+							supportThreshold: 0
+						};
 						const statusBlock = statusHistory?.find((s) => s?.status === 'Deciding');
 						if (statusBlock) {
 							const subsquidRes = await fetchSubsquid({
@@ -551,24 +560,35 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 									const currentApproval = currentApprovalData[currentApprovalData.length - 1];
 									const currentSupport = currentSupportData[currentSupportData.length - 1];
-									setProgress({
+									progress = {
 										approval: approval ? approval.toFormat(2, BigNumber.ROUND_UP) : (currentApproval?.y?.toFixed(1) as any),
 										approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
 										support: support ? support.toFormat(2, BigNumber.ROUND_UP) : (currentSupport?.y?.toFixed(1) as any),
 										supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
-									});
+									};
+									setProgress(progress);
 								}
 							} else {
 								setCurvesError(subsquidRes.errors?.[0]?.message || 'Something went wrong.');
 							}
 						} else {
-							setProgress({
+							progress = {
 								approval: Number(approval?.toFormat(2, BigNumber.ROUND_UP) || 0),
 								approvalThreshold: 100,
 								support: Number(support?.toFormat(2, BigNumber.ROUND_UP) || 0),
 								supportThreshold: 50
-							});
+							};
+							setProgress(progress);
 						}
+						dispatch(
+							setCurvesInformation({
+								...progress,
+								approvalData,
+								currentApprovalData,
+								currentSupportData,
+								supportData
+							})
+						);
 						const newData: ChartData<'line', (number | Point | null)[]> = {
 							datasets: [
 								{

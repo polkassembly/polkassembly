@@ -19,6 +19,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import ConfirmMessage from './ConfirmMessage';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -228,6 +229,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</>
 					</p>
 					<ConfirmationAttemptsRow timeline={timeline || []} />
+					<ConfirmMessage />
 				</GovSidebarCard>
 			)}
 			{isProposalPassed ? (

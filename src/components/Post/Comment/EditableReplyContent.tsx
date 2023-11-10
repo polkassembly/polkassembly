@@ -622,7 +622,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 										/>
 									)
 								)}
-								{id && !isEditing && (
+								{id !== userId && id && !isEditing && (
 									<ReportButton
 										className='text-xs text-pink_primary dark:text-blue-dark-helper'
 										proposalType={postType}

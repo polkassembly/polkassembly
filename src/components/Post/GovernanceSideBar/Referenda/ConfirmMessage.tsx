@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import dayjs from 'dayjs';
 import React, { memo, useEffect, useState } from 'react';
+import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
 import { usePostDataContext } from '~src/context';
-import { useCurvesInformationSelector } from '~src/redux/selectors';
+import { useCurvesInformationSelector, useNetworkSelector } from '~src/redux/selectors';
 
 const getDays = (hrs: number) => {
 	const days = Math.floor(hrs / 24);
@@ -37,12 +38,14 @@ const futurePoint = (data: any[], value: number) => {
 const ConfirmMessage = () => {
 	const curvesInformation = useCurvesInformationSelector();
 	const {
-		postData: { statusHistory }
+		postData: { statusHistory, track_name, track_number }
 	} = usePostDataContext();
+	const { network } = useNetworkSelector();
 	const { approval, approvalData, supportData, support, supportThreshold, approvalThreshold } = curvesInformation;
 	const [estimateHour, setEstimateHour] = useState(0);
 
 	useEffect(() => {
+		const trackInfo = getTrackData(network, track_name, track_number);
 		const statusObj = statusHistory?.find((s) => s?.status === 'Deciding');
 		if (!statusObj) {
 			return;
@@ -67,8 +70,18 @@ const ConfirmMessage = () => {
 		} else {
 			estimateHour = estimateApprovalHour;
 		}
+		if (trackInfo?.confirmPeriod) {
+			const timeStr = blocksToRelevantTime(network, Number(trackInfo?.confirmPeriod));
+			const time = timeStr.split(' ')[0];
+			const units = timeStr.split(' ')[1];
+			if (units === 'days') {
+				estimateHour = estimateHour + Number(time) * 24;
+			} else if (units === 'hrs') {
+				estimateHour = estimateHour + Number(time);
+			}
+		}
 		setEstimateHour(estimateHour);
-	}, [approval, approvalData, approvalThreshold, statusHistory, support, supportData, supportThreshold]);
+	}, [approval, approvalData, approvalThreshold, network, statusHistory, support, supportData, supportThreshold, track_name, track_number]);
 
 	if (!estimateHour) {
 		return null;
@@ -76,10 +89,10 @@ const ConfirmMessage = () => {
 
 	return (
 		<div className='mt-4 rounded-lg bg-[#F5F5FD] p-3 dark:bg-[#2C2C3E]'>
-			<p className='m-0 text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
-				Confirm in{' '}
+			<p className='m-0 flex flex-col text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
+				Proposal estimated to pass in
 				<span className='text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>
-					{getDays(estimateHour) ? `${getDays(estimateHour)} days` : ''} {getExtraHrs(estimateHour) ? `${getExtraHrs(estimateHour)} hrs` : ''}
+					{getDays(estimateHour) ? `${getDays(estimateHour)} days,` : ''} {getExtraHrs(estimateHour) ? `${getExtraHrs(estimateHour)} hours` : ''}
 				</span>
 			</p>
 		</div>

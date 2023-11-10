@@ -75,7 +75,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex gap-[6px] '>
 											<AyeApprovalIcon />
-											Current Approval
+											Approval
 										</span>
 										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approval)?.toFixed(2)}%</span>
 									</span>
@@ -91,7 +91,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex gap-[6px] '>
 											<NayApprovalIcon />
-											Current Support
+											Support
 										</span>
 										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(support)?.toFixed(2)}%</span>
 									</span>

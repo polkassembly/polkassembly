@@ -5,7 +5,7 @@
 // import { Avatar } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import InfoIcon from '~assets/info.svg';
+// import InfoIcon from '~assets/info.svg';
 
 interface Props {
 	predictCount: number;

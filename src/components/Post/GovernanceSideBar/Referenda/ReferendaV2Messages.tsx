@@ -211,7 +211,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</span>
 					</p>
 					<div className='mt-[20px]'>
-						<ConfirmMessage />
 						<Progress
 							className='m-0 flex items-center p-0'
 							showInfo={false}
@@ -230,6 +229,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</>
 					</p>
 					<ConfirmationAttemptsRow timeline={timeline || []} />
+					<ConfirmMessage />
 				</GovSidebarCard>
 			)}
 			{isProposalPassed ? (

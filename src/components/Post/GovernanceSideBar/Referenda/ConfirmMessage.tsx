@@ -75,9 +75,14 @@ const ConfirmMessage = () => {
 	}
 
 	return (
-		<p className='dark:text-white'>
-			Confirm in {getDays(estimateHour) ? `${getDays(estimateHour)} days` : ''} {getExtraHrs(estimateHour) ? `${getExtraHrs(estimateHour)} hrs` : ''}
-		</p>
+		<div className='mt-4 rounded-lg bg-[#F5F5FD] p-3 dark:bg-[#2C2C3E]'>
+			<p className='m-0 text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
+				Confirm in{' '}
+				<span className='text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>
+					{getDays(estimateHour) ? `${getDays(estimateHour)} days` : ''} {getExtraHrs(estimateHour) ? `${getExtraHrs(estimateHour)} hrs` : ''}
+				</span>
+			</p>
+		</div>
 	);
 };
 

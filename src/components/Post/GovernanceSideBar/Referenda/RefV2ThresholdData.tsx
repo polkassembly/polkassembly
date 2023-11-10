@@ -77,14 +77,14 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 											<AyeApprovalIcon />
 											Current Approval
 										</span>
-										<span>{Number(approval)?.toFixed(2)}%</span>
+										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approval)?.toFixed(2)}%</span>
 									</span>
 									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex gap-[6px] '>
 											<AyeThresholdIcon />
 											Threshold
 										</span>
-										<span>{Number(approvalThreshold)?.toFixed(2)}%</span>
+										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approvalThreshold)?.toFixed(2)}%</span>
 									</span>
 								</div>
 								<div className='flex flex-col gap-x-0'>
@@ -93,14 +93,14 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 											<NayApprovalIcon />
 											Current Support
 										</span>
-										<span>{Number(support)?.toFixed(2)}%</span>
+										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(support)?.toFixed(2)}%</span>
 									</span>
 									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex gap-[6px] '>
 											<NayThresholdIcon />
 											Threshold
 										</span>
-										<span>{Number(supportThreshold)?.toFixed(2)}%</span>
+										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(supportThreshold)?.toFixed(2)}%</span>
 									</span>
 								</div>
 							</div>

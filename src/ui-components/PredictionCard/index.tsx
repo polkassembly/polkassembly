@@ -46,6 +46,9 @@ const Container = styled.div`
 `;
 
 const PredictionCard = ({ predictCount }: Props) => {
+	if (predictCount === 0) {
+		return <></>;
+	}
 	return (
 		<Container>
 			<div className='flex items-center justify-between'>
@@ -70,6 +73,7 @@ const PredictionCard = ({ predictCount }: Props) => {
 					className='rounded-2xl bg-white px-2 py-1 text-xs text-[#F02A4E]'
 					href='https://app.zeitgeist.pm/markets/307'
 					target='_blank'
+					rel='noreferrer'
 				>
 					Predict
 				</a>

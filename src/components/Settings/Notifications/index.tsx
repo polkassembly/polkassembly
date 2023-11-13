@@ -21,6 +21,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import PipNotification from './PIP/Pip';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
 const getAllNetworks = (network: string) => {
 	for (const category of Object.keys(networks)) {
 		const chains = networks[category];
@@ -36,6 +37,7 @@ const getAllNetworks = (network: string) => {
 export default function Notifications({ network }: { network: string }) {
 	const currentUser = useUserDetailsSelector();
 	const { id, networkPreferences, primaryNetwork } = currentUser;
+	const reduxDispatch = useDispatch();
 
 	const [notificationPreferences, dispatch] = useReducer(reducer, notificationInitialState(network));
 	const [selectedNetwork, setSelectedNetwork] = useState<{
@@ -44,7 +46,7 @@ export default function Notifications({ network }: { network: string }) {
 	const [loading, setLoading] = useState(true);
 
 	const handleCurrentNetworkNotifications = (obj: INotificationObject) => {
-		dispatch(
+		reduxDispatch(
 			setUserDetailsState({
 				...currentUser,
 				networkPreferences: {
@@ -68,7 +70,7 @@ export default function Notifications({ network }: { network: string }) {
 				throw new Error(error);
 			}
 			if (data?.notification_preferences?.channelPreferences) {
-				dispatch(
+				reduxDispatch(
 					setUserDetailsState({
 						...currentUser,
 						networkPreferences: {
@@ -79,7 +81,7 @@ export default function Notifications({ network }: { network: string }) {
 				);
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
-				dispatch(
+				reduxDispatch(
 					setUserDetailsState({
 						...currentUser,
 						networkPreferences: {
@@ -109,7 +111,7 @@ export default function Notifications({ network }: { network: string }) {
 				throw new Error(error);
 			}
 			if (data.primary_network) {
-				dispatch(
+				reduxDispatch(
 					setUserDetailsState({
 						...currentUser,
 						primaryNetwork: data.primary_network || ''
@@ -125,7 +127,7 @@ export default function Notifications({ network }: { network: string }) {
 
 	const handleSetPrimaryNetwork = async (network: string) => {
 		try {
-			dispatch(
+			reduxDispatch(
 				setUserDetailsState({
 					...currentUser,
 					primaryNetwork: network
@@ -171,7 +173,7 @@ export default function Notifications({ network }: { network: string }) {
 
 	const handleReset = async (channel: CHANNEL) => {
 		try {
-			dispatch(
+			reduxDispatch(
 				setUserDetailsState({
 					...currentUser,
 					networkPreferences: {
@@ -198,7 +200,7 @@ export default function Notifications({ network }: { network: string }) {
 
 	const handleEnableDisabled = async (channel: CHANNEL, enabled = false) => {
 		try {
-			dispatch(
+			reduxDispatch(
 				setUserDetailsState({
 					...currentUser,
 					networkPreferences: {
@@ -228,6 +230,7 @@ export default function Notifications({ network }: { network: string }) {
 	};
 
 	useEffect(() => {
+		console.log('enter');
 		if (loading) {
 			return;
 		}
@@ -237,6 +240,7 @@ export default function Notifications({ network }: { network: string }) {
 				if (chain.selected) selectedNames.push(chain.name);
 			});
 		}
+		console.log(selectedNames);
 		handleSetNetworkPreferences(selectedNames);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [networkPreferences.triggerPreferences]);

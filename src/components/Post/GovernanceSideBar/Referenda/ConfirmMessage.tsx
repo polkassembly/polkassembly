@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import React, { memo, useEffect, useState } from 'react';
 import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
@@ -47,7 +48,9 @@ const ConfirmMessage = () => {
 	useEffect(() => {
 		const trackInfo = getTrackData(network, track_name, track_number);
 		const statusObj = statusHistory?.find((s) => s?.status === 'Deciding');
-		if (!statusObj) {
+		const confirmedStartedStatus = statusHistory?.find((s) => s?.status === 'ConfirmStarted');
+		const finalStatus = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+		if (!statusObj || finalStatus) {
 			return;
 		}
 		if (support >= supportThreshold && approval >= approvalThreshold) {
@@ -74,10 +77,11 @@ const ConfirmMessage = () => {
 			const timeStr = blocksToRelevantTime(network, Number(trackInfo?.confirmPeriod));
 			const time = timeStr.split(' ')[0];
 			const units = timeStr.split(' ')[1];
+			const confirmedStartedHour = confirmedStartedStatus && confirmedStartedStatus?.timestamp ? dayjs().diff(confirmedStartedStatus?.timestamp, 'hour') : 0;
 			if (units === 'days') {
-				estimateHour = estimateHour + Number(time) * 24;
+				estimateHour = estimateHour + Number(time) * 24 - confirmedStartedHour;
 			} else if (units === 'hrs') {
-				estimateHour = estimateHour + Number(time);
+				estimateHour = estimateHour + Number(time) - confirmedStartedHour;
 			}
 		}
 		setEstimateHour(estimateHour);
@@ -88,14 +92,16 @@ const ConfirmMessage = () => {
 	}
 
 	return (
-		<div className='mt-4 rounded-lg bg-[#F5F5FD] p-3 dark:bg-[#2C2C3E]'>
-			<p className='m-0 flex flex-col text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
-				Proposal estimated to pass in
-				<span className='text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>
-					{getDays(estimateHour) ? `${getDays(estimateHour)} days,` : ''} {getExtraHrs(estimateHour) ? `${getExtraHrs(estimateHour)} hours` : ''}
-				</span>
-			</p>
-		</div>
+		<Tooltip title={<div>Estimated Date: {dayjs().add(estimateHour, 'hour').format('YYYY-MM-DD HH:MM')}, based on current tally</div>}>
+			<div className='mt-4 min-h-[45px] rounded-lg bg-[#F5F5FD] p-3 dark:bg-[#2C2C3E]'>
+				<p className='m-0 flex gap-x-1 text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
+					Proposal estimated to pass in
+					<span className='text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>
+						{getDays(estimateHour) ? `${getDays(estimateHour)} days` : ''} {getExtraHrs(estimateHour) ? `, ${getExtraHrs(estimateHour)} hrs` : ''}
+					</span>
+				</p>
+			</div>
+		</Tooltip>
 	);
 };
 

@@ -100,7 +100,7 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 		icon,
 		key,
 		label,
-		type: ['tracksHeading', 'pipsHeading', 'toggle'].includes(key as string) ? 'group' : ''
+		type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 	} as MenuItem;
 }
 
@@ -669,7 +669,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	const handleMenuClick = (menuItem: any) => {
-		if (['userMenu', 'tracksHeading', 'pipsHeading', 'toggle'].includes(menuItem.key)) return;
+		if (['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
 		setSidedrawer(false);
 	};
@@ -730,11 +730,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
 
-	if (sidedrawer) {
-		sidebarItems = [...sidebarItems, getSiderMenuItem(<BigToggleButton />, 'toggle', '')];
-	} else {
-		sidebarItems = [...sidebarItems, getSiderMenuItem('', '', <ToggleButton />)];
-	}
 	return (
 		<Layout className={className}>
 			<NavHeader
@@ -763,7 +758,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							onClick={handleMenuClick}
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
-						{/* <ToggleButton /> */}
+						<ToggleButton />
 					</div>
 				</Sider>
 				<Drawer
@@ -781,6 +776,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						left: 0
 					}}
 					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
+					footer={<BigToggleButton />}
 				>
 					<div className='flex h-full flex-col justify-between'>
 						<Menu
@@ -793,7 +789,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 							onMouseLeave={() => setSidedrawer(false)}
 						/>
-						{/* <BigToggleButton /> */}
 					</div>
 				</Drawer>
 				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
@@ -938,6 +933,7 @@ export default styled(AppLayout)`
 	}
 	li .ant-menu-item-only-child {
 		padding-left: 58px !important;
+		margin-block: 0px !important;
 	}
 	.ant-menu .ant-menu-submenu-arrow {
 		color: var(--lightBlue) !important;
@@ -1029,5 +1025,8 @@ export default styled(AppLayout)`
 		.user-info-dropdown {
 			transform: scale(0.7);
 		}
+	}
+	.ant-drawer .ant-drawer-footer {
+		border: none !important;
 	}
 `;

@@ -18,7 +18,7 @@ const BigToggleButton = () => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
 				}}
-				className={classNames('flex w-[100%] cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent py-2 outline-none', {
+				className={classNames('flex w-[90%] cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-2 py-2 outline-none', {
 					'border-[#3B444F]': theme === 'dark',
 					'border-[#D2D8E0] dark:border-[#3B444F]': theme === 'light'
 				})}

@@ -49,8 +49,8 @@ const ConfirmMessage = () => {
 		const trackInfo = getTrackData(network, track_name, track_number);
 		const statusObj = statusHistory?.find((s) => s?.status === 'Deciding');
 		const confirmedStartedStatus = statusHistory?.find((s) => s?.status === 'ConfirmStarted');
-		const finalStatus = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
-		if (!statusObj || finalStatus) {
+		const blockVisibleStatus = (statusHistory || [])?.find((v: any) => ['Deciding', 'ConfirmStarted', 'ConfirmAborted'].includes(v?.status || ''));
+		if (!statusObj || !blockVisibleStatus) {
 			return;
 		}
 		if (support >= supportThreshold && approval >= approvalThreshold) {
@@ -83,6 +83,9 @@ const ConfirmMessage = () => {
 			} else if (units === 'hrs') {
 				estimateHour = estimateHour + Number(time) - confirmedStartedHour;
 			}
+		}
+		if (estimateHour < 0) {
+			return;
 		}
 		setEstimateHour(estimateHour);
 	}, [approval, approvalData, approvalThreshold, network, statusHistory, support, supportData, supportThreshold, track_name, track_number]);

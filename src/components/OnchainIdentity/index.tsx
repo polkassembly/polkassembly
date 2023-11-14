@@ -206,8 +206,8 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		(async () => {
 			const bondFee = api?.consts?.identity?.fieldDeposit;
 
-			const registerarFee: any = await api.query.identity.registrars().then((e) => JSON.parse(e.toString()));
-			const bnRegisterarFee = new BN(registerarFee[registerarFee.length - 1].fee || ZERO_BN);
+			const registerarFee: any = await api?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
+			const bnRegisterarFee = new BN(registerarFee[registerarFee?.length - 1].fee || ZERO_BN);
 			const minDeposite = api.consts.identity.basicDeposit;
 			setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
 			setPerSocialBondFee(bondFee);

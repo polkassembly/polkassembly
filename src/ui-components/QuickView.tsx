@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { UserOutlined } from '@ant-design/icons';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { poppins } from 'pages/_app';
 import Address from './Address';
@@ -207,6 +208,21 @@ const QuickView = ({
 										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
 									>
 										<PolkaverseIcon />
+									</Link>
+								)}
+								{network.includes('kilt') && (
+									<Link
+										target='_blank'
+										onClick={(e) => {
+											e.preventDefault();
+											e.stopPropagation();
+											window.open(`https://w3n.id/${address}`, '_blank');
+										}}
+										title={`https://w3n.id/${address}`}
+										href={`https://w3n.id/${address}`}
+										className='flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-[13px] text-[#96A4B6] hover:text-[#96A4B6]'
+									>
+										<UserOutlined />
 									</Link>
 								)}
 							</div>

@@ -106,11 +106,12 @@ const OnchainCreationLabel = ({ address, username, truncateUsername, className }
 			</div>
 			{!TippingUnavailableNetworks.includes(network) && !!profileAddress && !address && (
 				<Tipping
-					destinationAddress={profileAddress}
+					receiverAddress={profileAddress}
 					username={username || ''}
 					open={openTipping}
 					setOpen={setOpenTipping}
 					key={profileAddress}
+					paUsername={username}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}
 				/>

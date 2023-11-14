@@ -122,11 +122,12 @@ const NameLabel = ({
 			</div>
 			{!TippingUnavailableNetworks.includes(network) && !!address && !defaultAddress && (
 				<Tipping
-					destinationAddress={address}
+					receiverAddress={address}
 					username={username || ''}
 					open={openTipping}
 					setOpen={setOpenTipping}
 					key={address}
+					paUsername={username}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}
 				/>

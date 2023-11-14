@@ -70,12 +70,12 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									forGovSidebar={true}
 								/>
 							</div>
-							<div className='mt-4 flex justify-between gap-x-0'>
-								<div className='flex flex-col gap-x-0'>
+							<div className='mt-4 grid grid-cols-2 gap-x-5'>
+								<div className='col-span-1 flex flex-col gap-x-0'>
 									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex gap-[6px] '>
 											<AyeApprovalIcon />
-											Current Approval
+											Approval
 										</span>
 										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approval)?.toFixed(2)}%</span>
 									</span>
@@ -87,11 +87,11 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approvalThreshold)?.toFixed(2)}%</span>
 									</span>
 								</div>
-								<div className='flex flex-col gap-x-0'>
+								<div className='col-span-1 flex flex-col gap-x-0'>
 									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex gap-[6px] '>
 											<NayApprovalIcon />
-											Current Support
+											Support
 										</span>
 										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(support)?.toFixed(2)}%</span>
 									</span>

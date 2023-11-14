@@ -36,7 +36,6 @@ import Balance from '../Balance';
 import Address from '~src/ui-components/Address';
 import { useTheme } from 'next-themes';
 import DownArrow from '~assets/icons/down-icon.svg';
-// import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 
 const ZERO_BN = new BN(0);
 

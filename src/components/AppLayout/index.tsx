@@ -729,6 +729,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (isMobile) {
 		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
+
 	return (
 		<Layout className={className}>
 			<NavHeader
@@ -775,6 +776,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						left: 0
 					}}
 					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
+					footer={<BigToggleButton />}
 				>
 					<div className='flex h-full flex-col justify-between'>
 						<Menu
@@ -787,7 +789,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 							onMouseLeave={() => setSidedrawer(false)}
 						/>
-						<BigToggleButton />
 					</div>
 				</Drawer>
 				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
@@ -932,6 +933,7 @@ export default styled(AppLayout)`
 	}
 	li .ant-menu-item-only-child {
 		padding-left: 58px !important;
+		margin-block: 0px !important;
 	}
 	.ant-menu .ant-menu-submenu-arrow {
 		color: var(--lightBlue) !important;
@@ -1023,5 +1025,8 @@ export default styled(AppLayout)`
 		.user-info-dropdown {
 			transform: scale(0.7);
 		}
+	}
+	.ant-drawer .ant-drawer-footer {
+		border: none !important;
 	}
 `;

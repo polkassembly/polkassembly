@@ -11,6 +11,7 @@ import { userDetailsStore } from './userDetails';
 import { userUnlockTokensDataStore } from './tokenUnlocksData';
 import { currentTokenPriceStore } from './currentTokenPrice';
 import { curvesInformationStore } from './curvesInformation';
+import { tippingStore } from './Tipping';
 
 export const makeStore = () => {
 	const isServer = typeof window === 'undefined';
@@ -20,7 +21,8 @@ export const makeStore = () => {
 		[userDetailsStore.name]: userDetailsStore.reducer,
 		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer,
 		[currentTokenPriceStore.name]: currentTokenPriceStore.reducer,
-		[curvesInformationStore.name]: curvesInformationStore.reducer
+		[curvesInformationStore.name]: curvesInformationStore.reducer,
+		[tippingStore.name]: tippingStore.reducer
 	});
 
 	if (isServer) {
@@ -39,7 +41,7 @@ export const makeStore = () => {
 		const persistConfig = {
 			key: 'polkassembly',
 			storage,
-			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice'] // make sure it does not clash with server keys
+			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping'] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

@@ -12,12 +12,22 @@ export async function getKiltDidName(api: ApiPromise, lookupAccountAddress: stri
 	if (didDetails.isNone) {
 		return undefined;
 	}
-
 	const { w3n = null } = didDetails.unwrapOr({});
 
 	if (!w3n || w3n.isNone) {
 		return undefined;
 	}
-
 	return w3n.unwrapOr(null)?.toHuman();
+}
+
+export async function getKiltDidLinkedAccounts(api: ApiPromise, lookupAccountAddress: string): Promise<string[] | undefined> {
+	const didDetails = (await api.call.did.queryByAccount({
+		AccountId32: lookupAccountAddress
+	})) as any;
+
+	if (didDetails.isNone) {
+		return undefined;
+	}
+
+	return didDetails.toHuman().accounts || [];
 }

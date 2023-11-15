@@ -3,10 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Form, Input, Modal, Select, Spin } from 'antd';
-import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
 import BN from 'bn.js';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import { poppins } from 'pages/_app';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import styled from 'styled-components';
@@ -36,6 +37,8 @@ import Balance from '../Balance';
 import Address from '~src/ui-components/Address';
 import { useTheme } from 'next-themes';
 import DownArrow from '~assets/icons/down-icon.svg';
+import { getKiltDidLinkedAccounts } from '~src/util/kiltDid';
+import { setReceiver } from '~src/redux/Tipping';
 
 const ZERO_BN = new BN(0);
 
@@ -43,7 +46,6 @@ interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	className?: string;
-	receiverAddress: string;
 	username: string;
 	openAddressChangeModal: boolean;
 	setOpenAddressChangeModal: (pre: boolean) => void;
@@ -57,11 +59,13 @@ const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar';
 	{ key: 'fifteenDollar', value: 15 }
 ];
 
-const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
+const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const { receiverAddress } = useTippingDataSelector();
 	const { api, apiReady } = useApiContext();
+	const dispatch = useDispatch();
 	const [form] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>(loginAddress);
@@ -74,7 +78,6 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 	const [existentialDeposit, setExistentialDeposit] = useState<BN>(ZERO_BN);
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
-	const dispatch = useDispatch();
 	const [userAddresses, setUserAddresses] = useState<string[]>([]);
 	const [beneficiaryAddress, setBeneficiaryAddress] = useState<string>(receiverAddress);
 	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
@@ -84,11 +87,35 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 		threeDollar: '0'
 	});
 
+	const getKiltDidAccounts = async () => {
+		if (!api || !apiReady || !network) return;
+		const kiltAccounts = await getKiltDidLinkedAccounts(api, beneficiaryAddress || receiverAddress);
+		if (kiltAccounts) {
+			const linkedAccounts: string[] = [];
+			kiltAccounts.map((account: any) => {
+				Object.entries(account).forEach(([key, value]) => {
+					if (key === 'AccountId32') linkedAccounts.push(value as string);
+				});
+			});
+			const data = [...userAddresses, ...linkedAccounts];
+			//filter duplicate -->
+			setUserAddresses(data.filter((value, index) => data.indexOf(value) === index));
+		}
+	};
+
+	useEffect(() => {
+		setBeneficiaryAddress(receiverAddress);
+		if (network === AllNetworks.KILT) {
+			getKiltDidAccounts();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [receiverAddress, network]);
+
 	const getUserProfile = async () => {
 		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${paUsername}`);
 		if (data) {
 			if (data?.addresses) {
-				setUserAddresses(data?.addresses);
+				setUserAddresses(data?.addresses || []);
 			}
 		}
 	};
@@ -97,7 +124,7 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 		if (!paUsername) return;
 		getUserProfile();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [paUsername]);
+	}, [paUsername, network]);
 
 	const handleTipChangeToDollar = (value: number) => {
 		const tip = value / Number(currentTokenPrice || 1);
@@ -139,13 +166,14 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 		form.setFieldValue('balance', '');
 		setLoadingStatus({ isLoading: false, message: '' });
 		setOpen(false);
+		dispatch(setReceiver(''));
 	};
 
 	useEffect(() => {
 		setIsBalanceUpdated(false);
 		if (!api || !apiReady) return;
 
-		const deposit = api.consts.balances.existentialDeposit;
+		const deposit = api?.consts?.balances?.existentialDeposit;
 		setExistentialDeposit(deposit);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginWallet, loginAddress, api, apiReady]);

@@ -47,7 +47,7 @@ const OnchainCreationLabel = ({ address, username, truncateUsername, className }
 		}
 	};
 	useEffect(() => {
-		if (!address) {
+		if (!address && username) {
 			getUserProfile();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,7 +106,6 @@ const OnchainCreationLabel = ({ address, username, truncateUsername, className }
 			</div>
 			{!TippingUnavailableNetworks.includes(network) && !!profileAddress && !address && (
 				<Tipping
-					receiverAddress={profileAddress}
 					username={username || ''}
 					open={openTipping}
 					setOpen={setOpenTipping}

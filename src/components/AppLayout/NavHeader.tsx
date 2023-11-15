@@ -6,7 +6,7 @@
 import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Skeleton, Space } from 'antd';
+import { Button, Divider, Skeleton, Space, Tooltip } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
@@ -38,6 +38,7 @@ import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import PolkasafeWhiteIcon from '~assets/polkasafe-white-logo.svg';
+import { poppins } from 'pages/_app';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -193,25 +194,36 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		dropdownMenuItems.splice(1, 0, {
 			key: 'set on-chain identity',
 			label: (
-				<Link
-					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
-					href={''}
-					onClick={(e) => {
-						e.stopPropagation();
-						e.preventDefault();
-						handleIdentityButtonClick();
-					}}
-				>
-					<span className='text-2xl'>
-						<ApplayoutIdentityIcon />
-					</span>
-					<span>Set on-chain identity</span>
-					{!isVerified && (
-						<span className='flex items-center'>
-							<IdentityCaution />
+				<Tooltip
+					zIndex={2010}
+					title={
+						<span className={`text-xs ${poppins.className} ${poppins.variable}`}>
+							Identity verification is temporarily unavailable for 24 hours. We apologize for the inconvenience caused{' '}
 						</span>
-					)}
-				</Link>
+					}
+					color='var(--pink_primary)'
+				>
+					<Link
+						className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
+						href={''}
+						onClick={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							return;
+							handleIdentityButtonClick();
+						}}
+					>
+						<span className='text-2xl'>
+							<ApplayoutIdentityIcon />
+						</span>
+						<span>Set on-chain identity</span>
+						{!isVerified && (
+							<span className='flex items-center'>
+								<IdentityCaution />
+							</span>
+						)}
+					</Link>
+				</Tooltip>
 			)
 		});
 	}

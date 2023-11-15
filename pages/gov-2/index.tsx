@@ -118,7 +118,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 		<>
 			<SEOHead
 				title='OpenGov'
-				desc={`Join the future of ${network} with Polkadot's revolutionary OpenGov governance system on Polkassembly`}
+				desc={`Join the future of blockchain with ${network}'s revolutionary governance system on Polkassembly`}
 				network={network}
 			/>
 

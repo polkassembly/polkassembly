@@ -11,9 +11,9 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IListingContainerProps {
-    className?:string;
-    title: string;
-    isTip?: boolean;
+	className?: string;
+	title: string;
+	isTip?: boolean;
 	postIds: number[];
 	proposalType: ProposalType;
 }
@@ -29,17 +29,19 @@ const ListingContainer: FC<IListingContainerProps> = (props) => {
 			setLoading(true);
 			nextApiClientFetch<IPostsListingResponse>(`api/v1/listing/on-chain-posts?proposalType=${proposalType}`, {
 				postIds: postIds
-			}).then((res) => {
-				if (res.error) {
-					setError(res.error);
-				} else {
-					setPosts(res.data?.posts);
-				}
-				setLoading(false);
-			}).catch((err) => {
-				setError(err);
-				setLoading(false);
-			});
+			})
+				.then((res) => {
+					if (res.error) {
+						setError(res.error);
+					} else {
+						setPosts(res.data?.posts);
+					}
+					setLoading(false);
+				})
+				.catch((err) => {
+					setError(err);
+					setLoading(false);
+				});
 		}
 	}, [postIds, proposalType]);
 
@@ -48,15 +50,19 @@ const ListingContainer: FC<IListingContainerProps> = (props) => {
 	}
 
 	return (
-		<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+		<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
 			<div className='flex items-center justify-between'>
-				<h1 className='dashboard-heading'>{title}</h1>
+				<h1 className='dashboard-heading dark:text-white'>{title}</h1>
 			</div>
-			{
-				loading?
-					<LoadingState />
-					: <Listing posts={posts} proposalType={proposalType} isTip={isTip} />
-			}
+			{loading ? (
+				<LoadingState />
+			) : (
+				<Listing
+					posts={posts}
+					proposalType={proposalType}
+					isTip={isTip}
+				/>
+			)}
 		</div>
 	);
 };

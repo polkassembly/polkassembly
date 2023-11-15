@@ -10,9 +10,13 @@ interface Props {
 	errorMsg: string;
 }
 
-const ErrorAlert = ({ className, errorMsg } : Props) => {
+const ErrorAlert = ({ className, errorMsg }: Props) => {
 	return (
-		<Alert message={cleanError(errorMsg)} type="error" className={className} />
+		<Alert
+			message={cleanError(errorMsg)}
+			type='error'
+			className={`${className} dark:bg-[#ffcbd9] `}
+		/>
 	);
 };
 

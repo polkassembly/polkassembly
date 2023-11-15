@@ -4,7 +4,11 @@
 
 import getEncodedAddress from '../getEncodedAddress';
 
-jest.mock('../getNetwork', () => jest.fn(() => {return 'polkadot';}));
+jest.mock('../getNetwork', () =>
+	jest.fn(() => {
+		return 'polkadot';
+	})
+);
 const getNetwork = require('../getNetwork');
 
 describe('Verify address is encoded', () => {

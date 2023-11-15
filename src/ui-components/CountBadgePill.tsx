@@ -4,9 +4,11 @@
 
 import React from 'react';
 
-const CountBadgePill = ({ className, label, count } :  {className?:string, label?:string, count?: number}) => <div className={`${className} flex items-center gap-x-1 capitalize`}>
-	{label && label}
-	{count != null && count != undefined && <span className='text-xs font-medium'>({count})</span>}
-</div>;
+const CountBadgePill = ({ className, label, count }: { className?: string; label?: string; count?: number }) => (
+	<div className={`${className} flex items-center gap-x-1 capitalize`}>
+		{label && label}
+		{count != null && count != undefined && <span className='text-xs font-medium'>({count})</span>}
+	</div>
+);
 
 export default CountBadgePill;

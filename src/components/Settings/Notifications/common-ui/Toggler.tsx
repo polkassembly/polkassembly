@@ -6,23 +6,23 @@ import React from 'react';
 import styled from 'styled-components';
 
 type Props = {
-    selected: boolean;
-    label: string;
-    onClick: any;
+	selected: boolean;
+	label: string;
+	onClick: any;
 };
 
 const Toggle = styled(Switch)`
-    // &.ant-switch.ant-switch-small{
-    //     max-width:18px;
-    //     height:10px;
-    // }
-    // $.ant-switch.ant-switch-small.ant-switch-checked .ant-switch-handle{
-    //     inset-inline-start: calc(100% - 8px);
-    // }
-    // &.ant-switch.ant-switch-small .ant-switch-handle{
-    //     width:5px;
-    //     height:5px;
-    // }
+	// &.ant-switch.ant-switch-small{
+	//     max-width:18px;
+	//     height:10px;
+	// }
+	// $.ant-switch.ant-switch-small.ant-switch-checked .ant-switch-handle{
+	//     inset-inline-start: calc(100% - 8px);
+	// }
+	// &.ant-switch.ant-switch-small .ant-switch-handle{
+	//     width:5px;
+	//     height:5px;
+	// }
 `;
 
 export default function Toggler({ label, onClick, selected }: Props) {
@@ -31,14 +31,14 @@ export default function Toggler({ label, onClick, selected }: Props) {
 		onClick(checked);
 	};
 	return (
-		<span className='flex gap-[8px] items-center'>
+		<span className='flex items-center gap-[8px]'>
 			<Toggle
 				size='small'
 				id='postParticipated'
 				onChange={(checked, e) => handleClick(checked, e)}
 				checked={selected}
 			/>
-			<p className='m-0 text-[#485F7D]'>{label}</p>
+			<p className='m-0 text-[#485F7D] dark:text-white'>{label}</p>
 		</span>
 	);
 }

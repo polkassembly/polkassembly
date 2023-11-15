@@ -9,23 +9,20 @@ import SubscribedPostsNotification from '~assets/icons/subscribed-posts-notifica
 import GroupCheckbox from '../common-ui/GroupCheckbox';
 import { ACTIONS } from '../Reducer/action';
 import { Collapse } from '../common-ui/Collapse';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = {
 	onSetNotification: any;
 	dispatch: any;
 	options: any;
-	userNotification: any
+	userNotification: any;
 };
 
-export default function SubscribedPosts({
-	onSetNotification,
-	dispatch,
-	options,
-	userNotification
-}: Props) {
+export default function SubscribedPosts({ onSetNotification, dispatch, options, userNotification }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setAll(options.every((category: any) => category.selected));
@@ -57,11 +54,7 @@ export default function SubscribedPosts({
 		setAll(checked);
 	};
 
-	const handleChange = (
-		categoryOptions: any,
-		checked: boolean,
-		value: string
-	) => {
+	const handleChange = (categoryOptions: any, checked: boolean, value: string) => {
 		dispatch({
 			payload: {
 				params: { categoryOptions, checked, value }
@@ -88,7 +81,8 @@ export default function SubscribedPosts({
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -97,14 +91,14 @@ export default function SubscribedPosts({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<SubscribedPostsNotification />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
+						<h3 className='mb-0 text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 							Subscribed Posts <span className='hidden md:inline'>(Others proposals)</span>
 						</h3>
 						{!!active && (
 							<>
-								<span className='flex gap-[8px] items-center'>
+								<span className='flex items-center gap-[8px]'>
 									<Switch
 										size='small'
 										id='postParticipated'
@@ -114,7 +108,7 @@ export default function SubscribedPosts({
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D]'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-white'>All</p>
 								</span>
 							</>
 						)}

@@ -6,7 +6,7 @@ export const getStatusBlock = (timeline: any[], type: string[], status: string) 
 	let deciding: any;
 	if (timeline && Array.isArray(timeline)) {
 		timeline.some((v) => {
-			if (v && type.includes(v.type)  && v.statuses && Array.isArray(v.statuses)) {
+			if (v && type.includes(v.type) && v.statuses && Array.isArray(v.statuses)) {
 				let isFind = false;
 				v.statuses.some((v: any) => {
 					if (v && v.status === status) {

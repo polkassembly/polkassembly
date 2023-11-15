@@ -3,7 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import blockToTime from '../blockToTime';
 
-jest.mock('../getNetwork', () => jest.fn(() => { return 'polkadot'; }));
+jest.mock('../getNetwork', () =>
+	jest.fn(() => {
+		return 'polkadot';
+	})
+);
 const getNetwork = require('../getNetwork');
 
 const SEC = 1000;

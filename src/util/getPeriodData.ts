@@ -17,7 +17,7 @@ export const getPeriodData = (network: string, date: Dayjs, trackData: any, fiel
 		} else if (period.includes('min')) {
 			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'minute');
 		}
-		periodPercent = Math.round(dayjs().diff(date, 'minute') / periodEndsAt.diff(date, 'minute') * 100);
+		periodPercent = Math.round((dayjs().diff(date, 'minute') / periodEndsAt.diff(date, 'minute')) * 100);
 	}
 	const periodCardVisible = periodEndsAt.diff(dayjs(), 'second') > 0;
 	return {

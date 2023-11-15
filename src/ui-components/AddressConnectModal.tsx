@@ -111,7 +111,7 @@ const AddressConnectModal = ({
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-		const submissionDeposite = api.consts.referenda?.submissionDeposit || ZERO_BN;
+		const submissionDeposite = api?.consts?.referenda?.submissionDeposit || ZERO_BN;
 		setSubmissionDeposite(submissionDeposite);
 	}, [api, apiReady]);
 

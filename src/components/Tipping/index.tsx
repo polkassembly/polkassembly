@@ -145,7 +145,7 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 		setIsBalanceUpdated(false);
 		if (!api || !apiReady) return;
 
-		const deposit = api.consts.balances.existentialDeposit;
+		const deposit = api.consts.balances?.existentialDeposit;
 		setExistentialDeposit(deposit);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginWallet, loginAddress, api, apiReady]);

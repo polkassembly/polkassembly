@@ -33,9 +33,11 @@ async function oauthGetUserById(
 ) {
 	const oauthConsumer = getOauthConsumer(network);
 
-	return promisify(oauthConsumer.get.bind(oauthConsumer))(`https://api.twitter.com/1.1/users/show.json?user_id=${userId}`, oauthAccessToken, oauthAccessTokenSecret).then(
-		(body: any) => JSON.parse(body)
-	);
+	return promisify(oauthConsumer.get.bind(oauthConsumer))(
+		`https://api.twitter.com/1.1/account/verify_credentials.json?user_id=${userId}`,
+		oauthAccessToken,
+		oauthAccessTokenSecret
+	).then((body: any) => JSON.parse(body));
 }
 
 async function getOAuthAccessTokenWith(

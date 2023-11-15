@@ -5,7 +5,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
-import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal, Tooltip } from 'antd';
+import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -166,36 +166,25 @@ const getUserDropDown = (
 		dropdownMenuItems.splice(1, 0, {
 			key: 'set on-chain identity',
 			label: (
-				<Tooltip
-					zIndex={2010}
-					title={
-						<span className={`text-xs ${poppins.className} ${poppins.variable}`}>
-							Identity verification is temporarily unavailable for 24 hours. We apologize for the inconvenience caused{' '}
-						</span>
-					}
-					color='var(--pink_primary)'
+				<Link
+					className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
+					href={''}
+					onClick={(e) => {
+						e.stopPropagation();
+						e.preventDefault();
+						handleSetIdentityClick();
+					}}
 				>
-					<Link
-						className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
-						href={''}
-						onClick={(e) => {
-							e.stopPropagation();
-							e.preventDefault();
-							return;
-							handleSetIdentityClick();
-						}}
-					>
-						<span className='ml-[2px] text-lg'>
-							<ApplayoutIdentityIcon />
+					<span className='ml-[2px] text-lg'>
+						<ApplayoutIdentityIcon />
+					</span>
+					<span>Set on-chain identity</span>
+					{isIdentityUnverified && (
+						<span className='flex items-center'>
+							<IdentityCaution />
 						</span>
-						<span>Set on-chain identity</span>
-						{isIdentityUnverified && (
-							<span className='flex items-center'>
-								<IdentityCaution />
-							</span>
-						)}
-					</Link>
-				</Tooltip>
+					)}
+				</Link>
 			)
 		});
 	}

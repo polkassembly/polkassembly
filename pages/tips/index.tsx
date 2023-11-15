@@ -78,6 +78,7 @@ const Tips: FC<ITipsProps> = (props) => {
 		<>
 			<SEOHead
 				title='Tips'
+				desc='Explore the latest community kudos and recognition for hard work and dedication on our tips listing page on Polkassembly.'
 				network={network}
 			/>
 			<div className='mt-3 flex items-center'>

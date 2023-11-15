@@ -54,6 +54,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 		<>
 			<SEOHead
 				title='PreImages'
+				desc='Discover more about preimages of on chain governance proposals on Polkassembly'
 				network={network}
 			/>
 			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Preimage</h1>

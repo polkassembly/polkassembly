@@ -73,6 +73,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 		<>
 			<SEOHead
 				title='Motions'
+				desc="Stay informed on the latest council motions and hear the council's say in the governance voting process on Polkassembly's council motion page"
 				network={network}
 			/>
 			<div className='mt-3 flex sm:items-center'>

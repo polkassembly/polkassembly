@@ -132,6 +132,7 @@ import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
 import VoteDataSVG from '~assets/icons/vote-data-icon.svg';
 import DeleteIconSVG from '~assets/icons/deleteIcon.svg';
 import WhiteDeleteIconSVG from '~assets/icons/deleteWhiteIcon.svg';
+import PolkaverseIconSVG from '~assets/icons/SubsocialIcon.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -986,6 +987,13 @@ export const ArchivedIcon = (props: Partial<CustomIconComponentProps>) => (
 export const NoTagFoundIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={NoTagsFoundSVG}
+		{...props}
+	/>
+);
+
+export const SubSocialIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={PolkaverseIconSVG}
 		{...props}
 	/>
 );

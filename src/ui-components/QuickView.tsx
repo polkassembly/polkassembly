@@ -19,13 +19,13 @@ import ImageComponent from 'src/components/ImageComponent';
 import Link from 'next/link';
 import { network as AllNetworks } from '~src/global/networkConstants';
 
-import PolkaverseIcon from '~assets/icons/polkaverse.svg';
 import VerifiedIcon from '~assets/icons/verified-tick.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import CopyIcon from '~assets/icons/content_copy_small.svg';
 import WebIcon from '~assets/icons/web-icon.svg';
+import { SubSocialIcon } from './CustomIcons';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -208,7 +208,7 @@ const QuickView = ({
 										href={`https://polkaverse.com/accounts/${address}`}
 										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
 									>
-										<PolkaverseIcon />
+										<SubSocialIcon className='text-2xl' />
 									</Link>
 								)}
 								{network.includes('kilt') && (

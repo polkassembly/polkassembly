@@ -112,7 +112,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	}, [network]);
 
 	useEffect(() => {
-		!id && setOpenLoginModal(true);
+		setOpenLoginModal(!id);
 	}, [id]);
 
 	useEffect(() => {

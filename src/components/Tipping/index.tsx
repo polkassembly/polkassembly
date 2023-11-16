@@ -76,6 +76,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 	const disable = loadingStatus.isLoading || availableBalance.lte(tipAmount) || !address || tipAmount.eq(ZERO_BN);
 	const [remark, setRemark] = useState<string>('');
 	const [existentialDeposit, setExistentialDeposit] = useState<BN>(ZERO_BN);
+	const [kiltAccounts, setKiltAccounts] = useState<string[]>([]);
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [userAddresses, setUserAddresses] = useState<string[]>([]);
@@ -87,6 +88,22 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 		threeDollar: '0'
 	});
 
+	const filterDuptocateAddresses = (addresses: string[]) => {
+		const obj: any = {};
+		for (const address of addresses) {
+			if (obj[address] === undefined) {
+				obj[address] = 1;
+			} else {
+				obj[address] += 1;
+			}
+		}
+		const dataArr: string[] = [];
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const data = Object.entries(obj).forEach(([key]) => {
+			dataArr.push(key);
+		});
+		return dataArr;
+	};
 	const getKiltDidAccounts = async () => {
 		if (!api || !apiReady || !network) return;
 		const kiltAccounts = await getKiltDidLinkedAccounts(api, beneficiaryAddress || receiverAddress);
@@ -97,9 +114,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 					if (key === 'AccountId32') linkedAccounts.push(value as string);
 				});
 			});
-			const data = [...userAddresses, ...linkedAccounts];
-			//filter duplicate -->
-			setUserAddresses(data.filter((value, index) => data.indexOf(value) === index));
+			setKiltAccounts(linkedAccounts);
 		}
 	};
 
@@ -162,6 +177,8 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 		e?.preventDefault();
 		e?.stopPropagation();
 		setTipAmount(ZERO_BN);
+		setBeneficiaryAddress('');
+		setUserAddresses([]);
 		setRemark('');
 		form.setFieldValue('balance', '');
 		setLoadingStatus({ isLoading: false, message: '' });
@@ -339,17 +356,17 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 						</div>
 					</div>
 
-					{userAddresses.length > 1 && (
+					{filterDuptocateAddresses(userAddresses.concat(kiltAccounts)).length > 1 && (
 						<div className='mt-6 '>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Receiver Address</label>
 							<Select
 								placeholder='Select recriver address'
 								suffixIcon={<DownArrow />}
 								className={`flex h-full w-full items-center justify-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay ${className}`}
-								value={userAddresses.length > 0 ? beneficiaryAddress || receiverAddress : null}
+								value={filterDuptocateAddresses(userAddresses.concat(kiltAccounts)).length > 0 ? beneficiaryAddress || receiverAddress : null}
 								onChange={setBeneficiaryAddress}
 								options={
-									userAddresses?.map((userAddress) => {
+									filterDuptocateAddresses(userAddresses.concat(kiltAccounts))?.map((userAddress) => {
 										return {
 											label: (
 												<Address

@@ -45,6 +45,7 @@ import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import { trackEvent } from 'analytics';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -133,6 +134,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [multisig, setMultisig] = useState<string>('');
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const currentUser = useUserDetailsSelector();
 
 	const { client, connect } = usePolkasafe(address);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
@@ -330,6 +332,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		handleModalReset();
 	};
 	const handleSubmit = async () => {
+		// GAEvent for proposal voting
+		trackEvent('proposal_voting', 'voted_proposal', {
+			balance: lockedBalance,
+			conviction: conviction,
+			decision: vote,
+			isWeb3Login: currentUser?.web3signup,
+			postId: referendumId,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
+
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
 			return;

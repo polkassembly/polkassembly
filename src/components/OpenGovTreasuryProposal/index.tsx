@@ -19,6 +19,7 @@ import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useApiContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 interface Props {
 	className?: string;
@@ -82,6 +83,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -116,6 +118,13 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	}, [title, api, apiReady, preimage, postId]);
 
 	const handleClick = () => {
+		// GAEvent for proposal creation
+		trackEvent('proposal_creation', 'created_propsal', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
+
 		if (id) {
 			proposerAddress.length > 0 ? setOpenModal(!openModal) : setOpenAddressLinkedModal(true);
 		} else {

@@ -5,7 +5,7 @@
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import type { DatePickerProps } from 'antd';
-import {  RadioChangeEvent } from 'antd';
+import { RadioChangeEvent } from 'antd';
 import { Button, DatePicker, Form, Input, Radio } from 'antd';
 import { dayjs } from 'dayjs-init';
 import React, { useState } from 'react';
@@ -18,11 +18,11 @@ import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
-  className?: string
-	open: boolean
-	setSidebarCreateEvent: React.Dispatch<React.SetStateAction<boolean>>
-	selectedNetwork: string
-	id:  number | null | undefined
+	className?: string;
+	open: boolean;
+	setSidebarCreateEvent: React.Dispatch<React.SetStateAction<boolean>>;
+	selectedNetwork: string;
+	id: number | null | undefined;
 }
 
 const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent, id, open }: Props) => {
@@ -51,34 +51,34 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 		setEventJoiningLink('');
 	};
 
-	function isFormValid(){
+	function isFormValid() {
 		const errorsFoundTemp: string[] = [];
 
-		if(!eventTitle) {
+		if (!eventTitle) {
 			errorsFoundTemp.push('eventTitle');
 		}
 
-		if(!eventDescription) {
+		if (!eventDescription) {
 			errorsFoundTemp.push('eventDescription');
 		}
 
-		if(!eventStartDateTime) {
+		if (!eventStartDateTime) {
 			errorsFoundTemp.push('eventStartDateTime');
 		}
 
-		if(!eventEndDateTime) {
+		if (!eventEndDateTime) {
 			errorsFoundTemp.push('eventEndDateTime');
 		}
 
-		if(eventType == 'online' && !eventJoiningLink) {
+		if (eventType == 'online' && !eventJoiningLink) {
 			errorsFoundTemp.push('eventJoiningLink');
-		} else if(eventType == 'offline' && !eventLocation) {
+		} else if (eventType == 'offline' && !eventLocation) {
 			errorsFoundTemp.push('eventLocation');
 		}
 
 		setErrorsFound(errorsFoundTemp);
 
-		if(errorsFoundTemp.length > 0 ){
+		if (errorsFoundTemp.length > 0) {
 			return false;
 		}
 
@@ -86,10 +86,10 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 	}
 
 	const handleCreateEvent = async () => {
-		if(!isFormValid() || !id) return;
+		if (!isFormValid() || !id) return;
 
 		setLoading(true);
-		const { data , error: fetchError } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/createEvent', {
+		const { data, error: fetchError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/createEvent', {
 			content: eventDescription,
 			end_time: eventEndDateTime,
 			event_type: eventType,
@@ -124,33 +124,36 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 		setLoading(false);
 	};
 
-	const onEventStartDateChange :  DatePickerProps['onChange'] = (date) => {
+	const onEventStartDateChange: DatePickerProps['onChange'] = (date) => {
 		setEventStartDate(dayjs(date).toDate());
 	};
 
-	const onEventEndDateChange :  DatePickerProps['onChange'] = (date) => {
+	const onEventEndDateChange: DatePickerProps['onChange'] = (date) => {
 		setEventEndDate(dayjs(date).toDate());
 	};
 
 	return (
-		<SidebarRight className={className} open={open} closeSidebar={() => setSidebarCreateEvent(false)}>
-			<div className='dashboard-heading'>
+		<SidebarRight
+			className={`${className} dark:bg-section-dark-overlay`}
+			open={open}
+			closeSidebar={() => setSidebarCreateEvent(false)}
+		>
+			<div className='dashboard-heading dark:font-medium dark:text-white'>
 				<h1>Create Event</h1>
 			</div>
 
-			<div className="create-event-form">
+			<div className='create-event-form'>
 				<Form>
 					<div>
-						<label className='input-label'>Event Title</label>
+						<label className='input-label dark:text-blue-dark-medium'>Event Title</label>
 						<Form.Item validateStatus={errorsFound.includes('eventTitle') ? 'error' : ''}>
 							<Input
 								type='text'
-								className='text-input'
+								className='text-input dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								value={eventTitle}
 								onChange={(e) => setEventTitle(e.target.value)}
 								disabled={loading}
 							/>
-
 						</Form.Item>
 					</div>
 
@@ -159,40 +162,48 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						<Form.Item validateStatus={errorsFound.includes('eventDescription') ? 'error' : ''}>
 							<Input
 								type='text'
-								className='text-input'
+								className='text-input dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								value={eventDescription}
 								onChange={(e) => setEventDescription(e.target.value)}
 								disabled={loading}
 							/>
-
 						</Form.Item>
 					</div>
 
 					<label className='input-label mr-3'>Event Type</label>
-					<Radio.Group onChange={onEventTypeRadioToggle} value={eventType} className='radio-input-group'>
+					<Radio.Group
+						onChange={onEventTypeRadioToggle}
+						value={eventType}
+						className='radio-input-group dark:text-white'
+					>
 						<Radio
 							value='online'
 							checked={eventType === 'online'}
 							disabled={loading}
-						>Online</Radio>
+							className='dark:text-white'
+						>
+							Online
+						</Radio>
 						<Radio
 							value='offline'
 							checked={eventType === 'offline'}
 							disabled={loading}
-						>Offline</Radio>
+							className='dark:text-white'
+						>
+							Offline
+						</Radio>
 					</Radio.Group>
 
-					<div className="d-flex date-input-row">
+					<div className='d-flex date-input-row'>
 						<div className='start-date-div'>
 							<label className='input-label'>Start Date</label>
-							<Form.Item validateStatus={errorsFound.includes('eventStartDateTime') ? 'error' : ''} >
+							<Form.Item validateStatus={errorsFound.includes('eventStartDateTime') ? 'error' : ''}>
 								<DatePicker
 									onChange={onEventStartDateChange}
-									value={ eventStartDateTime && dayjs(eventStartDateTime, 'DD-MM-YYYY')}
+									value={eventStartDateTime && dayjs(eventStartDateTime, 'DD-MM-YYYY')}
 									disabled={loading}
 									format='DD-MM-YYYY'
 								/>
-
 							</Form.Item>
 						</div>
 
@@ -201,50 +212,61 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<Form.Item validateStatus={errorsFound.includes('eventEndDateTime') ? 'error' : ''}>
 								<DatePicker
 									onChange={onEventEndDateChange}
-									value={ eventEndDateTime && dayjs(eventEndDateTime, 'DD-MM-YYYY')}
+									value={eventEndDateTime && dayjs(eventEndDateTime, 'DD-MM-YYYY')}
 									disabled={loading || eventStartDateTime === null}
 									format='DD-MM-YYYY'
 									disabledDate={(current) => {
 										const customDate = dayjs(eventStartDateTime).format('YYYY-MM-DD');
 										return current && current < dayjs(customDate, 'YYYY-MM-DD');
 									}}
-
 								/>
-
 							</Form.Item>
 						</div>
 					</div>
 
-					{eventType == 'online' ? <div>
-						<label className='input-label'>Joining Link</label>
-						<Form.Item validateStatus={errorsFound.includes('eventJoiningLink') ? 'error' : ''}>
-							<Input
-								type='text'
-								className='text-input'
-								value={eventJoiningLink}
-								onChange={(e) => setEventJoiningLink(e.target.value)}
-								disabled={loading}
-							/>
-						</Form.Item>
-					</div>
-						:
+					{eventType == 'online' ? (
+						<div>
+							<label className='input-label'>Joining Link</label>
+							<Form.Item validateStatus={errorsFound.includes('eventJoiningLink') ? 'error' : ''}>
+								<Input
+									type='text'
+									className='text-input dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									value={eventJoiningLink}
+									onChange={(e) => setEventJoiningLink(e.target.value)}
+									disabled={loading}
+								/>
+							</Form.Item>
+						</div>
+					) : (
 						<div>
 							<label className='input-label'>Location</label>
 							<Form.Item validateStatus={errorsFound.includes('eventLocation') ? 'error' : ''}>
 								<Input
 									type='text'
-									className='text-input'
+									className='text-input dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									value={eventLocation}
 									onChange={(e) => setEventLocation(e.target.value)}
 									disabled={loading}
 								/>
 							</Form.Item>
 						</div>
-					}
+					)}
 
-					<div className="form-actions">
-						<Button onClick={closeCreateEventSidebar} disabled={loading} >Cancel</Button>
-						<Button className='bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300 ml-1' onClick={handleCreateEvent} loading={loading} >Create Event</Button>
+					<div className='form-actions'>
+						<Button
+							onClick={closeCreateEventSidebar}
+							disabled={loading}
+							className='dark:bg-transparent dark:text-white'
+						>
+							Cancel
+						</Button>
+						<Button
+							className='ml-1 rounded-md  bg-pink_primary text-white transition-colors duration-300 hover:bg-pink_secondary'
+							onClick={handleCreateEvent}
+							loading={loading}
+						>
+							Create Event
+						</Button>
 					</div>
 				</Form>
 			</div>
@@ -259,12 +281,12 @@ export default styled(CreateEventSidebar)`
 			margin-top: 18px;
 		}
 		.input.error {
-			border: 1px solid #FF0000;
+			border: 1px solid #ff0000;
 		}
 		.input-label {
 			font-weight: 500;
 			font-size: 16px;
-			color: #7D7D7D;
+			color: #7d7d7d;
 			margin-bottom: 12px;
 			@media only screen and (max-width: 768px) {
 				font-size: 14px;
@@ -285,13 +307,13 @@ export default styled(CreateEventSidebar)`
 		.radio-input-group {
 			margin-top: 12px;
 
-			.checkbox{
+			.checkbox {
 				margin-right: 20px !important;
 				&.checked {
 					label {
-						color: #E5007A;
+						color: #e5007a;
 						&::after {
-							background-color: #E5007A !important;
+							background-color: #e5007a !important;
 						}
 					}
 				}
@@ -335,20 +357,20 @@ export default styled(CreateEventSidebar)`
 
 			&.error {
 				.react-date-picker__wrapper {
-					border: #FF0000 1px solid;
-					color: #FF0000 !important;
+					border: #ff0000 1px solid;
+					color: #ff0000 !important;
 				}
 
 				.react-date-picker__inputGroup__input {
-					color: #FF0000 !important;
+					color: #ff0000 !important;
 					font-family: 'Roboto' !important;
 				}
 			}
 
 			.react-date-picker__wrapper {
 				padding: 0 10px;
-				border: 1px solid rgba(34,36,38,.15);
-				border-radius: .29rem;
+				border: 1px solid rgba(34, 36, 38, 0.15);
+				border-radius: 0.29rem;
 
 				.react-date-picker__inputGroup {
 					display: flex;
@@ -359,7 +381,6 @@ export default styled(CreateEventSidebar)`
 						align-items: center;
 					}
 				}
-
 			}
 
 			.react-date-picker__clear-button {
@@ -377,13 +398,16 @@ export default styled(CreateEventSidebar)`
 				margin-bottom: 0 !important;
 			}
 
-			.react-date-picker__inputGroup__divider,.react-date-picker__inputGroup__day, .react-date-picker__inputGroup__month, .react-date-picker__inputGroup__year {
+			.react-date-picker__inputGroup__divider,
+			.react-date-picker__inputGroup__day,
+			.react-date-picker__inputGroup__month,
+			.react-date-picker__inputGroup__year {
 				font-size: 14px;
 				padding-left: 1px !important;
 				padding-right: 1px !important;
 			}
 		}
-		.form-actions{
+		.form-actions {
 			display: flex;
 			justify-content: flex-end;
 			margin-top: 16px;
@@ -395,10 +419,9 @@ export default styled(CreateEventSidebar)`
 				}
 			}
 			.submit-btn {
-				background: #E5007A;
+				background: #e5007a;
 				color: #fff;
 			}
-
 		}
 	}
 `;

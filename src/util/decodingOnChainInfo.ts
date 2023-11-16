@@ -20,7 +20,7 @@ function containsBinaryData(str: string) {
 			totalBinaryCharacters++;
 		}
 	}
-	if (((totalBinaryCharacters / buffer.length) * 100) > 10) {
+	if ((totalBinaryCharacters / buffer.length) * 100 > 10) {
 		return true;
 	}
 	return false;
@@ -35,7 +35,7 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 				if (containsBinaryData(str)) {
 					const ss58Format = chainProperties?.[network]?.ss58Format;
 					try {
-						const str =  encodeAddress(obj, ss58Format);
+						const str = encodeAddress(obj, ss58Format);
 						if (str) {
 							if (containsBinaryData(str)) {
 								return obj;
@@ -59,7 +59,8 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 		return obj?.map((v) => {
 			return convertAnyHexToASCII(v, network);
 		});
-	} if (typeof obj === 'object') {
+	}
+	if (typeof obj === 'object') {
 		for (const key in obj) {
 			if (key.trim().toLowerCase() !== 'id') {
 				obj[key] = convertAnyHexToASCII(obj[key], network);
@@ -69,8 +70,4 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 	return obj;
 };
 
-export {
-	containsBinaryData,
-	isHex,
-	convertAnyHexToASCII
-};
+export { containsBinaryData, isHex, convertAnyHexToASCII };

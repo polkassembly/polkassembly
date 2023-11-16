@@ -9,15 +9,18 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
-interface Props{
-	className?: string,
-	reply: any
-	commentId: string
-	userName?:string
-
+import { IComment } from './Comment';
+interface Props {
+	className?: string;
+	reply: any;
+	commentId: string;
+	userName?: string;
+	isSubsquareUser: boolean;
+	isReactionOnReply: boolean;
+	comment: IComment;
 }
 
-export const Reply = ({ className, commentId, reply ,userName } : Props) => {
+export const Reply = ({ className, commentId, reply, userName, comment, isSubsquareUser, isReactionOnReply }: Props) => {
 	const { user_id, username, content, created_at, id, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
@@ -34,7 +37,11 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 	if (!user_id || !username || !content) return <div>Reply not available</div>;
 
 	return (
-		<div id={id} ref={replyRef} className={`${className} flex gap-x-4`}>
+		<div
+			id={id}
+			ref={replyRef}
+			className={`${className} flex gap-x-4`}
+		>
 			<UserAvatar
 				className='mt-1 hidden md:inline-block'
 				username={username}
@@ -43,15 +50,14 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 			/>
 			<div className='comment-box'>
 				<CreationLabel
-					className='py-2 pt-4 px-0 md:px-4 bg-[#EBF0F5] rounded-t-md'
+					className='reply-user-container -mt-1 rounded-t-md px-0 py-2 pt-4 dark:bg-[#141416] md:px-4'
 					created_at={created_at}
 					defaultAddress={proposer}
-					text={'replied'}
 					username={username}
 					spam_users_count={reply.spam_users_count}
 					commentSource={reply.reply_source}
-				>
-				</CreationLabel>
+					isRow={true}
+				></CreationLabel>
 				<EditableReplyContent
 					userId={user_id}
 					className='rounded-md'
@@ -62,6 +68,9 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 					userName={userName}
 					proposer={proposer}
 					is_custom_username={is_custom_username}
+					comment={comment}
+					isSubsquareUser={isSubsquareUser}
+					isReactionOnReply={isReactionOnReply}
 				/>
 			</div>
 		</div>
@@ -73,7 +82,6 @@ export default styled(Reply)`
 	margin-top: 1rem;
 
 	.comment-box {
-		background-color: white;
 		border-radius: 3px;
 		box-shadow: box_shadow_card;
 		margin-bottom: 1rem;

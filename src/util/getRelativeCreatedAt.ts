@@ -4,9 +4,6 @@
 
 import { dayjs } from 'dayjs-init';
 
-export default function getRelativeCreatedAt (created_at?:Date) {
-	return created_at ?
-		dayjs(created_at).isAfter(dayjs().subtract(1, 'w'))
-			? dayjs(created_at).fromNow() : dayjs(created_at).format('Do MMM \'YY') : null;
+export default function getRelativeCreatedAt(created_at?: Date) {
+	return created_at ? (dayjs(created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(created_at).fromNow() : dayjs(created_at).format("Do MMM 'YY")) : null;
 }
-

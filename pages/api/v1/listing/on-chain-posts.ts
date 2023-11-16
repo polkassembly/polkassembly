@@ -246,7 +246,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			}
-
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query,
@@ -255,8 +254,26 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals;
+
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
 				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
+				let requested = BigInt(0);
+				let args = preimage?.proposedCall?.args;
+				if (args) {
+					args = convertAnyHexToASCII(args, network);
+					if (args?.amount) {
+						requested = args.amount;
+					} else {
+						const calls = args.calls;
+						if (calls && Array.isArray(calls) && calls.length > 0) {
+							calls.forEach((call) => {
+								if (call && call.amount) {
+									requested += BigInt(call.amount);
+								}
+							});
+						}
+					}
+				}
 
 				const isStatus = {
 					swap: false
@@ -335,6 +352,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							post_id: postId,
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+							requestedAmount: requested ? requested.toString() : undefined,
 							spam_users_count:
 								data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 							status,
@@ -375,6 +393,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					post_id: postId,
 					post_reactions,
 					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
+					requestedAmount: requested ? requested.toString() : undefined,
 					status: status,
 					status_history: statusHistory,
 					tally,

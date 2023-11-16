@@ -991,7 +991,7 @@ export const NoTagFoundIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
-export const SubSocialIcon = (props: Partial<CustomIconComponentProps>) => (
+export const PolkaverseIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={PolkaverseIconSVG}
 		{...props}

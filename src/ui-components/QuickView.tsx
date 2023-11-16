@@ -25,7 +25,7 @@ import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import CopyIcon from '~assets/icons/content_copy_small.svg';
 import WebIcon from '~assets/icons/web-icon.svg';
-import { SubSocialIcon } from './CustomIcons';
+import { PolkaverseIcon } from './CustomIcons';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -208,7 +208,7 @@ const QuickView = ({
 										href={`https://polkaverse.com/accounts/${address}`}
 										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
 									>
-										<SubSocialIcon className='text-2xl' />
+										<PolkaverseIcon className='text-2xl' />
 									</Link>
 								)}
 								{network.includes('kilt') && (

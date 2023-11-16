@@ -119,7 +119,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 
 	const handleClick = () => {
 		// GAEvent for proposal creation
-		trackEvent('proposal_creation', 'created_propsal', {
+		trackEvent('proposal_creation', 'created_proposal', {
 			isWeb3Login: currentUser?.web3signup,
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''

@@ -96,7 +96,7 @@ const ConfirmMessage = () => {
 
 	return (
 		<Tooltip title={<div>Estimated Date: {dayjs().add(estimateHour, 'hour').format('YYYY-MM-DD HH:MM')}, based on current tally</div>}>
-			<div className='mt-4 h-[62px] rounded-lg bg-[#F5F5FD] p-3 hover:h-[62px] dark:bg-[#2C2C3E]'>
+			<div className='mt-4 flex h-[62px] items-center justify-center rounded-lg bg-[#F5F5FD] p-3 hover:h-[62px] dark:bg-[#2C2C3E]'>
 				<p className='m-0 text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
 					Proposal estimated to pass in
 					<span className='ml-1 text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>

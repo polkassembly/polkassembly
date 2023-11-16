@@ -16,6 +16,7 @@ import { titleMapper } from './utils';
 import { ProposalType } from '~src/global/proposalType';
 import { ACTIONS } from '../Reducer/action';
 import { Collapse } from '../common-ui/Collapse';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = {
@@ -25,14 +26,10 @@ type Props = {
 	options: any;
 };
 
-export default function Gov1Notification({
-	onSetNotification,
-	userNotification,
-	dispatch,
-	options
-}: Props) {
+export default function Gov1Notification({ onSetNotification, userNotification, dispatch, options }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleAllClick = (checked: boolean) => {
 		dispatch({
@@ -47,8 +44,7 @@ export default function Gov1Notification({
 				if (!option?.triggerName) {
 					return;
 				}
-				let postTypes =
-					notification?.[option.triggerName]?.post_types || [];
+				let postTypes = notification?.[option.triggerName]?.post_types || [];
 				if (checked) {
 					if (!postTypes.includes(key)) postTypes.push(key);
 				} else {
@@ -68,17 +64,11 @@ export default function Gov1Notification({
 	};
 
 	useEffect(() => {
-		const allSelected = Object.values(options).every((option: any) =>
-			option.every((item: any) => item.selected)
-		);
+		const allSelected = Object.values(options).every((option: any) => option.every((item: any) => item.selected));
 		setAll(allSelected);
 	}, [options]);
 
-	const handleCategoryAllClick = (
-		checked: boolean,
-		categoryOptions: any,
-		title: string
-	) => {
+	const handleCategoryAllClick = (checked: boolean, categoryOptions: any, title: string) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -91,8 +81,7 @@ export default function Gov1Notification({
 			if (!option?.triggerName) {
 				return;
 			}
-			let postTypes =
-				notification?.[option.triggerName]?.post_types || [];
+			let postTypes = notification?.[option.triggerName]?.post_types || [];
 			if (checked) {
 				if (!postTypes.includes(title)) postTypes.push(title);
 			} else {
@@ -109,12 +98,7 @@ export default function Gov1Notification({
 		onSetNotification(notification);
 	};
 
-	const handleChange = (
-		categoryOptions: any,
-		checked: boolean,
-		value: string,
-		title: string
-	) => {
+	const handleChange = (categoryOptions: any, checked: boolean, value: string, title: string) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -144,7 +128,8 @@ export default function Gov1Notification({
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -153,14 +138,14 @@ export default function Gov1Notification({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 							Gov 1 Notifications
 						</h3>
 						{!!active && (
 							<>
-								<span className='flex gap-[8px] items-center'>
+								<span className='flex items-center gap-[8px]'>
 									<Switch
 										size='small'
 										id='postParticipated'
@@ -170,7 +155,7 @@ export default function Gov1Notification({
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D]'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-blue-dark-medium'>All</p>
 								</span>
 							</>
 						)}
@@ -188,43 +173,49 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider
+							className='border-[2px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark md:hidden'
+							dashed
+						/>
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.COUNCIL_MOTIONS]
-							}
+							categoryOptions={options[ProposalType.COUNCIL_MOTIONS]}
 							title='Council Motion'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-[#3B444F] md:pl-[48px] dark:border-separatorDark'
 							Icon={TipsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
-					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<Divider
+						className='border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+						dashed
+					/>
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.DEMOCRACY_PROPOSALS]
-							}
+							categoryOptions={options[ProposalType.DEMOCRACY_PROPOSALS]}
 							title='Proposal'
 							classname='md:basis-[50%]'
 							Icon={TreasuryProposalIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider
+							className='border-[2px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark md:hidden'
+							dashed
+						/>
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.TREASURY_PROPOSALS]
-							}
+							categoryOptions={options[ProposalType.TREASURY_PROPOSALS]}
 							title='Treasury Proposal'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-[#3B444F] md:pl-[48px] dark:border-separatorDark'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
-					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<Divider
+						className='border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+						dashed
+					/>
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.BOUNTIES]}
@@ -234,19 +225,23 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider
+							className='border-[2px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark md:hidden'
+							dashed
+						/>
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.CHILD_BOUNTIES]
-							}
+							categoryOptions={options[ProposalType.CHILD_BOUNTIES]}
 							title='Child Bounties'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-[#3B444F] md:pl-[48px] dark:border-separatorDark'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
-					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<Divider
+						className='border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+						dashed
+					/>
 					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.TIPS]}
@@ -256,13 +251,14 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider
+							className='border-[2px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark md:hidden'
+							dashed
+						/>
 						<GroupCheckbox
-							categoryOptions={
-								options[ProposalType.TECH_COMMITTEE_PROPOSALS]
-							}
+							categoryOptions={options[ProposalType.TECH_COMMITTEE_PROPOSALS]}
 							title='Tech Committee'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-[#3B444F] md:pl-[48px] dark:border-separatorDark'
 							Icon={TechCommiteeIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}

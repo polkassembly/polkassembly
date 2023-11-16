@@ -11,10 +11,10 @@ import { getKiltDidName } from './kiltDid';
  * @param  {String} address The web3 address
  * @param  {Boolean} getWeb3Name If true, it will return the web3 name formatted as w3n:${web3Name}. The on-chain username will be returned if there is no web3 name
  */
-export default async function getOnChainUsername(api:ApiPromise, address:string, getWeb3Name: boolean = false): Promise<string> {
-	if(getWeb3Name) {
+export default async function getOnChainUsername(api: ApiPromise, address: string, getWeb3Name: boolean = false): Promise<string> {
+	if (getWeb3Name) {
 		const web3Name = await getKiltDidName(api, address);
-		if(web3Name) return `w3n:${web3Name}`;
+		if (web3Name) return `w3n:${web3Name}`;
 	}
 
 	const accountInfo = await api.derive.accounts.info(address);

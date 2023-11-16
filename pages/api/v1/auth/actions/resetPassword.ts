@@ -15,13 +15,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const { userId, newPassword } = req.body;
 
-	if(!userId || !newPassword) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!userId || !newPassword) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	if(!isValidPassowrd(newPassword)) return res.status(400).json({ message: messages.PASSWORD_LENGTH_ERROR });
+	if (!isValidPassowrd(newPassword)) return res.status(400).json({ message: messages.PASSWORD_LENGTH_ERROR });
 
 	await authServiceInstance.ResetPassword(token, userId, newPassword);
 

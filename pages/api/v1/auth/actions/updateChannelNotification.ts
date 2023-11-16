@@ -12,20 +12,14 @@ import messages from '~src/auth/utils/messages';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { IUserNotificationSettings } from '~src/types';
 
-const channelArray =[
-	'telegram',
-	'discord',
-	'email',
-	'slack',
-	'element'
-];
+const channelArray = ['telegram', 'discord', 'email', 'slack', 'element'];
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const { channel, enabled } = req.body;
-	if (!channel || enabled===undefined) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!channel || enabled === undefined) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	// network_preferences should be {[index: string]: IUserNotificationTriggerPreferences}
 	if (!channelArray.includes(channel)) return res.status(400).json({ message: 'Invalid channel' });
@@ -44,21 +38,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const newNotificationSettings: IUserNotificationSettings = {
 		...(userData?.notification_preferences || {}),
-		channelPreferences:{
+		channelPreferences: {
 			...(userData?.notification_preferences?.channelPreferences || {}),
-			[channel]:{
+			[channel]: {
 				...(userData?.notification_preferences?.channelPreferences?.[channel] || {}),
-				enabled:enabled
+				enabled: enabled
 			}
 		}
 	};
 
-	await userRef.update({ notification_preferences: newNotificationSettings }).then(() => {
-		return res.status(200).json({ message: 'Success' });
-	}).catch((error) => {
-		console.error('Error updating network preferences: ', error);
-		return res.status(500).json({ message: 'Error updating  network preferences' });
-	});
+	await userRef
+		.update({ notification_preferences: newNotificationSettings })
+		.then(() => {
+			return res.status(200).json({ message: 'Success' });
+		})
+		.catch((error) => {
+			console.error('Error updating network preferences: ', error);
+			return res.status(500).json({ message: 'Error updating  network preferences' });
+		});
 }
 
 export default withErrorHandling(handler);

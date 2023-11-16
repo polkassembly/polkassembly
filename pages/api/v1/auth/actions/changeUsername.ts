@@ -16,12 +16,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 
 	const { username } = req.body;
 
-	if( !username ) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!username) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
-	if(!token) return res.status(400).json({ message: 'Invalid token' });
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-	if(!isValidUsername(username)) return res.status(400).json({ message: messages.USERNAME_INVALID_ERROR });
+	if (!isValidUsername(username)) return res.status(400).json({ message: messages.USERNAME_INVALID_ERROR });
 
 	const updatedJWT = await authServiceInstance.ChangeUsername(token, username);
 

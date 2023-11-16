@@ -3,15 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { DislikeFilled, LeftOutlined, LikeFilled, LoadingOutlined, RightOutlined } from '@ant-design/icons';
-import { Pagination, PaginationProps, Spin, Table } from 'antd';
+import { PaginationProps, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import Link from 'next/link';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { Pagination } from '~src/ui-components/Pagination';
 
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -19,12 +20,12 @@ import { getBlockLink } from '~src/util/subscanCheck';
 
 interface ICouncilVotesProps {
 	address: string;
-	className?: string
+	className?: string;
 }
 
 const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const { className, address } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [votesHistory, setVotesHistory] = useState<IVoteHistory[]>([]);
@@ -33,42 +34,52 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 
 	const url = getBlockLink(network);
 
-	const columns : ColumnsType<any> = [
+	const columns: ColumnsType<any> = [
 		{
-			dataIndex:'index',
+			dataIndex: 'index',
 			key: 'index',
 			render: (index, obj) => {
 				return (
 					<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(obj.proposalType) as any)}/${index}`}>
-						<div className='text-sidebarBlue'>{obj.type} #{index}</div>
+						<div className='text-sidebarBlue'>
+							{obj.type} #{index}
+						</div>
 					</Link>
 				);
 			},
-			title:'Proposals'
+			title: 'Proposals'
 		},
 		{
-			dataIndex:'blockNumber',
+			dataIndex: 'blockNumber',
 			key: 'block',
 			render: (block) => (
-				<a target='_blank' href={`${url}${block}`} rel="noreferrer">
+				<a
+					target='_blank'
+					href={`${url}${block}`}
+					rel='noreferrer'
+				>
 					<div className='text-sidebarBlue'>#{block}</div>
 				</a>
 			),
-			title:'Block'
+			title: 'Block'
 		},
 		{
-			dataIndex:'decision',
+			dataIndex: 'decision',
 			key: 'decision',
 			render: (decision) => (
 				<>
-					{decision === 'yes' ? <div className='flex items-center'>
-						<LikeFilled className='text-green_primary' /> <span className='text-green_primary ml-2'>Aye</span>
-					</div> : <div className='flex items-center'>
-						<DislikeFilled className='text-red_primary' /> <span className='text-red_primary ml-2'>Nay</span>
-					</div>}
+					{decision === 'yes' ? (
+						<div className='flex items-center'>
+							<LikeFilled className='text-green_primary' /> <span className='ml-2 text-green_primary'>Aye</span>
+						</div>
+					) : (
+						<div className='flex items-center'>
+							<DislikeFilled className='text-red_primary' /> <span className='ml-2 text-red_primary'>Nay</span>
+						</div>
+					)}
 				</>
 			),
-			title:'Vote'
+			title: 'Vote'
 		}
 	];
 
@@ -97,33 +108,47 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	return (
 		<div className={`${className}`}>
 			{error ? <ErrorState errorMessage={error} /> : null}
-			<Spin spinning={loading} indicator={<LoadingOutlined />}>
-				{
-					votesHistory.length > 0?
-						<div>
-							<Table dataSource={votesHistory} columns={columns} pagination={false} />
-							<div className='flex justify-end mt-6 bg-white z-10'>
-								<Pagination
-									size="small"
-									defaultCurrent={1}
-									current={currentPage}
-									onChange={onChange}
-									total={count}
-									showSizeChanger={false}
-									pageSize={VOTES_LISTING_LIMIT}
-									responsive={true}
-									hideOnSinglePage={true}
-									nextIcon={<div className={`ml-1 ${currentPage > Math.floor(((count || 0) / VOTES_LISTING_LIMIT))? 'text-grey_secondary': ''}`}><RightOutlined /></div>}
-									prevIcon={<div className={`mr-1 ${currentPage <= 1? 'text-grey_secondary': ''}`}><LeftOutlined /></div>}
-								/>
-							</div>
+			<Spin
+				spinning={loading}
+				indicator={<LoadingOutlined />}
+			>
+				{votesHistory.length > 0 ? (
+					<div>
+						<Table
+							dataSource={votesHistory}
+							columns={columns}
+							pagination={false}
+						/>
+						<div className='z-10 mt-6 flex justify-end bg-white dark:bg-section-dark-overlay'>
+							<Pagination
+								size='small'
+								defaultCurrent={1}
+								current={currentPage}
+								onChange={onChange}
+								total={count}
+								showSizeChanger={false}
+								pageSize={VOTES_LISTING_LIMIT}
+								responsive={true}
+								hideOnSinglePage={true}
+								nextIcon={
+									<div className={`ml-1 ${currentPage > Math.floor((count || 0) / VOTES_LISTING_LIMIT) ? 'text-grey_secondary' : ''}`}>
+										<RightOutlined />
+									</div>
+								}
+								prevIcon={
+									<div className={`mr-1 ${currentPage <= 1 ? 'text-grey_secondary' : ''}`}>
+										<LeftOutlined />
+									</div>
+								}
+							/>
 						</div>
-						: <PostEmptyState />
-				}
+					</div>
+				) : (
+					<PostEmptyState />
+				)}
 			</Spin>
 		</div>
 	);
-
 };
 
 export default styled(CouncilVotes)`

@@ -175,7 +175,7 @@ const VoterRow: FC<IVoterRow> = ({
 						)}
 					</div>
 				) : (
-					<div className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}>
+					<div className={`${isUsedInVotedModal ? '-ml-1' : ''} w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}>
 						{voteDecision === 'Nye' && (
 							<div className='flex gap-x-2'>
 								<DislikeFilled className='text-[red]' />
@@ -199,11 +199,15 @@ const VoterRow: FC<IVoterRow> = ({
 
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
-						<div className={`w-[120px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[160px]' : ''} text-bodyBlue dark:text-blue-dark-high`}>
+						<div
+							className={`${isUsedInVotedModal && voteData?.decision === 'abstain' ? '-ml-7' : ''} w-[120px] overflow-ellipsis ${
+								voteData?.decision === 'abstain' ? 'w-[160px]' : ''
+							} text-bodyBlue dark:text-blue-dark-high`}
+						>
 							{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{voteData?.decision !== 'abstain' && (
-							<div className={'w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'}>
+							<div className={`${isUsedInVotedModal && voteData?.decision !== 'abstain' ? 'ml-3' : ''} w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high`}>
 								{`${voteData.lockPeriod === 0 ? '0.1' : voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}`}
 							</div>
 						)}
@@ -215,7 +219,7 @@ const VoterRow: FC<IVoterRow> = ({
 				)}
 
 				{(voteData.totalVotingPower || voteData.votingPower) && (
-					<div className='w-[90px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'>
+					<div className={`${isUsedInVotedModal && voteData?.decision === 'abstain' ? 'ml-[72px]' : ''} w-[90px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high`}>
 						{parseBalance(
 							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (BigInt(voteData?.balance?.abstain || 0) / BigInt(10)).toString(),
 							2,

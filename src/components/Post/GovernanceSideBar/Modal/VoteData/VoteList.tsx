@@ -54,6 +54,7 @@ interface IVotersListProps {
 	thresholdData?: any;
 	tally?: any;
 	isUsedInVotedModal?: boolean;
+	delegationAddress?: string | null;
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -80,7 +81,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	// const { className, referendumId, voteType, thresholdData, tally } = props;
-	const { className, referendumId, voteType, tally, isUsedInVotedModal } = props;
+	const { className, referendumId, voteType, tally, isUsedInVotedModal, delegationAddress } = props;
 	const { api, apiReady } = useApiContext();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
@@ -346,7 +347,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										{combinedVotes &&
 											!!combinedVotes.length &&
 											combinedVotes
-												.filter((voteData) => voteData.voter === currentUser.delegationDashboardAddress)
+												.filter((voteData) => voteData.voter === delegationAddress)
 												.map((voteData: any, index: number) => (
 													<VoterRow
 														className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === combinedVotes.length - 1 ? 'border-b' : ''}`}

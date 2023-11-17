@@ -37,7 +37,7 @@ interface Props {
 	onWalletUpdate?: () => void;
 }
 
-const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, setDisplayWeb2, isModal, setSignupOpen, setLoginOpen }) => {
+const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setSignupOpen, setLoginOpen }) => {
 	const [error, setErr] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [address, setAddress] = useState<string>('');
@@ -189,8 +189,6 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, setDisplayWeb
 		onWalletUpdate?.();
 	};
 
-	const handleToggle = () => setDisplayWeb2();
-
 	return (
 		<article className='flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay'>
 			<div className='mb-1 mt-1 flex items-center'>
@@ -295,29 +293,21 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, setDisplayWeb
 											linkAddressTextDisabled
 										/>
 									</div>
-									<div className='flex items-center justify-center'>
+									<div className='mb-6 flex items-center justify-center gap-x-2'>
+										<Button
+											className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+											onClick={() => handleBackToLogin()}
+										>
+											Go Back
+										</Button>
 										<Button
 											disabled={loading}
 											htmlType='submit'
 											size='large'
-											className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
+											className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
 										>
 											Sign-up
 										</Button>
-									</div>
-									<div>
-										<Divider>
-											<div className='flex items-center gap-x-2'>
-												<span className='text-md text-grey_primary'>Or</span>
-												<Button
-													className='text-md border-none p-0 font-semibold text-pink_primary outline-none'
-													disabled={loading}
-													onClick={handleToggle}
-												>
-													Sign-up with Username
-												</Button>
-											</div>
-										</Divider>
 									</div>
 								</>
 							)

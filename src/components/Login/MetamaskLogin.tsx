@@ -97,7 +97,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 	}
 };
 
-const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLoginOpen, setSignupOpen, onWalletUpdate }) => {
+const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSignupOpen, onWalletUpdate }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -384,8 +384,6 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 		}
 	};
 
-	const handleToggle = () => setDisplayWeb2();
-
 	const handleBackToLogin = (): void => {
 		onWalletUpdate?.();
 	};
@@ -525,7 +523,13 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 												}
 											/>
 										)}
-										<div className='flex items-center justify-center'>
+										<div className='flex items-center justify-center gap-x-2'>
+											<Button
+												className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+												onClick={() => handleBackToLogin()}
+											>
+												Go Back
+											</Button>
 											<Button
 												loading={loading}
 												htmlType='submit'
@@ -535,20 +539,6 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 												Login
 											</Button>
 										</div>
-										<div>
-											<Divider>
-												<div className='flex items-center gap-x-2'>
-													<span className='text-md text-grey_primary'>Or</span>
-													<Button
-														className='text-md border-none p-0 font-semibold text-pink_primary outline-none'
-														disabled={loading}
-														onClick={handleToggle}
-													>
-														Login with Username
-													</Button>
-												</div>
-											</Divider>
-										</div>
 									</>
 								)
 							)}
@@ -556,8 +546,8 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 						</AuthForm>
 					)}
 
-					{!authResponse.isTFAEnabled && (
-						<div className='my-6 flex items-center justify-center'>
+					{!!chosenWallet && !accounts.length && (
+						<div className='mb-6 mt-4 flex items-center justify-center'>
 							<Button
 								className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 								onClick={() => handleBackToLogin()}

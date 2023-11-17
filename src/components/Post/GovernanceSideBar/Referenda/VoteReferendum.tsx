@@ -56,6 +56,7 @@ interface Props {
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
 	address: string;
+	theme?: string;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -974,5 +975,8 @@ export default React.memo(styled(VoteReferendum)`
 	}
 	.vote-referendum .ant-segmented-item {
 		padding: 0px !important;
+	}
+	.dark .ant-segmented-group label {
+		background-color: transparent !important;
 	}
 `);

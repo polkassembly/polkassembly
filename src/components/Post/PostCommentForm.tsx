@@ -108,7 +108,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			return (
 				<Button
 					disabled={disabled}
-					className={`${disabled && 'opacity-50'} emoji-button hover:bg-baby_pink mb-[4px] h-10 w-10 border-solid p-0 pt-1 text-2xl`}
+					className={`${disabled && 'opacity-50'} emoji-button hover:bg-baby_pink mb-[4px] h-10 w-10 border-solid p-0 pt-1 text-2xl dark:bg-transparent`}
 					onClick={() => {
 						clickable && handleEmojiClick(icon, currentSentiment);
 					}}
@@ -360,7 +360,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 											<div className='flex'>
 												{showEmojiMenu && (
 													<div
-														className='absolute right-[77px] top-[-55px] -mt-1 flex h-[50px] w-[234px] space-x-1 p-2 pb-12 pt-[7px]'
+														className='absolute right-[77px] top-[-55px] -mt-1 flex h-[50px] w-[234px] space-x-1 p-2 pb-12 pt-[7px] dark:bg-black'
 														style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
 													>
 														<EmojiOption

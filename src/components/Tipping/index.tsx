@@ -126,7 +126,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 			getKiltDidAccounts();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [receiverAddress, network]);
+	}, [receiverAddress, network, api, apiReady]);
 
 	const getUserProfile = async () => {
 		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${paUsername}`);
@@ -375,8 +375,9 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 													address={userAddress}
 													key={userAddress}
 													disableTooltip
-													displayInline
 													disableAddressClick
+													showKiltAddress
+													displayInline={network !== 'kilt'}
 												/>
 											),
 											value: userAddress

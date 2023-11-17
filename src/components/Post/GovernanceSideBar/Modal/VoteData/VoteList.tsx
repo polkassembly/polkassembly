@@ -23,7 +23,7 @@ import DelegationVotersList from './DelegateVoteList';
 // import GraphExpandIcon from '~assets/graph-expand.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
@@ -69,7 +69,6 @@ const sortedCheck = {
 
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
-	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const {
 		postData: { statusHistory }

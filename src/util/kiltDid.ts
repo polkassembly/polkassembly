@@ -29,6 +29,5 @@ export async function getKiltDidLinkedAccounts(api: ApiPromise, lookupAccountAdd
 		return undefined;
 	}
 
-	console.log(didDetails.toHuman().serviceEndpoints)
 	return didDetails.toHuman().accounts || [];
 }

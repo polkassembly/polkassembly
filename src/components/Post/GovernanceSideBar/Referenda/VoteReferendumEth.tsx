@@ -36,6 +36,7 @@ import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 
@@ -79,6 +80,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
 	const [successModal, setSuccessModal] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
+	const currentUser = useUserDetailsSelector();
 
 	const convictionOpts = useMemo(() => {
 		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
@@ -240,6 +242,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	};
 
 	const handleSubmit = async (aye: boolean) => {
+		// GAEvent for proposal voting
+		trackEvent('proposal_voting', 'voted_proposal', {
+			balance: lockedBalance,
+			conviction: conviction,
+			decision: vote,
+			isWeb3Login: currentUser?.web3signup,
+			postId: referendumId,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
+
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
 			return;

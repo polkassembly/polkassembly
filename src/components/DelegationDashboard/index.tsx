@@ -37,11 +37,11 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 	useEffect(() => {
 		if (!window) return;
-		if (window.innerWidth < 768) {
-			setIsMobile(true);
+		setIsMobile(window.innerWidth < 768);
+		setOpenLoginModal(!(isMobile && isLoggedOut));
+		if (!isLoggedOut) {
+			setOpenLoginModal(false);
 		}
-		isMobile ? isLoggedOut && setOpenLoginModal(false) : isLoggedOut && setOpenLoginModal(true);
-		!isLoggedOut && setOpenLoginModal(false);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMobile, userDetails]);

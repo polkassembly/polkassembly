@@ -61,6 +61,7 @@ const News: FC<Props> = ({ data, error, network }) => {
 		<>
 			<SEOHead
 				title='News'
+				desc='Stay informed and up-to-date on the latest developments in decentralized governance with the news page on Polkassembly'
 				network={network}
 			/>
 			<div className='h-full w-full'>

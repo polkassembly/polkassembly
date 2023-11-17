@@ -2,13 +2,26 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { trackEvent } from 'analytics';
 import { Result } from 'antd';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import NothingFoundSVG from '~assets/nothing-found.svg';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const NotFound = () => {
+	const currentUser = useUserDetailsSelector();
+
+	useEffect(() => {
+		// GAEvent for page not found
+		trackEvent('page_not_found', 'error_404', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<Result
 			icon={

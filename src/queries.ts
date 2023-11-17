@@ -211,6 +211,9 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     preimage {
       method
       proposer
+      proposedCall {
+        args
+      }
     }
     index
     end

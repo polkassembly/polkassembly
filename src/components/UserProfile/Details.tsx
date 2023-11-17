@@ -220,8 +220,8 @@ const Details: FC<IDetailsProps> = (props) => {
 			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
 		};
 	}, [addresses, api, apiReady]);
-	const { nickname, display, legal } = onChainIdentity;
-	const newUsername = display || legal || nickname || username;
+	const { nickname, displayParent, display, legal } = onChainIdentity;
+	const newUsername = displayParent || display || legal || nickname || username;
 	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const { network } = useNetworkSelector();

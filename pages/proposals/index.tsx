@@ -78,6 +78,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 			<SEOHead
 				title='Proposals'
 				network={network}
+				desc='Discover and review the latest proposals for managing and allocating our treasury funds, and have your voice heard in the decision-making process using Polkassembly.'
 			/>
 			<div className='mt-3 flex items-center'>
 				<ProposalsIconListing className='-mt-3.5 text-lightBlue dark:text-icon-dark-inactive' />

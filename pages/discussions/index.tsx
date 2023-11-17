@@ -108,6 +108,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 		<>
 			<SEOHead
 				title='Discussions'
+				desc="Welcome to Polkassembly's discussion page! Engage in meaningful and respectful dialogue on a variety of topics relevant to our community. We look forward to hearing your thoughts and ideas about governance!"
 				network={network}
 			/>
 

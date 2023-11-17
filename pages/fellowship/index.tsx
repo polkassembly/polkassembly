@@ -33,6 +33,7 @@ const FellowshipMembers = (props: { network: string }) => {
 		<>
 			<SEOHead
 				title='Fellowship'
+				desc='Meet the accomplished and dedicated members of our fellowship program, who are dedicated to promoting and advancing the goals of the community.'
 				network={props.network}
 			/>
 			<h1 className='dashboard-heading mb-4 dark:text-white md:mb-6'>Fellowship</h1>

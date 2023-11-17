@@ -9,24 +9,33 @@ import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-post
 import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import styled from 'styled-components';
 import { redisGet, redisSet } from '~src/auth/redis';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import IdentityCaution from '~assets/icons/identity-caution.svg';
+import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
@@ -42,18 +51,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
-		if (redisData){
+		if (redisData) {
 			const props = JSON.parse(redisData);
-			if(!props.error){
+			if (!props.error) {
 				return { props };
 			}
 		}
 	}
 	const networkSocialsData = await getNetworkSocials({ network });
 
-	if(!networkTrackInfo[network]) {
+	if (!networkTrackInfo[network]) {
 		return { props: { error: 'Network does not support OpenGov yet.' } };
 	}
 
@@ -71,10 +83,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	};
 
 	for (const trackName of Object.keys(networkTrackInfo[network])) {
-		fetches [trackName as keyof typeof fetches] =  getLatestActivityOnChainPosts({
+		fetches[trackName as keyof typeof fetches] = getLatestActivityOnChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network,
-			proposalType: networkTrackInfo[network][trackName]?.fellowshipOrigin? ProposalType.FELLOWSHIP_REFERENDUMS: ProposalType.OPEN_GOV,
+			proposalType: networkTrackInfo[network][trackName]?.fellowshipOrigin ? ProposalType.FELLOWSHIP_REFERENDUMS : ProposalType.OPEN_GOV,
 			trackNo: networkTrackInfo[network][trackName].trackId
 		});
 	}
@@ -97,42 +109,85 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		networkSocialsData
 	};
 
-	if(process.env.IS_CACHING_ALLOWED == '1'){
-		await redisSet(`${network}_latestActivity_OpenGov`,JSON.stringify(props));
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		await redisSet(`${network}_latestActivity_OpenGov`, JSON.stringify(props));
 	}
 
 	return { props };
 };
 
-const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Props) => {
-	const { setNetwork } = useNetworkContext();
-	// const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
-	// const [floatButtonOpen , setFloatButtonOpen] = useState(false);
+const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
+	const dispatch = useDispatch();
+	const { api, apiReady } = useApiContext();
+	const { id: userId } = useUserDetailsSelector();
+	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
-		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+		dispatch(setNetwork(network));
+		if (!api || !apiReady) return;
+
+		let unsubscribe: () => void;
+		const address = localStorage.getItem('identityAddress');
+		const identityForm = localStorage.getItem('identityForm');
+
+		const encoded_addr = address ? getEncodedAddress(address, network) : '';
+		if (!identityForm || !JSON.parse(identityForm)?.setIdentity) return;
+
+		api.derive.accounts
+			.info(encoded_addr, (info: DeriveAccountInfo) => {
+				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
+				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
+				if (!(judgementProvided || !info?.identity?.judgements?.length)) {
+					localStorage.removeItem('identityForm');
+				}
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => console.error(e));
+
+		return () => unsubscribe && unsubscribe();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, api, apiReady, userId]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
 		<>
-			<SEOHead title='OpenGov' network={network}/>
-			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
-			<div className="mt-6 mx-1">
-				{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData?.data} showGov2Links />}
+			<SEOHead
+				title='OpenGov'
+				desc={`Join the future of blockchain with ${network}'s revolutionary governance system on Polkassembly`}
+				network={network}
+			/>
+			<div className='mr-2 flex justify-between'>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
+				{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+					<div className='flex items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
+						<IdentityCaution />
+						<span className='ml-2'>Social verification incomplete</span>
+					</div>
+				)}
+			</div>
+			<div className='mx-1 mt-6'>
+				{networkSocialsData && (
+					<AboutNetwork
+						networkSocialsData={networkSocialsData?.data}
+						showGov2Links
+					/>
+				)}
 			</div>
 
-			<div className="mt-8 mx-1">
-				<TreasuryOverview />
+			<div className='mx-1 mt-8'>
+				<TreasuryOverview theme={theme} />
 			</div>
 
-			<div className="mt-8 mx-1">
+			<div className='mx-1 mt-8'>
 				<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
 			</div>
 
-			<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
+			<div className='mx-1 mt-8 flex flex-col items-center justify-between gap-4 xl:flex-row'>
 				<div className='w-full xl:w-[60%]'>
 					<UpcomingEvents />
 				</div>
@@ -141,30 +196,26 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 					<News twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
-
-			{/* <AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} /> */}
-
 		</>
 	);
 };
 
 export default styled(Gov2Home)`
-.docsbot-wrapper {
-	z-index:1 !important;
-	margin-left:250px;
-	pointer-events: none !important;
-}
-  .floating-button{
-	display:none !important;
-}
-.docsbot-chat-inner-container{
-	z-index:1 !important;
-	margin-right:250px !important;
-	pointer-events: none !important;
-	background-color:red;
-
-}
-.ant-float-btn-group-circle {
-	display:none !important;
-}
+	.docsbot-wrapper {
+		z-index: 1 !important;
+		margin-left: 250px;
+		pointer-events: none !important;
+	}
+	.floating-button {
+		display: none !important;
+	}
+	.docsbot-chat-inner-container {
+		z-index: 1 !important;
+		margin-right: 250px !important;
+		pointer-events: none !important;
+		background-color: red;
+	}
+	.ant-float-btn-group-circle {
+		display: none !important;
+	}
 `;

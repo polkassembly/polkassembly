@@ -17,8 +17,8 @@ interface IPostReactionBarProps {
 
 const PostReactionBar: FC<IPostReactionBarProps> = ({ className, post_reactions }) => {
 	const [reactionsDisabled, setReactionsDisabled] = useState<boolean>(false);
-	const [openLikeModal,setLikeModalOpen]=useState<boolean>(false);
-	const [openDislikeModal,setDislikeModalOpen]=useState<boolean>(false);
+	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
+	const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
 	const [reactions, setReactions] = useState<IReactions>(post_reactions!);
 	if (!post_reactions) {
 		return null;
@@ -35,23 +35,27 @@ const PostReactionBar: FC<IPostReactionBarProps> = ({ className, post_reactions 
 							setReactionsDisabled={setReactionsDisabled}
 							setLikeModalOpen={setLikeModalOpen}
 							setDislikeModalOpen={setDislikeModalOpen}
-							setReactions={setReactions}/>
+							setReactions={setReactions}
+							isReactionButtonInPost={true}
+						/>
 					</div>
 				);
 			})}
 			<ReferendaLoginPrompts
 				modalOpen={openLikeModal}
 				setModalOpen={setLikeModalOpen}
-				image="/assets/referenda-like-dislike.png"
-				title="Join Polkassembly to Like this proposal."
-				subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
+				image='/assets/referenda-like-dislike.png'
+				title='Join Polkassembly to Like this proposal.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+			/>
 
 			<ReferendaLoginPrompts
 				modalOpen={openDislikeModal}
 				setModalOpen={setDislikeModalOpen}
-				image="/assets/referenda-like-dislike.png"
-				title="Join Polkassembly to Dislike this proposal."
-				subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
+				image='/assets/referenda-like-dislike.png'
+				title='Join Polkassembly to Dislike this proposal.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+			/>
 		</div>
 	);
 };

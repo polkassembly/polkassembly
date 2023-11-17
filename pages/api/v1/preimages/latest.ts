@@ -13,30 +13,30 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 
 export interface IPreimageData {
-    hash: string;
-    deposit: string;
-    createdAtBlock: number;
-    length: number;
-    method: string;
-    proposedCall: any;
-    proposer: string;
-    section: string;
-    status: string;
-    message?: string;
+	hash: string;
+	deposit: string;
+	createdAtBlock: number;
+	length: number;
+	method: string;
+	proposedCall: any;
+	proposer: string;
+	section: string;
+	status: string;
+	message?: string;
 }
 
-interface IPrams{
-  hash: string;
-  network: string;
+interface IPrams {
+	hash: string;
+	network: string;
 }
-export async function getLatestPreimage(params:IPrams ): Promise<IApiResponse<IPreimageData | MessageType>> {
-	const { hash , network } = params;
+export async function getLatestPreimage(params: IPrams): Promise<IApiResponse<IPreimageData | MessageType>> {
+	const { hash, network } = params;
 
 	try {
-		if(!network || !isValidNetwork(network)) {
+		if (!network || !isValidNetwork(network)) {
 			throw apiErrorWithStatusCode('Invalid network in request header', 400);
 		}
-		if(!hash) {
+		if (!hash) {
 			throw apiErrorWithStatusCode('Invalid hash', 400);
 		}
 		const subsquidRes = await fetchSubsquid({
@@ -70,21 +70,21 @@ export async function getLatestPreimage(params:IPrams ): Promise<IApiResponse<IP
 	}
 }
 
-const handler: NextApiHandler<IPreimageData | MessageType > = async (req, res) => {
+const handler: NextApiHandler<IPreimageData | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	const { hash } = req.query;
-	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
-	if(!hash) return res.status(400).json({ message: 'Invalid hash' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!hash) return res.status(400).json({ message: 'Invalid hash' });
 
 	const { data, error, status } = await getLatestPreimage({
 		hash: String(hash),
 		network
 	});
 
-	if(error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
-	}else {
-		res.status(status).json(data);
+	if (error || !data) {
+		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+	} else {
+		return res.status(status).json(data);
 	}
 };
 export default withErrorHandling(handler);

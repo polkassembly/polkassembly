@@ -8,42 +8,41 @@ import { DiscordIcon, EmailIcon, RiotIcon, TelegramIcon, TwitterIcon } from '~sr
 
 interface ISocialIconProps {
 	type: ESocialType;
-  className?: string;
+	className?: string;
 }
 
 export const SocialIcon: FC<ISocialIconProps> = (props) => {
-	switch(props.type) {
-	case ESocialType.EMAIL:
-		return <EmailIcon className={props.className} />;
-	case ESocialType.RIOT:
-		return <RiotIcon className={props.className}  />;
-	case ESocialType.TWITTER:
-		return <TwitterIcon className={props.className}  />;
-	case ESocialType.TELEGRAM:
-		return <TelegramIcon className={props.className}  />;
-	case ESocialType.DISCORD:
-		return <DiscordIcon className={props.className} />;
-	default:
-		return <></>;
+	switch (props.type) {
+		case ESocialType.EMAIL:
+			return <EmailIcon className={props.className} />;
+		case ESocialType.RIOT:
+			return <RiotIcon className={props.className} />;
+		case ESocialType.TWITTER:
+			return <TwitterIcon className={props.className} />;
+		case ESocialType.TELEGRAM:
+			return <TelegramIcon className={props.className} />;
+		case ESocialType.DISCORD:
+			return <DiscordIcon className={props.className} />;
+		default:
+			return <></>;
 	}
 };
 
-interface ISocialLink extends ISocial{
+interface ISocialLink extends ISocial {
 	className?: string;
 	disable?: boolean;
-  iconClassName?: string;
+	iconClassName?: string;
 }
 
 const SocialLink: FC<ISocialLink> = (props) => {
 	const { link: handle, className, type, disable, iconClassName } = props;
 
-	function getSocialLink(handle:any) {
+	function getSocialLink(handle: any) {
 		let username = '';
 		if (handle.startsWith('https://')) {
 			const url = new URL(handle);
 			username = url.pathname.split('/')[1];
-		}
-		else {
+		} else {
 			username = handle;
 		}
 		return username;
@@ -51,38 +50,50 @@ const SocialLink: FC<ISocialLink> = (props) => {
 	const userName = getSocialLink(handle);
 	let link = '';
 	switch (type) {
-	case ESocialType.TWITTER:
-		link = `https://twitter.com/${userName}`;
-		break;
-	case ESocialType.TELEGRAM:
-		link = `https:/t.me/${userName}`;
-		break;
-	case ESocialType.EMAIL:
-		link = `mailto:${handle}`;
-		break;
-	case ESocialType.RIOT:
-		link = `https://riot.im/app/#/user/${userName}`;
-		break;
-	case ESocialType.DISCORD:
-		link = `https://discordapp.com/users/${userName}`;
-		break;
+		case ESocialType.TWITTER:
+			link = `https://twitter.com/${userName}`;
+			break;
+		case ESocialType.TELEGRAM:
+			link = `https://t.me/${userName}`;
+			break;
+		case ESocialType.EMAIL:
+			link = `mailto:${handle}`;
+			break;
+		case ESocialType.RIOT:
+			link = `https://riot.im/app/#/user/${userName}`;
+			break;
+		case ESocialType.DISCORD:
+			link = `https://discordapp.com/users/${userName}`;
+			break;
 	}
 
 	return (
 		<>
-			{
-				disable?
-					<span className={`${className} cursor-not-allowed opacity-60`}>
-						<SocialIcon type={type}  className={iconClassName} />
-					</span>
-					: <a
-						href={link} target='_blank'
-						rel='noreferrer'
-						className={className}
-					>
-						<SocialIcon type={type} className={iconClassName} />
-					</a>
-			}
+			{disable ? (
+				<span className={`${className} cursor-not-allowed opacity-60`}>
+					<SocialIcon
+						type={type}
+						className={iconClassName}
+					/>
+				</span>
+			) : (
+				<a
+					href={link}
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						window.open(link, '_blank');
+					}}
+					target='_blank'
+					rel='noreferrer'
+					className={className}
+				>
+					<SocialIcon
+						type={type}
+						className={iconClassName}
+					/>
+				</a>
+			)}
 		</>
 	);
 };

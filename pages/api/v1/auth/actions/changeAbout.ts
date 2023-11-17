@@ -5,6 +5,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType, ProfileDetails } from '~src/auth/types';
 import getUserFromUserId from '~src/auth/utils/getUserFromUserId';
@@ -17,10 +18,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { address, title, description, image = '', signature, wallet } = req.body;
-	if(!address || !title || !description || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!address || !title || !description || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const signMessage = `<Bytes>about::network:${network}|address:${address}|title:${title}|description:${description}|image:${image}</Bytes>`;
 
@@ -37,11 +38,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const firestore = firebaseAdmin.firestore();
 	const addressDoc = await firestore.collection('addresses').doc(address).get();
-	if(!addressDoc.exists){
-		const signMessage  = await authServiceInstance.AddressSignupStart(address);
+	if (!addressDoc.exists) {
+		const signMessage = await authServiceInstance.AddressSignupStart(address);
 		const { user_id } = await authServiceInstance.AddressSignupConfirm(network, address, signMessage, wallet as Wallet);
 		userId = user_id!;
-	}else {
+	} else {
 		userId = addressDoc.data()?.user_id;
 		const user = await getUserFromUserId(userId);
 		const oldProfile = user.profile;
@@ -55,13 +56,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const userRef = firestore.collection('users').doc(String(userId));
 
 	//update profile field in userRef
-	userRef.update({ profile: newProfile }).then(() => {
-		return res.status(200).json({ message: 'Profile updated.' });
-	}).catch((error) => {
-		// The document probably doesn't exist.
-		console.error('Error updating document: ', error);
-		return res.status(500).json({ message: 'Error updating profile' });
-	});
+	userRef
+		.update({ profile: newProfile })
+		.then(() => {
+			return res.status(200).json({ message: 'Profile updated.' });
+		})
+		.catch((error) => {
+			// The document probably doesn't exist.
+			console.error('Error updating document: ', error);
+			return res.status(500).json({ message: 'Error updating profile' });
+		});
 }
 
 export default withErrorHandling(handler);

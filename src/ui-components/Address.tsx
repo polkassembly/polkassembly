@@ -206,6 +206,7 @@ const Address = (props: Props) => {
 		const web3Name = await getKiltDidName(api, address);
 		setKiltName(web3Name ? `w3n:${web3Name}` : '');
 	};
+
 	const handleFlags = () => {
 		if (!api || !apiReady) return;
 
@@ -384,7 +385,6 @@ const Address = (props: Props) => {
 			</Tooltip>
 			{!TippingUnavailableNetworks.includes(network) && (
 				<Tipping
-					receiverAddress={address}
 					username={addressPrefix}
 					open={openTipping}
 					setOpen={setOpenTipping}

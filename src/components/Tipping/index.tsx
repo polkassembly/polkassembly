@@ -3,10 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Form, Input, Modal, Select, Spin } from 'antd';
-import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
 import BN from 'bn.js';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import { poppins } from 'pages/_app';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import styled from 'styled-components';
@@ -36,6 +37,9 @@ import Balance from '../Balance';
 import Address from '~src/ui-components/Address';
 import { useTheme } from 'next-themes';
 import DownArrow from '~assets/icons/down-icon.svg';
+import { getKiltDidLinkedAccounts } from '~src/util/kiltDid';
+import { setReceiver } from '~src/redux/Tipping';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -43,7 +47,6 @@ interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	className?: string;
-	receiverAddress: string;
 	username: string;
 	openAddressChangeModal: boolean;
 	setOpenAddressChangeModal: (pre: boolean) => void;
@@ -57,11 +60,13 @@ const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar';
 	{ key: 'fifteenDollar', value: 15 }
 ];
 
-const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
+const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress } = useUserDetailsSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const { receiverAddress } = useTippingDataSelector();
 	const { api, apiReady } = useApiContext();
+	const dispatch = useDispatch();
 	const [form] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>(loginAddress);
@@ -72,9 +77,9 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 	const disable = loadingStatus.isLoading || availableBalance.lte(tipAmount) || !address || tipAmount.eq(ZERO_BN);
 	const [remark, setRemark] = useState<string>('');
 	const [existentialDeposit, setExistentialDeposit] = useState<BN>(ZERO_BN);
+	const [kiltAccounts, setKiltAccounts] = useState<string[]>([]);
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
-	const dispatch = useDispatch();
 	const [userAddresses, setUserAddresses] = useState<string[]>([]);
 	const [beneficiaryAddress, setBeneficiaryAddress] = useState<string>(receiverAddress);
 	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
@@ -84,11 +89,50 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 		threeDollar: '0'
 	});
 
+	const filterDuplicateAddresses = (addresses: string[]) => {
+		const obj: any = {};
+		for (const address of addresses) {
+			const encodedAdd = getEncodedAddress(address, network) || '';
+			if (obj[encodedAdd] === undefined) {
+				obj[encodedAdd] = 1;
+			} else {
+				obj[encodedAdd] += 1;
+			}
+		}
+		const dataArr: string[] = [];
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const data = Object.entries(obj).forEach(([key]) => {
+			dataArr.push(key);
+		});
+		return dataArr;
+	};
+	const getKiltDidAccounts = async () => {
+		if (!api || !apiReady || !network) return;
+		const kiltAccounts = await getKiltDidLinkedAccounts(api, beneficiaryAddress || receiverAddress);
+		if (kiltAccounts) {
+			const linkedAccounts: string[] = [];
+			kiltAccounts.map((account: any) => {
+				Object.entries(account).forEach(([key, value]) => {
+					if (key === 'AccountId32') linkedAccounts.push(value as string);
+				});
+			});
+			setKiltAccounts(linkedAccounts);
+		}
+	};
+
+	useEffect(() => {
+		setBeneficiaryAddress(receiverAddress);
+		if (network === AllNetworks.KILT) {
+			getKiltDidAccounts();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [receiverAddress, network]);
+
 	const getUserProfile = async () => {
 		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${paUsername}`);
 		if (data) {
 			if (data?.addresses) {
-				setUserAddresses(data?.addresses);
+				setUserAddresses(data?.addresses || []);
 			}
 		}
 	};
@@ -97,7 +141,7 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 		if (!paUsername) return;
 		getUserProfile();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [paUsername]);
+	}, [paUsername, network]);
 
 	const handleTipChangeToDollar = (value: number) => {
 		const tip = value / Number(currentTokenPrice || 1);
@@ -135,18 +179,21 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 		e?.preventDefault();
 		e?.stopPropagation();
 		setTipAmount(ZERO_BN);
+		setBeneficiaryAddress('');
+		setUserAddresses([]);
 		setRemark('');
 		form.setFieldValue('balance', '');
 		setLoadingStatus({ isLoading: false, message: '' });
 		setOpen(false);
+		dispatch(setReceiver(''));
 	};
 
 	useEffect(() => {
 		setIsBalanceUpdated(false);
 		if (!api || !apiReady) return;
 
-		const deposit = api.consts?.balances?.existentialDeposit;
-		setExistentialDeposit(deposit || ZERO_BN);
+		const deposit = api?.consts?.balances?.existentialDeposit;
+		setExistentialDeposit(deposit);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginWallet, loginAddress, api, apiReady]);
 
@@ -311,17 +358,17 @@ const Tipping = ({ className, receiverAddress, open, setOpen, username, openAddr
 						</div>
 					</div>
 
-					{userAddresses.length > 1 && (
+					{filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 1 && (
 						<div className='mt-6 '>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Receiver Address</label>
 							<Select
 								placeholder='Select recriver address'
 								suffixIcon={<DownArrow />}
 								className={`flex h-full w-full items-center justify-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay ${className}`}
-								value={userAddresses.length > 0 ? beneficiaryAddress || receiverAddress : null}
+								value={filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 0 ? beneficiaryAddress || receiverAddress : null}
 								onChange={setBeneficiaryAddress}
 								options={
-									userAddresses?.map((userAddress) => {
+									filterDuplicateAddresses(userAddresses.concat(kiltAccounts))?.map((userAddress) => {
 										return {
 											label: (
 												<Address

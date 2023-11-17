@@ -62,7 +62,6 @@ const SEOHead = ({ title, desc, network }: Props) => {
 				content={title}
 			/>
 			<meta
-				// yaha change hoga
 				property='og:description'
 				content={descString}
 			/>

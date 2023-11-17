@@ -284,7 +284,19 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 						) : (
 							accounts.length > 0 && (
 								<>
-									<div className='my-5 flex items-center justify-center'>
+									<h3 className='flex flex-col gap-y-2 px-8 dark:text-blue-dark-medium'>
+										<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
+											<span className='mt-2'>
+												<WalletIcon which={chosenWallet} />
+											</span>
+											<span className='text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>
+												{chosenWallet === Wallet.SUBWALLET
+													? chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).split('-')[0]
+													: chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
+											</span>
+										</p>
+									</h3>
+									<div className='-mt-2 flex items-center justify-center'>
 										<AccountSelectionForm
 											title='Choose linked account'
 											accounts={accounts}

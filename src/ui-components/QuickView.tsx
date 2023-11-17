@@ -25,6 +25,8 @@ import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import CopyIcon from '~assets/icons/content_copy_small.svg';
 import WebIcon from '~assets/icons/web-icon.svg';
+import { useDispatch } from 'react-redux';
+import { setReceiver } from '~src/redux/Tipping';
 import { PolkaverseIcon } from './CustomIcons';
 
 export const TippingUnavailableNetworks = [
@@ -70,6 +72,7 @@ const QuickView = ({
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 	const [messageApi, contextHolder] = message.useMessage();
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
+	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const identityArr = [
 		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
@@ -90,6 +93,7 @@ const QuickView = ({
 			setOpenAddressChangeModal?.(true);
 		} else {
 			setOpenTipping?.(true);
+			dispatch(setReceiver(address));
 		}
 		setOpen(false);
 	};
@@ -206,9 +210,9 @@ const QuickView = ({
 										}}
 										title={`https://polkaverse.com/accounts/${address}`}
 										href={`https://polkaverse.com/accounts/${address}`}
-										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
+										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-xl'
 									>
-										<PolkaverseIcon className='text-2xl' />
+										<PolkaverseIcon />
 									</Link>
 								)}
 								{network.includes('kilt') && (

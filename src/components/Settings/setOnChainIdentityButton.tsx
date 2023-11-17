@@ -243,7 +243,7 @@ const SetOnChainIdentityButton = ({
 
 		if (validAddress) {
 			try {
-				api.query.identity.identityOf(submitWithAccount, (data: any) => setidentityOpt(data));
+				api?.query?.identity?.identityOf(submitWithAccount, (data: any) => setidentityOpt(data));
 			} catch (e) {
 				setidentityOpt(undefined);
 			}

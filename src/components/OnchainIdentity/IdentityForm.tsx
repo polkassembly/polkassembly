@@ -19,7 +19,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
-import VerifiedTick from '~assets/icons/verified-tick.svg';
+import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
@@ -439,7 +439,7 @@ const IdentityForm = ({
 						>
 							<Input
 								onBlur={() => getGasFee()}
-								addonAfter={email?.verified && alreadyVerifiedfields?.email === form?.getFieldValue('email') && <VerifiedTick />}
+								addonAfter={email?.verified && alreadyVerifiedfields?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
@@ -479,7 +479,7 @@ const IdentityForm = ({
 							<Input
 								onBlur={() => getGasFee()}
 								name='twitter'
-								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
+								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
 								value={twitter?.value}
 								placeholder='Enter your twitter name'
 								className='h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'

@@ -40,7 +40,9 @@ export default function SubscribedPosts({ onSetNotification, dispatch, options, 
 			const trigger = option.triggerPreferencesName;
 			let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
 			if (checked) {
-				if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+				if (!subTriggers.includes(trigger)) {
+					subTriggers = [...subTriggers, trigger];
+				}
 			} else {
 				subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
 			}
@@ -66,7 +68,7 @@ export default function SubscribedPosts({ onSetNotification, dispatch, options, 
 		const trigger = option.triggerPreferencesName;
 		let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
 		if (checked) {
-			if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+			if (!subTriggers.includes(trigger)) subTriggers = [...subTriggers, trigger];
 		} else {
 			subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
 		}

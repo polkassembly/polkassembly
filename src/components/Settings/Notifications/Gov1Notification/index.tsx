@@ -46,7 +46,7 @@ export default function Gov1Notification({ onSetNotification, userNotification, 
 				}
 				let postTypes = notification?.[option.triggerName]?.post_types || [];
 				if (checked) {
-					if (!postTypes.includes(key)) postTypes.push(key);
+					if (!postTypes.includes(key)) postTypes = [...postTypes, key];
 				} else {
 					postTypes = postTypes.filter((postType: string) => {
 						return postType !== key;
@@ -83,7 +83,7 @@ export default function Gov1Notification({ onSetNotification, userNotification, 
 			}
 			let postTypes = notification?.[option.triggerName]?.post_types || [];
 			if (checked) {
-				if (!postTypes.includes(title)) postTypes.push(title);
+				if (!postTypes.includes(title)) postTypes = [...postTypes, title];
 			} else {
 				postTypes = postTypes.filter((postType: string) => {
 					return postType !== title;
@@ -113,7 +113,7 @@ export default function Gov1Notification({ onSetNotification, userNotification, 
 		}
 		let postTypes = notification?.[option.triggerName]?.post_types || [];
 		if (checked) {
-			if (!postTypes.includes(title)) postTypes.push(title);
+			if (!postTypes.includes(title)) postTypes = [...postTypes, title];
 		} else {
 			postTypes = postTypes.filter((postType: string) => postType !== title);
 		}

@@ -58,7 +58,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 				}
 				let tracks = notification?.[option.triggerName]?.tracks || [];
 				if (checked) {
-					if (!tracks.includes(id)) tracks.push(id);
+					if (!tracks.includes(id)) tracks = [...tracks, id];
 				} else {
 					tracks = tracks.filter((track: number) => track !== id);
 				}
@@ -94,7 +94,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 			}
 			let tracks = notification?.[option.triggerName]?.tracks || [];
 			if (checked) {
-				if (!tracks.includes(id)) tracks.push(id);
+				if (!tracks.includes(id)) tracks = [...tracks, id];
 			} else {
 				tracks = tracks.filter((track: number) => track !== id);
 			}
@@ -123,7 +123,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 		}
 		let tracks = notification?.[option.triggerName]?.tracks || [];
 		if (checked) {
-			if (!tracks.includes(id)) tracks.push(id);
+			if (!tracks.includes(id)) tracks = [...tracks, id];
 		} else {
 			tracks = tracks.filter((track: number) => track !== id);
 		}

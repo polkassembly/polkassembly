@@ -210,9 +210,9 @@ const QuickView = ({
 										}}
 										title={`https://polkaverse.com/accounts/${address}`}
 										href={`https://polkaverse.com/accounts/${address}`}
-										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3]'
+										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-xl'
 									>
-										<PolkaverseIcon className='text-2xl' />
+										<PolkaverseIcon />
 									</Link>
 								)}
 								{network.includes('kilt') && (

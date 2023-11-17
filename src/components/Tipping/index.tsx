@@ -89,7 +89,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 		threeDollar: '0'
 	});
 
-	const filterDuptocateAddresses = (addresses: string[]) => {
+	const filterDuplicateAddresses = (addresses: string[]) => {
 		const obj: any = {};
 		for (const address of addresses) {
 			const encodedAdd = getEncodedAddress(address, network) || '';
@@ -358,17 +358,17 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 						</div>
 					</div>
 
-					{filterDuptocateAddresses(userAddresses.concat(kiltAccounts)).length > 1 && (
+					{filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 1 && (
 						<div className='mt-6 '>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Receiver Address</label>
 							<Select
 								placeholder='Select recriver address'
 								suffixIcon={<DownArrow />}
 								className={`flex h-full w-full items-center justify-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay ${className}`}
-								value={filterDuptocateAddresses(userAddresses.concat(kiltAccounts)).length > 0 ? beneficiaryAddress || receiverAddress : null}
+								value={filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 0 ? beneficiaryAddress || receiverAddress : null}
 								onChange={setBeneficiaryAddress}
 								options={
-									filterDuptocateAddresses(userAddresses.concat(kiltAccounts))?.map((userAddress) => {
+									filterDuplicateAddresses(userAddresses.concat(kiltAccounts))?.map((userAddress) => {
 										return {
 											label: (
 												<Address

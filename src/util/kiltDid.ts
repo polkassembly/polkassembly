@@ -20,13 +20,14 @@ export async function getKiltDidName(api: ApiPromise, lookupAccountAddress: stri
 	return w3n.unwrapOr(null)?.toHuman();
 }
 
-export async function getKiltDidLinkedAccounts(api: ApiPromise, lookupAccountAddress: string): Promise<string[] | undefined> {
-	const didDetails = (await api.call.did.queryByAccount({
+export async function getKiltDidLinkedAccounts(api: ApiPromise, lookupAccountAddress: string): Promise<string[] | null> {
+	if (lookupAccountAddress.startsWith('0x')) return null;
+	const didDetails = (await api?.call?.did?.queryByAccount({
 		AccountId32: lookupAccountAddress
 	})) as any;
 
 	if (didDetails.isNone) {
-		return undefined;
+		return null;
 	}
 
 	return didDetails.toHuman().accounts || [];

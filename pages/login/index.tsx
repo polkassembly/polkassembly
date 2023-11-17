@@ -96,6 +96,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, setIsClosable, isModal, i
 			<SEOHead
 				title='Login'
 				network={network}
+				desc={`Securely access your governance forum account and shape the future of ${network} with Polkassembly`}
 			/>
 			<Row
 				justify='center'

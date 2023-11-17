@@ -91,6 +91,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 		<>
 			<SEOHead
 				title='Treasury Proposals'
+				desc='Discover and review the latest proposals for managing and allocating our treasury funds, and have your voice heard in the decision-making process using Polkassembly.'
 				network={network}
 			/>
 

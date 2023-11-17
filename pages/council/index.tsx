@@ -32,6 +32,7 @@ const Members = (props: { network: string }) => {
 		<>
 			<SEOHead
 				title='Council'
+				desc='Meet the dedicated team of council members who work tirelessly to ensure effective and fair governance for the community on Polkassembly.'
 				network={props.network}
 			/>
 			<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Council</h1>

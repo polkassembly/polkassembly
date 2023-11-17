@@ -77,6 +77,7 @@ const Referenda: FC<IReferendaProps> = (props) => {
 		<>
 			<SEOHead
 				title='Referenda'
+				desc='Stay informed and have your say on important community decisions by participating in referendums via Polkassembly and voting on key issues that affect us all.'
 				network={network}
 			/>
 			<div className='mt-3 flex items-center'>

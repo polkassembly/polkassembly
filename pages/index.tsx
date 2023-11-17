@@ -245,7 +245,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 			<SEOHead
 				title='Home'
-				desc='Democratizing governance for substrate blockchains'
+				desc={`Join the future of blockchain with ${network}'s revolutionary governance system on Polkassembly`}
 				network={network}
 			/>
 			<main>

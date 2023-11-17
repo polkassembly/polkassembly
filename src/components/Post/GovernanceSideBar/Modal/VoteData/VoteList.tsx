@@ -70,7 +70,6 @@ const sortedCheck = {
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
-	console.log('user', currentUser);
 	const { resolvedTheme: theme } = useTheme();
 	const {
 		postData: { statusHistory }

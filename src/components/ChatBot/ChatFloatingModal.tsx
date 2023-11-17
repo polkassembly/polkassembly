@@ -5,82 +5,80 @@ import { Button } from 'antd';
 import Image from 'next/image';
 import GrillChatIcon from '~assets/grillchat.png';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
 import { network as globalNework } from '~src/global/networkConstants';
 import { useEffect, useRef, useState } from 'react';
 import grill from '@subsocial/grill-widget';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Container = styled.div`
-.ChatFloatingModal {
-	position : fixed;
-	bottom:120px;
-	right:-5px;
-  	z-index: 1000;
-  	display: flex;
-  	flex-direction: column;
-  	align-items: flex-end;
-  	gap: 16px;
-}
+	.ChatFloatingModal {
+		position: fixed;
+		bottom: 120px;
+		right: -5px;
+		z-index: 1000;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 16px;
+	}
 
-.ChatFloatingModal .ChatFloatingButton {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  color: white;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-}
+	.ChatFloatingModal .ChatFloatingButton {
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		color: white;
+		font-size: 24px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
+	}
 
-.ChatFloatingModal .ChatFloatingButton img {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
+	.ChatFloatingModal .ChatFloatingButton img {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
 
-.ChatFloatingModal .ChatFloatingIframe {
-  /* 100px from the height of the button + offset to the bottom + gap */
-  height: min(570px, calc(90vh - 100px));
-  /* 60px from the offset left & right of the iframe (30px each) */
-  width: min(400px, calc(100vw - 60px));
-  border-radius: var(--border_radius_large);
-  overflow: hidden;
-  box-shadow: 0 12px 50px -12px rgba(0, 0, 0, 0.5);
-  transition-property: opacity, height, width;
-  transition-duration: 0.3s, 0s, 0s;
-  transition-delay: 0s, 0s, 0s;
-  opacity: 1;
-  
-}
+	.ChatFloatingModal .ChatFloatingIframe {
+		/* 100px from the height of the button + offset to the bottom + gap */
+		height: min(570px, calc(90vh - 100px));
+		/* 60px from the offset left & right of the iframe (30px each) */
+		width: min(400px, calc(100vw - 60px));
+		border-radius: var(--border_radius_large);
+		overflow: hidden;
+		box-shadow: 0 12px 50px -12px rgba(0, 0, 0, 0.5);
+		transition-property: opacity, height, width;
+		transition-duration: 0.3s, 0s, 0s;
+		transition-delay: 0s, 0s, 0s;
+		opacity: 1;
+	}
 
-.ChatFloatingIframe{
-	margin-right:30px;
-	margin-bottom:-40px;
-}
+	.ChatFloatingIframe {
+		margin-right: 30px;
+		margin-bottom: -40px;
+	}
 
-.ChatFloatingModal .ChatFloatingIframe.ChatFloatingIframeHidden {
-  pointer-events: none;
-  transition-delay: 0s, 0.3s, 0.3s !important;
-  width: 30px;
-  height: 30px;
-  opacity: 0;
-  
-}
+	.ChatFloatingModal .ChatFloatingIframe.ChatFloatingIframeHidden {
+		pointer-events: none;
+		transition-delay: 0s, 0.3s, 0.3s !important;
+		width: 30px;
+		height: 30px;
+		opacity: 0;
+	}
 
-.ChatFloatingModal .ChatFloatingIframe iframe {
-  border-radius: var(--border_radius_large);
-  width: 100%;
-  height: 100%;
-  border: none;
-}
+	.ChatFloatingModal .ChatFloatingIframe iframe {
+		border-radius: var(--border_radius_large);
+		width: 100%;
+		height: 100%;
+		border: none;
+	}
 `;
 
 export default function ChatFloatingModal() {
 	const [isOpen, setIsOpen] = useState(true);
 	const toggleChat = () => {
-		setIsOpen((prev:boolean) => !prev);
+		setIsOpen((prev: boolean) => !prev);
 	};
 	const grillData: { [index: string]: string[] } = {
 		[globalNework.CERE]: ['5145', '5139'],
@@ -90,7 +88,7 @@ export default function ChatFloatingModal() {
 		[globalNework.POLKADOT]: ['3638', '754']
 	};
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const hasOpened = useRef(false);
 	useEffect(() => {
 		if (!isOpen) return;
@@ -99,18 +97,16 @@ export default function ChatFloatingModal() {
 			if (grillData?.[network]) {
 				filterArray = grillData?.[network];
 			}
-			grill.init(
-				{
-					hub: { id: 'polkassembly' },
-					onWidgetCreated: (iframe:any) => {
-						const channelsQuery = new URLSearchParams();
-						const filterChannels = filterArray;
-						channelsQuery.set('channels', filterChannels.join(','));
-						iframe.src += `&${channelsQuery.toString()}`;
-						return iframe;
-					}
+			grill.init({
+				hub: { id: 'polkassembly' },
+				onWidgetCreated: (iframe: any) => {
+					const channelsQuery = new URLSearchParams();
+					const filterChannels = filterArray;
+					channelsQuery.set('channels', filterChannels.join(','));
+					iframe.src += `&${channelsQuery.toString()}`;
+					return iframe;
 				}
-			);
+			});
 		}
 		hasOpened.current = true;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,15 +118,21 @@ export default function ChatFloatingModal() {
 				{(isOpen || hasOpened.current) && (
 					<div
 						id='grill'
-						className={`ChatFloatingIframe ${!isOpen ? 'ChatFloatingIframeHidden' : ''}`
-						}
+						className={`ChatFloatingIframe ${!isOpen ? 'ChatFloatingIframeHidden' : ''}`}
 					/>
 				)}
-				{ !isOpen && <Button className={'ChatFloatingButton'} onClick={toggleChat}>
-					<Image src={GrillChatIcon} alt='GrillChat' className='w-[40px] h-[40px]' />
-				</Button>
-				}
-
+				{!isOpen && (
+					<Button
+						className={'ChatFloatingButton'}
+						onClick={toggleChat}
+					>
+						<Image
+							src={GrillChatIcon}
+							alt='GrillChat'
+							className='h-[40px] w-[40px]'
+						/>
+					</Button>
+				)}
 			</div>
 		</Container>
 	) : null;

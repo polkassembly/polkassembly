@@ -6,24 +6,35 @@ import React from 'react';
 import Address from 'src/ui-components/Address';
 
 import { WhitelistMember } from './WhitelistMembersContainer';
+import styled from 'styled-components';
 
 interface Props {
-	className?: string
-	member: WhitelistMember
+	className?: string;
+	member: WhitelistMember;
 }
 
-const WhitelistMemberCard = ({ className, member } : Props) => {
+const WhitelistMemberCard = ({ className, member }: Props) => {
 	return (
-		<div className={`${className} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-3 md:p-4`}>
-			<div className="flex items-center">
-				{member.rank && <div className='mr-4 text-navBlue font-semibold'>
-					<div>#{member.rank}</div>
-				</div>}
+		<div
+			className={`${className} rounded-md border-2 border-solid border-grey_light p-3 transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark md:p-4`}
+		>
+			<div className='flex items-center'>
+				{member.rank && (
+					<div className='mr-4 font-semibold text-navBlue'>
+						<div>#{member.rank}</div>
+					</div>
+				)}
 
-				<Address address={member.accountId} shortenAddressLength={7} />
+				<Address
+					address={member.accountId}
+					addressMaxLength={7}
+					iconSize={45}
+					ethIdenticonSize={45}
+					addressClassName={'text-xs mt-1'}
+				/>
 			</div>
 		</div>
 	);
 };
 
-export default WhitelistMemberCard;
+export default styled(WhitelistMemberCard)``;

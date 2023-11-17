@@ -7,12 +7,13 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import OverallPostsNotification from '~assets/icons/gov-icon.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
-import { useNetworkContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { iconMapper, postOriginMapper, titleMapper } from './utils';
 import { ACTIONS } from '../Reducer/action';
 import { INotificationObject } from '../types';
 import { Collapse } from '../common-ui/Collapse';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 type Props = {
@@ -34,15 +35,11 @@ const getConsecutiveKeys = (obj: any) => {
 };
 
 // eslint-disable-next-line no-empty-pattern
-export default function OpenGovNotification({
-	onSetNotification,
-	userNotification,
-	dispatch,
-	options
-}: Props) {
+export default function OpenGovNotification({ onSetNotification, userNotification, dispatch, options }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [all, setAll] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 	const openGovTwoOptions = getConsecutiveKeys(networkTrackInfo[network] || {});
 
 	const handleAllClick = (checked: boolean) => {
@@ -61,7 +58,7 @@ export default function OpenGovNotification({
 				}
 				let tracks = notification?.[option.triggerName]?.tracks || [];
 				if (checked) {
-					if (!tracks.includes(id)) tracks.push(id);
+					if (!tracks.includes(id)) tracks = [...tracks, id];
 				} else {
 					tracks = tracks.filter((track: number) => track !== id);
 				}
@@ -77,17 +74,11 @@ export default function OpenGovNotification({
 	};
 
 	useEffect(() => {
-		const allSelected = Object.values(options).every((option: any) =>
-			option.every((item: any) => item.selected)
-		);
+		const allSelected = Object.values(options).every((option: any) => option.every((item: any) => item.selected));
 		setAll(allSelected);
 	}, [options]);
 
-	const handleCategoryAllClick = (
-		checked: boolean,
-		categoryOptions: any,
-		title: any
-	) => {
+	const handleCategoryAllClick = (checked: boolean, categoryOptions: any, title: any) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -103,7 +94,7 @@ export default function OpenGovNotification({
 			}
 			let tracks = notification?.[option.triggerName]?.tracks || [];
 			if (checked) {
-				if (!tracks.includes(id)) tracks.push(id);
+				if (!tracks.includes(id)) tracks = [...tracks, id];
 			} else {
 				tracks = tracks.filter((track: number) => track !== id);
 			}
@@ -116,12 +107,7 @@ export default function OpenGovNotification({
 		onSetNotification(notification);
 	};
 
-	const handleChange = (
-		categoryOptions: any,
-		checked: boolean,
-		value: string,
-		title: string
-	) => {
+	const handleChange = (categoryOptions: any, checked: boolean, value: string, title: string) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
@@ -137,7 +123,7 @@ export default function OpenGovNotification({
 		}
 		let tracks = notification?.[option.triggerName]?.tracks || [];
 		if (checked) {
-			if (!tracks.includes(id)) tracks.push(id);
+			if (!tracks.includes(id)) tracks = [...tracks, id];
 		} else {
 			tracks = tracks.filter((track: number) => track !== id);
 		}
@@ -151,7 +137,8 @@ export default function OpenGovNotification({
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+			theme={theme}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -160,14 +147,14 @@ export default function OpenGovNotification({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className='channel-header flex items-center gap-[6px]'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
+						<h3 className='mb-0 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 							OpenGov Notifications
 						</h3>
 						{!!active && (
 							<>
-								<span className='flex gap-[8px] items-center'>
+								<span className='flex items-center gap-[8px]'>
 									<Switch
 										size='small'
 										id='postParticipated'
@@ -177,7 +164,7 @@ export default function OpenGovNotification({
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D]'>All</p>
+									<p className='m-0 text-[#485F7D] dark:text-white'>All</p>
 								</span>
 							</>
 						)}
@@ -186,24 +173,40 @@ export default function OpenGovNotification({
 				key='1'
 			>
 				<div className='flex flex-col'>
-					{openGovTwoOptions.map((category: any[], i:number) => (
+					{openGovTwoOptions.map((category: any[], i: number) => (
 						<React.Fragment key={category.toString()}>
 							<div className='flex flex-wrap'>
 								{category.map((postType, i) => {
-									return (<React.Fragment key={postType.toString()}>
-										<GroupCheckbox
-											categoryOptions={options[postType]}
-											title={postOriginMapper(postType)}
-											classname={i === (category.length - 1) ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]' : 'md:basis-[50%]'}
-											Icon={iconMapper(postType)}
-											onChange={handleChange}
-											handleCategoryAllClick={handleCategoryAllClick}
-										/>
-										{i !== (category.length - 1) && <Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />}
-									</React.Fragment>);
+									return (
+										<React.Fragment key={postType.toString()}>
+											<GroupCheckbox
+												categoryOptions={options[postType]}
+												title={postOriginMapper(postType)}
+												classname={
+													i === category.length - 1
+														? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-[#3B444F] md:pl-[48px] dark:border-separatorDark'
+														: 'md:basis-[50%]'
+												}
+												Icon={iconMapper(postType)}
+												onChange={handleChange}
+												handleCategoryAllClick={handleCategoryAllClick}
+											/>
+											{i !== category.length - 1 && (
+												<Divider
+													className='border-[2px] border-[#D2D8E0] dark:border-[#3B444F] md:hidden'
+													dashed
+												/>
+											)}
+										</React.Fragment>
+									);
 								})}
 							</div>
-							{i !== (openGovTwoOptions.length - 1) && <Divider className='border-[#D2D8E0] border-2' dashed />}
+							{i !== openGovTwoOptions.length - 1 && (
+								<Divider
+									className='border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+									dashed
+								/>
+							)}
 						</React.Fragment>
 					))}
 				</div>

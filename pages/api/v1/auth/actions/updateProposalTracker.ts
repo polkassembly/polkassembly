@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import { isValidNetwork } from '~src/api-utils';
 
 import authServiceInstance from '~src/auth/auth';
 import { ChallengeMessage, MessageType } from '~src/auth/types';
@@ -12,11 +13,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { id, status } = req.body;
 
-	if(!id || !status) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!id || !status) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 

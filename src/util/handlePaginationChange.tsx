@@ -4,11 +4,11 @@
 
 interface Args {
 	limit: number;
-	page:number;
+	page: number;
 	setOffset?: (value: React.SetStateAction<number>) => void;
 }
 export const handlePaginationChange = ({ limit, page, setOffset }: Args) => {
-	if(typeof window !== 'undefined'){
+	if (typeof window !== 'undefined') {
 		window.scrollTo(0, 300);
 	}
 	setOffset?.(Math.ceil(limit * (page - 1)));

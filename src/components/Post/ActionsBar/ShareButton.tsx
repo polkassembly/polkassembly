@@ -3,15 +3,31 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ShareAltOutlined } from '@ant-design/icons';
+import { trackEvent } from 'analytics';
 import { Button } from 'antd';
-import React, { useContext } from 'react';
+import React, { FC } from 'react';
+import { ProposalType } from '~src/global/proposalType';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
-import { NetworkContext } from '~src/context/NetworkContext';
-
-const ShareButton = function ({ title }: {title?: string | null}) {
-	const { network } = useContext(NetworkContext);
+interface IShareButtonProps {
+	postId: number | string;
+	proposalType: ProposalType;
+	title?: string;
+}
+const ShareButton: FC<IShareButtonProps> = (props) => {
+	const { postId, proposalType, title } = props;
+	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
 
 	const share = () => {
+		// GAEvent for post sharing
+		trackEvent('post_share_clicked', 'share_post', {
+			postId: postId,
+			postTitle: title,
+			proposalType: proposalType,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		const twitterParameters = [];
 
 		twitterParameters.push(`url=${encodeURI(global.window.location.href)}`);
@@ -30,7 +46,7 @@ const ShareButton = function ({ title }: {title?: string | null}) {
 	return (
 		<>
 			<Button
-				className={'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2'}
+				className={'flex items-center border-none px-1 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper md:px-2'}
 				onClick={share}
 			>
 				<ShareAltOutlined /> {' Share'}

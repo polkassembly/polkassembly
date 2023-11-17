@@ -15,12 +15,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IVerified | Mes
 	if (!address) return res.status(400).json({ message: 'Missing parameters' });
 
 	const substrateAddress = getSubstrateAddress(String(address));
-	if(!substrateAddress) return res.status(400).json({ message: messages.INVALID_ADDRESS });
+	if (!substrateAddress) return res.status(400).json({ message: messages.INVALID_ADDRESS });
 
 	const isVerifiedAddress = (await firestore_db.collection('addresses').where('address', '==', substrateAddress).where('verified', '==', true).limit(1).get()).docs.length > 0;
-	if(isVerifiedAddress) return res.status(200).json({ verified: true });
+	if (isVerifiedAddress) return res.status(200).json({ verified: true });
 
-	res.status(200).json({ verified: false });
+	return res.status(200).json({ verified: false });
 }
 
 export default withErrorHandling(handler);

@@ -39,6 +39,7 @@ import { useTheme } from 'next-themes';
 import DownArrow from '~assets/icons/down-icon.svg';
 import { getKiltDidLinkedAccounts } from '~src/util/kiltDid';
 import { setReceiver } from '~src/redux/Tipping';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -91,10 +92,11 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 	const filterDuptocateAddresses = (addresses: string[]) => {
 		const obj: any = {};
 		for (const address of addresses) {
-			if (obj[address] === undefined) {
-				obj[address] = 1;
+			const encodedAdd = getEncodedAddress(address, network) || '';
+			if (obj[encodedAdd] === undefined) {
+				obj[encodedAdd] = 1;
 			} else {
-				obj[address] += 1;
+				obj[encodedAdd] += 1;
 			}
 		}
 		const dataArr: string[] = [];

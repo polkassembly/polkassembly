@@ -13,8 +13,6 @@ import { formatBalance } from '@polkadot/util';
 import HelperTooltip from './HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
-import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
-import Image from 'next/image';
 
 const ZERO_BN = new BN(0);
 
@@ -134,16 +132,7 @@ const BalanceInput = ({
 			>
 				<Input
 					onBlur={() => onBlur?.()}
-					addonAfter={
-						<div className='flex items-center justify-center gap-1 dark:text-white'>
-							<Image
-								className='h-4 w-4 rounded-full object-contain'
-								src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
-								alt='Logo'
-							/>
-							{chainProperties[network]?.tokenSymbol}
-						</div>
-					}
+					addonAfter={<div className='flex items-center justify-center gap-1 dark:text-white'>{chainProperties[network]?.tokenSymbol}</div>}
 					name={formItemName || 'balance'}
 					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 					onChange={(e) => onBalanceChange(e.target.value)}

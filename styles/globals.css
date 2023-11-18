@@ -769,7 +769,7 @@ z-index: 1050 !important;
 }
 
 
-.dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
+/* .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
   text-shadow: none !important;
-}
+} */
  

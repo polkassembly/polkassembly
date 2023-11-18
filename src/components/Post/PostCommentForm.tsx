@@ -20,11 +20,6 @@ import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
 import { v4 } from 'uuid';
-import DarkNeutralIcon from '~assets/icons/dark-sentiment-icons/neutral.svg';
-import DarkSadIcon from '~assets/icons/dark-sentiment-icons/sad.svg';
-import DarkSadDizzyIcon from '~assets/icons/dark-sentiment-icons/sad-dizzy.svg';
-import DarkSmileIcon from '~assets/icons/dark-sentiment-icons/smile.svg';
-import DarkSmileDizzyIcon from '~assets/icons/dark-sentiment-icons/smile-dizzy.svg';
 import SadDizzyIcon from '~assets/overall-sentiment/pink-against.svg';
 import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
@@ -33,6 +28,11 @@ import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 import { ESentiment } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
+import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
+import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
+import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
+import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -374,7 +374,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 														<EmojiOption
 															icon={
 																theme === 'dark' ? (
-																	<DarkSadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																	<DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} />
 																) : (
 																	<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
 																)
@@ -385,7 +385,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 														<EmojiOption
 															icon={
 																theme === 'dark' ? (
-																	<DarkSadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																	<DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} />
 																) : (
 																	<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
 																)
@@ -396,7 +396,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 														<EmojiOption
 															icon={
 																theme === 'dark' ? (
-																	<DarkNeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																	<DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} />
 																) : (
 																	<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
 																)
@@ -407,7 +407,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 														<EmojiOption
 															icon={
 																theme === 'dark' ? (
-																	<DarkSmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																	<DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} />
 																) : (
 																	<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
 																)
@@ -418,7 +418,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 														<EmojiOption
 															icon={
 																theme === 'dark' ? (
-																	<DarkSmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																	<DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} />
 																) : (
 																	<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
 																)

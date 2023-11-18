@@ -511,7 +511,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					) : (
 						<LikeGray className='mb-[3px] mr-2' />
 					)}
-					<span className='text-base font-medium dark:text-blue-dark-medium'>Aye</span>
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
 				</div>
 			),
 			value: 'aye'
@@ -528,7 +528,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					) : (
 						<DislikeGray className='-mb-[3px] mr-2' />
 					)}
-					<span className='text-base font-medium dark:text-blue-dark-medium'>Nay</span>
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
 				</div>
 			),
 			value: 'nay'
@@ -545,7 +545,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						>
 							{' '}
 							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
-							<span className='text-base font-medium dark:text-blue-dark-medium'>Split</span>{' '}
+							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Split</span>
 						</div>
 					),
 					value: 'split'
@@ -558,7 +558,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							}`}
 						>
 							<StopOutlined className='mb-[3px] mr-2 dark:text-[#909090]' />
-							<span className='text-base font-medium dark:text-blue-dark-medium'>Abstain</span>
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
 						</div>
 					),
 					value: 'abstain'

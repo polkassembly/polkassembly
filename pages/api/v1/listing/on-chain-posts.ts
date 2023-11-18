@@ -246,6 +246,12 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			}
+			const strTrackStatus = String(trackStatus);
+			if (proposalType === ProposalType.OPEN_GOV) {
+				if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
+					postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+				}
+			}
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query,

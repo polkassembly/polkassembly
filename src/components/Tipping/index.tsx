@@ -181,6 +181,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 		setTipAmount(ZERO_BN);
 		setBeneficiaryAddress('');
 		setUserAddresses([]);
+		setKiltAccounts([]);
 		setRemark('');
 		form.setFieldValue('balance', '');
 		setLoadingStatus({ isLoading: false, message: '' });

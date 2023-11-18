@@ -764,15 +764,12 @@ z-index: 1050 !important;
   background-color: transparent !important;
 }
 
-/* .dark .ant-segmented-group label {
+.dark .ant-segmented-group label {
   background-color: transparent !important;
 }
 
-.ant-pagination .ant-pagination-item {
-  border: 1px solid #3B444F !important;
-}
 
-.ant-pagination .ant-pagination-item-active{
-  border-color: #e5007a !important;
-} */
+.dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
+  text-shadow: none !important;
+}
  

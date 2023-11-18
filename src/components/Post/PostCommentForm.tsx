@@ -20,6 +20,11 @@ import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
 import { v4 } from 'uuid';
+import DarkNeutralIcon from '~assets/icons/dark-sentiment-icons/neutral.svg';
+import DarkSadIcon from '~assets/icons/dark-sentiment-icons/sad.svg';
+import DarkSadDizzyIcon from '~assets/icons/dark-sentiment-icons/sad-dizzy.svg';
+import DarkSmileIcon from '~assets/icons/dark-sentiment-icons/smile.svg';
+import DarkSmileDizzyIcon from '~assets/icons/dark-sentiment-icons/smile-dizzy.svg';
 import SadDizzyIcon from '~assets/overall-sentiment/pink-against.svg';
 import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
@@ -27,6 +32,7 @@ import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 import { ESentiment } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -54,6 +60,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
+	const { resolvedTheme: theme } = useTheme();
+
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
@@ -124,7 +132,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			>
 				<Button
 					disabled={disabled}
-					className={`${disabled && 'opacity-50'} emoji-button hover:bg-baby_pink mb-[4px] h-10 w-10 rounded-full border-none p-0 pt-1 text-2xl`}
+					className={`${disabled && 'opacity-50'} emoji-button hover:bg-baby_pink mb-[4px] h-10 w-10 rounded-full border-none bg-transparent p-0 pt-1 text-2xl`}
 					onClick={() => {
 						clickable && handleEmojiClick(icon, currentSentiment);
 					}}
@@ -364,28 +372,58 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 														style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
 													>
 														<EmojiOption
-															icon={<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
 															currentSentiment={1}
 															title={'Completely Against'}
 														/>
 														<EmojiOption
-															icon={<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
 															currentSentiment={2}
 															title={'Slightly Against'}
 														/>
 														<EmojiOption
-															icon={<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+															icon={
+																theme === 'dark' ? (
+																	<DarkNeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
 															currentSentiment={3}
 															title={'Neutral'}
 														/>
 														<EmojiOption
-															icon={<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
 															currentSentiment={4}
 															title={'Slightly For'}
 														/>
 														<EmojiOption
-															icon={<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-															currentSentiment={5}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
+															currentSentiment={4}
 															title={'Completely For'}
 														/>
 													</div>

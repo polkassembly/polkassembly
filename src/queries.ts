@@ -1585,20 +1585,42 @@ query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOr
     totalCount
   }
   convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
-    decision
-    voter
-    balance {
-      ... on StandardVoteBalance {
-        value
-      }
-      ... on SplitVoteBalance {
-        aye
-        nay
-        abstain
-      }
-    }
-    lockPeriod
-    createdAt
+    id
+        decision
+        voter
+        balance {
+          ... on StandardVoteBalance {
+            value
+          }
+          ... on SplitVoteBalance {
+            aye
+            nay
+            abstain
+          }
+        }
+        createdAt
+        lockPeriod
+        selfVotingPower
+        totalVotingPower
+        delegatedVotingPower
+        delegatedVotes(limit: 5, orderBy: votingPower_DESC, where: {
+          removedAtBlock_isNull: true
+        }) {
+          decision
+          lockPeriod
+          voter
+          votingPower
+          balance {
+            ... on StandardVoteBalance {
+              value
+            }
+            ... on SplitVoteBalance {
+              aye
+              nay
+              abstain
+            }
+          }
+        }
   }
 }
 `;

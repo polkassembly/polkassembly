@@ -186,7 +186,12 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			message: 'Loading votes'
 		});
 		getReferendumV2VoteInfo().then(() => {
-			const url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
+			let url;
+			if (delegationAddress) {
+				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}&address=${delegationAddress}`;
+			} else {
+				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
+			}
 			nextApiClientFetch<IVotesResponse>(url)
 				.then((res) => {
 					if (res.error) {
@@ -345,7 +350,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										{combinedVotes &&
 											!!combinedVotes.length &&
 											combinedVotes
-												.filter((voteData) => voteData.voter === delegationAddress)
+												// .filter((voteData) => voteData.voter === delegationAddress)
 												.map((voteData: any, index: number) => (
 													<VoterRow
 														className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === combinedVotes.length - 1 ? 'border-b' : ''}`}

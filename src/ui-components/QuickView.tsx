@@ -137,11 +137,12 @@ const QuickView = ({
 							<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 								<Address
 									address={address}
-									disableHeader
-									iconSize={20}
+									disableHeader={network !== 'kilt'}
+									iconSize={network === 'kilt' ? 26 : 20}
 									addressMaxLength={5}
 									addressClassName='text-sm dark:text-blue-dark-medium'
 									disableTooltip
+									showKiltAddress={network === 'kilt'}
 								/>
 								<span
 									className='flex cursor-pointer items-center'

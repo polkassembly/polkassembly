@@ -9,8 +9,9 @@ import Address from '~src/ui-components/Address';
 import SuccessIcon from '~assets/icons/identity-success.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { trackEvent } from 'analytics';
 
 interface Props {
 	className?: string;
@@ -28,6 +29,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 	const { network } = useNetworkSelector();
 	const { displayName } = name;
 	const { email, web, twitter, riot } = socials;
+	const currentUser = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (!network) return;
@@ -98,6 +100,11 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 
 				<Button
 					onClick={() => {
+						// GAEvent for Let’s start your verification process button clicked
+						trackEvent('verification_CTA_clicked', 'submitted_verification_request', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
 						close(true);
 						changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 						openPreModal(true);

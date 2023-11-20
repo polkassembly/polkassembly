@@ -22,7 +22,8 @@ import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 interface Props {
 	delegate: IDelegate;
@@ -41,6 +42,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [social_links, setSocial_links] = useState<any[]>([]);
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (!network) return;
@@ -68,6 +70,11 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	}, [address, api, apiReady]);
 
 	const handleClick = () => {
+		// GAEvent for delegate CTA clicked
+		trackEvent('delegate_CTA_clicked', 'clicked_delegate_CTA', {
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		setOpen(true);
 		setAddress(address);
 	};

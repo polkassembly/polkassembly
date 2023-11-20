@@ -38,6 +38,7 @@ import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import PolkasafeWhiteIcon from '~assets/polkasafe-white-logo.svg';
+import { trackEvent } from 'analytics';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -199,6 +200,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					onClick={(e) => {
 						e.stopPropagation();
 						e.preventDefault();
+						// GAEvent for setOnchain identity clicked
+						trackEvent('set_onChain_identity_clicked', 'opened_identity_verification', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
 						handleIdentityButtonClick();
 					}}
 				>

@@ -39,8 +39,9 @@ import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { trackEvent } from 'analytics';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -123,6 +124,8 @@ const CreatePreimage = ({
 	});
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
+	const currentUser = useUserDetailsSelector();
+
 	const checkPreimageHash = (preimageLength: number | null, preimageHash: string) => {
 		if (!preimageHash || preimageLength === null) return false;
 		return !isHex(preimageHash, 256) || !preimageLength || preimageLength === 0;
@@ -395,6 +398,12 @@ const CreatePreimage = ({
 	};
 
 	const handleSubmit = async () => {
+		// GAEvent for create preImage CTA clicked
+		trackEvent('create_preImage_CTA_clicked', 'clicked_create_preImage', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		if (!isPreimage) {
 			if (txFee.gte(availableBalance)) return;
 		}

@@ -57,6 +57,7 @@ const Styled = styled.div`
 		font-size: 10px;
 		padding: 0px 6px;
 	}
+
 	.dark-pink {
 		color: #e5007a;
 		text-decoration: underline;

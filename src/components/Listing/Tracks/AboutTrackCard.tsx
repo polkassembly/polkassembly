@@ -19,6 +19,9 @@ import blockToTime from '~src/util/blockToTime';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import DiscussionIconGrey from '~assets/icons/Discussion-Unselected.svg';
+import DiscussionIconWhite from '~assets/icons/Discussion-Unselected-white.svg';
+import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -77,6 +80,7 @@ function addTrackGroup(arr: any) {
 
 export const getTrackData = (network: string, trackName?: string, trackNumber?: number) => {
 	const defaultTrackMetaData = getDefaultTrackMetaData();
+
 	if (!network) return defaultTrackMetaData;
 	let trackMetaData: TrackProps | undefined = undefined;
 	if (trackName) {
@@ -133,6 +137,7 @@ export const blocksToRelevantTime = (network: string, blocks: number): string =>
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { className, trackName } = props;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	useEffect(() => {
@@ -225,10 +230,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	}, [api, apiReady, network, track_number]);
 
 	return (
-		<div>
+		<div className={`${className}`}>
 			<article className='flex justify-between xs:py-2 md:py-0'>
 				<div className='flex items-center gap-x-2 xs:mt-2 xs:flex-wrap md:mt-0'>
-					<DiscussionIconGrey />
+					{theme === 'dark' ? <DiscussionIconWhite /> : <DiscussionIconGrey />}
 					<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>About {trackName.split(/(?=[A-Z])/).join(' ')}</h2>
 					<Tooltip
 						color='#E5007A'
@@ -243,10 +248,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 			</article>
 			<section className={`${className} mt-2 rounded-xxl bg-white drop-shadow-md dark:bg-section-dark-overlay md:p-4`}>
-				<div className='flex gap-x-2 px-4 font-normal leading-6 text-bodyBlue dark:text-blue-dark-high xs:mt-2 md:mt-0'>
+				<div className='text-container flex gap-x-2 px-4 font-normal leading-6 text-bodyBlue dark:text-blue-dark-high xs:mt-2 md:mt-0'>
 					<p className='m-0 p-0 text-sm'>{trackMetaData?.description}</p>
 					<span
-						className='m-0 mt-[2px] cursor-pointer p-0 text-xs text-pink_primary'
+						className={`m-0 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
 						onClick={() => setShowDetails(!showDetails)}
 					>
 						{showDetails ? 'Hide' : 'Show'} Track details
@@ -335,4 +340,15 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	);
 };
 
-export default AboutTrackCard;
+export default styled(AboutTrackCard)`
+	@media (max-width: 766px) and (min-width: 319px) {
+		.text-container {
+			padding-top: 16px !important;
+		}
+	}
+	@media (max-width: 374px) and (min-width: 319px) {
+		.text-container {
+			display: block !important;
+		}
+	}
+`;

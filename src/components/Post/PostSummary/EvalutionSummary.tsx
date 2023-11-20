@@ -53,8 +53,8 @@ const EvalutionSummary = () => {
 			<div className='mt-4 flex items-center gap-2.5'>
 				<span className='text-sm tracking-[0.01em]'>Proposer is </span>
 				<span
-					className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue ${
-						!isMultisigProposer ? 'border-[#91CAFF] bg-[#E6F4FF] ' : 'border-[#531FE4] bg-[#EEE9FC] '
+					className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue dark:text-[#909090] ${
+						!isMultisigProposer ? 'border-[#91CAFF] bg-[#E6F4FF] dark:border-[#125798] dark:bg-[#05263F] ' : 'border-[#531FE4] bg-[#EEE9FC] dark:border-[#531FE4] dark:bg-[#281856]'
 					}`}
 				>
 					{isMultisigProposer ? (
@@ -70,8 +70,8 @@ const EvalutionSummary = () => {
 					)}
 				</span>
 				<span
-					className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue ${
-						isGood ? 'border-[#2ED47A] bg-[#EFFCF5] ' : 'border-[#FFA08B] bg-[#F7E3E0] '
+					className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue dark:text-[#909090]  ${
+						isGood ? 'border-[#2ED47A] bg-[#EFFCF5] dark:border-[#026630] dark:bg-[#063E20]' : 'border-[#FFA08B] bg-[#F7E3E0] dark:border-[#5C3931] dark:bg-[#331701]'
 					}`}
 				>
 					{isGood ? (

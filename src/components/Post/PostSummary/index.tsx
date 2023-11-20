@@ -58,7 +58,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				onCancel={() => setOpen(false)}
 				closable={false}
 				title={
-					<div className='m-0 flex items-start justify-between rounded-[14px] p-5 pb-4 dark:bg-section-dark-overlay md:items-center md:p-6 md:pb-4'>
+					<div className='m-0 flex items-start justify-between rounded-t-[14px] p-5 pb-4 dark:bg-section-dark-overlay md:items-center md:p-6 md:pb-4'>
 						<article className='flex flex-col gap-x-[6px] md:flex-row md:items-center'>
 							<h3 className='m-0 flex items-center gap-x-2 p-0'>
 								<span className='flex items-center justify-center text-2xl text-lightBlue dark:text-blue-dark-medium'>

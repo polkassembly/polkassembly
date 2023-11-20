@@ -5,7 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import InfoAlertIcon from '~assets/icons/info-alert.svg';
+import SingleSignatoryAlertIcon from '~assets/icons/info-alert.svg';
+import NonVerifiedAlertIcon from '~assets/icons/red-info-alert.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useApiContext, usePostDataContext } from '~src/context';
@@ -47,13 +48,13 @@ const EvalutionSummary = () => {
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	return (
-		<div className='mt-4 pb-4 text-bodyBlue'>
+		<div className='mt-4 pb-4 text-bodyBlue dark:text-blue-dark-high'>
 			<label className='tracking[0.01em] text-lg font-medium'>Evaluation Summary</label>
 			<div className='mt-4 flex items-center gap-2.5'>
 				<span className='text-sm tracking-[0.01em]'>Proposer is </span>
 				<span
 					className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue ${
-						!isMultisigProposer ? 'border-[#91CAFF] bg-[#E6F4FF]' : 'border-[#531FE4] bg-[#EEE9FC]'
+						!isMultisigProposer ? 'border-[#91CAFF] bg-[#E6F4FF] ' : 'border-[#531FE4] bg-[#EEE9FC] '
 					}`}
 				>
 					{isMultisigProposer ? (
@@ -63,14 +64,14 @@ const EvalutionSummary = () => {
 						</>
 					) : (
 						<>
-							<InfoAlertIcon />
+							<SingleSignatoryAlertIcon />
 							Single signatory account
 						</>
 					)}
 				</span>
 				<span
 					className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue ${
-						isGood ? 'border-[#2ED47A] bg-[#EFFCF5] ' : 'border-[#91CAFF] bg-[#E6F4FF]'
+						isGood ? 'border-[#2ED47A] bg-[#EFFCF5] ' : 'border-[#FFA08B] bg-[#F7E3E0] '
 					}`}
 				>
 					{isGood ? (
@@ -80,7 +81,7 @@ const EvalutionSummary = () => {
 						</>
 					) : (
 						<>
-							{isBad ? <MinusCircleFilled style={{ color }} /> : <InfoAlertIcon />}
+							{isBad ? <MinusCircleFilled style={{ color }} /> : <NonVerifiedAlertIcon />}
 							Non Verified
 						</>
 					)}

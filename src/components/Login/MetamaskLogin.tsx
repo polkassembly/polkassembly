@@ -400,18 +400,6 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 			/>
 			{fetchAccounts ? (
 				<>
-					{/* <h3 className='flex flex-col gap-y-2 dark:text-blue-dark-medium'>
-						<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
-							<span className='-ml-2 mt-2 scale-75'>
-								<WalletIcon which={chosenWallet} />
-							</span>
-							<span className='text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>
-								{chosenWallet === Wallet.SUBWALLET
-									? chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).split('-')[0]
-									: chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
-							</span>
-						</p>
-					</h3> */}
 					<div className='-mt-6 flex flex-col px-8 pb-8'>
 						<div className='my-4 flex justify-start gap-x-2'>
 							<span className=''>
@@ -553,7 +541,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 										)}
 										<div className='flex items-center justify-center gap-x-2'>
 											<Button
-												className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+												className='flex h-10 w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 												onClick={() => handleBackToLogin()}
 											>
 												Go Back
@@ -562,7 +550,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 												loading={loading}
 												htmlType='submit'
 												size='large'
-												className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+												className='h-10 w-[144px] rounded-md border-none bg-pink_primary text-sm text-white outline-none'
 											>
 												Login
 											</Button>

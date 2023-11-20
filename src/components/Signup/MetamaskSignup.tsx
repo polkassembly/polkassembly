@@ -307,7 +307,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 									</div>
 									<div className='mb-6 flex items-center justify-center gap-x-2'>
 										<Button
-											className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+											className='flex w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 											onClick={() => handleBackToLogin()}
 										>
 											Go Back
@@ -316,7 +316,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 											disabled={loading}
 											htmlType='submit'
 											size='large'
-											className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+											className='w-[144px] rounded-md border-none bg-pink_primary text-sm text-white outline-none'
 										>
 											Sign-up
 										</Button>

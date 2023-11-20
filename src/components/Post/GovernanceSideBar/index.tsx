@@ -56,7 +56,9 @@ import PIPsVote from './PIPs/PIPsVote';
 import dynamic from 'next/dynamic';
 import { PlusOutlined } from '@ant-design/icons';
 import MoneyIcon from '~assets/icons/money-icon-gray.svg';
+import DarkMoneyIcon from '~assets/icons/money-icon-white.svg';
 import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
+import DarkConvictionIcon from '~assets/icons/conviction-icon-white.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
@@ -820,7 +822,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						className=' max-[345px]:w-auto'
 					>
 						<span>
-							<MoneyIcon className='mr-1' />
+							{theme === 'dark' ? <DarkMoneyIcon className='mr-1' /> : <MoneyIcon className='mr-1' />}
 							{formatedBalance(balance, unit)}
 							{` ${unit}`}
 						</span>
@@ -834,7 +836,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							className='ml-[-5px]'
 						>
 							<span title='Conviction'>
-								<ConvictionIcon className='mr-1' />
+								{theme === 'dark' ? <DarkConvictionIcon className='mr-1' /> : <ConvictionIcon className='mr-1' />}
 								{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x
 							</span>
 						</Tooltip>

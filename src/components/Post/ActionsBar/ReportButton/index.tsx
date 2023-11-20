@@ -174,12 +174,12 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				onClick={() => setShowModal(true)}
 			>
 				{isDeleteModal ? (
-					<DeleteOutlined className={`${className} text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`} />
+					<DeleteOutlined className={`${className} text-pink_primary dark:text-icon-dark-inactive`} />
 				) : (
 					<FlagOutlined className={`${className} p-0 text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`} />
 				)}
 				{isDeleteModal ? (
-					<span className={`${className} break-keep text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`}>Delete</span>
+					<span className={`${className} break-keep text-pink_primary dark:text-icon-dark-inactive`}>Delete</span>
 				) : (
 					<span
 						className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary ${

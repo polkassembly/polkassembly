@@ -45,7 +45,6 @@
   --alertColorDark: #141C2D;
   --disableStateDark: #1D1D1D;
   --helperTextColorDark: #595959;
-
   --borderColorDark: #3B444F;
 }
 
@@ -760,3 +759,17 @@ z-index: 1050 !important;
 .dark .ant-collapse-content{
   background-color: #0D0D0D;
 }
+
+.ant-pagination .ant-pagination-item-active {
+  background-color: transparent !important;
+}
+
+.dark .ant-segmented-group label {
+  background-color: transparent !important;
+}
+
+
+/* .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
+  text-shadow: none !important;
+} */
+ 

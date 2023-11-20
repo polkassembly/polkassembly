@@ -167,7 +167,7 @@ const CreateProposal = ({
 
 	const handleSubmitTreasuryProposal = async () => {
 		// GAEvent for create preImage CTA clicked
-		trackEvent('create_proposal_CTA_clicked', 'created_proposal', {
+		trackEvent('create_proposal_cta_clicked', 'created_proposal', {
 			isWeb3Login: currentUser?.web3signup,
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''

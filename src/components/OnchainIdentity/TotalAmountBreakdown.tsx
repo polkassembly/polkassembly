@@ -71,7 +71,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 
 	const handleRequestJudgement = () => {
 		// GAEvent for request judgement button clicked
-		trackEvent('request_judgement_CTA_clicked', 'initiated_judgement_request', {
+		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
@@ -173,7 +173,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					loading={loading}
 					onClick={() => {
 						// GAEvent for let's begin button clicked
-						trackEvent('lets_begin_CTA_clicked', 'initiated_verification_process', {
+						trackEvent('lets_begin_cta_clicked', 'initiated_verification_process', {
 							userId: currentUser?.id || '',
 							userName: currentUser?.username || ''
 						});

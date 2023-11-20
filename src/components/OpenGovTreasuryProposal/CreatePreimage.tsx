@@ -399,7 +399,7 @@ const CreatePreimage = ({
 
 	const handleSubmit = async () => {
 		// GAEvent for create preImage CTA clicked
-		trackEvent('create_preImage_CTA_clicked', 'clicked_create_preImage', {
+		trackEvent('create_preImage_cta_clicked', 'clicked_create_preImage', {
 			isWeb3Login: currentUser?.web3signup,
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''

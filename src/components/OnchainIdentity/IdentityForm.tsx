@@ -221,7 +221,7 @@ const IdentityForm = ({
 
 	const handleSetIdentity = async () => {
 		// GAEvent for set identity button clicked
-		trackEvent('set_identity_CTA_clicked', 'clicked_set_identity_CTA', {
+		trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});

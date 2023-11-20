@@ -71,7 +71,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	const handleClick = () => {
 		// GAEvent for delegate CTA clicked
-		trackEvent('delegate_CTA_clicked', 'clicked_delegate_CTA', {
+		trackEvent('delegate_cta_clicked', 'clicked_delegate_cta', {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});

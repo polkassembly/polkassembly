@@ -101,7 +101,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 				<Button
 					onClick={() => {
 						// GAEvent for Let’s start your verification process button clicked
-						trackEvent('verification_CTA_clicked', 'submitted_verification_request', {
+						trackEvent('verification_cta_clicked', 'submitted_verification_request', {
 							userId: currentUser?.id || '',
 							userName: currentUser?.username || ''
 						});

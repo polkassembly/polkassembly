@@ -201,7 +201,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						e.stopPropagation();
 						e.preventDefault();
 						// GAEvent for setOnchain identity clicked
-						trackEvent('set_onChain_identity_clicked', 'opened_identity_verification', {
+						trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
 							userId: currentUser?.id || '',
 							userName: currentUser?.username || ''
 						});

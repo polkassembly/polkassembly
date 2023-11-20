@@ -53,7 +53,7 @@ const EvalutionSummary = () => {
 				<span className='text-sm tracking-[0.01em]'>Proposer is </span>
 				<span
 					className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue ${
-						!isMultisigProposer ? 'border-[#91CAFF] bg-[#E6F4FF]' : 'border-[#FFA08B] bg-[#F7E3E0]'
+						!isMultisigProposer ? 'border-[#91CAFF] bg-[#E6F4FF]' : 'border-[#531FE4] bg-[#EEE9FC]'
 					}`}
 				>
 					{isMultisigProposer ? (

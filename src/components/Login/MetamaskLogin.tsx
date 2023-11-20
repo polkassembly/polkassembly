@@ -97,7 +97,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 	}
 };
 
-const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLoginOpen, setSignupOpen, onWalletUpdate }) => {
+const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSignupOpen, onWalletUpdate }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -384,8 +384,6 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 		}
 	};
 
-	const handleToggle = () => setDisplayWeb2();
-
 	const handleBackToLogin = (): void => {
 		onWalletUpdate?.();
 	};
@@ -401,59 +399,63 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 				className='mt-2 dark:bg-separatorDark'
 			/>
 			{fetchAccounts ? (
-				<div className='-mt-6 flex flex-col px-8 pb-8'>
-					<div className='my-4 flex justify-start gap-x-2'>
-						<span className=''>
-							<WalletIcon which={chosenWallet} />
-						</span>
-						<span className='mt-1 text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}</span>
-					</div>
-					<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>
-						For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
-					</p>
-					<Divider
-						style={{ background: '#D2D8E0', flexGrow: 1 }}
-						className='m-0 mt-5 p-0 dark:bg-separatorDark'
-					/>
-					<div className='mt-4 flex w-full justify-start gap-x-2 font-normal'>
-						<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Don&apos;t have an account?</label>
-						<div
-							onClick={handleClick}
-							className='cursor-pointer text-base text-pink_primary'
-						>
-							{' '}
-							Sign Up{' '}
+				<>
+					<div className='-mt-6 flex flex-col px-8 pb-8'>
+						<div className='my-4 flex justify-start gap-x-2'>
+							<span className=''>
+								<WalletIcon which={chosenWallet} />
+							</span>
+							<span className='mt-1 text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>
+								{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
+							</span>
+						</div>
+						<p className='m-0 p-0 text-base text-bodyBlue dark:text-blue-dark-high'>
+							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
+						</p>
+						<Divider
+							style={{ background: '#D2D8E0', flexGrow: 1 }}
+							className='m-0 mt-5 p-0 dark:bg-separatorDark'
+						/>
+						<div className='mt-4 flex w-full justify-start gap-x-2 font-normal'>
+							<label className='text-bodyBlue` text-base dark:text-blue-dark-high'>Don&apos;t have an account?</label>
+							<div
+								onClick={handleClick}
+								className='cursor-pointer text-base text-pink_primary'
+							>
+								{' '}
+								Sign Up{' '}
+							</div>
+						</div>
+						<Divider
+							style={{ background: '#D2D8E0', flexGrow: 1 }}
+							className='my-4 p-0 dark:bg-separatorDark'
+						/>
+						<div className='flex justify-end'>
+							<Button
+								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+								onClick={() => handleBackToLogin()}
+							>
+								Go Back
+							</Button>
+							<Button
+								key='got-it'
+								icon={<CheckOutlined />}
+								className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-5 text-sm font-medium leading-none text-white outline-none'
+								onClick={() => {
+									getAccounts()
+										.then(() => {
+											setFetchAccounts(false);
+										})
+										.catch((err) => {
+											console.error(err);
+										});
+								}}
+							>
+								Got it!
+							</Button>
 						</div>
 					</div>
-					<Divider
-						style={{ background: '#D2D8E0', flexGrow: 1 }}
-						className='my-4 p-0 dark:bg-separatorDark'
-					/>
-					<div className='flex justify-end'>
-						<Button
-							className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
-							onClick={() => handleBackToLogin()}
-						>
-							Go Back
-						</Button>
-						<Button
-							key='got-it'
-							icon={<CheckOutlined />}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-5 text-sm font-medium leading-none text-white outline-none'
-							onClick={() => {
-								getAccounts()
-									.then(() => {
-										setFetchAccounts(false);
-									})
-									.catch((err) => {
-										console.error(err);
-									});
-							}}
-						>
-							Got it!
-						</Button>
-					</div>
-				</div>
+				</>
 			) : (
 				<>
 					{authResponse.isTFAEnabled ? (
@@ -497,7 +499,19 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 							) : (
 								accounts.length > 0 && (
 									<>
-										<div className='my-5 flex items-center justify-center'>
+										<h3 className='flex flex-col gap-y-2 px-8 dark:text-blue-dark-medium'>
+											<p className='m-0 flex items-center justify-start gap-x-2 p-0'>
+												<span className='mt-2'>
+													<WalletIcon which={chosenWallet} />
+												</span>
+												<span className='text-xl text-bodyBlue dark:text-blue-dark-high sm:text-xl'>
+													{chosenWallet === Wallet.SUBWALLET
+														? chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).split('-')[0]
+														: chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
+												</span>
+											</p>
+										</h3>
+										<div className='-mt-4 flex items-center justify-center'>
 											<AccountSelectionForm
 												title='Choose linked account'
 												accounts={accounts}
@@ -525,29 +539,21 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 												}
 											/>
 										)}
-										<div className='flex items-center justify-center'>
+										<div className='flex items-center justify-center gap-x-2'>
+											<Button
+												className='flex h-10 w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+												onClick={() => handleBackToLogin()}
+											>
+												Go Back
+											</Button>
 											<Button
 												loading={loading}
 												htmlType='submit'
 												size='large'
-												className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+												className='h-10 w-[144px] rounded-md border-none bg-pink_primary text-sm text-white outline-none'
 											>
 												Login
 											</Button>
-										</div>
-										<div>
-											<Divider>
-												<div className='flex items-center gap-x-2'>
-													<span className='text-md text-grey_primary'>Or</span>
-													<Button
-														className='text-md border-none p-0 font-semibold text-pink_primary outline-none'
-														disabled={loading}
-														onClick={handleToggle}
-													>
-														Login with Username
-													</Button>
-												</div>
-											</Divider>
 										</div>
 									</>
 								)
@@ -556,8 +562,8 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, setDisplayWeb2, isModal, setLo
 						</AuthForm>
 					)}
 
-					{!authResponse.isTFAEnabled && (
-						<div className='my-6 flex items-center justify-center'>
+					{!!chosenWallet && !accounts.length && (
+						<div className='mb-6 mt-4 flex items-center justify-center'>
 							<Button
 								className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
 								onClick={() => handleBackToLogin()}

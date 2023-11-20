@@ -37,6 +37,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 
@@ -90,6 +91,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [successModal, setSuccessModal] = useState(false);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -295,6 +297,16 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	};
 
 	const handleSubmit = async () => {
+		// GAEvent for proposal voting
+		trackEvent('proposal_voting', 'voted_proposal', {
+			balance: lockedBalance,
+			conviction: conviction,
+			decision: vote,
+			isWeb3Login: currentUser?.web3signup,
+			postId: referendumId,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		if (!isTalismanEthereum) {
 			console.error('Please use Ethereum account via Talisman wallet.');
 			return;

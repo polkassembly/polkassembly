@@ -78,6 +78,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 		<>
 			<SEOHead
 				title='Bounties'
+				desc='Discover and participate in treasury-funded bounties on Polkassembly, where members can propose and work on projects to improve the governance and growth of our community.'
 				network={network}
 			/>
 			<div className='mt-3 flex sm:items-center'>

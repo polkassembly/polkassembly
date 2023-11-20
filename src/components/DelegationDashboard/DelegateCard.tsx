@@ -99,6 +99,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						iconSize={34}
 						usernameClassName='font-semibold'
 						isTruncateUsername={false}
+						className='flex items-center'
 					/>
 
 					<div className='-mt-5 mr-2 flex gap-2'>

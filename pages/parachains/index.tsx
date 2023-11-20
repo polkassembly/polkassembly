@@ -94,6 +94,7 @@ const Parachains = ({ className, network }: Props) => {
 		<>
 			<SEOHead
 				title='Parachains'
+				desc="Explore the limitless potential of Polkadot's multi-chain architecture and the Parachains ecosystem on Polkassembly's dedicated page."
 				network={network}
 			/>
 			<div className={className}>

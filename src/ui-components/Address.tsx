@@ -62,6 +62,7 @@ interface Props {
 	ethIdenticonSize?: number;
 	isVoterAddress?: boolean;
 	disableTooltip?: boolean;
+	showKiltAddress?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -92,7 +93,8 @@ const Address = (props: Props) => {
 		passedUsername,
 		ethIdenticonSize,
 		isVoterAddress,
-		disableTooltip = false
+		disableTooltip = false,
+		showKiltAddress = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -206,6 +208,7 @@ const Address = (props: Props) => {
 		const web3Name = await getKiltDidName(api, address);
 		setKiltName(web3Name ? `w3n:${web3Name}` : '');
 	};
+
 	const handleFlags = () => {
 		if (!api || !apiReady) return;
 
@@ -330,7 +333,7 @@ const Address = (props: Props) => {
 								{!disableHeader && (
 									<div>
 										<div className='flex items-center'>
-											{kiltName ||
+											{!!kiltName ||
 												(!!identity && !!mainDisplay && (
 													<IdentityBadge
 														identity={identity}
@@ -345,7 +348,7 @@ const Address = (props: Props) => {
 													} hover:text-bodyBlue dark:text-blue-dark-high`}
 												>
 													{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
-													{!extensionName && sub && isSubVisible && (
+													{!extensionName && !!sub && isSubVisible && (
 														<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
 													)}
 												</div>
@@ -363,8 +366,9 @@ const Address = (props: Props) => {
 								</div>
 							</div>
 						) : (
-							<div className={`${addressClassName} text-xs font-semibold dark:text-blue-dark-medium`}>
+							<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>
 								{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+								{showKiltAddress && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
 							</div>
 						)}
 					</div>
@@ -384,7 +388,6 @@ const Address = (props: Props) => {
 			</Tooltip>
 			{!TippingUnavailableNetworks.includes(network) && (
 				<Tipping
-					receiverAddress={address}
 					username={addressPrefix}
 					open={openTipping}
 					setOpen={setOpenTipping}

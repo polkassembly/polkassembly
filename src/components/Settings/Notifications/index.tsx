@@ -230,7 +230,6 @@ export default function Notifications({ network }: { network: string }) {
 	};
 
 	useEffect(() => {
-		console.log('enter');
 		if (loading) {
 			return;
 		}
@@ -240,7 +239,6 @@ export default function Notifications({ network }: { network: string }) {
 				if (chain.selected) selectedNames.push(chain.name);
 			});
 		}
-		console.log(selectedNames);
 		handleSetNetworkPreferences(selectedNames);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [networkPreferences.triggerPreferences]);

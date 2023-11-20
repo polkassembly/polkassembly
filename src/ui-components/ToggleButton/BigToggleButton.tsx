@@ -7,9 +7,12 @@ import { useTheme } from 'next-themes';
 import DarkModeSwitcher from '~assets/icons/darkmodeswitcher.svg';
 import LightModeSwitcher from '~assets/icons/lightmodeswitcher.svg';
 import classNames from 'classnames';
+import { trackEvent } from 'analytics';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const BigToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();
+	const currentUser = useUserDetailsSelector();
 
 	return (
 		<div className='flex w-full items-center justify-center'>
@@ -17,6 +20,13 @@ const BigToggleButton = () => {
 				onClick={(e) => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
+					// GAEvent for theme change
+					trackEvent('theme_preference_change', 'switched_theme', {
+						isWeb3Login: currentUser?.web3signup,
+						theme: theme === 'dark' ? 'light' : 'dark',
+						userId: currentUser?.id || '',
+						userName: currentUser?.username || ''
+					});
 				}}
 				className={classNames('flex w-[90%] cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-2 py-2 outline-none', {
 					'border-[#3B444F]': theme === 'dark',

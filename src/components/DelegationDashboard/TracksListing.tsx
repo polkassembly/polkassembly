@@ -244,12 +244,14 @@ const DashboardTrackListing = ({ className }: Props) => {
 					rowClassName='cursor-pointer'
 					loading={loading || !delegationDashboardAddress}
 					pagination={false}
-					onRow={(rowData: ITrackDataType) => {
+					onRow={(row: ITrackDataType) => {
 						return {
-							onClick: () => router.push(`/delegation/${rowData?.track.split(' ').join('-').toLowerCase()}`)
+							onClick: () => {
+								router.push(`/delegation/${row?.track?.split(' ')?.join('-')?.toLowerCase() || row.track.toLowerCase()}`);
+							}
 						};
 					}}
-				></Table>
+				/>
 			)}
 
 			{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && (

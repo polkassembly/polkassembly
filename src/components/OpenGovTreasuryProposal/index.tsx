@@ -14,11 +14,14 @@ import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
+import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_white.svg';
 import { BN_HUNDRED } from '@polkadot/util';
 import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useApiContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -82,6 +85,8 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -116,6 +121,13 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	}, [title, api, apiReady, preimage, postId]);
 
 	const handleClick = () => {
+		// GAEvent for proposal creation
+		trackEvent('proposal_creation', 'created_proposal', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
+
 		if (id) {
 			proposerAddress.length > 0 ? setOpenModal(!openModal) : setOpenAddressLinkedModal(true);
 		} else {
@@ -215,7 +227,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
 					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						<CreateProposalIcon />
+						{theme === 'dark' ? <CreateProposalIconDark /> : <CreateProposalIcon />}
 						Create Treasury Proposal
 					</div>
 				}
@@ -383,5 +395,8 @@ export default styled(OpenGovTreasuryProposal)`
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
+	}
+	.ant-steps .ant-steps-item-wait .ant-steps-item-icon {
+		background-color: ${(props) => (props.theme === 'dark' ? '#dde4ed' : 'rgba(0, 0, 0, 0.06)')} !important;
 	}
 `;

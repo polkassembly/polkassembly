@@ -87,6 +87,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, 
 		<>
 			<SEOHead
 				title='Signup'
+				desc={`Securely access your governance forum account and shape the future of ${network} with Polkassembly`}
 				network={network}
 			/>
 			<Row

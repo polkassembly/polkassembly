@@ -256,10 +256,7 @@ const VoterRow: FC<IVoterRow> = ({
 				<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
 					<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-							<CalenderIcon />{' '}
-							{dayjs(voteData.createdAt.toDate?.())
-								.format('MM/DD/YYYY, h:mm A')
-								.toString()}
+							<CalenderIcon /> {dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
 						</span>
 						{voteData?.decision !== 'abstain' && isReferendum2 && (
 							<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>

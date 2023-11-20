@@ -24,7 +24,6 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 
-
 const ZERO_BN = new BN(0);
 
 interface Props {

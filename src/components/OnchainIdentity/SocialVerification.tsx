@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Spin, Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
-import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
+import { EmailIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { ESetIdentitySteps, ISocials } from '.';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -14,7 +14,6 @@ import BN from 'bn.js';
 import InprogressState from './InprogressState';
 import { useRouter } from 'next/router';
 import { useApiContext } from '~src/context';
-import VerifiedTick from '~assets/icons/verified-tick.svg';
 
 interface Props {
 	className?: string;
@@ -61,7 +60,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 						<span>{value}</span>
 						{verified ? (
 							<span className='flex items-center justify-center gap-2 text-xs text-[#8d99a9]'>
-								<VerifiedTick />
+								<VerifiedIcon className='text-xl' />
 								Verified
 							</span>
 						) : (

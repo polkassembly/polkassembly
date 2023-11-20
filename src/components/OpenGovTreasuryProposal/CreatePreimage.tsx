@@ -934,7 +934,7 @@ const CreatePreimage = ({
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
 						<Button
 							onClick={() => setSteps({ percent: 100, step: 0 })}
-							className='h-[38px] w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary'
+							className='h-[40px] w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
@@ -976,5 +976,9 @@ export default styled(CreatePreimage)`
 	.ant-alert-with-description .ant-alert-icon {
 		font-size: 18px !important;
 		margin-top: 4px;
+	}
+
+	.ant-alert-with-description .ant-alert-description {
+		color: black !important;
 	}
 `;

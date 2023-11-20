@@ -19,9 +19,11 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
-import VerifiedTick from '~assets/icons/verified-tick.svg';
+import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
+
 
 const ZERO_BN = new BN(0);
 
@@ -94,6 +96,7 @@ const IdentityForm = ({
 	setAddressChangeModalOpen
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
@@ -158,7 +161,7 @@ const IdentityForm = ({
 		const okLegal = checkValue(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
 		const okEmail = checkValue(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
 		// const okRiot = checkValue((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
-		const okTwitter = checkValue(twitterVal.length > 0, twitterVal, 3, [], WHITESPACE, []);
+		const okTwitter = checkValue(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
 		// const okWeb = checkValue((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
 		let okSocials = 1;
@@ -446,11 +449,11 @@ const IdentityForm = ({
 						>
 							<Input
 								onBlur={() => getGasFee()}
-								addonAfter={email?.verified && alreadyVerifiedfields?.email === form?.getFieldValue('email') && <VerifiedTick />}
+								addonAfter={email?.verified && alreadyVerifiedfields?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
-								className='h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
 									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 									handleInfo();
@@ -474,7 +477,11 @@ const IdentityForm = ({
 								{
 									message: 'Invalid twitter username',
 									validator(rule, value, callback) {
-										if (callback && value.length && !checkValue(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], WHITESPACE, [])) {
+										if (
+											callback &&
+											value.length &&
+											!checkValue(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], [...WHITESPACE, '/'], [])
+										) {
 											callback(rule?.message?.toString());
 										} else {
 											callback();
@@ -486,10 +493,10 @@ const IdentityForm = ({
 							<Input
 								onBlur={() => getGasFee()}
 								name='twitter'
-								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
+								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
 								value={twitter?.value}
 								placeholder='Enter your twitter name'
-								className='h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
 									handleInfo();
@@ -645,9 +652,13 @@ export default styled(IdentityForm)`
 	input {
 		height: 40px !important;
 		border-radius: 4px 0px 0px 4px;
+		background: transparent !important;
 	}
 	.ant-input-group .ant-input-group-addon {
 		border-radius: 0px 4px 4px 0px !important;
-		background: white !important;
+		background: transparent !important;
+	}
+	.dark input {
+		color: white !important;
 	}
 `;

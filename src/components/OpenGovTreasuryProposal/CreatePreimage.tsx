@@ -15,7 +15,7 @@ import Web3 from 'web3';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import styled from 'styled-components';
 import DownArrow from '~assets/icons/down-icon.svg';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { BN_HUNDRED, BN_MAX_INTEGER, BN_ONE, BN_THOUSAND, formatBalance, isHex } from '@polkadot/util';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
@@ -205,7 +205,15 @@ const CreatePreimage = ({
 		setPreimageHash(createPreimageForm?.preimageHash || '');
 		setPreimageLength(createPreimageForm?.preimageLength || null);
 
-		// TODO: setBeneficiaryAddresses(createPreimageForm?.beneficiaryAddresses || []);
+		dispatchBeneficiaryAddresses({
+			payload: {
+				address: '',
+				amount: '',
+				index: 0,
+				newState: createPreimageForm?.beneficiaryAddresses || []
+			},
+			type: EBeneficiaryAddressesActionType.REPLACE_STATE
+		});
 
 		setEnactment(createPreimageForm?.enactment || { key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 		setSelectedTrack(createPreimageForm?.selectedTrack || '');
@@ -381,7 +389,11 @@ const CreatePreimage = ({
 			setPreimageHash(preimage.preimageHash);
 			setPreimageLength(preimage.preimageLength);
 			setPreimageCreated(true);
-			onChangeLocalStorageSet({ preimageCreated: true, preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength }, Boolean(isPreimage), true);
+			onChangeLocalStorageSet(
+				{ beneficiaryAddresses: [], preimageCreated: true, preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength },
+				Boolean(isPreimage),
+				true
+			);
 			setLoading(false);
 			setSteps({ percent: 100, step: 2 });
 		};
@@ -483,7 +495,7 @@ const CreatePreimage = ({
 							amount: newBeneficiaryAddress.amount,
 							index: 0
 						},
-						type: EBeneficiaryAddressesActionType.REPLACE_ALL
+						type: EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE
 					});
 
 					setFundingAmount(balance);
@@ -543,14 +555,14 @@ const CreatePreimage = ({
 							amount: newBeneficiaryAddress.amount,
 							index: 0
 						},
-						type: EBeneficiaryAddressesActionType.REPLACE_ALL
+						type: EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE
 					});
 
 					setFundingAmount(balance);
 					setPreimageLength(data.length);
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet(
-						{ beneficiaryAddresses: [newBeneficiaryAddress] || '', fundingAmount: balance.toString(), preimageLength: data?.length || '' },
+						{ beneficiaryAddresses: [newBeneficiaryAddress] || [], fundingAmount: balance.toString(), preimageLength: data?.length || '' },
 						Boolean(isPreimage)
 					);
 					//select track
@@ -692,6 +704,23 @@ const CreatePreimage = ({
 		});
 	};
 
+	const removeAllBeneficiaries = () => {
+		dispatchBeneficiaryAddresses({
+			payload: {
+				address: '',
+				amount: '',
+				index: 0
+			},
+			type: EBeneficiaryAddressesActionType.REMOVE_ALL
+		});
+
+		form.resetFields();
+
+		setInputAmountValue('0');
+		form.setFieldValue('funding_amount', '0');
+		handleSelectTrack(ZERO_BN, Boolean(isPreimage));
+	};
+
 	return (
 		<Spin
 			spinning={loading}
@@ -828,7 +857,6 @@ const CreatePreimage = ({
 												inputClassName={'font-normal text-sm h-[40px]'}
 												skipFormatCheck={true}
 												checkValidAddress={setValidBeneficiaryAddress}
-												onBlur={getPreimageTxFee}
 											/>
 
 											{beneficiary.address
@@ -852,21 +880,33 @@ const CreatePreimage = ({
 								);
 							})}
 
-							<Button
-								type='text'
-								className='mt-2 flex items-center text-xs text-[#407BFF]'
-								size='small'
-								onClick={addBeneficiary}
-							>
-								<PlusCircleOutlined />
-								Add Another
-							</Button>
+							<div className='flex items-center justify-between'>
+								<Button
+									type='text'
+									className='mt-2 flex items-center text-xs text-[#407BFF]'
+									size='small'
+									onClick={addBeneficiary}
+								>
+									<PlusCircleOutlined />
+									Add Beneficiary
+								</Button>
+
+								<Button
+									type='text'
+									className='mt-2 flex items-center text-xs text-red-light-text dark:text-red-dark-text'
+									size='small'
+									onClick={removeAllBeneficiaries}
+								>
+									<MinusCircleOutlined />
+									Remove All
+								</Button>
+							</div>
 
 							{addressAlert && (
 								<Alert
 									className='mb mt-2'
 									showIcon
-									message='The substrate address has been changed to Kusama address.'
+									message={`The substrate address has been changed to ${network} network address.`}
 								/>
 							)}
 							<div className='-mb-6 mt-6'>

@@ -62,7 +62,8 @@ export enum EBeneficiaryAddressesActionType {
 	UPDATE_ADDRESS,
 	UPDATE_AMOUNT,
 	REMOVE_ALL,
-	REPLACE_ALL,
+	REPLACE_ALL_WITH_ONE,
+	REPLACE_STATE,
 	ADD
 }
 
@@ -72,6 +73,7 @@ export interface EBeneficiaryAddressesAction {
 		index: number;
 		address: string;
 		amount: string;
+		newState?: IBeneficiary[];
 	};
 }
 
@@ -95,10 +97,12 @@ const beneficiaryAddressesReducer = (state: IBeneficiary[], action: EBeneficiary
 			});
 		case EBeneficiaryAddressesActionType.REMOVE_ALL:
 			return [];
-		case EBeneficiaryAddressesActionType.REPLACE_ALL:
+		case EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE:
 			return [{ address: action.payload.address, amount: action.payload.amount }];
 		case EBeneficiaryAddressesActionType.ADD:
 			return [...state, { address: '', amount: ZERO_BN.toString() } as IBeneficiary];
+		case EBeneficiaryAddressesActionType.REPLACE_STATE:
+			return action.payload.newState || [];
 		default:
 			return state;
 	}

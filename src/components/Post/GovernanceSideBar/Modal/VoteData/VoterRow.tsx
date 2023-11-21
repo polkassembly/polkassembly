@@ -134,7 +134,7 @@ const VoterRow: FC<IVoterRow> = ({
 		if (voteData.decision === 'yes') {
 			setVoteDecision('Aye');
 		} else if (voteData.decision === 'no') {
-			setVoteDecision('Nye');
+			setVoteDecision('Nay');
 		} else {
 			setVoteDecision('Abstain');
 		}
@@ -176,7 +176,7 @@ const VoterRow: FC<IVoterRow> = ({
 					</div>
 				) : (
 					<div className={`${isUsedInVotedModal ? '-ml-1' : ''} w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}>
-						{voteDecision === 'Nye' && (
+						{voteDecision === 'Nay' && (
 							<div className='flex gap-x-2'>
 								<DislikeFilled className='text-[red]' />
 								<p className='m-0 p-0 font-medium capitalize text-[red]'>{voteDecision}</p>

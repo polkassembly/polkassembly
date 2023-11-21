@@ -109,6 +109,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
+	const handleContentClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+	};
 	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
 	const getSentimentLabel = (sentiment: ESentiment) => {
@@ -262,12 +265,14 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									</div>
 								}
 							>
-								<VoteList
-									referendumId={postData?.postIndex as number}
-									isUsedInVotedModal={true}
-									delegationAddress={delegationAddress}
-									voteType={getVotingTypeFromProposalType(postData?.postType)}
-								/>
+								<div onClick={handleContentClick}>
+									<VoteList
+										referendumId={postData?.postIndex as number}
+										isUsedInVotedModal={true}
+										delegationAddress={delegationAddress}
+										voteType={getVotingTypeFromProposalType(postData?.postType)}
+									/>
+								</div>
 							</Modal>
 						</div>
 					) : null}

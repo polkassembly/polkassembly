@@ -350,7 +350,7 @@ const CreateProposal = ({
 						showIcon
 						type='info'
 						message={
-							<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
+							<span className='text-sm text-bodyBlue dark:text-blue-900'>
 								An amount of{' '}
 								<span className='font-semibold'>
 									{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}

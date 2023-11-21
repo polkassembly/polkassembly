@@ -199,8 +199,10 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 						{status.map((item: ETrackDelegationStatus, index: number) => (
 							<h2
 								key={index}
-								className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${
-									item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'
+								className={`text-xs ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] dark:border-solid dark:border-[#531FE4] dark:bg-[#281856]'} ${
+									item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8] dark:border-solid dark:border-[#026630] dark:bg-[#063E20]'
+								} ${
+									item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:border-solid dark:border-[#5C3931] dark:bg-[#331701]'
 								} rounded-[26px] px-[12px] py-[6px] text-center ${item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'w-[95px] truncate'} `}
 							>
 								{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
@@ -458,10 +460,10 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 					<div className='flex items-start justify-center'>
 						<Button
 							onClick={() => setOpen(true)}
-							className='flex h-[40px] items-center justify-center gap-2 border-[1px] border-solid border-pink_primary px-2 text-sm font-normal text-bodyBlue dark:text-white max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
+							className='flex h-[40px] items-center justify-center gap-2 border-[1px] border-solid border-pink_primary px-2 text-sm font-normal text-bodyBlue dark:bg-[#33071E] dark:text-white max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
 						>
 							<UndelegatedProfileIcon />
-							<span className='text-sm font-medium tracking-wide text-pink_primary'>{action}</span>
+							<span className='text-sm font-medium tracking-wide text-pink_primary '>{action}</span>
 						</Button>
 					</div>
 				),

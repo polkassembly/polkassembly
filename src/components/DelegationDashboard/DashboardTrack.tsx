@@ -61,6 +61,7 @@ export interface ITrackRowData {
 	balance: string;
 	delegatedOn: Date;
 	action: string;
+	theme?: string;
 }
 
 export const handleTrack = (track: string) => {
@@ -212,8 +213,10 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 							status.map((item: ETrackDelegationStatus, index: number) => (
 								<span
 									key={index}
-									className={`text-sm ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${
-										item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'
+									className={`text-sm ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] dark:border-[#531FE4] dark:bg-[#281856]'} ${
+										item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8] dark:border-solid dark:border-[#026630] dark:bg-[#063E20]'
+									} ${
+										item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:border-solid dark:border-[#5C3931] dark:bg-[#331701]'
 									} rounded-[26px] px-[12px] py-[6px] text-center`}
 								>
 									{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
@@ -358,5 +361,29 @@ export default styled(DashboardTrackListing)`
 		font-size: 14px;
 		font-weight: 600px;
 		line-height: 21px;
+	}
+	.column .ant-table-thead > tr > th {
+		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#485F7D')} !important;
+		font-size: 14px;
+		font-weight: ${(props) => (props.theme === 'dark' ? '500' : '600')} !important;
+		line-height: 21px;
+		white-space: nowrap;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+	}
+	.column .ant-table-thead > tr > th:nth-child(1) {
+		text-align: center;
+	}
+	.ant-table-cell {
+		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
+		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+	}
+	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
+	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+		background-color: transparent !important;
+	}
+	@media only screen and (max-width: 1024px) {
+		.column .ant-table-thead > tr > th:nth-child(2) {
+			text-align: center;
+		}
 	}
 `;

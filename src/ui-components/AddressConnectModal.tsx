@@ -446,7 +446,7 @@ const AddressConnectModal = ({
 						<div>
 							{canUsePolkasafe(network) && !showMultisig && usingMultisig && (
 								<div className='m-auto mb-6 mt-3 flex w-[50%] flex-col gap-3'>
-									<Divider className='m-0'>OR</Divider>
+									<Divider className='m-0 dark:text-blue-dark-high'>OR</Divider>
 									<div className='flex w-full justify-center'>
 										<WalletButton
 											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'

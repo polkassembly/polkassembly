@@ -1021,3 +1021,4 @@ export const BeneficiaryWhiteIcon = (props: Partial<CustomIconComponentProps>) =
 		{...props}
 	/>
 );
+

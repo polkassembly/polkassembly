@@ -6,6 +6,7 @@ import React from 'react';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from './Beneficiary';
 import { Popover } from 'antd';
+import { BeneficiaryIcon } from '../CustomIcons';
 
 interface Props {
 	className?: string;
@@ -17,7 +18,8 @@ const BeneficiariesListing = ({ className, beneficiaries }: Props) => {
 
 	return (
 		<div className={`${className} flex flex-wrap items-center gap-1`}>
-			<span className='mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Beneficiary:</span>
+			<BeneficiaryIcon className='-mt-[2px]' />
+			<span className='ml-[1px] mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Beneficiary:</span>
 			<Beneficiary beneficiary={beneficiaries[0]} />
 			{beneficiaries.length > 1 && (
 				<span className='flex items-center gap-1'>

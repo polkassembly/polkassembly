@@ -143,6 +143,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						cid={cid}
 						isRow={false}
 						beneficiaries={beneficiaries}
+						inPostHeading={true}
 					>
 						{history && history?.length > 0 && (
 							<div
@@ -157,13 +158,28 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								/>
 							</div>
 						)}
-						{summary ? (
-							<>
+						{tags && tags.length > 0 && (
+							<div className='flex'>
 								<Divider
-									className='ml-1 xs:mt-2 xs:inline-block md:mt-0 md:hidden'
+									className='ml-2 mr-3 mt-2'
 									type='vertical'
 									style={{ borderLeft: '1px solid #485F7D' }}
 								/>
+								<div className='flex flex-wrap gap-[8px]'>
+									{tags?.map((tag, index) => (
+										<div
+											onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
+											className='traking-2 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+											key={index}
+										>
+											{tag}
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+						{summary ? (
+							<>
 								<PostSummary
 									theme={theme}
 									className='flex xs:mt-2 md:mt-0'
@@ -173,19 +189,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</CreationLabel>
 				</>
 			</div>
-			{tags && tags.length > 0 && (
-				<div className='mt-3.5 flex flex-wrap gap-[8px]'>
-					{tags?.map((tag, index) => (
-						<div
-							onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
-							className='traking-2 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
-							key={index}
-						>
-							{tag}
-						</div>
-					))}
-				</div>
-			)}
 			{history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}

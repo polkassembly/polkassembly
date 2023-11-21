@@ -27,6 +27,12 @@ import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 import { ESentiment } from '~src/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import DarkSentiment1 from '~assets/overall-sentiment/dark/dizzy(1).svg';
+import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
+import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
+import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
+import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -54,6 +60,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
+	const { resolvedTheme: theme } = useTheme();
+
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
@@ -108,7 +116,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			return (
 				<Button
 					disabled={disabled}
-					className={`${disabled && 'opacity-50'} emoji-button hover:bg-baby_pink mb-[4px] h-10 w-10 border-solid p-0 pt-1 text-2xl`}
+					className={`${disabled && 'opacity-50'} emoji-button hover:bg-baby_pink mb-[4px] h-10 w-10 border-solid p-0 pt-1 text-2xl dark:border-[#3B444F] dark:bg-transparent`}
 					onClick={() => {
 						clickable && handleEmojiClick(icon, currentSentiment);
 					}}
@@ -124,7 +132,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			>
 				<Button
 					disabled={disabled}
-					className={`${disabled && 'opacity-50'} emoji-button hover:bg-baby_pink mb-[4px] h-10 w-10 rounded-full border-none p-0 pt-1 text-2xl`}
+					className={`${disabled && 'opacity-50'} emoji-button hover:bg-baby_pink mb-[4px] h-10 w-10 rounded-full border-none bg-transparent p-0 pt-1 text-2xl hover:bg-[#303030]`}
 					onClick={() => {
 						clickable && handleEmojiClick(icon, currentSentiment);
 					}}
@@ -337,7 +345,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 									<textarea
 										name='content'
 										className={
-											'suffixColor input-container mt-2 max-h-10 w-full flex-1 resize-none rounded-[4px] border-[1px] text-sm hover:border-pink_primary focus:border-pink_primary dark:text-blue-dark-high'
+											'suffixColor input-container mt-2 max-h-10 w-full flex-1 resize-none rounded-[4px] border-[1px] text-sm hover:border-pink_primary focus:border-pink_primary dark:border-[#3B444F] dark:text-blue-dark-high'
 										}
 										onChange={(e) => {
 											onContentChange(e.target.value);
@@ -360,32 +368,62 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 											<div className='flex'>
 												{showEmojiMenu && (
 													<div
-														className='absolute right-[77px] top-[-55px] -mt-1 flex h-[50px] w-[234px] space-x-1 p-2 pb-12 pt-[7px]'
+														className='absolute right-[77px] top-[-55px] -mt-1 flex h-[50px] w-[234px] space-x-1 p-2 pb-12 pt-[7px] dark:border-[#3B444F] dark:bg-black'
 														style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
 													>
 														<EmojiOption
-															icon={<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSentiment1 style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
 															currentSentiment={1}
 															title={'Completely Against'}
 														/>
 														<EmojiOption
-															icon={<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSentiment2 style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
 															currentSentiment={2}
 															title={'Slightly Against'}
 														/>
 														<EmojiOption
-															icon={<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSentiment3 style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
 															currentSentiment={3}
 															title={'Neutral'}
 														/>
 														<EmojiOption
-															icon={<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSentiment4 style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
 															currentSentiment={4}
 															title={'Slightly For'}
 														/>
 														<EmojiOption
-															icon={<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />}
-															currentSentiment={5}
+															icon={
+																theme === 'dark' ? (
+																	<DarkSentiment5 style={{ border: 'none', transform: 'scale(1.2)' }} />
+																) : (
+																	<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />
+																)
+															}
+															currentSentiment={4}
 															title={'Completely For'}
 														/>
 													</div>
@@ -406,7 +444,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 												)}
 												{selectedIcon && (
 													<Button
-														className='mr-[7px] h-10 w-10 border-solid p-0 pt-1'
+														className='mr-[7px] h-10 w-10 border-solid p-0 pt-2 dark:border-[#3B444F] dark:bg-transparent'
 														onClick={() => setShowEmojiMenu(!showEmojiMenu)}
 													>
 														{selectedIcon}

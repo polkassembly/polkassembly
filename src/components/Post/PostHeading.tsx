@@ -41,6 +41,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	const {
 		postData: {
+			beneficiaries,
 			created_at,
 			status,
 			postType: proposalType,
@@ -141,6 +142,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						topic={topic && topic?.name}
 						cid={cid}
 						isRow={false}
+						beneficiaries={beneficiaries}
 					>
 						{history && history?.length > 0 && (
 							<div

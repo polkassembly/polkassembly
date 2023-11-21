@@ -39,8 +39,9 @@ import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { trackEvent } from 'analytics';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -123,6 +124,8 @@ const CreatePreimage = ({
 	});
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
+	const currentUser = useUserDetailsSelector();
+
 	const checkPreimageHash = (preimageLength: number | null, preimageHash: string) => {
 		if (!preimageHash || preimageLength === null) return false;
 		return !isHex(preimageHash, 256) || !preimageLength || preimageLength === 0;
@@ -395,6 +398,12 @@ const CreatePreimage = ({
 	};
 
 	const handleSubmit = async () => {
+		// GAEvent for create preImage CTA clicked
+		trackEvent('create_preImage_cta_clicked', 'clicked_create_preImage', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		if (!isPreimage) {
 			if (txFee.gte(availableBalance)) return;
 		}
@@ -925,7 +934,7 @@ const CreatePreimage = ({
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
 						<Button
 							onClick={() => setSteps({ percent: 100, step: 0 })}
-							className='h-[38px] w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary'
+							className='h-[40px] w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
@@ -967,5 +976,9 @@ export default styled(CreatePreimage)`
 	.ant-alert-with-description .ant-alert-icon {
 		font-size: 18px !important;
 		margin-top: 4px;
+	}
+
+	.ant-alert-with-description .ant-alert-description {
+		color: black !important;
 	}
 `;

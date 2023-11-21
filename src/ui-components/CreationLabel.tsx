@@ -218,7 +218,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 
 	return (
 		<div className={`${className} flex w-[100%] justify-between bg-none`}>
-			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-1 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
 						<NameLabel
@@ -239,11 +239,15 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								/>
 							</div>
 						)}
-						<Divider
-							className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
-							type='vertical'
-						/>
-						<BeneficiariesListing beneficiaries={beneficiaries} />
+						{beneficiaries && beneficiaries?.length > 0 && (
+							<>
+								<Divider
+									className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
+									type='vertical'
+								/>
+								<BeneficiariesListing beneficiaries={beneficiaries} />
+							</>
+						)}
 						{cid ? (
 							<>
 								<Divider

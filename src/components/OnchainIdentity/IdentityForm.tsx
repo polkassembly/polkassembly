@@ -20,8 +20,9 @@ import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 
@@ -105,6 +106,7 @@ const IdentityForm = ({
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 
 	const handleLocalStorageSave = (field: any) => {
@@ -220,6 +222,11 @@ const IdentityForm = ({
 	};
 
 	const handleSetIdentity = async () => {
+		// GAEvent for set identity button clicked
+		trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		if (!api || !apiReady || !okAll) return;
 		const identityTx = api.tx?.identity?.setIdentity(info);
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());

@@ -14,6 +14,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 interface Props {
 	className?: string;
@@ -40,6 +41,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsSelector();
 	const [showAlert, setShowAlert] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -68,6 +70,11 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 	}, [network, userId]);
 
 	const handleRequestJudgement = () => {
+		// GAEvent for request judgement button clicked
+		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
 			handleLocalStorageSave({ setIdentity: true });
 			changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
@@ -164,7 +171,14 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			<div className='-mx-6 mt-6 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<Button
 					loading={loading}
-					onClick={() => changeStep(ESetIdentitySteps.SET_IDENTITY_FORM)}
+					onClick={() => {
+						// GAEvent for let's begin button clicked
+						trackEvent('lets_begin_cta_clicked', 'initiated_verification_process', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
+						changeStep(ESetIdentitySteps.SET_IDENTITY_FORM);
+					}}
 					className='h-[40px] w-full rounded-[4px] border-pink_primary bg-pink_primary text-sm tracking-wide text-white'
 				>
 					Let&apos;s Begin

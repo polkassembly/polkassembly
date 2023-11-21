@@ -26,6 +26,7 @@ import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 
@@ -83,6 +84,8 @@ const CreateProposal = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsSelector();
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
+	const currentUser = useUserDetailsSelector();
+
 	const success = (message: string) => {
 		messageApi.open({
 			content: message,
@@ -164,6 +167,12 @@ const CreateProposal = ({
 	};
 
 	const handleSubmitTreasuryProposal = async () => {
+		// GAEvent for create preImage CTA clicked
+		trackEvent('create_proposal_cta_clicked', 'created_proposal', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		if (!api || !apiReady) return;
 		const post_id = Number(await api.query.referenda.referendumCount());
 		const origin: any = { Origins: selectedTrack };

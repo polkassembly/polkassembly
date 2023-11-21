@@ -89,7 +89,7 @@ export interface IPostListing {
 	identity?: string | null;
 	isSpamReportInvalid?: boolean;
 	spam_users_count?: number;
-	benefeciaries?: string[];
+	beneficiaries?: string[];
 }
 
 export interface IPostsListingResponse {
@@ -731,14 +731,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const postDoc = await postDocRef.get();
 					let args = preimage?.proposedCall?.args;
 					let requested = BigInt(0);
-					const benefeciaries: string[] = [];
+					const beneficiaries: string[] = [];
 
 					if (args) {
 						args = convertAnyHexToASCII(args, network);
 						if (args?.amount) {
 							requested = args.amount;
 							if (args.beneficiary) {
-								benefeciaries.push(args.beneficiary);
+								beneficiaries.push(args.beneficiary);
 							}
 						} else {
 							const calls = args.calls;
@@ -746,8 +746,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								calls.forEach((call) => {
 									if (call && call.amount) {
 										requested += BigInt(call.amount);
-										if (call.beneficiary && !benefeciaries.includes(call.beneficiary)) {
-											benefeciaries.push(call.beneficiary);
+										if (call.beneficiary && !beneficiaries.includes(call.beneficiary)) {
+											beneficiaries.push(call.beneficiary);
 										}
 									}
 								});
@@ -768,7 +768,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const topic_id = data?.topic_id;
 
 							return {
-								benefeciaries,
+								beneficiaries,
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,
 								curator,
@@ -812,7 +812,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 					subsquareTitle = res?.title;
 					return {
-						benefeciaries,
+						beneficiaries,
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,
 						curator,

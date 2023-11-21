@@ -519,3 +519,8 @@ export enum EAddressOtherTextType {
 	LINKED_ADDRESS = 'Linked',
 	UNLINKED_ADDRESS = 'Address not linked'
 }
+
+export interface IBeneficiary {
+	address: string;
+	amount: string;
+}

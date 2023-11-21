@@ -20,6 +20,8 @@ import OnchainInfoWrapper from './OnchainInfoWrapper';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { IBeneficiary } from '~src/types';
+import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active />,
@@ -37,6 +39,7 @@ const BlocksToTime = dynamic(() => import('src/components/BlocksToTime'), {
 });
 
 export interface IOnChainInfo {
+	beneficiaries: IBeneficiary[];
 	cid?: string;
 	codec?: string;
 	code?: string;
@@ -112,6 +115,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	if (!onChainInfo) return null;
 
 	const {
+		beneficiaries,
 		cid,
 		code,
 		codec,
@@ -501,6 +505,21 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								</div>
 							) : null}
 						</div>
+					)}
+					{beneficiaries && beneficiaries.length > 0 && (
+						<>
+							<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
+								<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Beneficiaries</h6>
+								<div className='col-span-6 flex flex-col gap-2 font-medium leading-6 text-bodyBlue'>
+									{beneficiaries.map((beneficiary, index) => (
+										<Beneficiary
+											key={index}
+											beneficiary={beneficiary}
+										/>
+									))}
+								</div>
+							</div>
+						</>
 					)}
 					{proposed_call ? (
 						<div className='mt-5 flex flex-col gap-y-5'>

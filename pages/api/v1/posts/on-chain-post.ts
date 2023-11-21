@@ -16,7 +16,7 @@ import {
 	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse, IPostHistory } from '~src/types';
+import { IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -126,6 +126,7 @@ export interface IPostResponse {
 	history?: IPostHistory[];
 	pips_voters?: IPIPsVoting[];
 	title?: string;
+	beneficiaries?: IBeneficiary[];
 	[key: string]: any;
 }
 
@@ -785,10 +786,18 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const proposedCall = preimage?.proposedCall;
 		let remark = '';
 		let requested = BigInt(0);
+		const beneficiaries: IBeneficiary[] = [];
+
 		if (proposedCall?.args) {
 			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
 			if (proposedCall.args.amount) {
 				requested = proposedCall.args.amount;
+				if (proposedCall.args.beneficiary) {
+					beneficiaries.push({
+						address: proposedCall.args.beneficiary as string,
+						amount: proposedCall.args.amount
+					});
+				}
 			} else {
 				const calls = proposedCall.args.calls;
 				if (calls && Array.isArray(calls) && calls.length > 0) {
@@ -798,6 +807,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 						}
 						if (call && call.amount) {
 							requested += BigInt(call.amount);
+							if (call.beneficiary) {
+								beneficiaries.push({
+									address: call.beneficiary as string,
+									amount: call.amount
+								});
+							}
 						}
 					});
 				}
@@ -829,6 +844,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
+			beneficiaries,
 			bond: postData?.bond,
 			cid: postData?.cid,
 			code: postData?.code,

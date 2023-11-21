@@ -18,7 +18,7 @@ import { CloseIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
-import { ESentiment, EVoteDecisionType } from '~src/types';
+import { ESentiment, EVoteDecisionType, IBeneficiary } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
@@ -26,6 +26,7 @@ import { useTheme } from 'next-themes';
 import { usePostDataContext } from '~src/context';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VoteList from '~src/components/Post/GovernanceSideBar/Modal/VoteData/VoteList';
+import BeneficiariesListing from './BeneficiariesListing';
 
 const Styled = styled.div`
 	padding: 0;
@@ -81,10 +82,12 @@ interface ICreationLabelProps {
 	votesArr?: any;
 	isRow?: boolean;
 	voteData?: any;
+	beneficiaries?: IBeneficiary[];
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	const {
+		beneficiaries,
 		className,
 		children,
 		created_at,
@@ -119,9 +122,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 
 	return (
 		<div className={`${className} flex w-[100%] justify-between bg-none`}>
-			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
-					<div className={'flex flex-shrink-0 items-center'}>
+					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
@@ -139,6 +142,15 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									theme={theme}
 								/>
 							</div>
+						)}
+						{beneficiaries && beneficiaries?.length > 0 && (
+							<>
+								<Divider
+									className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
+									type='vertical'
+								/>
+								<BeneficiariesListing beneficiaries={beneficiaries} />
+							</>
 						)}
 						{cid ? (
 							<>

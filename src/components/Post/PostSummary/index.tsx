@@ -8,6 +8,8 @@ import Markdown from '~src/ui-components/Markdown';
 import styled from 'styled-components';
 import { AiStarIcon, OpenAiIcon, SummaryModalClose } from '~src/ui-components/CustomIcons';
 import { usePostDataContext } from '~src/context';
+import { poppins } from 'pages/_app';
+import EvalutionSummary from './EvalutionSummary';
 
 interface IPostSummaryProps {
 	className?: string;
@@ -46,12 +48,17 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			</button>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(className, 'ml-0 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
+				className={classNames(
+					className,
+					'ml-0 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay',
+					poppins.className,
+					poppins.variable
+				)}
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}
 				title={
-					<div className='m-0 flex items-start justify-between rounded-[14px] p-5 pb-4 dark:bg-section-dark-overlay md:items-center md:p-6 md:pb-4'>
+					<div className='m-0 flex items-start justify-between rounded-t-[14px] p-5 pb-4 dark:bg-section-dark-overlay md:items-center md:p-6 md:pb-4'>
 						<article className='flex flex-col gap-x-[6px] md:flex-row md:items-center'>
 							<h3 className='m-0 flex items-center gap-x-2 p-0'>
 								<span className='flex items-center justify-center text-2xl text-lightBlue dark:text-blue-dark-medium'>
@@ -80,6 +87,8 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 						className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-blue-dark-high'
 						md={sanitizeSummary(summary || '')}
 					/>
+					<div className='mt-4 border-0 border-t-[1.5px] border-dashed border-[#D2D8E0]' />
+					<EvalutionSummary />
 				</div>
 			</Modal>
 		</section>

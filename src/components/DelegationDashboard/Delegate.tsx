@@ -18,6 +18,7 @@ import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
@@ -40,6 +41,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (!address) return;
@@ -79,7 +81,14 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	return (
 		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6 dark:bg-section-dark-overlay`}>
 			<div
-				onClick={() => setExpandProposals(!expandProposals)}
+				onClick={() => {
+					// GAEvent for delegate dropdown clicked
+					trackEvent('delegate_dropdown_clicked', 'clicked_delegate_dropdown', {
+						userId: currentUser?.id || '',
+						userName: currentUser?.username || ''
+					});
+					setExpandProposals(!expandProposals);
+				}}
 				className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex cursor-pointer items-center justify-between'
 			>
 				<div className='jutify-center flex items-center gap-2'>

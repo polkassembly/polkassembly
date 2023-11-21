@@ -104,7 +104,7 @@ const VoteInitiatedModal = ({
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
 				{icon}
-				<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em]'>{title}</h2>
+				<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>{title}</h2>
 				<div className='flex flex-col items-center justify-center gap-[14px]'>
 					<div className='text-[24px] font-semibold text-pink_primary'>
 						{formatedBalance(balance.toString(), unit)}
@@ -236,7 +236,7 @@ const VoteInitiatedModal = ({
 				<span className='quote quote--left -left-[23px] -top-[2px] h-[40px] w-[48px] justify-center rounded-br-xxl bg-white pt-[10px] text-center dark:bg-section-dark-overlay'>
 					<LeftQuote />
 				</span>
-				<p className='-mt-[155px] text-center'>
+				<p className='-mt-[155px] text-center dark:text-blue-dark-medium'>
 					Your <span className='capitalize text-pink_primary '>&apos;{vote}&apos;</span> vote is in! Mind sharing your reason for this vote?
 				</p>
 				<div className='form-group form-container ml-4'>

@@ -71,6 +71,7 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
+import UnverifiedUserNudge from '../Nudges/UnverifiedUserNudge';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -740,6 +741,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
+			{isIdentityUnverified && <UnverifiedUserNudge />}
 			<Layout hasSider>
 				<Sider
 					trigger={null}

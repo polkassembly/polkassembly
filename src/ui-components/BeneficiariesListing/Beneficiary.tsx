@@ -17,8 +17,6 @@ interface Props {
 const Beneficiary = ({ className, beneficiary }: Props) => {
 	const { network } = useNetworkSelector();
 
-	console.log('chainProperties[network]?.tokenSymbol; ', chainProperties[network]?.tokenSymbol);
-
 	return (
 		<div className={`${className} flex items-center gap-1`}>
 			<Address

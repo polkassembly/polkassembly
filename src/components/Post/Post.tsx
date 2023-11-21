@@ -387,6 +387,7 @@ const Post: FC<IPostProps> = (props) => {
 				children: (
 					<PostOnChainInfo
 						onChainInfo={{
+							beneficiaries: post?.beneficiaries || [],
 							bond: post?.bond,
 							cid: post?.cid,
 							code: post?.code,

@@ -126,6 +126,7 @@ export interface IPostResponse {
 	history?: IPostHistory[];
 	pips_voters?: IPIPsVoting[];
 	title?: string;
+	benefeciaries?: string[];
 	[key: string]: any;
 }
 
@@ -785,10 +786,15 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const proposedCall = preimage?.proposedCall;
 		let remark = '';
 		let requested = BigInt(0);
+		const benefeciaries: string[] = [];
+
 		if (proposedCall?.args) {
 			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
 			if (proposedCall.args.amount) {
 				requested = proposedCall.args.amount;
+				if (proposedCall.args.beneficiary) {
+					benefeciaries.push(proposedCall.args.beneficiary);
+				}
 			} else {
 				const calls = proposedCall.args.calls;
 				if (calls && Array.isArray(calls) && calls.length > 0) {
@@ -798,6 +804,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 						}
 						if (call && call.amount) {
 							requested += BigInt(call.amount);
+							if (call.beneficiary && !benefeciaries.includes(call.beneficiary)) {
+								benefeciaries.push(call.beneficiary);
+							}
 						}
 					});
 				}
@@ -829,6 +838,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
+			benefeciaries,
 			bond: postData?.bond,
 			cid: postData?.cid,
 			code: postData?.code,

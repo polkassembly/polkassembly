@@ -89,6 +89,7 @@ export interface IPostListing {
 	identity?: string | null;
 	isSpamReportInvalid?: boolean;
 	spam_users_count?: number;
+	benefeciaries?: string[];
 }
 
 export interface IPostsListingResponse {
@@ -730,21 +731,30 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const postDoc = await postDocRef.get();
 					let args = preimage?.proposedCall?.args;
 					let requested = BigInt(0);
+					const benefeciaries: string[] = [];
+
 					if (args) {
 						args = convertAnyHexToASCII(args, network);
 						if (args?.amount) {
 							requested = args.amount;
+							if (args.beneficiary) {
+								benefeciaries.push(args.beneficiary);
+							}
 						} else {
 							const calls = args.calls;
 							if (calls && Array.isArray(calls) && calls.length > 0) {
 								calls.forEach((call) => {
 									if (call && call.amount) {
 										requested += BigInt(call.amount);
+										if (call.beneficiary && !benefeciaries.includes(call.beneficiary)) {
+											benefeciaries.push(call.beneficiary);
+										}
 									}
 								});
 							}
 						}
 					}
+
 					if (postDoc && postDoc.exists) {
 						const data = postDoc.data();
 						if (data) {
@@ -758,6 +768,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const topic_id = data?.topic_id;
 
 							return {
+								benefeciaries,
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,
 								curator,
@@ -801,6 +812,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 					subsquareTitle = res?.title;
 					return {
+						benefeciaries,
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,
 						curator,

@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { IBeneficiary, NotificationStatus } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
@@ -25,6 +25,7 @@ import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
+import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 
 const ZERO_BN = new BN(0);
 
@@ -37,7 +38,7 @@ interface Props {
 	preimageHash: string;
 	preimageLength: number | null;
 	enactment: IEnactment;
-	beneficiaryAddress: string;
+	beneficiaryAddresses: IBeneficiary[];
 	setOpenModal: (pre: boolean) => void;
 	setOpenSuccess: (pre: boolean) => void;
 	title: string;
@@ -62,7 +63,7 @@ const CreateProposal = ({
 	preimageHash,
 	preimageLength,
 	enactment,
-	beneficiaryAddress,
+	beneficiaryAddresses,
 	setOpenModal,
 	setOpenSuccess,
 	title,
@@ -130,7 +131,7 @@ const CreateProposal = ({
 		setLoading(false);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
+	}, [proposerAddress, beneficiaryAddresses, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
@@ -272,13 +273,14 @@ const CreateProposal = ({
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Beneficiary Address:</span>
-							<Address
-								addressClassName='text-bodyBlue text-sm dark:text-blue-dark-high'
-								address={beneficiaryAddress}
-								iconSize={18}
-								displayInline
-								isTruncateUsername={false}
-							/>
+							<div className='flex flex-col gap-2'>
+								{beneficiaryAddresses.map((beneficiary, index) => (
+									<Beneficiary
+										beneficiary={beneficiary}
+										key={index}
+									/>
+								))}
+							</div>
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Track:</span>

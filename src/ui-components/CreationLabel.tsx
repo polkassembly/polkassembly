@@ -69,7 +69,7 @@ interface ICreationLabelProps {
 	children?: ReactNode;
 	created_at?: Date;
 	defaultAddress?: string | null;
-	delegationAddress?: string | null;
+	voterAddress?: string | null;
 	text?: string;
 	topic?: string;
 	username?: string;
@@ -104,7 +104,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		vote,
 		votesArr = [],
 		isRow,
-		delegationAddress,
+		voterAddress,
 		inPostHeading
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
@@ -269,7 +269,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									<VoteList
 										referendumId={postData?.postIndex as number}
 										isUsedInVotedModal={true}
-										delegationAddress={delegationAddress}
+										voterAddress={voterAddress}
 										voteType={getVotingTypeFromProposalType(postData?.postType)}
 									/>
 								</div>

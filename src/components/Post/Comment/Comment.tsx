@@ -102,7 +102,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					className='creation-label comment-modal mt-0 rounded-t-md bg-comment_bg px-0 py-2 pt-4 dark:bg-[#141416] md:px-4'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
-					delegationAddress={comment?.votes?.[0]?.voter}
+					voterAddress={comment?.votes?.[0]?.voter}
 					username={comment.username}
 					sentiment={newSentiment}
 					commentSource={comment_source}

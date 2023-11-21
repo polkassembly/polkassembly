@@ -54,7 +54,7 @@ interface IVotersListProps {
 	thresholdData?: any;
 	tally?: any;
 	isUsedInVotedModal?: boolean;
-	delegationAddress?: string | null;
+	voterAddress?: string | null;
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -79,7 +79,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	// const { className, referendumId, voteType, thresholdData, tally } = props;
-	const { className, referendumId, voteType, tally, isUsedInVotedModal, delegationAddress } = props;
+	const { className, referendumId, voteType, tally, isUsedInVotedModal, voterAddress } = props;
 	const { api, apiReady } = useApiContext();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
@@ -187,8 +187,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		});
 		getReferendumV2VoteInfo().then(() => {
 			let url;
-			if (delegationAddress) {
-				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}&address=${delegationAddress}`;
+			if (voterAddress && isUsedInVotedModal) {
+				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}&address=${voterAddress}`;
 			} else {
 				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
 			}
@@ -234,6 +234,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					});
 				});
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, getReferendumV2VoteInfo, referendumId, sortBy, voteType]);
 
 	useEffect(() => {
@@ -349,25 +350,23 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									<div className='max-h-[360px]'>
 										{combinedVotes &&
 											!!combinedVotes.length &&
-											combinedVotes
-												// .filter((voteData) => voteData.voter === delegationAddress)
-												.map((voteData: any, index: number) => (
-													<VoterRow
-														className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === combinedVotes.length - 1 ? 'border-b' : ''}`}
-														key={`${voteData.voter}_${index}`}
-														currentKey={activeKey}
-														voteType={voteType}
-														voteData={voteData}
-														index={index}
-														isReferendum2={isReferendum2}
-														setDelegationVoteModal={setDelegationVoteModal}
-														setActiveKey={setActiveKey}
-														tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
-														decision={decision}
-														referendumId={referendumId}
-														isUsedInVotedModal={isUsedInVotedModal}
-													/>
-												))}
+											combinedVotes.map((voteData: any, index: number) => (
+												<VoterRow
+													className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === combinedVotes.length - 1 ? 'border-b' : ''}`}
+													key={`${voteData.voter}_${index}`}
+													currentKey={activeKey}
+													voteType={voteType}
+													voteData={voteData}
+													index={index}
+													isReferendum2={isReferendum2}
+													setDelegationVoteModal={setDelegationVoteModal}
+													setActiveKey={setActiveKey}
+													tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
+													decision={decision}
+													referendumId={referendumId}
+													isUsedInVotedModal={isUsedInVotedModal}
+												/>
+											))}
 										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
 									</div>
 								)}

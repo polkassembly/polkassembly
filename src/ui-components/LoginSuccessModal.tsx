@@ -36,6 +36,8 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
+	const [firstPassword, setFirstPassword] = useState('');
+	const { password } = validation;
 
 	const validateUsername = (optionalUsername: string) => {
 		let errorUsername = 0;
@@ -80,6 +82,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 			custom_username: true,
 			email: email || '',
 			image: currentUser.picture || '',
+			password: firstPassword || '',
 			social_links: JSON.stringify([]),
 			title: '',
 			user_id: Number(currentUser.id),
@@ -239,6 +242,36 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 										placeholder='email@example.com'
 										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										id='email'
+									/>
+								</Form.Item>
+							</div>
+							<div className='flex flex-col gap-y-1'>
+								<label
+									className='text-base text-[#485F7D] dark:text-blue-dark-medium'
+									htmlFor='first_password'
+								>
+									Set Password
+								</label>
+								<Form.Item
+									name='first_password'
+									rules={[
+										{
+											message: messages.VALIDATION_PASSWORD_ERROR,
+											required: password.required
+										},
+										{
+											message: messages.VALIDATION_PASSWORD_ERROR,
+											min: password.minLength
+										}
+									]}
+								>
+									<Input.Password
+										onChange={(e) => {
+											setFirstPassword(e.target.value);
+										}}
+										placeholder='Password'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-white dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+										id='first_password'
 									/>
 								</Form.Item>
 							</div>

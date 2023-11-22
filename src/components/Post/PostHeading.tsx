@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Modal, Skeleton } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -20,10 +20,7 @@ import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-import { poppins } from 'pages/_app';
-import TagsIcon from '~assets/icons/tags-icon.svg';
-import TagsWhiteIcon from '~assets/icons/tags-white-icon.svg';
+import TagsModal from '~src/ui-components/TagsModal';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -71,7 +68,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
-	const [tagsModal, setTagsModal] = useState<boolean>(false);
+	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 
 	const { network } = useNetworkSelector();
 
@@ -185,7 +182,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 									onClick={(e) => {
 										e.stopPropagation();
 										e.preventDefault();
-										setTagsModal(true);
+										setOpenTagsModal(true);
 									}}
 								>
 									+{tags.length - 3}
@@ -217,46 +214,13 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					defaultAddress={proposer}
 				/>
 			)}
-			<Modal
-				wrapClassName='dark:bg-modalOverlayDark'
-				open={tagsModal}
-				onCancel={(e) => {
-					e.stopPropagation();
-					e.preventDefault();
-					setTagsModal(false);
-				}}
-				footer={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.variable} ${poppins.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay h-[120px] max-w-full shrink-0 max-sm:w-[100%]`}
-				title={
-					<>
-						<label className='text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
-							{theme === 'dark' ? <TagsWhiteIcon className='mr-2' /> : <TagsIcon className='mr-2' />}
-							Tags
-						</label>
-						<Divider
-							type='horizontal'
-							className='border-l-1 mt-4 border-[#90A0B7] dark:border-icon-dark-inactive'
-						/>
-					</>
-				}
-			>
-				<div className='mt-3 flex flex-wrap gap-2'>
-					{tags && tags.length > 0 && (
-						<>
-							{tags?.map((tag, index) => (
-								<div
-									key={index}
-									className='traking-2 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
-									onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
-								>
-									{tag}
-								</div>
-							))}
-						</>
-					)}
-				</div>
-			</Modal>
+			<TagsModal
+				tags={tags}
+				track_name={track_name}
+				proposalType={proposalType}
+				openTagsModal={openTagsModal}
+				setOpenTagsModal={setOpenTagsModal}
+			/>
 		</div>
 	);
 };

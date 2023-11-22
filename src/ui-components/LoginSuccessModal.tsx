@@ -270,7 +270,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 											setFirstPassword(e.target.value);
 										}}
 										placeholder='Password'
-										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-white dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 										id='first_password'
 									/>
 								</Form.Item>

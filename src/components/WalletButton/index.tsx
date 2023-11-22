@@ -3,8 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Button } from 'antd';
-import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
@@ -15,31 +13,21 @@ interface Props {
 	className?: string;
 	text?: string;
 	isOptionalLogin?: boolean;
+	isAvailable?: boolean;
 }
 
-const WalletButton = ({ disabled, onClick, icon, className, text, name, isOptionalLogin }: Props) => {
-	const [availableWallets, setAvailableWallets] = useState<any>({});
-
-	const getWallet = () => {
-		const injectedWindow = window as Window & InjectedWindow;
-		setAvailableWallets(injectedWindow.injectedWeb3);
-	};
-
-	useEffect(() => {
-		getWallet();
-	}, []);
-
+const WalletButton = ({ disabled, onClick, icon, className, text, name, isOptionalLogin, isAvailable }: Props) => {
 	return (
 		<Button
-			className={`flex ${
-				isOptionalLogin ? `border_grey_stroke w-full ${availableWallets ? 'bg-white' : 'bg-grey_stroke'}` : 'justify-center border-[#F8E3EE]'
+			className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-[#F8E3EE]'} ${
+				isAvailable ? 'bg-white' : 'bg-grey_stroke dark:bg-[#3d3d3d]'
 			} items-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 			onClick={onClick}
 			disabled={disabled}
 		>
 			<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 			{text && isOptionalLogin && <p className='wallet-text-container m-0 ml-4 p-0 text-lightBlue dark:text-white'>{text}</p>}
-			{isOptionalLogin && !availableWallets && <p className='m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
+			{isOptionalLogin && !isAvailable && <p className='m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
 		</Button>
 	);
 };

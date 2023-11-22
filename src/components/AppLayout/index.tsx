@@ -250,7 +250,7 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { username, picture, loginAddress, id, email } = useUserDetailsSelector();
+	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -260,6 +260,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
+	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
@@ -319,6 +320,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
 				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 				setIsGood(Boolean(isGood));
+				setIsIdentitySet(info.identity ? true : false);
 				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
 			})
 			.then((unsub) => {
@@ -741,10 +743,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
-			{id && isIdentityUnverified && network === 'polkadot' && (
+			{userId && isIdentityUnverified && network === 'polkadot' && (
 				<UnverifiedUserNudge
 					handleSetIdentityClick={handleIdentityButtonClick}
-					isIdentitySet={email ? true : false}
+					isIdentitySet={isIdentitySet}
 				/>
 			)}
 			<Layout hasSider>

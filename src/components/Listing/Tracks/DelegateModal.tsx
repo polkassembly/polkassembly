@@ -366,7 +366,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						<Button
 							htmlType='submit'
 							key='submit'
-							className={`h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary
+							className={`h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary
 							${
 								(!form.getFieldValue('targetAddress') ||
 									!delegationDashboardAddress ||
@@ -411,9 +411,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px]'
+										className='mb-4 h-10 rounded-[4px] dark:border-[#5C3931] dark:bg-[#331701]'
 										showIcon
-										message='Insufficient balance'
+										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>
 								)}
 								<div className=''>
@@ -457,9 +457,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 								{addressAlert && (
 									<Alert
-										className='mb mt-2 rounded-[4px]'
+										className='mb mt-2 rounded-[4px] dark:border-[#125798] dark:bg-[#05263F]'
 										showIcon
-										message='The substrate address has been changed to Kusama address.'
+										message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
 									/>
 								)}
 
@@ -596,8 +596,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							<Alert
 								showIcon
 								type='info'
-								className='mb-4 rounded-[4px]'
-								message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}
+								className='mb-4 rounded-[4px] dark:border-[#125798] dark:bg-[#05263F]'
+								message={
+									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
+								}
 							/>
 						)}
 					</div>

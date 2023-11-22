@@ -154,7 +154,7 @@ const TreasuryProposalSuccessPopup = ({
 					type='warning'
 					className='m-2 w-full rounded-[4px] text-sm'
 					message={
-						<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+						<span className='text-sm font-medium text-bodyBlue dark:text-yellow-600'>
 							Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} to prevent your proposal from being
 							timed out.
 						</span>

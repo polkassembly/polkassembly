@@ -250,7 +250,7 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { username, picture, loginAddress } = useUserDetailsSelector();
+	const { username, picture, loginAddress, id } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -741,7 +741,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
-			{isIdentityUnverified && <UnverifiedUserNudge />}
+			{id && isIdentityUnverified && <UnverifiedUserNudge />}
 			<Layout hasSider>
 				<Sider
 					trigger={null}

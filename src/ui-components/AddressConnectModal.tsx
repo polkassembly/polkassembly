@@ -505,7 +505,7 @@ const AddressConnectModal = ({
 							}
 							type='info'
 							showIcon
-							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:text-white dark:bg-[var(--inactiveIconDark)]'
 						/>
 					)}
 					<Form

@@ -7,7 +7,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ShieldUserIcon from '~assets/icons/shield-user-icon.svg';
 import { setCookie, getCookie } from 'cookies-next';
 
-const UnverifiedUserNudge = () => {
+const UnverifiedUserNudge = ({ isIdentitySet, handleSetIdentityClick }: { handleSetIdentityClick: () => void; isIdentitySet: boolean }) => {
 	const [isOpen, setIsOpen] = useState<boolean>(true);
 
 	useEffect(() => {
@@ -16,7 +16,7 @@ const UnverifiedUserNudge = () => {
 		if (viewedNudge) {
 			setIsOpen(false);
 		}
-	}, []);
+	}, [setIsOpen]);
 
 	function handleNudgeClose() {
 		setCookie('nudge_viewed', true);
@@ -29,10 +29,13 @@ const UnverifiedUserNudge = () => {
 		<Layout className='flex flex-row'>
 			<div className='hidden w-[72px] lg:block '></div>
 			<div className='flex w-full flex-row items-center justify-between gap-8 bg-purple-600 px-4 py-2 md:px-8 lg:px-20'>
-				<div className='flex flex-col gap-2 sm:inline-flex sm:flex-row sm:items-center'>
-					Identity has not been verified yet
-					<span className='inline-flex items-center gap-2 rounded-md bg-purple-900 px-2 py-1'>
-						<ShieldUserIcon /> Set on-chain identity
+				<div
+					className='flex flex-col gap-2 sm:inline-flex sm:flex-row sm:items-center'
+					onClick={handleSetIdentityClick}
+				>
+					{isIdentitySet ? 'Identity has not been verified yet' : 'Identity has not been set yet'}
+					<span className='inline-flex cursor-pointer items-center gap-2 rounded-md bg-purple-900 px-2 py-1 hover:opacity-80'>
+						<ShieldUserIcon /> {isIdentitySet ? 'Verify on-chain identity' : 'Set on-chain identity'}
 					</span>
 				</div>
 				<span

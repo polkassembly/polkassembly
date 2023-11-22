@@ -287,6 +287,7 @@ const CreateProposal = ({
 									<Beneficiary
 										beneficiary={beneficiary}
 										key={index}
+										disableBalanceFormatting
 									/>
 								))}
 							</div>
@@ -360,21 +361,21 @@ const CreateProposal = ({
 						}
 						description={
 							<div className='mt-[10px] flex flex-col gap-1'>
-								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-900'>
 									<span className='w-[150px]'>Deposit amount</span>
-									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+									<span className='font-medium text-bodyBlue dark:text-blue-900'>
 										{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-900'>
 									<span className='w-[150px]'>Gas fees</span>
-									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+									<span className='font-medium text-bodyBlue dark:text-blue-900'>
 										{formatedBalance(String(txFee.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-medium'>
+								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-900'>
 									<span className='w-[150px]'>Total</span>
-									<span className='text-bodyBlue dark:text-blue-dark-high'>
+									<span className='text-bodyBlue dark:text-blue-900'>
 										{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
 									</span>
 								</span>

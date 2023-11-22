@@ -75,8 +75,6 @@ import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import Web3 from 'web3';
 import { useTheme } from 'next-themes';
-import PredictionCard from '~src/ui-components/PredictionCard';
-import { network as allNetworks } from '~src/global/networkConstants';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import { useDispatch } from 'react-redux';
 

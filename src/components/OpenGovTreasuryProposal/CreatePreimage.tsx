@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
-import { EBeneficiaryAddressesAction, EBeneficiaryAddressesActionType, EEnactment, IEnactment, IPreimage, ISteps } from '.';
+import { EBeneficiaryAddressesAction, EBeneficiaryAddressesActionType, EEnactment, IEnactment, INIT_BENEFICIARIES, IPreimage, ISteps } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
 import dynamic from 'next/dynamic';
@@ -173,7 +173,13 @@ const CreatePreimage = ({
 		if (isPreimageVal || isPreimage || !proposerAddress || !txFundingAmount || txFundingAmount.lte(ZERO_BN) || txFundingAmount.eq(ZERO_BN)) return;
 
 		setLoading(true);
-		const txArr = beneficiaryAddresses.map((beneficiary) => api.tx.treasury.spend(txFundingAmount.toString(), beneficiary.address));
+		const txArr: any[] = [];
+
+		beneficiaryAddresses.forEach((beneficiary) => {
+			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && new BN(beneficiary.amount).gt(ZERO_BN)) {
+				txArr.push(api?.tx?.treasury?.spend(beneficiary.amount, beneficiary.address));
+			}
+		});
 
 		(async () => {
 			await form.validateFields();
@@ -210,7 +216,7 @@ const CreatePreimage = ({
 				address: '',
 				amount: '',
 				index: 0,
-				newState: createPreimageForm?.beneficiaryAddresses || []
+				newState: createPreimageForm?.beneficiaryAddresses || INIT_BENEFICIARIES
 			},
 			type: EBeneficiaryAddressesActionType.REPLACE_STATE
 		});
@@ -379,7 +385,13 @@ const CreatePreimage = ({
 		}
 		api.setSigner(injected.signer);
 
-		const txArr = beneficiaryAddresses.map((beneficiary) => api?.tx?.treasury?.spend(beneficiary.amount, beneficiary.address));
+		const txArr: any[] = [];
+
+		beneficiaryAddresses.forEach((beneficiary) => {
+			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && new BN(beneficiary.amount).gt(ZERO_BN)) {
+				txArr.push(api?.tx?.treasury?.spend(beneficiary.amount, beneficiary.address));
+			}
+		});
 
 		const proposal = txArr.length > 1 ? api.tx.utility.batchAll(txArr) : txArr[0];
 		const preimage: any = getState(api, proposal);
@@ -418,6 +430,24 @@ const CreatePreimage = ({
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
+
+		//validate beneficiaryAddresses and fundingAmount for each beneficiary
+		let areBeneficiaryAddressesValid = true;
+		for (const beneficiary in beneficiaryAddresses) {
+			if (
+				!beneficiaryAddresses[beneficiary].address ||
+				!beneficiaryAddresses[beneficiary].amount ||
+				!getEncodedAddress(beneficiaryAddresses[beneficiary].address, network) ||
+				!new BN(beneficiaryAddresses[beneficiary].amount).gt(ZERO_BN)
+			) {
+				areBeneficiaryAddressesValid = false;
+				setValidBeneficiaryAddress(false);
+				return;
+			}
+		}
+
+		if (!areBeneficiaryAddressesValid) return;
+
 		if (!isPreimage) {
 			if (txFee.gte(availableBalance)) return;
 		}
@@ -692,8 +722,6 @@ const CreatePreimage = ({
 	};
 
 	const addBeneficiary = () => {
-		if (beneficiaryAddresses.find((beneficiary) => !beneficiary.address || !beneficiary.amount)) return;
-
 		dispatchBeneficiaryAddresses({
 			payload: {
 				address: '',
@@ -719,6 +747,7 @@ const CreatePreimage = ({
 		setInputAmountValue('0');
 		form.setFieldValue('funding_amount', '0');
 		handleSelectTrack(ZERO_BN, Boolean(isPreimage));
+		setIsAutoSelectTrack(true);
 	};
 
 	return (

@@ -741,7 +741,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
-			{id && isIdentityUnverified && (
+			{id && isIdentityUnverified && network === 'polkadot' && (
 				<UnverifiedUserNudge
 					handleSetIdentityClick={handleIdentityButtonClick}
 					isIdentitySet={email ? true : false}

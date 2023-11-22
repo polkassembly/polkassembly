@@ -199,11 +199,11 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 						{status.map((item: ETrackDelegationStatus, index: number) => (
 							<h2
 								key={index}
-								className={`text-xs ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] dark:border-solid dark:border-[#531FE4] dark:bg-[#281856]'} ${
-									item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8] dark:border-solid dark:border-[#026630] dark:bg-[#063E20]'
-								} ${
-									item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:border-solid dark:border-[#5C3931] dark:bg-[#331701]'
-								} rounded-[26px] px-[12px] py-[6px] text-center ${item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'w-[95px] truncate'} `}
+								className={`text-xs ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] dark:bg-[#6C2CF8]'} ${
+									item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8] dark:bg-[#69600B]'
+								} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'} rounded-[26px] px-[12px] py-[6px] text-center ${
+									item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'w-[95px] truncate'
+								} `}
 							>
 								{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 							</h2>

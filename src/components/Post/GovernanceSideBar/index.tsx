@@ -1288,8 +1288,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							</>
 						)}
 					</Form>
-					{/* // Added Pridiction card on proposal id 213 */}
-					{post.post_id === 213 && network === allNetworks.POLKADOT && <PredictionCard predictCount={154} />}
 				</div>
 			}
 		</>

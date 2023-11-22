@@ -41,6 +41,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	const {
 		postData: {
+			beneficiaries,
 			created_at,
 			status,
 			postType: proposalType,
@@ -141,6 +142,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						topic={topic && topic?.name}
 						cid={cid}
 						isRow={false}
+						beneficiaries={beneficiaries}
+						inPostHeading={true}
 					>
 						{history && history?.length > 0 && (
 							<div
@@ -155,6 +158,26 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								/>
 							</div>
 						)}
+						<div className='flex items-center'>
+							<Divider
+								className=''
+								type='vertical'
+								style={{ borderLeft: '1px solid #485F7D' }}
+							/>
+							{tags && tags.length > 0 && (
+								<div className='mx-1 flex flex-wrap gap-[8px]'>
+									{tags?.map((tag, index) => (
+										<div
+											onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
+											className='traking-2 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+											key={index}
+										>
+											{tag}
+										</div>
+									))}
+								</div>
+							)}
+						</div>
 						{summary ? (
 							<>
 								<Divider
@@ -171,19 +194,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</CreationLabel>
 				</>
 			</div>
-			{tags && tags.length > 0 && (
-				<div className='mt-3.5 flex flex-wrap gap-[8px]'>
-					{tags?.map((tag, index) => (
-						<div
-							onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
-							className='traking-2 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
-							key={index}
-						>
-							{tag}
-						</div>
-					))}
-				</div>
-			)}
 			{history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}

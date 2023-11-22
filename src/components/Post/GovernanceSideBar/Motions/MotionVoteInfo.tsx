@@ -27,6 +27,7 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 				<HelperTooltip
 					className='ml-2 font-normal'
 					text='This represents the onchain votes of council members'
+					placement='bottom'
 				/>
 			</h3>
 			<div className='mt-6'>

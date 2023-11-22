@@ -388,8 +388,9 @@ const CreatePreimage = ({
 		const txArr: any[] = [];
 
 		beneficiaryAddresses.forEach((beneficiary) => {
+			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && new BN(beneficiary.amount).gt(ZERO_BN)) {
-				txArr.push(api?.tx?.treasury?.spend(beneficiary.amount, beneficiary.address));
+				txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
 			}
 		});
 

@@ -768,6 +768,10 @@ z-index: 1050 !important;
   background-color: transparent !important;
 }
 
+.ant-modal .ant-modal-header {
+  background: transparent !important;
+}
+
 
 /* .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
   text-shadow: none !important;

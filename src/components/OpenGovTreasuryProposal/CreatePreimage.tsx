@@ -721,6 +721,8 @@ const CreatePreimage = ({
 			return beneficiary;
 		});
 
+		totalAmt = Number(totalAmt.toFixed(6));
+
 		setInputAmountValue(totalAmt.toString());
 		form.setFieldValue('funding_amount', totalAmt.toString());
 		onChangeLocalStorageSet({ beneficiaryAddresses: latestBenefeciaries, fundingAmount: totalAmt.toString() }, Boolean(isPreimage));

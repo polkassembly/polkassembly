@@ -120,6 +120,7 @@ const TreasuryProposalSuccessPopup = ({
 										<Beneficiary
 											beneficiary={beneficiary}
 											key={index}
+											disableBalanceFormatting
 										/>
 									))}
 								</div>

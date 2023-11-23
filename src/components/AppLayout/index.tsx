@@ -71,7 +71,7 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import UnverifiedUserNudge from '../Nudges/UnverifiedUserNudge';
+import UnverifiedUserNudge from '../../ui-components/UnverifiedUserNudge';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false

@@ -26,7 +26,7 @@ const UnverifiedUserNudge = ({ isIdentitySet, handleSetIdentityClick }: { handle
 
 	return (
 		<Layout className='flex flex-row'>
-			<div className='hidden w-[72px] lg:block '></div>
+			<div className='hidden w-[72px] bg-purple-600 lg:block'></div>
 			<div className='flex w-full flex-row items-center justify-between gap-8 bg-purple-600 px-4 py-2 md:px-8 lg:px-20'>
 				<div
 					className='flex flex-col gap-2 sm:inline-flex sm:flex-row sm:items-center'

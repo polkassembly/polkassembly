@@ -320,7 +320,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
 				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 				setIsGood(Boolean(isGood));
-				setIsIdentitySet(info.identity ? true : false);
+				setIsIdentitySet(!!(info.identity && !info?.identity?.judgements?.length));
 				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
 			})
 			.then((unsub) => {

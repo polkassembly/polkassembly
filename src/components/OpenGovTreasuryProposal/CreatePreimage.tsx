@@ -118,7 +118,6 @@ const CreatePreimage = ({
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [isAutoSelectTrack, setIsAutoSelectTrack] = useState<boolean>(true);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -321,7 +320,6 @@ const CreatePreimage = ({
 			form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE);
 			if (data.preimageCreated) setPreimageCreated(data.preimageCreated);
 			if (data.preimageLinked) setPreimageLinked(data.preimageLinked);
-			setIsAutoSelectTrack(true);
 			setOpenAdvanced(false);
 		}
 	};
@@ -624,6 +622,8 @@ const CreatePreimage = ({
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceExistPreimageFn = useCallback(_.debounce(existPreimageData, 2000), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 300), []);
 
 	const handlePreimageHash = (preimageHash: string, isPreimage: boolean) => {
 		if (!preimageHash || preimageHash.length === 0) return;
@@ -694,7 +694,7 @@ const CreatePreimage = ({
 		setPreimageCreated(false);
 		setPreimageLinked(false);
 		setSteps({ percent: beneficiaryAddresses[0]?.address?.length > 0 && fundingAmount.gt(ZERO_BN) ? 100 : 60, step: 1 });
-		if (!isAutoSelectTrack || !fundingAmount || fundingAmount.eq(ZERO_BN)) return;
+		debounceGetPreimageTxFee();
 	};
 
 	const handleInputValueChange = (input: string, index: number) => {
@@ -758,7 +758,6 @@ const CreatePreimage = ({
 		setInputAmountValue('0');
 		form.setFieldValue('funding_amount', '0');
 		handleSelectTrack(ZERO_BN, Boolean(isPreimage));
-		setIsAutoSelectTrack(true);
 	};
 
 	const fundingAmtToBN = () => {
@@ -913,7 +912,6 @@ const CreatePreimage = ({
 										<div className='-mb-[69px]'>
 											<BalanceInput
 												formItemName={`balance-${index}`}
-												onBlur={getPreimageTxFee}
 												address={proposerAddress}
 												placeholder='Split amount'
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
@@ -992,7 +990,6 @@ const CreatePreimage = ({
 									tracksArr={trackArr}
 									onTrackChange={(track) => {
 										setSelectedTrack(track);
-										setIsAutoSelectTrack(false);
 										onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
 										getPreimageTxFee();
 										setSteps({ percent: 100, step: 1 });

@@ -5,21 +5,20 @@ import React, { useState, useEffect } from 'react';
 import { Layout } from 'antd';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ShieldUserIcon from '~assets/icons/shield-user-icon.svg';
-import { setCookie, getCookie } from 'cookies-next';
 
 const UnverifiedUserNudge = ({ isIdentitySet, handleSetIdentityClick }: { handleSetIdentityClick: () => void; isIdentitySet: boolean }) => {
 	const [isOpen, setIsOpen] = useState<boolean>(true);
 
 	useEffect(() => {
-		const viewedNudge = getCookie('nudge_viewed');
+		const nudgeStatus = localStorage.getItem('nudge_status');
 
-		if (viewedNudge) {
+		if (nudgeStatus === 'viewed') {
 			setIsOpen(false);
 		}
 	}, [setIsOpen]);
 
 	function handleNudgeClose() {
-		setCookie('nudge_viewed', true);
+		localStorage.setItem('nudge_status', 'viewed');
 		setIsOpen(false);
 	}
 

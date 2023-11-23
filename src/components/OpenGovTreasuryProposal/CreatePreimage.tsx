@@ -155,27 +155,28 @@ const CreatePreimage = ({
 
 	maxSpendArr.sort((a, b) => a.maxSpend - b.maxSpend);
 
-	const getPreimageTxFee = (isPreimageVal?: boolean, selectedTrackVal?: string, fundingAmountVal?: BN) => {
+	const getPreimageTxFee = (isPreimageVal?: boolean, selectedTrackVal?: string, fundingAmountVal?: BN, latestBenefeciaries?: IBeneficiary[]) => {
 		const txSelectedTrack = selectedTrackVal || selectedTrack;
 		const txFundingAmount = fundingAmountVal || fundingAmount;
+		latestBenefeciaries = latestBenefeciaries || beneficiaryAddresses;
 
 		//validate beneficiaryAddresses
 		if (
-			!beneficiaryAddresses.length ||
-			beneficiaryAddresses.find(
+			!latestBenefeciaries.length ||
+			latestBenefeciaries.find(
 				(beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0 || !getEncodedAddress(beneficiary.address, network)
 			)
 		) {
 			return;
 		}
 
-		if (!api || !apiReady || !beneficiaryAddresses.length || !txSelectedTrack) return;
+		if (!api || !apiReady || !latestBenefeciaries.length || !txSelectedTrack) return;
 		setShowAlert(false);
 		if (isPreimageVal || isPreimage || !proposerAddress || !txFundingAmount || txFundingAmount.lte(ZERO_BN) || txFundingAmount.eq(ZERO_BN)) return;
 
 		const txArr: any[] = [];
 
-		beneficiaryAddresses.forEach((beneficiary) => {
+		latestBenefeciaries.forEach((beneficiary) => {
 			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 				txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
@@ -735,7 +736,7 @@ const CreatePreimage = ({
 		setFundingAmount(fundingAmt);
 
 		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage));
-		debounceGetPreimageTxFee(Boolean(isPreimage), selectedTrack);
+		debounceGetPreimageTxFee(Boolean(isPreimage), selectedTrack, fundingAmt, latestBenefeciaries);
 	};
 
 	const addBeneficiary = () => {

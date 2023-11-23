@@ -257,14 +257,14 @@ const CreateProposal = ({
 				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
-						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-[#5C3931] dark:bg-[#331701] dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
 						showIcon
-						message='Insufficient available balance.'
+						message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 					/>
 				)}
 				<Alert
-					message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`}
-					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+					message={<span className='text-[13px] dark:text-blue-dark-high'>Preimage {isPreimage ? 'linked' : 'created'} successfully</span>}
+					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
 					type='success'
 					showIcon
 				/>
@@ -347,11 +347,11 @@ const CreateProposal = ({
 				</div>
 				{showAlert && (
 					<Alert
-						className='mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+						className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
 						showIcon
 						type='info'
 						message={
-							<span className='text-sm text-bodyBlue dark:text-blue-900'>
+							<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 								An amount of{' '}
 								<span className='font-semibold'>
 									{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
@@ -362,20 +362,20 @@ const CreateProposal = ({
 						description={
 							<div className='mt-[10px] flex flex-col gap-1'>
 								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-900'>
-									<span className='w-[150px]'>Deposit amount</span>
-									<span className='font-medium text-bodyBlue dark:text-blue-900'>
+									<span className='w-[150px] dark:text-blue-dark-high'>Deposit amount</span>
+									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-900'>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-high'>
 									<span className='w-[150px]'>Gas fees</span>
-									<span className='font-medium text-bodyBlue dark:text-blue-900'>
+									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-900'>
+								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-high '>
 									<span className='w-[150px]'>Total</span>
-									<span className='text-bodyBlue dark:text-blue-900'>
+									<span className='text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
 									</span>
 								</span>

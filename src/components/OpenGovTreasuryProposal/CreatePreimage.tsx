@@ -859,9 +859,9 @@ const CreatePreimage = ({
 							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
-									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-[#5C3931] dark:bg-[#331701] dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
 									showIcon
-									message='Insufficient available balance.'
+									message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 								/>
 							)}
 							<div className='mt-6'>
@@ -897,7 +897,7 @@ const CreatePreimage = ({
 											<AddressInput
 												name={`address-${index}`}
 												defaultAddress={beneficiary.address}
-												label={'Beneficiary Address'}
+												label={`${`Beneficiary Address ${beneficiaryAddresses.length > 1 ? index + 1 : ''}`}`}
 												placeholder='Add beneficiary address'
 												className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 												onChange={(address) => handleBeneficiaryAddresschange(address, index)}
@@ -953,9 +953,10 @@ const CreatePreimage = ({
 
 							{addressAlert && (
 								<Alert
-									className='mb mt-2'
+									className='mt-2 dark:border-[#125798] dark:bg-[#05263F]'
 									showIcon
-									message={`The substrate address has been changed to ${network} network address.`}
+									type='info'
+									message={<span className='text-[13px] dark:text-blue-dark-high'>The substrate address has been changed to ${network} network address.</span>}
 								/>
 							)}
 							<div className='-mb-6 mt-6'>
@@ -1124,10 +1125,18 @@ const CreatePreimage = ({
 					{showAlert && !isPreimage && !txFee.eq(ZERO_BN) && (
 						<Alert
 							type='info'
-							className='mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+							className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
 							showIcon
-							description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
-							message={`${formatedBalance(String(baseDeposit.toString()), unit)} ${unit} Base deposit is required to create a preimage.`}
+							description={
+								<span className='text-xs dark:text-blue-dark-high'>
+									Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
+								</span>
+							}
+							message={
+								<span className='text-[13px] dark:text-blue-dark-high'>
+									{formatedBalance(String(baseDeposit.toString()), unit)} {unit} Base deposit is required to create a preimage.
+								</span>
+							}
 						/>
 					)}
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>

@@ -227,8 +227,12 @@ const CreatePreimage = ({
 		form.setFieldValue('preimage_hash', createPreimageForm?.preimageHash || '');
 		form.setFieldValue('preimage_length', createPreimageForm?.preimageLength || 0);
 		form.setFieldValue('funding_amount', createPreimageForm?.fundingAmount);
-		form.setFieldValue('address', createPreimageForm.beneficiaryAddress || '');
 		form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE);
+
+		((createPreimageForm?.beneficiaryAddresses || INIT_BENEFICIARIES) as IBeneficiary[]).forEach((beneficiary, index) => {
+			form.setFieldValue(`address-${index}`, beneficiary.address || '');
+			form.setFieldValue(`balance-${index}`, beneficiary.amount || ZERO_BN);
+		});
 
 		if (
 			createPreimageForm.preimageHash &&
@@ -403,7 +407,7 @@ const CreatePreimage = ({
 			setPreimageLength(preimage.preimageLength);
 			setPreimageCreated(true);
 			onChangeLocalStorageSet(
-				{ beneficiaryAddresses: [], preimageCreated: true, preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength },
+				{ beneficiaryAddresses: INIT_BENEFICIARIES, preimageCreated: true, preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength },
 				Boolean(isPreimage),
 				true
 			);
@@ -687,7 +691,6 @@ const CreatePreimage = ({
 	};
 
 	const handleFundingAmountChange = (fundingAmount: BN) => {
-		setFundingAmount(fundingAmount);
 		setPreimageCreated(false);
 		setPreimageLinked(false);
 		setSteps({ percent: beneficiaryAddresses[0]?.address?.length > 0 && fundingAmount.gt(ZERO_BN) ? 100 : 60, step: 1 });
@@ -709,17 +712,22 @@ const CreatePreimage = ({
 
 		let totalAmt = ZERO_BN;
 
-		beneficiaryAddresses.forEach((beneficiary, i) => {
+		const latestBenefeciarries = beneficiaryAddresses.map((beneficiary, i) => {
 			if (index === i) {
 				totalAmt = totalAmt.add(new BN(input));
+				return { ...beneficiary, amount: input };
 			} else {
 				totalAmt = totalAmt.add(new BN(beneficiary.amount));
 			}
+			return beneficiary;
 		});
 
 		setInputAmountValue(totalAmt.toString());
 		form.setFieldValue('funding_amount', totalAmt.toString());
-		onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage));
+		onChangeLocalStorageSet({ beneficiaryAddresses: latestBenefeciarries, fundingAmount: totalAmt.toString() }, Boolean(isPreimage));
+
+		const [fundingAmt] = inputToBn(totalAmt.toString(), network, false);
+		setFundingAmount(fundingAmt);
 	};
 
 	const addBeneficiary = () => {

@@ -957,7 +957,7 @@ const CreatePreimage = ({
 									className='mt-2 dark:border-[#125798] dark:bg-[#05263F]'
 									showIcon
 									type='info'
-									message={<span className='text-[13px] dark:text-blue-dark-high'>The substrate address has been changed to ${network} network address.</span>}
+									message={<span className='text-[13px] dark:text-blue-dark-high'>The substrate address has been changed to {network} network address.</span>}
 								/>
 							)}
 							<div className='-mb-6 mt-6'>

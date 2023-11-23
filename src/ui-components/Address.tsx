@@ -63,6 +63,7 @@ interface Props {
 	isVoterAddress?: boolean;
 	disableTooltip?: boolean;
 	showKiltAddress?: boolean;
+	destroyTooltipOnHide?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -94,7 +95,8 @@ const Address = (props: Props) => {
 		ethIdenticonSize,
 		isVoterAddress,
 		disableTooltip = false,
-		showKiltAddress = false
+		showKiltAddress = false,
+		destroyTooltipOnHide = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -263,6 +265,7 @@ const Address = (props: Props) => {
 				arrow
 				color='#fff'
 				overlayClassName={className}
+				destroyTooltipOnHide={destroyTooltipOnHide}
 				title={
 					<QuickView
 						socials={socials}

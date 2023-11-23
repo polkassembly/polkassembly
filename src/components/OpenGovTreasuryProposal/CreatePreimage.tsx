@@ -247,9 +247,6 @@ const CreatePreimage = ({
 			setSteps({ percent: 100, step: 1 });
 			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, createPreimageForm.isPreimage ? bnBalance : balance);
 		}
-		if (createPreimageForm?.selectedTrack) {
-			setIsAutoSelectTrack(false);
-		}
 
 		if (createPreimageForm?.enactment) {
 			setOpenAdvanced(true);

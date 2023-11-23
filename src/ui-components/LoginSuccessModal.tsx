@@ -18,7 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IAddProfileResponse } from '~src/auth/types';
 import { handleTokenChange } from '~src/services/auth.service';
 import { useDispatch } from 'react-redux';
-
+import styled from 'styled-components';
 interface Props {
 	// setLoading: (pre: boolean) => void;
 	setLoginOpen?: (pre: boolean) => void;
@@ -270,7 +270,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 											setFirstPassword(e.target.value);
 										}}
 										placeholder='Password'
-										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+										className='dark:[&>input]:color-white rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 										id='first_password'
 									/>
 								</Form.Item>
@@ -323,4 +323,12 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 	);
 };
 
-export default LoginSuccessModal;
+export default styled(LoginSuccessModal)`
+	.ant-input {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '')} !important;
+	}
+	.ant-input::placeholder {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+	}
+`;

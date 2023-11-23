@@ -202,7 +202,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				onClick={handleClick}
 			>
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
-				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Treasury Proposal</p>
+				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
 			</div>
 			{openAddressLinkedModal && (
 				<AddressConnectModal

@@ -163,7 +163,9 @@ const CreatePreimage = ({
 		//validate beneficiaryAddresses
 		if (
 			!beneficiaryAddresses.length ||
-			beneficiaryAddresses.find((beneficiary) => !beneficiary.address || !beneficiary.amount || !getEncodedAddress(beneficiary.address, network))
+			beneficiaryAddresses.find(
+				(beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0 || !getEncodedAddress(beneficiary.address, network)
+			)
 		) {
 			return;
 		}
@@ -176,8 +178,9 @@ const CreatePreimage = ({
 		const txArr: any[] = [];
 
 		beneficiaryAddresses.forEach((beneficiary) => {
-			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && new BN(beneficiary.amount).gt(ZERO_BN)) {
-				txArr.push(api?.tx?.treasury?.spend(beneficiary.amount, beneficiary.address));
+			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
+				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
+				txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
 			}
 		});
 
@@ -196,10 +199,11 @@ const CreatePreimage = ({
 		setSteps({ percent: 20, step: 1 });
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
-		const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
 		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount}`, network, false);
+
 		if (isValid) {
 			if (createPreimageForm.isPreimage) {
+				const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
 				setFundingAmount(bnBalance);
 			} else {
 				setFundingAmount(balance);
@@ -245,6 +249,7 @@ const CreatePreimage = ({
 		}
 		if (createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) {
 			setSteps({ percent: 100, step: 1 });
+			const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
 			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, createPreimageForm.isPreimage ? bnBalance : balance);
 		}
 
@@ -390,7 +395,7 @@ const CreatePreimage = ({
 
 		beneficiaryAddresses.forEach((beneficiary) => {
 			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
-			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && new BN(beneficiary.amount).gt(ZERO_BN)) {
+			if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
 			}
 		});
@@ -438,9 +443,9 @@ const CreatePreimage = ({
 		for (const beneficiary in beneficiaryAddresses) {
 			if (
 				!beneficiaryAddresses[beneficiary].address ||
-				!beneficiaryAddresses[beneficiary].amount ||
+				isNaN(Number(beneficiaryAddresses[beneficiary].amount)) ||
 				!getEncodedAddress(beneficiaryAddresses[beneficiary].address, network) ||
-				!new BN(beneficiaryAddresses[beneficiary].amount).gt(ZERO_BN)
+				Number(beneficiaryAddresses[beneficiary].amount) <= 0
 			) {
 				areBeneficiaryAddressesValid = false;
 				setValidBeneficiaryAddress(false);
@@ -692,7 +697,6 @@ const CreatePreimage = ({
 		setPreimageLinked(false);
 		setSteps({ percent: beneficiaryAddresses[0]?.address?.length > 0 && fundingAmount.gt(ZERO_BN) ? 100 : 60, step: 1 });
 		if (!isAutoSelectTrack || !fundingAmount || fundingAmount.eq(ZERO_BN)) return;
-		handleSelectTrack(fundingAmount, Boolean(isPreimage));
 	};
 
 	const handleInputValueChange = (input: string, index: number) => {
@@ -707,24 +711,25 @@ const CreatePreimage = ({
 			type: EBeneficiaryAddressesActionType.UPDATE_AMOUNT
 		});
 
-		let totalAmt = ZERO_BN;
+		let totalAmt = 0;
 
-		const latestBenefeciarries = beneficiaryAddresses.map((beneficiary, i) => {
+		const latestBenefeciaries = beneficiaryAddresses.map((beneficiary, i) => {
 			if (index === i) {
-				totalAmt = totalAmt.add(new BN(input));
+				totalAmt += Number(input);
 				return { ...beneficiary, amount: input };
 			} else {
-				totalAmt = totalAmt.add(new BN(beneficiary.amount));
+				totalAmt += Number(beneficiary.amount);
 			}
 			return beneficiary;
 		});
 
 		setInputAmountValue(totalAmt.toString());
 		form.setFieldValue('funding_amount', totalAmt.toString());
-		onChangeLocalStorageSet({ beneficiaryAddresses: latestBenefeciarries, fundingAmount: totalAmt.toString() }, Boolean(isPreimage));
+		onChangeLocalStorageSet({ beneficiaryAddresses: latestBenefeciaries, fundingAmount: totalAmt.toString() }, Boolean(isPreimage));
 
 		const [fundingAmt] = inputToBn(totalAmt.toString(), network, false);
 		setFundingAmount(fundingAmt);
+		handleSelectTrack(fundingAmt, Boolean(isPreimage));
 	};
 
 	const addBeneficiary = () => {
@@ -754,6 +759,11 @@ const CreatePreimage = ({
 		form.setFieldValue('funding_amount', '0');
 		handleSelectTrack(ZERO_BN, Boolean(isPreimage));
 		setIsAutoSelectTrack(true);
+	};
+
+	const fundingAmtToBN = () => {
+		const [fundingAmt] = inputToBn(inputAmountValue || '0', network, false);
+		return fundingAmt;
 	};
 
 	return (
@@ -964,7 +974,7 @@ const CreatePreimage = ({
 									placeholder='Add funding amount'
 									formItemName='funding_amount'
 									theme={theme}
-									balance={new BN(inputAmountValue)}
+									balance={fundingAmtToBN()}
 									disabled={true}
 								/>
 							</div>
@@ -1129,7 +1139,7 @@ const CreatePreimage = ({
 							className={`h-[40px] w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white ${
 								(isPreimage !== null && !isPreimage
 									? !(
-											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || !beneficiary.amount) &&
+											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0) &&
 											validBeneficiaryAddress &&
 											fundingAmount &&
 											selectedTrack &&
@@ -1142,7 +1152,7 @@ const CreatePreimage = ({
 							disabled={
 								isPreimage !== null && !isPreimage
 									? !(
-											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || !beneficiary.amount) &&
+											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0) &&
 											validBeneficiaryAddress &&
 											fundingAmount &&
 											selectedTrack &&

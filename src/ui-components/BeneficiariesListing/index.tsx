@@ -21,7 +21,7 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 
 	return (
 		<div className={`${className} flex flex-wrap items-center gap-1`}>
-			{theme === 'dark' ? <BeneficiaryGreyIcon className='-mt-[2px]' /> : <BeneficiaryIcon className='-mt-[2px]' />}
+			{theme === 'dark' ? <BeneficiaryGreyIcon className='-mt-[2px] ml-1' /> : <BeneficiaryIcon className='-mt-[2px] ml-1' />}
 			<span className='ml-[1px] mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Beneficiary:</span>
 			<Beneficiary
 				beneficiary={beneficiaries[0]}

@@ -22,7 +22,6 @@ interface ITagsModalProps {
 const TagsModal: FC<ITagsModalProps> = (props) => {
 	const { tags, track_name, proposalType, openTagsModal, setOpenTagsModal } = props;
 	const router = useRouter();
-	console.log('tags here');
 	const { resolvedTheme: theme } = useTheme();
 	const handleTagClick = (pathname: string, filterBy: string) => {
 		if (pathname)

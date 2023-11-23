@@ -257,14 +257,19 @@ const CreatePreimage = ({
 	};
 
 	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean) => {
+		let selectedTrack = '';
+
 		for (const i in maxSpendArr) {
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
 			if (maxSpend.gte(fundingAmount)) {
+				selectedTrack = maxSpendArr[i].track;
 				setSelectedTrack(maxSpendArr[i].track);
 				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
 				break;
 			}
 		}
+
+		return selectedTrack;
 	};
 
 	useEffect(() => {
@@ -623,7 +628,7 @@ const CreatePreimage = ({
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceExistPreimageFn = useCallback(_.debounce(existPreimageData, 2000), []);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 300), []);
+	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 500), []);
 
 	const handlePreimageHash = (preimageHash: string, isPreimage: boolean) => {
 		if (!preimageHash || preimageHash.length === 0) return;
@@ -694,7 +699,6 @@ const CreatePreimage = ({
 		setPreimageCreated(false);
 		setPreimageLinked(false);
 		setSteps({ percent: beneficiaryAddresses[0]?.address?.length > 0 && fundingAmount.gt(ZERO_BN) ? 100 : 60, step: 1 });
-		debounceGetPreimageTxFee();
 	};
 
 	const handleInputValueChange = (input: string, index: number) => {
@@ -729,7 +733,9 @@ const CreatePreimage = ({
 
 		const [fundingAmt] = inputToBn(totalAmt.toString(), network, false);
 		setFundingAmount(fundingAmt);
-		handleSelectTrack(fundingAmt, Boolean(isPreimage));
+
+		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage));
+		debounceGetPreimageTxFee(Boolean(isPreimage), selectedTrack);
 	};
 
 	const addBeneficiary = () => {

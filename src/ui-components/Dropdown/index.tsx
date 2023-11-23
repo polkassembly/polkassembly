@@ -4,7 +4,7 @@
 
 import { Dropdown as AntdDropdown } from 'antd';
 
-export const Dropdown = (props: any, overlayClass: string) => {
+export const Dropdown = (props: any) => {
 	return (
 		<AntdDropdown
 			{...props}
@@ -12,7 +12,7 @@ export const Dropdown = (props: any, overlayClass: string) => {
 				props.theme == 'dark'
 					? '[&>ul]:bg-section-dark-garyBackground [&>ul>li]:text-white [&>ul>.ant-dropdown-menu-item-selected]:bg-section-dark-garyBackground [&>ul>.ant-dropdown-menu-item-selected]:text-pink_primary hover:[&>ul>li]:bg-section-dark-garyBackground hover:[&>ul>li]:text-pink_secondary'
 					: ''
-			} z-[2000] ${props.hideOverflow ? '[&>ul]:overflow-hidden' : ''} ${overlayClass}`}
+			} z-[2000] ${props.hideOverflow ? '[&>ul]:overflow-hidden' : ''}`}
 		>
 			{props.children}
 		</AntdDropdown>

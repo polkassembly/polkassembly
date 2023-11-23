@@ -52,11 +52,13 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	return (
 		<div className='flex items-center gap-3'>
 			{showAddress && (
-				<Address
-					address={address}
-					displayInline
-					iconSize={20}
-				/>
+				<span className='min-w-[120px]'>
+					<Address
+						address={address}
+						displayInline
+						iconSize={20}
+					/>
+				</span>
 			)}
 			<span
 				className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue dark:text-[#909090] ${

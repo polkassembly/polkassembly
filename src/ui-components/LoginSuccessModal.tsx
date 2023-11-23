@@ -305,7 +305,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									Skip
 								</Button>
 							)}
-							{email && (
+							{email && firstPassword && (
 								<Button
 									loading={loading}
 									size='large'

@@ -174,7 +174,6 @@ const CreatePreimage = ({
 		setShowAlert(false);
 		if (isPreimageVal || isPreimage || !proposerAddress || !txFundingAmount || txFundingAmount.lte(ZERO_BN) || txFundingAmount.eq(ZERO_BN)) return;
 
-		setLoading(true);
 		const txArr: any[] = [];
 
 		beneficiaryAddresses.forEach((beneficiary) => {
@@ -190,7 +189,6 @@ const CreatePreimage = ({
 			const gasFee: BN = new BN(info.partialFee);
 			setGasFee(gasFee);
 			setTxFee(gasFee.add(baseDeposit));
-			setLoading(false);
 			setShowAlert(true);
 		})();
 	};

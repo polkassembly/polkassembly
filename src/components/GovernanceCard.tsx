@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, Modal, Progress, Skeleton, Tooltip } from 'antd';
+import { Divider, Progress, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
@@ -18,7 +18,6 @@ import TopicTag from '~src/ui-components/TopicTag';
 import BN from 'bn.js';
 import { chainProperties } from 'src/global/networkConstants';
 import { CommentsIcon } from '~src/ui-components/CustomIcons';
-import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import { useApiContext } from '~src/context';
 import { useRouter } from 'next/router';
@@ -28,7 +27,6 @@ import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { ProposalType } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -36,6 +34,7 @@ import { useTheme } from 'next-themes';
 import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import Markdown from '~src/ui-components/Markdown';
+import TagsModal from '~src/ui-components/TagsModal';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -612,45 +611,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 				</div>
 			</div>
-			<Modal
-				wrapClassName='dark:bg-modalOverlayDark'
-				open={tagsModal}
-				onCancel={(e) => {
-					e.stopPropagation();
-					e.preventDefault();
-					setTagsModal(false);
-				}}
-				footer={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				className={`${poppins.variable} ${poppins.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay h-[120px]  max-w-full shrink-0 max-sm:w-[100%]`}
-				title={
-					<>
-						<label className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
-							<TagsIcon className='mr-2' />
-							Tags
-						</label>
-						<Divider
-							type='vertical'
-							className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive'
-						/>
-					</>
-				}
-			>
-				<div className='mt-3 flex flex-wrap gap-2'>
-					{tags && tags.length > 0 && (
-						<>
-							{tags?.map((tag, index) => (
-								<div
-									key={index}
-									className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-1 text-xs font-normal text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
-								>
-									{tag}
-								</div>
-							))}
-						</>
-					)}
-				</div>
-			</Modal>
+			<TagsModal
+				tags={tags}
+				proposalType={proposalType}
+				openTagsModal={tagsModal}
+				setOpenTagsModal={setTagsModal}
+			/>
 		</>
 	);
 };

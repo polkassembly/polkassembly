@@ -78,6 +78,7 @@ import { useTheme } from 'next-themes';
 import PredictionCard from '~src/ui-components/PredictionCard';
 import { network as allNetworks } from '~src/global/networkConstants';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
+import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
@@ -936,6 +937,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			{
 				<div className={className}>
 					<Form>
+						<RHSCardSlides />
 						{!post_link && canEdit && (
 							<>
 								<PostEditOrLinkCTA />

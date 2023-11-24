@@ -37,7 +37,7 @@ const Footer = ({ className }: { className?: string }) => {
 			aria-label='Site Footer'
 			className={`${className} bg-white dark:bg-section-dark-overlay max-[650px]:rounded-[14px] `}
 		>
-			<div className='mx-auto max-w-screen-xl px-4 pt-8 dark:bg-section-dark-overlay sm:px-6 lg:pl-8 lg:pr-2'>
+			<div className='mx-auto px-4 pt-8 dark:bg-section-dark-overlay sm:px-6'>
 				<div className='flex flex-col md:flex-row '>
 					{/* Logo and Network Link */}
 					<div>

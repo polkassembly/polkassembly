@@ -261,7 +261,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			<nav className='flex h-[60px] max-h-[60px] w-full items-center justify-between'>
 				<div className='flex items-center'>
 					<Link
-						className='logo-size flex'
+						className='logo-size flex lg:hidden'
 						href={'/'}
 					>
 						{theme === 'dark' && isMobile ? (
@@ -275,7 +275,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</Link>
 
 					<div className='type-container flex items-center gap-1'>
-						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
+						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary md:mr-[10px] md:h-10'></span>
 						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>

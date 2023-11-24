@@ -107,7 +107,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 	const StatusDiv = ({ status }: { status: string }) => {
 		return (
-			<div className='status-tag my-1 items-center rounded-[50px] px-[15px] py-[5px] text-xs text-white'>
+			<div className='my-1 items-center rounded-[50px] py-[5px] text-xs text-white'>
 				<StatusTag
 					theme={theme}
 					className='max-w-[86px] overflow-hidden text-ellipsis text-white md:max-w-full'
@@ -194,7 +194,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 						) : (
 							<UpArrow
 								onClick={toggleCollapse}
-								className='mt-[7px]'
+								className='mt-[7px] -ml-2'
 							/>
 						)}
 					</p>
@@ -247,7 +247,7 @@ export default styled(TimelineContainer)`
 
 	@media (max-width: 1500px) and (min-width: 1320px) {
 		.content-container {
-			width: 580px;
+			width: 570px;
 		}
 
 		.timeline-dropdown {

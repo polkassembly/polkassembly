@@ -73,7 +73,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 					</span>
 				</span>
 			) : (
-				<span className='flex cursor-pointer items-center justify-center rounded-[2px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-1 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] md:rounded-[4px] md:p-[8.5px]'>
+				<span className='flex cursor-pointer items-center justify-center rounded-[2px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-1 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] md:rounded-[4px] lg:p-[8.5px]'>
 					<SignalTowerIcon className='m-0 p-0 text-xs md:text-sm' />
 				</span>
 			)}

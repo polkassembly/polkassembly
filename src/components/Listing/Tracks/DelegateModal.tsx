@@ -411,7 +411,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px] dark:border-[#5C3931] dark:bg-[#331701]'
+										className='mb-4 h-10 rounded-[4px] dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>

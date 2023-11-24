@@ -209,8 +209,9 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			)}
 			{walletError && (
 				<Alert
-					message={walletError}
+					message={<span className='dark:text-blue-dark-high'>{walletError}</span>}
 					type='error'
+					className='dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
 				/>
 			)}
 			{authResponse.isTFAEnabled ? (

@@ -179,7 +179,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 								/>
 							) : (
 								<Alert
-									className='mb-5 mt-1 p-3 text-sm '
+									className='mb-5 mt-1 p-3 text-sm dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
 									message={<span className='dark:text-blue-dark-high'>Username already exists. Please try again </span>}
 									type='error'
 									showIcon
@@ -251,8 +251,8 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 								/>
 							) : (
 								<Alert
-									className='mb-5 mt-1 p-3 text-sm '
-									message='Email already exists. Please use a different email or link your address with the existing account.'
+									className='mb-5 mt-1 p-3 text-sm dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
+									message={<span className='dark:text-blue-dark-high'>Email already exists. Please use a different email or link your address with the existing account.</span>}
 									type='error'
 									showIcon
 								/>

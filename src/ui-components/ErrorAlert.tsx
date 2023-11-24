@@ -15,7 +15,7 @@ const ErrorAlert = ({ className, errorMsg }: Props) => {
 		<Alert
 			message={cleanError(errorMsg)}
 			type='error'
-			className={`${className} dark:bg-[#ffcbd9] `}
+			className={`${className} dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]`}
 		/>
 	);
 };

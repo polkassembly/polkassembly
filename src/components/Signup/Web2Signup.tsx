@@ -209,9 +209,9 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				)}
 				{walletError && (
 					<Alert
-						message={walletError}
+						message={<span className='dark:text-blue-dark-high'>{walletError}</span>}
 						type='error'
-						className='px-8'
+						className='px-8 dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
 					/>
 				)}
 				<AuthForm

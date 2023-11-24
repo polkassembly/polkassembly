@@ -27,7 +27,7 @@ const WalletButton = ({ disabled, onClick, icon, className, text, name, isOption
 		>
 			<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 			{text && isOptionalLogin && <p className='wallet-text-container m-0 ml-4 p-0 text-lightBlue dark:text-white'>{text}</p>}
-			{isOptionalLogin && !isAvailable && <p className='m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
+			{isOptionalLogin && !isAvailable && <p className='not-installed-container m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
 		</Button>
 	);
 };
@@ -38,6 +38,11 @@ export default styled(WalletButton)`
 			width: 100px !important;
 			text-overflow: ellipsis;
 			overflow-x: hidden;
+		}
+	}
+	@media (max-width: 544px) and (min-width: 319px) {
+		.not-installed-container {
+			display: none;
 		}
 	}
 `;

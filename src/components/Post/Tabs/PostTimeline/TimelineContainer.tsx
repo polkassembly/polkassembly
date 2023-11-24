@@ -193,7 +193,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 							</div>
 						) : (
 							<div className='up-arrow-container'>
-							   <UpArrow
+								<UpArrow
 									onClick={toggleCollapse}
 									className='mt-[7px]'
 								/>

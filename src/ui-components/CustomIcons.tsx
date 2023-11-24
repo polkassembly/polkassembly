@@ -134,8 +134,8 @@ import DeleteIconSVG from '~assets/icons/deleteIcon.svg';
 import WhiteDeleteIconSVG from '~assets/icons/deleteWhiteIcon.svg';
 import PolkaverseSVG from '~assets/icons/SubsocialIcon.svg';
 import VerifiedSVG from '~assets/icons/verified-tick.svg';
-import SidebarLeftSVG from '~assets/icons/sidebar-left.svg'
-import SidebarRightSVG from '~assets/icons/sidebar-right.svg'
+import SidebarLeftSVG from '~assets/icons/sidebar-left.svg';
+import SidebarRightSVG from '~assets/icons/sidebar-right.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon

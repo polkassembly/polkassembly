@@ -96,19 +96,19 @@ const beneficiaryAddressesReducer = (state: IBeneficiary[], action: EBeneficiary
 				}
 			});
 		case EBeneficiaryAddressesActionType.REMOVE_ALL:
-			return [];
+			return INIT_BENEFICIARIES;
 		case EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE:
 			return [{ address: action.payload.address, amount: action.payload.amount }];
 		case EBeneficiaryAddressesActionType.ADD:
 			return [...state, { address: '', amount: ZERO_BN.toString() } as IBeneficiary];
 		case EBeneficiaryAddressesActionType.REPLACE_STATE:
-			return action.payload.newState || [];
+			return action.payload.newState || INIT_BENEFICIARIES;
 		default:
 			return state;
 	}
 };
 
-const INIT_BENEFICIARIES = [
+export const INIT_BENEFICIARIES = [
 	{
 		address: '',
 		amount: ZERO_BN.toString()
@@ -202,7 +202,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				onClick={handleClick}
 			>
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
-				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Treasury Proposal</p>
+				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
 			</div>
 			{openAddressLinkedModal && (
 				<AddressConnectModal

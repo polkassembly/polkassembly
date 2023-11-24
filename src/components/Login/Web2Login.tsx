@@ -38,7 +38,7 @@ const WalletButtons = dynamic(() => import('./WalletButtons'), {
 
 const Container = styled.article`
 	.changeColor .ant-alert-message {
-		color: var(--bodyBlue);
+		color: #1677ff;
 	}
 `;
 
@@ -200,7 +200,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 					type='info'
 					showIcon
-					className='changeColor  mx-8 mb-5 text-bodyBlue dark:text-blue-dark-high'
+					className='changeColor  mx-8 mb-5 text-bodyBlue dark:bg-[var(--inactiveIconDark)] dark:text-white'
 				/>
 			)}
 			{walletError && (

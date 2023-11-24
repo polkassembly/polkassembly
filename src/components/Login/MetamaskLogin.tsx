@@ -518,6 +518,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 												address={address}
 												onAccountChange={onAccountChange}
 												linkAddressTextDisabled
+												className='p-4'
 											/>
 										</div>
 										{isSignUp && (

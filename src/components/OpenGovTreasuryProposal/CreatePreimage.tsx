@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
-import { EBeneficiaryAddressesAction, EBeneficiaryAddressesActionType, EEnactment, IEnactment, IPreimage, ISteps } from '.';
+import { EBeneficiaryAddressesAction, EBeneficiaryAddressesActionType, EEnactment, IEnactment, INIT_BENEFICIARIES, IPreimage, ISteps } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
 import dynamic from 'next/dynamic';
@@ -118,7 +118,6 @@ const CreatePreimage = ({
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [isAutoSelectTrack, setIsAutoSelectTrack] = useState<boolean>(true);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -156,24 +155,33 @@ const CreatePreimage = ({
 
 	maxSpendArr.sort((a, b) => a.maxSpend - b.maxSpend);
 
-	const getPreimageTxFee = (isPreimageVal?: boolean, selectedTrackVal?: string, fundingAmountVal?: BN) => {
+	const getPreimageTxFee = (isPreimageVal?: boolean, selectedTrackVal?: string, fundingAmountVal?: BN, latestBenefeciaries?: IBeneficiary[]) => {
 		const txSelectedTrack = selectedTrackVal || selectedTrack;
 		const txFundingAmount = fundingAmountVal || fundingAmount;
+		latestBenefeciaries = latestBenefeciaries || beneficiaryAddresses;
 
 		//validate beneficiaryAddresses
 		if (
-			!beneficiaryAddresses.length ||
-			beneficiaryAddresses.find((beneficiary) => !beneficiary.address || !beneficiary.amount || !getEncodedAddress(beneficiary.address, network))
+			!latestBenefeciaries.length ||
+			latestBenefeciaries.find(
+				(beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0 || !getEncodedAddress(beneficiary.address, network)
+			)
 		) {
 			return;
 		}
 
-		if (!api || !apiReady || !beneficiaryAddresses.length || !txSelectedTrack) return;
+		if (!api || !apiReady || !latestBenefeciaries.length || !txSelectedTrack) return;
 		setShowAlert(false);
 		if (isPreimageVal || isPreimage || !proposerAddress || !txFundingAmount || txFundingAmount.lte(ZERO_BN) || txFundingAmount.eq(ZERO_BN)) return;
 
-		setLoading(true);
-		const txArr = beneficiaryAddresses.map((beneficiary) => api.tx.treasury.spend(txFundingAmount.toString(), beneficiary.address));
+		const txArr: any[] = [];
+
+		latestBenefeciaries.forEach((beneficiary) => {
+			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
+				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
+				txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
+			}
+		});
 
 		(async () => {
 			await form.validateFields();
@@ -181,7 +189,6 @@ const CreatePreimage = ({
 			const gasFee: BN = new BN(info.partialFee);
 			setGasFee(gasFee);
 			setTxFee(gasFee.add(baseDeposit));
-			setLoading(false);
 			setShowAlert(true);
 		})();
 	};
@@ -190,10 +197,11 @@ const CreatePreimage = ({
 		setSteps({ percent: 20, step: 1 });
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
-		const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
 		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount}`, network, false);
+
 		if (isValid) {
 			if (createPreimageForm.isPreimage) {
+				const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
 				setFundingAmount(bnBalance);
 			} else {
 				setFundingAmount(balance);
@@ -210,7 +218,7 @@ const CreatePreimage = ({
 				address: '',
 				amount: '',
 				index: 0,
-				newState: createPreimageForm?.beneficiaryAddresses || []
+				newState: createPreimageForm?.beneficiaryAddresses || INIT_BENEFICIARIES
 			},
 			type: EBeneficiaryAddressesActionType.REPLACE_STATE
 		});
@@ -221,8 +229,12 @@ const CreatePreimage = ({
 		form.setFieldValue('preimage_hash', createPreimageForm?.preimageHash || '');
 		form.setFieldValue('preimage_length', createPreimageForm?.preimageLength || 0);
 		form.setFieldValue('funding_amount', createPreimageForm?.fundingAmount);
-		form.setFieldValue('address', createPreimageForm.beneficiaryAddress || '');
 		form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE);
+
+		((createPreimageForm?.beneficiaryAddresses || INIT_BENEFICIARIES) as IBeneficiary[]).forEach((beneficiary, index) => {
+			form.setFieldValue(`address-${index}`, beneficiary.address || '');
+			form.setFieldValue(`balance-${index}`, beneficiary.amount || ZERO_BN);
+		});
 
 		if (
 			createPreimageForm.preimageHash &&
@@ -235,10 +247,8 @@ const CreatePreimage = ({
 		}
 		if (createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) {
 			setSteps({ percent: 100, step: 1 });
+			const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
 			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, createPreimageForm.isPreimage ? bnBalance : balance);
-		}
-		if (createPreimageForm?.selectedTrack) {
-			setIsAutoSelectTrack(false);
 		}
 
 		if (createPreimageForm?.enactment) {
@@ -248,14 +258,19 @@ const CreatePreimage = ({
 	};
 
 	const handleSelectTrack = (fundingAmount: BN, isPreimage: boolean) => {
+		let selectedTrack = '';
+
 		for (const i in maxSpendArr) {
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
 			if (maxSpend.gte(fundingAmount)) {
+				selectedTrack = maxSpendArr[i].track;
 				setSelectedTrack(maxSpendArr[i].track);
 				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
 				break;
 			}
 		}
+
+		return selectedTrack;
 	};
 
 	useEffect(() => {
@@ -311,7 +326,6 @@ const CreatePreimage = ({
 			form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE);
 			if (data.preimageCreated) setPreimageCreated(data.preimageCreated);
 			if (data.preimageLinked) setPreimageLinked(data.preimageLinked);
-			setIsAutoSelectTrack(true);
 			setOpenAdvanced(false);
 		}
 	};
@@ -379,7 +393,14 @@ const CreatePreimage = ({
 		}
 		api.setSigner(injected.signer);
 
-		const txArr = beneficiaryAddresses.map((beneficiary) => api?.tx?.treasury?.spend(beneficiary.amount, beneficiary.address));
+		const txArr: any[] = [];
+
+		beneficiaryAddresses.forEach((beneficiary) => {
+			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
+			if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
+				txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
+			}
+		});
 
 		const proposal = txArr.length > 1 ? api.tx.utility.batchAll(txArr) : txArr[0];
 		const preimage: any = getState(api, proposal);
@@ -390,7 +411,7 @@ const CreatePreimage = ({
 			setPreimageLength(preimage.preimageLength);
 			setPreimageCreated(true);
 			onChangeLocalStorageSet(
-				{ beneficiaryAddresses: [], preimageCreated: true, preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength },
+				{ beneficiaryAddresses: INIT_BENEFICIARIES, preimageCreated: true, preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength },
 				Boolean(isPreimage),
 				true
 			);
@@ -418,6 +439,24 @@ const CreatePreimage = ({
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
+
+		//validate beneficiaryAddresses and fundingAmount for each beneficiary
+		let areBeneficiaryAddressesValid = true;
+		for (const beneficiary in beneficiaryAddresses) {
+			if (
+				!beneficiaryAddresses[beneficiary].address ||
+				isNaN(Number(beneficiaryAddresses[beneficiary].amount)) ||
+				!getEncodedAddress(beneficiaryAddresses[beneficiary].address, network) ||
+				Number(beneficiaryAddresses[beneficiary].amount) <= 0
+			) {
+				areBeneficiaryAddressesValid = false;
+				setValidBeneficiaryAddress(false);
+				return;
+			}
+		}
+
+		if (!areBeneficiaryAddressesValid) return;
+
 		if (!isPreimage) {
 			if (txFee.gte(availableBalance)) return;
 		}
@@ -589,6 +628,8 @@ const CreatePreimage = ({
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceExistPreimageFn = useCallback(_.debounce(existPreimageData, 2000), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 500), []);
 
 	const handlePreimageHash = (preimageHash: string, isPreimage: boolean) => {
 		if (!preimageHash || preimageHash.length === 0) return;
@@ -656,12 +697,9 @@ const CreatePreimage = ({
 	};
 
 	const handleFundingAmountChange = (fundingAmount: BN) => {
-		setFundingAmount(fundingAmount);
 		setPreimageCreated(false);
 		setPreimageLinked(false);
 		setSteps({ percent: beneficiaryAddresses[0]?.address?.length > 0 && fundingAmount.gt(ZERO_BN) ? 100 : 60, step: 1 });
-		if (!isAutoSelectTrack || !fundingAmount || fundingAmount.eq(ZERO_BN)) return;
-		handleSelectTrack(fundingAmount, Boolean(isPreimage));
 	};
 
 	const handleInputValueChange = (input: string, index: number) => {
@@ -676,24 +714,32 @@ const CreatePreimage = ({
 			type: EBeneficiaryAddressesActionType.UPDATE_AMOUNT
 		});
 
-		let totalAmt = ZERO_BN;
+		let totalAmt = 0;
 
-		beneficiaryAddresses.forEach((beneficiary, i) => {
+		const latestBenefeciaries = beneficiaryAddresses.map((beneficiary, i) => {
 			if (index === i) {
-				totalAmt = totalAmt.add(new BN(input));
+				totalAmt += Number(input);
+				return { ...beneficiary, amount: input };
 			} else {
-				totalAmt = totalAmt.add(new BN(beneficiary.amount));
+				totalAmt += Number(beneficiary.amount);
 			}
+			return beneficiary;
 		});
+
+		totalAmt = Number(totalAmt.toFixed(6));
 
 		setInputAmountValue(totalAmt.toString());
 		form.setFieldValue('funding_amount', totalAmt.toString());
-		onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage));
+		onChangeLocalStorageSet({ beneficiaryAddresses: latestBenefeciaries, fundingAmount: totalAmt.toString() }, Boolean(isPreimage));
+
+		const [fundingAmt] = inputToBn(totalAmt.toString(), network, false);
+		setFundingAmount(fundingAmt);
+
+		const selectedTrack = handleSelectTrack(fundingAmt, Boolean(isPreimage));
+		debounceGetPreimageTxFee(Boolean(isPreimage), selectedTrack, fundingAmt, latestBenefeciaries);
 	};
 
 	const addBeneficiary = () => {
-		if (beneficiaryAddresses.find((beneficiary) => !beneficiary.address || !beneficiary.amount)) return;
-
 		dispatchBeneficiaryAddresses({
 			payload: {
 				address: '',
@@ -719,6 +765,11 @@ const CreatePreimage = ({
 		setInputAmountValue('0');
 		form.setFieldValue('funding_amount', '0');
 		handleSelectTrack(ZERO_BN, Boolean(isPreimage));
+	};
+
+	const fundingAmtToBN = () => {
+		const [fundingAmt] = inputToBn(inputAmountValue || '0', network, false);
+		return fundingAmt;
 	};
 
 	return (
@@ -809,9 +860,9 @@ const CreatePreimage = ({
 							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
-									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-[#5C3931] dark:bg-[#331701] dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
 									showIcon
-									message='Insufficient available balance.'
+									message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 								/>
 							)}
 							<div className='mt-6'>
@@ -847,7 +898,7 @@ const CreatePreimage = ({
 											<AddressInput
 												name={`address-${index}`}
 												defaultAddress={beneficiary.address}
-												label={'Beneficiary Address'}
+												label={`${`Beneficiary Address ${beneficiaryAddresses.length > 1 ? index + 1 : ''}`}`}
 												placeholder='Add beneficiary address'
 												className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 												onChange={(address) => handleBeneficiaryAddresschange(address, index)}
@@ -868,7 +919,6 @@ const CreatePreimage = ({
 										<div className='-mb-[69px]'>
 											<BalanceInput
 												formItemName={`balance-${index}`}
-												onBlur={getPreimageTxFee}
 												address={proposerAddress}
 												placeholder='Split amount'
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
@@ -904,9 +954,10 @@ const CreatePreimage = ({
 
 							{addressAlert && (
 								<Alert
-									className='mb mt-2'
+									className='mt-2 dark:border-[#125798] dark:bg-[#05263F]'
 									showIcon
-									message={`The substrate address has been changed to ${network} network address.`}
+									type='info'
+									message={<span className='text-[13px] dark:text-blue-dark-high'>The substrate address has been changed to {network} network address.</span>}
 								/>
 							)}
 							<div className='-mb-6 mt-6'>
@@ -929,7 +980,7 @@ const CreatePreimage = ({
 									placeholder='Add funding amount'
 									formItemName='funding_amount'
 									theme={theme}
-									balance={new BN(inputAmountValue)}
+									balance={fundingAmtToBN()}
 									disabled={true}
 								/>
 							</div>
@@ -947,7 +998,6 @@ const CreatePreimage = ({
 									tracksArr={trackArr}
 									onTrackChange={(track) => {
 										setSelectedTrack(track);
-										setIsAutoSelectTrack(false);
 										onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
 										getPreimageTxFee();
 										setSteps({ percent: 100, step: 1 });
@@ -1076,10 +1126,18 @@ const CreatePreimage = ({
 					{showAlert && !isPreimage && !txFee.eq(ZERO_BN) && (
 						<Alert
 							type='info'
-							className='mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+							className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
 							showIcon
-							description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
-							message={`${formatedBalance(String(baseDeposit.toString()), unit)} ${unit} Base deposit is required to create a preimage.`}
+							description={
+								<span className='text-xs dark:text-blue-dark-high'>
+									Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
+								</span>
+							}
+							message={
+								<span className='text-[13px] dark:text-blue-dark-high'>
+									{formatedBalance(String(baseDeposit.toString()), unit)} {unit} Base deposit is required to create a preimage.
+								</span>
+							}
 						/>
 					)}
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
@@ -1094,7 +1152,7 @@ const CreatePreimage = ({
 							className={`h-[40px] w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white ${
 								(isPreimage !== null && !isPreimage
 									? !(
-											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || !beneficiary.amount) &&
+											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0) &&
 											validBeneficiaryAddress &&
 											fundingAmount &&
 											selectedTrack &&
@@ -1107,7 +1165,7 @@ const CreatePreimage = ({
 							disabled={
 								isPreimage !== null && !isPreimage
 									? !(
-											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || !beneficiary.amount) &&
+											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0) &&
 											validBeneficiaryAddress &&
 											fundingAmount &&
 											selectedTrack &&

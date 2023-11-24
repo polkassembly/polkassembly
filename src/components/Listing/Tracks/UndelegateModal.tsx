@@ -221,7 +221,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						<Button
 							htmlType='submit'
 							key='submit'
-							className='h-10 w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary'
+							className='h-10 w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary'
 							disabled={loading}
 							onClick={handleSubmit}
 						>
@@ -239,8 +239,10 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							<Alert
 								showIcon
 								type='info'
-								className='rounded-[4px] text-[14px]'
-								message={`An approximate fees of ${formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction`}
+								className='rounded-[4px] text-[14px] dark:border-[#125798] dark:bg-[#05263F] '
+								message={
+									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction</span>
+								}
 							/>
 						}
 						<Form
@@ -275,10 +277,13 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className='mt-4'>
 								<label className='mb-2 text-sm text-lightBlue dark:text-blue-dark-medium'>Balance </label>
-								<div className='h-10 cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b]'>{`${formatedBalance(balance.toString(), unit)} ${unit}`}</div>
+								<div className='h-10 cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b] dark:text-blue-dark-high'>{`${formatedBalance(
+									balance.toString(),
+									unit
+								)} ${unit}`}</div>
 							</div>
 
-							<div className='mb-[2px]  border-solid border-white dark:border-[#3B444F]'>
+							<div className='mb-[2px] border-solid border-white dark:border-0'>
 								<label className='flex items-center text-sm text-lightBlue dark:text-blue-dark-medium'>
 									Conviction
 									<span>
@@ -290,13 +295,13 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 								</label>
 							</div>
 							<div className='track-[0.0025em] flex items-center justify-between rounded-md'>
-								<div className='flex items-center justify-center text-sm text-[#7c899b]'>
+								<div className='flex items-center justify-center text-sm text-[#7c899b] dark:text-blue-dark-high'>
 									{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>
 							<div className='mb-4 mt-6 flex items-center justify-start gap-2'>
 								<label className='mb-[2px] text-sm tracking-[0.0025em] text-lightBlue dark:text-blue-dark-medium'>Track:</label>
-								<span className='tracking-medium text-sm text-[#7c899b]'>
+								<span className='tracking-medium text-sm text-[#7c899b] dark:text-blue-dark-high'>
 									{trackName} #{trackNum}
 								</span>
 							</div>

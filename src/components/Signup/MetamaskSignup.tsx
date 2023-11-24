@@ -303,6 +303,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 											address={address}
 											onAccountChange={onAccountChange}
 											linkAddressTextDisabled
+											className='p-4'
 										/>
 									</div>
 									<div className='mb-6 flex items-center justify-center gap-x-2'>

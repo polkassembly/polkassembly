@@ -87,6 +87,8 @@ const TreasuryProposalSuccessPopup = ({
 				<Link
 					href={`https://${network}.polkassembly.io/referenda/${postId}`}
 					className='flex items-center'
+					target='_blank'
+					rel='noopener noreferrer'
 				>
 					<Button className='h-[40px] w-full rounded-[4px] bg-pink_primary text-sm font-medium text-white'>View Proposal</Button>
 				</Link>
@@ -120,6 +122,7 @@ const TreasuryProposalSuccessPopup = ({
 										<Beneficiary
 											beneficiary={beneficiary}
 											key={index}
+											disableBalanceFormatting
 										/>
 									))}
 								</div>
@@ -150,9 +153,9 @@ const TreasuryProposalSuccessPopup = ({
 					</div>
 				)}
 				<Alert
+					className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
 					showIcon
-					type='warning'
-					className='m-2 w-full rounded-[4px] text-sm'
+					type='info'
 					message={
 						<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} to prevent your proposal from being
@@ -163,6 +166,8 @@ const TreasuryProposalSuccessPopup = ({
 						<Link
 							href={`https://${network}.polkassembly.io/referenda/${postId}`}
 							className='cursor-pointer text-xs font-medium text-pink_primary'
+							target='_blank'
+							rel='noopener noreferrer'
 						>
 							Pay Decision Deposit
 						</Link>

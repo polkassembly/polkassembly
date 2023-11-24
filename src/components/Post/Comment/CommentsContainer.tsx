@@ -262,9 +262,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				<>
 					{isGrantClosed ? (
 						<Alert
-							message='Grant closed, no comments can be added or edited.'
+							message={<span className='dark:text-blue-dark-high'>Grant closed, no comments can be added or edited.</span>}
 							type='info'
 							showIcon
+							className='dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 						/>
 					) : (
 						<PostCommentForm

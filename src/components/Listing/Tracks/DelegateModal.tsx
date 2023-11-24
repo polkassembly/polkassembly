@@ -596,7 +596,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							<Alert
 								showIcon
 								type='info'
-								className='mb-4 rounded-[4px] dark:border-[#125798] dark:bg-[#05263F]'
+								className='mb-4 rounded-[4px] dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
 								}

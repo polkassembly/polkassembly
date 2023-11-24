@@ -481,8 +481,9 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 							{accountsNotFound && (
 								<div className='my-5 flex items-center justify-center'>
 									<Alert
-										message='You need at least one account in Polkadot-js extension to login.'
+										message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
 										description='Please reload this page after adding accounts.'
+										className='dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 										type='info'
 										showIcon
 									/>
@@ -524,10 +525,10 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 										{isSignUp && (
 											<Alert
 												showIcon
-												className='mb-2'
+												className='mb-2 dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 												type='info'
 												message={
-													<>
+													<span className='dark:text-blue-dark-high'>
 														By Signing up you agree to the terms of the{' '}
 														<Link
 															href='/terms-and-conditions'
@@ -536,7 +537,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 															Polkassembly end user agreement
 														</Link>
 														.
-													</>
+													</span>
 												}
 											/>
 										)}

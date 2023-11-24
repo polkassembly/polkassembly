@@ -294,7 +294,7 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-[#91CAFF] dark:bg-[#37414b]'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 						message={<span className='dark:text-blue-dark-high'>Your identity has already been set. Please edit a field to proceed.</span>}
 					/>
 				)}
@@ -545,7 +545,7 @@ const IdentityForm = ({
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert
-						className='mt-6 rounded-[4px] dark:border-[#91CAFF] dark:bg-[#37414b]'
+						className='mt-6 rounded-[4px] dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 						type='info'
 						showIcon
 						message={

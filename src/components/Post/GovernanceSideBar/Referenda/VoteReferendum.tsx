@@ -753,9 +753,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											.gte(showMultisig ? multisigBalance : availableBalance) && (
 											<Alert
 												type='info'
-												message='Insufficient balance'
+												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 												showIcon
-												className='mb-4 rounded-[4px]'
+												className='mb-4 rounded-[4px] dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 											/>
 										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
@@ -767,9 +767,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 									<Alert
-										message='No addresses found in the address selection tab.'
+										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
+										className='dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -807,9 +808,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
 									<Alert
-										message='Please select a wallet.'
+										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
+										className='dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 									/>
 								) : null}
 

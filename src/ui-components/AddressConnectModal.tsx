@@ -481,7 +481,7 @@ const AddressConnectModal = ({
 					)}
 					{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
 						<Alert
-							message={`For using ${walletAlertTitle}:`}
+							message={<span className='dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
 							description={
 								<ul className='mt-[-5px] text-sm'>
 									<li>Give access to Polkassembly on your selected wallet.</li>
@@ -489,13 +489,13 @@ const AddressConnectModal = ({
 								</ul>
 							}
 							showIcon
-							className='mt-4'
+							className='mt-4 dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 							type='info'
 						/>
 					)}
 					{Object.keys(availableWallets || {}).length === 0 && !loading && (
 						<Alert
-							message={<div className='mt-1 text-[13px] font-medium'>{accountAlertTitle}</div>}
+							message={<div className='mt-1 text-[13px] font-medium dark:text-blue-dark-high'>{accountAlertTitle}</div>}
 							description={
 								<div className='-mt-1 pb-1 text-xs text-lightBlue'>
 									{linkAddressNeeded
@@ -505,7 +505,7 @@ const AddressConnectModal = ({
 							}
 							type='info'
 							showIcon
-							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:bg-[var(--inactiveIconDark)] dark:text-white'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 						/>
 					)}
 					<Form
@@ -550,20 +550,20 @@ const AddressConnectModal = ({
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 							<Alert
 								type='info'
-								className='mt-4 rounded-[4px]'
+								className='mt-4 rounded-[4px] dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 								showIcon
-								message='Please select a wallet.'
+								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 							/>
 						) : null}
 					</Form>
 				</div>
 				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
 					<Alert
-						className='mt-6 rounded-[4px]'
+						className='mt-6 rounded-[4px] dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 						type='info'
 						showIcon
 						message={
-							<span className='text-[13px] font-medium text-bodyBlue '>
+							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
 								Please maintain minimum balance for these transactions:
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'

@@ -15,7 +15,7 @@ const ExtensionNotDetected: React.FC<Props> = ({ chosenWallet }) => {
 	return (
 		<Alert
 			message={
-				<div className='flex gap-x-2'>
+				<div className='flex gap-x-2 dark:text-blue-dark-high'>
 					<span className='capitalize'>{chosenWallet === Wallet.SUBWALLET ? chosenWallet.split('-')[0] : chosenWallet || 'Wallet'}</span>
 					<span>extension not detected.</span>
 				</div>
@@ -31,7 +31,7 @@ const ExtensionNotDetected: React.FC<Props> = ({ chosenWallet }) => {
 			}
 			type='info'
 			showIcon
-			className='changeColor text-blue-light-high'
+			className='changeColor dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 		/>
 	);
 };

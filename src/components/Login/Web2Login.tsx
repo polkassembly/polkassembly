@@ -197,10 +197,14 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			{defaultWallets.length === 0 && isDelegation && (
 				<Alert
 					message='Wallet extension not detected.'
-					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
+					description={
+						<span className='dark:text-blue-dark-high'>
+							No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.
+						</span>
+					}
 					type='info'
 					showIcon
-					className='changeColor  mx-8 mb-5 text-bodyBlue dark:bg-[var(--inactiveIconDark)] dark:text-white'
+					className='changeColor  mx-8 mb-5 text-bodyBlue dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 				/>
 			)}
 			{walletError && (

@@ -954,7 +954,7 @@ const CreatePreimage = ({
 
 							{addressAlert && (
 								<Alert
-									className='mt-2 dark:border-[#125798] dark:bg-[#05263F]'
+									className='mt-2 dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 									showIcon
 									type='info'
 									message={<span className='text-[13px] dark:text-blue-dark-high'>The substrate address has been changed to {network} network address.</span>}
@@ -1126,7 +1126,7 @@ const CreatePreimage = ({
 					{showAlert && !isPreimage && !txFee.eq(ZERO_BN) && (
 						<Alert
 							type='info'
-							className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
+							className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 							showIcon
 							description={
 								<span className='text-xs dark:text-blue-dark-high'>

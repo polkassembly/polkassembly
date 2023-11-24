@@ -182,7 +182,7 @@ export default MultisigAccountSelectionForm;
 const MultisigNotFound = () => (
 	<Alert
 		message={
-			<div className='flex gap-x-2'>
+			<div className='flex gap-x-2 dark:text-blue-dark-high'>
 				<span className='capitalize'>No multisig account found.</span>
 			</div>
 		}
@@ -202,5 +202,6 @@ const MultisigNotFound = () => (
 		}
 		type='info'
 		showIcon
+		className='dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
 	/>
 );

@@ -192,10 +192,12 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 								/>
 							</div>
 						) : (
-							<UpArrow
-								onClick={toggleCollapse}
-								className='mt-[7px] -ml-2'
-							/>
+							<div className='up-arrow-container'>
+							   <UpArrow
+									onClick={toggleCollapse}
+									className='mt-[7px]'
+								/>
+							</div>
 						)}
 					</p>
 				</div>
@@ -266,7 +268,7 @@ export default styled(TimelineContainer)`
 
 	@media (min-width: 1100px) and (max-width: 1280px) {
 		.content-container {
-			width: 800px;
+			width: 760px;
 		}
 
 		.timeline-container {
@@ -279,6 +281,12 @@ export default styled(TimelineContainer)`
 
 		.round-icon {
 			margin-left: 34px;
+		}
+		.arrow-container {
+			margin-left: -85px;
+		}
+		.up-arrow-container {
+			margin-left: -40px;
 		}
 	}
 

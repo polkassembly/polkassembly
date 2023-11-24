@@ -74,8 +74,10 @@ const QuickView = ({
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const identityArr = [
-		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
-		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' }
+		{ isVerified: !!identity?.twitter && isGood, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
+		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' },
+		{ isVerified: !!identity?.email && isGood, key: 'Email', value: identity?.email || socials?.find((social) => social.type === 'Email')?.link || '' },
+		{ isVerified: !!identity?.riot && isGood, key: 'Riot', value: identity?.riot || socials?.find((social) => social.type === 'Riot')?.link || '' }
 	];
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const success = () => {
@@ -195,7 +197,7 @@ const QuickView = ({
 										}}
 										href={identity?.web}
 										title={identity?.web}
-										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#51D36E] text-white'
+										className={`flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'text-[#96A4B6]'}`}
 									>
 										<WebIcon />
 									</Link>

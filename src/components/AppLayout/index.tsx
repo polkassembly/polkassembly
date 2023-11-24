@@ -733,7 +733,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (isMobile) {
-		sidebarItems = [ username && isMobile ? userDropdown : null, ...sidebarItems];
+		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[64px]' />), username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
 
 	return (
@@ -1049,9 +1049,9 @@ export default styled(AppLayout)`
 	}
 
 	@media (max-width: 468px) and (min-width: 380px) {
-		.menu-container {
-			top: 58px !important;
-		}
+		/* .menu-container {
+			top: 62px !important;
+		} */
 
 		.logo-display-block {
 			display: none !important;

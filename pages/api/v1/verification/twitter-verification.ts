@@ -54,7 +54,7 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 			created_at: new Date(),
 			oauth_request_token: oauthRequestToken,
 			oauth_request_token_secret: oauthRequestTokenSecret,
-			twitter_handle: twitterHandle,
+			twitter_handle: twitterHandle.toLowerCase(),
 			user_id: userId,
 			verified: false
 		});

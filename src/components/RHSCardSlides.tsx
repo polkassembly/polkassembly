@@ -115,7 +115,7 @@ const RHSCardSlides = () => {
 				<div className='card-slide h-3/4 bg-white'>
 					{RHSCards.map((card, index) => (
 						<div
-							className={`content bg-rhs-card-gradient flex h-full w-full items-center justify-center gap-3 p-3 lg:p-5 ${index === currentIndex ? 'flex' : 'hidden'}`}
+							className={`content flex h-full w-full items-center justify-center gap-3 bg-rhs-card-gradient p-3 lg:p-5 ${index === currentIndex ? 'flex' : 'hidden'}`}
 							key={card.title}
 						>
 							<Image

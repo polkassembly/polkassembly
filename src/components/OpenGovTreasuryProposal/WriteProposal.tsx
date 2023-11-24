@@ -234,13 +234,13 @@ const WriteProposal = ({
 					{isDiscussionLinked === false && (
 						<Alert
 							type='info'
-							className='icon-alert'
+							className='icon-alert dark:border-[#125798] dark:bg-[#05263F]'
 							showIcon
 							message={
-								<span className='text-sm font-medium text-bodyBlue'>
+								<span className='text-[13px] font-normal text-bodyBlue dark:text-blue-dark-high'>
 									Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
 									<a
-										className='ml-1 text-xs text-pink_primary'
+										className='ml-1 text-xs font-semibold text-pink_primary'
 										target='_blank'
 										rel='noreferrer'
 										href={'/post/create'}
@@ -327,6 +327,6 @@ const WriteProposal = ({
 };
 export default styled(WriteProposal)`
 	.icon-alert .ant-alert-icon {
-		margin-top: -40px !important;
+		margin-top: -20px !important;
 	}
 `;

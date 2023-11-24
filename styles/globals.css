@@ -621,6 +621,7 @@ z-index: 1050 !important;
 
 .dark .ant-select:not(.ant-select-customize-input) .ant-select-selector{
   background-color: #0D0D0D;
+  border-color: var(--separatorDark);
 }
 
 .dark .ant-select-item-option-content{
@@ -768,8 +769,10 @@ z-index: 1050 !important;
   background-color: transparent !important;
 }
 
-
-/* .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
-  text-shadow: none !important;
-} */
- 
+.ant-modal .ant-modal-header {
+  background: transparent !important;
+}
+.overlay-class  {
+  width: 126px !important;
+  min-width: 0px !important;
+}

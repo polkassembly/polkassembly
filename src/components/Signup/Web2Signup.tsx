@@ -39,7 +39,7 @@ const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'
 
 const Container = styled.article`
 	.changeColor .ant-alert-message {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
+		color: ${(props) => (props.theme === 'dark' ? '#1677ff' : '#243a57')} !important;
 	}
 `;
 interface Props {
@@ -200,7 +200,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 						type='info'
 						showIcon
-						className='changeColor px-8 text-[#243A57] dark:text-blue-dark-high'
+						className='changeColor px-8 text-[#243A57] dark:bg-[var(--inactiveIconDark)] dark:text-white'
 					/>
 				)}
 				{walletError && (

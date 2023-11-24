@@ -87,6 +87,8 @@ const TreasuryProposalSuccessPopup = ({
 				<Link
 					href={`https://${network}.polkassembly.io/referenda/${postId}`}
 					className='flex items-center'
+					target='_blank'
+					rel='noopener noreferrer'
 				>
 					<Button className='h-[40px] w-full rounded-[4px] bg-pink_primary text-sm font-medium text-white'>View Proposal</Button>
 				</Link>
@@ -164,6 +166,8 @@ const TreasuryProposalSuccessPopup = ({
 						<Link
 							href={`https://${network}.polkassembly.io/referenda/${postId}`}
 							className='cursor-pointer text-xs font-medium text-pink_primary'
+							target='_blank'
+							rel='noopener noreferrer'
 						>
 							Pay Decision Deposit
 						</Link>

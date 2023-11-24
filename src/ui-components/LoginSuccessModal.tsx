@@ -23,6 +23,7 @@ interface Props {
 	// setLoading: (pre: boolean) => void;
 	setLoginOpen?: (pre: boolean) => void;
 	setSignupOpen?: (pre: boolean) => void;
+	theme?: string;
 }
 
 const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
@@ -269,8 +270,9 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 										onChange={(e) => {
 											setFirstPassword(e.target.value);
 										}}
+										disabled={loading}
 										placeholder='Password'
-										className='dark:[&>input]:color-white rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent dark:[&>input]:text-white'
 										id='first_password'
 									/>
 								</Form.Item>
@@ -296,7 +298,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							className='-mt-6 mb-5 dark:bg-separatorDark'
 						/>
 						<div className='mb-6 flex justify-end gap-x-5 px-8'>
-							{!email && (
+							{!email && !firstPassword && (
 								<Button
 									size='large'
 									onClick={handleOptionalSkip}
@@ -305,12 +307,13 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									Skip
 								</Button>
 							)}
-							{email && firstPassword && (
+							{(email || firstPassword) && (
 								<Button
 									loading={loading}
+									disabled={!email || !firstPassword}
 									size='large'
 									htmlType='submit'
-									className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+									className={`${!email || !firstPassword ? 'opacity-50' : ''} w-[144px] rounded-md border-none bg-pink_primary text-white outline-none`}
 								>
 									Done
 								</Button>
@@ -324,11 +327,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 };
 
 export default styled(LoginSuccessModal)`
-	.ant-input {
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
-		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '')} !important;
-	}
-	.ant-input::placeholder {
+	#first_password {
 		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
 	}
 `;

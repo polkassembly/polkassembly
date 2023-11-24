@@ -448,7 +448,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 								description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 								type='info'
 								showIcon
-								className='changeColor text-blue-light-high dark:text-blue-dark-high'
+								className='changeColor text-blue-light-high dark:bg-[var(--inactiveIconDark)] dark:text-white'
 							/>
 						)}
 

@@ -18,6 +18,10 @@ import { getTrackFunctions } from '../../Post/GovernanceSideBar/Referenda/util';
 import blockToTime from '~src/util/blockToTime';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
+import DiscussionIconGrey from '~assets/icons/Discussion-Unselected.svg';
+import DiscussionIconWhite from '~assets/icons/Discussion-Unselected-white.svg';
+import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -76,6 +80,7 @@ function addTrackGroup(arr: any) {
 
 export const getTrackData = (network: string, trackName?: string, trackNumber?: number) => {
 	const defaultTrackMetaData = getDefaultTrackMetaData();
+
 	if (!network) return defaultTrackMetaData;
 	let trackMetaData: TrackProps | undefined = undefined;
 	if (trackName) {
@@ -132,6 +137,7 @@ export const blocksToRelevantTime = (network: string, blocks: number): string =>
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { className, trackName } = props;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	useEffect(() => {
@@ -142,6 +148,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		labels: []
 	});
 	const [curvesLoading, setCurvesLoading] = useState(true);
+	const [showDetails, setShowDetails] = useState(false);
 	//get the track number of the track
 	const track_number = trackMetaData?.trackId;
 	const { api, apiReady } = useApiContext();
@@ -223,102 +230,128 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	}, [api, apiReady, network, track_number]);
 
 	return (
-		<section className={`${className} rounded-xxl bg-white drop-shadow-md dark:bg-section-dark-overlay md:p-4`}>
-			<article className='flex justify-between px-4 xs:py-2 md:py-0'>
+		<div className={`${className}`}>
+			<article className='flex justify-between xs:py-2 md:py-0'>
 				<div className='flex items-center gap-x-2 xs:mt-2 xs:flex-wrap md:mt-0'>
+					{theme === 'dark' ? <DiscussionIconWhite /> : <DiscussionIconGrey />}
 					<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>About {trackName.split(/(?=[A-Z])/).join(' ')}</h2>
 					<Tooltip
 						color='#E5007A'
 						title='Track Number'
 						className='cursor-pointer'
 					>
-						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em] text-[#E5007A]'>#{trackMetaData.trackId}</h4>
+						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em]'>(#{trackMetaData.trackId})</h4>
 					</Tooltip>
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1 lg:mr-3 xl:mr-1.5'>
 					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 				</div>
 			</article>
+			<section className={`${className} mt-2 rounded-xxl bg-white drop-shadow-md dark:bg-section-dark-overlay md:p-4`}>
+				<div className='text-container flex gap-x-2 px-4 font-normal leading-6 text-bodyBlue dark:text-blue-dark-high xs:mt-2 md:mt-0'>
+					<p className='m-0 p-0 text-sm'>
+						{trackMetaData?.description}
+						<span
+							className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+							onClick={() => setShowDetails(!showDetails)}
+						>
+							{showDetails ? 'Hide' : 'Show'} Track details
+						</span>
+					</p>
+				</div>
 
-			<p className='px-4 text-base font-normal leading-6 text-bodyBlue dark:text-blue-dark-high xs:mt-2 md:mt-0'>{trackMetaData?.description}</p>
+				{showDetails && (
+					<article className='md:flex md:justify-between'>
+						<section className='mt-6 flex w-full flex-wrap text-xs md:grid md:w-[70%] md:grid-cols-3'>
+							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+								<div className='flex flex-col'>
+									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Max Deciding</span>
+									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{trackMetaData.maxDeciding}</span>
+								</div>
+							</article>
 
-			<article className='md:flex md:justify-between'>
-				<section className='mt-6 flex w-full flex-wrap text-xs md:grid md:w-[70%] md:grid-cols-3'>
-					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
-						<div className='flex flex-col'>
-							<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Max Deciding</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{trackMetaData.maxDeciding}</span>
-						</div>
+							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+								<div className='flex flex-col'>
+									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Confirm Period</span>
+									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+										{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}
+									</span>
+								</div>
+							</article>
+
+							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+								<div className='flex flex-col'>
+									<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Min. Enactment Period</span>
+									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+										{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}
+									</span>
+								</div>
+							</article>
+
+							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+								<div className='flex flex-col'>
+									<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Period</span>
+									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+										{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}
+									</span>
+								</div>
+							</article>
+
+							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+								<div className='flex flex-col'>
+									<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Deposit</span>
+									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+										{trackMetaData.decisionDeposit &&
+											formatUSDWithUnits(
+												formatBnBalance(
+													`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit,
+													{ numberAfterComma: 2, withThousandDelimitor: false, withUnit: true },
+													network
+												),
+												1
+											)}
+									</span>
+								</div>
+							</article>
+
+							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
+								<div className='flex flex-col'>
+									<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Prepare Period</span>
+									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
+										{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}
+									</span>
+								</div>
+							</article>
+						</section>
+						<section className='mb-5 mr-5 flex justify-center xs:mt-6 sm:mt-0 md:w-[30%]'>
+							<Curves
+								curvesLoading={curvesLoading}
+								data={data}
+							/>
+						</section>
 					</article>
+				)}
 
-					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
-						<div className='flex flex-col'>
-							<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Confirm Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
-								{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}
-							</span>
-						</div>
-					</article>
+				<Divider className='xs:block sm:hidden' />
 
-					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
-						<div className='flex flex-col'>
-							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Min. Enactment Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
-								{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}
-							</span>
-						</div>
-					</article>
-
-					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
-						<div className='flex flex-col'>
-							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
-								{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}
-							</span>
-						</div>
-					</article>
-
-					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
-						<div className='flex flex-col'>
-							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Deposit</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
-								{trackMetaData.decisionDeposit &&
-									formatUSDWithUnits(
-										formatBnBalance(
-											`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit,
-											{ numberAfterComma: 2, withThousandDelimitor: false, withUnit: true },
-											network
-										),
-										1
-									)}
-							</span>
-						</div>
-					</article>
-
-					<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
-						<div className='flex flex-col'>
-							<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Prepare Period</span>
-							<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
-								{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}
-							</span>
-						</div>
-					</article>
-				</section>
-				<section className='mb-5 mr-5 flex justify-center xs:mt-6 sm:mt-0 md:w-[30%]'>
-					<Curves
-						curvesLoading={curvesLoading}
-						data={data}
-					/>
-				</section>
-			</article>
-
-			<Divider className='xs:block sm:hidden' />
-
-			<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
-				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
-			</article>
-		</section>
+				<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
+					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
+				</article>
+			</section>
+		</div>
 	);
 };
 
-export default AboutTrackCard;
+export default styled(AboutTrackCard)`
+	@media (max-width: 766px) and (min-width: 319px) {
+		.text-container {
+			padding-top: 16px !important;
+			margin-bottom: 8px !important;
+		}
+	}
+	@media (max-width: 374px) and (min-width: 319px) {
+		.text-container {
+			display: block !important;
+		}
+	}
+`;

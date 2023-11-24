@@ -53,8 +53,8 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 				<span className='w-[60px] py-1.5 text-sm'>{title}</span>
 				<div className='w-full'>
 					<div
-						className={`flex h-[40px]  items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] pl-3 pr-2 tracking-wide dark:border-[#3B444F] ${
-							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue dark:text-blue-dark-high'
+						className={`flex h-[40px]  items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] pl-3 pr-2 tracking-wide dark:border-[#3B444F] dark:bg-transparent ${
+							verified ? 'bg-[#f6f7f9] text-[#8d99a9] ' : 'bg-white text-bodyBlue dark:text-blue-dark-high'
 						}`}
 					>
 						<span>{value}</span>
@@ -115,7 +115,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 					loading={fieldLoading.email}
 				/>
 			),
-			dot: <EmailIcon className={` ${email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B]'} ' rounded-full p-2.5 text-xl`} />,
+			dot: <EmailIcon className={` ${email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />,
 			key: 1
 		});
 	}
@@ -133,7 +133,9 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 					fieldName={ESocials.TWITTER}
 				/>
 			),
-			dot: <TwitterIcon className={` ${twitter?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B]'} ' rounded-full p-2.5 text-xl`} />,
+			dot: (
+				<TwitterIcon className={` ${twitter?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />
+			),
 			key: 2
 		});
 	}
@@ -169,7 +171,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	};
 
 	const handleVerify = async (fieldName: ESocials, checkingVerified?: boolean) => {
-		const account = fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] || socials?.[fieldName]?.value : socials?.[fieldName]?.value;
+		const account = fieldName === ESocials.TWITTER ? (socials?.[fieldName]?.value?.split('@')?.[1] || socials?.[fieldName]?.value)?.toLowerCase() : socials?.[fieldName]?.value;
 
 		if (!checkingVerified) {
 			setFieldLoading({ ...fieldLoading, [fieldName]: true });
@@ -286,15 +288,15 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	};
 
 	return (
-		<div className={`${className} border-solid border-white pl-4 dark:border-[#3B444F]`}>
+		<div className={`${className} border-solid border-white pl-4 dark:border-transparent`}>
 			<Timeline
 				className='mt-8'
 				items={items}
 			/>
-			<div className='-mx-6 flex justify-end gap-4 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5'>
+			<div className='-ml-10 -mr-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<Button
 					onClick={onCancel}
-					className='h-[40px] w-[134px] rounded-[4px] border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary'
+					className='h-[40px] w-[134px] rounded-[4px] border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary dark:bg-transparent'
 				>
 					Cancel
 				</Button>
@@ -318,14 +320,18 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	);
 };
 export default styled(SocialVerification)`
-.ant-timeline .ant-timeline-item-tail{
-  border-inline-start: 2px solid rgba(5, 5, 5, 0) !important;
-  background-image: linear-gradient(rgba(144,160,183) 33%, rgba(255,255,255,0) 0%) !important;
-  background-position: right !important;
-  background-size: 1.5px 7px !important;
-  background-repeat: repeat-y !important ;
-  cursor: pointer !important;
-}
-.ant-timeline .ant-timeline-item-content {
-  inset-block-start: -12px;
+	.ant-timeline .ant-timeline-item-tail {
+		border-inline-start: 2px solid rgba(5, 5, 5, 0) !important;
+		background-image: linear-gradient(rgba(144, 160, 183) 33%, rgba(255, 255, 255, 0) 0%) !important;
+		background-position: right !important;
+		background-size: 1.5px 7px !important;
+		background-repeat: repeat-y !important ;
+		cursor: pointer !important;
+	}
+	.ant-timeline .ant-timeline-item-content {
+		inset-block-start: -12px;
+	}
+	.ant-timeline .ant-timeline-item-head {
+		background-color: transparent !important;
+	}
 `;

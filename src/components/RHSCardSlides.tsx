@@ -31,7 +31,7 @@ const cardsData: card[] = [
 		tag: cardTags.LINK_DISCUSSION,
 		title: 'Link Discussion'
 	},
-	{ description: 'Please include relevant tags to enhance post discoverability.', icon: '/assets/icons/rhs-card-icons/Plus.png', tag: 'add-tags', title: cardTags.ADD_TAGS },
+	{ description: 'Please include relevant tags to enhance post discoverability.', icon: '/assets/icons/rhs-card-icons/Plus.png', tag: cardTags.ADD_TAGS, title: 'Add Tags' },
 	{
 		description: 'To be paid before completion of decision period; payable by anyone',
 		icon: '/assets/icons/rhs-card-icons/Crystal.png',

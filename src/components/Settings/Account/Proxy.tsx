@@ -186,11 +186,12 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 						<Alert
 							type='warning'
 							message={
-								<>
+								<span className='dark:text-blue-dark-high'>
 									<p>At least one proxy account should be in your polkadot js extension.</p>
 									<p>Please reload this page after adding accounts.</p>
-								</>
+								</span>
 							}
+							className='dark:border-[#F89118] dark:bg-[rgba(248_145_24_0.2)]'
 						/>
 					) : (
 						<>

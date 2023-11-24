@@ -157,9 +157,9 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 
 					{extensionNotAvailable && (
 						<Alert
-							className='mb-6'
+							className='mb-6 dark:border-[#F89118] dark:bg-[rgba(248_145_24_0.2)]'
 							type='warning'
-							message='Please install polkadot.js extension to claim.'
+							message={<span className='dark:text-blue-dark-high'>Please install polkadot.js extension to claim.</span>}
 						/>
 					)}
 

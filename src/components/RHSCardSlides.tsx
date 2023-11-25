@@ -112,10 +112,10 @@ const RHSCardSlides = () => {
 						{!isReversed ? <NavigateNextIcon className='fill-current text-black dark:text-white' /> : <NavigatePrevIcon className='fill-current text-black dark:text-white' />}
 					</div>
 				</div>
-				<div className='card-slide h-3/4 bg-white'>
+				<div className='card-slide h-3/4'>
 					{RHSCards.map((card, index) => (
 						<div
-							className={`content flex h-full w-full items-center justify-center gap-3 bg-rhs-card-gradient p-3 lg:p-5 ${index === currentIndex ? 'flex' : 'hidden'}`}
+							className={`slide flex h-full w-full items-center justify-center gap-2 bg-rhs-card-gradient p-3 lg:p-5 ${index === currentIndex ? 'flex' : 'hidden'}`}
 							key={card.title}
 						>
 							<Image
@@ -125,8 +125,8 @@ const RHSCardSlides = () => {
 								height={60}
 							/>
 							<div className='content mr-14 text-white'>
-								<h4 className='font-semibold tracking-wide'>{card.title}</h4>
-								<span className='break-words text-xs'>{card.description}</span>
+								<h5 className='mb-0 text-base font-semibold tracking-wide'>{card.title}</h5>
+								<span className='break-words text-xs leading-3'>{card.description}</span>
 							</div>
 						</div>
 					))}

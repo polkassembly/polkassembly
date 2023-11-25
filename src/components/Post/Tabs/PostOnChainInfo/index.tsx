@@ -577,13 +577,13 @@ const ProposalInfo: React.FC<IProposalInfoProps> = (props) => {
 				</div>
 			)}
 			{proposed_call?.section && (
-				<div className='-mt-2 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
+				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
 					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Section</h6>
 					<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{proposed_call.section}</p>
 				</div>
 			)}
 			{proposed_call?.description && (
-				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
+				<div className='-mt-2 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
 					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
 					<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{proposed_call.description}</p>
 				</div>

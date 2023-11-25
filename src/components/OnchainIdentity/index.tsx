@@ -376,7 +376,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 								handleLocalStorageSetUnverified();
 								setLoading({ ...loading, isLoading: false });
 							}}
-							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary'
+							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Yes, Exit
 						</Button>
@@ -412,7 +412,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						)}
 						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
 						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
-							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'>
+							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high'>
 								<IdentityProgressIcon />
 								In Progress
 							</span>
@@ -433,6 +433,8 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							perSocialBondFee={perSocialBondFee}
 							changeStep={setStep}
 							alreadyVerifiedfields={alreadyVerifiedfields}
+							address={address}
+							setStartLoading={setLoading}
 						/>
 					)}
 					{step === ESetIdentitySteps.SET_IDENTITY_FORM && (

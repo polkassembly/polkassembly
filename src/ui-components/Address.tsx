@@ -63,6 +63,8 @@ interface Props {
 	isVoterAddress?: boolean;
 	disableTooltip?: boolean;
 	showKiltAddress?: boolean;
+	destroyTooltipOnHide?: boolean;
+	inPostHeading?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -94,7 +96,9 @@ const Address = (props: Props) => {
 		ethIdenticonSize,
 		isVoterAddress,
 		disableTooltip = false,
-		showKiltAddress = false
+		showKiltAddress = false,
+		destroyTooltipOnHide = false,
+		inPostHeading
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -263,6 +267,7 @@ const Address = (props: Props) => {
 				arrow
 				color='#fff'
 				overlayClassName={className}
+				destroyTooltipOnHide={destroyTooltipOnHide}
 				title={
 					<QuickView
 						socials={socials}
@@ -316,8 +321,8 @@ const Address = (props: Props) => {
 										onClick={(e) => handleClick(e)}
 										title={mainDisplay || encodedAddr}
 										className={`flex gap-x-1 ${
-											usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-blue-dark-high'
-										} hover:text-bodyBlue dark:text-blue-dark-high`}
+											usernameClassName ? usernameClassName : 'font-medium text-bodyBlue dark:text-blue-dark-high'
+										} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
 									>
 										{!!addressPrefix && (
 											<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>

@@ -17,6 +17,8 @@ import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import Link from 'next/link';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { IBeneficiary } from '~src/types';
+import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 
 interface Props {
 	className?: string;
@@ -27,7 +29,7 @@ interface Props {
 	selectedTrack: string;
 	preimageHash: string;
 	preimageLength: number | null;
-	beneficiaryAddress: string;
+	beneficiaryAddresses: IBeneficiary[];
 	postId: number;
 }
 
@@ -52,7 +54,7 @@ const TreasuryProposalSuccessPopup = ({
 	fundingAmount,
 	preimageHash,
 	proposerAddress,
-	beneficiaryAddress,
+	beneficiaryAddresses,
 	preimageLength,
 	selectedTrack,
 	postId
@@ -85,6 +87,8 @@ const TreasuryProposalSuccessPopup = ({
 				<Link
 					href={`https://${network}.polkassembly.io/referenda/${postId}`}
 					className='flex items-center'
+					target='_blank'
+					rel='noopener noreferrer'
 				>
 					<Button className='h-[40px] w-full rounded-[4px] bg-pink_primary text-sm font-medium text-white'>View Proposal</Button>
 				</Link>
@@ -99,7 +103,7 @@ const TreasuryProposalSuccessPopup = ({
 						{formatedBalance(fundingAmount.toString(), unit)} {unit}
 					</span>
 				)}
-				{proposerAddress && beneficiaryAddress && selectedTrack && preimageHash && preimageLength && (
+				{proposerAddress && beneficiaryAddresses?.[0]?.address?.length > 0 && selectedTrack && preimageHash && preimageLength && (
 					<div className='my-2 flex'>
 						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 							<span className='flex'>
@@ -113,12 +117,15 @@ const TreasuryProposalSuccessPopup = ({
 							</span>
 							<span className='flex'>
 								<span className='w-[172px]'>Beneficiary Address:</span>
-								<Address
-									displayInline
-									address={beneficiaryAddress}
-									isTruncateUsername={false}
-									iconSize={18}
-								/>
+								<div className='flex flex-col gap-2'>
+									{beneficiaryAddresses.map((beneficiary, index) => (
+										<Beneficiary
+											beneficiary={beneficiary}
+											key={index}
+											disableBalanceFormatting
+										/>
+									))}
+								</div>
 							</span>
 
 							<span className='flex'>
@@ -146,9 +153,9 @@ const TreasuryProposalSuccessPopup = ({
 					</div>
 				)}
 				<Alert
+					className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
 					showIcon
-					type='warning'
-					className='m-2 w-full rounded-[4px] text-sm'
+					type='info'
 					message={
 						<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} to prevent your proposal from being
@@ -159,6 +166,8 @@ const TreasuryProposalSuccessPopup = ({
 						<Link
 							href={`https://${network}.polkassembly.io/referenda/${postId}`}
 							className='cursor-pointer text-xs font-medium text-pink_primary'
+							target='_blank'
+							rel='noopener noreferrer'
 						>
 							Pay Decision Deposit
 						</Link>

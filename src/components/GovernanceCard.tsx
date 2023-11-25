@@ -247,11 +247,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<div className='flex items-center justify-center'>
 								{requestedAmount > 100 ? (
 									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
-										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
+										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
 									</span>
 								) : (
 									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.65rem]'>
-										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
+										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
 									</span>
 								)}
 							</div>

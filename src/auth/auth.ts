@@ -855,7 +855,6 @@ class AuthService {
 
 	public async ResetPasswordFromAuth(token: string, newPassword: string): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
-		console.log('userId', userId);
 		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);
 
 		await firebaseAdmin.firestore().collection('users').doc(String(userId)).update({
@@ -863,8 +862,6 @@ class AuthService {
 			salt
 		});
 		const user = await getUserFromUserId(userId);
-		console.log(user);
-		// const user = await firebaseAdmin.firestore().collection('users').doc(String(userId)).get();
 		return this.getSignedToken(user);
 	}
 

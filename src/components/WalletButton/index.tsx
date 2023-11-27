@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import styled from 'styled-components';
 
 interface Props {
@@ -18,17 +18,38 @@ interface Props {
 
 const WalletButton = ({ disabled, onClick, icon, className, text, name, isOptionalLogin, isAvailable }: Props) => {
 	return (
-		<Button
-			className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-[#F8E3EE]'} ${
-				isAvailable ? 'bg-white' : 'bg-grey_stroke dark:bg-[#3d3d3d]'
-			} items-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
-			onClick={onClick}
-			disabled={disabled}
-		>
-			<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
-			{text && isOptionalLogin && <p className='wallet-text-container m-0 ml-4 p-0 text-lightBlue dark:text-white'>{text}</p>}
-			{isOptionalLogin && !isAvailable && <p className='not-installed-container m-0 ml-auto p-0 text-xs text-grey_primary'>Not Installed</p>}
-		</Button>
+		<>
+			{!isOptionalLogin && (
+				<Tooltip
+					// color='#E5007A'
+					title={`${text} wallet ${isAvailable ? '' : 'not'} installed`}
+					placement='top'
+				>
+					<Button
+						className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-[#F8E3EE]'} ${
+							isAvailable ? 'bg-white' : 'bg-grey_stroke bg-[#F6F7F9] dark:bg-[#3d3d3d]'
+						} items-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
+						onClick={onClick}
+						disabled={disabled}
+					>
+						<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
+					</Button>
+				</Tooltip>
+			)}
+			{isOptionalLogin && (
+				<Button
+					className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-[#F8E3EE]'} ${
+						isAvailable ? 'text- bg-white' : 'bg-[#F6F7F9] dark:bg-[#3d3d3d]'
+					} items-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
+					onClick={onClick}
+					disabled={!isAvailable}
+				>
+					<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
+					{text && isOptionalLogin && <p className={`wallet-text-container m-0 ml-4 p-0 ${!isAvailable ? 'text-disableText' : 'text-lightBlue'} dark:text-white`}>{text}</p>}
+					{isOptionalLogin && !isAvailable && <p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs'>Not Installed</p>}
+				</Button>
+			)}
+		</>
 	);
 };
 

@@ -282,7 +282,7 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='error'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-[#FF3C5F] dark:bg-[#3d161d]'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 						message={
 							<span className='dark:text-blue-dark-high'>
 								Minimum Balance of {formatedBalance(totalFee.toString(), unit, 2)} {unit} is required to proceed
@@ -294,7 +294,7 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-[#91CAFF] dark:bg-[#37414b]'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						message={<span className='dark:text-blue-dark-high'>Your identity has already been set. Please edit a field to proceed.</span>}
 					/>
 				)}
@@ -545,7 +545,7 @@ const IdentityForm = ({
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert
-						className='mt-6 rounded-[4px] dark:border-[#91CAFF] dark:bg-[#37414b]'
+						className='mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'
 						showIcon
 						message={

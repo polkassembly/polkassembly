@@ -12,9 +12,9 @@ interface Props {
 	timeout?: number;
 	timeoutText?: string;
 	size?: 'default' | 'small' | 'large';
-	iconClassName?:string;
+	iconClassName?: string;
 }
-const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', size = 'default',iconClassName }: Props) => {
+const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', size = 'default', iconClassName }: Props) => {
 	const [displayLoader, setDisplayLoader] = useState(true);
 
 	useEffect(() => {

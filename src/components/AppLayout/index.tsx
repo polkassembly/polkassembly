@@ -777,9 +777,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					}}
 					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
 					// footer={<BigToggleButton />}
-					>
-					<div className='flex h-full flex-col justify-between'
-					    onMouseLeave={() => setSidedrawer(false)}
+				>
+					<div
+						className='flex h-full flex-col justify-between'
+						onMouseLeave={() => setSidedrawer(false)}
 					>
 						<Menu
 							theme={theme}
@@ -790,7 +791,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							onClick={handleMenuClick}
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
-					    <BigToggleButton />
+						<BigToggleButton />
 					</div>
 				</Drawer>
 				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (

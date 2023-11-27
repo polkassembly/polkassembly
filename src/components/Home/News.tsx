@@ -14,9 +14,9 @@ interface INewsProps {
 const News: FC<INewsProps> = (props) => {
 	const { twitter } = props;
 	const { resolvedTheme: theme } = useTheme();
-	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [prevTheme, setPrevTheme] = useState(theme)
-	
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [prevTheme, setPrevTheme] = useState(theme);
+
 	let profile = 'polkadot';
 	if (twitter) {
 		profile = twitter.split('/')[3];
@@ -24,8 +24,8 @@ const News: FC<INewsProps> = (props) => {
 
 	useEffect(() => {
 		setPrevTheme(theme);
-	   }, [theme]);
-	  
+	}, [theme]);
+
 	useEffect(() => {
 		if (prevTheme !== theme) {
 			setIsLoading(true);
@@ -34,12 +34,12 @@ const News: FC<INewsProps> = (props) => {
 
 	return (
 		<div className='h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:bg-section-dark-overlay lg:h-[550px] lg:p-6'>
-    		<h2 className='mb-6 text-xl font-medium leading-8 text-blue-light-high dark:text-blue-dark-high'>News</h2>
-    		<div className='overflow-hidden rounded-[10px]'>
-				{ isLoading && <Loader iconClassName={"text-7xl mt-32"}/> }
+			<h2 className='mb-6 text-xl font-medium leading-8 text-blue-light-high dark:text-blue-dark-high'>News</h2>
+			<div className='overflow-hidden rounded-[10px]'>
+				{isLoading && <Loader iconClassName={'text-7xl mt-32'} />}
 				<TwitterTimelineEmbed
-				    key={theme}
-				    onLoad={()=>setIsLoading(false)}
+					key={theme}
+					onLoad={() => setIsLoading(false)}
 					sourceType='profile'
 					screenName={profile}
 					options={{ height: 450 }}

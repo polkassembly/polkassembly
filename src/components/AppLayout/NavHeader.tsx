@@ -150,7 +150,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -162,7 +162,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<IconSettings className='userdropdown-icon text-2xl' />
@@ -175,7 +175,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					href='/'
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -195,7 +195,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'set on-chain identity',
 			label: (
 				<Link
-					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
+					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
 					href={''}
 					onClick={(e) => {
 						e.stopPropagation();

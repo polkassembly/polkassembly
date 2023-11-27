@@ -483,7 +483,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 									<Alert
 										message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
 										description='Please reload this page after adding accounts.'
-										className='dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+										className='dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 										type='info'
 										showIcon
 									/>
@@ -525,7 +525,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 										{isSignUp && (
 											<Alert
 												showIcon
-												className='mb-2 dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+												className='mb-2 dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 												type='info'
 												message={
 													<span className='dark:text-blue-dark-high'>

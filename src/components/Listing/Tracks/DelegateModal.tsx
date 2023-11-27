@@ -411,7 +411,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px] dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
+										className='mb-4 h-10 rounded-[4px] dark:border-[#FF3C5F] dark:bg-[#FF3C5F]/20'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>
@@ -596,7 +596,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							<Alert
 								showIcon
 								type='info'
-								className='mb-4 rounded-[4px] dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+								className='mb-4 rounded-[4px] dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
 								}

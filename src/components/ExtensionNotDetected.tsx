@@ -22,16 +22,18 @@ const ExtensionNotDetected: React.FC<Props> = ({ chosenWallet }) => {
 			}
 			description={
 				getExtensionUrl() ? (
-					<div className='max-w-md'>No web 3 account integration could be found. To be able to vote on-chain, visit this page on a computer with polkadot-js extension.</div>
+					<div className='max-w-md dark:text-blue-dark-high'>
+						No web 3 account integration could be found. To be able to vote on-chain, visit this page on a computer with polkadot-js extension.
+					</div>
 				) : (
-					<div className='max-w-md'>
+					<div className='max-w-md dark:text-blue-dark-high'>
 						Please install <a href='https://www.mozilla.org/en-US/firefox/'>Firefox</a> or <a href='https://www.google.com/chrome/'>Chrome</a> browser to use this feature.
 					</div>
 				)
 			}
 			type='info'
 			showIcon
-			className='changeColor dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+			className='changeColor dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 		/>
 	);
 };

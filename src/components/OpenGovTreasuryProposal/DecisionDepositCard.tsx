@@ -423,7 +423,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							<Alert
 								showIcon
 								type='error'
-								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
+								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:border-[#FF3C5F] dark:bg-[#FF3C5F]/20'
 								message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 							/>
 						)}
@@ -438,7 +438,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 									</ul>
 								}
 								showIcon
-								className='mb-4 dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+								className='mb-4 dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 								type='info'
 							/>
 						)}
@@ -448,7 +448,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 								description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 								type='info'
 								showIcon
-								className='changeColor text-blue-light-high dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)] dark:text-white'
+								className='changeColor text-blue-light-high dark:border-[#91CAFF] dark:bg-[#91CAFF]/20 dark:text-white'
 							/>
 						)}
 
@@ -474,7 +474,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 											type='info'
 											showIcon
 											message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
-											className='dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+											className='dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 										/>
 									) : null}
 

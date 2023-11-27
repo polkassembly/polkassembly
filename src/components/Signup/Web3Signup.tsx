@@ -403,7 +403,7 @@ const Web3Signup: FC<Props> = ({
 												description='Please reload this page after adding accounts.'
 												type='info'
 												showIcon
-												className='dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+												className='dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 											/>
 										</div>
 									)}

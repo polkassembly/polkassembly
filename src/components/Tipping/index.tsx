@@ -322,7 +322,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				>
 					{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
 						<Alert
-							className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
+							className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#FF3C5F] dark:bg-[#FF3C5F]/20'
 							showIcon
 							type='error'
 							message={<span className='dark:text-blue-dark-high'>Insufficient Balance for Tipping</span>}

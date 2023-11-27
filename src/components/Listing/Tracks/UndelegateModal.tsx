@@ -239,7 +239,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							<Alert
 								showIcon
 								type='info'
-								className='rounded-[4px] text-[14px] dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+								className='rounded-[4px] text-[14px] dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction</span>
 								}

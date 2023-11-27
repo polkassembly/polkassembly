@@ -204,14 +204,14 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					}
 					type='info'
 					showIcon
-					className='changeColor  mx-8 mb-5 text-bodyBlue dark:border-[#91CAFF] dark:bg-[rgba(145_202_255_0.2)]'
+					className='changeColor  mx-8 mb-5 text-bodyBlue dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
 				/>
 			)}
 			{walletError && (
 				<Alert
 					message={<span className='dark:text-blue-dark-high'>{walletError}</span>}
 					type='error'
-					className='dark:border-[#FF3C5F] dark:bg-[rgba(255_60_95_0.2)]'
+					className='dark:border-[#FF3C5F] dark:bg-[#FF3C5F]/20'
 				/>
 			)}
 			{authResponse.isTFAEnabled ? (

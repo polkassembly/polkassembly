@@ -234,7 +234,7 @@ const WriteProposal = ({
 					{isDiscussionLinked === false && (
 						<Alert
 							type='info'
-							className='icon-alert dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
+							className='icon-alert dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							showIcon
 							message={
 								<span className='text-[13px] font-normal text-bodyBlue dark:text-blue-dark-high'>

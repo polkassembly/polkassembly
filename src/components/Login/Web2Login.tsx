@@ -204,7 +204,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					}
 					type='info'
 					showIcon
-					className='changeColor  dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mx-8 mb-5 text-bodyBlue'
+					className='changeColor  mx-8 mb-5 text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 				/>
 			)}
 			{walletError && (

@@ -202,6 +202,6 @@ const MultisigNotFound = () => (
 		}
 		type='info'
 		showIcon
-		className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
+		className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 	/>
 );

@@ -560,7 +560,7 @@ const Web3Login: FC<Props> = ({
 													description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
 													type='info'
 													showIcon
-													className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
+													className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 												/>
 											</div>
 										)}
@@ -601,7 +601,7 @@ const Web3Login: FC<Props> = ({
 													{isSignUp && (
 														<Alert
 															showIcon
-															className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mb-2 px-4'
+															className='mb-2 px-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 															type='info'
 															message={
 																<span className='dark:text-blue-dark-high'>

@@ -423,7 +423,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							<Alert
 								showIcon
 								type='error'
-								className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark mb-4 h-10 rounded-[4px] text-sm text-bodyBlue'
+								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 								message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 							/>
 						)}
@@ -438,7 +438,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 									</ul>
 								}
 								showIcon
-								className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mb-4'
+								className='mb-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								type='info'
 							/>
 						)}
@@ -452,7 +452,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 								}
 								type='info'
 								showIcon
-								className='changeColor dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark text-blue-light-high dark:text-white'
+								className='changeColor text-blue-light-high dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-white'
 							/>
 						)}
 
@@ -478,7 +478,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 											type='info'
 											showIcon
 											message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
-											className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
+											className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 										/>
 									) : null}
 

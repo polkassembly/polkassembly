@@ -13,7 +13,7 @@ const FilteredError = ({ className, text }: ErrorProps) => {
 	return (
 		<div className='flex place-content-center'>
 			<Alert
-				className={`${className} dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark max-w-sm text-center`}
+				className={`${className} max-w-sm text-center dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark`}
 				message={<span className='dark:text-blue-dark-high'>{text}</span>}
 				type='error'
 			/>

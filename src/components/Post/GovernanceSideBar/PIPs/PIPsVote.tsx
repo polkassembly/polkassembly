@@ -433,7 +433,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										type='error'
 										message={<span className='dark:text-blue-dark-high'>{balanceErr}</span>}
 										showIcon
-										className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark mb-4 h-10 rounded-[4px]'
+										className='mb-4 h-10 rounded-[4px] dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 									/>
 								)}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
@@ -448,7 +448,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
-										className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
+										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -468,7 +468,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
-										className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
+										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
 

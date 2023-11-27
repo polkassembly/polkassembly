@@ -489,7 +489,7 @@ const AddressConnectModal = ({
 								</ul>
 							}
 							showIcon
-							className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mt-4'
+							className='mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							type='info'
 						/>
 					)}
@@ -505,7 +505,7 @@ const AddressConnectModal = ({
 							}
 							type='info'
 							showIcon
-							className='changeColor text-md dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mt-6 rounded-[4px] text-bodyBlue'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						/>
 					)}
 					<Form
@@ -550,7 +550,7 @@ const AddressConnectModal = ({
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 							<Alert
 								type='info'
-								className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mt-4 rounded-[4px]'
+								className='mt-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								showIcon
 								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 							/>
@@ -559,7 +559,7 @@ const AddressConnectModal = ({
 				</div>
 				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
 					<Alert
-						className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mt-6 rounded-[4px]'
+						className='mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'
 						showIcon
 						message={

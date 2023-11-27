@@ -270,7 +270,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 									description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
 									type='info'
 									showIcon
-									className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
+									className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								/>
 							</div>
 						)}

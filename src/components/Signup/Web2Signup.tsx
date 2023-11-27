@@ -204,14 +204,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						}
 						type='info'
 						showIcon
-						className='changeColor dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark px-8 text-[#243A57] dark:text-white'
+						className='changeColor px-8 text-[#243A57] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-white'
 					/>
 				)}
 				{walletError && (
 					<Alert
 						message={<span className='dark:text-blue-dark-high'>{walletError}</span>}
 						type='error'
-						className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark px-8'
+						className='px-8 dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 					/>
 				)}
 				<AuthForm

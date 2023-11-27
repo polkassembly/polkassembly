@@ -557,7 +557,7 @@ const Web3Login: FC<Props> = ({
 											<div className='my-5 flex items-center justify-center px-4'>
 												<Alert
 													message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
-													description='Please reload this page after adding accounts.'
+													description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
 													type='info'
 													showIcon
 													className='dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'

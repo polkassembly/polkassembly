@@ -483,7 +483,7 @@ const AddressConnectModal = ({
 						<Alert
 							message={<span className='dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
 							description={
-								<ul className='mt-[-5px] text-sm'>
+								<ul className='mt-[-5px] text-sm dark:text-blue-dark-high'>
 									<li>Give access to Polkassembly on your selected wallet.</li>
 									<li>Add an address to the selected wallet.</li>
 								</ul>
@@ -497,7 +497,7 @@ const AddressConnectModal = ({
 						<Alert
 							message={<div className='mt-1 text-[13px] font-medium dark:text-blue-dark-high'>{accountAlertTitle}</div>}
 							description={
-								<div className='-mt-1 pb-1 text-xs text-lightBlue'>
+								<div className='-mt-1 pb-1 text-xs text-lightBlue dark:text-blue-dark-high'>
 									{linkAddressNeeded
 										? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 										: 'Please login with a web3 wallet to access this feature.'}

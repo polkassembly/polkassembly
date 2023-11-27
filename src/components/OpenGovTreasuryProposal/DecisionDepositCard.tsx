@@ -432,7 +432,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							<Alert
 								message={<span className='dark:text-blue-dark-high'>For paying decision deposite:</span>}
 								description={
-									<ul className='mt-[-5px] text-sm'>
+									<ul className='mt-[-5px] text-sm dark:text-blue-dark-high'>
 										<li>Give access to Polkassembly on your selected wallet.</li>
 										<li>Add an address to the selected wallet.</li>
 									</ul>
@@ -445,7 +445,11 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 						{Object.keys(availableWallets || {}).length === 0 && !loading && (
 							<Alert
 								message={<span className='dark:text-blue-dark-high'>Wallet extension not detected.</span>}
-								description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
+								description={
+									<span className='dark:text-blue-dark-high'>
+										No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.
+									</span>
+								}
 								type='info'
 								showIcon
 								className='changeColor text-blue-light-high dark:border-[#91CAFF] dark:bg-[#91CAFF]/20 dark:text-white'

@@ -187,7 +187,7 @@ const MultisigNotFound = () => (
 			</div>
 		}
 		description={
-			<div className='max-w-md'>
+			<div className='max-w-md dark:text-blue-dark-high'>
 				Please integrate a multisig account or change your address. To create a multisig account, please visit{' '}
 				<a
 					className='text-pink_primary'

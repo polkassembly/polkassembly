@@ -196,7 +196,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 
 				{defaultWallets.length === 0 && isDelegation && (
 					<Alert
-						message='Wallet extension not detected.'
+						message={<span className='dark:text-blue-dark-high'>Wallet extension not detected.</span>}
 						description={
 							<span className='dark:text-blue-dark-high'>
 								No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.

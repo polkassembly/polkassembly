@@ -671,7 +671,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const handleMenuClick = (menuItem: any) => {
 		if (['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
-		// setSidedrawer(false);
+		{
+			isMobile && setSidedrawer(false);
+		}
 	};
 	const handleLogout = async (username: string) => {
 		dispatch(logout());

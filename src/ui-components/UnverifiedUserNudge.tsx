@@ -28,7 +28,7 @@ const UnverifiedUserNudge = ({ isIdentitySet, handleSetIdentityClick }: { handle
 			<div className='hidden w-[72px] lg:block'></div>
 			<div className='mx-auto flex w-[94vw] max-w-7xl flex-initial flex-row items-center justify-between gap-8 py-2 lg:w-[85vw] 2xl:w-5/6'>
 				<div
-					className='flex flex-col gap-2 sm:inline-flex sm:flex-row sm:items-center'
+					className='flex flex-col gap-2 text-white sm:inline-flex sm:flex-row sm:items-center'
 					onClick={handleSetIdentityClick}
 				>
 					{isIdentitySet ? 'Identity has not been verified yet' : 'Identity has not been set yet'}

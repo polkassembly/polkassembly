@@ -66,8 +66,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 			commentScrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}
 	}, [asPath, id]);
-	console.log(comment);
-
 	if (!user_id || !content)
 		return (
 			<div className={`${className} mb-5`}>

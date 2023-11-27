@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
@@ -519,6 +519,10 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 									))}
 								</div>
 							</div>
+							<Divider
+								style={{ background: '#e5e7eb', flexGrow: 1 }}
+								className='mt-4 dark:bg-separatorDark'
+							/>
 						</>
 					)}
 					{proposed_call ? (
@@ -579,7 +583,7 @@ const ProposalInfo: React.FC<IProposalInfoProps> = (props) => {
 				</div>
 			)}
 			{proposed_call?.description && (
-				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
+				<div className='-mt-2 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
 					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
 					<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{proposed_call.description}</p>
 				</div>

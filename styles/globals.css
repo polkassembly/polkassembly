@@ -6,6 +6,7 @@
   --navBlue: #90a0b7;
   --sidebarBlue: #334d6e;
   --bodyBlue: #243a57;
+  --disableText: #798AA2;
   --lightBlue: #485f7d;
   --black_primary: #2e2f30;
   --blue_primary: #4d9999;
@@ -775,6 +776,10 @@ z-index: 1050 !important;
   background-color: transparent !important;
 }
 
+/* .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
+  text-shadow: none !important;
+} */
+ 
 .ant-modal .ant-modal-header {
   background: transparent !important;
 }

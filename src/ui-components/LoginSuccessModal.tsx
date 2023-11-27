@@ -18,11 +18,12 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IAddProfileResponse } from '~src/auth/types';
 import { handleTokenChange } from '~src/services/auth.service';
 import { useDispatch } from 'react-redux';
-
+import styled from 'styled-components';
 interface Props {
 	// setLoading: (pre: boolean) => void;
 	setLoginOpen?: (pre: boolean) => void;
 	setSignupOpen?: (pre: boolean) => void;
+	theme?: string;
 }
 
 const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
@@ -36,6 +37,8 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
+	const [firstPassword, setFirstPassword] = useState('');
+	const { password } = validation;
 
 	const validateUsername = (optionalUsername: string) => {
 		let errorUsername = 0;
@@ -80,6 +83,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 			custom_username: true,
 			email: email || '',
 			image: currentUser.picture || '',
+			password: firstPassword || '',
 			social_links: JSON.stringify([]),
 			title: '',
 			user_id: Number(currentUser.id),
@@ -242,6 +246,37 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									/>
 								</Form.Item>
 							</div>
+							<div className='flex flex-col gap-y-1'>
+								<label
+									className='text-base text-[#485F7D] dark:text-blue-dark-medium'
+									htmlFor='first_password'
+								>
+									Set Password
+								</label>
+								<Form.Item
+									name='first_password'
+									rules={[
+										{
+											message: messages.VALIDATION_PASSWORD_ERROR,
+											required: password.required
+										},
+										{
+											message: messages.VALIDATION_PASSWORD_ERROR,
+											min: password.minLength
+										}
+									]}
+								>
+									<Input.Password
+										onChange={(e) => {
+											setFirstPassword(e.target.value);
+										}}
+										disabled={loading}
+										placeholder='Password'
+										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent dark:[&>input]:text-white'
+										id='first_password'
+									/>
+								</Form.Item>
+							</div>
 							{!emailError ? (
 								<Alert
 									className='mb-5 mt-1 p-3 text-sm dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
@@ -263,7 +298,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							className='-mt-6 mb-5 dark:bg-separatorDark'
 						/>
 						<div className='mb-6 flex justify-end gap-x-5 px-8'>
-							{!email && (
+							{!email && !firstPassword && (
 								<Button
 									size='large'
 									onClick={handleOptionalSkip}
@@ -272,12 +307,13 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									Skip
 								</Button>
 							)}
-							{email && (
+							{(email || firstPassword) && (
 								<Button
 									loading={loading}
+									disabled={!email || !firstPassword}
 									size='large'
 									htmlType='submit'
-									className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
+									className={`${!email || !firstPassword ? 'opacity-50' : ''} w-[144px] rounded-md border-none bg-pink_primary text-white outline-none`}
 								>
 									Done
 								</Button>
@@ -290,4 +326,8 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 	);
 };
 
-export default LoginSuccessModal;
+export default styled(LoginSuccessModal)`
+	#first_password {
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+	}
+`;

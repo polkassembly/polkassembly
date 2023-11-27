@@ -297,7 +297,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 											</span>
 										</p>
 									</h3>
-									<div className='-mt-2 flex items-center justify-center'>
+									<div className='-mt-2 flex items-center justify-center px-8'>
 										<AccountSelectionForm
 											title='Choose linked account'
 											accounts={accounts}

@@ -114,7 +114,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit }: { canEdit: any; showDec
 				<div className='card-slide h-3/4'>
 					{RHSCards.map((card, index) => (
 						<div
-							className={`slide bg-rhs-card-gradient flex h-full w-full items-center justify-center gap-2 p-3 lg:p-5 ${index === currentIndex ? 'flex' : 'hidden'}`}
+							className={`slide flex h-full w-full items-center justify-center gap-2 bg-rhs-card-gradient p-3 lg:p-5 ${index === currentIndex ? 'flex' : 'hidden'}`}
 							key={card.title}
 						>
 							<Image

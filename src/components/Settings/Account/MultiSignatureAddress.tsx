@@ -308,8 +308,9 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 					{error && <FilteredError text={error} />}
 					{extensionNotAvailable && (
 						<Alert
-							message='Please install polkadot.js extension'
+							message={<span className='dark:text-blue-dark-high'>Please install polkadot.js extension</span>}
 							type='error'
+							className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 						/>
 					)}
 				</div>

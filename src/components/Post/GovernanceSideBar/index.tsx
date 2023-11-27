@@ -194,6 +194,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
+	const showDecisionDeposit =
+		statusHistory &&
+		statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0 &&
+		statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0 &&
+		trackName;
+
 	const balance = useMemo(() => {
 		return onChainLastVote?.balance
 			? Object.values(onChainLastVote.balance)
@@ -937,7 +943,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			{
 				<div className={className}>
 					<Form>
-						<RHSCardSlides />
+						<RHSCardSlides
+							showDecisionDeposit={showDecisionDeposit}
+							canEdit={canEdit}
+						/>
 						{!post_link && canEdit && (
 							<>
 								<PostEditOrLinkCTA />

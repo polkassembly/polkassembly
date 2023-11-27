@@ -7,7 +7,6 @@ import React, { useState, useEffect } from 'react';
 import NavigateNextIcon from '~assets/icons/navigate-next.svg';
 import NavigatePrevIcon from '~assets/icons/navigate-prev.svg';
 import { usePostDataContext } from '~src/context';
-import { useUserDetailsSelector } from '~src/redux/selectors';
 
 type card = { title: string; description: string; icon: string; tag: string };
 
@@ -40,13 +39,13 @@ const cardsData: card[] = [
 	}
 ];
 
-const RHSCardSlides = () => {
+const RHSCardSlides = ({ canEdit, showDecisionDeposit }: { canEdit: any; showDecisionDeposit: any }) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isReversed, setIsReversed] = useState(false);
 	const [RHSCards, setRHSCards] = useState<card[]>(cardsData);
-	const { username } = useUserDetailsSelector();
 
 	const { postData } = usePostDataContext();
+	const { post_link, tags } = postData;
 
 	const nextSlide = () => {
 		setCurrentIndex((prevIndex) => {
@@ -63,24 +62,24 @@ const RHSCardSlides = () => {
 	};
 
 	useEffect(() => {
-		if (postData.tags.length) {
+		if (!(canEdit && post_link && !(tags && Array.isArray(tags) && tags.length > 0))) {
 			setRHSCards((prevCards) => {
 				return prevCards.filter((card) => card.tag !== cardTags.ADD_TAGS);
 			});
 		}
 
-		if (postData.post_link) {
+		if (!(!post_link && canEdit)) {
 			setRHSCards((prevCards) => {
 				return prevCards.filter((card) => card.tag !== cardTags.LINK_DISCUSSION);
 			});
 		}
 
-		if (postData.username !== username) {
+		if (!showDecisionDeposit) {
 			setRHSCards((prevCards) => {
-				return prevCards.filter((card) => card.tag !== cardTags.ADD_DEADLINE);
+				return prevCards.filter((card) => card.tag !== cardTags.DECISION_DEPOSIT);
 			});
 		}
-	}, [postData, username]);
+	}, [canEdit, post_link, showDecisionDeposit, tags]);
 
 	useEffect(() => {
 		if (RHSCards.length <= 1) {
@@ -115,7 +114,7 @@ const RHSCardSlides = () => {
 				<div className='card-slide h-3/4'>
 					{RHSCards.map((card, index) => (
 						<div
-							className={`slide flex h-full w-full items-center justify-center gap-2 bg-rhs-card-gradient p-3 lg:p-5 ${index === currentIndex ? 'flex' : 'hidden'}`}
+							className={`slide bg-rhs-card-gradient flex h-full w-full items-center justify-center gap-2 p-3 lg:p-5 ${index === currentIndex ? 'flex' : 'hidden'}`}
 							key={card.title}
 						>
 							<Image

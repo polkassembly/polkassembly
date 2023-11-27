@@ -46,6 +46,12 @@
   --disableStateDark: #1D1D1D;
   --helperTextColorDark: #595959;
   --borderColorDark: #3B444F;
+  --infoAlertBorderDark: #91CAFF;
+  --infoAlertBgDark: #91CAFF33;
+  --errorAlertBorderDark: #FF3C5F;
+  --errorAlertBgDark: #FF3C5F33;
+  --warningAlertBorderDark: #F89118;
+  --warningAlertBgDark: #F8911833;
 }
 
 ::-webkit-scrollbar {
@@ -621,6 +627,7 @@ z-index: 1050 !important;
 
 .dark .ant-select:not(.ant-select-customize-input) .ant-select-selector{
   background-color: #0D0D0D;
+  border-color: var(--separatorDark);
 }
 
 .dark .ant-select-item-option-content{
@@ -768,8 +775,10 @@ z-index: 1050 !important;
   background-color: transparent !important;
 }
 
-
-/* .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
-  text-shadow: none !important;
-} */
- 
+.ant-modal .ant-modal-header {
+  background: transparent !important;
+}
+.overlay-class  {
+  width: 126px !important;
+  min-width: 0px !important;
+}

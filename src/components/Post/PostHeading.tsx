@@ -20,6 +20,8 @@ import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import TagsModal from '~src/ui-components/TagsModal';
+import styled from 'styled-components';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -67,7 +69,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
-
+	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
@@ -143,6 +145,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						cid={cid}
 						isRow={false}
 						beneficiaries={beneficiaries}
+						inPostHeading={true}
 					>
 						{history && history?.length > 0 && (
 							<div
@@ -157,6 +160,35 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								/>
 							</div>
 						)}
+						<div className='post-heading-tags flex items-center'>
+							<Divider
+								className='mr-3'
+								type='vertical'
+								style={{ borderLeft: '1px solid #485F7D' }}
+							/>
+							{tags?.slice(0, 3).map((tag, index) => (
+								<div
+									key={index}
+									className='traking-2 mr-1 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+									onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
+								>
+									{tag}
+								</div>
+							))}
+							{tags.length > 3 && (
+								<span
+									className='mr-1 cursor-pointer text-bodyBlue dark:text-blue-dark-high'
+									style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
+									onClick={(e) => {
+										e.stopPropagation();
+										e.preventDefault();
+										setOpenTagsModal(true);
+									}}
+								>
+									+{tags.length - 3}
+								</span>
+							)}
+						</div>
 						{summary ? (
 							<>
 								<Divider
@@ -171,21 +203,34 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							</>
 						) : null}
 					</CreationLabel>
+					<div className='tag-container mt-4 hidden items-center'>
+						<div className='flex'>
+							{tags?.slice(0, 2).map((tag, index) => (
+								<div
+									key={index}
+									className='traking-2 mr-1 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+									onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
+								>
+									{tag}
+								</div>
+							))}
+							{tags.length > 3 && (
+								<span
+									className='mr-1 cursor-pointer text-bodyBlue dark:text-blue-dark-high'
+									style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
+									onClick={(e) => {
+										e.stopPropagation();
+										e.preventDefault();
+										setOpenTagsModal(true);
+									}}
+								>
+									+{tags.length - 2}
+								</span>
+							)}
+						</div>
+					</div>
 				</>
 			</div>
-			{tags && tags.length > 0 && (
-				<div className='mt-3.5 flex flex-wrap gap-[8px]'>
-					{tags?.map((tag, index) => (
-						<div
-							onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
-							className='traking-2 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
-							key={index}
-						>
-							{tag}
-						</div>
-					))}
-				</div>
-			)}
 			{history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}
@@ -195,8 +240,24 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					defaultAddress={proposer}
 				/>
 			)}
+			<TagsModal
+				tags={tags}
+				track_name={track_name}
+				proposalType={proposalType}
+				openTagsModal={openTagsModal}
+				setOpenTagsModal={setOpenTagsModal}
+			/>
 		</div>
 	);
 };
 
-export default PostHeading;
+export default styled(PostHeading)`
+	@media (max-width: 768px) and (min-width: 319px) {
+		.post-heading-tags {
+			display: none !important;
+		}
+		.tag-container {
+			display: block !important;
+		}
+	}
+`;

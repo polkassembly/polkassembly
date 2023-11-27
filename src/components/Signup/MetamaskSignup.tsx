@@ -266,10 +266,11 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 						{accountsNotFound && (
 							<div className='my-5 flex items-center justify-center'>
 								<Alert
-									message='You need at least one account in Polkadot-js extension to login.'
-									description='Please reload this page after adding accounts.'
+									message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
+									description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
 									type='info'
 									showIcon
+									className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								/>
 							</div>
 						)}
@@ -303,6 +304,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 											address={address}
 											onAccountChange={onAccountChange}
 											linkAddressTextDisabled
+											className='p-4'
 										/>
 									</div>
 									<div className='mb-6 flex items-center justify-center gap-x-2'>

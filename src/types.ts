@@ -348,6 +348,7 @@ export interface Post {
 	subscribers?: number[];
 	summary?: string;
 	createdOnPolkassembly?: boolean;
+	inductee_address?: string;
 }
 
 export interface IPostTag {

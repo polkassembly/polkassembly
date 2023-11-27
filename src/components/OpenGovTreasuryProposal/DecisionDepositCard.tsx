@@ -423,32 +423,36 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 							<Alert
 								showIcon
 								type='error'
-								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
-								message='Insufficient available balance.'
+								className='mb-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+								message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 							/>
 						)}
 
 						{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0 && !loading && (
 							<Alert
-								message='For paying decision deposite:'
+								message={<span className='dark:text-blue-dark-high'>For paying decision deposite:</span>}
 								description={
-									<ul className='mt-[-5px] text-sm'>
+									<ul className='mt-[-5px] text-sm dark:text-blue-dark-high'>
 										<li>Give access to Polkassembly on your selected wallet.</li>
 										<li>Add an address to the selected wallet.</li>
 									</ul>
 								}
 								showIcon
-								className='mb-4'
+								className='mb-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								type='info'
 							/>
 						)}
 						{Object.keys(availableWallets || {}).length === 0 && !loading && (
 							<Alert
-								message='Wallet extension not detected.'
-								description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
+								message={<span className='dark:text-blue-dark-high'>Wallet extension not detected.</span>}
+								description={
+									<span className='dark:text-blue-dark-high'>
+										No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.
+									</span>
+								}
 								type='info'
 								showIcon
-								className='changeColor text-blue-light-high dark:bg-inactiveIconDark dark:text-white'
+								className='changeColor text-blue-light-high dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-white'
 							/>
 						)}
 
@@ -473,7 +477,8 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 										<Alert
 											type='info'
 											showIcon
-											message='Please select a wallet.'
+											message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
+											className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 										/>
 									) : null}
 

@@ -80,6 +80,7 @@ interface ICreationLabelProps {
 	isRow?: boolean;
 	voteData?: any;
 	beneficiaries?: IBeneficiary[];
+	inPostHeading?: boolean;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
@@ -99,7 +100,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		truncateUsername,
 		vote,
 		votesArr = [],
-		isRow
+		isRow,
+		inPostHeading
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
@@ -221,6 +223,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
+						{inPostHeading && <span className='mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
@@ -245,7 +248,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
 									type='vertical'
 								/>
-								<BeneficiariesListing beneficiaries={beneficiaries} />
+								<BeneficiariesListing
+									beneficiaries={beneficiaries}
+									inPostHeading={inPostHeading}
+								/>
 							</>
 						)}
 						{cid ? (
@@ -265,17 +271,21 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					</div>
 				</div>
 				<div className='flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1'>
-					{(topic || text || created_at) && (
-						<>
-							&nbsp;
-							<Divider
-								className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
-								type='vertical'
-							/>
-						</>
+					{!inPostHeading && (
+						<div>
+							{(topic || text || created_at) && (
+								<>
+									&nbsp;
+									<Divider
+										className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
+										type='vertical'
+									/>
+								</>
+							)}
+						</div>
 					)}
 					{created_at && (
-						<span className={`mr-1 flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
+						<span className={`${inPostHeading ? '' : 'mr-1'} flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
 							<ClockCircleOutlined className='ml-1 mr-1' />
 							{relativeCreatedAt}
 						</span>

@@ -548,7 +548,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							<Alert
 								message={<span className='dark:text-blue-dark-high'>Please use Ethereum account via Talisman wallet.</span>}
 								type='info'
-								className='-mt-2 mb-2 dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+								className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark -mt-2 mb-2'
 								showIcon
 							/>
 						)}
@@ -558,7 +558,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								type='info'
 								message={<span className='dark:text-blue-dark-high'>Insufficient balance.</span>}
 								showIcon
-								className='mb-4 rounded-[4px] dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+								className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mb-4 rounded-[4px]'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
@@ -566,7 +566,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 								showIcon
 								type='info'
-								className='dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+								className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
 							/>
 						)}
 
@@ -587,7 +587,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							<Alert
 								type='info'
 								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
-								className='rounded-[4px] dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+								className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark rounded-[4px]'
 								showIcon
 							/>
 						) : null}

@@ -265,7 +265,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							message={<span className='dark:text-blue-dark-high'>Grant closed, no comments can be added or edited.</span>}
 							type='info'
 							showIcon
-							className='dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+							className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
 						/>
 					) : (
 						<PostCommentForm

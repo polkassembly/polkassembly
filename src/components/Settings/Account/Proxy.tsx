@@ -191,7 +191,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 									<p>Please reload this page after adding accounts.</p>
 								</span>
 							}
-							className='dark:border-[#F89118] dark:bg-[#F89118]/20'
+							className='dark:bg-warningAlertBgDark dark:border-warningAlertBorderDark'
 						/>
 					) : (
 						<>

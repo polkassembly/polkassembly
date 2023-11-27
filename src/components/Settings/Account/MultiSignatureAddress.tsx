@@ -310,7 +310,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						<Alert
 							message={<span className='dark:text-blue-dark-high'>Please install polkadot.js extension</span>}
 							type='error'
-							className='dark:border-[#FF3C5F] dark:bg-[#FF3C5F]/20'
+							className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 						/>
 					)}
 				</div>

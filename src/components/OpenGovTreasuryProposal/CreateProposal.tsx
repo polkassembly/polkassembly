@@ -257,7 +257,7 @@ const CreateProposal = ({
 				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
-						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-[#FF3C5F] dark:bg-[#FF3C5F]/20 ${poppins.variable} ${poppins.className}`}
+						className={`dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
 						showIcon
 						message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 					/>
@@ -347,7 +347,7 @@ const CreateProposal = ({
 				</div>
 				{showAlert && (
 					<Alert
-						className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+						className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mt-6 rounded-[4px] text-bodyBlue'
 						showIcon
 						type='info'
 						message={

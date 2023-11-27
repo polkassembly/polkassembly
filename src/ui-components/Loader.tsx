@@ -39,7 +39,7 @@ const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', siz
 					/>
 				) : (
 					<Alert
-						className='w-2/3 text-center dark:border-[#FF3C5F] dark:bg-[#FF3C5F]/20'
+						className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark w-2/3 text-center'
 						type='error'
 						message={<span className='dark:text-blue-dark-high'>{timeoutText}</span>}
 					/>

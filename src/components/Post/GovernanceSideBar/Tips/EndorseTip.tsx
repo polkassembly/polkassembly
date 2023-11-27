@@ -171,7 +171,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 		<>
 			<h3 className='dashboard-heading mb-6 dark:text-white'>Endorse with account!</h3>
 			<Alert
-				className='mb-6 dark:border-[#F89118] dark:bg-[#F89118]/20'
+				className='dark:bg-warningAlertBgDark dark:border-warningAlertBorderDark mb-6'
 				type='warning'
 				message={
 					<div className='flex items-center gap-x-2 dark:text-blue-dark-high'>

@@ -239,7 +239,7 @@ const Profile = () => {
 						<Alert
 							type='error'
 							message={<span className='dark:text-blue-dark-high'>{err}</span>}
-							className='dark:border-[#FF3C5F] dark:bg-[#FF3C5F]/20'
+							className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 						/>
 					</div>
 				)}

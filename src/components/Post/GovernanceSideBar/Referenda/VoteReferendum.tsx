@@ -755,7 +755,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 												type='info'
 												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 												showIcon
-												className='mb-4 rounded-[4px] dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+												className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mb-4 rounded-[4px]'
 											/>
 										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
@@ -770,7 +770,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
-										className='dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+										className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -811,7 +811,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
-										className='dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+										className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark'
 									/>
 								) : null}
 

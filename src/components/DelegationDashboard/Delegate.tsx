@@ -148,7 +148,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						(!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
 					{addressAlert && (
 						<Alert
-							className='mb-4 mt-4 dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+							className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mb-4 mt-4'
 							showIcon
 							type='info'
 							message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}

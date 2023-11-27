@@ -153,7 +153,7 @@ const TreasuryProposalSuccessPopup = ({
 					</div>
 				)}
 				<Alert
-					className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+					className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mt-6 rounded-[4px] text-bodyBlue'
 					showIcon
 					type='info'
 					message={

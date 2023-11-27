@@ -122,7 +122,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				<Alert
 					showIcon
 					type='info'
-					className='mt-4 h-10 rounded-[4px] text-[13px] text-bodyBlue dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+					className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mt-4 h-10 rounded-[4px] text-[13px] text-bodyBlue'
 					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
@@ -130,7 +130,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				<Alert
 					showIcon
 					type='info'
-					className='mt-4 rounded-[4px] text-[13px] text-bodyBlue dark:border-[#91CAFF] dark:bg-[#91CAFF]/20'
+					className='dark:bg-infoAlertBgDark dark:border-infoAlertBorderDark mt-4 rounded-[4px] text-[13px] text-bodyBlue'
 					description={
 						<span className='dark:text-blue-dark-high'>
 							To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.

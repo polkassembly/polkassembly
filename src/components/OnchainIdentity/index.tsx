@@ -24,6 +24,7 @@ import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useRouter } from 'next/router';
 
 const ZERO_BN = new BN(0);
 
@@ -67,12 +68,12 @@ interface Props {
 }
 const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
 	const { network } = useNetworkSelector();
-	const { id: userId } = useUserDetailsSelector();
+	const { id: userId, loginAddress } = useUserDetailsSelector();
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
-	const [address, setAddress] = useState<string>('');
+	const [address, setAddress] = useState<string>(loginAddress);
 	const [name, setName] = useState<IName>({ displayName: '', legalName: '' });
 	const [socials, setSocials] = useState<ISocials>({
 		email: { value: '', verified: false },
@@ -96,6 +97,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		legalName: '',
 		twitter: ''
 	});
+	const router = useRouter();
 
 	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?: string | null): Promise<void> => {
 		if (!api || !apiReady) return;
@@ -320,6 +322,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			setOpen(false);
 			setStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		}
+		router.replace('?setidentity=true', '/opengov');
 	};
 
 	useEffect(() => {
@@ -375,6 +378,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 								setOpen(false);
 								handleLocalStorageSetUnverified();
 								setLoading({ ...loading, isLoading: false });
+								router.replace('?setidentity=true', '/opengov');
 							}}
 							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>

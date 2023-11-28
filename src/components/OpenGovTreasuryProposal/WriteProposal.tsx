@@ -312,7 +312,7 @@ const WriteProposal = ({
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<Button
 							htmlType='submit'
-							className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary dark:bg-[#33071E] dark:text-pink_primary ${
+							className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
 								(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50'
 							}`}
 							disabled={!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)}

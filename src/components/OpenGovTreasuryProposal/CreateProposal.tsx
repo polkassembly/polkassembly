@@ -28,6 +28,7 @@ import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
 import MissingInfoAlert from './MissingInfoAlert';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -81,6 +82,7 @@ const CreateProposal = ({
 	showMultisigInfoCard
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
 	const { api, apiReady } = useApiContext();
@@ -275,6 +277,7 @@ const CreateProposal = ({
 					showIcon
 				/>
 				<MissingInfoAlert
+					theme={theme}
 					isDiscussionLinked={isDiscussionLinked}
 					showIdentityInfoCard={showIdentityInfoCard}
 					showMultisigInfoCard={showMultisigInfoCard}
@@ -398,7 +401,7 @@ const CreateProposal = ({
 					<Button
 						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary dark:bg-[#33071E] dark:text-pink_primary ${
+						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
 							(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'
 						}`}
 					>

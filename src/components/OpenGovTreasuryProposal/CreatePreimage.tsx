@@ -77,8 +77,9 @@ interface Props {
 	availableBalance: BN;
 	setAvailableBalance: (pre: BN) => void;
 	isUpdatedAvailableBalance: boolean;
-	showIdentityInfoCard: boolean;
+	showIdentityInfoCardForBeneficiary: boolean;
 	showMultisigInfoCard: boolean;
+	showIdentityInfoCardForProposer: boolean;
 }
 
 interface IAdvancedDetails {
@@ -109,7 +110,8 @@ const CreatePreimage = ({
 	setAvailableBalance,
 	isUpdatedAvailableBalance,
 	showMultisigInfoCard,
-	showIdentityInfoCard,
+	showIdentityInfoCardForBeneficiary,
+	showIdentityInfoCardForProposer,
 	form
 }: Props) => {
 	const { api, apiReady } = useApiContext();
@@ -892,14 +894,14 @@ const CreatePreimage = ({
 									size='large'
 									identiconSize={30}
 								/>
-								{showIdentityInfoCard && network.includes('polkadot') && (
+								{showIdentityInfoCardForProposer && network.includes('polkadot') && (
 									<Alert
 										className='icon-fix mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-blue-dark-high'
 										showIcon
 										type='info'
 										message={
 											<div className='text-[13px] dark:text-blue-dark-high'>
-												You have an unverified profile; please set your onchain identity for higher chance for the proposal to pass.
+												Your proposer address is currently unverified. Please set your on-chain identity to increase the likelihood of your proposal being approved.
 												<Link
 													target='_blank'
 													href={'?setidentity=true'}
@@ -1008,12 +1010,37 @@ const CreatePreimage = ({
 												height={16}
 												src='/assets/polkasafe-logo.svg'
 												alt='polkasafe'
-												className='mr-0.5'
+												className={`${theme === 'dark' && 'icon-color'} mr-0.5`}
 											/>
 											Create a Multisig Wallet on PolkaSafe now
 										</Link>
 									}
 									type='info'
+								/>
+							)}
+							{showIdentityInfoCardForBeneficiary && network.includes('polkadot') && (
+								<Alert
+									className='icon-fix mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-blue-dark-high'
+									showIcon
+									type='info'
+									message={
+										<div className='text-[13px] dark:text-blue-dark-high'>
+											Your beneficiary address is currently unverified. Please set your on-chain identity to increase the likelihood of your proposal being approved.
+											<Link
+												target='_blank'
+												href={'?setidentity=true'}
+												className='ml-1 text-xs font-medium text-pink_primary'
+												onClick={(e) => {
+													if (!currentUser.id) {
+														e.preventDefault();
+														e.stopPropagation();
+													}
+												}}
+											>
+												Set onchain identity
+											</Link>
+										</div>
+									}
 								/>
 							)}
 
@@ -1206,7 +1233,7 @@ const CreatePreimage = ({
 						</Button>
 						<Button
 							htmlType='submit'
-							className={`h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary dark:bg-[#33071E] dark:text-pink_primary ${
+							className={`h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
 								(isPreimage !== null && !isPreimage
 									? !(
 											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0) &&
@@ -1265,9 +1292,14 @@ export default styled(CreatePreimage)`
 	.ant-alert-with-description .ant-alert-icon {
 		font-size: 15px !important;
 		margin-top: 6px;
+		margin-right: 8px;
 	}
 
 	.ant-alert-with-description .ant-alert-description {
-		color: black !important;
+		color: var(--bodyBlue) !important;
+		margin-top: -6px;
+	}
+	.icon-color {
+		filter: brightness(100%) saturate(0%) contrast(3.5) invert(100%) !important;
 	}
 `;

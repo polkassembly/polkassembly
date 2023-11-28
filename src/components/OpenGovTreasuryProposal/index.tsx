@@ -163,8 +163,10 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [showMultisigInfoCard, setShowMultisigInfoCard] = useState<boolean>(false);
-	const [isLoading, setMultisigCheckLoading] = useState<boolean>(false);
-	const [showIdentityInfoCard, setShowIdentityInfoCard] = useState<boolean>(false);
+	const [isMultisigLoading, setMultisigCheckLoading] = useState<boolean>(false);
+	const [isIdentityLoading, setIdentityCheckLoading] = useState<boolean>(false);
+	const [showIdentityInfoCardForBeneficiary, setShowIdentityInfoCardForBeneficiary] = useState<boolean>(false);
+	const [showIdentityInfoCardForProposer, setShowIdentityInfoCardForProposer] = useState<boolean>(false);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -189,56 +191,77 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 		setOpenModal(false);
 		setCloseConfirm(false);
 	};
-	const handleIdentityInfo = async () => {
-		if (!api || !apiReady || !proposerAddress || !window) return;
+	const handleBeneficiaryIdentityInfo = async () => {
+		if (!api || !apiReady || beneficiaryAddresses.find((beneficiary) => !beneficiary.address)?.address.length === 0) return;
 
 		let promiseArr: any[] = [];
-		for (const address of [...beneficiaryAddresses.map((addr) => addr.address), proposerAddress]) {
+		for (const address of [...beneficiaryAddresses.map((addr) => addr.address)]) {
 			if (!address) continue;
-			const encoded_addr = getEncodedAddress(address, network);
-			promiseArr = [...promiseArr, api?.derive?.accounts.info(encoded_addr)];
+			const encodedAddr = getEncodedAddress(address, network);
+			promiseArr = [...promiseArr, api?.derive?.accounts.info(encodedAddr)];
 		}
-
-		(async () => {
-			try {
-				setMultisigCheckLoading(true);
-				const resolve = await Promise.all(promiseArr);
-				setShowIdentityInfoCard(
-					!!resolve.find((info: DeriveAccountInfo) => {
-						const judgements = info.identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
-						const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-						return !isGood;
-					})
-				);
-			} catch (err) {
-				console.log(err);
-			}
-		})();
+		try {
+			setIdentityCheckLoading(true);
+			const resolve = await Promise.all(promiseArr);
+			setShowIdentityInfoCardForBeneficiary(
+				!!resolve.find((info: DeriveAccountInfo) => {
+					const judgements = info.identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
+					const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+					return !isGood;
+				})
+			);
+			setIdentityCheckLoading(false);
+		} catch (err) {
+			console.log(err);
+			setIdentityCheckLoading(false);
+		}
+	};
+	const handleBeneficiariesMultisigCheck = async () => {
+		if (beneficiaryAddresses.find((beneficiary) => !beneficiary.address)?.address.length === 0) return;
+		setShowMultisigInfoCard(false);
+		let promiseArr: any[] = [];
+		for (const address of [...beneficiaryAddresses.map((addr) => addr.address)]) {
+			if (!address) continue;
+			promiseArr = [...promiseArr, checkIsAddressMultisig(address)];
+		}
+		try {
+			setMultisigCheckLoading(true);
+			const resolve = await Promise.all(promiseArr);
+			setShowMultisigInfoCard(!resolve.find((val) => !!val));
+			setMultisigCheckLoading(false);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	useEffect(() => {
-		handleIdentityInfo();
-		setShowMultisigInfoCard(false);
-		if (proposerAddress || beneficiaryAddresses) {
-			let promiseArr: any[] = [];
-			for (const address of [...beneficiaryAddresses.map((addr) => addr.address), proposerAddress]) {
-				if (!address) continue;
-				promiseArr = [...promiseArr, checkIsAddressMultisig(address)];
-			}
-
-			(async () => {
-				try {
-					setMultisigCheckLoading(true);
-					const resolve = await Promise.all(promiseArr);
-					setShowMultisigInfoCard(!resolve.find((val) => !!val));
-					setMultisigCheckLoading(false);
-				} catch (err) {
-					console.log(err);
-				}
-			})();
-		}
+		handleBeneficiaryIdentityInfo();
+		handleBeneficiariesMultisigCheck();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [proposerAddress, loginAddress, window, beneficiaryAddresses]);
+	}, [loginAddress, window, beneficiaryAddresses]);
+
+	useEffect(() => {
+		if (!api || !apiReady || !proposerAddress) return;
+
+		let unsubscribe: () => void;
+		const encodedAddr = getEncodedAddress(proposerAddress, network);
+
+		api.derive.accounts
+			.info(encodedAddr, (info: DeriveAccountInfo) => {
+				const judgements = info.identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
+				const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+				setShowIdentityInfoCardForProposer(!isGood);
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+
+		return () => unsubscribe && unsubscribe();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [proposerAddress]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !proposerAddress) return;
@@ -321,9 +344,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 								setCloseConfirm(false);
 								setOpenModal(true);
 							}}
-							className={
-								'h-[40px] w-[200px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary dark:bg-[#33071E] dark:text-pink_primary'
-							}
+							className={'h-[40px] w-[200px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary'}
 						>
 							No, Continue Editing
 						</Button>
@@ -423,8 +444,9 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							enactment={enactment}
 							setEnactment={setEnactment}
 							isUpdatedAvailableBalance={isUpdatedAvailableBalance}
-							showIdentityInfoCard={isLoading ? false : showIdentityInfoCard}
-							showMultisigInfoCard={isLoading ? false : showMultisigInfoCard}
+							showIdentityInfoCardForBeneficiary={isIdentityLoading ? false : showIdentityInfoCardForBeneficiary}
+							showMultisigInfoCard={isMultisigLoading ? false : showMultisigInfoCard}
+							showIdentityInfoCardForProposer={showIdentityInfoCardForProposer}
 						/>
 					)}
 					{steps.step === 2 && (
@@ -445,8 +467,8 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							selectedTrack={selectedTrack}
 							preimageHash={preimageHash}
 							preimageLength={preimageLength}
-							showIdentityInfoCard={isLoading ? false : showIdentityInfoCard}
-							showMultisigInfoCard={isLoading ? false : showMultisigInfoCard}
+							showIdentityInfoCard={isIdentityLoading ? false : showIdentityInfoCardForBeneficiary || showIdentityInfoCardForProposer}
+							showMultisigInfoCard={isMultisigLoading ? false : showMultisigInfoCard}
 							isDiscussionLinked={isDiscussionLinked}
 						/>
 					)}

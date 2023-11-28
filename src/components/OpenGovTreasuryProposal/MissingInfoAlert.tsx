@@ -6,21 +6,24 @@ import { Alert } from 'antd';
 import { poppins } from 'pages/_app';
 import Image from 'next/image';
 import Link from 'next/link';
-import DownArrowIcon from '~assets/icons/down-arrow.svg';
+import DownArrowIcon from '~assets/icons/down-icon.svg';
+import styled from 'styled-components';
 
 interface Props {
 	showMultisigInfoCard: boolean;
 	showIdentityInfoCard: boolean;
 	isDiscussionLinked: boolean;
+	className?: string;
+	theme: string;
 }
-const MissingInfoAlert = ({ showIdentityInfoCard, showMultisigInfoCard, isDiscussionLinked }: Props) => {
+const MissingInfoAlert = ({ className, showIdentityInfoCard, showMultisigInfoCard, isDiscussionLinked, theme }: Props) => {
 	const [showWarnings, setShowWarning] = useState<boolean>(false);
 	const leftAction = (showIdentityInfoCard ? 1 : 0) + (showMultisigInfoCard ? 1 : 0) + (isDiscussionLinked ? 0 : 1);
 
 	return (
 		<Alert
 			type='warning'
-			className={`mt-5 rounded-[4px] text-bodyBlue dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark ${poppins.variable} ${poppins.className}`}
+			className={`mt-5 rounded-[4px] text-bodyBlue dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark ${poppins.variable} ${poppins.className} ${className}`}
 			showIcon
 			message={
 				<div className='mt-0.5 text-xs dark:text-blue-dark-high'>
@@ -37,7 +40,7 @@ const MissingInfoAlert = ({ showIdentityInfoCard, showMultisigInfoCard, isDiscus
 						className='flex items-center gap-1 font-medium text-pink_primary'
 					>
 						View warnings
-						<DownArrowIcon className={showWarnings ? 'rotate-180 cursor-pointer' : 'cursor-pointer'} />
+						<DownArrowIcon className={`${showWarnings ? 'rotate-180 cursor-pointer' : 'cursor-pointer'} ${theme === 'dark' && 'icon-color'}`} />
 					</span>
 					{showWarnings && (
 						<ul className='ml-2.5 flex flex-col gap-1 text-bodyBlue dark:text-blue-dark-high'>
@@ -71,7 +74,7 @@ const MissingInfoAlert = ({ showIdentityInfoCard, showMultisigInfoCard, isDiscus
 											height={12}
 											src='/assets/icons/redirect.svg'
 											alt='polkasafe'
-											className='mx-1'
+											className='mx-1 '
 										/>
 										Set identity
 									</Link>
@@ -84,4 +87,8 @@ const MissingInfoAlert = ({ showIdentityInfoCard, showMultisigInfoCard, isDiscus
 		/>
 	);
 };
-export default MissingInfoAlert;
+export default styled(MissingInfoAlert)`
+	.icon-color {
+		filter: brightness(100%) saturate(0%) contrast(3.5) invert(100%) !important;
+	}
+`;

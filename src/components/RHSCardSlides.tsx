@@ -122,7 +122,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen
 		}
 	};
 
-	if (!RHSCards.length) return;
+	if (!RHSCards.length) return null;
 
 	return (
 		<>

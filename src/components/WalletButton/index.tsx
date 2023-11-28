@@ -26,8 +26,8 @@ const WalletButton = ({ isloginFlow, disabled, onClick, icon, className, text, n
 					placement='top'
 				>
 					<Button
-						className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'border-borderColor justify-center'} ${
-							isAvailable ? 'bg-white dark:bg-inactiveIconDark' : 'dark:bg-greyColor bg-lightWhite cursor-not-allowed'
+						className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-borderColor'} ${
+							isAvailable ? 'bg-white dark:bg-inactiveIconDark' : 'cursor-not-allowed bg-lightWhite dark:bg-greyColor'
 						} border-grey_stroke items-center rounded-[7px] dark:border-section-dark-container ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 						onClick={(e) => {
 							if (!isAvailable) return;
@@ -41,20 +41,20 @@ const WalletButton = ({ isloginFlow, disabled, onClick, icon, className, text, n
 			)}
 			{isOptionalLogin && isloginFlow && (
 				<Button
-					className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'border-borderColor justify-center'} ${
-						isAvailable ? 'text- bg-white dark:bg-inactiveIconDark' : 'dark:bg-greyColor bg-lightWhite'
+					className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-borderColor'} ${
+						isAvailable ? 'text- bg-white dark:bg-inactiveIconDark' : 'bg-lightWhite dark:bg-greyColor'
 					} border-grey_stroke items-center rounded-[7px] dark:border-section-dark-container ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 					onClick={onClick}
 					disabled={!isAvailable}
 				>
 					<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 					{text && isOptionalLogin && <p className={`wallet-text-container m-0 ml-4 p-0 ${!isAvailable ? 'text-disableText' : 'text-lightBlue'} dark:text-white`}>{text}</p>}
-					{isOptionalLogin && !isAvailable && <p className='not-installed-container text-disableText dark:text-lightGreyTextColor m-0 ml-auto p-0 text-xs'>Not Installed</p>}
+					{isOptionalLogin && !isAvailable && <p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs dark:text-lightGreyTextColor'>Not Installed</p>}
 				</Button>
 			)}
 			{!isloginFlow && (
 				<Button
-					className={`border-borderColor flex items-center justify-center rounded-[7px] dark:border-section-dark-container dark:bg-inactiveIconDark ${
+					className={`flex items-center justify-center rounded-[7px] border-borderColor dark:border-section-dark-container dark:bg-inactiveIconDark ${
 						name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'
 					} ${className}`}
 					onClick={onClick}

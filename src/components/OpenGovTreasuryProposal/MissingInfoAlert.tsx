@@ -40,7 +40,7 @@ const MissingInfoAlert = ({ showIdentityInfoCard, showMultisigInfoCard, isDiscus
 						<DownArrowIcon className={showWarnings ? 'rotate-180 cursor-pointer' : 'cursor-pointer'} />
 					</span>
 					{showWarnings && (
-						<ul className='ml-2.5 flex flex-col gap-1 text-bodyBlue'>
+						<ul className='ml-2.5 flex flex-col gap-1 text-bodyBlue dark:text-blue-dark-high'>
 							{showMultisigInfoCard && <li>Beneficiary Address is not a multisig. </li>}
 							{!isDiscussionLinked && <li>Discussion Post not added. </li>}
 							{/* {showMultisigInfoCard && (

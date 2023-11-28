@@ -577,16 +577,16 @@ const AddressConnectModal = ({
 							hideDetails ? (
 								''
 							) : (
-								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs'>
+								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
 									<li className='flex w-full justify-between'>
-										<div className='mr-1 text-lightBlue'>Preimage Creation</div>
-										<span className='font-medium text-bodyBlue'>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-high'>Preimage Creation</div>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
 										</span>
 									</li>
 									<li className='mt-0 flex w-full justify-between'>
-										<div className='mr-1 text-lightBlue'>Proposal Submission</div>
-										<span className='font-medium text-bodyBlue'>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-high'>Proposal Submission</div>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
 										</span>
 									</li>

@@ -761,7 +761,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 												type='info'
 												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 												showIcon
-												className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark mb-4 rounded-[4px]'
+												className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 											/>
 										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (

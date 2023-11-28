@@ -373,18 +373,18 @@ const CreateProposal = ({
 						description={
 							<div className='mt-[10px] flex flex-col gap-1'>
 								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-900'>
-									<span className='w-[150px] dark:text-blue-dark-high'>Deposit amount</span>
+									<span className='w-[150px] dark:text-blue-dark-medium'>Deposit amount</span>
 									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-high'>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
 									<span className='w-[150px]'>Gas fees</span>
 									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-high '>
+								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-medium '>
 									<span className='w-[150px]'>Total</span>
 									<span className='text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
@@ -398,7 +398,7 @@ const CreateProposal = ({
 					<Button
 						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white ${
+						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary dark:bg-[#33071E] dark:text-pink_primary ${
 							(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'
 						}`}
 					>

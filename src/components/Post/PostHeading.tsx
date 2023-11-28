@@ -161,11 +161,13 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							</div>
 						)}
 						<div className='post-heading-tags flex items-center'>
-							<Divider
-								className='mr-3'
-								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
-							/>
+							{tags.length > 0 && (
+								<Divider
+									className='mr-3'
+									type='vertical'
+									style={{ borderLeft: '1px solid #485F7D' }}
+								/>
+							)}
 							{tags?.slice(0, 3).map((tag, index) => (
 								<div
 									key={index}

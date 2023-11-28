@@ -576,7 +576,7 @@ const AddressConnectModal = ({
 							hideDetails ? (
 								''
 							) : (
-								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs'>
+								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
 									<li className='flex w-full justify-between'>
 										<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Preimage Creation</div>
 										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>

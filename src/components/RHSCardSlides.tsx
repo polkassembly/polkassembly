@@ -29,12 +29,12 @@ type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggle
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen, toggleEdit, graphicOpen }: props) => {
 	const cardsData: card[] = [
 		{
-			description: 'Deadlines increase accountability and improve likelihood of success.',
-			icon: '/assets/icons/rhs-card-icons/Calendar.png',
-			tag: cardTags.ADD_DEADLINE,
-			title: 'Add Deadline'
-		},
-		{
+			//{
+			// description: 'Deadlines increase accountability and improve likelihood of success.',
+			// icon: '/assets/icons/rhs-card-icons/Calendar.png',
+			// tag: cardTags.ADD_DEADLINE,
+			// title: 'Add Deadline'
+			//},
 			clickHandler: () => setOpenLinkCta(true),
 			description: 'Please add contextual info for voters to make an informed decision',
 			icon: '/assets/icons/rhs-card-icons/Doc.png',
@@ -122,6 +122,8 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen
 		}
 	};
 
+	if (!RHSCards.length) return;
+
 	return (
 		<>
 			<DecisionDepositCard
@@ -146,9 +148,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen
 					<div className='card-slide h-3/4'>
 						{RHSCards.map((card, index) => (
 							<div
-								className={`slide flex h-full w-full cursor-pointer items-center justify-center gap-2 bg-rhs-card-gradient p-3 lg:p-5 ${
-									index === currentIndex ? 'flex' : 'hidden'
-								}`}
+								className={`slide flex h-full w-full cursor-pointer items-center justify-center gap-2 bg-rhs-card-gradient p-3 ${index === currentIndex ? 'flex' : 'hidden'}`}
 								key={card.title}
 								onClick={card.clickHandler}
 							>
@@ -159,8 +159,8 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen
 									height={60}
 								/>
 								<div className='content mr-14 text-white'>
-									<h5 className='mb-0 text-base font-semibold tracking-wide'>{card.title}</h5>
-									<span className='break-words text-xs leading-3'>{card.description}</span>
+									<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
+									<p className='mb-0 break-words text-xs leading-tight'>{card.description}</p>
 								</div>
 							</div>
 						))}

@@ -181,8 +181,8 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={modalOpen}
-				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				title={'Set Deadline Date'}
+				className={`${className} dark:text-blue-dark-medium' dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				title={<span className='dark:text-blue-dark-high'>Set Deadline Date</span>}
 				centered
 				footer={[
 					<Button
@@ -208,7 +208,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 
 					<Form>
 						<Form.Item className='date-input-form-field'>
-							<label className=' text-md flex items-center font-medium text-sidebarBlue'>
+							<label className=' text-md flex items-center font-medium text-sidebarBlue dark:text-blue-dark-medium'>
 								Deadline Date
 								<HelperTooltip
 									className='ml-2 align-middle'
@@ -237,7 +237,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 						</Form.Item>
 
 						<Form.Item className='status-input-form-field'>
-							<label className=' text-md flex items-center font-medium text-sidebarBlue'>Status</label>
+							<label className=' text-md flex items-center font-medium text-sidebarBlue dark:text-blue-dark-medium'>Status</label>
 
 							{canEdit ? (
 								// eslint-disable-next-line sort-keys
@@ -249,7 +249,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 										disabled={loading}
 										menu={{ items: statusOptions, onClick: onStatusChange }}
 									>
-										<Space className='cursor-pointer'>
+										<Space className='cursor-pointer dark:text-blue-dark-high'>
 											{status
 												.toString()
 												.split('_')

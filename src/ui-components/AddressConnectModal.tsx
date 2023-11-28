@@ -378,7 +378,7 @@ const AddressConnectModal = ({
 	return (
 		<Modal
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.className} ${poppins.variable} radius w-[530px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${poppins.className} ${poppins.variable} radius w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={open}
 			title={
 				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
@@ -403,7 +403,7 @@ const AddressConnectModal = ({
 						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
 					}
-					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
+					className={`mt-4 h-[40px] w-[134px] rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||
 						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
@@ -564,7 +564,7 @@ const AddressConnectModal = ({
 						showIcon
 						message={
 							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-								Please maintain minimum balance for these transactions:
+								Please maintain minimum {formatedBalance(String(baseDeposit.add(submissionDeposite).toString()), unit)} {unit} balance for these transactions:
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
 									onClick={() => setHideDetails(!hideDetails)}
@@ -579,14 +579,14 @@ const AddressConnectModal = ({
 							) : (
 								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs'>
 									<li className='flex w-full justify-between'>
-										<div className='mr-1 text-lightBlue'>Preimage Creation</div>
-										<span className='font-medium text-bodyBlue'>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Preimage Creation</div>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
 										</span>
 									</li>
 									<li className='mt-0 flex w-full justify-between'>
-										<div className='mr-1 text-lightBlue'>Proposal Submission</div>
-										<span className='font-medium text-bodyBlue'>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
 										</span>
 									</li>

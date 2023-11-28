@@ -92,6 +92,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		if (network && !isOpenGovSupported(network)) {
 			setGovTypeToContext(EGovType.GOV1);
 		}
+		setOpenAddressLinkedModal(Boolean(router?.query?.setidentity) || false);
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 

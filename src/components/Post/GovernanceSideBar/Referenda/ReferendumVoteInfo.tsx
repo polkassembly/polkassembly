@@ -23,6 +23,8 @@ import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL, GET_TOTAL_CONVICTION_VOTES_COUNT } from '~src/queries';
 import { useNetworkSelector } from '~src/redux/selectors';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 
 interface IReferendumVoteInfoProps {
 	className?: string;
@@ -41,6 +43,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: 'Loading votes' });
 	const [voteInfo, setVoteInfo] = useState<VoteInfo | null>(null);
 	const [isFetchingCereVoteInfo, setIsFetchingCereVoteInfo] = useState(true);
+	const [ayeNayCounts, setAyeNayCounts] = useState<{ ayes: number; nays: number }>({ ayes: 0, nays: 0 });
 
 	const { data: voteInfoData, error: voteInfoError } = useFetch<any>(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`, {
 		body: JSON.stringify({
@@ -49,6 +52,20 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		headers: subscanApiHeaders,
 		method: 'POST'
 	});
+	const handleAyeNayCount = async () => {
+		const { data, error } = await nextApiClientFetch<{ aye: { totalCount: number }; nay: { totalCount: number }; abstain: { totalCount: number } }>(
+			'/api/v1/votes/ayeNayTotalCount',
+			{
+				postId: referendumId,
+				proposalType: getSubsquidLikeProposalType(ProposalType.REFERENDUMS)
+			}
+		);
+		if (data) {
+			setAyeNayCounts({ ayes: data.aye.totalCount, nays: data.nay.totalCount });
+		} else {
+			console.log(error);
+		}
+	};
 
 	useEffect(() => {
 		if (network != 'cere') return;
@@ -147,7 +164,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		if (!apiReady) {
 			return;
 		}
-
+		handleAyeNayCount();
 		let unsubscribe: () => void;
 
 		setLoadingStatus({
@@ -173,7 +190,8 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		}
 
 		return () => unsubscribe && unsubscribe();
-	}, [api, apiReady, network]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network, referendumId]);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -278,7 +296,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
-										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye({ayeNayCounts.ayes})</span>
 									</div>
 									<div className='text-xs font-medium leading-[22px] text-lightBlue dark:text-blue-dark-medium'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
@@ -286,7 +304,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								</article>
 								<article className='flex items-center justify-between gap-x-2 text-lightBlue dark:text-blue-dark-medium'>
 									<div className='flex items-center gap-x-1'>
-										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay</span>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay({ayeNayCounts.nays})</span>
 									</div>
 									<div className='text-xs font-medium leading-[22px] text-lightBlue dark:text-blue-dark-medium'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}

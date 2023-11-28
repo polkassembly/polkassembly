@@ -19,6 +19,8 @@ import DefaultProfile from '~assets/icons/dashboard-profile.svg';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
+import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -37,16 +39,30 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	const { api, apiReady } = useApiContext();
 	const [activeIssuance, setActiveIssuance] = useState<BN | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [ayeNayCounts, setAyeNayCounts] = useState<{ ayes: number; nays: number }>({ ayes: 0, nays: 0 });
 
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO || 0,
 		nays: ZERO || 0,
 		support: ZERO || 0
 	});
+	const handleAyeNayCount = async () => {
+		const { data, error } = await nextApiClientFetch<{ aye: { totalCount: number }; nay: { totalCount: number }; abstain: { totalCount: number } }>(
+			'/api/v1/votes/ayeNayTotalCount',
+			{
+				postId: postIndex,
+				proposalType: getSubsquidLikeProposalType(ProposalType.REFERENDUM_V2)
+			}
+		);
+		if (data) {
+			setAyeNayCounts({ ayes: data.aye.totalCount, nays: data.nay.totalCount });
+		} else {
+			console.log(error);
+		}
+	};
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-
 		(async () => {
 			if (network === 'picasso') {
 				const totalIssuance = await api.query.openGovBalances.totalIssuance();
@@ -99,6 +115,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [status, api, apiReady, network]);
 
+	useEffect(() => {
+		handleAyeNayCount();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postIndex]);
+
 	return (
 		<>
 			<GovSidebarCard className={className}>
@@ -133,7 +154,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:font-normal dark:text-white'>Ayes</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:font-normal dark:text-white'>Ayes({ayeNayCounts.ayes})</span>
 							</div>
 							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
 								{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
@@ -141,7 +162,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						</article>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Nays</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Nays({ayeNayCounts.nays})</span>
 							</div>
 							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
 								{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}

@@ -233,7 +233,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						/>
 						{text}&nbsp;
 						{topic && (
-							<div className='flex items-center sm:-mt-0.5'>
+							<div className='topic-container ml-1 flex items-center sm:-mt-0.5'>
 								<span className='mr-2 mt-0.5 text-lightBlue dark:text-blue-dark-medium'>in</span>{' '}
 								<TopicTag
 									topic={topic}
@@ -270,7 +270,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className='mt-2 flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1'>
+				<div className='details-container mt-2 flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1'>
 					{!inPostHeading && (
 						<div>
 							{(topic || text || created_at) && (
@@ -467,6 +467,18 @@ export default styled(CreationLabel)`
 
 		.power-value {
 			left: 178px !important;
+		}
+	}
+
+	@media (max-width: 468px) and (min-width: 319px) {
+		.topic-container {
+			margin-top: 8px;
+		}
+	}
+
+	@media (max-width: 768px) and (min-width: 319px) {
+		.details-container {
+			margin-top: -4px !important;
 		}
 	}
 `;

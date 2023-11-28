@@ -205,7 +205,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							</>
 						) : null}
 					</CreationLabel>
-					<div className='tag-container mt-4 hidden items-center'>
+					<div className='tag-container mt-1 hidden items-center'>
 						<div className='flex'>
 							{tags?.slice(0, 2).map((tag, index) => (
 								<div

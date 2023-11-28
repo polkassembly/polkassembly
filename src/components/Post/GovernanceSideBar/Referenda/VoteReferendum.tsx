@@ -593,13 +593,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										setShowMultisig(false);
 										setMultisig('');
 									}}
-									className='absolute left-[24px] mt-1 cursor-pointer'
+									className='absolute left-[24px] -mt-1 cursor-pointer'
 								/>
 								<div className='flex items-center gap-[8px]'>
 									{theme === 'dark' ? (
 										<WalletIcon
 											which={Wallet.POLKASAFE}
-											className='ml-14 h-6 w-6'
+											className='ml-14 mt-[10px] h-6 w-6'
 										/>
 									) : (
 										<PolkasafeIcon className='ml-14' />

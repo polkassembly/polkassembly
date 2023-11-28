@@ -14,12 +14,13 @@ interface Props {
 	text?: string;
 	isOptionalLogin?: boolean;
 	isAvailable?: boolean;
+	isloginFlow?: boolean;
 }
 
-const WalletButton = ({ disabled, onClick, icon, className, text, name, isOptionalLogin, isAvailable }: Props) => {
+const WalletButton = ({ isloginFlow, disabled, onClick, icon, className, text, name, isOptionalLogin, isAvailable }: Props) => {
 	return (
 		<>
-			{!isOptionalLogin && (
+			{!isOptionalLogin && isloginFlow && (
 				<Tooltip
 					// color='#E5007A'
 					title={`${text} wallet ${isAvailable ? '' : 'not'} installed`}
@@ -36,7 +37,7 @@ const WalletButton = ({ disabled, onClick, icon, className, text, name, isOption
 					</Button>
 				</Tooltip>
 			)}
-			{isOptionalLogin && (
+			{isOptionalLogin && isloginFlow && (
 				<Button
 					className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-[#F8E3EE]'} ${
 						isAvailable ? 'text- bg-white' : 'bg-[#F6F7F9] dark:bg-[#3d3d3d]'
@@ -46,7 +47,18 @@ const WalletButton = ({ disabled, onClick, icon, className, text, name, isOption
 				>
 					<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 					{text && isOptionalLogin && <p className={`wallet-text-container m-0 ml-4 p-0 ${!isAvailable ? 'text-disableText' : 'text-lightBlue'} dark:text-white`}>{text}</p>}
-					{isOptionalLogin && !isAvailable && <p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs'>Not Installed</p>}
+					{isOptionalLogin && !isAvailable && <p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs dark:text-[#909090]'>Not Installed</p>}
+				</Button>
+			)}
+			{!isloginFlow && (
+				<Button
+					className={`flex items-center justify-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${
+						name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'
+					} ${className}`}
+					onClick={onClick}
+					disabled={disabled}
+				>
+					<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 				</Button>
 			)}
 		</>

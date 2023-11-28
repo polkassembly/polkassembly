@@ -27,6 +27,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
+import MissingInfoAlert from './MissingInfoAlert';
 
 const ZERO_BN = new BN(0);
 
@@ -45,10 +46,12 @@ interface Props {
 	title: string;
 	content: string;
 	tags: string[];
-	postId: number;
 	setPostId: (pre: number) => void;
 	availableBalance: BN;
 	discussionLink: string | null;
+	showMultisigInfoCard: boolean;
+	showIdentityInfoCard: boolean;
+	isDiscussionLinked: boolean;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -72,7 +75,10 @@ const CreateProposal = ({
 	tags,
 	setPostId,
 	availableBalance,
-	discussionLink
+	discussionLink,
+	isDiscussionLinked,
+	showIdentityInfoCard,
+	showMultisigInfoCard
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -268,6 +274,11 @@ const CreateProposal = ({
 					type='success'
 					showIcon
 				/>
+				<MissingInfoAlert
+					isDiscussionLinked={isDiscussionLinked}
+					showIdentityInfoCard={showIdentityInfoCard}
+					showMultisigInfoCard={showMultisigInfoCard}
+				/>
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<div className='mt-4 flex flex-col gap-2'>
 						<span className='flex'>
@@ -308,7 +319,7 @@ const CreateProposal = ({
 							<span className='w-[150px]'>Preimage Hash:</span>
 							<span className='font-medium  text-bodyBlue dark:text-blue-dark-high'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
 							<span
-								className='flex cursor-pointer items-center'
+								className='ml-1 flex cursor-pointer items-center'
 								onClick={(e) => {
 									e.preventDefault();
 									copyLink(preimageHash);
@@ -400,10 +411,11 @@ const CreateProposal = ({
 };
 export default styled(CreateProposal)`
 	.ant-alert-with-description {
-		padding-block: 15px !important;
+		padding-block: 10px !important;
+		padding: 10px 12px !important;
 	}
 	.ant-alert-with-description .ant-alert-icon {
-		font-size: 18px !important;
+		font-size: 16px !important;
 		margin-top: 4px;
 	}
 `;

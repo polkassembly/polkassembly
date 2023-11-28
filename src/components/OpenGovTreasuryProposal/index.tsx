@@ -6,10 +6,7 @@ import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { Button, Form, Modal, Steps } from 'antd';
-import WriteProposal from './WriteProposal';
-import CreatePreimage from './CreatePreimage';
-import CreateProposal from './CreateProposal';
-import AddressConnectModal from '~src/ui-components/AddressConnectModal';
+import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
@@ -18,11 +15,28 @@ import { BN_HUNDRED } from '@polkadot/util';
 import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useApiContext } from '~src/context';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
 import { IBeneficiary } from '~src/types';
-import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
+import dynamic from 'next/dynamic';
+
+const WriteProposal = dynamic(() => import('./WriteProposal'), {
+	ssr: false
+});
+const CreatePreimage = dynamic(() => import('./CreatePreimage'), {
+	ssr: false
+});
+const CreateProposal = dynamic(() => import('./CreateProposal'), {
+	ssr: false
+});
+
+const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
+	ssr: false
+});
 interface Props {
 	className?: string;
 	theme?: string;
@@ -120,6 +134,9 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 
 	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
 
+	const currentUser = useUserDetailsSelector();
+	const { id, loginAddress } = currentUser;
+	const { network } = useNetworkSelector();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
@@ -141,12 +158,13 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
 	const [postId, setPostId] = useState<number>(0);
-	const { id } = useUserDetailsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
-	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const [showMultisigInfoCard, setShowMultisigInfoCard] = useState<boolean>(false);
+	const [isLoading, setMultisigCheckLoading] = useState<boolean>(false);
+	const [showIdentityInfoCard, setShowIdentityInfoCard] = useState<boolean>(false);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -171,10 +189,58 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 		setOpenModal(false);
 		setCloseConfirm(false);
 	};
+	const handleIdentityInfo = async () => {
+		if (!api || !apiReady || !proposerAddress || !window) return;
+
+		let promiseArr: any[] = [];
+		for (const address of [...beneficiaryAddresses.map((addr) => addr.address), proposerAddress]) {
+			if (!address) continue;
+			const encoded_addr = getEncodedAddress(address, network);
+			promiseArr = [...promiseArr, api?.derive?.accounts.info(encoded_addr)];
+		}
+
+		(async () => {
+			try {
+				setMultisigCheckLoading(true);
+				const resolve = await Promise.all(promiseArr);
+				setShowIdentityInfoCard(
+					!!resolve.find((info: DeriveAccountInfo) => {
+						const judgements = info.identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
+						const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+						return !isGood;
+					})
+				);
+			} catch (err) {
+				console.log(err);
+			}
+		})();
+	};
 
 	useEffect(() => {
-		const address = localStorage.getItem('treasuryProposalProposerAddress') || '';
-		setProposerAddress(address);
+		handleIdentityInfo();
+		setShowMultisigInfoCard(false);
+		if (proposerAddress || beneficiaryAddresses) {
+			let promiseArr: any[] = [];
+			for (const address of [...beneficiaryAddresses.map((addr) => addr.address), proposerAddress]) {
+				if (!address) continue;
+				promiseArr = [...promiseArr, checkIsAddressMultisig(address)];
+			}
+
+			(async () => {
+				try {
+					setMultisigCheckLoading(true);
+					const resolve = await Promise.all(promiseArr);
+					setShowMultisigInfoCard(!resolve.find((val) => !!val));
+					setMultisigCheckLoading(false);
+				} catch (err) {
+					console.log(err);
+				}
+			})();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [proposerAddress, loginAddress, window, beneficiaryAddresses]);
+
+	useEffect(() => {
 		if (!api || !apiReady || !proposerAddress) return;
 		setIsUpdatedAvailableBalance(!isUpdatedAvailableBalance);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -198,7 +264,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high'
+				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 				onClick={handleClick}
 			>
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
@@ -212,7 +278,10 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					closable
 					linkAddressNeeded
 					accountSelectionFormTitle='Select Proposer Address'
-					onConfirm={() => setOpenModal(true)}
+					onConfirm={(address: string) => {
+						setOpenModal(true);
+						setProposerAddress(address);
+					}}
 					walletAlertTitle='Treasury proposal creation'
 					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
@@ -252,7 +321,9 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 								setCloseConfirm(false);
 								setOpenModal(true);
 							}}
-							className={'h-[40px] w-[200px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white'}
+							className={
+								'h-[40px] w-[200px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary dark:bg-[#33071E] dark:text-pink_primary'
+							}
 						>
 							No, Continue Editing
 						</Button>
@@ -282,7 +353,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[680px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
@@ -352,6 +423,8 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							enactment={enactment}
 							setEnactment={setEnactment}
 							isUpdatedAvailableBalance={isUpdatedAvailableBalance}
+							showIdentityInfoCard={isLoading ? false : showIdentityInfoCard}
+							showMultisigInfoCard={isLoading ? false : showMultisigInfoCard}
 						/>
 					)}
 					{steps.step === 2 && (
@@ -361,7 +434,6 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							title={title}
 							content={content}
 							tags={tags}
-							postId={postId}
 							setPostId={setPostId}
 							setOpenSuccess={setOpenSuccess}
 							setOpenModal={setOpenModal}
@@ -373,11 +445,13 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							selectedTrack={selectedTrack}
 							preimageHash={preimageHash}
 							preimageLength={preimageLength}
+							showIdentityInfoCard={isLoading ? false : showIdentityInfoCard}
+							showMultisigInfoCard={isLoading ? false : showMultisigInfoCard}
+							isDiscussionLinked={isDiscussionLinked}
 						/>
 					)}
 				</div>
 			</Modal>
-
 			<ReferendaLoginPrompts
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}

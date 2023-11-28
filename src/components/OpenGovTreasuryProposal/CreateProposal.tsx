@@ -27,6 +27,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
+import { dayjs } from 'dayjs-init';
 
 const ZERO_BN = new BN(0);
 
@@ -160,6 +161,17 @@ const CreateProposal = ({
 	};
 
 	const handleSubmitTreasuryProposal = async () => {
+		const lastProposalCreatedAt = localStorage.getItem('lastTreasuryCreatedDateTime');
+
+		if (lastProposalCreatedAt) {
+			const proposalCreatedThresholdSeconds = process.env.NEXT_PUBLIC_TREASURY_PROPOSAL_THRESHOLD_SECONDS || 300;
+			const thresholdDate = dayjs().subtract(Number(proposalCreatedThresholdSeconds), 'seconds');
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const lastProposalCreatedAtDate = dayjs(lastProposalCreatedAt).isAfter(thresholdDate);
+
+			// TODO: show confirmation modal and then submit
+		}
 		// GAEvent for create preImage CTA clicked
 		trackEvent('create_proposal_cta_clicked', 'created_proposal', {
 			isWeb3Login: currentUser?.web3signup,
@@ -214,6 +226,7 @@ const CreateProposal = ({
 			);
 
 			const onSuccess = async () => {
+				localStorage.setItem('lastTreasuryCreatedDateTime', new Date().toISOString());
 				handleSaveTreasuryProposal(post_id);
 				setPostId(post_id);
 				console.log('Saved referenda ID: ', post_id);

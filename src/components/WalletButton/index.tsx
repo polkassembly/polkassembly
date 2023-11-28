@@ -27,8 +27,8 @@ const WalletButton = ({ isloginFlow, disabled, onClick, icon, className, text, n
 				>
 					<Button
 						className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'border-borderColor justify-center'} ${
-							isAvailable ? 'bg-white dark:bg-inactiveIconDark' : 'bg-grey_stroke dark:bg-greyColor bg-lightWhite cursor-not-allowed'
-						} border-borderColor items-center rounded-[7px] dark:border-section-dark-container ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
+							isAvailable ? 'bg-white dark:bg-inactiveIconDark' : 'dark:bg-greyColor bg-lightWhite cursor-not-allowed'
+						} border-grey_stroke items-center rounded-[7px] dark:border-section-dark-container ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 						onClick={(e) => {
 							if (!isAvailable) return;
 							onClick(e as any);
@@ -43,7 +43,7 @@ const WalletButton = ({ isloginFlow, disabled, onClick, icon, className, text, n
 				<Button
 					className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'border-borderColor justify-center'} ${
 						isAvailable ? 'text- bg-white dark:bg-inactiveIconDark' : 'dark:bg-greyColor bg-lightWhite'
-					} border-borderColor items-center rounded-[7px] dark:border-section-dark-container ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
+					} border-grey_stroke items-center rounded-[7px] dark:border-section-dark-container ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 					onClick={onClick}
 					disabled={!isAvailable}
 				>

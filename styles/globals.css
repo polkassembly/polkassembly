@@ -53,6 +53,10 @@
   --errorAlertBgDark: #FF3C5F33;
   --warningAlertBorderDark: #F89118;
   --warningAlertBgDark: #F8911833;
+  --borderColor: #F8E3EE;
+  --greyColor: #3d3d3d;
+  --lightGreyTextColor: #909090;
+  --lightWhite: #F6F7F9
 }
 
 ::-webkit-scrollbar {

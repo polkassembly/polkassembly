@@ -54,6 +54,10 @@ module.exports = {
 				errorAlertBgDark: 'var(--errorAlertBgDark)',
 				warningAlertBorderDark: 'var(--warningAlertBorderDark)',
 				warningAlertBgDark: 'var(--warningAlertBgDark)',
+				borderColor: 'var(--borderColor)',
+				greyColor: 'var(--greyColor)',
+				lightGreyTextColor: 'var(--lightGreyTextColor)',
+				lightWhite: 'var(--lightWhite)',
 				blue: {
 					light: {
 						disabled: '#96A4B6',

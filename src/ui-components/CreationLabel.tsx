@@ -248,7 +248,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
 									type='vertical'
 								/>
-								<BeneficiariesListing beneficiaries={beneficiaries} />
+								<BeneficiariesListing
+									beneficiaries={beneficiaries}
+									inPostHeading={inPostHeading}
+								/>
 							</>
 						)}
 						{cid ? (

@@ -498,7 +498,7 @@ const IdentityForm = ({
 								name='twitter'
 								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
 								value={twitter?.value}
-								placeholder='Enter your twitter name'
+								placeholder='Enter your twitter handle (case sensitive)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });

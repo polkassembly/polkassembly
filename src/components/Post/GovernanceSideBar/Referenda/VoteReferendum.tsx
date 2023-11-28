@@ -502,7 +502,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.AYE ? 'bg-[#2ED47A] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${
+						vote === EVoteDecisionType.AYE ? 'bg-[#2ED47A] text-white dark:bg-[#478F37]' : ''
+					}`}
 				>
 					{vote === EVoteDecisionType.AYE ? (
 						<LikeWhite className='mb-[3px] mr-2' />
@@ -519,7 +521,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.NAY ? 'bg-[#F53C3C] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${
+						vote === EVoteDecisionType.NAY ? 'bg-[#F53C3C] text-white dark:bg-[#A8071A]' : ''
+					}`}
 				>
 					{vote === EVoteDecisionType.NAY ? (
 						<DislikeWhite className='-mb-[3px] mr-2' />
@@ -541,7 +545,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white' : ''}`}
+							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
+								vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white dark:bg-[#D05704]' : ''
+							}`}
 						>
 							{' '}
 							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
@@ -554,10 +560,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					label: (
 						<div
 							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
-								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white' : ''
+								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white dark:bg-[#3866CE]' : ''
 							}`}
 						>
-							<StopOutlined className='mb-[3px] mr-2 dark:text-[#909090]' />
+							<StopOutlined className={`mb-[3px] mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
 							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
 						</div>
 					),
@@ -755,7 +761,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 												type='info'
 												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 												showIcon
-												className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+												className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark mb-4 rounded-[4px]'
 											/>
 										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (

@@ -155,15 +155,7 @@ const CreateProposal = ({
 			userId
 		});
 
-		if (data && !isNaN(Number(data?.post_id)) && data.post_id !== undefined) {
-			setPostId(data?.post_id);
-			setOpenSuccess(true);
-			console.log(postId, 'postId');
-			localStorage.removeItem('treasuryProposalProposerAddress');
-			localStorage.removeItem('treasuryProposalProposerWallet');
-			localStorage.removeItem('treasuryProposalData');
-			setOpenModal(false);
-		} else if (apiError || !data?.post_id) {
+		if (apiError || !data?.post_id) {
 			queueNotification({
 				header: 'Error',
 				message: apiError,
@@ -171,6 +163,7 @@ const CreateProposal = ({
 			});
 			console.error(apiError);
 		}
+
 		setLoading(false);
 	};
 
@@ -229,8 +222,15 @@ const CreateProposal = ({
 			);
 
 			const onSuccess = async () => {
-				await handleSaveTreasuryProposal(post_id);
+				handleSaveTreasuryProposal(post_id);
+				setPostId(post_id);
+				console.log('Saved referenda ID: ', post_id);
+				localStorage.removeItem('treasuryProposalProposerAddress');
+				localStorage.removeItem('treasuryProposalProposerWallet');
+				localStorage.removeItem('treasuryProposalData');
 				setLoading(false);
+				setOpenSuccess(true);
+				setOpenModal(false);
 			};
 
 			const onFailed = async () => {

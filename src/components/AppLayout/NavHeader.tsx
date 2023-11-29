@@ -39,6 +39,8 @@ import { logout, setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import PolkasafeWhiteIcon from '~assets/polkasafe-white-logo.svg';
 import { trackEvent } from 'analytics';
+import StakeIcon from '~assets/stake-icon.svg';
+import DelegateIcon from '~assets/delegate-icon.svg';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -71,6 +73,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+
+	const delegationLinks: { [key: string]: string } = { kasuma: 'https://kusama.polkassembly.io/delegation', polkadot: 'https://polkadot.polkassembly.io/delegation' };
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -117,7 +121,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					href='https://townhallgov.com/'
 					target='_blank'
 					rel='noreferrer'
-					className='custom-link'
+					className='custom-link after:hidden'
 				>
 					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
 						<TownHall />
@@ -134,11 +138,45 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					href='https://polkasafe.xyz/'
 					target='_blank'
 					rel='noreferrer'
-					className='custom-link'
+					className='custom-link after:hidden'
 				>
 					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
 						{theme === 'dark' ? <PolkasafeWhiteIcon className='relative left-[3px] top-[-1px] scale-[2]' /> : <PolkaSafe />}
 						<span>Polkasafe</span>
+					</span>
+				</a>
+			)
+		},
+		{
+			className: 'logo-class',
+			key: 'Staking',
+			label: (
+				<a
+					href='https://staking.polkadot.network/'
+					target='_blank'
+					rel='noreferrer'
+					className='custom-link after:hidden'
+				>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+						<StakeIcon />
+						<span>Staking</span>
+					</span>
+				</a>
+			)
+		},
+		{
+			className: 'logo-class',
+			key: 'Delegation',
+			label: (
+				<a
+					href={delegationLinks[network]}
+					target='_blank'
+					rel='noreferrer'
+					className='custom-link after:hidden'
+				>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+						<DelegateIcon />
+						<span>Delegation</span>
 					</span>
 				</a>
 			)

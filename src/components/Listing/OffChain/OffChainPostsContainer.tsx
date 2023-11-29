@@ -2,18 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { SwapOutlined } from '@ant-design/icons';
-import { Dropdown } from '~src/ui-components/Dropdown';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { sortOptions, sortValues } from 'src/global/sortOptions';
+import { sortValues } from 'src/global/sortOptions';
 import styled from 'styled-components';
 import { OffChainProposalType } from '~src/global/proposalType';
 import OffChainPostsListingContainer from './OffChainPostsListingContainer';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { useTheme } from 'next-themes';
+import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 
 interface IOffChainContainerProps {
 	posts: any[];
@@ -34,40 +31,8 @@ export function getTitle(proposalType: OffChainProposalType): string {
 }
 
 const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType, defaultPage }) => {
-	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
-
-	const handleSortByClick = ({ key }: { key: string }) => {
-		router.push({
-			pathname: '',
-			query: { ...router.query, sortBy: key }
-		});
-		setSortBy(key);
-	};
-
-	const sortByOptions: ItemType[] = sortOptions;
-	const sortByDropdown = (
-		<Dropdown
-			theme={theme}
-			menu={{
-				defaultSelectedKeys: [sortValues.COMMENTED],
-				items: sortByOptions,
-				onClick: handleSortByClick,
-				selectable: true
-			}}
-			trigger={['click']}
-			overlayClassName='z-[1056]'
-		>
-			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-pink_primary hover:text-pink_primary'>
-				<span className='font-normal sm:mr-1 sm:mt-0.5'>Sort By</span>
-				<SwapOutlined
-					rotate={90}
-					style={{ fontSize: '14px', marginRight: '10px' }}
-				/>
-			</div>
-		</Dropdown>
-	);
 
 	return (
 		<div className={`${className} rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay xs:px-0 xs:py-3 md:p-0`}>
@@ -77,7 +42,11 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 				</div>
 				<div className='flex'>
 					<FilterByTags className='mr-2 xs:mt-1 sm:mt-0.5' />
-					{sortByDropdown}
+					<SortByDropdownComponent
+						theme={theme}
+						sortBy={sortBy}
+						setSortBy={setSortBy}
+					/>
 				</div>
 			</div>
 			<OffChainPostsListingContainer

@@ -37,7 +37,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
-import PolkasafeWhiteIcon from '~assets/polkasafe-white-logo.svg';
+import PolkasafeWhiteIcon from '~assets/icons/polkasafe-white-logo.svg';
 import { trackEvent } from 'analytics';
 import StakeIcon from '~assets/stake-icon.svg';
 import DelegateIcon from '~assets/delegate-icon.svg';
@@ -141,7 +141,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					className='custom-link after:hidden'
 				>
 					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
-						{theme === 'dark' ? <PolkasafeWhiteIcon className='relative left-[3px] top-[-1px] scale-[2]' /> : <PolkaSafe />}
+						{theme === 'dark' ? <PolkasafeWhiteIcon /> : <PolkaSafe />}
 						<span>Polkasafe</span>
 					</span>
 				</a>

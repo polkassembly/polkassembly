@@ -397,11 +397,12 @@ const AddressConnectModal = ({
 			footer={
 				<Button
 					onClick={handleSubmit}
-					disabled={false}
-					// !accounts ||
-					// (showMultisig && !multisig) ||
-					// (showMultisig && initiatorBalance.lte(totalDeposit)) ||
-					// (isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+					disabled={
+						!accounts ||
+						(showMultisig && !multisig) ||
+						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
+						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+					}
 					className={`mt-4 h-[40px] w-[134px] rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||

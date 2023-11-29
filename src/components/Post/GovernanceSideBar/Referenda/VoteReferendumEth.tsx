@@ -438,23 +438,25 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 						{!isTalismanEthereum && (
 							<Alert
-								message='Please use Ethereum account via Talisman wallet.'
+								message={<span className='dark:text-blue-dark-high'>Please use Ethereum account via Talisman wallet.</span>}
 								type='info'
+								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						)}
 						{isBalanceErr && !loadingStatus.isLoading && wallet && (
 							<Alert
 								type='info'
-								message='Insufficient balance.'
+								message={<span className='dark:text-blue-dark-high'>Insufficient balance.</span>}
 								showIcon
-								className='mb-4 rounded-[4px]'
+								className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 							<Alert
-								message='No addresses found in the address selection tab.'
+								message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 								showIcon
 								type='info'
+								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						)}
 
@@ -474,9 +476,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							/>
 						) : !wallet ? (
 							<Alert
-								message='Please select a wallet.'
+								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 								showIcon
 								type='info'
+								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						) : null}
 						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>

@@ -74,8 +74,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
-	const delegationLinks: { [key: string]: string } = { kasuma: 'https://kusama.polkassembly.io/delegation', polkadot: 'https://polkadot.polkassembly.io/delegation' };
-
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
 		if (!router.query?.username) return;
@@ -163,13 +161,16 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</span>
 				</a>
 			)
-		},
-		{
+		}
+	];
+
+	if (['kusama', 'polkadot'].includes(network)) {
+		menudropDownItems.push({
 			className: 'logo-class',
 			key: 'Delegation',
 			label: (
 				<a
-					href={delegationLinks[network]}
+					href={`https://${network}.polkassembly.io/delegation`}
 					target='_blank'
 					rel='noreferrer'
 					className='custom-link after:hidden'
@@ -180,8 +181,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</span>
 				</a>
 			)
-		}
-	];
+		});
+	}
 
 	const dropdownMenuItems: ItemType[] = [
 		{

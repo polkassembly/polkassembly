@@ -121,9 +121,9 @@ const MissingInfoAlert = ({ className, showIdentityInfoCard, showMultisigInfoCar
 					</span>
 					{showCompletedActions && (
 						<ul className='flex flex-col gap-1 text-bodyBlue dark:text-blue-dark-high'>
-							{showMultisigInfoCard && <li>Beneficiary Address is not a multisig.</li>}
-							{!isDiscussionLinked && <li>Discussion post was not created to gather feedback before proposal creation.</li>}
-							{network === 'polkadot' && <IdentityList />}
+							{!showMultisigInfoCard && <li>Beneficiary Address is not a multisig.</li>}
+							{isDiscussionLinked && <li>Discussion post was not created to gather feedback before proposal creation.</li>}
+							{network === 'polkadot' && !showIdentityInfoCard && <IdentityList />}
 						</ul>
 					)}
 				</div>

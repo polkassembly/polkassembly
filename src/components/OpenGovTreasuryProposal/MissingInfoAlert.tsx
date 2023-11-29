@@ -64,7 +64,7 @@ const MissingInfoAlert = ({ className, showIdentityInfoCard, showMultisigInfoCar
 			className={`mt-5 rounded-[4px] text-bodyBlue dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark ${poppins.variable} ${poppins.className} ${className}`}
 			showIcon
 			message={
-				<div className='mt-0.5 text-xs dark:text-blue-dark-high'>
+				<div className='mt-0.5 text-xs dark:text-blue-dark-high leading-5'>
 					<span>
 						{leftAction} of {network === 'polkadot' ? 3 : 2} suggestions regarding proposal creation have not been incorporated. The community will have visibility about this.
 					</span>

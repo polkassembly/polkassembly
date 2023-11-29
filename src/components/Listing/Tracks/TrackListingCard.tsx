@@ -17,6 +17,8 @@ import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { Pagination } from '~src/ui-components/Pagination';
+import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
+import { sortValues } from '~src/global/sortOptions';
 
 interface Props {
 	className?: string;
@@ -33,6 +35,8 @@ export enum CustomStatus {
 
 const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
+
 	const items = [
 		{
 			label: (
@@ -105,7 +109,17 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			)
 		},
 		{
-			label: <FilterByTags className='xs:hidden sm:mr-5 sm:block' />,
+			label: (
+				<div className='flex'>
+					<FilterByTags className='xs:hidden sm:mr-5 sm:block' />
+					<SortByDropdownComponent
+						theme={theme}
+						sortBy={sortBy}
+						setSortBy={setSortBy}
+					/>
+				</div>
+			),
+
 			key: 'Filter'
 		}
 	];

@@ -21,15 +21,18 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IVotesCount } from '~src/types';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
 	tally?: any;
+	ayeNayAbstainCounts: IVotesCount;
+	setAyeNayAbstainCounts: (pre: IVotesCount) => void;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally }) => {
+const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts }) => {
 	const { network } = useNetworkSelector();
 	const {
 		postData: { status, postIndex }
@@ -39,7 +42,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	const { api, apiReady } = useApiContext();
 	const [activeIssuance, setActiveIssuance] = useState<BN | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
-	const [ayeNayCounts, setAyeNayCounts] = useState<{ ayes: number; nays: number }>({ ayes: 0, nays: 0 });
 
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO || 0,
@@ -47,6 +49,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		support: ZERO || 0
 	});
 	const handleAyeNayCount = async () => {
+		setIsLoading(true);
+
 		const { data, error } = await nextApiClientFetch<{ aye: { totalCount: number }; nay: { totalCount: number }; abstain: { totalCount: number } }>(
 			'/api/v1/votes/ayeNayTotalCount',
 			{
@@ -55,9 +59,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			}
 		);
 		if (data) {
-			setAyeNayCounts({ ayes: data.aye.totalCount, nays: data.nay.totalCount });
+			setAyeNayAbstainCounts({ abstain: data?.abstain.totalCount, ayes: data.aye.totalCount, nays: data.nay.totalCount });
+			setIsLoading(false);
 		} else {
 			console.log(error);
+			setIsLoading(false);
 		}
 	};
 
@@ -154,7 +160,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:font-normal dark:text-white'>Ayes({ayeNayCounts.ayes})</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:font-normal dark:text-white'>Ayes({ayeNayAbstainCounts.ayes})</span>
 							</div>
 							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
 								{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
@@ -162,7 +168,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						</article>
 						<article className='flex items-center justify-between gap-x-2'>
 							<div className='flex items-center gap-x-1'>
-								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Nays({ayeNayCounts.nays})</span>
+								<span className='text-xs font-medium leading-[18px] tracking-[0.01em] dark:text-white'>Nays({ayeNayAbstainCounts.nays})</span>
 							</div>
 							<div className='text-xs font-medium leading-[22px] text-navBlue dark:text-blue-dark-medium'>
 								{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}

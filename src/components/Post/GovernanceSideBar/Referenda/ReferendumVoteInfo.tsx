@@ -10,7 +10,7 @@ import { ApiContext } from 'src/context/ApiContext';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { useFetch } from 'src/hooks';
 import { getFailingThreshold } from 'src/polkassemblyutils';
-import { LoadingStatusType, VoteInfo } from 'src/types';
+import { IVotesCount, LoadingStatusType, VoteInfo } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import Loader from 'src/ui-components/Loader';
 import PassingInfoTag from 'src/ui-components/PassingInfoTag';
@@ -25,17 +25,18 @@ import { GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL, GET_TOTAL_CONVICTION_VOTES_C
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
-
 interface IReferendumVoteInfoProps {
 	className?: string;
 	referendumId: number;
 	setOpen: (value: React.SetStateAction<boolean>) => void;
 	voteThreshold?: string;
+	ayeNayCounts: IVotesCount;
+	setAyeNayCounts: (pre: IVotesCount) => void;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen, voteThreshold }) => {
+const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen, voteThreshold, ayeNayCounts, setAyeNayCounts }) => {
 	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useContext(ApiContext);
@@ -43,7 +44,6 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: 'Loading votes' });
 	const [voteInfo, setVoteInfo] = useState<VoteInfo | null>(null);
 	const [isFetchingCereVoteInfo, setIsFetchingCereVoteInfo] = useState(true);
-	const [ayeNayCounts, setAyeNayCounts] = useState<{ ayes: number; nays: number }>({ ayes: 0, nays: 0 });
 
 	const { data: voteInfoData, error: voteInfoError } = useFetch<any>(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`, {
 		body: JSON.stringify({
@@ -53,6 +53,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		method: 'POST'
 	});
 	const handleAyeNayCount = async () => {
+		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		const { data, error } = await nextApiClientFetch<{ aye: { totalCount: number }; nay: { totalCount: number }; abstain: { totalCount: number } }>(
 			'/api/v1/votes/ayeNayTotalCount',
 			{
@@ -62,8 +63,10 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		);
 		if (data) {
 			setAyeNayCounts({ ayes: data.aye.totalCount, nays: data.nay.totalCount });
+			setLoadingStatus({ ...loadingStatus, isLoading: false });
 		} else {
 			console.log(error);
+			setLoadingStatus({ ...loadingStatus, isLoading: false });
 		}
 	};
 

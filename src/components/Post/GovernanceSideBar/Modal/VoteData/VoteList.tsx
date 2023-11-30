@@ -7,7 +7,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
-import { LoadingStatusType } from 'src/types';
+import { IVotesCount, LoadingStatusType } from 'src/types';
 import { useApiContext, usePostDataContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortValues } from '~src/global/sortOptions';
@@ -53,6 +53,7 @@ interface IVotersListProps {
 	voteType: VoteType;
 	thresholdData?: any;
 	tally: any;
+	ayeNayAbstainCounts: IVotesCount;
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -77,7 +78,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	// const { className, referendumId, voteType, thresholdData, tally } = props;
-	const { className, referendumId, voteType, tally } = props;
+	const { className, referendumId, voteType, tally, ayeNayAbstainCounts } = props;
 	const { api, apiReady } = useApiContext();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
@@ -104,7 +105,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='flex items-center justify-center gap-1 rounded-[20px] text-green-700'>
-					<LikeFilled /> <span>Ayes</span>
+					<LikeFilled /> <span>Ayes({ayeNayAbstainCounts.ayes})</span>
 				</div>
 			),
 			value: 'yes'
@@ -112,7 +113,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='flex items-center justify-center gap-1  rounded-[20px] text-red-600'>
-					<DislikeFilled /> <span>Nays</span>
+					<DislikeFilled /> <span>Nays({ayeNayAbstainCounts.nays})</span>
 				</div>
 			),
 			value: 'no'
@@ -123,7 +124,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		decisionOptions.push({
 			label: (
 				<div className='flex items-center justify-center gap-1 rounded-[20px] text-blue-400'>
-					<MinusCircleFilled /> <span>Abstain</span>
+					<MinusCircleFilled /> <span>Abstain({ayeNayAbstainCounts.abstain})</span>
 				</div>
 			),
 			value: 'abstain'

@@ -861,7 +861,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: parallelLogo,
 		rpcEndpoint: 'wss://rpc.parallel.fi',
 		ss58Format: 172,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/parallel-polkassembly/graphql',
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.PARA,
 		treasuryProposalBondPercent: '5%',

@@ -525,3 +525,9 @@ export interface IBeneficiary {
 	address: string;
 	amount: string;
 }
+
+export interface IVotesCount {
+	ayes: number;
+	nays: number;
+	abstain?: number;
+}

@@ -50,8 +50,7 @@ for (const key of Object.keys(network)) {
 					/>
 				</span>
 				<span className='text-sm font-medium capitalize text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
-					{' '}
-					{keyVal == 'hydradx' ? 'HydraDX' : keyVal}{' '}
+					{keyVal == 'hydradx' ? 'HydraDX' : keyVal}
 				</span>
 			</div>
 		),

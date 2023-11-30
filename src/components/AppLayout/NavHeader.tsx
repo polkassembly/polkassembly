@@ -41,6 +41,7 @@ import PolkasafeWhiteIcon from '~assets/icons/polkasafe-white-logo.svg';
 import { trackEvent } from 'analytics';
 import StakeIcon from '~assets/stake-icon.svg';
 import DelegateIcon from '~assets/delegate-icon.svg';
+import { delegationSupportedNetworks } from '../DelegationDashboard';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -164,7 +165,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	];
 
-	if (['kusama', 'polkadot'].includes(network)) {
+	if (delegationSupportedNetworks?.includes(network)) {
 		menudropDownItems.push({
 			className: 'logo-class',
 			key: 'Delegation',

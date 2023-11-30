@@ -19,7 +19,7 @@ const SelectTracks = ({ tracksArr, className, onTrackChange, selectedTrack }: Pr
 			<Select
 				placeholder='Select a track'
 				suffixIcon={<DownArrow />}
-				className={`flex h-[40px] w-full flex-col items-center rounded-[4px]  ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay`}
+				className={`flex h-[40px] w-full flex-col items-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlaydark dark:border-separatorDark`}
 				value={selectedTrack.length > 0 ? selectedTrack : null}
 				onChange={onTrackChange}
 				options={

@@ -9,6 +9,7 @@ import Link from 'next/link';
 import DownArrowIcon from '~assets/icons/down-icon.svg';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { onchainIdentitySupportedNetwork } from '../AppLayout';
 
 interface Props {
 	showMultisigInfoCard: boolean;
@@ -63,10 +64,10 @@ const MissingInfoAlert = ({ className, showIdentityInfoCardForProposer, showIden
 	const [showWarnings, setShowWarning] = useState<boolean>(true);
 	const [showCompletedActions, setShowCompletedActions] = useState<boolean>(true);
 	const leftAction =
-		(network === 'polkadot' ? (showIdentityInfoCardForProposer ? 1 : 0) + (showIdentityInfoCardForBeneficiary ? 1 : 0) : 0) +
+		(onchainIdentitySupportedNetwork.includes(network) ? (showIdentityInfoCardForProposer ? 1 : 0) + (showIdentityInfoCardForBeneficiary ? 1 : 0) : 0) +
 		(showMultisigInfoCard ? 1 : 0) +
 		(isDiscussionLinked ? 0 : 1);
-	const TOTAL_ACTIONS = network === 'polkadot' ? TOTAL_STEPS_WITH_IDENTITY_CHECK : TOTAL_STEPS_WITHOUT_IDENTITY_CHECK;
+	const TOTAL_ACTIONS = onchainIdentitySupportedNetwork.includes(network) ? TOTAL_STEPS_WITH_IDENTITY_CHECK : TOTAL_STEPS_WITHOUT_IDENTITY_CHECK;
 	return (
 		<Alert
 			type='warning'
@@ -125,13 +126,13 @@ const MissingInfoAlert = ({ className, showIdentityInfoCardForProposer, showIden
 								</li>
 							)} */}
 
-									{network === 'polkadot' && showIdentityInfoCardForProposer && (
+									{onchainIdentitySupportedNetwork.includes(network) && showIdentityInfoCardForProposer && (
 										<IdentityList
 											aleredySet={false}
 											title='Proposer Address'
 										/>
 									)}
-									{network === 'polkadot' && showIdentityInfoCardForBeneficiary && (
+									{onchainIdentitySupportedNetwork.includes(network) && showIdentityInfoCardForBeneficiary && (
 										<IdentityList
 											aleredySet={false}
 											title='Beneficiary Address'
@@ -154,13 +155,13 @@ const MissingInfoAlert = ({ className, showIdentityInfoCardForProposer, showIden
 								<ul className='flex flex-col gap-1 text-bodyBlue dark:text-blue-dark-high'>
 									{!showMultisigInfoCard && <li>Beneficiary Address is multisig.</li>}
 									{isDiscussionLinked && <li>Discussion post was created to gather feedback before proposal creation.</li>}
-									{network === 'polkadot' && !showIdentityInfoCardForProposer && (
+									{onchainIdentitySupportedNetwork.includes(network) && !showIdentityInfoCardForProposer && (
 										<IdentityList
 											aleredySet
 											title='Proposer Address'
 										/>
 									)}
-									{network === 'polkadot' && !showIdentityInfoCardForBeneficiary && (
+									{onchainIdentitySupportedNetwork.includes(network) && !showIdentityInfoCardForBeneficiary && (
 										<IdentityList
 											aleredySet
 											title='Beneficiary Address'

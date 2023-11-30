@@ -5,7 +5,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Listing from '~src/components/Listing';
@@ -21,6 +21,8 @@ import MotionsIcon from '~assets/icons/motions-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
+import SortByStatusDropdownComponent from '~src/ui-components/SortByStatusDropdown';
+import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -48,6 +50,8 @@ interface IMotionsProps {
 }
 const Motions: FC<IMotionsProps> = (props) => {
 	const { data, error, network } = props;
+	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
+
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -94,7 +98,18 @@ const Motions: FC<IMotionsProps> = (props) => {
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
 						<FilteredTags />
 					</div>
-					<FilterByTags className='my-6 xs:mx-6 xs:my-2 sm:mr-14' />
+					<div className='mb-5 flex items-center gap-x-2 '>
+						<SortByStatusDropdownComponent
+							sortBy={sortBy}
+							setSortBy={setSortBy}
+						/>
+						<FilterByTags />
+						<SortByDropdownComponent
+							sortBy={sortBy}
+							setSortBy={setSortBy}
+							isUsedInTrackListing={true}
+						/>
+					</div>
 				</div>
 
 				<div>

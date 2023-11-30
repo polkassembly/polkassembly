@@ -113,13 +113,11 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			label: (
 				<div className='mt-1 flex items-center gap-x-2 '>
 					<SortByStatusDropdownComponent
-						theme={theme}
 						sortBy={sortBy}
 						setSortBy={setSortBy}
 					/>
 					<FilterByTags />
 					<SortByDropdownComponent
-						theme={theme}
 						sortBy={sortBy}
 						setSortBy={setSortBy}
 						isUsedInTrackListing={true}
@@ -167,13 +165,11 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:px-4 xs:pt-2 sm:hidden'>
 				<div className='mt-1 flex items-center gap-x-1 xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden'>
 					<SortByStatusDropdownComponent
-						theme={theme}
 						sortBy={sortBy}
 						setSortBy={setSortBy}
 					/>
 					<FilterByTags />
 					<SortByDropdownComponent
-						theme={theme}
 						sortBy={sortBy}
 						setSortBy={setSortBy}
 						isUsedInTrackListing={true}

@@ -615,7 +615,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								</div>
 							</div>
 						) : (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
 								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 							</div>

@@ -5,23 +5,55 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { gov2ReferendumStatusOptions, referendumStatusOptions } from '~src/global/statuses';
+import { bountyStatusOptions, childBountyStatusOptions, gov2ReferendumStatusOptions, motionStatusOptions, referendumStatusOptions, tipStatusOptions } from '~src/global/statuses';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector } from '~src/redux/selectors';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
+import { getProposalTypeFromSinglePostLink } from '~src/global/proposalType';
+import { useTheme } from 'next-themes';
 
 interface SortByDropdownProps {
-	theme: string | undefined;
+	theme?: string | undefined;
 	sortBy: any;
 	setSortBy: any;
 }
 
-const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ theme, sortBy, setSortBy }) => {
+const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSortBy }) => {
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
-	const statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
-	const sortByOptions: ItemType[] = statusOptions;
+	let path = router.pathname.split('/')[1];
+	let statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
+	if (path === 'child_bounties') {
+		path = 'child_bounty';
+	} else if (path === 'bounties') {
+		path = 'bounty';
+	} else if (path === 'tips') {
+		path = 'tip';
+	} else if (path === 'motions') {
+		path = 'motion';
+	}
 
+	const postType = getProposalTypeFromSinglePostLink(path);
+	switch (postType) {
+		case 'child_bounties':
+			statusOptions = childBountyStatusOptions;
+			break;
+		case 'bounties':
+			statusOptions = bountyStatusOptions;
+			break;
+		case 'tips':
+			statusOptions = tipStatusOptions;
+			break;
+		case 'council_motions':
+			statusOptions = motionStatusOptions;
+			break;
+		default:
+			statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
+			break;
+	}
+
+	const sortByOptions: ItemType[] = statusOptions;
 	const handleSortByClick = ({ key }: { key: string }) => {
 		router.push({
 			pathname: '',

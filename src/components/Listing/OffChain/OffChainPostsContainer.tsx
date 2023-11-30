@@ -9,7 +9,6 @@ import { OffChainProposalType } from '~src/global/proposalType';
 import OffChainPostsListingContainer from './OffChainPostsListingContainer';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
-import { useTheme } from 'next-themes';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 
 interface IOffChainContainerProps {
@@ -31,7 +30,6 @@ export function getTitle(proposalType: OffChainProposalType): string {
 }
 
 const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType, defaultPage }) => {
-	const { resolvedTheme: theme } = useTheme();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 
 	return (
@@ -43,7 +41,6 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 				<div className='flex'>
 					<FilterByTags className='mr-2 xs:mt-1 sm:mt-0.5' />
 					<SortByDropdownComponent
-						theme={theme}
 						sortBy={sortBy}
 						setSortBy={setSortBy}
 					/>

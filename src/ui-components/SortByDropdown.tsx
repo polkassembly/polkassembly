@@ -7,16 +7,18 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { SwapOutlined } from '@ant-design/icons';
 import { sortOptions } from 'src/global/sortOptions'; // Import if required
+import { useTheme } from 'next-themes';
 
 interface SortByDropdownProps {
-	theme: string | undefined;
+	theme?: string | undefined;
 	sortBy: any;
 	setSortBy: any;
 	isUsedInTrackListing?: boolean;
 }
 
-const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ theme, sortBy, setSortBy, isUsedInTrackListing }) => {
+const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSortBy, isUsedInTrackListing }) => {
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 	const sortByOptions: ItemType[] = sortOptions;
 
 	const handleSortByClick = ({ key }: { key: string }) => {

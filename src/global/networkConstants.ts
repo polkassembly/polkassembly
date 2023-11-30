@@ -536,7 +536,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: equilibriumLogo,
-		rpcEndpoint: 'wss://node.pol.equilibrium.io/',
+		rpcEndpoint: 'wss://equilibrium-rpc.dwellir.com',
 		ss58Format: 68,
 		tokenDecimals: 9,
 		tokenSymbol: tokenSymbol.TOKEN,

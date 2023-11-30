@@ -5,7 +5,10 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { gov2ReferendumStatusOptions } from '~src/global/statuses';
+import { gov2ReferendumStatusOptions, referendumStatusOptions } from '~src/global/statuses';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useNetworkSelector } from '~src/redux/selectors';
+import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 
 interface SortByDropdownProps {
 	theme: string | undefined;
@@ -15,7 +18,9 @@ interface SortByDropdownProps {
 
 const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ theme, sortBy, setSortBy }) => {
 	const router = useRouter();
-	const sortByOptions: ItemType[] = gov2ReferendumStatusOptions;
+	const { network } = useNetworkSelector();
+	const statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
+	const sortByOptions: ItemType[] = statusOptions;
 
 	const handleSortByClick = ({ key }: { key: string }) => {
 		router.push({
@@ -37,8 +42,9 @@ const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ theme, s
 			trigger={['click']}
 			overlayClassName='z-[1056]'
 		>
-			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-pink_primary hover:text-pink_primary'>
-				<span className='font-normal sm:mr-1 sm:mt-0.5'>Status</span>
+			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-bodyBlue hover:text-pink_primary'>
+				<span className='text-xs font-normal opacity-70 dark:text-[#96A4B6] dark:opacity-100 sm:mr-1 sm:mt-0.5'>Status</span>
+				<DropdownGreyIcon />
 			</div>
 		</Dropdown>
 	);

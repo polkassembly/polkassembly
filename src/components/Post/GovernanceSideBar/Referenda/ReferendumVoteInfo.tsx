@@ -71,7 +71,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 	};
 
 	useEffect(() => {
-		if (network != 'cere') return;
+		if (!['cere', 'equilibrium'].includes(network)) return;
 
 		(async () => {
 			setIsFetchingCereVoteInfo(true);
@@ -346,12 +346,12 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						</Spin>
 					</GovSidebarCard>
 				)
-			) : network === 'cere' ? (
+			) : ['cere', 'equilibrium'].includes(network) ? (
 				<>
 					<GovSidebarCard>
 						<Spin
 							spinning={isFetchingCereVoteInfo}
-							className='bg-white'
+							className='bg-white dark:bg-section-light-overlay'
 							indicator={<LoadingOutlined />}
 						>
 							<div className='flex items-center justify-between gap-x-2'>

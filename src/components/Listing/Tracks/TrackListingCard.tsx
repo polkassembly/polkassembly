@@ -19,6 +19,7 @@ import { Tabs } from '~src/ui-components/Tabs';
 import { Pagination } from '~src/ui-components/Pagination';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import { sortValues } from '~src/global/sortOptions';
+import SortByStatusDropdownComponent from '~src/ui-components/SortByStatusDropdown';
 
 interface Props {
 	className?: string;
@@ -113,6 +114,11 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 				<div className='flex'>
 					<FilterByTags className='xs:hidden sm:mr-5 sm:block' />
 					<SortByDropdownComponent
+						theme={theme}
+						sortBy={sortBy}
+						setSortBy={setSortBy}
+					/>
+					<SortByStatusDropdownComponent
 						theme={theme}
 						sortBy={sortBy}
 						setSortBy={setSortBy}

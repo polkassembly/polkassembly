@@ -19,7 +19,9 @@ import { chainProperties } from '~src/global/networkConstants';
 import SearchBar from '~src/ui-components/SearchBar';
 import TownHall from '~assets/icons/TownHall.svg';
 import Mail from '~assets/icons/mail.svg';
+import MailWhite from '~assets/icons/mailIconWhite.svg';
 import Arrow from '~assets/icons/arrow.svg';
+import ArrowWhite from '~assets/icons/arrow-white.svg';
 import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
 import PaLogoDark from '~assets/PALogoDark.svg';
@@ -345,11 +347,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						) : (
 							<AuthDropdown>
 								{!web3signup ? (
-									<div className='border-1px-solid-#d7dce3 flex items-center justify-between gap-x-2 rounded-3xl bg-[#f6f7f9] px-3  '>
-										<Mail />
+									<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
+										{theme === 'dark' ? <MailWhite /> : <Mail />}
 										<div className='flex items-center justify-between gap-x-1'>
-											<span className='w-[85%] truncate normal-case'>{displayName || username || ''}</span>
-											<Arrow />
+											<span className='w-[85%] truncate text-xs font-semibold normal-case'>{displayName || username || ''}</span>
+											{theme === 'dark' ? <ArrowWhite /> : <Arrow />}
 										</div>
 									</div>
 								) : (

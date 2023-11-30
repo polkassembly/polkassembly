@@ -28,6 +28,7 @@ import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
 import { dayjs } from 'dayjs-init';
+import RapidCreationConfirmation from './RapidCreationConfirmation';
 
 const ZERO_BN = new BN(0);
 
@@ -86,6 +87,7 @@ const CreateProposal = ({
 	const { id: userId } = useUserDetailsSelector();
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const currentUser = useUserDetailsSelector();
+	const [openRapidCreationModal, setOpenRapidCreationModal] = useState<boolean>(false);
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -160,24 +162,14 @@ const CreateProposal = ({
 		setLoading(false);
 	};
 
-	const handleSubmitTreasuryProposal = async () => {
-		const lastProposalCreatedAt = localStorage.getItem('lastTreasuryCreatedDateTime');
-
-		if (lastProposalCreatedAt) {
-			const proposalCreatedThresholdSeconds = process.env.NEXT_PUBLIC_TREASURY_PROPOSAL_THRESHOLD_SECONDS || 300;
-			const thresholdDate = dayjs().subtract(Number(proposalCreatedThresholdSeconds), 'seconds');
-
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const lastProposalCreatedAtDate = dayjs(lastProposalCreatedAt).isAfter(thresholdDate);
-
-			// TODO: show confirmation modal and then submit
-		}
+	const submitOnchainCall = async () => {
 		// GAEvent for create preImage CTA clicked
 		trackEvent('create_proposal_cta_clicked', 'created_proposal', {
 			isWeb3Login: currentUser?.web3signup,
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
+
 		if (!api || !apiReady) return;
 		const post_id = Number(await api.query.referenda.referendumCount());
 		const origin: any = { Origins: selectedTrack };
@@ -258,6 +250,24 @@ const CreateProposal = ({
 				message: error.message,
 				status: NotificationStatus.ERROR
 			});
+		}
+	};
+	const handleSubmitTreasuryProposal = async () => {
+		const lastProposalCreatedAt = localStorage.getItem('lastTreasuryCreatedDateTime');
+
+		if (lastProposalCreatedAt) {
+			const proposalCreatedThresholdSeconds = process.env.NEXT_PUBLIC_TREASURY_PROPOSAL_THRESHOLD_SECONDS || 300;
+			const thresholdDate = dayjs().subtract(Number(proposalCreatedThresholdSeconds), 'seconds');
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const lastProposalCreatedAtDate = dayjs(lastProposalCreatedAt).isAfter(thresholdDate);
+			if (lastProposalCreatedAtDate) {
+				setOpenRapidCreationModal(true);
+			} else {
+				await submitOnchainCall();
+			}
+		} else {
+			await submitOnchainCall();
 		}
 	};
 
@@ -408,6 +418,14 @@ const CreateProposal = ({
 					</Button>
 				</div>
 			</div>
+			<RapidCreationConfirmation
+				open={openRapidCreationModal}
+				setOpen={setOpenRapidCreationModal}
+				onConfirm={() => {
+					setOpenModal(true);
+					submitOnchainCall();
+				}}
+			/>
 		</Spin>
 	);
 };

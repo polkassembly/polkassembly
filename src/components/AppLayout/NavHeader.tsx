@@ -39,8 +39,11 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
-import PolkasafeWhiteIcon from '~assets/polkasafe-white-logo.svg';
+import PolkasafeWhiteIcon from '~assets/icons/polkasafe-white-logo.svg';
 import { trackEvent } from 'analytics';
+import StakeIcon from '~assets/stake-icon.svg';
+import DelegateIcon from '~assets/delegate-icon.svg';
+import { delegationSupportedNetworks } from '../DelegationDashboard';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -119,9 +122,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					href='https://townhallgov.com/'
 					target='_blank'
 					rel='noreferrer'
-					className='custom-link'
+					className='custom-link after:hidden'
 				>
-					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
 						<TownHall />
 						<span>TownHall</span>
 					</span>
@@ -136,23 +139,60 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					href='https://polkasafe.xyz/'
 					target='_blank'
 					rel='noreferrer'
-					className='custom-link'
+					className='custom-link after:hidden'
 				>
-					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
-						{theme === 'dark' ? <PolkasafeWhiteIcon className='relative left-[3px] top-[-1px] scale-[2]' /> : <PolkaSafe />}
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+						{theme === 'dark' ? <PolkasafeWhiteIcon /> : <PolkaSafe />}
 						<span>Polkasafe</span>
+					</span>
+				</a>
+			)
+		},
+		{
+			className: 'logo-class',
+			key: 'Staking',
+			label: (
+				<a
+					href='https://staking.polkadot.network/'
+					target='_blank'
+					rel='noreferrer'
+					className='custom-link after:hidden'
+				>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+						<StakeIcon />
+						<span>Staking</span>
 					</span>
 				</a>
 			)
 		}
 	];
 
+	if (delegationSupportedNetworks?.includes(network)) {
+		menudropDownItems.push({
+			className: 'logo-class',
+			key: 'Delegation',
+			label: (
+				<a
+					href={`https://${network}.polkassembly.io/delegation`}
+					target='_blank'
+					rel='noreferrer'
+					className='custom-link after:hidden'
+				>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+						<DelegateIcon />
+						<span>Delegation</span>
+					</span>
+				</a>
+			)
+		});
+	}
+
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -164,7 +204,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<IconSettings className='userdropdown-icon text-2xl' />
@@ -177,7 +217,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					href='/'
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -197,7 +237,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'set on-chain identity',
 			label: (
 				<Link
-					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
+					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
 					href={''}
 					onClick={(e) => {
 						e.stopPropagation();

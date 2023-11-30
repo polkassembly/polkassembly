@@ -12,9 +12,10 @@ interface SortByDropdownProps {
 	theme: string | undefined;
 	sortBy: any;
 	setSortBy: any;
+	isUsedInTrackListing?: boolean;
 }
 
-const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ theme, sortBy, setSortBy }) => {
+const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ theme, sortBy, setSortBy, isUsedInTrackListing }) => {
 	const router = useRouter();
 	const sortByOptions: ItemType[] = sortOptions;
 
@@ -39,7 +40,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ theme, sortBy,
 			overlayClassName='z-[1056]'
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-pink_primary hover:text-pink_primary'>
-				<span className='font-normal sm:mr-1 sm:mt-0.5'>Sort By</span>
+				<span className={`${isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100' : ''} text-xs font-normal sm:mr-1 sm:mt-0.5`}>Sort By</span>
 				<SwapOutlined
 					rotate={90}
 					style={{ fontSize: '14px', marginRight: '10px' }}

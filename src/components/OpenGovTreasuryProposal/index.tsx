@@ -374,7 +374,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 					setOpenModal(false);
 				}}
 				footer={false}
-				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[680px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[720px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
@@ -467,8 +467,9 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							selectedTrack={selectedTrack}
 							preimageHash={preimageHash}
 							preimageLength={preimageLength}
-							showIdentityInfoCard={isIdentityLoading ? false : showIdentityInfoCardForBeneficiary || showIdentityInfoCardForProposer}
+							showIdentityInfoCardForBeneficiary={isIdentityLoading ? false : showIdentityInfoCardForBeneficiary}
 							showMultisigInfoCard={isMultisigLoading ? false : showMultisigInfoCard}
+							showIdentityInfoCardForProposer={showIdentityInfoCardForProposer}
 							isDiscussionLinked={isDiscussionLinked}
 						/>
 					)}

@@ -78,8 +78,8 @@ interface Props {
 	setAvailableBalance: (pre: BN) => void;
 	isUpdatedAvailableBalance: boolean;
 	showIdentityInfoCardForBeneficiary: boolean;
-	showMultisigInfoCard: boolean;
 	showIdentityInfoCardForProposer: boolean;
+	showMultisigInfoCard: boolean;
 }
 
 interface IAdvancedDetails {

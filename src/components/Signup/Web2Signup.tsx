@@ -350,7 +350,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							showPolkasafe={canUsePolkasafe(network)}
 							onPolkasafeSelect={setWithPolkasafe}
 							isSigningUp={true}
-							isloginFlow={true}
+							isLoginFlow={true}
 						/>
 					</div>
 					{error && (

@@ -54,9 +54,18 @@
   --warningAlertBorderDark: #F89118;
   --warningAlertBgDark: #F8911833;
   --borderColor: #F8E3EE;
-  --greyColor: #3d3d3d;
+  --disabledGreyColor: #3d3d3d;
+  --yellowColor: #FFBF60;
+  --darkOrangeColor: #D05704;
+  --nayRedColor: #F53C3C;
+  --nayDarkRedColor: #A8071A;
+  --ayeGreenColor: #2ED47A;
+  --ayeDarkGreenColor: #478F37;
+  --abstainBlueColor: #407BFF;
+  --abstainDarkBlueColor: #3866CE;
   --lightGreyTextColor: #909090;
-  --lightWhite: #F6F7F9
+  --lightWhite: #F6F7F9;
+  --textGreyColor: #576D8B;
 }
 
 ::-webkit-scrollbar {

@@ -502,8 +502,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${
-						vote === EVoteDecisionType.AYE ? 'bg-[#2ED47A] text-white dark:bg-[#478F37]' : ''
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.AYE ? 'bg-ayeGreenColor text-white dark:bg-ayeDarkGreenColor' : ''
 					}`}
 				>
 					{vote === EVoteDecisionType.AYE ? (
@@ -521,8 +521,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${
-						vote === EVoteDecisionType.NAY ? 'bg-[#F53C3C] text-white dark:bg-[#A8071A]' : ''
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.NAY ? 'bg-nayRedColor text-white dark:bg-nayDarkRedColor' : ''
 					}`}
 				>
 					{vote === EVoteDecisionType.NAY ? (
@@ -545,8 +545,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
-								vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white dark:bg-[#D05704]' : ''
+							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
 							}`}
 						>
 							{' '}
@@ -559,8 +559,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				{
 					label: (
 						<div
-							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
-								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white dark:bg-[#3866CE]' : ''
+							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
 							<StopOutlined className={`mb-[3px] mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
@@ -599,13 +599,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										setShowMultisig(false);
 										setMultisig('');
 									}}
-									className='absolute left-[24px] -mt-1 cursor-pointer'
+									className='absolute left-6 -mt-1 cursor-pointer'
 								/>
 								<div className='flex items-center gap-[8px]'>
 									{theme === 'dark' ? (
 										<WalletIcon
 											which={Wallet.POLKASAFE}
-											className='ml-14 mt-[10px] h-6 w-6'
+											className='ml-14 mt-2.5 h-6 w-6'
 										/>
 									) : (
 										<PolkasafeIcon className='ml-14' />

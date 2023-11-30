@@ -165,7 +165,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								<Divider
 									className='mr-3'
 									type='vertical'
-									style={{ borderLeft: '1px solid #485F7D' }}
+									style={{ borderLeft: '1px solid var(--lightBlue)' }}
 								/>
 							)}
 							{tags?.slice(0, 3).map((tag, index) => (

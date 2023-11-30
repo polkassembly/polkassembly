@@ -20,10 +20,10 @@ interface Props {
 	selectedWallet?: Wallet;
 	isOptionalLogin?: boolean;
 	isSigningUp?: boolean;
-	isloginFlow?: boolean;
+	isLoginFlow?: boolean;
 }
 
-const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, noHeader = false, selectedWallet, isOptionalLogin, isSigningUp, isloginFlow }: Props) => {
+const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, noHeader = false, selectedWallet, isOptionalLogin, isSigningUp, isLoginFlow }: Props) => {
 	const { network } = useNetworkSelector();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
@@ -64,7 +64,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						}
 						isOptionalLogin={isOptionalLogin}
 						isAvailable={availableWallets[Wallet.POLKADOT]}
-						isloginFlow={isloginFlow}
+						isLoginFlow={isLoginFlow}
 						text='Polkadot.js'
 					/>
 					<WalletButton
@@ -81,7 +81,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						isOptionalLogin={isOptionalLogin}
 						isAvailable={availableWallets[Wallet.TALISMAN]}
 						text='Talisman'
-						isloginFlow={isloginFlow}
+						isLoginFlow={isLoginFlow}
 					/>
 					<WalletButton
 						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary' : ''}`}
@@ -97,7 +97,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						isAvailable={availableWallets[Wallet.SUBWALLET]}
 						isOptionalLogin={isOptionalLogin}
 						text='SubWallet'
-						isloginFlow={isloginFlow}
+						isLoginFlow={isLoginFlow}
 					/>
 				</div>
 				<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
@@ -115,7 +115,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						isAvailable={availableWallets[Wallet.POLKAGATE]}
 						isOptionalLogin={isOptionalLogin}
 						text='PolkaGate'
-						isloginFlow={isloginFlow}
+						isLoginFlow={isLoginFlow}
 					/>
 					{showPolkasafe && onPolkasafeSelect && (
 						<WalletButton
@@ -135,7 +135,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 							isAvailable={availableWallets[Wallet.POLKASAFE]}
 							isOptionalLogin={isOptionalLogin}
 							text='Polkasafe (Multisig)'
-							isloginFlow={isloginFlow}
+							isLoginFlow={isLoginFlow}
 						/>
 					)}
 					{(window as any).walletExtension?.isNovaWallet && (
@@ -153,7 +153,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 							isAvailable={availableWallets[Wallet.NOVAWALLET]}
 							isOptionalLogin={isOptionalLogin}
 							text='Nova Wallet'
-							isloginFlow={isloginFlow}
+							isLoginFlow={isLoginFlow}
 						/>
 					)}
 				</div>
@@ -174,7 +174,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 								isAvailable={isMetamaskWallet}
 								isOptionalLogin={isOptionalLogin}
 								text='MetaMask'
-								isloginFlow={isloginFlow}
+								isLoginFlow={isLoginFlow}
 							/>
 						) : null}
 						{['polymesh'].includes(network) ? (
@@ -192,7 +192,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 								isAvailable={availableWallets[Wallet.POLYWALLET]}
 								isOptionalLogin={isOptionalLogin}
 								text='PolyWallet'
-								isloginFlow={isloginFlow}
+								isLoginFlow={isLoginFlow}
 							/>
 						) : null}
 					</div>

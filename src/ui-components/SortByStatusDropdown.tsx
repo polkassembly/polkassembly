@@ -48,6 +48,7 @@ const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, 
 		case 'council_motions':
 			statusOptions = motionStatusOptions;
 			break;
+		// case isOpenGovSupported()
 		default:
 			statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
 			break;
@@ -57,7 +58,11 @@ const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, 
 	const handleSortByClick = ({ key }: { key: string }) => {
 		router.push({
 			pathname: '',
-			query: { ...router.query, status: key }
+			// query: { ...router.query, status: key }
+			query: {
+				...router.query,
+				statusTag: encodeURIComponent(JSON.stringify(key))
+			}
 		});
 		setSortBy(key);
 	};

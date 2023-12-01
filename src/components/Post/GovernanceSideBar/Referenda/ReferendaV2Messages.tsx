@@ -29,6 +29,19 @@ interface IReferendaV2Messages {
 interface IButtonProps extends PropsWithChildren {
 	className?: string;
 }
+const getDefaultTrackMetaData = () => {
+	return {
+		confirmPeriod: '',
+		decisionDeposit: '',
+		decisionPeriod: '',
+		description: '',
+		group: '',
+		maxDeciding: '',
+		minEnactmentPeriod: '',
+		preparePeriod: '',
+		trackId: 0
+	};
+};
 
 export const getDefaultPeriod = () => {
 	return {
@@ -75,6 +88,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const awardedStatusBlock = getStatusBlock(timeline || [], ['TreasuryProposal'], 'Awarded');
 	const isTreasuryProposalPresent = checkProposalPresent(timeline || [], 'TreasuryProposal');
+	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
+
+	useEffect(() => {
+		setTrackMetaData(getTrackData(network, track_name));
+	}, [network, track_name]);
 
 	const Button: FC<IButtonProps> = (props) => {
 		const { children, className } = props;
@@ -140,6 +158,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	};
 
 	const isDisbursalPeriodCardVisible = isTreasuryProposal ? (requested ? (isTreasuryProposalPresent ? (awardedStatusBlock ? false : true) : false) : false) : false;
+	const isPreparePeriodExpired = periodStartAt(prepare.period, prepare.periodPercent) / Number(prepare.period.split(' ')[0]) === 1;
 
 	return (
 		<>
@@ -176,6 +195,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</>
 					</p>
 					<ConfirmationAttemptsRow timeline={timeline || []} />
+					{isPreparePeriodExpired && (
+						<div className='mt-4 border-0 border-t-[1px] border-solid border-grey_border pt-3 text-xs leading-5 tracking-[0.015em] text-lightBlue dark:text-blue-dark-high'>
+							For the proposal to move into voting period, decision deposit needs to be placed or else it will be timed out in{' '}
+							{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))}.
+						</div>
+					)}
 				</GovSidebarCard>
 			)}
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (

@@ -21,8 +21,8 @@ import MotionsIcon from '~assets/icons/motions-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
-import SortByStatusDropdownComponent from '~src/ui-components/SortByStatusDropdown';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
+import FilterByStatus from '~src/ui-components/FilterByStatus';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -100,7 +100,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 						<FilteredTags />
 					</div>
 					<div className='mb-5 flex items-center gap-x-2 '>
-						<SortByStatusDropdownComponent />
+						<FilterByStatus />
 						<FilterByTags />
 						<SortByDropdownComponent
 							sortBy={sortBy}

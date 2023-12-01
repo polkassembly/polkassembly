@@ -23,8 +23,8 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
-import SortByStatusDropdownComponent from '~src/ui-components/SortByStatusDropdown';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
+import FilterByStatus from '~src/ui-components/FilterByStatus';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -104,7 +104,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 						<FilteredTags />
 					</div>
 					<div className='mb-5 flex items-center gap-x-2 '>
-						<SortByStatusDropdownComponent />
+						<FilterByStatus />
 						<FilterByTags />
 						<SortByDropdownComponent
 							sortBy={sortBy}

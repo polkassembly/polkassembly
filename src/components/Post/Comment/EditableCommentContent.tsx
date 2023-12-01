@@ -127,7 +127,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		let usernameContent = '';
 		if (!!onChainUsername && !!proposer) {
 			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
-		} else if (!onChainUsername && !!proposer && !(is_custom_username || MANUAL_USERNAME_25_CHAR.includes(username || '') || username?.length !== 25)) {
+		} else if (!onChainUsername && !!proposer && !(is_custom_username || MANUAL_USERNAME_25_CHAR.includes(userName || '') || userName?.length !== 25)) {
 			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;

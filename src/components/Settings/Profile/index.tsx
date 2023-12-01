@@ -238,7 +238,8 @@ const Profile = () => {
 					<div className='mb-4 flex items-start'>
 						<Alert
 							type='error'
-							message={err}
+							message={<span className='dark:text-blue-dark-high'>{err}</span>}
+							className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 						/>
 					</div>
 				)}

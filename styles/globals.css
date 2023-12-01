@@ -6,6 +6,7 @@
   --navBlue: #90a0b7;
   --sidebarBlue: #334d6e;
   --bodyBlue: #243a57;
+  --disableText: #798AA2;
   --lightBlue: #485f7d;
   --black_primary: #2e2f30;
   --blue_primary: #4d9999;
@@ -46,6 +47,25 @@
   --disableStateDark: #1D1D1D;
   --helperTextColorDark: #595959;
   --borderColorDark: #3B444F;
+  --infoAlertBorderDark: #91CAFF;
+  --infoAlertBgDark: #91CAFF33;
+  --errorAlertBorderDark: #FF3C5F;
+  --errorAlertBgDark: #FF3C5F33;
+  --warningAlertBorderDark: #F89118;
+  --warningAlertBgDark: #F8911833;
+  --borderColor: #F8E3EE;
+  --disabledGreyColor: #3d3d3d;
+  --yellowColor: #FFBF60;
+  --darkOrangeColor: #D05704;
+  --nayRedColor: #F53C3C;
+  --nayDarkRedColor: #A8071A;
+  --ayeGreenColor: #2ED47A;
+  --ayeDarkGreenColor: #478F37;
+  --abstainBlueColor: #407BFF;
+  --abstainDarkBlueColor: #3866CE;
+  --lightGreyTextColor: #909090;
+  --lightWhite: #F6F7F9;
+  --textGreyColor: #576D8B;
 }
 
 ::-webkit-scrollbar {
@@ -773,6 +793,10 @@ z-index: 1050 !important;
   background-color: transparent !important;
 }
 
+/* .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
+  text-shadow: none !important;
+} */
+ 
 .ant-modal .ant-modal-header {
   background: transparent !important;
 }

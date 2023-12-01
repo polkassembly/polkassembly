@@ -671,7 +671,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const handleMenuClick = (menuItem: any) => {
 		if (['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
-		setSidedrawer(false);
+		{
+			isMobile && setSidedrawer(false);
+		}
 	};
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -776,9 +778,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						left: 0
 					}}
 					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
-					footer={<BigToggleButton />}
+					// footer={<BigToggleButton />}
 				>
-					<div className='flex h-full flex-col justify-between'>
+					<div
+						className='flex h-full flex-col justify-between'
+						onMouseLeave={() => setSidedrawer(false)}
+					>
 						<Menu
 							theme={theme}
 							mode='inline'
@@ -787,8 +792,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							items={sidebarItems}
 							onClick={handleMenuClick}
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
-							onMouseLeave={() => setSidedrawer(false)}
 						/>
+						<BigToggleButton />
 					</div>
 				</Drawer>
 				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (

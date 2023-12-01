@@ -127,7 +127,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 
 	return (
 		<div className={`${className} flex w-[100%] justify-between bg-none`}>
-			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+			<div className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
 						{inPostHeading && <span className='mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
@@ -140,7 +140,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						/>
 						{text}&nbsp;
 						{topic && (
-							<div className='flex items-center sm:-mt-0.5'>
+							<div className='topic-container ml-1 flex items-center sm:-mt-0.5'>
 								<span className='mr-2 mt-0.5 text-lightBlue dark:text-blue-dark-medium'>in</span>{' '}
 								<TopicTag
 									topic={topic}
@@ -177,7 +177,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className='flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1'>
+				<div className={`details-container ${inPostHeading ? 'mt-2' : ''} flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1`}>
 					{!inPostHeading && (
 						<div>
 							{(topic || text || created_at) && (
@@ -193,7 +193,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					)}
 					{created_at && (
 						<span className={`${inPostHeading ? '' : 'mr-1'} flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
-							<ClockCircleOutlined className='ml-1 mr-1' />
+							<ClockCircleOutlined className={`${inPostHeading ? '' : 'ml-1'} mr-1`} />
 							{relativeCreatedAt}
 						</span>
 					)}
@@ -357,6 +357,18 @@ export default styled(CreationLabel)`
 
 		.power-value {
 			left: 178px !important;
+		}
+	}
+
+	@media (max-width: 468px) and (min-width: 319px) {
+		.topic-container {
+			margin-top: 8px;
+		}
+	}
+
+	@media (max-width: 768px) and (min-width: 319px) {
+		.details-container {
+			margin-top: -4px !important;
 		}
 	}
 `;

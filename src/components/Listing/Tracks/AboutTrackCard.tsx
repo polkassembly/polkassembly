@@ -251,12 +251,22 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<div className='text-container flex gap-x-2 px-4 font-normal leading-6 text-bodyBlue dark:text-blue-dark-high xs:mt-2 md:mt-0'>
 					<p className='m-0 p-0 text-sm'>
 						{trackMetaData?.description}
-						<span
-							className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
-							onClick={() => setShowDetails(!showDetails)}
-						>
-							{showDetails ? 'Hide' : 'Show'} Track details
-						</span>
+						{showDetails && (
+							<span
+								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+								onClick={() => setShowDetails(false)}
+							>
+								Hide Track details
+							</span>
+						)}
+						{!showDetails && (
+							<span
+								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
+								onClick={() => setShowDetails(true)}
+							>
+								ShowTrack details
+							</span>
+						)}
 					</p>
 				</div>
 

@@ -62,7 +62,9 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 			)}
 			<span
 				className={`flex items-center gap-1 rounded-lg border-[1px] border-solid px-2 py-1 text-xs text-lightBlue dark:text-[#909090] ${
-					!isMultisigProposer ? 'border-[#91CAFF] bg-[#E6F4FF] dark:border-[#125798] dark:bg-[#05263F] ' : 'border-[#531FE4] bg-[#EEE9FC] dark:border-[#531FE4] dark:bg-[#281856]'
+					!isMultisigProposer
+						? 'border-infoAlertBorderDark bg-[#E6F4FF] dark:border-[#125798] dark:bg-[#05263F] '
+						: 'border-[#531FE4] bg-[#EEE9FC] dark:border-[#531FE4] dark:bg-[#281856]'
 				}`}
 			>
 				{isMultisigProposer ? (

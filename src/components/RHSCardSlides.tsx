@@ -6,6 +6,7 @@ import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import NavigateNextIcon from '~assets/icons/navigate-next.svg';
 import NavigatePrevIcon from '~assets/icons/navigate-prev.svg';
+import CloseCardIcon from '~assets/icons/rhs-card-icons/close-card.svg';
 import { usePostDataContext } from '~src/context';
 import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import { Skeleton } from 'antd';
@@ -25,44 +26,11 @@ enum cardTags {
 	ADD_TAGS = 'add-tags'
 }
 
-type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | undefined; setGraphicOpen: (state: boolean) => void; graphicOpen: boolean };
-const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen, toggleEdit, graphicOpen }: props) => {
-	const cardsData: card[] = [
-		{
-			//{
-			// description: 'Deadlines increase accountability and improve likelihood of success.',
-			// icon: '/assets/icons/rhs-card-icons/Calendar.png',
-			// tag: cardTags.ADD_DEADLINE,
-			// title: 'Add Deadline'
-			//},
-			clickHandler: () => setOpenLinkCta(true),
-			description: 'Please add contextual info for voters to make an informed decision',
-			icon: '/assets/icons/rhs-card-icons/Doc.png',
-			tag: cardTags.LINK_DISCUSSION,
-			title: 'Link Discussion'
-		},
-		{
-			clickHandler: () => setOpenDecisionDeposit(true),
-			description: 'To be paid before completion of decision period; payable by anyone',
-			icon: '/assets/icons/rhs-card-icons/Crystal.png',
-			tag: cardTags.DECISION_DEPOSIT,
-			title: 'Decision Deposit'
-		},
-		{
-			clickHandler: () => {
-				toggleEdit && toggleEdit();
-				setGraphicOpen(false);
-			},
-			description: 'Please include relevant tags to enhance post discoverability.',
-			icon: '/assets/icons/rhs-card-icons/Plus.png',
-			tag: cardTags.ADD_TAGS,
-			title: 'Add Tags'
-		}
-	];
-
+type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | undefined };
+const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isReversed, setIsReversed] = useState(false);
-	const [RHSCards, setRHSCards] = useState<card[]>(cardsData);
+	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
 	const [openLinkCta, setOpenLinkCta] = useState(false);
 
@@ -83,25 +51,62 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen
 		});
 	};
 
+	const closeCardSlides = () => {
+		setRHSCards([]);
+	};
+
 	useEffect(() => {
-		if (!(canEdit && graphicOpen && post_link && !(tags && Array.isArray(tags) && tags.length > 0))) {
+		if (canEdit && !(tags && Array.isArray(tags) && tags.length > 0)) {
 			setRHSCards((prevCards) => {
-				return prevCards.filter((card) => card.tag !== cardTags.ADD_TAGS);
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => {
+						toggleEdit && toggleEdit();
+					},
+					description: 'Please include relevant tags to enhance post discoverability.',
+					icon: '/assets/icons/rhs-card-icons/Plus.png',
+					tag: cardTags.ADD_TAGS,
+					title: 'Add Tags'
+				});
+
+				return newCards;
 			});
 		}
 
-		if (!(!post_link && canEdit)) {
+		if (!post_link && canEdit) {
 			setRHSCards((prevCards) => {
-				return prevCards.filter((card) => card.tag !== cardTags.LINK_DISCUSSION);
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => setOpenLinkCta(true),
+					description: 'Please add contextual info for voters to make an informed decision',
+					icon: '/assets/icons/rhs-card-icons/Doc.png',
+					tag: cardTags.LINK_DISCUSSION,
+					title: 'Link Discussion'
+				});
+
+				return newCards;
 			});
 		}
 
-		if (!showDecisionDeposit) {
+		if (showDecisionDeposit) {
 			setRHSCards((prevCards) => {
-				return prevCards.filter((card) => card.tag !== cardTags.DECISION_DEPOSIT);
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => setOpenDecisionDeposit(true),
+					description: 'To be paid before completion of decision period; payable by anyone',
+					icon: '/assets/icons/rhs-card-icons/Crystal.png',
+					tag: cardTags.DECISION_DEPOSIT,
+					title: 'Decision Deposit'
+				});
+
+				return newCards;
 			});
 		}
-	}, [canEdit, post_link, showDecisionDeposit, tags, graphicOpen]);
+
+		return () => {
+			setRHSCards([]);
+		};
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit]);
 
 	useEffect(() => {
 		if (RHSCards.length <= 1) {
@@ -122,7 +127,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen
 		}
 	};
 
-	if (!RHSCards.length) return null;
+	if (!RHSCards || RHSCards.length === 0) return null;
 
 	return (
 		<>
@@ -140,9 +145,15 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, setGraphicOpen
 					<div className='absolute right-0 top-0 aspect-square w-16 rounded-bl-[50%] bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
 						<div
 							className='navigation-btn absolute inset-2 z-10 flex items-center justify-center rounded-full bg-white shadow-md dark:bg-section-dark-overlay'
-							onClick={handleTransitionButtonClick}
+							onClick={RHSCards.length === 1 ? closeCardSlides : handleTransitionButtonClick}
 						>
-							{!isReversed ? <NavigateNextIcon className='fill-current text-black dark:text-white' /> : <NavigatePrevIcon className='fill-current text-black dark:text-white' />}
+							{RHSCards.length === 1 ? (
+								<CloseCardIcon className='fill-current text-black dark:text-white' />
+							) : !isReversed ? (
+								<NavigateNextIcon className='fill-current text-black dark:text-white' />
+							) : (
+								<NavigatePrevIcon className='fill-current text-black dark:text-white' />
+							)}
 						</div>
 					</div>
 					<div className='card-slide h-3/4'>

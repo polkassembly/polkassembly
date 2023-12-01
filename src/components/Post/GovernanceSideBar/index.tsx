@@ -150,7 +150,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [accountsMap, setAccountsMap] = useState<{ [key: string]: string }>({});
 	const [signersMap, setSignersMap] = useState<{ [key: string]: Signer }>({});
 	const [open, setOpen] = useState(false);
-	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [curvesError, setCurvesError] = useState('');
 	const [data, setData] = useState<any>({
@@ -939,8 +938,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							canEdit={canEdit}
 							trackName={String(trackName)}
 							toggleEdit={toggleEdit}
-							graphicOpen={graphicOpen}
-							setGraphicOpen={setGraphicOpen}
 						/>
 						{accountsNotFound || extensionNotFound ? (
 							<GovSidebarCard>

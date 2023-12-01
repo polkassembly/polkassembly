@@ -14,11 +14,12 @@ import { useTheme } from 'next-themes';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;
-	sortBy: any;
-	setSortBy: any;
+	sortBy?: any;
+	setSortBy?: any;
+	setStatusItem?: any;
 }
 
-const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSortBy }) => {
+const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSortBy, setStatusItem }) => {
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
@@ -58,12 +59,12 @@ const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, 
 	const handleSortByClick = ({ key }: { key: string }) => {
 		router.push({
 			pathname: '',
-			// query: { ...router.query, status: key }
 			query: {
 				...router.query,
-				statusTag: encodeURIComponent(JSON.stringify(key))
+				proposalStatus: encodeURIComponent(JSON.stringify(key))
 			}
 		});
+		setStatusItem(key);
 		setSortBy(key);
 	};
 

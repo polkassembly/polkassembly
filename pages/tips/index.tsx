@@ -31,13 +31,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, proposalStatus } = query;
 	const proposalType = ProposalType.TIPS;
 	const { data, error } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
+		proposalStatus: proposalStatus && JSON.parse(decodeURIComponent(String(proposalStatus))),
 		proposalType,
 		sortBy
 	});

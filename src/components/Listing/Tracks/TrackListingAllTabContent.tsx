@@ -18,6 +18,7 @@ interface ITrackListingAllTabContentProps {
 	error?: any;
 	count?: number;
 	showSimilarPost?: boolean;
+	statusItem?: string;
 }
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
@@ -27,7 +28,7 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { className, posts, error, count, showSimilarPost } = props;
+	const { className, posts, error, count, showSimilarPost, statusItem } = props;
 
 	const noPosts = count === 0 || isNaN(Number(count));
 
@@ -45,7 +46,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 		return (
 			<>
 				<div className='sm:mx-3'>
-					<FilteredTags />
+					<FilteredTags statusItem={statusItem} />
 				</div>
 				<div className={`${className} proposals__list`}>
 					{posts.map((post, index) => {

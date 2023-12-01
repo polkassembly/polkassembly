@@ -115,7 +115,7 @@ interface IGetOnChainPostsParams {
 	proposalType?: string | string[];
 	postIds?: string | string[] | number[];
 	filterBy?: string[] | [];
-	statusTag?: string | string[];
+	proposalStatus?: string | string[];
 }
 
 export function getProposerAddressFromFirestorePostData(data: any, network: string) {
@@ -142,8 +142,7 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
-		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy, statusTag } = params;
-		console.log(decodeURIComponent(String(statusTag)));
+		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy, proposalStatus } = params;
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
@@ -164,6 +163,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
 
+		// yeh wala if condition...
 		if (filterBy && Array.isArray(filterBy) && filterBy.length > 0) {
 			const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 			let order: 'desc' | 'asc' = sortBy === sortValues.NEWEST ? 'desc' : 'asc';
@@ -245,6 +245,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
+			// condition yaha h
+			// if (proposalStatus) {
+			// postsVariables.status_in = [proposalStatus];
+			// }
 			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
@@ -444,11 +448,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				type_in: subsquidProposalType
 			};
 
-			if (proposalType === ProposalType.OPEN_GOV) {
+			if (proposalType === ProposalType.OPEN_GOV || !!proposalStatus) {
 				strProposalType = 'referendums_v2';
 				postsVariables.trackNumber_in = numTrackNo;
 				if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
 					postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+				}
+				if (proposalStatus) {
+					postsVariables.status_in = [proposalStatus];
 				}
 			} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
 				if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {

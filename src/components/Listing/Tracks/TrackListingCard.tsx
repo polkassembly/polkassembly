@@ -37,6 +37,7 @@ export enum CustomStatus {
 const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
+	const [statusItem, setStatusItem] = useState();
 
 	const items = [
 		{
@@ -52,6 +53,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 					posts={posts?.all?.data?.posts || []}
 					error={posts?.all?.error}
 					count={posts?.all?.data?.count || 0}
+					statusItem={statusItem}
 				/>
 			)
 		},
@@ -112,10 +114,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		{
 			label: (
 				<div className='mt-1 flex items-center gap-x-2 '>
-					<SortByStatusDropdownComponent
-						sortBy={sortBy}
-						setSortBy={setSortBy}
-					/>
+					<SortByStatusDropdownComponent setStatusItem={setStatusItem} />
 					<FilterByTags />
 					<SortByDropdownComponent
 						sortBy={sortBy}
@@ -129,6 +128,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		}
 	];
 	const router = useRouter();
+	console.log('item -->', statusItem);
 
 	const trackStatus = router.query['trackStatus'];
 
@@ -164,10 +164,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		<div className={`${className} rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
 			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:px-4 xs:pt-2 sm:hidden'>
 				<div className='mt-1 flex items-center gap-x-1 xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden'>
-					<SortByStatusDropdownComponent
-						sortBy={sortBy}
-						setSortBy={setSortBy}
-					/>
+					<SortByStatusDropdownComponent />
 					<FilterByTags />
 					<SortByDropdownComponent
 						sortBy={sortBy}

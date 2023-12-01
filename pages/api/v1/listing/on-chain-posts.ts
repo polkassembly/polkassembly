@@ -245,10 +245,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
-			// condition yaha h
-			// if (proposalStatus) {
-			// postsVariables.status_in = [proposalStatus];
-			// }
+			if (proposalStatus) {
+				postsVariables.status_eq = proposalStatus;
+			}
 			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;

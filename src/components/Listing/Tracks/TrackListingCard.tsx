@@ -19,7 +19,7 @@ import { Tabs } from '~src/ui-components/Tabs';
 import { Pagination } from '~src/ui-components/Pagination';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import { sortValues } from '~src/global/sortOptions';
-import SortByStatusDropdownComponent from '~src/ui-components/SortByStatusDropdown';
+import FilterByStatus from '~src/ui-components/FilterByStatus';
 
 interface Props {
 	className?: string;
@@ -114,7 +114,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		{
 			label: (
 				<div className='mt-1 flex items-center gap-x-2 '>
-					<SortByStatusDropdownComponent setStatusItem={setStatusItem} />
+					<FilterByStatus setStatusItem={setStatusItem} />
 					<FilterByTags />
 					<SortByDropdownComponent
 						sortBy={sortBy}
@@ -163,7 +163,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		<div className={`${className} rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
 			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:pt-2 sm:hidden'>
 				<div className='mt-1 flex items-center gap-x-1 xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden'>
-					<SortByStatusDropdownComponent setStatusItem={setStatusItem} />
+					<FilterByStatus setStatusItem={setStatusItem} />
 					<FilterByTags />
 					<SortByDropdownComponent
 						sortBy={sortBy}

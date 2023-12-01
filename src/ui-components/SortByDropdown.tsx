@@ -44,6 +44,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-pink_primary hover:text-pink_primary'>
 				<span className={`${isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100' : ''} text-xs font-normal sm:mr-1 sm:mt-0.5`}>Sort By</span>
 				<SwapOutlined
+					className={`${isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6]' : ''}`}
 					rotate={90}
 					style={{ fontSize: '14px', marginRight: '10px' }}
 				/>

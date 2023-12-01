@@ -110,6 +110,8 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchInput, tags]);
 
+	console.log(tags);
+
 	useEffect(() => {
 		if (searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0) {
 			setDisplayTags(trendingTags.slice(0, 5).map((tag) => tag?.name));

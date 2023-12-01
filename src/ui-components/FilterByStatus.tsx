@@ -17,7 +17,7 @@ interface SortByDropdownProps {
 	setStatusItem?: any;
 }
 
-const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
+const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
@@ -52,6 +52,7 @@ const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ setStatu
 			statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
 			break;
 	}
+	console.log(statusOptions);
 
 	const sortByOptions: ItemType[] = statusOptions;
 	const handleSortByClick = ({ key }: { key: string }) => {
@@ -84,4 +85,4 @@ const SortByStatusDropdownComponent: React.FC<SortByDropdownProps> = ({ setStatu
 	);
 };
 
-export default SortByStatusDropdownComponent;
+export default FilterByStatus;

@@ -52,7 +52,6 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
 			break;
 	}
-	console.log(statusOptions);
 
 	const sortByOptions: ItemType[] = statusOptions;
 	const handleSortByClick = ({ key }: { key: string }) => {

@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus, proposalStatus } = query;
 	if (!trackStatus && !filterBy) {
 		return {
 			props: {},
@@ -68,6 +68,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
+				proposalStatus: proposalStatus && JSON.parse(decodeURIComponent(String(proposalStatus))),
 				proposalType,
 				sortBy,
 				trackNo: trackId,

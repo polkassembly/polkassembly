@@ -598,6 +598,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			'tracksHeading',
 			null
 		),
+		getSiderMenuItem('All', '/all-posts', <OverviewIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.governanceItems

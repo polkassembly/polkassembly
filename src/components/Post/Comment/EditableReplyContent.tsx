@@ -89,8 +89,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 	useEffect(() => {
 		let usernameContent = '';
 		if (!!onChainUsername && !!proposer) {
-			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
-		} else if (!onChainUsername && proposer && !(is_custom_username || MANUAL_USERNAME_25_CHAR.includes(username || '') || username?.length !== 25)) {
+			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/${getEncodedAddress(proposer, network)})`;
+		} else if (!onChainUsername && !!proposer && !(is_custom_username || MANUAL_USERNAME_25_CHAR.includes(username || '') || username?.length !== 25)) {
 			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;

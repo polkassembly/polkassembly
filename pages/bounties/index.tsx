@@ -104,10 +104,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 						<FilteredTags />
 					</div>
 					<div className='mb-5 flex items-center gap-x-2 '>
-						<SortByStatusDropdownComponent
-							sortBy={sortBy}
-							setSortBy={setSortBy}
-						/>
+						<SortByStatusDropdownComponent />
 						<FilterByTags />
 						<SortByDropdownComponent
 							sortBy={sortBy}

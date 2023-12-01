@@ -115,6 +115,7 @@ interface IGetOnChainPostsParams {
 	proposalType?: string | string[];
 	postIds?: string | string[] | number[];
 	filterBy?: string[] | [];
+	statusTag?: string | string[];
 }
 
 export function getProposerAddressFromFirestorePostData(data: any, network: string) {
@@ -141,7 +142,8 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
-		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy } = params;
+		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy, statusTag } = params;
+		console.log(decodeURIComponent(String(statusTag)));
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
@@ -964,8 +966,8 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
-	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
-
+	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy, statusTag } = req.query;
+	console.log(decodeURIComponent(String(statusTag)));
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;

@@ -29,7 +29,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-				setOpen(!open);
+				setOpen((prev) => !prev);
 			}
 		};
 		document.addEventListener('keydown', handleKeyDown);

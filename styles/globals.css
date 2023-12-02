@@ -800,3 +800,9 @@ z-index: 1050 !important;
   width: 126px !important;
   min-width: 0px !important;
 }
+
+.clear-filter-option {
+  font-size: 12px !important;
+  color: #e5007a;
+  text-align: left;
+}

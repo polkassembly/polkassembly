@@ -18,8 +18,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { GenerateDiffHtml, removeNbsp } from '~src/util/htmlDiff';
-import striptags from 'striptags';
+import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -75,8 +74,8 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {
 		const currentComment = item && item.content;
 		const previousComment = index < historyData.length - 1 ? historyData[index + 1]?.content : null;
-		const previousCommentString = previousComment ? removeNbsp(striptags(String(previousComment)).replace(/\s+/g, ' ').replace(/###/g, '').replace(/\*\*/g, '').trim()) : '';
-		const currentCommentString = removeNbsp(striptags(String(currentComment)).replace(/\s+/g, ' ').replace(/###/g, '').replace(/\*\*/g, '').trim());
+		const previousCommentString = previousComment ? removeSymbols(previousComment) : '';
+		const currentCommentString = removeSymbols(currentComment);
 		const difference = previousComment ? GenerateDiffHtml(previousCommentString, currentCommentString) : currentComment;
 
 		return {

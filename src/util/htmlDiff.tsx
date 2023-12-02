@@ -4,9 +4,11 @@
 
 import { diffWords } from 'diff';
 import { useTheme } from 'next-themes';
+import striptags from 'striptags';
+import removeMd from 'remove-markdown';
 
-export function removeNbsp(input: string) {
-	return input.replace(/&nbsp;/g, ' ');
+export function removeSymbols(input: string) {
+	return removeMd(striptags(String(input)));
 }
 
 export function GenerateDiffHtml(originalHtml: string, modifiedHtml: string) {
@@ -23,6 +25,5 @@ export function GenerateDiffHtml(originalHtml: string, modifiedHtml: string) {
 			diffHtml += part.value;
 		}
 	});
-
 	return diffHtml;
 }

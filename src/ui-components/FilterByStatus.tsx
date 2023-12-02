@@ -13,6 +13,7 @@ import DropdownPinkIcon from '~assets/icons/dropdown-pink.svg';
 import { getProposalTypeFromSinglePostLink } from '~src/global/proposalType';
 import { useTheme } from 'next-themes';
 import { Divider } from 'antd';
+import styled from 'styled-components';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;
@@ -85,7 +86,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 					proposalStatus: encodeURIComponent(JSON.stringify(key))
 				}
 			});
-			setStatusItem(key);
+			setStatusItem?.(key);
 			setSelectedStatus(key);
 		}
 	};
@@ -109,4 +110,8 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	);
 };
 
-export default FilterByStatus;
+export default styled(FilterByStatus)`
+	.ant-dropdown {
+		width: 200px !important;
+	}
+`;

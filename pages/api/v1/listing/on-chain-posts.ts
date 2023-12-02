@@ -163,7 +163,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
 
-		// yeh wala if condition...
 		if (filterBy && Array.isArray(filterBy) && filterBy.length > 0) {
 			const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 			let order: 'desc' | 'asc' = sortBy === sortValues.NEWEST ? 'desc' : 'asc';
@@ -257,7 +256,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				query,
 				variables: postsVariables
 			});
-
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals;
 
@@ -449,9 +447,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			if (proposalType === ProposalType.OPEN_GOV || !!proposalStatus) {
 				strProposalType = 'referendums_v2';
-				postsVariables.trackNumber_in = numTrackNo;
-				if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
-					postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+				if (proposalType == ProposalType.OPEN_GOV) {
+					postsVariables.trackNumber_in = numTrackNo;
+					if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
+						postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+					}
 				}
 				if (proposalStatus) {
 					postsVariables.status_in = [proposalStatus];

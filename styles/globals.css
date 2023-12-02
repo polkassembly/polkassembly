@@ -800,3 +800,7 @@ z-index: 1050 !important;
   width: 126px !important;
   min-width: 0px !important;
 }
+
+.ant-timeline-item-head.ant-timeline-item-head-custom.ant-timeline-item-head-blue{
+  border-radius: 100%;
+}

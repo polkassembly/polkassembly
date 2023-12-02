@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { MenuProps, Modal, Timeline, TimelineItemProps } from 'antd';
-import { Dropdown } from '~src/ui-components/Dropdown';
+import { Modal, Timeline, TimelineItemProps, Tooltip } from 'antd';
 import { ESentiment, ICommentHistory } from '~src/types';
 import styled from 'styled-components';
 import NameLabel from './NameLabel';
@@ -19,6 +18,8 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
+import { generateDiffHtml, removeNbsp } from '~src/util/htmlDiff';
+import striptags from 'striptags';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -72,14 +73,11 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 	};
 	const { resolvedTheme: theme } = useTheme();
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {
-		// const difference = historyData[index + 1] ? diffChars(historyData[index + 1]?.content, item?.content) : [];
-
-		const items: MenuProps['items'] = [
-			{
-				key: 1,
-				label: getSentimentLabel(item?.sentiment) || null
-			}
-		];
+		const currentComment = item && item.content;
+		const previousComment = index < historyData.length - 1 ? historyData[index + 1]?.content : null;
+		const previousCommentString = previousComment ? removeNbsp(striptags(String(previousComment)).replace(/\s+/g, ' ').replace(/###/g, '').replace(/\*\*/g, '').trim()) : '';
+		const currentCommentString = removeNbsp(striptags(String(currentComment)).replace(/\s+/g, ' ').replace(/###/g, '').replace(/\*\*/g, '').trim());
+		const difference = previousComment ? generateDiffHtml(previousCommentString, currentCommentString) : currentComment;
 
 		return {
 			children: (
@@ -104,15 +102,13 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 								</div>
 							</div>
 						</div>
-						<Dropdown
-							overlayClassName='sentiment-hover z-[1056]'
-							placement='topCenter'
-							menu={{ items }}
-							className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
-							theme={theme}
+						<Tooltip
+							placement='top'
+							title={getSentimentLabel(item?.sentiment)}
+							className={'text-lg min-[320px]:mr-2'}
 						>
 							<>{getSentimentIcon(item.sentiment as ESentiment, theme || '')}</>
-						</Dropdown>
+						</Tooltip>
 					</div>
 					<div className={`mt-2 px-[2px] text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${poppins.className} ${poppins.variable} pr-2 leading-6`}>
 						{/* {historyData[index + 1] ? (
@@ -132,7 +128,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 						) : ( */}
 						<Markdown
 							className='text-sm'
-							md={!item?.expanded && item?.content.length > 100 ? `${item?.content.slice(0, 100)}...` : item?.content}
+							md={!item?.expanded && item?.content.length > 100 ? `${difference.slice(0, 100)}...` : difference}
 						/>
 					</div>
 					{item?.content.length > 100 && (
@@ -188,6 +184,24 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 	);
 };
 export default styled(CommentHistoryModal)`
+	.added {
+		background-color: var(--ayeGreenColor);
+		margin-right: 1.5px;
+	}
+
+	.removed {
+		background-color: var(--nayRedColor);
+		text-decoration: line-through;
+	}
+	.added-dark {
+		background-color: var(--ayeDarkGreenColor);
+		margin-right: 1.5px;
+	}
+
+	.removed-dark {
+		background-color: var(--nayDarkRedColor);
+		text-decoration: line-through;
+	}
 	.closeIcon .ant-modal-close-x {
 		margin-top: 4px;
 	}

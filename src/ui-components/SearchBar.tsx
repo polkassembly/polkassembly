@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { SearchOutlined } from '@ant-design/icons';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ClientOnly, { Search } from './ClientOnly';
 import NewSearch from 'src/components/Search';
@@ -25,6 +25,18 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+				setOpen(!open);
+			}
+		};
+		document.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [open]);
 
 	return allowedNetwork.includes(network?.toUpperCase()) ? (
 		<div className={className}>

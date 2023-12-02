@@ -111,7 +111,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 							className='flex items-center  justify-center text-lg text-white  min-[320px]:mr-2'
 							theme={theme}
 						>
-							{getSentimentIcon(item.sentiment as ESentiment, theme || '')}
+							<>{getSentimentIcon(item.sentiment as ESentiment, theme || '')}</>
 						</Dropdown>
 					</div>
 					<div className={`mt-2 px-[2px] text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${poppins.className} ${poppins.variable} pr-2 leading-6`}>

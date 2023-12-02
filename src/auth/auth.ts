@@ -853,6 +853,18 @@ class AuthService {
 		await redisDel(key);
 	}
 
+	public async ResetPasswordFromAuth(token: string, newPassword: string): Promise<string> {
+		const userId = getUserIdFromJWT(token, jwtPublicKey);
+		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);
+
+		await firebaseAdmin.firestore().collection('users').doc(String(userId)).update({
+			password,
+			salt
+		});
+		const user = await getUserFromUserId(userId);
+		return this.getSignedToken(user);
+	}
+
 	public async UndoEmailChange(token: string): Promise<{ email: string; updatedToken: string }> {
 		const firestore = firebaseAdmin.firestore();
 

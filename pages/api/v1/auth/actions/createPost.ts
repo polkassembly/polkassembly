@@ -16,6 +16,7 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostTag, Post } from '~src/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
@@ -24,7 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, proposalType, title, topicId, userId, gov_type, tags } = req.body;
+	const { content, proposalType, title, topicId, userId, gov_type, tags, inductee_address } = req.body;
 	if (!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (typeof content !== 'string' || typeof title !== 'string' || isContentBlacklisted(title) || isContentBlacklisted(content)) {
@@ -32,6 +33,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	}
 
 	if (tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
+
+	const substrate_inductee_address = getSubstrateAddress(inductee_address);
+
+	if (inductee_address && !substrate_inductee_address) return res.status(400).json({ message: 'Invalid inductee_address parameter' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type "${proposalType}" is invalid.` });
@@ -60,6 +65,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		gov_type: gov_type,
 		history: [],
 		id: newID,
+		inductee_address: substrate_inductee_address || '',
 		isDeleted: false,
 		last_comment_at,
 		last_edited_at: last_comment_at,

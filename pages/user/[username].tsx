@@ -180,6 +180,19 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		};
 	});
 
+	const sortedTabItems = tabItems.sort((a, b) => {
+		const countA = a ? a.label.props.count : 0;
+		const countB = b ? b.label.props.count : 0;
+
+		// Tabs with count > 1 appear first
+		if (countA > 1 && countB <= 1) {
+			return -1;
+		} else if (countB > 1 && countA <= 1) {
+			return 1;
+		}
+		return 0;
+	});
+
 	return (
 		<>
 			<SEOHead
@@ -247,7 +260,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 								theme={theme}
 								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue dark:bg-section-dark-overlay'
 								type='card'
-								items={tabItems as any}
+								items={sortedTabItems as any}
 							/>
 						</div>
 					)}

@@ -19,7 +19,9 @@ import { chainProperties } from '~src/global/networkConstants';
 import SearchBar from '~src/ui-components/SearchBar';
 import TownHall from '~assets/icons/TownHall.svg';
 import Mail from '~assets/icons/mail.svg';
+import MailWhite from '~assets/icons/mailIconWhite.svg';
 import Arrow from '~assets/icons/arrow.svg';
+import ArrowWhite from '~assets/icons/arrow-white.svg';
 import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
 import PaLogoDark from '~assets/PALogoDark.svg';
@@ -37,8 +39,11 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useDispatch } from 'react-redux';
 import { logout, setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
-import PolkasafeWhiteIcon from '~assets/polkasafe-white-logo.svg';
+import PolkasafeWhiteIcon from '~assets/icons/polkasafe-white-logo.svg';
 import { trackEvent } from 'analytics';
+import StakeIcon from '~assets/stake-icon.svg';
+import DelegateIcon from '~assets/delegate-icon.svg';
+import { delegationSupportedNetworks } from '../DelegationDashboard';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -117,9 +122,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					href='https://townhallgov.com/'
 					target='_blank'
 					rel='noreferrer'
-					className='custom-link'
+					className='custom-link after:hidden'
 				>
-					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
 						<TownHall />
 						<span>TownHall</span>
 					</span>
@@ -134,23 +139,60 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					href='https://polkasafe.xyz/'
 					target='_blank'
 					rel='noreferrer'
-					className='custom-link'
+					className='custom-link after:hidden'
 				>
-					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink-dark-primary'>
-						{theme === 'dark' ? <PolkasafeWhiteIcon className='relative left-[3px] top-[-1px] scale-[2]' /> : <PolkaSafe />}
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+						{theme === 'dark' ? <PolkasafeWhiteIcon /> : <PolkaSafe />}
 						<span>Polkasafe</span>
+					</span>
+				</a>
+			)
+		},
+		{
+			className: 'logo-class',
+			key: 'Staking',
+			label: (
+				<a
+					href='https://staking.polkadot.network/'
+					target='_blank'
+					rel='noreferrer'
+					className='custom-link after:hidden'
+				>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+						<StakeIcon />
+						<span>Staking</span>
 					</span>
 				</a>
 			)
 		}
 	];
 
+	if (delegationSupportedNetworks?.includes(network)) {
+		menudropDownItems.push({
+			className: 'logo-class',
+			key: 'Delegation',
+			label: (
+				<a
+					href={`https://${network}.polkassembly.io/delegation`}
+					target='_blank'
+					rel='noreferrer'
+					className='custom-link after:hidden'
+				>
+					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+						<DelegateIcon />
+						<span>Delegation</span>
+					</span>
+				</a>
+			)
+		});
+	}
+
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href={`/user/${username}`}
 				>
 					<IconProfile className='userdropdown-icon text-2xl' />
@@ -162,7 +204,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'settings',
 			label: (
 				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
 					href='/settings?tab=account'
 				>
 					<IconSettings className='userdropdown-icon text-2xl' />
@@ -175,7 +217,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					href='/'
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white'
+					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -195,7 +237,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			key: 'set on-chain identity',
 			label: (
 				<Link
-					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high ${className}`}
+					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
 					href={''}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -305,11 +347,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						) : (
 							<AuthDropdown>
 								{!web3signup ? (
-									<div className='border-1px-solid-#d7dce3 flex items-center justify-between gap-x-2 rounded-3xl bg-[#f6f7f9] px-3  '>
-										<Mail />
+									<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
+										{theme === 'dark' ? <MailWhite /> : <Mail />}
 										<div className='flex items-center justify-between gap-x-1'>
-											<span className='w-[85%] truncate normal-case'>{displayName || username || ''}</span>
-											<Arrow />
+											<span className='w-[85%] truncate text-xs font-semibold normal-case'>{displayName || username || ''}</span>
+											{theme === 'dark' ? <ArrowWhite /> : <Arrow />}
 										</div>
 									</div>
 								) : (

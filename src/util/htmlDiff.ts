@@ -40,20 +40,3 @@ export function generateDiffHtml(originalHtml: string, modifiedHtml: string) {
 
 	return diffHtml;
 }
-
-export function generateDiffHtmlDark(originalHtml: string, modifiedHtml: string) {
-	const diff = diffWords(originalHtml, modifiedHtml);
-
-	let diffHtml = '';
-	diff.forEach((part) => {
-		if (part.added) {
-			diffHtml += `<span class="added-dark">${part.value}</span>`;
-		} else if (part.removed) {
-			diffHtml += `<span class="removed-dark">${part.value}</span>`;
-		} else {
-			diffHtml += part.value;
-		}
-	});
-
-	return diffHtml;
-}

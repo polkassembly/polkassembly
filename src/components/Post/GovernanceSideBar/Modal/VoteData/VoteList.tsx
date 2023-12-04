@@ -55,7 +55,7 @@ interface IVotersListProps {
 	tally?: any;
 	isUsedInVotedModal?: boolean;
 	voterAddress?: string | null;
-	ayeNayAbstainCounts: IVotesCount;
+	ayeNayAbstainCounts?: IVotesCount;
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -108,7 +108,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='flex items-center justify-center gap-1 rounded-[20px] text-green-700'>
-					<LikeFilled /> <span>Ayes({ayeNayAbstainCounts.ayes})</span>
+					<LikeFilled /> <span>Ayes({ayeNayAbstainCounts?.ayes})</span>
 				</div>
 			),
 			value: 'yes'
@@ -116,7 +116,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='flex items-center justify-center gap-1  rounded-[20px] text-red-600'>
-					<DislikeFilled /> <span>Nays({ayeNayAbstainCounts.nays})</span>
+					<DislikeFilled /> <span>Nays({ayeNayAbstainCounts?.nays})</span>
 				</div>
 			),
 			value: 'no'
@@ -127,7 +127,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		decisionOptions.push({
 			label: (
 				<div className='flex items-center justify-center gap-1 rounded-[20px] text-blue-400'>
-					<MinusCircleFilled /> <span>Abstain({ayeNayAbstainCounts.abstain})</span>
+					<MinusCircleFilled /> <span>Abstain({ayeNayAbstainCounts?.abstain})</span>
 				</div>
 			),
 			value: 'abstain'

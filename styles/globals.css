@@ -594,7 +594,7 @@ z-index: 1050 !important;
 }
 
 .dark .ant-popover-inner{
-  background-color: #1C1D1F;
+  background-color: #282a2d;
 }
 
 .dark .ant-popover-arrow::before{

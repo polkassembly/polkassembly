@@ -15,6 +15,7 @@ import { algolia_client } from '~src/components/Search';
 import MarkdownEditor from './MarkdownEditor';
 import { SwapOutlined } from '@ant-design/icons';
 import { CloseIcon } from './CustomIcons';
+import { useTheme } from 'next-themes';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -101,12 +102,13 @@ img {
 `;
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, height, onChange, isDisabled, value, name, autofocus = false, theme } = props;
+	const { className, height, onChange, isDisabled, value, name, autofocus = false } = props;
 
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [mdEditor, setMdEditor] = useState<boolean>(true);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
@@ -116,6 +118,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
+	useEffect(() => {}, [theme]);
 
 	function handleEditorChange() {
 		// if it's being changed to md editor
@@ -178,6 +181,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					>
 						<div className={`${loading && 'invisible'}`}>
 							<Editor
+								key={theme}
 								onPaste={(e) => {
 									e.stopPropagation();
 									e.preventDefault();

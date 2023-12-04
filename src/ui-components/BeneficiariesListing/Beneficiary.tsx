@@ -23,7 +23,6 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 		<div className={`${className} flex items-center gap-1`}>
 			<Address
 				displayInline
-				iconSize={10}
 				address={beneficiary.address}
 				inPostHeading={inPostHeading}
 			/>

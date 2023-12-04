@@ -630,7 +630,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						>
 							<>
 								<div className='my-6'>
-									<div className='mt-1 flex items-center gap-x-2'>
+									<div className='mt-1 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
+									<div className='mt-1 flex items-center justify-center gap-x-2'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
 												className={`${wallet === Wallet.POLKADOT ? ' h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}

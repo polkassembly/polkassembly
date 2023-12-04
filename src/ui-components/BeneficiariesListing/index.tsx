@@ -8,6 +8,7 @@ import Beneficiary from './Beneficiary';
 import { Popover } from 'antd';
 import { BeneficiaryIcon, BeneficiaryGreyIcon } from '../CustomIcons';
 import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -20,8 +21,8 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 	if (!beneficiaries || beneficiaries.length === 0) return null;
 
 	return (
-		<div className={`${className} flex flex-wrap items-center gap-1`}>
-			{theme === 'dark' ? <BeneficiaryGreyIcon className='-mt-[2px] ml-1' /> : <BeneficiaryIcon className='-mt-[2px] ml-1' />}
+		<div className={`${className} beneficiary-container flex flex-wrap items-center gap-1`}>
+			{theme === 'dark' ? <BeneficiaryGreyIcon className='-mt-[2px]' /> : <BeneficiaryIcon className='-mt-[2px] ml-1' />}
 			<span className='ml-[1px] mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Beneficiary:</span>
 			<Beneficiary
 				beneficiary={beneficiaries[0]}
@@ -51,4 +52,10 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 	);
 };
 
-export default BeneficiariesListing;
+export default styled(BeneficiariesListing)`
+	@media (max-width: 700px) and (min-width: 319px) {
+		.beneficiary-container {
+			margin-top: 40px !important;
+		}
+	}
+`;

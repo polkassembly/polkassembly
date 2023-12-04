@@ -39,7 +39,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen }) => {
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
 					<PostEditLinkingIcon />
-					<article className='mb-[35px] mt-[28px] flex flex-col items-center text-center text-xl leading-[30px] tracking-[0.01em] text-sidebarBlue'>
+					<article className='mb-[35px] mt-[28px] flex flex-col items-center text-center text-xl leading-[30px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-high'>
 						<h3 className='m-0 p-0 text-lg font-medium'>Welcome Text</h3>
 						<p className='m-0 mt-2 text-base'>Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals.</p>
 					</article>

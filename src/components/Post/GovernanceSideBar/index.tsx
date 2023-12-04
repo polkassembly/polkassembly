@@ -6,7 +6,7 @@ import { ClockCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal, Spin, Tooltip, Skeleton } from 'antd';
+import { Button, Form, Modal, Spin, Tooltip } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -39,7 +39,6 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
-import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
@@ -53,15 +52,11 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import PIPsVoteInfo from './PIPs/PIPsVoteInfo';
 import PIPsVote from './PIPs/PIPsVote';
-import dynamic from 'next/dynamic';
-import { PlusOutlined } from '@ant-design/icons';
 import MoneyIcon from '~assets/icons/money-icon-gray.svg';
 import DarkMoneyIcon from '~assets/icons/money-icon-white.svg';
 import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
 import DarkConvictionIcon from '~assets/icons/conviction-icon-white.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
-import CloseIcon from '~assets/icons/close.svg';
-import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
 import VoteDataModal from './Modal/VoteData';
 import { ApiPromise } from '@polkadot/api';
@@ -76,12 +71,9 @@ import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import Web3 from 'web3';
 import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
+import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
 
-const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
 	className?: string;
@@ -91,7 +83,7 @@ interface IGovernanceSidebarProps {
 	startTime: string;
 	tally?: any;
 	post: IPostResponse;
-	toggleEdit?: () => void;
+	toggleEdit: () => void | null;
 	trackName?: string;
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
@@ -143,7 +135,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet } = useUserDetailsSelector();
 	const {
-		postData: { created_at, track_number, post_link, statusHistory, postIndex }
+		postData: { created_at, track_number, statusHistory, postIndex }
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -156,7 +148,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [accountsMap, setAccountsMap] = useState<{ [key: string]: string }>({});
 	const [signersMap, setSignersMap] = useState<{ [key: string]: Signer }>({});
 	const [open, setOpen] = useState(false);
-	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [curvesError, setCurvesError] = useState('');
 	const [data, setData] = useState<any>({
@@ -190,6 +181,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		].includes(post.status);
 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+
+	const showDecisionDeposit =
+		!!statusHistory &&
+		statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0 &&
+		statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0 &&
+		!!trackName;
 
 	const balance = useMemo(() => {
 		return onChainLastVote?.balance
@@ -937,40 +934,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			{
 				<div className={className}>
 					<Form>
-						{!post_link && canEdit && (
-							<>
-								<PostEditOrLinkCTA />
-							</>
-						)}
-						{/* decision deposite placed. */}
-						{statusHistory &&
-							statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0 &&
-							statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0 &&
-							trackName && <DecisionDepositCard trackName={String(trackName)} />}
-
-						{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && (
-							<div className=' mb-8 rounded-[14px] bg-white pb-[36px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay'>
-								<div
-									className='flex items-center justify-end px-[20px] py-[17px]'
-									onClick={() => setGraphicOpen(false)}
-								>
-									<CloseIcon />
-								</div>
-								<div className='flex flex-col items-center justify-center gap-6'>
-									<GraphicIcon />
-									<Button
-										className='h-[35px] w-[176px] rounded-[4px] bg-pink_primary text-[16px] font-medium text-white'
-										onClick={() => {
-											toggleEdit && toggleEdit();
-											setGraphicOpen(false);
-										}}
-									>
-										<PlusOutlined />
-										Add Tags
-									</Button>
-								</div>
-							</div>
-						)}
+						<RHSCardSlides
+							showDecisionDeposit={showDecisionDeposit}
+							canEdit={canEdit}
+							trackName={String(trackName)}
+							toggleEdit={toggleEdit}
+						/>
 						{accountsNotFound || extensionNotFound ? (
 							<GovSidebarCard>
 								{accountsNotFound ? (

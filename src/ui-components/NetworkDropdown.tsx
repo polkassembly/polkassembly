@@ -49,7 +49,9 @@ for (const key of Object.keys(network)) {
 						alt='Logo'
 					/>
 				</span>
-				<span className='text-sm font-medium capitalize text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
+				<span className='text-sm font-medium capitalize text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
+					{keyVal == 'hydradx' ? 'HydraDX' : keyVal}
+				</span>
 			</div>
 		),
 		link

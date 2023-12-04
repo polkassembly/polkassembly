@@ -38,7 +38,7 @@ const WalletButtons = dynamic(() => import('./WalletButtons'), {
 
 const Container = styled.article`
 	.changeColor .ant-alert-message {
-		color: var(--bodyBlue);
+		color: #1677ff;
 	}
 `;
 
@@ -181,6 +181,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							showPolkasafe={canUsePolkasafe(network)}
 							onPolkasafeSelect={setWithPolkasafe}
 							isOptionalLogin={true}
+							isLoginFlow={true}
 						/>
 					</div>
 					<p
@@ -196,17 +197,22 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			)}
 			{defaultWallets.length === 0 && isDelegation && (
 				<Alert
-					message='Wallet extension not detected.'
-					description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
+					message={<span className='dark:text-blue-dark-high'>Wallet extension not detected.</span>}
+					description={
+						<span className='dark:text-blue-dark-high'>
+							No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.
+						</span>
+					}
 					type='info'
 					showIcon
-					className='changeColor  mx-8 mb-5 text-bodyBlue dark:text-blue-dark-high'
+					className='changeColor  mx-8 mb-5 text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 				/>
 			)}
 			{walletError && (
 				<Alert
-					message={walletError}
+					message={<span className='dark:text-blue-dark-high'>{walletError}</span>}
 					type='error'
+					className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 				/>
 			)}
 			{authResponse.isTFAEnabled ? (
@@ -307,6 +313,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								onWalletSelect={onWalletSelect}
 								showPolkasafe={canUsePolkasafe(network)}
 								onPolkasafeSelect={setWithPolkasafe}
+								isLoginFlow={true}
 							/>
 						</div>
 

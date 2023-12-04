@@ -431,9 +431,9 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 								{balanceErr.length > 0 && ![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) && wallet && (
 									<Alert
 										type='error'
-										message={balanceErr}
+										message={<span className='dark:text-blue-dark-high'>{balanceErr}</span>}
 										showIcon
-										className='mb-4 h-10 rounded-[4px]'
+										className='mb-4 h-10 rounded-[4px] dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 									/>
 								)}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
@@ -445,9 +445,10 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 									<Alert
-										message='No addresses found in the address selection tab.'
+										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
+										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -464,9 +465,10 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 									/>
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
 									<Alert
-										message='Please select a wallet.'
+										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
+										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
 

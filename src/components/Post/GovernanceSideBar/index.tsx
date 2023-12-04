@@ -45,7 +45,7 @@ import BN from 'bn.js';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { EVoteDecisionType, ILastVote, NotificationStatus, Wallet } from '~src/types';
+import { EVoteDecisionType, ILastVote, IVotesCount, NotificationStatus, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -70,8 +70,6 @@ import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import Web3 from 'web3';
 import { useTheme } from 'next-themes';
-import PredictionCard from '~src/ui-components/PredictionCard';
-import { network as allNetworks } from '~src/global/networkConstants';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
@@ -834,7 +832,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						>
 							<span title='Conviction'>
 								{theme === 'dark' ? <DarkConvictionIcon className='mr-1' /> : <ConvictionIcon className='mr-1' />}
-								{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x
+								{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x{isDelegated && '/d'}
+								{''}
 							</span>
 						</Tooltip>
 					)}
@@ -928,6 +927,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	};
 	const RenderLastVote =
 		address === loginAddress ? lastVote ? <LastVoteInfoLocalState {...lastVote} /> : onChainLastVote !== null ? <LastVoteInfoOnChain {...onChainLastVote} /> : null : null;
+	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
+
 	return (
 		<>
 			{
@@ -1055,6 +1056,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										{(onchainId || onchainId === 0) && (
 											<div className={className}>
 												<ReferendumVoteInfo
+													ayeNayCounts={ayeNayAbstainCounts}
+													setAyeNayCounts={setAyeNayAbstainCounts}
 													setOpen={setOpen}
 													voteThreshold={post.vote_threshold}
 													referendumId={onchainId as number}
@@ -1119,7 +1122,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											<>
 												{proposalType === ProposalType.OPEN_GOV && (
 													<div className={className}>
-														<ReferendumV2VoteInfo tally={tally} />
+														<ReferendumV2VoteInfo
+															ayeNayAbstainCounts={ayeNayAbstainCounts}
+															setAyeNayAbstainCounts={setAyeNayAbstainCounts}
+															tally={tally}
+														/>
 														<RefV2ThresholdData
 															canVote={canVote}
 															setOpen={setOpen}
@@ -1154,6 +1161,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 												setOpen={setOpen}
 												proposalType={proposalType}
 												tally={tally}
+												ayeNayAbstainCounts={ayeNayAbstainCounts}
 												thresholdData={{
 													curvesError,
 													curvesLoading,
@@ -1257,8 +1265,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							</>
 						)}
 					</Form>
-					{/* // Added Pridiction card on proposal id 213 */}
-					{post.post_id === 213 && network === allNetworks.POLKADOT && <PredictionCard predictCount={154} />}
 				</div>
 			}
 		</>

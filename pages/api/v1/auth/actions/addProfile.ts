@@ -9,6 +9,7 @@ import authServiceInstance from '~src/auth/auth';
 import { ISocial, MessageType, TokenType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import isValidEmail from '~src/auth/utils/isValidEmail';
+import isValidPassowrd from '~src/auth/utils/isValidPassowrd';
 import messages from '~src/auth/utils/messages';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import firebaseAdmin from '~src/services/firebaseInit';
@@ -17,7 +18,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
-	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username, custom_username = false, email } = req.body;
+	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username, custom_username = false, email, password } = req.body;
 	if (!username) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	for (let i = 0; i < nameBlacklist.length; i++) {
@@ -65,6 +66,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		}
 		if (!isValidEmail(email)) throw apiErrorWithStatusCode(messages.INVALID_EMAIL, 400);
 		await authServiceInstance.SendVerifyEmail(token, email, network);
+		if (!isValidPassowrd(password)) return res.status(400).json({ message: messages.PASSWORD_LENGTH_ERROR });
+		await authServiceInstance.ResetPasswordFromAuth(token, password);
 	}
 
 	//update profile field in userRef

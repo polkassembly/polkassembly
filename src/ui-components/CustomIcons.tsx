@@ -134,6 +134,8 @@ import DeleteIconSVG from '~assets/icons/deleteIcon.svg';
 import WhiteDeleteIconSVG from '~assets/icons/deleteWhiteIcon.svg';
 import PolkaverseSVG from '~assets/icons/SubsocialIcon.svg';
 import VerifiedSVG from '~assets/icons/verified-tick.svg';
+import BeneficiarySVG from '~assets/icons/Beneficiary.svg';
+import BeneficiaryGreySVG from '~assets/icons/BeneficiaryGrey.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1002,6 +1004,20 @@ export const PolkaverseIcon = (props: Partial<CustomIconComponentProps>) => (
 export const VerifiedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={VerifiedSVG}
+		{...props}
+	/>
+);
+
+export const BeneficiaryIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BeneficiarySVG}
+		{...props}
+	/>
+);
+
+export const BeneficiaryGreyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BeneficiaryGreySVG}
 		{...props}
 	/>
 );

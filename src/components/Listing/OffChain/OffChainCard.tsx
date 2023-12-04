@@ -3,17 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
-import { Divider, Modal, Tooltip } from 'antd';
-import { poppins } from 'pages/_app';
+import { Divider, Tooltip } from 'antd';
 import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
-import { CloseIcon, CommentsIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
-import TagsIcon from '~assets/icons/tags-icon.svg';
+import { CommentsIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import TopicTag from '~src/ui-components/TopicTag';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import TagsModal from '~src/ui-components/TagsModal';
 
 export interface IDiscussionProps {
 	created_at: Date;
@@ -148,40 +147,11 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						</div>
 					</div>
 				</div>
-				<Modal
-					wrapClassName='dark:bg-modalOverlayDark'
-					open={tagsModal}
-					onCancel={(e) => {
-						e.stopPropagation();
-						e.preventDefault();
-						setTagsModal(false);
-					}}
-					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-					footer={false}
-					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				>
-					<div className='flex'>
-						<h2 className='mb-2 text-lg font-medium tracking-wide text-bodyBlue dark:text-blue-dark-high'>
-							<TagsIcon className='mr-2' />
-							Tags
-						</h2>
-					</div>
-					<div className='h-[1px] w-full bg-[#D2D8E0]' />
-					<div className='mt-4 flex flex-wrap gap-2'>
-						{tags && tags.length > 0 && (
-							<>
-								{tags?.map((tag, index) => (
-									<div
-										key={index}
-										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
-									>
-										{tag}
-									</div>
-								))}
-							</>
-						)}
-					</div>
-				</Modal>
+				<TagsModal
+					tags={tags}
+					openTagsModal={tagsModal}
+					setOpenTagsModal={setTagsModal}
+				/>
 			</div>
 
 			<div
@@ -279,38 +249,11 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						</div>
 					</div>
 				</div>
-				<Modal
-					wrapClassName='dark:bg-modalOverlayDark'
-					open={tagsModal}
-					onCancel={(e) => {
-						e.stopPropagation();
-						e.preventDefault();
-						setTagsModal(false);
-					}}
-					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-					footer={false}
-					className={`${poppins.variable} ${poppins.className} h-[120px] max-w-full  shrink-0 max-sm:w-[100%] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				>
-					<div className='flex'>
-						<TagsIcon className='mr-2 mt-1.5' />
-						<h2 className='mb-2 text-lg font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>Tags</h2>
-					</div>
-					<div className='h-[1px] w-full bg-[#D2D8E0]' />
-					<div className='mt-4 flex flex-wrap gap-2'>
-						{tags && tags.length > 0 && (
-							<>
-								{tags?.map((tag, index) => (
-									<div
-										key={index}
-										className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[16px] py-[2px] text-[10px] font-normal text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-medium'
-									>
-										{tag}
-									</div>
-								))}
-							</>
-						)}
-					</div>
-				</Modal>
+				<TagsModal
+					tags={tags}
+					openTagsModal={tagsModal}
+					setOpenTagsModal={setTagsModal}
+				/>
 			</div>
 		</>
 	);

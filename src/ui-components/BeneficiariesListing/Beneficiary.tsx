@@ -12,9 +12,11 @@ import { formatedBalance } from '~src/util/formatedBalance';
 interface Props {
 	className?: string;
 	beneficiary: IBeneficiary;
+	inPostHeading?: boolean;
+	disableBalanceFormatting?: boolean;
 }
 
-const Beneficiary = ({ className, beneficiary }: Props) => {
+const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostHeading }: Props) => {
 	const { network } = useNetworkSelector();
 
 	return (
@@ -23,9 +25,11 @@ const Beneficiary = ({ className, beneficiary }: Props) => {
 				displayInline
 				iconSize={10}
 				address={beneficiary.address}
+				inPostHeading={inPostHeading}
 			/>
 			<span className='text-blue-light-high dark:text-blue-dark-high'>
-				({formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)} {chainProperties[network]?.tokenSymbol})
+				({disableBalanceFormatting ? beneficiary.amount.toString() : formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}&nbsp;
+				{chainProperties[network]?.tokenSymbol})
 			</span>
 		</div>
 	);

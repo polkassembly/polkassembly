@@ -25,8 +25,8 @@ interface IErrorStateProps {
 export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVisible = true }) => {
 	return (
 		<Result
-			icon={<FrownOutlined className='text-pink_primary ' />}
-			title={cleanError(errorMessage)}
+			icon={<FrownOutlined className='text-pink_primary dark:text-blue-dark-high' />}
+			title={<span className='dark:text-blue-dark-high'>{cleanError(errorMessage)}</span>}
 			extra={
 				isRefreshBtnVisible ? (
 					<Button

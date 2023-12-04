@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
@@ -10,7 +10,6 @@ import WriteProposal from './WriteProposal';
 import CreatePreimage from './CreatePreimage';
 import CreateProposal from './CreateProposal';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
-import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
@@ -22,7 +21,8 @@ import { useApiContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
-
+import { IBeneficiary } from '~src/types';
+import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 interface Props {
 	className?: string;
 	theme?: string;
@@ -57,8 +57,69 @@ export interface IPreimage {
 	storageFee: BN;
 }
 const ZERO_BN = new BN(0);
+
+export enum EBeneficiaryAddressesActionType {
+	UPDATE_ADDRESS,
+	UPDATE_AMOUNT,
+	REMOVE_ALL,
+	REPLACE_ALL_WITH_ONE,
+	REPLACE_STATE,
+	ADD
+}
+
+export interface EBeneficiaryAddressesAction {
+	type: EBeneficiaryAddressesActionType;
+	payload: {
+		index: number;
+		address: string;
+		amount: string;
+		newState?: IBeneficiary[];
+	};
+}
+
+const beneficiaryAddressesReducer = (state: IBeneficiary[], action: EBeneficiaryAddressesAction) => {
+	switch (action.type) {
+		case EBeneficiaryAddressesActionType.UPDATE_ADDRESS:
+			return state.map((beneficiary, index) => {
+				if (index === action.payload.index) {
+					return { ...beneficiary, address: action.payload.address, amount: beneficiary.amount ?? ZERO_BN.toString() };
+				} else {
+					return beneficiary;
+				}
+			});
+		case EBeneficiaryAddressesActionType.UPDATE_AMOUNT:
+			return state.map((beneficiary, index) => {
+				if (index === action.payload.index) {
+					return { ...beneficiary, address: beneficiary.address ?? '', amount: action.payload.amount };
+				} else {
+					return beneficiary;
+				}
+			});
+		case EBeneficiaryAddressesActionType.REMOVE_ALL:
+			return INIT_BENEFICIARIES;
+		case EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE:
+			return [{ address: action.payload.address, amount: action.payload.amount }];
+		case EBeneficiaryAddressesActionType.ADD:
+			return [...state, { address: '', amount: ZERO_BN.toString() } as IBeneficiary];
+		case EBeneficiaryAddressesActionType.REPLACE_STATE:
+			return action.payload.newState || INIT_BENEFICIARIES;
+		default:
+			return state;
+	}
+};
+
+export const INIT_BENEFICIARIES = [
+	{
+		address: '',
+		amount: ZERO_BN.toString()
+	}
+];
+
 const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
+
+	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
+
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
@@ -67,7 +128,6 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [preimageHash, setPreimageHash] = useState<string>('');
 	const [preimageLength, setPreimageLength] = useState<number | null>(null);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
-	const [beneficiaryAddress, setBeneficiaryAddress] = useState<string>('');
 	const [fundingAmount, setFundingAmount] = useState<BN>(ZERO_BN);
 	const [tags, setTags] = useState<string[]>([]);
 	const [content, setContent] = useState<string>('');
@@ -138,11 +198,11 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
+				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high'
 				onClick={handleClick}
 			>
 				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
-				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Treasury Proposal</p>
+				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
 			</div>
 			{openAddressLinkedModal && (
 				<AddressConnectModal
@@ -207,7 +267,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				}}
 				selectedTrack={selectedTrack}
 				proposerAddress={proposerAddress}
-				beneficiaryAddress={beneficiaryAddress}
+				beneficiaryAddresses={beneficiaryAddresses}
 				fundingAmount={fundingAmount}
 				preimageHash={preimageHash}
 				preimageLength={preimageLength}
@@ -283,8 +343,8 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							preimageHash={preimageHash}
 							setPreimageHash={setPreimageHash}
 							proposerAddress={proposerAddress}
-							beneficiaryAddress={beneficiaryAddress}
-							setBeneficiaryAddress={setBeneficiaryAddress}
+							beneficiaryAddresses={beneficiaryAddresses}
+							dispatchBeneficiaryAddresses={dispatchBeneficiaryAddresses}
 							fundingAmount={fundingAmount}
 							setFundingAmount={setFundingAmount}
 							selectedTrack={selectedTrack}
@@ -305,7 +365,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							setPostId={setPostId}
 							setOpenSuccess={setOpenSuccess}
 							setOpenModal={setOpenModal}
-							beneficiaryAddress={beneficiaryAddress}
+							beneficiaryAddresses={beneficiaryAddresses}
 							enactment={enactment}
 							isPreimage={Boolean(isPreimage)}
 							proposerAddress={proposerAddress}

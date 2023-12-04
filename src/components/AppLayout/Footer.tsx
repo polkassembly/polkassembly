@@ -118,7 +118,7 @@ const Footer = ({ className }: { className?: string }) => {
 								<div className='space-y-2 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
 									<div>
 										<a
-											href='https://polkassembly.hellonext.co/'
+											href='https://feedback.polkassembly.io/'
 											target='_blank'
 											rel='noreferrer'
 										>

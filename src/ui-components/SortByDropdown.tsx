@@ -62,8 +62,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 				selectable: true
 			}}
 			trigger={['hover']}
-			// overlayClassName='z-[1056]'
-			overlayClassName='ant-dropdown-menu-border-blue_primary'
+			overlayClassName='z-[1056]'
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
 				<span className={`${selectedStatus ? 'text-pink_primary' : ''} sm:mr-1 sm:mt-0.5`}>Sort By</span>

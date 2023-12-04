@@ -61,20 +61,17 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 				onClick: handleSortByClick,
 				selectable: true
 			}}
-			trigger={['click']}
-			overlayClassName='z-[1056]'
+			trigger={['hover']}
+			// overlayClassName='z-[1056]'
+			overlayClassName='ant-dropdown-menu-border-blue_primary'
 		>
-			<div
-				className={`dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-pink_primary hover:text-pink_primary ${
-					isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100' : ''
-				}`}
-			>
+			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
 				<span className={`${selectedStatus ? 'text-pink_primary' : ''} sm:mr-1 sm:mt-0.5`}>Sort By</span>
 				<SwapOutlined
-					className={`${isUsedInTrackListing ? `${selectedStatus ? 'text-pink_primary' : 'text-bodyBlue opacity-70 dark:text-[#96A4B6] '}` : ''}`}
+					className={`${isUsedInTrackListing ? `${selectedStatus ? 'text-pink_primary' : 'text-bodyBlue opacity-70 dark:text-[#96A4B6]'}` : ''}`}
 					rotate={90}
 					style={{ fontSize: '14px', marginRight: '10px' }}
-				/>
+				/>{' '}
 			</div>
 		</Dropdown>
 	);

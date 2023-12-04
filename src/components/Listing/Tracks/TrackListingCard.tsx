@@ -160,7 +160,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
+		<div className={`${className} mt-[36px] rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
 			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:pt-2 sm:hidden'>
 				<div className='mt-1 flex items-center gap-x-1 xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden'>
 					<FilterByStatus setStatusItem={setStatusItem} />

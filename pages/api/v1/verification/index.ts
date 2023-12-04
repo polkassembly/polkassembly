@@ -115,7 +115,7 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 
 		const twitterData = twitterVerificationDoc.data();
 
-		if (twitterData?.twitter_handle !== account) return res.status(400).json({ message: 'Twitter handle does not match' });
+		if (`${twitterData?.twitter_handle}`.toLowerCase() !== `${account}`.toLowerCase()) return res.status(400).json({ message: 'Twitter handle does not match' });
 
 		if (twitterData?.verified && twitterData?.user_id === userId) {
 			return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
@@ -124,7 +124,7 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 		} else {
 			await twitterVerificationDoc.ref.set({
 				created_at: new Date(),
-				twitter_handle: account,
+				twitter_handle: twitterData?.twitter_handle,
 				user_id: userId,
 				verified: false
 			});

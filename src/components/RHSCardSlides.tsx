@@ -11,6 +11,7 @@ import { usePostDataContext } from '~src/context';
 import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
+import { checkIsOnChainPost } from '~src/global/proposalType';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -34,8 +35,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
 	const [openLinkCta, setOpenLinkCta] = useState(false);
 
-	const { postData } = usePostDataContext();
-	const { post_link, tags } = postData;
+	const {
+		postData: { post_link, tags, postType }
+	} = usePostDataContext();
+
+	const isOnchainPost = checkIsOnChainPost(postType);
 
 	const nextSlide = () => {
 		setCurrentIndex((prevIndex) => {
@@ -81,7 +85,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					description: 'Please add contextual info for voters to make an informed decision',
 					icon: '/assets/icons/rhs-card-icons/Doc.png',
 					tag: cardTags.LINK_DISCUSSION,
-					title: 'Link Discussion'
+					title: isOnchainPost ? 'Link Discussion' : 'Link Onchain Post'
 				});
 
 				return newCards;
@@ -106,7 +110,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		return () => {
 			setRHSCards([]);
 		};
-	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit]);
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost]);
 
 	useEffect(() => {
 		if (RHSCards.length <= 1) {

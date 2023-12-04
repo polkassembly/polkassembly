@@ -446,7 +446,7 @@ const AddressConnectModal = ({
 						<div>
 							{canUsePolkasafe(network) && !showMultisig && usingMultisig && (
 								<div className='m-auto mb-6 mt-3 flex w-[50%] flex-col gap-3'>
-									<Divider className='m-0'>OR</Divider>
+									<Divider className='m-0 dark:text-blue-dark-high'>OR</Divider>
 									<div className='flex w-full justify-center'>
 										<WalletButton
 											className='border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
@@ -481,23 +481,23 @@ const AddressConnectModal = ({
 					)}
 					{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
 						<Alert
-							message={`For using ${walletAlertTitle}:`}
+							message={<span className='dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
 							description={
-								<ul className='mt-[-5px] text-sm'>
+								<ul className='mt-[-5px] text-sm dark:text-blue-dark-high'>
 									<li>Give access to Polkassembly on your selected wallet.</li>
 									<li>Add an address to the selected wallet.</li>
 								</ul>
 							}
 							showIcon
-							className='mt-4'
+							className='mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							type='info'
 						/>
 					)}
 					{Object.keys(availableWallets || {}).length === 0 && !loading && (
 						<Alert
-							message={<div className='mt-1 text-[13px] font-medium'>{accountAlertTitle}</div>}
+							message={<div className='mt-1 text-[13px] font-medium dark:text-blue-dark-high'>{accountAlertTitle}</div>}
 							description={
-								<div className='-mt-1 pb-1 text-xs text-lightBlue'>
+								<div className='-mt-1 pb-1 text-xs text-lightBlue dark:text-blue-dark-high'>
 									{linkAddressNeeded
 										? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 										: 'Please login with a web3 wallet to access this feature.'}
@@ -505,7 +505,7 @@ const AddressConnectModal = ({
 							}
 							type='info'
 							showIcon
-							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						/>
 					)}
 					<Form
@@ -550,20 +550,20 @@ const AddressConnectModal = ({
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 							<Alert
 								type='info'
-								className='mt-4 rounded-[4px]'
+								className='mt-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								showIcon
-								message='Please select a wallet.'
+								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 							/>
 						) : null}
 					</Form>
 				</div>
 				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
 					<Alert
-						className='mt-6 rounded-[4px]'
+						className='mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'
 						showIcon
 						message={
-							<span className='text-[13px] font-medium text-bodyBlue '>
+							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
 								Please maintain minimum balance for these transactions:
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
@@ -577,16 +577,16 @@ const AddressConnectModal = ({
 							hideDetails ? (
 								''
 							) : (
-								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs'>
+								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
 									<li className='flex w-full justify-between'>
-										<div className='mr-1 text-lightBlue'>Preimage Creation</div>
-										<span className='font-medium text-bodyBlue'>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-high'>Preimage Creation</div>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
 										</span>
 									</li>
 									<li className='mt-0 flex w-full justify-between'>
-										<div className='mr-1 text-lightBlue'>Proposal Submission</div>
-										<span className='font-medium text-bodyBlue'>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-high'>Proposal Submission</div>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
 										</span>
 									</li>

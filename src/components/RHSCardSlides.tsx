@@ -33,6 +33,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	const [isReversed, setIsReversed] = useState(false);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
+	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [openLinkCta, setOpenLinkCta] = useState(false);
 
 	const {
@@ -81,7 +82,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
-					clickHandler: () => setOpenLinkCta(true),
+					clickHandler: () => (isOnchainPost ? setOpenLinkCta(true) : setLinkingAndEditingOpen(true)),
 					description: 'Please add contextual info for voters to make an informed decision',
 					icon: '/assets/icons/rhs-card-icons/Doc.png',
 					tag: cardTags.LINK_DISCUSSION,
@@ -143,6 +144,8 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			<PostEditOrLinkCTA
 				open={openLinkCta}
 				setOpen={setOpenLinkCta}
+				linkingAndEditingOpen={linkingAndEditingOpen}
+				setLinkingAndEditingOpen={setLinkingAndEditingOpen}
 			/>
 			<div className='card relative mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl bg-[#f5f6f8] font-poppins shadow-lg dark:bg-section-dark-background'>
 				<div className='box relative h-full w-full'>

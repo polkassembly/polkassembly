@@ -17,13 +17,14 @@ interface IPostEditOrLinkCTA {
 	className?: string;
 	open: boolean;
 	setOpen: (state: boolean) => void;
+	linkingAndEditingOpen: boolean;
+	setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen }) => {
+const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEditingOpen, setLinkingAndEditingOpen }) => {
 	const {
 		postData: { postType }
 	} = usePostDataContext();
-	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [linkingModalOpen, setLinkingModalOpen] = useState(false);
 	const isOnchainPost = checkIsOnChainPost(postType);

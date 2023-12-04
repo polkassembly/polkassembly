@@ -8,7 +8,6 @@ import Beneficiary from './Beneficiary';
 import { Popover } from 'antd';
 import { BeneficiaryIcon, BeneficiaryGreyIcon } from '../CustomIcons';
 import { useTheme } from 'next-themes';
-import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -52,10 +51,4 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 	);
 };
 
-export default styled(BeneficiariesListing)`
-	@media (max-width: 700px) and (min-width: 319px) {
-		.beneficiary-container {
-			margin-top: 40px !important;
-		}
-	}
-`;
+export default BeneficiariesListing;

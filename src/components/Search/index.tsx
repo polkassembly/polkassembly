@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Checkbox, Input, List, Modal, Popover, Radio, RadioChangeEvent, Collapse } from 'antd';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Checkbox, Input, List, Modal, Popover, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
 import _ from 'lodash';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -115,6 +115,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const [isFilter, setIsFilter] = useState<boolean>(false);
 	const [justStart, setJustStart] = useState<boolean>(true);
 	const currentUser = useUserDetailsSelector();
+	const inputRef = useRef<InputRef>(null);
+
+	useEffect(() => {
+		if (openModal) {
+			setTimeout(() => inputRef.current?.focus(), 0);
+		}
+	}, [openModal]);
 
 	Object.keys(post_topic).map((topic) => topicOptions.push(topicToOptionText(topic)));
 
@@ -491,6 +498,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input
+					ref={inputRef}
 					className='placeholderColor mt-2 h-[40px] rounded-[4px] border-pink_primary text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					type='search'
 					value={searchInput}

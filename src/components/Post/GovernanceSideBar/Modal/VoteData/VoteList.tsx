@@ -52,8 +52,10 @@ interface IVotersListProps {
 	referendumId: number;
 	voteType: VoteType;
 	thresholdData?: any;
-	tally: any;
-	ayeNayAbstainCounts: IVotesCount;
+	tally?: any;
+	isUsedInVotedModal?: boolean;
+	voterAddress?: string | null;
+	ayeNayAbstainCounts?: IVotesCount;
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -78,7 +80,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	} = usePostDataContext();
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	// const { className, referendumId, voteType, thresholdData, tally } = props;
-	const { className, referendumId, voteType, tally, ayeNayAbstainCounts } = props;
+	const { className, referendumId, voteType, tally, isUsedInVotedModal, voterAddress, ayeNayAbstainCounts } = props;
 	const { api, apiReady } = useApiContext();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
@@ -88,6 +90,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [decision, setDecision] = useState<DecisionType>();
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
+	const [combinedVotes, setCombinedVotes] = useState<any[]>([]);
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
 
 	const [delegationVoteModal, setDelegationVoteModal] = useState<{ isOpen: boolean; voter: string | null }>({ isOpen: false, voter: null });
@@ -105,7 +108,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='flex items-center justify-center gap-1 rounded-[20px] text-green-700'>
-					<LikeFilled /> <span>Ayes({ayeNayAbstainCounts.ayes})</span>
+					<LikeFilled /> <span>Ayes({ayeNayAbstainCounts?.ayes})</span>
 				</div>
 			),
 			value: 'yes'
@@ -113,7 +116,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		{
 			label: (
 				<div className='flex items-center justify-center gap-1  rounded-[20px] text-red-600'>
-					<DislikeFilled /> <span>Nays({ayeNayAbstainCounts.nays})</span>
+					<DislikeFilled /> <span>Nays({ayeNayAbstainCounts?.nays})</span>
 				</div>
 			),
 			value: 'no'
@@ -124,7 +127,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		decisionOptions.push({
 			label: (
 				<div className='flex items-center justify-center gap-1 rounded-[20px] text-blue-400'>
-					<MinusCircleFilled /> <span>Abstain({ayeNayAbstainCounts.abstain})</span>
+					<MinusCircleFilled /> <span>Abstain({ayeNayAbstainCounts?.abstain})</span>
 				</div>
 			),
 			value: 'abstain'
@@ -184,7 +187,12 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			message: 'Loading votes'
 		});
 		getReferendumV2VoteInfo().then(() => {
-			const url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
+			let url;
+			if (voterAddress && isUsedInVotedModal) {
+				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}&address=${voterAddress}`;
+			} else {
+				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
+			}
 			nextApiClientFetch<IVotesResponse>(url)
 				.then((res) => {
 					if (res.error) {
@@ -195,6 +203,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						});
 					} else {
 						const votesRes = res.data;
+						let combinedVotes;
 						setVotesRes(votesRes);
 						if (votesRes && firstRef.current) {
 							firstRef.current = false;
@@ -207,6 +216,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								decision = 'abstain';
 							}
 							setDecision(decision);
+						}
+						if (votesRes && votesRes.abstain && votesRes.no && votesRes.yes) {
+							combinedVotes = [...votesRes.abstain.votes, ...votesRes.no.votes, ...votesRes.yes.votes];
+							setCombinedVotes(combinedVotes);
 						}
 						setLoadingStatus({
 							isLoading: false,
@@ -222,6 +235,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					});
 				});
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, getReferendumV2VoteInfo, referendumId, sortBy, voteType]);
 
 	useEffect(() => {
@@ -238,22 +252,28 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				<div className='flex gap-6'>
 					<div className='flex w-full flex-col justify-between'>
 						<div className='w-full'>
-							<div className='mb-8 flex w-full items-center justify-center'>
-								<Segmented
-									block
-									className='w-full rounded-[30px] px-3 py-2'
-									size='large'
-									value={decision}
-									onChange={(value) => {
-										setDecision(String(value) as DecisionType);
-										setCurrentPage(1);
-									}}
-									options={decisionOptions}
-								/>
-							</div>
+							{!isUsedInVotedModal && (
+								<div className='mb-8 flex w-full items-center justify-center'>
+									<Segmented
+										block
+										className='w-full rounded-[30px] px-3 py-2'
+										size='large'
+										value={decision}
+										onChange={(value) => {
+											setDecision(String(value) as DecisionType);
+											setCurrentPage(1);
+										}}
+										options={decisionOptions}
+									/>
+								</div>
+							)}
 							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
-									<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+									{!isUsedInVotedModal ? (
+										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+									) : (
+										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Vote</div>
+									)}
 									<div
 										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-white ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
@@ -264,7 +284,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										}}
 									>
 										Amount
-										<ExpandIcon className={orderBy.balanceIsAsc ? 'rotate-180' : ''} />
+										{!isUsedInVotedModal && <ExpandIcon className={orderBy.balanceIsAsc ? 'rotate-180' : ''} />}
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
@@ -277,7 +297,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											}}
 										>
 											Conviction
-											<ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />
+											{!isUsedInVotedModal && <ExpandIcon className={orderBy.convictionIsAsc ? 'rotate-180' : ''} />}
 										</div>
 									) : null}
 
@@ -292,7 +312,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											}}
 										>
 											Voting Power
-											<ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />
+											{!isUsedInVotedModal && <ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />}
 										</span>
 										<span>
 											<Tooltip
@@ -304,57 +324,84 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</span>
 									</div>
 								</div>
-								<div className='max-h-[360px]'>
-									{votesRes &&
-										decision &&
-										!!votesRes[decision]?.votes?.length &&
-										votesRes[decision]?.votes.map((voteData: any, index: number) => (
-											<VoterRow
-												className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
-												key={`${voteData.voter}_${index}`}
-												currentKey={activeKey}
-												voteType={voteType}
-												voteData={voteData}
-												index={index}
-												isReferendum2={isReferendum2}
-												setDelegationVoteModal={setDelegationVoteModal}
-												setActiveKey={setActiveKey}
-												tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
-												decision={decision}
-												referendumId={referendumId}
-											/>
-										))}
-									{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
-								</div>
+								{!isUsedInVotedModal ? (
+									<div className='max-h-[360px]'>
+										{votesRes &&
+											decision &&
+											!!votesRes[decision]?.votes?.length &&
+											votesRes[decision]?.votes.map((voteData: any, index: number) => (
+												<VoterRow
+													className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === votesRes[decision]?.votes.length - 1 ? 'border-b' : ''}`}
+													key={`${voteData.voter}_${index}`}
+													currentKey={activeKey}
+													voteType={voteType}
+													voteData={voteData}
+													index={index}
+													isReferendum2={isReferendum2}
+													setDelegationVoteModal={setDelegationVoteModal}
+													setActiveKey={setActiveKey}
+													tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
+													decision={decision}
+													referendumId={referendumId}
+												/>
+											))}
+										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
+									</div>
+								) : (
+									<div className='max-h-[360px]'>
+										{combinedVotes &&
+											!!combinedVotes.length &&
+											combinedVotes.map((voteData: any, index: number) => (
+												<VoterRow
+													className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${index === combinedVotes.length - 1 ? 'border-b' : ''}`}
+													key={`${voteData.voter}_${index}`}
+													currentKey={activeKey}
+													voteType={voteType}
+													voteData={voteData}
+													index={index}
+													isReferendum2={isReferendum2}
+													setDelegationVoteModal={setDelegationVoteModal}
+													setActiveKey={setActiveKey}
+													tally={tallyData?.[decision === 'yes' ? 'ayes' : decision === 'no' ? 'nays' : 'abstain'] || null}
+													decision={decision}
+													referendumId={referendumId}
+													isUsedInVotedModal={isUsedInVotedModal}
+												/>
+											))}
+										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
+									</div>
+								)}
 							</VoteContainer>
 						</div>
-						<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
-							<p className='m-0 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
-							<Pagination
-								theme={theme}
-								size='small'
-								defaultCurrent={1}
-								current={currentPage}
-								onChange={onChange}
-								total={votesRes && decision ? votesRes[decision]?.count || 0 : 0}
-								showSizeChanger={false}
-								pageSize={VOTES_LISTING_LIMIT}
-								responsive={true}
-								hideOnSinglePage={true}
-								nextIcon={
-									<div
-										className={`ml-1 ${currentPage > Math.floor((votesRes && decision ? votesRes[decision]?.count || 0 : 0) / VOTES_LISTING_LIMIT) ? 'text-grey_secondary' : ''}`}
-									>
-										<RightOutlined />
-									</div>
-								}
-								prevIcon={
-									<div className={`mr-1 ${currentPage <= 1 ? 'text-grey_secondary' : ''}`}>
-										<LeftOutlined />
-									</div>
-								}
-							/>
-						</div>
+						{!isUsedInVotedModal && (
+							<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
+								<p className='m-0 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
+								<Pagination
+									theme={theme}
+									size='small'
+									defaultCurrent={1}
+									current={currentPage}
+									onChange={onChange}
+									total={votesRes && decision ? votesRes[decision]?.count || 0 : 0}
+									showSizeChanger={false}
+									pageSize={VOTES_LISTING_LIMIT}
+									responsive={true}
+									hideOnSinglePage={true}
+									nextIcon={
+										<div
+											className={`ml-1 ${currentPage > Math.floor((votesRes && decision ? votesRes[decision]?.count || 0 : 0) / VOTES_LISTING_LIMIT) ? 'text-grey_secondary' : ''}`}
+										>
+											<RightOutlined />
+										</div>
+									}
+									prevIcon={
+										<div className={`mr-1 ${currentPage <= 1 ? 'text-grey_secondary' : ''}`}>
+											<LeftOutlined />
+										</div>
+									}
+								/>
+							</div>
+						)}
 					</div>
 					{/* {thresholdData && (
 						<Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] dark:border-[#3B444F] pl-4'>

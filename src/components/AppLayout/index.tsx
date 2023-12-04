@@ -71,6 +71,7 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
+import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -249,7 +250,7 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { username, picture, loginAddress } = useUserDetailsSelector();
+	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -259,6 +260,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
+	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
@@ -318,6 +320,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
 				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 				setIsGood(Boolean(isGood));
+				setIsIdentitySet(!!(info.identity.display && !info?.identity?.judgements?.length));
 				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
 			})
 			.then((unsub) => {
@@ -742,6 +745,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
+			{!!userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+				<SetIdentityNudge
+					handleSetIdentityClick={handleIdentityButtonClick}
+					isIdentitySet={isIdentitySet}
+				/>
+			)}
 			<Layout hasSider>
 				<Sider
 					trigger={null}

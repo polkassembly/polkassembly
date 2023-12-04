@@ -48,7 +48,13 @@ const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
 	ssr: false
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -363,15 +369,19 @@ const Post: FC<IPostProps> = (props) => {
 		if (['polkadot', 'kusama'].includes(network)) {
 			tabs.push({
 				children: (
-					<PostAudit
+					// <PostAudit
+					// auditData={auditData}
+					// videoData={videoData}
+					// />
+					<EvaluationTab
 						auditData={auditData}
 						videoData={videoData}
 					/>
 				),
-				key: 'audit',
+				key: 'evaluation',
 				label: (
 					<div className='audit flex items-center justify-center gap-2'>
-						Audit
+						Evaluation
 						{totalAuditCount + totalVideoCount > 0 && (
 							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{totalAuditCount + totalVideoCount}

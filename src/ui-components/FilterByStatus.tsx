@@ -18,9 +18,10 @@ import styled from 'styled-components';
 interface SortByDropdownProps {
 	theme?: string | undefined;
 	setStatusItem?: any;
+	className?: string;
 }
 
-const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
+const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem, className }) => {
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -100,7 +101,8 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 				selectable: true
 			}}
 			trigger={['click']}
-			overlayClassName='z-[1056]'
+			overlayClassName={`${className} z-[1056]`}
+			className={`${className}`}
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 hover:text-pink_primary dark:text-[#96A4B6] dark:opacity-100'>
 				<span className={`${selectedStatus ? 'text-pink_primary' : ''} sm:mr-1 sm:mt-0.5`}>Status</span>
@@ -111,7 +113,12 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 };
 
 export default styled(FilterByStatus)`
+<<<<<<< HEAD
 	.ant-dropdown {
+=======
+	.ant-dropdown .ant-dropdown-menu,
+	.ant-dropdown-menu-submenu .ant-dropdown-menu {
+>>>>>>> ff9b841e54423538137346a0818a06b8026cf051
 		width: 200px !important;
 	}
 `;

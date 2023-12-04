@@ -5,19 +5,26 @@ import React, { useState, useEffect } from 'react';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ShieldUserIcon from '~assets/icons/shield-user-icon.svg';
 
-const UnverifiedUserNudge = ({ isIdentitySet, handleSetIdentityClick }: { handleSetIdentityClick: () => void; isIdentitySet: boolean }) => {
-	const [isOpen, setIsOpen] = useState<boolean>(true);
+interface Props {
+	isIdentitySet: boolean;
+	handleSetIdentityClick: () => void;
+}
+
+const SetIdentityNudge = ({ isIdentitySet, handleSetIdentityClick }: Props) => {
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	useEffect(() => {
-		const nudgeStatus = localStorage.getItem('nudge_status');
+		const nudgeStatus = localStorage.getItem('identityNudgeStatus');
 
-		if (nudgeStatus === 'viewed') {
+		if (nudgeStatus !== 'viewed') {
+			setIsOpen(true);
+		} else {
 			setIsOpen(false);
 		}
-	}, [setIsOpen]);
+	}, []);
 
 	function handleNudgeClose() {
-		localStorage.setItem('nudge_status', 'viewed');
+		localStorage.setItem('identityNudgeStatus', 'viewed');
 		setIsOpen(false);
 	}
 
@@ -47,4 +54,4 @@ const UnverifiedUserNudge = ({ isIdentitySet, handleSetIdentityClick }: { handle
 	);
 };
 
-export default UnverifiedUserNudge;
+export default SetIdentityNudge;

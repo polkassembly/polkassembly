@@ -71,7 +71,7 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import UnverifiedUserNudge from '../../ui-components/UnverifiedUserNudge';
+import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -320,7 +320,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
 				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 				setIsGood(Boolean(isGood));
-				setIsIdentitySet(!!(info.identity && !info?.identity?.judgements?.length));
+				setIsIdentitySet(!!(info.identity.display && !info?.identity?.judgements?.length));
 				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
 			})
 			.then((unsub) => {
@@ -745,8 +745,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
-			{userId && isIdentityUnverified && network === 'polkadot' && (
-				<UnverifiedUserNudge
+			{!!userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+				<SetIdentityNudge
 					handleSetIdentityClick={handleIdentityButtonClick}
 					isIdentitySet={isIdentitySet}
 				/>

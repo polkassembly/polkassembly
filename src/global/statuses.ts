@@ -90,6 +90,10 @@ export const gov2ReferendumStatusOptions = [
 		label: 'Confirm Started'
 	},
 	{
+		key: gov2ReferendumStatus.CREATED,
+		label: 'Created'
+	},
+	{
 		key: gov2ReferendumStatus.DECIDING,
 		label: 'Deciding'
 	},

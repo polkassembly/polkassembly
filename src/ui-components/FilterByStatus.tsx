@@ -87,7 +87,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem, classNam
 					proposalStatus: encodeURIComponent(JSON.stringify(key))
 				}
 			});
-			setStatusItem?.(key);
+			setStatusItem(key);
 			setSelectedStatus(key);
 		}
 	};
@@ -113,12 +113,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem, classNam
 };
 
 export default styled(FilterByStatus)`
-<<<<<<< HEAD
 	.ant-dropdown {
-=======
-	.ant-dropdown .ant-dropdown-menu,
-	.ant-dropdown-menu-submenu .ant-dropdown-menu {
->>>>>>> ff9b841e54423538137346a0818a06b8026cf051
 		width: 200px !important;
 	}
 `;

@@ -181,7 +181,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	});
 
 	const sortTabItemsByCount = (tabItems: any) => {
-		return tabItems.sort((a: any, b: any) => b.label.props.count - a.label.props.count);
+		return tabItems.sort((a: any, b: any) => b?.label?.props?.count - a?.label?.props?.count);
 	};
 
 	const sortedTabItems = sortTabItemsByCount(tabItems);

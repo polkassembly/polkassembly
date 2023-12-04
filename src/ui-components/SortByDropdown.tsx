@@ -69,7 +69,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 				<SwapOutlined
 					className={`${isUsedInTrackListing ? `${selectedStatus ? 'text-pink_primary' : 'text-bodyBlue opacity-70 dark:text-[#96A4B6]'}` : ''}`}
 					rotate={90}
-					style={{ fontSize: '14px', marginRight: '10px' }}
+					style={{ fontSize: '12px', marginRight: '10px' }}
 				/>{' '}
 			</div>
 		</Dropdown>

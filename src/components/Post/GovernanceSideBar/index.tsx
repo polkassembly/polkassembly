@@ -85,7 +85,7 @@ interface IGovernanceSidebarProps {
 	startTime: string;
 	tally?: any;
 	post: IPostResponse;
-	toggleEdit?: () => void;
+	toggleEdit: () => void | null;
 	trackName?: string;
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
@@ -185,10 +185,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
 	const showDecisionDeposit =
-		statusHistory &&
+		!!statusHistory &&
 		statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0 &&
 		statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0 &&
-		trackName;
+		!!trackName;
 
 	const balance = useMemo(() => {
 		return onChainLastVote?.balance

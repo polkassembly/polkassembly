@@ -27,7 +27,7 @@ enum cardTags {
 	ADD_TAGS = 'add-tags'
 }
 
-type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | undefined };
+type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isReversed, setIsReversed] = useState(false);
@@ -54,10 +54,6 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			const newIndex = prevIndex === 0 ? RHSCards.length - 1 : prevIndex - 1;
 			return !isReversed && newIndex === RHSCards.length - 1 ? prevIndex : newIndex;
 		});
-	};
-
-	const closeCardSlides = () => {
-		setRHSCards([]);
 	};
 
 	useEffect(() => {
@@ -152,7 +148,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					<div className='absolute right-0 top-0 aspect-square w-16 rounded-bl-[50%] bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
 						<div
 							className='navigation-btn absolute inset-2 z-10 flex items-center justify-center rounded-full bg-white shadow-md dark:bg-section-dark-overlay'
-							onClick={RHSCards.length === 1 ? closeCardSlides : handleTransitionButtonClick}
+							onClick={() => (RHSCards.length === 1 ? setRHSCards([]) : handleTransitionButtonClick())}
 						>
 							{RHSCards.length === 1 ? (
 								<CloseCardIcon className='fill-current text-black dark:text-white' />

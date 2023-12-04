@@ -180,6 +180,12 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		};
 	});
 
+	const sortTabItemsByCount = (tabItems: any) => {
+		return tabItems.sort((a: any, b: any) => b?.label?.props?.count - a?.label?.props?.count);
+	};
+
+	const sortedTabItems = sortTabItemsByCount(tabItems);
+
 	return (
 		<>
 			<SEOHead
@@ -247,7 +253,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 								theme={theme}
 								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue dark:bg-section-dark-overlay'
 								type='card'
-								items={tabItems as any}
+								items={sortedTabItems as any}
 							/>
 						</div>
 					)}

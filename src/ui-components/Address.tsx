@@ -299,7 +299,7 @@ const Address = (props: Props) => {
 							<Identicon
 								className='image identicon'
 								value={encodedAddr}
-								size={iconSize || displayInline ? 20 : 32}
+								size={iconSize ? iconSize : displayInline ? 20 : 32}
 								theme={'polkadot'}
 							/>
 						))}
@@ -316,12 +316,12 @@ const Address = (props: Props) => {
 										/>
 									))}
 
-								<div className={`flex items-center font-semibold text-bodyBlue   dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
+								<div className={`flex items-center font-semibold text-bodyBlue  dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
 									<div
 										onClick={(e) => handleClick(e)}
 										title={mainDisplay || encodedAddr}
 										className={`flex gap-x-1 ${
-											usernameClassName ? usernameClassName : 'font-medium text-bodyBlue dark:text-blue-dark-high'
+											usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
 										} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
 									>
 										{!!addressPrefix && (

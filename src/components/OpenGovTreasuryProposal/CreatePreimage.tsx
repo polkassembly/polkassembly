@@ -860,7 +860,7 @@ const CreatePreimage = ({
 							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
-									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-[#5C3931] dark:bg-[#331701] dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark ${poppins.variable} ${poppins.className}`}
 									showIcon
 									message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 								/>
@@ -954,7 +954,7 @@ const CreatePreimage = ({
 
 							{addressAlert && (
 								<Alert
-									className='mt-2 dark:border-[#125798] dark:bg-[#05263F]'
+									className='mt-2 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									showIcon
 									type='info'
 									message={<span className='text-[13px] dark:text-blue-dark-high'>The substrate address has been changed to {network} network address.</span>}
@@ -1126,7 +1126,7 @@ const CreatePreimage = ({
 					{showAlert && !isPreimage && !txFee.eq(ZERO_BN) && (
 						<Alert
 							type='info'
-							className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
+							className='mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							showIcon
 							description={
 								<span className='text-xs dark:text-blue-dark-high'>

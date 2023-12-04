@@ -113,7 +113,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		proposalType,
 		votesData,
 		identityId = null,
-		truncateUsername = true,
+		truncateUsername = false,
 		showSimilarPost,
 		description
 	} = props;

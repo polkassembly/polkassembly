@@ -7,6 +7,7 @@ import VotersList from './VoteList';
 import { Divider, Modal as AntdModal } from 'antd';
 import styled from 'styled-components';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
+import { IVotesCount } from '~src/types';
 interface IVoteDataModal {
 	setOpen?: any;
 	open?: any;
@@ -21,6 +22,7 @@ interface IVoteDataModal {
 		progress: any;
 		setData: any;
 	};
+	ayeNayAbstainCounts: IVotesCount;
 }
 
 const Modal = styled(AntdModal)`
@@ -29,7 +31,7 @@ const Modal = styled(AntdModal)`
 	}
 `;
 
-const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally }) => {
+const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally, ayeNayAbstainCounts }) => {
 	return (
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
@@ -56,6 +58,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 				referendumId={onchainId as number}
 				voteType={getVotingTypeFromProposalType(proposalType)}
 				thresholdData={thresholdData}
+				ayeNayAbstainCounts={ayeNayAbstainCounts}
 			/>
 		</Modal>
 	);

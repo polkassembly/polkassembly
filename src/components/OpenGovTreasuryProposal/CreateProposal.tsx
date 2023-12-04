@@ -147,15 +147,7 @@ const CreateProposal = ({
 			userId
 		});
 
-		if (data && !isNaN(Number(data?.post_id)) && data.post_id !== undefined) {
-			setPostId(data?.post_id);
-			setOpenSuccess(true);
-			console.log(postId, 'postId');
-			localStorage.removeItem('treasuryProposalProposerAddress');
-			localStorage.removeItem('treasuryProposalProposerWallet');
-			localStorage.removeItem('treasuryProposalData');
-			setOpenModal(false);
-		} else if (apiError || !data?.post_id) {
+		if (apiError || !data?.post_id) {
 			queueNotification({
 				header: 'Error',
 				message: apiError,
@@ -163,6 +155,7 @@ const CreateProposal = ({
 			});
 			console.error(apiError);
 		}
+
 		setLoading(false);
 	};
 
@@ -221,8 +214,15 @@ const CreateProposal = ({
 			);
 
 			const onSuccess = async () => {
-				await handleSaveTreasuryProposal(post_id);
+				handleSaveTreasuryProposal(post_id);
+				setPostId(post_id);
+				console.log('Saved referenda ID: ', post_id);
+				localStorage.removeItem('treasuryProposalProposerAddress');
+				localStorage.removeItem('treasuryProposalProposerWallet');
+				localStorage.removeItem('treasuryProposalData');
 				setLoading(false);
+				setOpenSuccess(true);
+				setOpenModal(false);
 			};
 
 			const onFailed = async () => {
@@ -257,7 +257,7 @@ const CreateProposal = ({
 				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
-						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-[#5C3931] dark:bg-[#331701] dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark ${poppins.variable} ${poppins.className}`}
 						showIcon
 						message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 					/>
@@ -347,7 +347,7 @@ const CreateProposal = ({
 				</div>
 				{showAlert && (
 					<Alert
-						className='mt-6 rounded-[4px] text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
+						className='mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						showIcon
 						type='info'
 						message={

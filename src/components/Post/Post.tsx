@@ -207,25 +207,25 @@ const Post: FC<IPostProps> = (props) => {
 	} else if (postType === ProposalType.DISCUSSIONS) {
 		postType = 'Discussion';
 	}
+	const postTypeInfo = postType === ProposalType.TIPS ? post.hash : post.post_id;
 	const productData = async () => {
 		try {
-			const response = await fetch(
-				`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS ? post.hash : post.post_id}`,
-				{
+			if (networkModified) {
+				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}`, {
 					headers: {
 						Accept: 'application/vnd.github.v3+json',
 						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
 						'X-GitHub-Api-Version': '2022-11-28'
 					}
+				});
+				if (response.ok) {
+					const data = await response.json();
+					setAuditData(data);
+					const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
+					setTotalAuditCount(count);
+				} else {
+					// throw new Error('Request failed');
 				}
-			);
-			if (response.ok) {
-				const data = await response.json();
-				setAuditData(data);
-				const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
-				setTotalAuditCount(count);
-			} else {
-				// throw new Error('Request failed');
 			}
 		} catch (error) {
 			// console.log('Error:', error);
@@ -233,23 +233,22 @@ const Post: FC<IPostProps> = (props) => {
 	};
 	const videosData = async () => {
 		try {
-			const response = await fetch(
-				`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS ? post.hash : post.post_id}/video.json`,
-				{
+			if (networkModified) {
+				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}/video.json`, {
 					headers: {
 						Accept: 'application/vnd.github.v3+json',
 						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
 						'X-GitHub-Api-Version': '2022-11-28'
 					}
+				});
+				if (response.ok) {
+					const data = await response.json();
+					const decoded = atob(data.content).replace(/}\s*{/g, '}, {');
+					setVideoData(JSON.parse(decoded) as IDataVideoType[]);
+					setTotalVideoCount(JSON.parse(decoded).length);
+				} else {
+					// throw new Error('Request failed');
 				}
-			);
-			if (response.ok) {
-				const data = await response.json();
-				const decoded = atob(data.content).replace(/}\s*{/g, '}, {');
-				setVideoData(JSON.parse(decoded) as IDataVideoType[]);
-				setTotalVideoCount(JSON.parse(decoded).length);
-			} else {
-				// throw new Error('Request failed');
 			}
 		} catch (error) {
 			// console.log('Error:', error);

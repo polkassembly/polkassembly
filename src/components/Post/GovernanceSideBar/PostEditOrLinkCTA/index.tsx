@@ -2,14 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { LinkOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 import { usePostDataContext } from '~src/context';
-import { CloseIcon, EditIcon } from '~src/ui-components/CustomIcons';
-import GovSidebarCard from '~src/ui-components/GovSidebarCard';
-import PostEditIcon from 'public/assets/icons/post-edit.svg';
-import PostLinkingIcon from 'public/assets/icons/post-linking.svg';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import PostEditLinkingIcon from 'public/assets/icons/post-edit-linking.svg';
 import { Modal } from 'antd';
 import ContinueWithoutLinking from './ContinueWithoutLinking';
@@ -20,46 +15,21 @@ import { poppins } from 'pages/_app';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
+	open: boolean;
+	setOpen: (state: boolean) => void;
+	linkingAndEditingOpen: boolean;
+	setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
+const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEditingOpen, setLinkingAndEditingOpen }) => {
 	const {
-		postData: { created_at, last_edited_at, postType }
+		postData: { postType }
 	} = usePostDataContext();
-	const isEditCTA = last_edited_at ? dayjs(last_edited_at).diff(dayjs(created_at)) < 0 : true;
-	const [open, setOpen] = useState(false);
-	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [linkingModalOpen, setLinkingModalOpen] = useState(false);
 	const isOnchainPost = checkIsOnChainPost(postType);
 	return (
-		<GovSidebarCard>
-			<div className='flex flex-col items-center py-3'>
-				<div>{isEditCTA ? <PostEditIcon /> : <PostLinkingIcon />}</div>
-				<span className='mt-4 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>Please add contextual information for voters to make an informed decision.</span>
-				<button
-					className='mt-5 flex h-[40px] w-full cursor-pointer items-center justify-center gap-x-2 rounded-[4px] border-none bg-pink_primary px-9 py-1 text-lg leading-[27px] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'
-					onClick={() => {
-						if (isEditCTA) {
-							setOpen(true);
-						} else {
-							setLinkingAndEditingOpen(true);
-						}
-					}}
-				>
-					{isEditCTA ? (
-						<>
-							<EditIcon />
-							<span className='text-base'>Edit Proposal Details</span>
-						</>
-					) : (
-						<>
-							<LinkOutlined />
-							<span>Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post</span>
-						</>
-					)}
-				</button>
-			</div>
+		<>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
@@ -70,7 +40,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
 					<PostEditLinkingIcon />
-					<article className='mb-[35px] mt-[28px] flex flex-col items-center text-center text-xl leading-[30px] tracking-[0.01em] text-sidebarBlue'>
+					<article className='mb-[35px] mt-[28px] flex flex-col items-center text-center text-xl leading-[30px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-high'>
 						<h3 className='m-0 p-0 text-lg font-medium'>Welcome Text</h3>
 						<p className='m-0 mt-2 text-base'>Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals.</p>
 					</article>
@@ -109,7 +79,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 				linkingAndEditingOpen={linkingAndEditingOpen}
 				setLinkingAndEditingOpen={setLinkingAndEditingOpen}
 			/>
-		</GovSidebarCard>
+		</>
 	);
 };
 

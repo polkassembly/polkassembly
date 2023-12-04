@@ -127,6 +127,11 @@ module.exports = {
 			},
 			borderRadius: {
 				xxl: '0.875rem'
+			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'rhs-card-gradient': 'linear-gradient(97deg, #04d9bb 0.25%, #06d7bb 0.26%, #6e49c9 112.25%)',
+				'rhs-indicator-gradient': 'linear-gradient(153deg, #08D4BB 16.67%, #6F47C9 100%)'
 			}
 		}
 	},

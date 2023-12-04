@@ -789,6 +789,10 @@ z-index: 1050 !important;
   background-color: transparent !important;
 }
 
+.bg-comment_bg {
+  background-color: transparent !important;
+}
+
 /* .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
   text-shadow: none !important;
 } */
@@ -796,6 +800,7 @@ z-index: 1050 !important;
 .ant-modal .ant-modal-header {
   background: transparent !important;
 }
+
 .overlay-class  {
   width: 126px !important;
   min-width: 0px !important;

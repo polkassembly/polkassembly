@@ -99,7 +99,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 				onClick: handleSortByClick,
 				selectable: true
 			}}
-			trigger={['click']}
+			trigger={['hover']}
 			overlayClassName='z-[1056]'
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>

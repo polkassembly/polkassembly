@@ -464,7 +464,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 										</div>
 									) : (
 										<Button
-											disabled={!content}
+											disabled={!content || (typeof content === 'string' && content.trim() === '')}
 											loading={loading}
 											htmlType='submit'
 											className={`my-0 mt-3 flex items-center border-none bg-pink_primary text-white hover:bg-pink_secondary ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}

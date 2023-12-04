@@ -37,7 +37,7 @@ export interface IComment {
 	post_index?: number;
 	post_type?: string;
 	vote?: string | null;
-	votes?: [];
+	votes?: any[];
 	isRow?: boolean;
 	isDeleted?: boolean;
 }
@@ -66,7 +66,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 			commentScrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}
 	}, [asPath, id]);
-
 	if (!user_id || !content)
 		return (
 			<div className={`${className} mb-5`}>
@@ -98,9 +97,10 @@ export const Comment: FC<ICommentProps> = (props) => {
 			/>
 			<div className='w-full overflow-hidden'>
 				<CreationLabel
-					className='creation-label comment-modal mt-0 rounded-t-md bg-comment_bg px-0 py-2 pt-4 dark:bg-[#141416] md:px-4'
+					className='creation-label comment-modal mt-0 rounded-t-md bg-comment_bg px-2 py-2 pt-4 dark:bg-[#141416] md:px-4'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
+					voterAddress={comment?.votes?.[0]?.voter}
 					username={comment.username}
 					sentiment={newSentiment}
 					commentSource={comment_source}

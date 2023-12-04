@@ -37,6 +37,7 @@ interface Props {
 	onBlur?: () => void;
 	theme?: string;
 	isBalanceUpdated?: boolean;
+	disabled?: boolean;
 }
 
 const BalanceInput = ({
@@ -57,7 +58,8 @@ const BalanceInput = ({
 	onBlur,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	theme,
-	isBalanceUpdated
+	isBalanceUpdated,
+	disabled
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -150,6 +152,7 @@ const BalanceInput = ({
 					placeholder={placeholder}
 					value={formatedBalance(String(balance || ZERO_BN), unit)}
 					size={size || 'middle'}
+					disabled={disabled}
 				/>
 			</Form.Item>
 		</div>

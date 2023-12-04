@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Form } from 'antd';
-import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
 import TextEditor from '~src/ui-components/TextEditor';
 
@@ -40,7 +39,6 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 		errorMsg: null,
 		validateStatus: 'success'
 	});
-	const { resolvedTheme: theme } = useTheme();
 
 	const onChangeWrapper = (content: string) => {
 		const validationStatus = validateContent(content);
@@ -62,7 +60,6 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 				help={validationStatus.errorMsg}
 			>
 				<TextEditor
-					theme={theme}
 					name='content'
 					value={value}
 					height={height}

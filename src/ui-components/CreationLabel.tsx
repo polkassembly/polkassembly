@@ -22,9 +22,10 @@ import { ESentiment, EVoteDecisionType, IBeneficiary } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
-import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { usePostDataContext } from '~src/context';
+import { getVotingTypeFromProposalType } from '~src/global/proposalType';
+import VoteList from '~src/components/Post/GovernanceSideBar/Modal/VoteData/VoteList';
 import BeneficiariesListing from './BeneficiariesListing';
 
 const Styled = styled.div`
@@ -57,6 +58,7 @@ const Styled = styled.div`
 		font-size: 10px;
 		padding: 0px 6px;
 	}
+
 	.dark-pink {
 		color: #e5007a;
 		text-decoration: underline;
@@ -67,6 +69,7 @@ interface ICreationLabelProps {
 	children?: ReactNode;
 	created_at?: Date;
 	defaultAddress?: string | null;
+	voterAddress?: string | null;
 	text?: string;
 	topic?: string;
 	username?: string;
@@ -101,13 +104,16 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		vote,
 		votesArr = [],
 		isRow,
+		voterAddress,
 		inPostHeading
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
-	const { network } = useNetworkSelector();
+	const handleContentClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+	};
 	const { resolvedTheme: theme } = useTheme();
-
+	const { postData } = usePostDataContext();
 	const getSentimentLabel = (sentiment: ESentiment) => {
 		return <div className={`${poppins.variable} ${poppins.className} pl-1 pr-1 text-[10px] font-light leading-4 tracking-wide`}>{getSentimentTitle(sentiment)}</div>;
 	};
@@ -119,108 +125,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		}
 	];
 
-	const AbstainDetailsComponent = ({ network, vote, power }: any) => {
-		return (
-			<>
-				<div className={'abstain-amount-value ml-[64px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'}>
-					{parseBalance((vote?.balance?.abstain || 0).toString(), 2, true, network)}
-				</div>
-				<div className={'abstain-conviction-value ml-[44px] mr-[50px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'}>-</div>
-				<div className='abstain-power-value w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'>{power}</div>
-			</>
-		);
-	};
-
-	const AyeNyeDetailsComponent = ({ network, vote, power }: any) => {
-		return (
-			<>
-				<div className={'amount-value ml-[95px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'}>
-					{parseBalance((vote?.balance?.value || 0).toString(), 2, true, network)}
-				</div>
-				<div className={'conviction-value ml-10 mr-[55px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'}>{`${
-					vote.lockPeriod === 0 ? '0.1' : vote.lockPeriod
-				}x`}</div>
-				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'>{power}</div>
-			</>
-		);
-	};
-	const SplitDetailsComponent = ({ network, vote, power }: any) => {
-		return (
-			<>
-				<div className={'amount-value ml-[86px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'}>
-					{parseBalance((vote?.decision === 'abstain' ? vote?.balance?.abstain || 0 : vote?.balance?.value || 0).toString(), 2, true, network)}
-				</div>
-				{vote?.decision === 'abstain' && (
-					<div className={'conviction-value ml-10 mr-[58px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'}> - </div>
-				)}
-				<div className='power-value -mr-[60px] w-[92px] overflow-ellipsis text-center text-bodyBlue dark:text-blue-dark-high'>{power}</div>
-			</>
-		);
-	};
-
-	const renderVoteContent = (vote: any, network: any, idx: number) => {
-		const lockPeriod = vote.lockPeriod === 0 || vote?.decision === 'abstain' ? 0.1 : vote.lockPeriod;
-		const value = vote?.decision === 'abstain' ? BigInt(vote?.balance?.abstain || 0) : BigInt(vote?.balance?.value || 0);
-		const powerValue = lockPeriod === 0.1 ? value / BigInt(10) : value * BigInt(lockPeriod);
-		const power = parseBalance(powerValue.toString(), 2, true, network);
-
-		return (
-			<div
-				key={idx}
-				className='modal-inner-content mb-2 flex items-center'
-			>
-				{vote.decision == 'yes' ? (
-					<div className='mb-[-1px] justify-between '>
-						<div className='flex'>
-							<LikeFilled className='relative -top-[4px] text-[green]' /> <span className='relative -top-[2px] ml-1 font-medium capitalize text-[green]'>Aye</span>
-							<AyeNyeDetailsComponent
-								network={network}
-								vote={vote}
-								power={power}
-							/>
-						</div>
-					</div>
-				) : vote.decision == 'no' ? (
-					<div className='w-[90%] justify-between'>
-						<div className='mb-[-1px] flex'>
-							<DislikeFilled className='relative -top-[4px] text-[red]' /> <span className='relative -top-[2px] mb-[5px] ml-1 font-medium capitalize text-[red]'>Nay</span>
-							<AyeNyeDetailsComponent
-								network={network}
-								vote={vote}
-								power={power}
-							/>
-						</div>
-					</div>
-				) : vote.decision == 'abstain' && !(vote.balance as any).abstain ? (
-					<div className='mb-[-1px] flex w-[90%] justify-between '>
-						<div className='mb-[-1px]  flex'>
-							<SplitYellow className='mr-1 mt-[2px]' /> <span className='ml-1 font-medium capitalize text-[#FECA7E]'>Split</span>
-							<SplitDetailsComponent
-								network={network}
-								vote={vote}
-								power={power}
-							/>
-						</div>
-					</div>
-				) : vote.decision == 'abstain' && (vote.balance as any).abstain ? (
-					<div className=' align-center mb-[1px] flex w-[90%] justify-between'>
-						<div className='flex justify-center align-middle'>
-							<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>Abstain</span>
-							<AbstainDetailsComponent
-								network={network}
-								vote={vote}
-								power={power}
-							/>
-						</div>
-					</div>
-				) : null}
-			</div>
-		);
-	};
-
 	return (
 		<div className={`${className} flex w-[100%] justify-between bg-none`}>
-			<div className={`flex text-xs ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+			<div className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
 						{inPostHeading && <span className='mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
@@ -233,7 +140,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						/>
 						{text}&nbsp;
 						{topic && (
-							<div className='flex items-center sm:-mt-0.5'>
+							<div className='topic-container ml-1 flex items-center sm:-mt-0.5'>
 								<span className='mr-2 mt-0.5 text-lightBlue dark:text-blue-dark-medium'>in</span>{' '}
 								<TopicTag
 									topic={topic}
@@ -248,7 +155,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
 									type='vertical'
 								/>
-								<BeneficiariesListing beneficiaries={beneficiaries} />
+								<BeneficiariesListing
+									beneficiaries={beneficiaries}
+									inPostHeading={inPostHeading}
+								/>
 							</>
 						)}
 						{cid ? (
@@ -267,7 +177,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className='flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1'>
+				<div className={`details-container ${inPostHeading ? 'mt-2' : ''} flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1`}>
 					{!inPostHeading && (
 						<div>
 							{(topic || text || created_at) && (
@@ -283,7 +193,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					)}
 					{created_at && (
 						<span className={`${inPostHeading ? '' : 'mr-1'} flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
-							<ClockCircleOutlined className='ml-1 mr-1' />
+							<ClockCircleOutlined className={`${inPostHeading ? '' : 'ml-1'} mr-1`} />
 							{relativeCreatedAt}
 						</span>
 					)}
@@ -297,7 +207,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							/>
 							{vote === EVoteDecisionType.AYE ? (
 								<p className='mb-[-1px]'>
-									<LikeFilled className='text-[green]' /> <span className='ont-medium capitalize text-[green]'>Voted {vote}</span>
+									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-[green]'>Voted {vote}</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (
 								<div>
@@ -309,7 +219,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								</div>
 							) : vote === EVoteDecisionType.ABSTAIN ? (
 								<div className='align-center mb-[1px] flex justify-center'>
-									<AbstainGray className='mr-1' /> <span className='ont-medium capitalize text-bodyBlue dark:text-blue-dark-high'>Voted {vote}</span>
+									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>Voted {vote}</span>
 								</div>
 							) : null}
 						</div>
@@ -349,7 +259,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`${poppins.variable} ${poppins.className} max-h-[675px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 								wrapClassName={`${className} dark:bg-modalOverlayDark`}
 								title={
@@ -358,30 +268,13 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 									</div>
 								}
 							>
-								<div className='modal-content'>
-									<div className='modal-container mt-3 flex text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>
-										<p className='m-0 p-0'>Vote</p>
-										<p className='amount-container m-0 ml-[124px] p-0'>Amount</p>
-										<p className='conviction-container relative m-0 ml-[64px] p-0'>Conviction</p>
-										<p className='m-0 ml-auto p-0'>Voting Power</p>
-									</div>
-									<div className='border-container my-3 -ml-6 w-[560px]  border-0 border-b-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]'></div>
-									{votesArr.length > 0 &&
-										votesArr.slice(0, 1).map((vote: any, idx: any) => {
-											return renderVoteContent(vote, network, idx);
-										})}
-									<div>
-										{votesArr.length > 1 && (
-											<div className='vote-history-container'>
-												<div className='-ml-6 mb-2 w-[560px] border-0 border-b-[1px] border-dashed border-[#D2D8E0] dark:border-[#3B444F]'></div>
-												<p className='m-0 mb-2 p-0 text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>Vote History</p>
-											</div>
-										)}
-										{votesArr.length > 1 &&
-											votesArr.slice(1).map((vote: any, idx: any) => {
-												return renderVoteContent(vote, network, idx);
-											})}
-									</div>
+								<div onClick={handleContentClick}>
+									<VoteList
+										referendumId={postData?.postIndex as number}
+										isUsedInVotedModal={true}
+										voterAddress={voterAddress}
+										voteType={getVotingTypeFromProposalType(postData?.postType)}
+									/>
 								</div>
 							</Modal>
 						</div>
@@ -464,6 +357,18 @@ export default styled(CreationLabel)`
 
 		.power-value {
 			left: 178px !important;
+		}
+	}
+
+	@media (max-width: 468px) and (min-width: 319px) {
+		.topic-container {
+			margin-top: 8px;
+		}
+	}
+
+	@media (max-width: 768px) and (min-width: 319px) {
+		.details-container {
+			margin-top: -4px !important;
 		}
 	}
 `;

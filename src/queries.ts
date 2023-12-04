@@ -1588,20 +1588,42 @@ query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOr
     totalCount
   }
   convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
-    decision
-    voter
-    balance {
-      ... on StandardVoteBalance {
-        value
-      }
-      ... on SplitVoteBalance {
-        aye
-        nay
-        abstain
-      }
-    }
-    lockPeriod
-    createdAt
+    id
+        decision
+        voter
+        balance {
+          ... on StandardVoteBalance {
+            value
+          }
+          ... on SplitVoteBalance {
+            aye
+            nay
+            abstain
+          }
+        }
+        createdAt
+        lockPeriod
+        selfVotingPower
+        totalVotingPower
+        delegatedVotingPower
+        delegatedVotes(limit: 5, orderBy: votingPower_DESC, where: {
+          removedAtBlock_isNull: true
+        }) {
+          decision
+          lockPeriod
+          voter
+          votingPower
+          balance {
+            ... on StandardVoteBalance {
+              value
+            }
+            ... on SplitVoteBalance {
+              aye
+              nay
+              abstain
+            }
+          }
+        }
   }
 }
 `;
@@ -1936,6 +1958,24 @@ export const GET_POSTS_LISTING_FOR_POLYMESH = `query PolymeshPrposalsQuery($type
     type
   }
   proposalsConnection(orderBy: createdAtBlock_DESC, where: {type_in: $type_in}) {
+    totalCount
+  }
+}`;
+
+export const GET_AYE_NAY_TOTAL_COUNT = `query getAyeNayTotalCount($type_eq: ProposalType, $proposalIndex_eq: Int= 291) {
+  aye: flattenedConvictionVotesConnection(orderBy: id_ASC, where: {
+    decision_eq: yes, removedAtBlock_isNull: true,proposalIndex_eq:  $proposalIndex_eq,  proposal:{type_eq:$type_eq} }
+  ) {
+    totalCount
+  }
+  nay: flattenedConvictionVotesConnection(orderBy: id_ASC, where: {
+    decision_eq: no, removedAtBlock_isNull: true, proposalIndex_eq:$proposalIndex_eq,  proposal:{type_eq:$type_eq}  }
+  ) {
+    totalCount
+  }
+  abstain: flattenedConvictionVotesConnection(orderBy: id_ASC, where: {
+    decision_eq: abstain, removedAtBlock_isNull: true,  proposalIndex_eq:$proposalIndex_eq, proposal:{type_eq:$type_eq} }
+  ) {
     totalCount
   }
 }`;

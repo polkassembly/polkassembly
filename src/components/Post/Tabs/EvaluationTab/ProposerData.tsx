@@ -6,62 +6,29 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, message } from 'antd';
 
-import React, { FC, useContext, useEffect, useState } from 'react';
-// import { ProfileIcon } from '~src/ui-components/CustomIcons';
+import React, { FC } from 'react';
 import ImageComponent from '~src/components/ImageComponent';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MinusCircleFilled } from '@ant-design/icons';
-import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 import CopyIcon from '~assets/icons/content_copy_small.svg';
-// import WebIcon from '~assets/icons/web-icon.svg';
-// import { VerifiedIcon } from './CustomIcons';
-
-import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { ApiPromise } from '@polkadot/api';
-import { ApiContext } from '~src/context/ApiContext';
 import copyToClipboard from '~src/util/copyToClipboard';
 import EvalutionSummary from '../../PostSummary/EvalutionSummary';
 import MessageIcon from '~assets/icons/ChatIcon.svg';
 import ClipBoardIcon from '~assets/icons/ClipboardText.svg';
 import CalenderIcon from '~assets/icons/Calendar.svg';
-import { network as AllNetworks } from '~src/global/networkConstants';
 
-interface IBeneficiariesTab {
+interface IProposerData {
 	className?: string;
 	address?: any;
+	profileData?: any;
+	isGood?: any;
 }
 
-const ProposerData: FC<IBeneficiariesTab> = (className, address) => {
-	const apiContext = useContext(ApiContext);
-	const { network } = useNetworkSelector();
-	const [apiReady, setApiReady] = useState(false);
-	const [api, setApi] = useState<ApiPromise>();
-	useEffect(() => {
-		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
-			setApi(apiContext.relayApi);
-			setApiReady(apiContext.relayApiReady);
-		} else {
-			if (!apiContext.api || !apiContext.apiReady) return;
-			setApi(apiContext.api);
-			setApiReady(apiContext.apiReady);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address]);
+const ProposerData: FC<IProposerData> = (props) => {
+	const { className, address, profileData, isGood } = props;
 
-	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 	const [messageApi, contextHolder] = message.useMessage();
-
-	const encodedAddr = address ? getEncodedAddress(address, network) || '' : '';
-	const [profileData, setProfileData] = useState<IGetProfileWithAddressResponse | undefined>();
-	useEffect(() => {
-		fetchUsername(address);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const success = () => {
 		messageApi.open({
@@ -71,36 +38,6 @@ const ProposerData: FC<IBeneficiariesTab> = (className, address) => {
 		});
 	};
 
-	useEffect(() => {
-		if (!api || !apiReady || !address || !encodedAddr) return;
-		handleIdentityInfo();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, address, encodedAddr, network]);
-
-	const handleIdentityInfo = () => {
-		api?.derive.accounts.info(encodedAddr, (info: DeriveAccountInfo) => {
-			setIdentity(info.identity);
-		});
-	};
-
-	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
-	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-
-	const fetchUsername = async (address: string) => {
-		const substrateAddress = getSubstrateAddress(address);
-
-		if (substrateAddress) {
-			try {
-				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
-				if (error || !data || !data.username) {
-					return;
-				}
-				setProfileData(data);
-			} catch (error) {
-				// console.log(error);
-			}
-		}
-	};
 	console.log(profileData);
 
 	return (

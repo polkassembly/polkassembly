@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 import ProposerTab from './ProposerTab';
 import AuditTab from './AuditTab';
 import ProgressReport from './ProgressReport';
+import BeneficiariesTab from './BeneficiariesTab';
 // import { useTheme } from 'next-themes';
 
 interface Props {
@@ -15,8 +16,9 @@ interface Props {
 const index: FC<Props> = ({ auditData, videoData }) => {
 	// const { resolvedTheme: theme } = useTheme();
 	return (
-		<div>
+		<div className=''>
 			<ProposerTab className='' />
+			<BeneficiariesTab className='' />
 			<AuditTab
 				auditData={auditData}
 				videoData={videoData}

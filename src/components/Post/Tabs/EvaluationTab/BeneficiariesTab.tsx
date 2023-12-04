@@ -4,21 +4,21 @@
 import { Collapse } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
-import ProgressReportIcon from '~assets/icons/progressIcon.svg';
+import BeneficiariesIcon from '~assets/icons/BeneficiariesIcon.svg';
 
 import React, { FC } from 'react';
 const { Panel } = Collapse;
 
-interface IProgressReport {
+interface IBeneficiariesTab {
 	className?: string;
 }
 
-const ProgressReport: FC<IProgressReport> = (className) => {
+const BeneficiariesTab: FC<IBeneficiariesTab> = (className) => {
 	return (
 		<div className={`${className}`}>
 			<Collapse
 				size='large'
-				className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+				className={'mt-4 bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 				expandIconPosition='end'
 				expandIcon={({ isActive }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
@@ -28,9 +28,9 @@ const ProgressReport: FC<IProgressReport> = (className) => {
 				<Panel
 					header={
 						<div className='channel-header flex items-center gap-[6px]'>
-							<ProgressReportIcon />
+							<BeneficiariesIcon />
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
-								Progress Reports
+								Beneficiaries
 							</h3>
 						</div>
 					}
@@ -43,4 +43,4 @@ const ProgressReport: FC<IProgressReport> = (className) => {
 	);
 };
 
-export default ProgressReport;
+export default BeneficiariesTab;

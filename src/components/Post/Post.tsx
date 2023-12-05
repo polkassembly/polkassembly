@@ -208,7 +208,8 @@ const Post: FC<IPostProps> = (props) => {
 		postType = 'Discussion';
 	}
 	const postTypeInfo = postType === ProposalType.TIPS ? post.hash : post.post_id;
-	const productData = async () => {
+
+	const productData = useCallback(async () => {
 		try {
 			if (networkModified) {
 				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}`, {
@@ -230,8 +231,9 @@ const Post: FC<IPostProps> = (props) => {
 		} catch (error) {
 			// console.log('Error:', error);
 		}
-	};
-	const videosData = async () => {
+	}, [networkModified, postType, postTypeInfo]);
+
+	const videosData = useCallback(async () => {
 		try {
 			if (networkModified) {
 				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}/video.json`, {
@@ -253,11 +255,13 @@ const Post: FC<IPostProps> = (props) => {
 		} catch (error) {
 			// console.log('Error:', error);
 		}
-	};
+	}, [networkModified, postType, postTypeInfo]);
 
 	useEffect(() => {
-		productData().then(() => {});
-		videosData().then(() => {});
+		if (proposalType === ProposalType.REFERENDUM_V2 && ['polkadot', 'kusama'].includes(network)) {
+			productData().then(() => {});
+			videosData().then(() => {});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -359,7 +363,8 @@ const Post: FC<IPostProps> = (props) => {
 				label: 'Timeline'
 			}
 		];
-		if (['polkadot', 'kusama'].includes(network)) {
+
+		if (proposalType === ProposalType.REFERENDUM_V2 && ['polkadot', 'kusama'].includes(network)) {
 			tabs.push({
 				children: (
 					<PostAudit

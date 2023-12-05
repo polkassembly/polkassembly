@@ -57,6 +57,21 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	};
 
 	useEffect(() => {
+		if (showDecisionDeposit) {
+			setRHSCards((prevCards) => {
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => setOpenDecisionDeposit(true),
+					description: 'To be paid before completion of decision period; payable by anyone',
+					icon: '/assets/icons/rhs-card-icons/Crystal.png',
+					tag: cardTags.DECISION_DEPOSIT,
+					title: 'Decision Deposit'
+				});
+
+				return newCards;
+			});
+		}
+
 		if (canEdit && !(tags && Array.isArray(tags) && tags.length > 0)) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
@@ -83,21 +98,6 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					icon: '/assets/icons/rhs-card-icons/Doc.png',
 					tag: cardTags.LINK_DISCUSSION,
 					title: isOnchainPost ? 'Link Discussion' : 'Link Onchain Post'
-				});
-
-				return newCards;
-			});
-		}
-
-		if (showDecisionDeposit) {
-			setRHSCards((prevCards) => {
-				const newCards = [...prevCards];
-				newCards.push({
-					clickHandler: () => setOpenDecisionDeposit(true),
-					description: 'To be paid before completion of decision period; payable by anyone',
-					icon: '/assets/icons/rhs-card-icons/Crystal.png',
-					tag: cardTags.DECISION_DEPOSIT,
-					title: 'Decision Deposit'
 				});
 
 				return newCards;

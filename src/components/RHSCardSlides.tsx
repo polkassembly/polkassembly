@@ -132,11 +132,13 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 
 	return (
 		<>
-			<DecisionDepositCard
-				trackName={trackName}
-				openModal={openDecisionDeposit}
-				setOpenModal={setOpenDecisionDeposit}
-			/>
+			{showDecisionDeposit && (
+				<DecisionDepositCard
+					trackName={trackName}
+					openModal={openDecisionDeposit}
+					setOpenModal={setOpenDecisionDeposit}
+				/>
+			)}
 			<PostEditOrLinkCTA
 				open={openLinkCta}
 				setOpen={setOpenLinkCta}

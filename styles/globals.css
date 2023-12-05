@@ -36,7 +36,7 @@
   --nay_red: #ff3c5f;
   --nay_red_Dark: #BD2020;
   --ligth_red: #fff1f4;
-  --comment_bg: #f9fafb;
+  --comment_bg: #F9FAFB;
   --font_default: "Poppins";
   --main-bg: #F5F6F8;
   --separatorDark: #4B4B4B;
@@ -786,10 +786,6 @@ z-index: 1050 !important;
 }
 
 .dark .ant-segmented-group label {
-  background-color: transparent !important;
-}
-
-.bg-comment_bg {
   background-color: transparent !important;
 }
 

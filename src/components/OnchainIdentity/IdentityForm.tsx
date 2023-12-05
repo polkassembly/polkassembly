@@ -528,20 +528,6 @@ const IdentityForm = ({
 				</div> */}
 				</div>
 			</Form>
-			{!alreadyVerifiedfields?.alreadyVerified && !alreadyVerifiedfields.isIdentitySet && (
-				<div className='mt-6 flex items-center gap-4 text-sm'>
-					<span className='font-medium text-lightBlue dark:text-blue-dark-high'>
-						Min Deposit{' '}
-						<HelperTooltip
-							className='ml-1'
-							text='Amount that needs held in an address for a verified account.'
-						/>
-					</span>
-					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue dark:border-separatorDark dark:bg-[#1D1D1D] dark:text-blue-dark-high'>
-						{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
-					</span>
-				</div>
-			)}
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert
@@ -564,6 +550,18 @@ const IdentityForm = ({
 								''
 							) : (
 								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
+									<span className='flex justify-between text-xs'>
+										<span className='text-lightBlue dark:text-blue-dark-medium '>
+											Min. Deposit (Refundable){' '}
+											<HelperTooltip
+												className='ml-1'
+												text='Refundable deposit unless the referendum is killed by the community'
+											/>
+										</span>
+										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
+											{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
+										</span>
+									</span>
 									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
 										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>

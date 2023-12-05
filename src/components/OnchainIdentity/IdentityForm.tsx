@@ -555,7 +555,7 @@ const IdentityForm = ({
 											Min. Deposit (Refundable){' '}
 											<HelperTooltip
 												className='ml-1'
-												text='Refundable deposit unless the referendum is killed by the community'
+												text='Deposit is refundable unless the referendum is killed by the community'
 											/>
 										</span>
 										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
@@ -592,7 +592,7 @@ const IdentityForm = ({
 											{formatedBalance(registerarFee.toString(), unit)} {unit}
 										</span>
 									</span>
-									<span className='flex justify-between text-xs'>
+									<span className='text-md mt-1 flex justify-between'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
 										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(totalFee.toString(), unit, 2)} {unit}

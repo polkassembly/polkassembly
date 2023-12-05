@@ -69,6 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 				network,
 				page,
 				proposalStatus: proposalStatus && JSON.parse(decodeURIComponent(String(proposalStatus))),
+				// proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 				proposalType,
 				sortBy,
 				trackNo: trackId,

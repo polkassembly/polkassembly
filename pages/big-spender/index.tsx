@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
-				proposalStatus: proposalStatus && JSON.parse(decodeURIComponent(String(proposalStatus))),
+				proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 				proposalType,
 				sortBy,
 				trackNo: trackId,

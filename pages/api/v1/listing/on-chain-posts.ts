@@ -245,7 +245,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				type_eq: subsquidProposalType
 			};
 			if (proposalStatus) {
-				postsVariables.status_eq = proposalStatus;
+				postsVariables.status_in = proposalStatus;
 			}
 			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			if (network === 'polymesh') {

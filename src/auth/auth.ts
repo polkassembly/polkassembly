@@ -1093,7 +1093,7 @@ class AuthService {
 	}
 
 	public async ProposalTrackerCreate(onchain_proposal_id: number, status: string, deadline: string, token: string, network: string, start_time: string): Promise<void> {
-		if (!token || !status || !deadline || !onchain_proposal_id || !network || !start_time) throw apiErrorWithStatusCode(messages.INVALID_PROPOSAL_TRACKER_PARAMS, 400);
+		if (!token || !status || !deadline || isNaN(onchain_proposal_id) || !network || !start_time) throw apiErrorWithStatusCode(messages.INVALID_PROPOSAL_TRACKER_PARAMS, 400);
 
 		const user = await this.GetUser(token);
 		if (!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);

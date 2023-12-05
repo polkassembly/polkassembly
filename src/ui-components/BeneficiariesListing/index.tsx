@@ -15,7 +15,7 @@ interface Props {
 	inPostHeading?: boolean;
 }
 
-const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props) => {
+const BeneficiariesListing = ({ className, beneficiaries }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	if (!beneficiaries || beneficiaries.length === 0) return null;
 
@@ -23,10 +23,7 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 		<div className={`${className} beneficiary-container flex flex-wrap items-center gap-1`}>
 			{theme === 'dark' ? <BeneficiaryGreyIcon className='-mt-[2px]' /> : <BeneficiaryIcon className='-mt-[2px] ml-1' />}
 			<span className='ml-[1px] mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Beneficiary:</span>
-			<Beneficiary
-				beneficiary={beneficiaries[0]}
-				inPostHeading={inPostHeading}
-			/>
+			<Beneficiary beneficiary={beneficiaries[0]} />
 			{beneficiaries.length > 1 && (
 				<span className='flex items-center gap-1'>
 					&amp;

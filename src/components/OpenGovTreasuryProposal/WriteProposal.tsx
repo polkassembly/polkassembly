@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
+import { Alert, Button, DatePicker, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
 import { ISteps } from '.';
@@ -15,8 +15,11 @@ import _ from 'lodash';
 import styled from 'styled-components';
 import ContentForm from '../ContentForm';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { dayjs } from 'dayjs-init';
+import type { DatePickerProps } from 'antd';
 
 interface Props {
+	className?: string;
 	isDiscussionLinked: boolean | null;
 	setIsDiscussionLinked: (pre: boolean) => void;
 	discussionLink: string;
@@ -29,9 +32,14 @@ interface Props {
 	setTags: (pre: string[]) => void;
 	setSteps: (pre: ISteps) => void;
 	form: FormInstance;
+	theme?: string;
+	setDeadlineDate: (pre: Date) => void;
+	deadlineDate: Date;
 }
 
 const WriteProposal = ({
+	className,
+	theme,
 	setSteps,
 	setIsDiscussionLinked,
 	isDiscussionLinked,
@@ -43,11 +51,14 @@ const WriteProposal = ({
 	setContent,
 	tags,
 	setTags,
-	form
+	form,
+	setDeadlineDate,
+	deadlineDate
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionFound, setIsDiscussionFound] = useState<boolean>(true);
+	const showDataPicker = isDiscussionLinked !== null ? (isDiscussionLinked ? !!discussionLink.length : true) : false;
 
 	const handleSubmit = async () => {
 		await form.validateFields();
@@ -111,6 +122,9 @@ const WriteProposal = ({
 		if (data && data?.writeProposalForm) {
 			const isDiscussionLink = data?.isDiscussionLinked;
 			data?.isDiscussionLinked !== undefined && setIsDiscussionLinked(Boolean(isDiscussionLink));
+			if (data?.deadline) {
+				setDeadlineDate(data?.deadline);
+			}
 			setSteps({ percent: 33.3, step: 0 });
 			const writeProposalFormData = data?.writeProposalForm?.[isDiscussionLink ? 'discussionLinkForm' : 'withoutDiscussionLinkForm'] || {};
 			handleStateChange(writeProposalFormData);
@@ -167,6 +181,22 @@ const WriteProposal = ({
 		setSteps({ percent: 66.6, step: 0 });
 	};
 
+	const onChange: DatePickerProps['onChange'] = (dayJSDate) => {
+		const date = dayJSDate || dayjs();
+		let form: any = localStorage.getItem('treasuryProposalData');
+		if (form) {
+			form = JSON.parse(form);
+			localStorage.setItem(
+				'treasuryProposalData',
+				JSON.stringify({
+					...form,
+					deadline: date.toDate()
+				})
+			);
+		}
+		setDeadlineDate(date.toDate());
+	};
+
 	return (
 		<>
 			<Spin
@@ -202,6 +232,7 @@ const WriteProposal = ({
 					disabled={loading}
 					initialValues={{ content, discussion_link: discussionLink, tags, title }}
 					validateMessages={{ required: "Please add the '${name}'" }}
+					className={className}
 				>
 					{isDiscussionLinked && (
 						<>
@@ -290,7 +321,7 @@ const WriteProposal = ({
 								{isDiscussionLinked ? (
 									<Markdown
 										imgHidden
-										className='post-content rounded-[4px] border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 dark:bg-section-dark-overlay dark:text-blue-dark-high'
+										className='post-content rounded-[4px] border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 pt-2 dark:bg-section-dark-overlay dark:text-blue-dark-high'
 										md={`${content?.slice(0, 300)}...` || content}
 									/>
 								) : (
@@ -307,6 +338,22 @@ const WriteProposal = ({
 									</Form.Item>
 								)}
 							</div>
+						</div>
+					)}
+					{showDataPicker && (
+						<div className={isDiscussionLinked ? 'mt-6' : ''}>
+							<label className='mb-0.5 text-sm text-lightBlue dark:text-blue-dark-high'>Add Deadline for completing deliverables</label>
+							<DatePicker
+								placeholder='DD-MM-YYYY'
+								format='DD-MM-YYYY'
+								disabledDate={(date) => dayjs(new Date()).format('dd-mm-yyyy') !== date.format('dd-mm-yyyy') && dayjs(new Date()).isAfter(date)}
+								onChange={onChange}
+								allowClear={false}
+								popupClassName={`z-[1060] dark:bg-section-dark-overlay ${theme}`}
+								rootClassName='dark:text-blue-dark-high'
+								className='h-10 w-full rounded-[4px] dark:bg-section-dark-overlay dark:text-blue-dark-high'
+								value={dayjs(deadlineDate)}
+							/>
 						</div>
 					)}
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
@@ -328,5 +375,8 @@ const WriteProposal = ({
 export default styled(WriteProposal)`
 	.icon-alert .ant-alert-icon {
 		margin-top: -20px !important;
+	}
+	.ant-picker-input > input {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
 	}
 `;

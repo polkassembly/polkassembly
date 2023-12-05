@@ -167,6 +167,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	const [isIdentityLoading, setIdentityCheckLoading] = useState<boolean>(false);
 	const [showIdentityInfoCardForBeneficiary, setShowIdentityInfoCardForBeneficiary] = useState<boolean>(false);
 	const [showIdentityInfoCardForProposer, setShowIdentityInfoCardForProposer] = useState<boolean>(false);
+	const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -417,6 +418,9 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							setTags={setTags}
 							setContent={setContent}
 							setTitle={setTitle}
+							theme={theme}
+							setDeadlineDate={setDeadlineDate}
+							deadlineDate={deadlineDate}
 						/>
 					)}
 
@@ -471,6 +475,10 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 							showMultisigInfoCard={isMultisigLoading ? false : showMultisigInfoCard}
 							showIdentityInfoCardForProposer={showIdentityInfoCardForProposer}
 							isDiscussionLinked={isDiscussionLinked}
+							showDeadlineCard={!deadlineDate}
+							deadlineDate={deadlineDate}
+							postId={postId}
+							setDeadlineDate={setDeadlineDate}
 						/>
 					)}
 				</div>

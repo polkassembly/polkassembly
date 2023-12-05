@@ -555,7 +555,7 @@ const IdentityForm = ({
 											Min. Deposit (Refundable){' '}
 											<HelperTooltip
 												className='ml-1'
-												text='Deposit is refundable unless the referendum is killed by the community'
+												text='Deposit is refundable and can be redeemed once verification is removed'
 											/>
 										</span>
 										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>

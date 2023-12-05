@@ -14,7 +14,7 @@ import { useTheme } from 'next-themes';
 import { Checkbox, Divider, Popover } from 'antd';
 import styled from 'styled-components';
 import { poppins } from 'pages/_app';
-
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 interface SortByDropdownProps {
 	theme?: string | undefined;
 	setStatusItem?: any;
@@ -24,6 +24,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+	const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
 	const { network } = useNetworkSelector();
 	let path = router.pathname.split('/')[1];
 	let statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
@@ -58,12 +59,15 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	}
 
 	const sortByOptions: ItemType[] = [...statusOptions];
-
-	const handleSortByClick = ({ key }: { key: string }) => {
+	const handleCheckboxChange = (checkedValues: CheckboxValueType[]) => {
+		setCheckedItems(checkedValues);
+	};
+	const handleSortByClick = (key: string) => {
 		if (key === 'clear_filter') {
+			setCheckedItems([]);
 			router.push({ pathname: '' });
 			setSelectedStatus(null);
-			setStatusItem(null);
+			setStatusItem?.([]);
 		} else {
 			router.push({
 				pathname: '',
@@ -72,7 +76,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 					proposalStatus: encodeURIComponent(JSON.stringify(key))
 				}
 			});
-			setStatusItem?.(key);
+			setStatusItem?.push(key);
 			setSelectedStatus(key);
 		}
 	};
@@ -81,7 +85,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 		<div>
 			<div
 				className='flex cursor-pointer justify-end p-1 text-xs text-pink_primary'
-				onClick={() => handleSortByClick({ key: 'clear_filter' })}
+				onClick={() => handleSortByClick('clear_filter')}
 			>
 				Clear Filter
 			</div>
@@ -91,6 +95,8 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 				style={{ background: '#D2D8E0' }}
 			/>
 			<Checkbox.Group
+				value={checkedItems}
+				onChange={handleCheckboxChange}
 				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
 				// value={tags}
 			>

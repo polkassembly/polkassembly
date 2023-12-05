@@ -37,7 +37,7 @@ export enum CustomStatus {
 const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
-	const [statusItem, setStatusItem] = useState();
+	const [statusItem, setStatusItem] = useState([]);
 
 	const items = [
 		{

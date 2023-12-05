@@ -18,7 +18,7 @@ interface ITrackListingAllTabContentProps {
 	error?: any;
 	count?: number;
 	showSimilarPost?: boolean;
-	statusItem?: string;
+	statusItem?: any[];
 }
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {

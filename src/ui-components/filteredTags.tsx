@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 
 interface IFilteredTags {
-	statusItem?: string;
+	statusItem?: any[];
 }
 
 const FilteredTags: FC<IFilteredTags> = (props) => {
@@ -41,11 +41,21 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 					</div>
 				</div>
 			) : null}
-			{statusItem ? (
+			{statusItem && statusItem?.length > 0 ? (
 				<div className='flex flex-wrap items-center sm:pb-4'>
 					<div className='flex h-[30px] items-center rounded bg-[#FDF0F7] px-2 py-1 dark:bg-[#33071E]'>
 						<span className='rounded-xl text-xs font-medium text-pink_primary dark:text-icon-dark-inactive'>Status: &nbsp;</span>
-						<div className='traking-2 mr-1 text-[12px] text-bodyBlue hover:border-pink_primary hover:text-pink_primary dark:text-white'>{statusItem}</div>
+						<div className='traking-2 mr-1 text-[12px] text-bodyBlue hover:border-pink_primary hover:text-pink_primary dark:text-white'>
+							{statusItem}
+							{statusItem.map((status, index) => (
+								<div
+									className='traking-2 mr-1 h-[22px] rounded-full border-[1px] border-solid border-navBlue px-[14px] text-[10px] text-lightBlue hover:border-pink_primary hover:text-pink_primary dark:text-white'
+									key={index}
+								>
+									{status.charAt(0).toUpperCase() + status.slice(1)}
+								</div>
+							))}
+						</div>
 					</div>
 				</div>
 			) : null}

@@ -70,17 +70,17 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									forGovSidebar={true}
 								/>
 							</div>
-							<div className='mt-4 grid gap-x-5 min-[410px]:grid-cols-2'>
+							<div className='mt-4 grid grid-cols-2 gap-x-3 min-[410px]:gap-x-5'>
 								<div className='col-span-1 flex flex-col gap-x-0'>
-									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<span className='flex gap-[6px] '>
+									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
+										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<AyeApprovalIcon />
 											Approval
 										</span>
 										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(approval)?.toFixed(2)}%</span>
 									</span>
-									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<span className='flex gap-[6px] '>
+									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
+										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<AyeThresholdIcon />
 											Threshold
 										</span>
@@ -88,15 +88,15 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									</span>
 								</div>
 								<div className='col-span-1 flex flex-col gap-x-0'>
-									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<span className='flex gap-[6px] '>
+									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
+										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<NayApprovalIcon />
 											Support
 										</span>
 										<span className='text-[#485F7D] dark:text-[#9E9E9E]'>{Number(support)?.toFixed(2)}%</span>
 									</span>
-									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<span className='flex gap-[6px] '>
+									<span className='flex justify-between space-x-[2px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high min-[410px]:space-x-2'>
+										<span className='flex gap-[2px] min-[410px]:gap-[6px] '>
 											<NayThresholdIcon />
 											Threshold
 										</span>

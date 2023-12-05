@@ -73,7 +73,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 	const { resolvedTheme: theme } = useTheme();
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {
 		const currentComment = item && item.content;
-		const previousComment = index < historyData.length - 1 ? historyData[index + 1]?.content : null;
+		const previousComment = index < historyData?.length - 1 ? historyData[index + 1]?.content : null;
 		const previousCommentString = previousComment ? removeSymbols(previousComment) : '';
 		const currentCommentString = removeSymbols(currentComment);
 		const difference = previousComment ? GenerateDiffHtml(previousCommentString, currentCommentString) : currentComment;

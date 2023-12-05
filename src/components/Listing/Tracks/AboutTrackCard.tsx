@@ -264,7 +264,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								className={`m-0 ml-2 ${theme === 'dark' ? 'mt-1' : 'mt-[2px]'} cursor-pointer p-0 text-xs text-pink_primary`}
 								onClick={() => setShowDetails(true)}
 							>
-								ShowTrack details
+								Show Track details
 							</span>
 						)}
 					</p>

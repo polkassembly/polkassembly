@@ -36,7 +36,7 @@
   --nay_red: #ff3c5f;
   --nay_red_Dark: #BD2020;
   --ligth_red: #fff1f4;
-  --comment_bg: #f9fafb;
+  --comment_bg: #F9FAFB;
   --font_default: "Poppins";
   --main-bg: #F5F6F8;
   --separatorDark: #4B4B4B;
@@ -796,7 +796,18 @@ z-index: 1050 !important;
 .ant-modal .ant-modal-header {
   background: transparent !important;
 }
+
 .overlay-class  {
   width: 126px !important;
   min-width: 0px !important;
+}
+
+@media (max-width: 700px) and (min-width: 319px) {
+  .beneficiary-container {
+    margin-top: 8px !important;
+  }
+
+  .details-container{
+    margin-top: 4px !important;
+  }
 }

@@ -11,12 +11,15 @@ import ImageComponent from '~src/components/ImageComponent';
 import { MinusCircleFilled } from '@ant-design/icons';
 
 import CopyIcon from '~assets/icons/content_copy_small.svg';
+import WhiteCopyIcon from '~assets/icons/content_copy_small_white.svg';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import copyToClipboard from '~src/util/copyToClipboard';
 import EvalutionSummary from '../../PostSummary/EvalutionSummary';
 import MessageIcon from '~assets/icons/ChatIcon.svg';
 import ClipBoardIcon from '~assets/icons/ClipboardText.svg';
 import CalenderIcon from '~assets/icons/Calendar.svg';
+import dayjs from 'dayjs';
+import { useTheme } from 'next-themes';
 
 interface IProposerData {
 	className?: string;
@@ -27,8 +30,8 @@ interface IProposerData {
 
 const ProposerData: FC<IProposerData> = (props) => {
 	const { className, address, profileData, isGood } = props;
-
 	const [messageApi, contextHolder] = message.useMessage();
+	const { resolvedTheme: theme } = useTheme();
 
 	const success = () => {
 		messageApi.open({
@@ -67,12 +70,12 @@ const ProposerData: FC<IProposerData> = (props) => {
 							}}
 						>
 							{contextHolder}
-							<CopyIcon />
+							{theme === 'dark' ? <WhiteCopyIcon className='ml-2 scale-125' /> : <CopyIcon className='ml-2 scale-125' />}
 						</span>
 					</div>
 					{!profileData?.profile?.bio && (
 						<div>
-							<p className='text-sm text-textGreyColor'>
+							<p className='text-sm text-textGreyColor dark:text-lightGreyTextColor'>
 								Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis, voluptatibus, eum enim sunt et alias repudiandae repellat molestias quis odit, quia illo quod
 								molestiae accusantium fuga hic commodi esse. Consequuntur quas reiciendis pariatur officia rerum, perspiciatis temporibus quae necessitatibus sed atque debitis
 								minus enim unde nam modi qui deleniti quibusdam exercitationem illo et magnam at iure? Accusamus nesciunt sint mollitia.
@@ -89,34 +92,46 @@ const ProposerData: FC<IProposerData> = (props) => {
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
 				className='mb-0 mt-2 dark:bg-separatorDark'
 			/>
-			<div className='mt-2 flex h-[60px] divide-x divide-gray-300'>
-				<div className='flex w-1/4 items-center justify-center p-4'>
+			<div className='mt-2 flex h-[60px] items-center divide-x  divide-gray-300'>
+				<div className='flex w-1/4 gap-x-2 p-4'>
 					<CalenderIcon />
-					<div>hello 1</div>
+					<div className='-mt-1'>
+						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
+						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}</span>
+					</div>
 				</div>
 				<Divider
 					type='vertical'
 					className='h-[40px]'
 				/>
-				<div className='flex w-1/4 items-center justify-center p-4'>
+				<div className='flex w-1/4 gap-x-2 p-4'>
 					<ClipBoardIcon />
-					<div>hello 2</div>
+					<div className='-mt-1'>
+						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
+						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}</span>
+					</div>
 				</div>
 				<Divider
 					type='vertical'
 					className='h-[40px]'
 				/>
-				<div className='flex w-1/4 items-center justify-center p-4'>
+				<div className='flex w-1/4 gap-x-2 p-4'>
 					<MessageIcon />
-					<div>Hello 3</div>
+					<div className='-mt-1'>
+						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
+						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}</span>
+					</div>
 				</div>
 				<Divider
 					type='vertical'
 					className='h-[40px]'
 				/>
-				<div className='flex w-1/4 items-center justify-center p-4'>
+				<div className='flex w-1/4 gap-x-2 p-4'>
 					<MessageIcon />
-					<div>Hello 4</div>
+					<div className='-mt-1'>
+						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Voting Power</p>
+						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}</span>
+					</div>
 				</div>
 			</div>
 		</div>

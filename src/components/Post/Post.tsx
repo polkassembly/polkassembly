@@ -54,7 +54,7 @@ const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
 	ssr: false
 });
 
-const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab'), {
+const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab/index'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

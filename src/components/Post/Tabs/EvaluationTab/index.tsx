@@ -6,6 +6,7 @@ import ProposerTab from './ProposerTab';
 import AuditTab from './AuditTab';
 import ProgressReport from './ProgressReport';
 import BeneficiariesTab from './BeneficiariesTab';
+import { usePostDataContext } from '~src/context';
 // import { useTheme } from 'next-themes';
 
 interface Props {
@@ -13,12 +14,13 @@ interface Props {
 	videoData?: any;
 }
 
-const index: FC<Props> = ({ auditData, videoData }) => {
+const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 	// const { resolvedTheme: theme } = useTheme();
+	const postedBy = usePostDataContext();
 	return (
 		<div className=''>
 			<ProposerTab className='' />
-			<BeneficiariesTab className='' />
+			{postedBy?.postData?.beneficiaries && postedBy?.postData?.beneficiaries?.length > 0 && <BeneficiariesTab className='' />}
 			<AuditTab
 				auditData={auditData}
 				videoData={videoData}
@@ -30,4 +32,4 @@ const index: FC<Props> = ({ auditData, videoData }) => {
 	);
 };
 
-export default index;
+export default IndexComponent;

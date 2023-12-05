@@ -1,13 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Collapse } from 'antd';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
-import ProposerIcon from '~assets/icons/proposerIcon.svg';
 
 import React, { FC, useContext, useEffect, useState } from 'react';
-import { usePostDataContext } from '~src/context';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -19,17 +14,13 @@ import { ApiPromise } from '@polkadot/api';
 import { ApiContext } from '~src/context/ApiContext';
 import ProposerData from './ProposerData';
 
-const { Panel } = Collapse;
-
-interface IProposerTab {
+interface IIndividualBeneficiary {
 	className?: string;
+	address?: string;
 }
 
-const ProposerTab: FC<IProposerTab> = (className) => {
-	// const { picture } = useUserDetailsSelector();
-	const postedBy = usePostDataContext();
-	console.log(postedBy);
-	const address = postedBy?.postData?.proposer;
+const IndividualBeneficiary: FC<IIndividualBeneficiary> = ({ address, className }) => {
+	console.log(address);
 	const apiContext = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const [apiReady, setApiReady] = useState(false);
@@ -48,10 +39,13 @@ const ProposerTab: FC<IProposerTab> = (className) => {
 
 	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 
-	const encodedAddr = postedBy?.postData?.proposer ? getEncodedAddress(postedBy?.postData?.proposer, network) || '' : '';
+	let encodedAddr: any;
+	if (address) {
+		encodedAddr = address ? getEncodedAddress(address, network) || '' : '';
+	}
 	const [profileData, setProfileData] = useState<IGetProfileWithAddressResponse | undefined>();
 	useEffect(() => {
-		fetchUsername(postedBy?.postData?.proposer);
+		fetchUsername(address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -70,8 +64,12 @@ const ProposerTab: FC<IProposerTab> = (className) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 
-	const fetchUsername = async (address: string) => {
-		const substrateAddress = getSubstrateAddress(address);
+	const fetchUsername = async (address: string | undefined) => {
+		console.log(address);
+		let substrateAddress;
+		if (address) {
+			substrateAddress = getSubstrateAddress(address);
+		}
 
 		if (substrateAddress) {
 			try {
@@ -88,33 +86,13 @@ const ProposerTab: FC<IProposerTab> = (className) => {
 
 	return (
 		<div className={`${className}`}>
-			<Collapse
-				size='large'
-				className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
-				expandIconPosition='end'
-				expandIcon={({ isActive }) => {
-					return isActive ? <ExpandIcon /> : <CollapseIcon />;
-				}}
-				// theme={theme}
-			>
-				<Panel
-					header={
-						<div className='channel-header flex items-center gap-[6px]'>
-							<ProposerIcon />
-							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Proposer</h3>
-						</div>
-					}
-					key='1'
-				>
-					<ProposerData
-						address={address}
-						profileData={profileData}
-						isGood={isGood}
-					/>
-				</Panel>
-			</Collapse>
+			<ProposerData
+				address={address}
+				profileData={profileData}
+				isGood={isGood}
+			/>
 		</div>
 	);
 };
 
-export default ProposerTab;
+export default IndividualBeneficiary;

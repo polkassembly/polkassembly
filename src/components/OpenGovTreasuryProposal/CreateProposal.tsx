@@ -27,6 +27,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
+import MissingInfoAlert from './MissingInfoAlert';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -45,10 +47,13 @@ interface Props {
 	title: string;
 	content: string;
 	tags: string[];
-	postId: number;
 	setPostId: (pre: number) => void;
 	availableBalance: BN;
 	discussionLink: string | null;
+	showMultisigInfoCard: boolean;
+	showIdentityInfoCardForBeneficiary: boolean;
+	showIdentityInfoCardForProposer: boolean;
+	isDiscussionLinked: boolean;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -72,9 +77,14 @@ const CreateProposal = ({
 	tags,
 	setPostId,
 	availableBalance,
-	discussionLink
+	discussionLink,
+	isDiscussionLinked,
+	showIdentityInfoCardForBeneficiary,
+	showIdentityInfoCardForProposer,
+	showMultisigInfoCard
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
 	const { api, apiReady } = useApiContext();
@@ -268,6 +278,13 @@ const CreateProposal = ({
 					type='success'
 					showIcon
 				/>
+				<MissingInfoAlert
+					theme={theme}
+					isDiscussionLinked={isDiscussionLinked}
+					showIdentityInfoCardForBeneficiary={showIdentityInfoCardForBeneficiary}
+					showIdentityInfoCardForProposer={showIdentityInfoCardForProposer}
+					showMultisigInfoCard={showMultisigInfoCard}
+				/>
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<div className='mt-4 flex flex-col gap-2'>
 						<span className='flex'>
@@ -308,7 +325,7 @@ const CreateProposal = ({
 							<span className='w-[150px]'>Preimage Hash:</span>
 							<span className='font-medium  text-bodyBlue dark:text-blue-dark-high'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
 							<span
-								className='flex cursor-pointer items-center'
+								className='ml-1 flex cursor-pointer items-center'
 								onClick={(e) => {
 									e.preventDefault();
 									copyLink(preimageHash);
@@ -362,18 +379,18 @@ const CreateProposal = ({
 						description={
 							<div className='mt-[10px] flex flex-col gap-1'>
 								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-900'>
-									<span className='w-[150px] dark:text-blue-dark-high'>Deposit amount</span>
+									<span className='w-[150px] dark:text-blue-dark-medium'>Deposit amount</span>
 									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-high'>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
 									<span className='w-[150px]'>Gas fees</span>
 									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-high '>
+								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-medium '>
 									<span className='w-[150px]'>Total</span>
 									<span className='text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
@@ -387,7 +404,7 @@ const CreateProposal = ({
 					<Button
 						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white ${
+						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
 							(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'
 						}`}
 					>
@@ -400,10 +417,11 @@ const CreateProposal = ({
 };
 export default styled(CreateProposal)`
 	.ant-alert-with-description {
-		padding-block: 15px !important;
+		padding-block: 10px !important;
+		padding: 10px 12px !important;
 	}
 	.ant-alert-with-description .ant-alert-icon {
-		font-size: 18px !important;
+		font-size: 16px !important;
 		margin-top: 4px;
 	}
 `;

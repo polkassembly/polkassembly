@@ -135,7 +135,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet } = useUserDetailsSelector();
 	const {
-		postData: { created_at, track_number, statusHistory, postIndex }
+		postData: { created_at, track_number, statusHistory, postIndex, postType }
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -182,11 +182,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
-	const showDecisionDeposit =
-		!!statusHistory &&
-		statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0 &&
-		statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0 &&
-		!!trackName;
+	const showDecisionDeposit = status == gov2ReferendumStatus.SUBMITTED && postType == ProposalType.REFERENDUM_V2;
 
 	const balance = useMemo(() => {
 		return onChainLastVote?.balance

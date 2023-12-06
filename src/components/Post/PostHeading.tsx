@@ -38,21 +38,22 @@ interface iTagsListingProps {
 	tags: [] | string[];
 	handleTagClick: (tag: string) => void;
 	handleTagModalOpen: () => void;
+	maxTags: number;
 }
 
-const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen }: iTagsListingProps) => {
+const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxTags }: iTagsListingProps) => {
 	return (
-		<div className={`${className} post-heading-tags flex items-center`}>
-			{tags?.slice(0, 3).map((tag, index) => (
+		<div className={`${className} flex items-center`}>
+			{tags?.slice(0, maxTags).map((tag, index) => (
 				<div
 					key={index}
-					className='traking-2 mr-1 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+					className='traking-2 mr-1 inline-flex cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
 					onClick={() => handleTagClick(tag)}
 				>
 					{tag}
 				</div>
 			))}
-			{tags.length > 3 && (
+			{tags.length > maxTags && (
 				<span
 					className='mr-1 cursor-pointer text-bodyBlue dark:text-blue-dark-high'
 					style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
@@ -62,7 +63,7 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen }: iT
 						handleTagModalOpen();
 					}}
 				>
-					+{tags.length - 3}
+					+{tags.length - maxTags}
 				</span>
 			)}
 		</div>
@@ -199,7 +200,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						{tags && tags.length > 0 && beneficiaries && beneficiaries?.length > 0 && (
 							<>
 								<Divider
-									className='mr-3'
+									className='mr-3 hidden md:inline-block'
 									type='vertical'
 									style={{ borderLeft: '1px solid var(--lightBlue)' }}
 								/>
@@ -209,6 +210,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 									handleTagModalOpen={() => {
 										setOpenTagsModal(true);
 									}}
+									maxTags={3}
+									className='post-heading-tags'
 								/>
 							</>
 						)}
@@ -233,8 +236,20 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							handleTagModalOpen={() => {
 								setOpenTagsModal(true);
 							}}
+							maxTags={3}
+							className='post-heading-tags'
 						/>
 					)}
+					{/* for mobile */}
+					<TagsListing
+						tags={tags}
+						handleTagClick={(tag: string) => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
+						handleTagModalOpen={() => {
+							setOpenTagsModal(true);
+						}}
+						maxTags={2}
+						className='tag-container hidden'
+					/>
 				</>
 			</div>
 			{history && history.length > 0 && (

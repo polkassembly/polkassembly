@@ -130,7 +130,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			<div
 				className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} ${
 					inPostHeading && !beneficiaries?.length ? 'flex' : ''
-				} flex-wrap items-center gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}
+				} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center md:items-center`}
 			>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
@@ -201,7 +201,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					)}
 					{inPostHeading && !beneficiaries?.length && (
 						<Divider
-							className='ml-1 xs:mt-2 xs:inline-block md:mt-0'
+							className='ml-1 hidden xs:mt-2 md:mt-0 md:inline-block'
 							type='vertical'
 							style={{ borderLeft: '1px solid #485F7D' }}
 						/>

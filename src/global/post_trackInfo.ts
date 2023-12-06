@@ -10,6 +10,8 @@ interface INetworkTrackInfo {
 	[index: string]: TrackInfoType;
 }
 
+// rococo config is incorrect for rococo but on ui is populated via api.
+
 export const networkTrackInfo: INetworkTrackInfo = {
 	kusama: {
 		[PostOrigin.ROOT]: {
@@ -2094,7 +2096,6 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			}
 		}
 	},
-	// this is incorrect for rococo but on ui is populated via api. 
 	rococo: {
 		[PostOrigin.ROOT]: {
 			trackId: 0,
@@ -2492,5 +2493,5 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				}
 			}
 		}
-	},
+	}
 };

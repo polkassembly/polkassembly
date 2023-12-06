@@ -348,6 +348,7 @@ export interface Post {
 	subscribers?: number[];
 	summary?: string;
 	createdOnPolkassembly?: boolean;
+	inductee_address?: string;
 }
 
 export interface IPostTag {
@@ -518,4 +519,15 @@ export enum EAddressOtherTextType {
 	COUNCIL_CONNECTED = 'Council (Connected)',
 	LINKED_ADDRESS = 'Linked',
 	UNLINKED_ADDRESS = 'Address not linked'
+}
+
+export interface IBeneficiary {
+	address: string;
+	amount: string;
+}
+
+export interface IVotesCount {
+	ayes: number;
+	nays: number;
+	abstain?: number;
 }

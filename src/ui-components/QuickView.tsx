@@ -19,15 +19,14 @@ import ImageComponent from 'src/components/ImageComponent';
 import Link from 'next/link';
 import { network as AllNetworks } from '~src/global/networkConstants';
 
-import VerifiedIcon from '~assets/icons/verified-tick.svg';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import CopyIcon from '~assets/icons/content_copy_small.svg';
 import WebIcon from '~assets/icons/web-icon.svg';
+import { PolkaverseIcon, VerifiedIcon } from './CustomIcons';
 import { useDispatch } from 'react-redux';
 import { setReceiver } from '~src/redux/Tipping';
-import { PolkaverseIcon } from './CustomIcons';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -75,8 +74,10 @@ const QuickView = ({
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const identityArr = [
-		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
-		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' }
+		{ isVerified: !!identity?.twitter && isGood, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
+		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' },
+		{ isVerified: !!identity?.email && isGood, key: 'Email', value: identity?.email || socials?.find((social) => social.type === 'Email')?.link || '' },
+		{ isVerified: !!identity?.riot && isGood, key: 'Riot', value: identity?.riot || socials?.find((social) => social.type === 'Riot')?.link || '' }
 	];
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const success = () => {
@@ -115,8 +116,8 @@ const QuickView = ({
 				/>
 				<div className={`flex ${!address && !profileCreatedAt ? 'mb-2 justify-between' : 'flex-col gap-1.5'}`}>
 					<div className='mt-0 flex items-center justify-start gap-2'>
-						<span className='text-xl font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
-						<div className='flex items-center justify-center'>{isGood ? <VerifiedIcon /> : <MinusCircleFilled style={{ color }} />}</div>
+						<span className='text-xl font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username?.length > 15 ? `${username?.slice(0, 15)}...` : username}</span>
+						<div className='flex items-center justify-center '>{isGood ? <VerifiedIcon className='text-xl' /> : <MinusCircleFilled style={{ color }} />}</div>
 						<a
 							target='_blank'
 							rel='noreferrer'
@@ -196,7 +197,7 @@ const QuickView = ({
 										}}
 										href={identity?.web}
 										title={identity?.web}
-										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#51D36E] text-white'
+										className={`flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'text-[#96A4B6]'}`}
 									>
 										<WebIcon />
 									</Link>

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
@@ -20,6 +20,8 @@ import OnchainInfoWrapper from './OnchainInfoWrapper';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { IBeneficiary } from '~src/types';
+import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active />,
@@ -37,6 +39,7 @@ const BlocksToTime = dynamic(() => import('src/components/BlocksToTime'), {
 });
 
 export interface IOnChainInfo {
+	beneficiaries: IBeneficiary[];
 	cid?: string;
 	codec?: string;
 	code?: string;
@@ -112,6 +115,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	if (!onChainInfo) return null;
 
 	const {
+		beneficiaries,
 		cid,
 		code,
 		codec,
@@ -502,6 +506,25 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							) : null}
 						</div>
 					)}
+					{beneficiaries && beneficiaries.length > 0 && (
+						<>
+							<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
+								<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Beneficiaries</h6>
+								<div className='col-span-6 flex flex-col gap-2 font-medium leading-6 text-bodyBlue'>
+									{beneficiaries.map((beneficiary, index) => (
+										<Beneficiary
+											key={index}
+											beneficiary={beneficiary}
+										/>
+									))}
+								</div>
+							</div>
+							<Divider
+								style={{ background: '#e5e7eb', flexGrow: 1 }}
+								className='mt-4 dark:bg-separatorDark'
+							/>
+						</>
+					)}
 					{proposed_call ? (
 						<div className='mt-5 flex flex-col gap-y-5'>
 							<ProposalInfo
@@ -560,7 +583,7 @@ const ProposalInfo: React.FC<IProposalInfoProps> = (props) => {
 				</div>
 			)}
 			{proposed_call?.description && (
-				<div className='grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
+				<div className='-mt-2 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
 					<h6 className='col-span-6 font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
 					<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{proposed_call.description}</p>
 				</div>

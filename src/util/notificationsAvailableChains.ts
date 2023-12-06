@@ -10,5 +10,7 @@ export const AVAILABLE_NETWORK = [
 	AllNetworks.COLLECTIVES,
 	AllNetworks.POLKADEX,
 	AllNetworks.POLYMESH,
-	AllNetworks.MOONBEAM
+	AllNetworks.MOONBEAM,
+	AllNetworks.MOONBASE,
+	AllNetworks.MOONRIVER
 ];

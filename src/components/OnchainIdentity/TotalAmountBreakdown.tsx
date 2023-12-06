@@ -14,6 +14,11 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
+import { useApiContext } from '~src/context';
+import executeTx from '~src/util/executeTx';
+import { ILoading, NotificationStatus } from '~src/types';
+import queueNotification from '~src/ui-components/QueueNotification';
 
 interface Props {
 	className?: string;
@@ -23,6 +28,8 @@ interface Props {
 	loading: boolean;
 	isIdentityAlreadySet: boolean;
 	alreadyVerifiedfields: IVerifiedFields;
+	address: string;
+	setStartLoading: (pre: ILoading) => void;
 }
 const getLearnMoreRedirection = (network: string) => {
 	switch (network) {
@@ -33,13 +40,15 @@ const getLearnMoreRedirection = (network: string) => {
 	}
 };
 
-const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, loading, isIdentityAlreadySet, alreadyVerifiedfields }: Props) => {
+const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, loading, isIdentityAlreadySet, alreadyVerifiedfields, address, setStartLoading }: Props) => {
 	const { registerarFee, minDeposite } = txFee;
 	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsSelector();
 	const [showAlert, setShowAlert] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -67,10 +76,42 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 		);
 	}, [network, userId]);
 
-	const handleRequestJudgement = () => {
+	const handleRequestJudgement = async () => {
+		// GAEvent for request judgement button clicked
+		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
-			handleLocalStorageSave({ setIdentity: true });
-			changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
+			if (!api || !apiReady) return;
+			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
+
+			const onSuccess = async () => {
+				handleLocalStorageSave({ setIdentity: true });
+				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
+				setStartLoading({ isLoading: false, message: 'Success!' });
+			};
+			const onFailed = (error: string) => {
+				queueNotification({
+					header: 'failed!',
+					message: error || 'Transaction failed!',
+					status: NotificationStatus.ERROR
+				});
+				setStartLoading({ isLoading: false, message: error || 'Failed' });
+			};
+
+			await executeTx({
+				address,
+				api,
+				apiReady,
+				errorMessageFallback: 'failed.',
+				network,
+				onFailed,
+				onSuccess,
+				setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
+				tx: requestedJudgementTx
+			});
 		} else {
 			setShowAlert(true);
 		}
@@ -81,16 +122,20 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				<Alert
 					showIcon
 					type='info'
-					className='mt-4 h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
-					message='No identity request found for judgment.'
+					className='mt-4 h-10 rounded-[4px] text-[13px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
 			{isIdentityAlreadySet && showAlert && (!alreadyVerifiedfields.email || !alreadyVerifiedfields.twitter) && (
 				<Alert
 					showIcon
 					type='info'
-					className='mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
-					description='To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.'
+					className='mt-4 rounded-[4px] text-[13px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					description={
+						<span className='dark:text-blue-dark-high'>
+							To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.
+						</span>
+					}
 				/>
 			)}
 
@@ -164,7 +209,14 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			<div className='-mx-6 mt-6 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<Button
 					loading={loading}
-					onClick={() => changeStep(ESetIdentitySteps.SET_IDENTITY_FORM)}
+					onClick={() => {
+						// GAEvent for let's begin button clicked
+						trackEvent('lets_begin_cta_clicked', 'initiated_verification_process', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
+						changeStep(ESetIdentitySteps.SET_IDENTITY_FORM);
+					}}
 					className='h-[40px] w-full rounded-[4px] border-pink_primary bg-pink_primary text-sm tracking-wide text-white'
 				>
 					Let&apos;s Begin

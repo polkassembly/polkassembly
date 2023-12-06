@@ -9,15 +9,15 @@ import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 const networks: any = {
 	kusama: [],
 	polkadot: [],
-	solo: []
-	// test: []
+	solo: [],
+	test: []
 };
 
 const networkLabel: { [index: string]: string } = {
 	kusama: 'Kusama',
 	polkadot: 'Polkadot',
-	solo: 'Solo Chains'
-	// test: 'Test Chains'
+	solo: 'Solo Chains',
+	test: 'Test Chains'
 };
 
 for (const key of Object.keys(network)) {

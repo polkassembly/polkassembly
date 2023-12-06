@@ -43,7 +43,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 
 		return {
 			children: !item?.expanded ? (
-				<div className={'-mt-1 ml-3 flex h-[50px] flex-col gap-2 text-sm font-medium tracking-[0.01em] text-[#334D6E] max-sm:ml-0 max-sm:w-full'}>
+				<div className={'-mt-1 ml-3 flex h-[50px] flex-col gap-2 text-sm font-medium tracking-[0.01em] text-[#334D6E] dark:text-blue-dark-medium max-sm:ml-0 max-sm:w-full'}>
 					Edited on {getRelativeCreatedAt(date)}
 					<div
 						className='-mt-2 flex cursor-pointer justify-start text-sm text-pink_primary'
@@ -74,7 +74,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							</div>
 						</div>
 					</div>
-					<div className='mt-1 text-[16px] font-medium text-[#334D6E]'>
+					<div className='mt-1 text-[16px] font-medium text-[#334D6E] dark:text-blue-dark-medium'>
 						{historyData[index + 1] ? (
 							item?.title ? (
 								<div>
@@ -174,7 +174,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 			className={`closeIcon shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			footer={false}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] '>Proposal Edit History</label>}
+			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-white'>Proposal Edit History</label>}
 		>
 			<div className='post-history-timeline -mb-6 mt-9 flex flex-col px-4'>
 				<Timeline items={items} />
@@ -219,5 +219,11 @@ export default styled(PostHistoryModal)`
 	}
 	.post-history-timeline .ant-timeline .ant-timeline-item-head-custom {
 		inset-block-start: 8px !important;
+	}
+	.ant-modal .ant-modal-header {
+		background: transparent !important;
+	}
+	.ant-timeline .ant-timeline-item-head {
+		background-color: transparent !important;
 	}
 `;

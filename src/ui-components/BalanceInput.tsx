@@ -37,6 +37,7 @@ interface Props {
 	onBlur?: () => void;
 	theme?: string;
 	isBalanceUpdated?: boolean;
+	disabled?: boolean;
 }
 
 const BalanceInput = ({
@@ -57,7 +58,8 @@ const BalanceInput = ({
 	onBlur,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	theme,
-	isBalanceUpdated
+	isBalanceUpdated,
+	disabled
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -135,7 +137,7 @@ const BalanceInput = ({
 				<Input
 					onBlur={() => onBlur?.()}
 					addonAfter={
-						<div className='flex items-center justify-center gap-1'>
+						<div className='flex items-center justify-center gap-1 dark:text-white'>
 							<Image
 								className='h-4 w-4 rounded-full object-contain'
 								src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
@@ -150,6 +152,7 @@ const BalanceInput = ({
 					placeholder={placeholder}
 					value={formatedBalance(String(balance || ZERO_BN), unit)}
 					size={size || 'middle'}
+					disabled={disabled}
 				/>
 			</Form.Item>
 		</div>
@@ -194,5 +197,9 @@ export default styled(BalanceInput)`
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
 		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
+	}
+	.ant-input-group-addon {
+		background-color: ${(props) => (props.theme === 'dark' ? '#e5007a' : '#edeff3')} !important;
+		border: ${(props) => (props.theme === 'dark' ? '1px solid #e5007a' : '1px solid #edeff3')} !important;
 	}
 `;

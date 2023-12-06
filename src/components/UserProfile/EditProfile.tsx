@@ -163,16 +163,16 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			console.error('Error updating profile: ', error);
 			queueNotification({
 				header: 'Error!',
-				message: error || 'Your profile was not updated.',
+				message: error || 'Your profile is not updated.',
 				status: NotificationStatus.ERROR
 			});
-			setErrorCheck({ ...errorCheck, basicInformationError: 'Your profile was not updated.' });
+			setErrorCheck({ ...errorCheck, basicInformationError: 'Your profile is not updated.' });
 		}
 
 		if (data?.token) {
 			queueNotification({
 				header: 'Success!',
-				message: 'Your profile was updated.',
+				message: 'Your profile is updated.',
 				status: NotificationStatus.SUCCESS
 			});
 			setProfileDetails((prev) => {

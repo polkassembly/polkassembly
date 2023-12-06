@@ -19,8 +19,10 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from '~src/ui-components/Address';
-import VerifiedTick from '~assets/icons/verified-tick.svg';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 
@@ -93,6 +95,7 @@ const IdentityForm = ({
 	setAddressChangeModalOpen
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
@@ -103,6 +106,7 @@ const IdentityForm = ({
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 
 	const handleLocalStorageSave = (field: any) => {
@@ -156,7 +160,7 @@ const IdentityForm = ({
 		const okLegal = checkValue(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
 		const okEmail = checkValue(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
 		// const okRiot = checkValue((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
-		const okTwitter = checkValue(twitterVal.length > 0, twitterVal, 3, [], WHITESPACE, []);
+		const okTwitter = checkValue(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
 		// const okWeb = checkValue((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
 		let okSocials = 1;
@@ -218,6 +222,11 @@ const IdentityForm = ({
 	};
 
 	const handleSetIdentity = async () => {
+		// GAEvent for set identity button clicked
+		trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		if (!api || !apiReady || !okAll) return;
 		const identityTx = api.tx?.identity?.setIdentity(info);
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
@@ -273,16 +282,20 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='error'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
-						message={`Minimum Balance of ${formatedBalance(totalFee.toString(), unit, 2)} ${unit} is required to proceed`}
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+						message={
+							<span className='dark:text-blue-dark-high'>
+								Minimum Balance of {formatedBalance(totalFee.toString(), unit, 2)} {unit} is required to proceed
+							</span>
+						}
 					/>
 				)}
 				{alreadyVerifiedfields?.alreadyVerified && (
 					<Alert
 						showIcon
 						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
-						message='Your identity has already been set. Please edit a field to proceed.'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						message={<span className='dark:text-blue-dark-high'>Your identity has already been set. Please edit a field to proceed.</span>}
 					/>
 				)}
 				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
@@ -439,11 +452,11 @@ const IdentityForm = ({
 						>
 							<Input
 								onBlur={() => getGasFee()}
-								addonAfter={email?.verified && alreadyVerifiedfields?.email === form?.getFieldValue('email') && <VerifiedTick />}
+								addonAfter={email?.verified && alreadyVerifiedfields?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
-								className='h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
 									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
 									handleInfo();
@@ -467,7 +480,11 @@ const IdentityForm = ({
 								{
 									message: 'Invalid twitter username',
 									validator(rule, value, callback) {
-										if (callback && value.length && !checkValue(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], WHITESPACE, [])) {
+										if (
+											callback &&
+											value.length &&
+											!checkValue(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], [...WHITESPACE, '/'], [])
+										) {
 											callback(rule?.message?.toString());
 										} else {
 											callback();
@@ -479,10 +496,10 @@ const IdentityForm = ({
 							<Input
 								onBlur={() => getGasFee()}
 								name='twitter'
-								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedTick />}
+								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
 								value={twitter?.value}
-								placeholder='Enter your twitter name'
-								className='h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								placeholder='Enter your twitter handle (case sensitive)'
+								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
 									handleInfo();
@@ -528,11 +545,11 @@ const IdentityForm = ({
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert
-						className='mt-6 rounded-[4px]'
+						className='mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'
 						showIcon
 						message={
-							<span className='text-sm font-medium text-bodyBlue'>
+							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
@@ -549,19 +566,19 @@ const IdentityForm = ({
 								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
 									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(gasFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium'>
+										<span className='text-lightBlue dark:text-blue-dark-medium '>
 											Bond{' '}
 											<HelperTooltip
 												className='ml-1'
 												text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(bondFee.toString(), unit)} {unit}
 										</span>
 									</span>
@@ -573,13 +590,13 @@ const IdentityForm = ({
 												className='ml-1'
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(registerarFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(totalFee.toString(), unit, 2)} {unit}
 										</span>
 									</span>
@@ -638,9 +655,13 @@ export default styled(IdentityForm)`
 	input {
 		height: 40px !important;
 		border-radius: 4px 0px 0px 4px;
+		background: transparent !important;
 	}
 	.ant-input-group .ant-input-group-addon {
 		border-radius: 0px 4px 4px 0px !important;
-		background: white !important;
+		background: transparent !important;
+	}
+	.dark input {
+		color: white !important;
 	}
 `;

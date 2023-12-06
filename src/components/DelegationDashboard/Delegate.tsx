@@ -18,6 +18,7 @@ import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
@@ -40,6 +41,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
+	const currentUser = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (!address) return;
@@ -79,7 +81,14 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	return (
 		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6 dark:bg-section-dark-overlay`}>
 			<div
-				onClick={() => setExpandProposals(!expandProposals)}
+				onClick={() => {
+					// GAEvent for delegate dropdown clicked
+					trackEvent('delegate_dropdown_clicked', 'clicked_delegate_dropdown', {
+						userId: currentUser?.id || '',
+						userName: currentUser?.username || ''
+					});
+					setExpandProposals(!expandProposals);
+				}}
 				className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex cursor-pointer items-center justify-between'
 			>
 				<div className='jutify-center flex items-center gap-2'>
@@ -93,9 +102,9 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 				<div className='mt-[24px]'>
 					{disabled && (
 						<Alert
-							className='text-sm font-normal text-bodyBlue dark:text-white'
+							className='text-sm font-normal text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
 							showIcon
-							message='You have already delegated for this track.'
+							message={<span className='dark:text-blue-dark-high'>You have already delegated for this track.</span>}
 						/>
 					)}
 					<h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white ${disabled && 'opacity-50'}`}>
@@ -121,7 +130,9 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 									getEncodedAddress(address, network) === delegationDashboardAddress ||
 									disabled
 								}
-								className={`ml-1 mr-1 flex h-[40px] items-center justify-around gap-2 rounded-md bg-pink_primary px-4 py-1 ${disabled && 'opacity-50'}`}
+								className={`ml-1 mr-1 flex h-[40px] items-center justify-around gap-2 rounded-md bg-pink_primary px-4 py-1 dark:border-pink_primary dark:bg-[#33071E] ${
+									disabled && 'opacity-50'
+								}`}
 							>
 								<DelegatesProfileIcon />
 								<span className='text-sm font-medium text-white'>Delegate</span>
@@ -137,9 +148,10 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						(!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
 					{addressAlert && (
 						<Alert
-							className='mb-4 mt-4'
+							className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							showIcon
-							message='The substrate address has been changed to Kusama address.'
+							type='info'
+							message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
 						/>
 					)}
 

@@ -54,6 +54,7 @@ export const userDetailsStore = createSlice({
 			localStorage.removeItem('loginAddress');
 			localStorage.removeItem('identityWallet');
 			localStorage.removeItem('identityAddress');
+			localStorage.removeItem('identityNudgeStatus');
 			localStorage.removeItem('identityForm');
 			state.addresses = [];
 			state.allowed_roles = [];

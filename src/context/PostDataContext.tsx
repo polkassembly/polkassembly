@@ -9,7 +9,7 @@ import { createContext, FC, PropsWithChildren, useState } from 'react';
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { ITimeline } from '~src/components/Post/Comment/CommentsContainer';
 import { ProposalType } from '~src/global/proposalType';
-import { IOptionPoll, IPoll, IPostHistory } from '~src/types';
+import { IBeneficiary, IOptionPoll, IPoll, IPostHistory } from '~src/types';
 
 export interface IPostDataContextProviderProps extends PropsWithChildren {
 	initialPostData: IPostData;
@@ -25,6 +25,7 @@ export interface ITimelineData {
 }
 
 export interface IPostData {
+	beneficiaries?: IBeneficiary[];
 	postIndex: number | string;
 	postType: ProposalType;
 	timeline?: ITimelineData[];

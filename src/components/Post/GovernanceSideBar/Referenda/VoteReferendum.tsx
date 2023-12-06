@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Divider, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -18,12 +18,16 @@ import { ProposalType } from '~src/global/proposalType';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
+import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
 import LikeGray from '~assets/icons/like-gray.svg';
+import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
+import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
+import DarkSplitGray from '~assets/icons/split-gray-dark.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import dayjs from 'dayjs';
@@ -56,6 +60,7 @@ interface Props {
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
 	address: string;
+	theme?: string;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -497,10 +502,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.AYE ? 'bg-[#2ED47A] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.AYE ? 'bg-ayeGreenColor text-white dark:bg-ayeDarkGreenColor' : ''
+					}`}
 				>
-					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-[3px] mr-2' /> : <LikeGray className='mb-[3px] mr-2' />}
-					<span className='text-base font-medium'>Aye</span>
+					{vote === EVoteDecisionType.AYE ? (
+						<LikeWhite className='mb-[3px] mr-2' />
+					) : theme === 'dark' ? (
+						<DarkLikeGray className='mb-[3px] mr-2' />
+					) : (
+						<LikeGray className='mb-[3px] mr-2' />
+					)}
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
 				</div>
 			),
 			value: 'aye'
@@ -508,9 +521,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.NAY ? 'bg-[#F53C3C] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.NAY ? 'bg-nayRedColor text-white dark:bg-nayDarkRedColor' : ''
+					}`}
 				>
-					{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />} <span className='text-base font-medium'>Nay</span>
+					{vote === EVoteDecisionType.NAY ? (
+						<DislikeWhite className='-mb-[3px] mr-2' />
+					) : theme === 'dark' ? (
+						<DarkDislikeGray className='-mb-[3px] mr-2' />
+					) : (
+						<DislikeGray className='-mb-[3px] mr-2' />
+					)}
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
 				</div>
 			),
 			value: 'nay'
@@ -523,10 +545,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white' : ''}`}
+							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
+							}`}
 						>
 							{' '}
-							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' />} <span className='text-base font-medium'>Split</span>{' '}
+							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
+							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Split</span>
 						</div>
 					),
 					value: 'split'
@@ -534,11 +559,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				{
 					label: (
 						<div
-							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
-								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white' : ''
+							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
-							<StopOutlined className='mb-[3px] mr-2' /> <span className='text-base font-medium'>Abstain</span>
+							<StopOutlined className={`mb-[3px] mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
 						</div>
 					),
 					value: 'abstain'
@@ -573,13 +599,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										setShowMultisig(false);
 										setMultisig('');
 									}}
-									className='absolute left-[24px] mt-1 cursor-pointer'
+									className='absolute left-6 -mt-1 cursor-pointer'
 								/>
 								<div className='flex items-center gap-[8px]'>
 									{theme === 'dark' ? (
 										<WalletIcon
 											which={Wallet.POLKASAFE}
-											className='ml-14 h-6 w-6'
+											className='ml-14 mt-2.5 h-6 w-6'
 										/>
 									) : (
 										<PolkasafeIcon className='ml-14' />
@@ -589,8 +615,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								</div>
 							</div>
 						) : (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-								<CastVoteIcon className='ml-6' />
+							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+								{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
 								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 							</div>
 						)
@@ -603,9 +629,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							tip={loadingStatus.message}
 						>
 							<>
-								<div className='mb-6'>
-									<div className='mt-3 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
-									<div className='mt-1 flex items-center justify-center gap-x-5'>
+								<div className='my-6'>
+									<div className='mt-1 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
+									<div className='mt-1 flex items-center justify-center gap-x-2'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
 												className={`${wallet === Wallet.POLKADOT ? ' h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
@@ -690,28 +716,27 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 												}
 											/>
 										) : null}
-									</div>
-									{canUsePolkasafe(network) && !showMultisig && (
-										<div className='m-auto mt-3 flex w-[50%] flex-col gap-3'>
-											<Divider className='m-0 dark:text-blue-dark-medium'>OR</Divider>
-											<div className='flex w-full justify-center'>
-												<WalletButton
-													className='!border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
-													onClick={() => {
-														setShowMultisig(!showMultisig);
-													}}
-													name='Polkasafe'
-													icon={
-														<WalletIcon
-															which={Wallet.POLKASAFE}
-															className='h-6 w-6'
-														/>
-													}
-													text={'Cast Vote with Multisig'}
-												/>
+										{canUsePolkasafe(network) && !showMultisig && (
+											<div className='flex-col'>
+												<div className='flex w-full justify-center'>
+													<WalletButton
+														className='h-[50px] w-[64px] !border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
+														onClick={() => {
+															setShowMultisig(!showMultisig);
+														}}
+														name='Polkasafe'
+														icon={
+															<WalletIcon
+																which={Wallet.POLKASAFE}
+																className='h-6 w-6'
+															/>
+														}
+														text={'Cast Vote with Multisig'}
+													/>
+												</div>
 											</div>
-										</div>
-									)}
+										)}
+									</div>
 								</div>
 								{showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (
 									<Alert
@@ -735,9 +760,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											.gte(showMultisig ? multisigBalance : availableBalance) && (
 											<Alert
 												type='info'
-												message='Insufficient balance'
+												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 												showIcon
-												className='mb-4 rounded-[4px]'
+												className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 											/>
 										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
@@ -749,9 +774,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 									<Alert
-										message='No addresses found in the address selection tab.'
+										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
+										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -789,9 +815,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
 									<Alert
-										message='Please select a wallet.'
+										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
+										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
 
@@ -974,5 +1001,8 @@ export default React.memo(styled(VoteReferendum)`
 	}
 	.vote-referendum .ant-segmented-item {
 		padding: 0px !important;
+	}
+	.dark .ant-segmented-group label {
+		background-color: transparent !important;
 	}
 `);

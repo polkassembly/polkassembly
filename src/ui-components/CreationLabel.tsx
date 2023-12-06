@@ -126,8 +126,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return (
-		<div className={`${className} flex w-[100%] justify-between bg-none`}>
-			<div className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+		<div className={`${className} flex w-[100%] flex-col justify-between gap-3 bg-none`}>
+			<div
+				className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} ${
+					inPostHeading && !beneficiaries?.length ? 'flex' : ''
+				} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}
+			>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
 						{inPostHeading && <span className='mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
@@ -190,6 +194,13 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								</>
 							)}
 						</div>
+					)}
+					{inPostHeading && !beneficiaries?.length && (
+						<Divider
+							className='ml-1 xs:mt-2 xs:inline-block md:mt-0'
+							type='vertical'
+							style={{ borderLeft: '1px solid #485F7D' }}
+						/>
 					)}
 					{created_at && (
 						<span className={`${inPostHeading ? '' : 'mr-1'} flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>

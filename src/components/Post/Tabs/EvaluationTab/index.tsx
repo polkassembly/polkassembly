@@ -4,7 +4,7 @@
 import React, { FC } from 'react';
 import ProposerTab from './ProposerTab';
 import AuditTab from './AuditTab';
-import ProgressReport from './ProgressReport';
+// import ProgressReport from './ProgressReport';
 import BeneficiariesTab from './BeneficiariesTab';
 import { usePostDataContext } from '~src/context';
 // import { useTheme } from 'next-themes';
@@ -24,10 +24,10 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 			<AuditTab
 				auditData={auditData}
 				videoData={videoData}
-				// theme={theme}
 				className='my-4'
 			/>
-			<ProgressReport className='' />
+			{/* progress report dropdown component */}
+			{/* <ProgressReport className='' /> */}
 		</div>
 	);
 };

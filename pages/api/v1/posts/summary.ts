@@ -25,7 +25,7 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	}
 
 	const strProposalType = String(proposalType);
-	if (!isOffChainProposalTypeValid(strProposalType) || !isProposalTypeValid(strProposalType))
+	if (!(isOffChainProposalTypeValid(strProposalType) || isProposalTypeValid(strProposalType)))
 		return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
 
 	const postRef = postsByTypeRef(network, proposalType as any).doc(String(postId));

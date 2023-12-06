@@ -50,6 +50,7 @@ function App({ Component, pageProps }: AppProps) {
 	const store: any = useStore();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
+	console.log(network);
 
 	useEffect(() => {
 		router.isReady && setShowSplashScreen(false);
@@ -57,8 +58,9 @@ function App({ Component, pageProps }: AppProps) {
 
 	useEffect(() => {
 		const networkStr = getNetwork();
-		if (!global?.window || !chainProperties[networkStr].gTag) return;
 		setNetwork(networkStr);
+
+		if (!global?.window || !chainProperties[networkStr].gTag) return;
 
 		if (!window.GA_INITIALIZED) {
 			initGA(networkStr);

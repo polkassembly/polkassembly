@@ -67,6 +67,12 @@ const sortedCheck = {
 	convictionIsAsc: false,
 	votingIsAsc: false
 };
+const formatNumber = (num: number | undefined) => {
+	if (num && num >= 1000) {
+		return (num / 1000).toFixed(1) + 'k';
+	}
+	return num;
+};
 
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
@@ -107,16 +113,16 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const decisionOptions = [
 		{
 			label: (
-				<div className='flex items-center justify-center gap-1 rounded-[20px] text-green-700'>
-					<LikeFilled /> <span>Ayes({ayeNayAbstainCounts?.ayes})</span>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-green-700 max-[450px]:text-xs min-[450px]:mt-0'>
+					<LikeFilled /> <span>Ayes({formatNumber(ayeNayAbstainCounts?.ayes)})</span>
 				</div>
 			),
 			value: 'yes'
 		},
 		{
 			label: (
-				<div className='flex items-center justify-center gap-1  rounded-[20px] text-red-600'>
-					<DislikeFilled /> <span>Nays({ayeNayAbstainCounts?.nays})</span>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-red-600  max-[450px]:text-xs min-[450px]:mt-0'>
+					<DislikeFilled /> <span>Nays({formatNumber(ayeNayAbstainCounts?.nays)})</span>
 				</div>
 			),
 			value: 'no'
@@ -126,8 +132,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	if (voteType === VoteType.REFERENDUM_V2) {
 		decisionOptions.push({
 			label: (
-				<div className='flex items-center justify-center gap-1 rounded-[20px] text-blue-400'>
-					<MinusCircleFilled /> <span>Abstain({ayeNayAbstainCounts?.abstain})</span>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-blue-400 max-[450px]:text-xs min-[450px]:mt-0'>
+					<MinusCircleFilled /> <span>Abstain({formatNumber(ayeNayAbstainCounts?.abstain)})</span>
 				</div>
 			),
 			value: 'abstain'
@@ -256,7 +262,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								<div className='mb-8 flex w-full items-center justify-center'>
 									<Segmented
 										block
-										className='w-full rounded-[30px] px-3 py-2'
+										className='w-full rounded-[10px] px-1 py-2 min-[450px]:rounded-[30px] min-[450px]:px-3'
 										size='large'
 										value={decision}
 										onChange={(value) => {

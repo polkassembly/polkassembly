@@ -377,7 +377,7 @@ const Post: FC<IPostProps> = (props) => {
 					<div className='audit flex items-center justify-center gap-2'>
 						Audit
 						{totalAuditCount + totalVideoCount > 0 && (
-							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:bg-section-dark-container dark:text-blue-dark-high'>
 								{totalAuditCount + totalVideoCount}
 							</span>
 						)}{' '}

@@ -70,7 +70,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 									forGovSidebar={true}
 								/>
 							</div>
-							<div className='mt-4 grid grid-cols-2 gap-x-5'>
+							<div className='mt-4 grid gap-x-5 min-[410px]:grid-cols-2'>
 								<div className='col-span-1 flex flex-col gap-x-0'>
 									<span className='flex justify-between gap-x-2 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 										<span className='flex gap-[6px] '>

@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
@@ -14,7 +15,8 @@ import { useTheme } from 'next-themes';
 import { Checkbox, Divider, Popover } from 'antd';
 import styled from 'styled-components';
 import { poppins } from 'pages/_app';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import type { CheckboxValueType } from 'antd/es/checkbox/Group';
+
 interface SortByDropdownProps {
 	theme?: string | undefined;
 	setStatusItem?: any;
@@ -59,26 +61,31 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	}
 
 	const sortByOptions: ItemType[] = [...statusOptions];
-	const handleCheckboxChange = (checkedValues: CheckboxValueType[]) => {
-		setCheckedItems(checkedValues);
-	};
-	const handleSortByClick = (key: string) => {
+
+	const handleSortByClick = (key: any) => {
 		if (key === 'clear_filter') {
 			setCheckedItems([]);
 			router.push({ pathname: '' });
 			setSelectedStatus(null);
 			setStatusItem?.([]);
 		} else {
-			router.push({
-				pathname: '',
-				query: {
-					...router.query,
-					proposalStatus: encodeURIComponent(JSON.stringify(key))
-				}
-			});
-			setStatusItem?.push(key);
-			setSelectedStatus(key);
+			if (key.length > 0) {
+				router.replace({
+					pathname: '',
+					query: {
+						...router.query,
+						proposalStatus: encodeURIComponent(JSON.stringify(key))
+					}
+				});
+				setStatusItem?.(key);
+				setSelectedStatus(key);
+			}
 		}
+	};
+
+	const onChange = (list: CheckboxValueType[]) => {
+		setCheckedItems(list);
+		handleSortByClick(list);
 	};
 
 	const content = (
@@ -96,18 +103,12 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			/>
 			<Checkbox.Group
 				value={checkedItems}
-				onChange={handleCheckboxChange}
+				onChange={onChange}
 				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
-				// value={tags}
 			>
 				{sortByOptions.map((item, index) => (
 					<div key={index}>
-						<Checkbox
-							value={item}
-							onClick={() => {
-								handleSortByClick((item as any)?.label);
-							}}
-						>
+						<Checkbox value={item?.key}>
 							<div className='text-xs tracking-wide text-[#667589] dark:text-white'>{(item as any)?.label}</div>
 						</Checkbox>
 					</div>
@@ -121,8 +122,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			zIndex={1056}
 			content={content}
 			placement='bottom'
-			open={true}
-			overlayClassName={`dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
+			overlayClassName={`w-[250px] dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
 				<span className={`${selectedStatus ? 'text-pink_primary' : ''} sm:mr-1 sm:mt-0.5`}>Status</span>

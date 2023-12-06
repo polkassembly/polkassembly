@@ -244,13 +244,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
-			if (proposalStatus) {
+			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
 			}
 			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			}
+			console.log(proposalStatus, postsVariables, query);
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query,
@@ -453,8 +454,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
 					}
 				}
-				if (proposalStatus) {
-					postsVariables.status_in = [proposalStatus];
+				if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
+					postsVariables.status_in = proposalStatus;
 				}
 			} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
 				if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
@@ -483,6 +484,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === AllNetworks.POLYMESH) {
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 			}
+			console.log(postsVariables, proposalStatus, query);
 			let subsquidRes: any = {};
 			try {
 				subsquidRes = await fetchSubsquid({

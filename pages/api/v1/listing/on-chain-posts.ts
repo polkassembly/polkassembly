@@ -251,7 +251,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			}
-			console.log(proposalStatus, postsVariables, query);
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query,
@@ -484,7 +483,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === AllNetworks.POLYMESH) {
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 			}
-			console.log(postsVariables, proposalStatus, query);
 			let subsquidRes: any = {};
 			try {
 				subsquidRes = await fetchSubsquid({
@@ -974,8 +972,7 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
-	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy, statusTag } = req.query;
-	console.log(decodeURIComponent(String(statusTag)));
+	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;

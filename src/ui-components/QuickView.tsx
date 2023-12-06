@@ -176,7 +176,7 @@ const QuickView = ({
 		if (!isKiltNameExists || !api || !apiReady || network !== 'kilt') return;
 		handleKiltSocials();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isKiltNameExists, api, apiReady]);
+	}, [isKiltNameExists, api, apiReady, network]);
 
 	return (
 		<div

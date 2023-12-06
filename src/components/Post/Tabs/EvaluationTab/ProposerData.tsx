@@ -8,11 +8,8 @@ import { Divider, message } from 'antd';
 
 import React, { FC } from 'react';
 import ImageComponent from '~src/components/ImageComponent';
-import { MinusCircleFilled } from '@ant-design/icons';
-
 import CopyIcon from '~assets/icons/content_copy_small.svg';
 import WhiteCopyIcon from '~assets/icons/content_copy_small_white.svg';
-import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import copyToClipboard from '~src/util/copyToClipboard';
 import EvalutionSummary from '../../PostSummary/EvalutionSummary';
 import MessageIcon from '~assets/icons/ChatIcon.svg';
@@ -20,6 +17,7 @@ import ClipBoardIcon from '~assets/icons/ClipboardText.svg';
 import CalenderIcon from '~assets/icons/Calendar.svg';
 import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
+import Address from '~src/ui-components/Address';
 
 interface IProposerData {
 	className?: string;
@@ -29,7 +27,7 @@ interface IProposerData {
 }
 
 const ProposerData: FC<IProposerData> = (props) => {
-	const { className, address, profileData, isGood } = props;
+	const { className, address, profileData } = props;
 	const [messageApi, contextHolder] = message.useMessage();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -56,13 +54,13 @@ const ProposerData: FC<IProposerData> = (props) => {
 				</div>
 				<div>
 					<div className='flex gap-x-1'>
-						<p className='text-base font-semibold text-bodyBlue dark:text-white'>
-							{profileData?.username && profileData?.username?.length > 15 ? `${profileData?.username?.slice(0, 15)}...` : profileData?.username}
-						</p>
-						<p className='w-[120px] truncate text-base text-bodyBlue dark:text-white'>({address})</p>
-						<div className='mt-0.5'>{isGood ? <VerifiedIcon className='text-xl' /> : <MinusCircleFilled />}</div>
+						<Address
+							address={address}
+							disableIdenticon={true}
+							isUsedInDisplayData={true}
+						/>
 						<span
-							className='-mt-4 flex cursor-pointer items-center'
+							className='-ml-2 -mt-0.5 flex cursor-pointer items-center'
 							onClick={(e) => {
 								e.preventDefault();
 								copyToClipboard(address);
@@ -74,7 +72,7 @@ const ProposerData: FC<IProposerData> = (props) => {
 						</span>
 					</div>
 					{!profileData?.profile?.bio && (
-						<div>
+						<div className='mt-5'>
 							<p className='text-sm text-textGreyColor dark:text-lightGreyTextColor'>
 								Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis, voluptatibus, eum enim sunt et alias repudiandae repellat molestias quis odit, quia illo quod
 								molestiae accusantium fuga hic commodi esse. Consequuntur quas reiciendis pariatur officia rerum, perspiciatis temporibus quae necessitatibus sed atque debitis

@@ -25,6 +25,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
+import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -54,6 +55,7 @@ interface Props {
 	isTruncateUsername?: boolean;
 	usernameClassName?: string;
 	disableIdenticon?: boolean;
+	isUsedInDisplayData?: boolean;
 	disableAddressClick?: boolean;
 	showFullAddress?: boolean;
 	extensionName?: string;
@@ -98,7 +100,8 @@ const Address = (props: Props) => {
 		disableTooltip = false,
 		showKiltAddress = false,
 		destroyTooltipOnHide = false,
-		inPostHeading
+		inPostHeading,
+		isUsedInDisplayData
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -334,25 +337,37 @@ const Address = (props: Props) => {
 								</div>
 							</div>
 						) : !!extensionName || !!mainDisplay ? (
-							<div className='ml-0.5 font-semibold text-bodyBlue'>
+							<div className={`${isUsedInDisplayData ? 'flex gap-x-2' : 'ml-0.5'} font-semibold text-bodyBlue`}>
 								{!disableHeader && (
 									<div>
 										<div className='flex items-center'>
-											{!!kiltName ||
-												(!!identity && !!mainDisplay && (
-													<IdentityBadge
-														identity={identity}
-														flags={flags}
-													/>
-												))}
+											{!isUsedInDisplayData && (
+												<div>
+													{!!kiltName ||
+														(!!identity && !!mainDisplay && (
+															<IdentityBadge
+																identity={identity}
+																flags={flags}
+															/>
+														))}
+												</div>
+											)}
 											<Space className={'header'}>
 												<div
 													onClick={(e) => handleClick(e)}
 													className={`flex flex-col font-semibold text-bodyBlue  ${
 														!disableAddressClick && 'cursor-pointer hover:underline'
-													} hover:text-bodyBlue dark:text-blue-dark-high`}
+													} hover:text-bodyBlue dark:text-blue-dark-high ${isUsedInDisplayData ? 'text-base' : ''}`}
 												>
-													{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
+													{!!addressSuffix && (
+														<span
+															className={`${usernameClassName} ${
+																isUsedInDisplayData ? 'w-[120px] truncate text-base' : `${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`
+															}`}
+														>
+															{addressSuffix}
+														</span>
+													)}
 													{!extensionName && !!sub && isSubVisible && (
 														<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
 													)}
@@ -362,13 +377,14 @@ const Address = (props: Props) => {
 									</div>
 								)}
 								<div
-									className={`${!addressClassName ? 'text-xs' : addressClassName} ${
+									className={`${!addressClassName ? `${isUsedInDisplayData ? 'text-base' : 'text-xs'}` : addressClassName} ${
 										!disableAddressClick && 'cursor-pointer hover:underline'
-									} font-normal dark:text-blue-dark-medium`}
+									} font-normal dark:text-blue-dark-medium `}
 									onClick={(e) => handleClick(e)}
 								>
 									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 								</div>
+								{isUsedInDisplayData && <div>{!!kiltName || (!!identity && !!mainDisplay && <VerifiedIcon className='scale-125' />)}</div>}
 							</div>
 						) : (
 							<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>

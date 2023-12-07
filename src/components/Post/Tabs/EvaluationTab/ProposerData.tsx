@@ -24,6 +24,8 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import BN from 'bn.js';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { getUserIdWithAddress } from 'pages/api/v1/auth/data/userProfileWithUsername';
 
 const ZERO_BN = new BN(0);
 interface IProposerData {
@@ -53,6 +55,11 @@ const ProposerData: FC<IProposerData> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
+	// useEffect(() => {
+	// 	fetchData();
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [address]);
+
 	const success = () => {
 		messageApi.open({
 			content: 'Address copied to clipboard',
@@ -60,6 +67,21 @@ const ProposerData: FC<IProposerData> = (props) => {
 			type: 'success'
 		});
 	};
+
+	// const fetchData = async () => {
+	// 	// const userId = await getUserIdWithAddress(address.toString());
+	// 	// console.log(userId);
+	// 	const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', {
+	// 		address: address,
+	// 		network: network,
+	// 		userId: userId
+	// 	});
+	// 	if (data) {
+	// 		console.log(data);
+	// 	} else {
+	// 		console.log(error);
+	// 	}
+	// };
 
 	console.log(profileData);
 
@@ -126,7 +148,7 @@ const ProposerData: FC<IProposerData> = (props) => {
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
 				className='mb-0 mt-2 dark:bg-separatorDark'
 			/>
-			<div className='mt-3 flex h-[60px] items-center divide-x  divide-gray-300'>
+			<div className='mt-3 flex h-[60px] items-center divide-x'>
 				<div className='flex w-1/4 gap-x-2 p-4'>
 					<CalenderIcon />
 					<div className='-mt-1'>
@@ -136,7 +158,8 @@ const ProposerData: FC<IProposerData> = (props) => {
 				</div>
 				<Divider
 					type='vertical'
-					className='h-[40px]'
+					style={{ background: '#D2D8E0', flexGrow: 1 }}
+					className='h-[40px] dark:bg-separatorDark'
 				/>
 				<div className='flex w-1/4 gap-x-2 p-4'>
 					<ClipBoardIcon />
@@ -147,7 +170,8 @@ const ProposerData: FC<IProposerData> = (props) => {
 				</div>
 				<Divider
 					type='vertical'
-					className='h-[40px]'
+					style={{ background: '#D2D8E0', flexGrow: 1 }}
+					className='h-[40px] dark:bg-separatorDark'
 				/>
 				<div className='flex w-1/4 gap-x-2 p-4'>
 					<MessageIcon />
@@ -158,7 +182,8 @@ const ProposerData: FC<IProposerData> = (props) => {
 				</div>
 				<Divider
 					type='vertical'
-					className='h-[40px]'
+					style={{ background: '#D2D8E0', flexGrow: 1 }}
+					className='h-[40px] dark:bg-separatorDark'
 				/>
 				<div className='flex w-1/4 gap-x-2 p-4'>
 					<MessageIcon />

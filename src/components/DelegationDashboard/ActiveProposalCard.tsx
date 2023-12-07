@@ -235,7 +235,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									displayInline
 								/>
 							)}
-							<div className='flex items-center justify-center text-xs text-lightBlue dark:text-blue-dark-medium'>
+							<div className='dark:section-dark-background flex items-center justify-center text-xs text-lightBlue dark:text-blue-dark-medium'>
 								Not Voted yet <CautionIcon className='ml-1' />
 							</div>
 						</div>

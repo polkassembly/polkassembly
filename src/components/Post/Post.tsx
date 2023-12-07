@@ -37,6 +37,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
+import ScrollToCommentsButton from '~src/ui-components/ScrollToComment';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -585,6 +586,7 @@ const Post: FC<IPostProps> = (props) => {
 					{!isEditing ? <Sidebar className='hidden xl:block' /> : null}
 				</div>
 				<ScrollToTopButton />
+				<ScrollToCommentsButton />
 
 				<SidebarRight
 					open={sidebarOpen}

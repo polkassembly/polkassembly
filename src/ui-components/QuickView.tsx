@@ -120,8 +120,6 @@ const QuickView = ({
 		switch (key) {
 			case ESocialType.EMAIL:
 				return { isVerified: verified, key: ESocialType.EMAIL, value: value as string };
-			case ESocialType.TELEGRAM:
-				return { isVerified: verified, key: ESocialType.TELEGRAM, value: value as string };
 			case ESocialType.TWITTER:
 				return { isVerified: verified, key: ESocialType.TWITTER, value: value as string };
 			case ESocialType.RIOT:
@@ -142,10 +140,13 @@ const QuickView = ({
 
 						for (const social of res) {
 							if (social?.credential?.claim?.contents) {
+								console.log(social);
 								Object.entries(social?.credential?.claim?.contents).map(([key, value]) => {
 									socialsArr.push(handleKiltSocialFields(true, key as ESocialType, value as string) as ISocialsType);
 									if (key === 'Username' && social?.metadata?.label === 'KILT Discord Credential') {
 										socialsArr.push({ isVerified: true, key: ESocialType.DISCORD, value: value as string });
+									} else if (key === 'Username' && social?.metadata?.label === 'Personal Telegram Credential') {
+										socialsArr.push({ isVerified: true, key: ESocialType.TELEGRAM, value: value as string });
 									}
 								});
 							}
@@ -159,8 +160,11 @@ const QuickView = ({
 						if (res.request?.claim?.contents) {
 							Object.entries(res?.request?.claim?.contents).map(([key, value]) => {
 								socialsArr.push(handleKiltSocialFields(false, key as ESocialType, value as string) as ISocialsType);
-								if (key === 'Username' && res.cTypeTitle === 'Discord') {
+								if (key === 'Username' && res.cTypeTitle === ESocialType.DISCORD) {
 									socialsArr.push({ isVerified: false, key: ESocialType.DISCORD, value: value as string });
+								}
+								if (key === 'Username' && res.cTypeTitle === ESocialType.TELEGRAM) {
+									socialsArr.push({ isVerified: false, key: ESocialType.TELEGRAM, value: value as string });
 								}
 							});
 						}

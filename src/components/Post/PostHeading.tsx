@@ -218,7 +218,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						{summary ? (
 							<>
 								<Divider
-									className='ml-1 xs:mt-2 xs:inline-block md:mt-0 md:hidden'
+									className='ml-1 mr-2 xs:mt-2 xs:inline-block md:mt-0 md:hidden'
 									type='vertical'
 									style={{ borderLeft: '1px solid #485F7D' }}
 								/>

@@ -103,7 +103,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			</div>
 
 			<Divider
-				className='-ml-5 mb-3 mt-0 w-[250px]'
+				className='-ml-5 mb-3 mt-0 w-[250px] dark:bg-separatorDark'
 				style={{ background: '#D2D8E0' }}
 			/>
 			<Checkbox.Group

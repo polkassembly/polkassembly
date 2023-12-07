@@ -4,40 +4,52 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { SwapOutlined } from '@ant-design/icons';
-import { sortOptions } from 'src/global/sortOptions'; // Import if required
-import { useTheme } from 'next-themes';
+import { sortOptions } from 'src/global/sortOptions';
 import { Divider } from 'antd';
 import styled from 'styled-components';
+import { poppins } from 'pages/_app';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;
 	sortBy: any;
 	setSortBy: any;
 	isUsedInTrackListing?: boolean;
+	className?: string;
 }
 
-const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSortBy, isUsedInTrackListing }) => {
+const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, isUsedInTrackListing, className }) => {
 	const router = useRouter();
-	const { resolvedTheme: theme } = useTheme();
-	const clearFilterOption = {
-		key: 'clear_filter',
-		label: (
-			<div>
+
+	const dropdownMenu = (
+		<div className={`${poppins.className} ${poppins.variable} rounded-xl bg-white dark:bg-[#282A2D]`}>
+			<div
+				onClick={() => handleSortByClick('clear_filter')}
+				className='pt-3'
+			>
 				<div className='flex justify-end'>
-					<span className='my-1 text-[10px] text-pink_primary'>Clear Filter</span>
+					<span className='my-1 mr-2 text-[10px] text-pink_primary'>Clear Filter</span>
 				</div>
 				<Divider
 					style={{ background: '#D2D8E0', flexGrow: 1 }}
-					className='mb-2 mt-0 dark:bg-separatorDark'
+					className='mb-1 mt-0 dark:bg-separatorDark'
 				/>
 			</div>
-		)
-	};
-	const sortByOptions: ItemType[] = [clearFilterOption, ...sortOptions];
+			<div className='mb-2'>
+				{sortOptions.map((option) => (
+					<div
+						key={option.key}
+						onClick={() => handleSortByClick(option.key)}
+						className='cursor-pointer px-4 py-2 text-xs hover:text-pink_primary'
+					>
+						{option.label}
+					</div>
+				))}
+			</div>
+		</div>
+	);
 
-	const handleSortByClick = ({ key }: { key: string }) => {
+	const handleSortByClick = (key: string) => {
 		if (key === 'clear_filter') {
 			router.push({ pathname: '' });
 			setSortBy(null);
@@ -52,15 +64,9 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 
 	return (
 		<Dropdown
-			theme={theme}
-			menu={{
-				defaultSelectedKeys: [sortBy],
-				items: sortByOptions,
-				onClick: handleSortByClick,
-				selectable: true
-			}}
+			overlay={dropdownMenu}
 			trigger={['hover']}
-			overlayClassName='z-[1056]'
+			className={`${className} ${poppins.className} ${poppins.variable}`}
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
 				<span className='sm:mr-1 sm:mt-0.5'>Sort By</span>
@@ -68,7 +74,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 					className={`${isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6]' : ''}`}
 					rotate={90}
 					style={{ fontSize: '12px', marginRight: '10px' }}
-				/>{' '}
+				/>
 			</div>
 		</Dropdown>
 	);

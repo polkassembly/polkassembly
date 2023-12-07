@@ -16,7 +16,7 @@ const ScrollToCommentsButton = () => {
 			return;
 		}
 		const rect = commentsSectionRef.current.getBoundingClientRect();
-		const isInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+		const isInView = (rect.top >= 0 && rect.bottom <= window.innerHeight) || rect.bottom <= 0;
 
 		if (isInView) {
 			setIsVisible(false);

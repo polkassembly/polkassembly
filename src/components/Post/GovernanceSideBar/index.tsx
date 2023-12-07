@@ -135,7 +135,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet } = useUserDetailsSelector();
 	const {
-		postData: { created_at, track_number, statusHistory, postIndex, postType }
+		postData: { created_at, last_edited_at, track_number, statusHistory, postIndex, postType }
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -936,6 +936,17 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							trackName={String(trackName)}
 							toggleEdit={toggleEdit}
 						/>
+						{canEdit && created_at.toString() === last_edited_at?.toString() && (
+							<GovSidebarCard>
+								<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Edit Your Post</h6>
+								<Button
+									className='mb-3 flex w-[100%] items-center justify-center rounded-[4px] border-pink_primary bg-pink_primary p-6 text-lg text-white hover:border-pink_primary hover:bg-pink_secondary'
+									onClick={toggleEdit}
+								>
+									Edit Post Now
+								</Button>
+							</GovSidebarCard>
+						)}
 						{accountsNotFound || extensionNotFound ? (
 							<GovSidebarCard>
 								{accountsNotFound ? (

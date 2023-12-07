@@ -213,58 +213,61 @@ const Post: FC<IPostProps> = (props) => {
 	} else if (postType === ProposalType.DISCUSSIONS) {
 		postType = 'Discussion';
 	}
-	const productData = async () => {
+	const postTypeInfo = postType === ProposalType.TIPS ? post.hash : post.post_id;
+
+	const productData = useCallback(async () => {
 		try {
-			const response = await fetch(
-				`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS ? post.hash : post.post_id}`,
-				{
+			if (networkModified) {
+				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}`, {
 					headers: {
 						Accept: 'application/vnd.github.v3+json',
 						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
 						'X-GitHub-Api-Version': '2022-11-28'
 					}
+				});
+				if (response.ok) {
+					const data = await response.json();
+					setAuditData(data);
+					const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
+					setTotalAuditCount(count);
+				} else {
+					// throw new Error('Request failed');
 				}
-			);
-			if (response.ok) {
-				const data = await response.json();
-				setAuditData(data);
-				const count = data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')).length || 0;
-				setTotalAuditCount(count);
-			} else {
-				// throw new Error('Request failed');
 			}
 		} catch (error) {
 			// console.log('Error:', error);
 		}
-	};
-	const videosData = async () => {
+	}, [networkModified, postType, postTypeInfo]);
+
+	const videosData = useCallback(async () => {
 		try {
-			const response = await fetch(
-				`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS ? post.hash : post.post_id}/video.json`,
-				{
+			if (networkModified) {
+				const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postTypeInfo}/video.json`, {
 					headers: {
 						Accept: 'application/vnd.github.v3+json',
 						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
 						'X-GitHub-Api-Version': '2022-11-28'
 					}
+				});
+				if (response.ok) {
+					const data = await response.json();
+					const decoded = atob(data.content).replace(/}\s*{/g, '}, {');
+					setVideoData(JSON.parse(decoded) as IDataVideoType[]);
+					setTotalVideoCount(JSON.parse(decoded).length);
+				} else {
+					// throw new Error('Request failed');
 				}
-			);
-			if (response.ok) {
-				const data = await response.json();
-				const decoded = atob(data.content).replace(/}\s*{/g, '}, {');
-				setVideoData(JSON.parse(decoded) as IDataVideoType[]);
-				setTotalVideoCount(JSON.parse(decoded).length);
-			} else {
-				// throw new Error('Request failed');
 			}
 		} catch (error) {
 			// console.log('Error:', error);
 		}
-	};
+	}, [networkModified, postType, postTypeInfo]);
 
 	useEffect(() => {
-		productData().then(() => {});
-		videosData().then(() => {});
+		if (proposalType === ProposalType.REFERENDUM_V2 && ['polkadot', 'kusama'].includes(network)) {
+			productData().then(() => {});
+			videosData().then(() => {});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -366,7 +369,8 @@ const Post: FC<IPostProps> = (props) => {
 				label: 'Timeline'
 			}
 		];
-		if (['polkadot', 'kusama'].includes(network)) {
+
+		if (proposalType === ProposalType.REFERENDUM_V2 && ['polkadot', 'kusama'].includes(network)) {
 			tabs.push({
 				children: (
 					// <PostAudit
@@ -383,7 +387,7 @@ const Post: FC<IPostProps> = (props) => {
 					<div className='audit flex items-center justify-center gap-2'>
 						Evaluation
 						{totalAuditCount + totalVideoCount > 0 && (
-							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
+							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:bg-section-dark-container dark:text-blue-dark-high'>
 								{totalAuditCount + totalVideoCount}
 							</span>
 						)}{' '}

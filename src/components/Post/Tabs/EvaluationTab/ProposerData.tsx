@@ -93,17 +93,31 @@ const ProposerData: FC<IProposerData> = (props) => {
 							{theme === 'dark' ? <WhiteCopyIcon className='ml-2 scale-125' /> : <CopyIcon className='ml-2 scale-125' />}
 						</span>
 					</div>
-					{!profileData?.profile?.bio && (
-						<div className='mt-5'>
-							<p className='text-sm text-textGreyColor dark:text-lightGreyTextColor'>
-								Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis, voluptatibus, eum enim sunt et alias repudiandae repellat molestias quis odit, quia illo quod
-								molestiae accusantium fuga hic commodi esse. Consequuntur quas reiciendis pariatur officia rerum, perspiciatis temporibus quae necessitatibus sed atque debitis
-								minus enim unde nam modi qui deleniti quibusdam exercitationem illo et magnam at iure? Accusamus nesciunt sint mollitia.
-							</p>
-							<p className='text-sm text-textGreyColor'>{profileData?.profile?.bio}</p>
+					{profileData?.profile?.bio ? (
+						<div className='mt-3'>
+							<p className='m-0 p-0 text-sm text-textGreyColor'>{profileData?.profile?.bio}</p>
+						</div>
+					) : (
+						<div className='mt-3'>
+							<p className='m-0 p-0 text-sm text-textGreyColor dark:text-lightGreyTextColor'>No bio added</p>
 						</div>
 					)}
-					<div>
+					{profileData?.profile?.badges && profileData?.profile?.badges?.length > 0 && (
+						<div className='mt-3'>
+							<div className='flex gap-x-2'>
+								{profileData?.profile?.badges.map((badge: string, index: number) => (
+									<div
+										className='border-grey_stroke flex border px-3.5 py-0.5 text-[12px] text-lightBlue hover:border-pink_primary hover:text-pink_primary dark:text-[#D2D8E0]'
+										style={{ border: '1px solid #D2D8E0', borderRadius: '50px' }}
+										key={index}
+									>
+										{badge}
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+					<div className='mb-1 mt-3'>
 						<EvalutionSummary isUsedInEvaluationTab={true} />
 					</div>
 				</div>
@@ -112,7 +126,7 @@ const ProposerData: FC<IProposerData> = (props) => {
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
 				className='mb-0 mt-2 dark:bg-separatorDark'
 			/>
-			<div className='mt-2 flex h-[60px] items-center divide-x  divide-gray-300'>
+			<div className='mt-3 flex h-[60px] items-center divide-x  divide-gray-300'>
 				<div className='flex w-1/4 gap-x-2 p-4'>
 					<CalenderIcon />
 					<div className='-mt-1'>

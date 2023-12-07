@@ -359,15 +359,7 @@ const Address = (props: Props) => {
 														!disableAddressClick && 'cursor-pointer hover:underline'
 													} hover:text-bodyBlue dark:text-blue-dark-high ${isUsedInDisplayData ? 'text-base' : ''}`}
 												>
-													{!!addressSuffix && (
-														<span
-															className={`${usernameClassName} ${
-																isUsedInDisplayData ? 'w-[120px] truncate text-base' : `${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`
-															}`}
-														>
-															{addressSuffix}
-														</span>
-													)}
+													{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
 													{!extensionName && !!sub && isSubVisible && (
 														<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
 													)}

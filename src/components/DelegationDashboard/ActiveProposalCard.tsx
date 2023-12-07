@@ -227,7 +227,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 					</div>
 				) : (
 					votingData && (
-						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-[#F89118] bg-[#fff7ef] px-6 py-2'>
+						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-[#F89118] bg-[#fff7ef] px-6 py-2 dark:bg-[#1D160E]'>
 							{status.includes(ETrackDelegationStatus.Delegated) && (
 								<Address
 									address={String(delegatedTo)}
@@ -235,7 +235,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									displayInline
 								/>
 							)}
-							<div className='dark:section-dark-background flex items-center justify-center text-xs text-lightBlue dark:text-blue-dark-medium'>
+							<div className='flex items-center justify-center text-xs text-lightBlue dark:text-blue-dark-medium'>
 								Not Voted yet <CautionIcon className='ml-1' />
 							</div>
 						</div>

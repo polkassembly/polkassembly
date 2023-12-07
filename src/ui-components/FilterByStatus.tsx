@@ -66,16 +66,14 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			router.push({ pathname: '' });
 			setStatusItem?.([]);
 		} else {
-			if (key.length > 0) {
-				router.replace({
-					pathname: '',
-					query: {
-						...router.query,
-						proposalStatus: encodeURIComponent(JSON.stringify(key))
-					}
-				});
-				setStatusItem?.(key);
-			}
+			router.replace({
+				pathname: '',
+				query: {
+					...router.query,
+					proposalStatus: encodeURIComponent(JSON.stringify(key))
+				}
+			});
+			setStatusItem?.(key);
 		}
 	};
 
@@ -85,7 +83,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	};
 
 	const content = (
-		<div>
+		<div className='px-2'>
 			<div
 				className='flex cursor-pointer justify-end p-1 text-xs text-pink_primary'
 				onClick={() => handleSortByClick('clear_filter')}
@@ -100,6 +98,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			<Checkbox.Group
 				value={checkedItems}
 				onChange={onChange}
+				style={{ boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
 				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
 			>
 				{sortByOptions.map((item, index) => (

@@ -53,7 +53,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 
 	const userRef = firestore.collection('users').doc(String(user.id));
 
-	const userQuerySnapshot = await firestore.collection('users').where('username', '==', String(username).toLowerCase()).limit(1).get();
+	const userQuerySnapshot = await firestore.collection('users').where('username', '==', String(username)).limit(1).get();
 	if (!userQuerySnapshot.empty && user?.username !== username) {
 		throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
 	}

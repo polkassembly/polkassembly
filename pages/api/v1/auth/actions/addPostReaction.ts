@@ -6,7 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { activityDocRef, activityReactionCollRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
 import { deleteKeys, redisDel } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
@@ -21,7 +21,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { userId, postId, reaction, postType, trackNumber } = req.body;
-	if (!userId || isNaN(postId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (!userId || isNaN(postId) || !reaction) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
@@ -29,8 +29,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const postRef = postsByTypeRef(network, postType).doc(String(postId));
-	const reactionsCollRef = postRef.collection('post_reactions');
+	const postRef = postType ? postsByTypeRef(network, postType).doc(String(postId)) : activityDocRef(network, String(postId));
+	const reactionsCollRef = postType ? postRef.collection('post_reactions') : activityReactionCollRef(network, String(postId));
 
 	const userReactionQuery = reactionsCollRef.where('user_id', '==', user.id);
 
@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			updated_at: new Date()
 		};
 	} else {
-		reactionDoc = postRef.collection('post_reactions').doc();
+		reactionDoc = postType ? postRef.collection('post_reactions').doc() : activityReactionCollRef(network, String(postId)).doc();
 
 		reactionData = {
 			created_at: new Date(),
@@ -58,9 +58,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		};
 	}
 
-	const subsquidProposalType = getSubsquidLikeProposalType(postType);
+	const subsquidProposalType = postType ? getSubsquidLikeProposalType(postType) : null;
 
-	if (process.env.IS_CACHING_ALLOWED == '1') {
+	if (process.env.IS_CACHING_ALLOWED == '1' && subsquidProposalType) {
 		if (!isNaN(trackNumber)) {
 			// delete referendum v2 redis cache
 			if (postType == ProposalType.REFERENDUM_V2) {

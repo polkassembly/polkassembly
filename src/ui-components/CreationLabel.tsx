@@ -126,11 +126,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return (
-		<div className={`${className} flex w-[100%] justify-between bg-none`}>
+		<div className={`${className} flex w-[100%] justify-between`}>
 			<div className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
-						{inPostHeading && <span className='mr-1 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
+						{inPostHeading && <span className='mr-2 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
 						<NameLabel
 							defaultAddress={defaultAddress}
 							username={username}
@@ -140,8 +140,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						/>
 						{text}&nbsp;
 						{topic && (
-							<div className='topic-container ml-1 flex items-center sm:-mt-0.5'>
-								<span className='mr-2 mt-0.5 text-lightBlue dark:text-blue-dark-medium'>in</span>{' '}
+							<div className='topic-container ml-1 flex items-center'>
+								<span className='mr-2 text-lightBlue dark:text-blue-dark-medium'>in</span>{' '}
 								<TopicTag
 									topic={topic}
 									className={topic}
@@ -152,7 +152,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						{beneficiaries && beneficiaries?.length > 0 && (
 							<>
 								<Divider
-									className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
+									className={`md:inline-block ${!isRow ? 'hidden' : 'inline-block'} ${inPostHeading ? 'mr-3' : ''} border-lightBlue dark:border-icon-dark-inactive max-sm:hidden`}
 									type='vertical'
 								/>
 								<BeneficiariesListing
@@ -362,7 +362,7 @@ export default styled(CreationLabel)`
 
 	@media (max-width: 468px) and (min-width: 319px) {
 		.topic-container {
-			margin-top: 8px;
+			margin-top: 2px;
 		}
 	}
 

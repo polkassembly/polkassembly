@@ -8,3 +8,8 @@ import { firestore_db } from '~src/services/firebaseInit';
 export const networkDocRef = (networkName: string) => firestore_db.collection('networks').doc(networkName);
 export const postsByTypeRef = (networkName: string, proposalType: ProposalType) =>
 	networkDocRef(networkName).collection('post_types').doc(String(proposalType)).collection('posts');
+
+export const activityCollRef = (networkName: string) => networkDocRef(networkName).collection('activities');
+export const activityDocRef = (networkName: string, activityId: string) => activityCollRef(networkName).doc(activityId);
+export const activityReactionCollRef = (networkName: string, activityId: string) => activityDocRef(networkName, activityId).collection('reactions');
+export const activityViewsCollRef = (networkName: string, activityId: string) => activityDocRef(networkName, activityId).collection('views');

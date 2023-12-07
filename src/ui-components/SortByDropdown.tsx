@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
@@ -19,7 +19,6 @@ interface SortByDropdownProps {
 
 const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSortBy, isUsedInTrackListing }) => {
 	const router = useRouter();
-	const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 	const { resolvedTheme: theme } = useTheme();
 	const clearFilterOption = {
 		key: 'clear_filter',
@@ -40,7 +39,6 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 	const handleSortByClick = ({ key }: { key: string }) => {
 		if (key === 'clear_filter') {
 			router.push({ pathname: '' });
-			setSelectedStatus(null);
 			setSortBy(null);
 		} else {
 			router.push({
@@ -48,7 +46,6 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 				query: { ...router.query, sortBy: key }
 			});
 			setSortBy(key);
-			setSelectedStatus(key);
 		}
 	};
 
@@ -65,9 +62,9 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 			overlayClassName='z-[1056]'
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
-				<span className={`${selectedStatus ? 'text-pink_primary' : ''} sm:mr-1 sm:mt-0.5`}>Sort By</span>
+				<span className='sm:mr-1 sm:mt-0.5'>Sort By</span>
 				<SwapOutlined
-					className={`${isUsedInTrackListing ? `${selectedStatus ? 'text-pink_primary' : 'text-bodyBlue opacity-70 dark:text-[#96A4B6]'}` : ''}`}
+					className={`${isUsedInTrackListing ? 'text-bodyBlue opacity-70 dark:text-[#96A4B6]' : ''}`}
 					rotate={90}
 					style={{ fontSize: '12px', marginRight: '10px' }}
 				/>{' '}

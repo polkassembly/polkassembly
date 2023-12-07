@@ -9,7 +9,6 @@ import { bountyStatusOptions, childBountyStatusOptions, gov2ReferendumStatusOpti
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector } from '~src/redux/selectors';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
-import DropdownPinkIcon from '~assets/icons/dropdown-pink.svg';
 import { getProposalTypeFromSinglePostLink } from '~src/global/proposalType';
 import { useTheme } from 'next-themes';
 import { Checkbox, Divider, Popover } from 'antd';
@@ -25,7 +24,6 @@ interface SortByDropdownProps {
 const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
-	const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 	const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
 	const { network } = useNetworkSelector();
 	let path = router.pathname.split('/')[1];
@@ -66,7 +64,6 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 		if (key === 'clear_filter') {
 			setCheckedItems([]);
 			router.push({ pathname: '' });
-			setSelectedStatus(null);
 			setStatusItem?.([]);
 		} else {
 			if (key.length > 0) {
@@ -78,7 +75,6 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 					}
 				});
 				setStatusItem?.(key);
-				setSelectedStatus(key);
 			}
 		}
 	};
@@ -125,8 +121,8 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			overlayClassName={`w-[250px] dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
 		>
 			<div className='dropdown-div flex cursor-pointer items-center whitespace-pre rounded px-2 py-1 text-xs font-normal text-bodyBlue opacity-70 dark:text-[#96A4B6] dark:opacity-100'>
-				<span className={`${selectedStatus ? 'text-pink_primary' : ''} sm:mr-1 sm:mt-0.5`}>Status</span>
-				{selectedStatus ? <DropdownPinkIcon /> : <DropdownGreyIcon />}
+				<span className='sm:mr-1 sm:mt-0.5'>Status</span>
+				<DropdownGreyIcon />
 			</div>
 		</Popover>
 	);

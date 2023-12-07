@@ -9,6 +9,7 @@ import { SwapOutlined } from '@ant-design/icons';
 import { sortOptions } from 'src/global/sortOptions'; // Import if required
 import { useTheme } from 'next-themes';
 import { Divider } from 'antd';
+import styled from 'styled-components';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;
@@ -25,11 +26,11 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 		label: (
 			<div>
 				<div className='flex justify-end'>
-					<span className='my-1 text-xs text-pink_primary'>Clear Filter</span>
+					<span className='my-1 text-[10px] text-pink_primary'>Clear Filter</span>
 				</div>
 				<Divider
 					style={{ background: '#D2D8E0', flexGrow: 1 }}
-					className='my-2 dark:bg-separatorDark'
+					className='mb-2 mt-0 dark:bg-separatorDark'
 				/>
 			</div>
 		)
@@ -73,4 +74,8 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ sortBy, setSor
 	);
 };
 
-export default SortByDropdownComponent;
+export default styled(SortByDropdownComponent)`
+	.ant-dropdown-menu .ant-dropdown-menu-root .ant-dropdown-menu-vertical .ant-dropdown-menu-light {
+		padding: 4px 0 !important;
+	}
+`;

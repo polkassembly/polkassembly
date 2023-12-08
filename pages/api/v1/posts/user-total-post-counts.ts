@@ -12,11 +12,12 @@ import messages from '~src/auth/utils/messages';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { TOTAL_PROPOSALS_COUNT_BY_ADDRESSES } from '~src/queries';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 
 interface Props {
 	network: string;
 	userId: number;
-	addresses: string[];
+	addresses?: string[];
 }
 
 export const getUserPostCount = async (params: Props) => {
@@ -25,12 +26,17 @@ export const getUserPostCount = async (params: Props) => {
 
 		const discussionsRef = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('isDeleted', '==', false).where('user_id', '==', Number(userId)).get();
 		const discussionsCounts = discussionsRef.size;
+		let user_addresses: any[] = [];
+
+		if (!addresses?.length || !addresses) {
+			user_addresses = await getAddressesFromUserId(userId);
+		}
 
 		const subsquidRes = await fetchSubsquid({
 			network,
 			query: TOTAL_PROPOSALS_COUNT_BY_ADDRESSES,
 			variables: {
-				proposer_in: addresses.map((address) => getEncodedAddress(address, network) || '')
+				proposer_in: (addresses || user_addresses).map((address) => getEncodedAddress(address, network) || '')
 			}
 		});
 		return {
@@ -56,10 +62,8 @@ const handler: NextApiHandler<{ discussions: number; proposals: number } | Messa
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { userId, addresses } = req.body;
-	if (isNaN(Number(userId))) return res.status(403).json({ message: messages.UNAUTHORISED });
-
-	if (!Array.isArray(addresses) || !addresses.length) return res.status(403).json({ message: messages.INVALID_PARAMS });
+	const { userId, addresses = [] } = req.body;
+	if (isNaN(Number(userId))) return res.status(403).json({ message: messages.INVALID_PARAMS });
 
 	const { data, error, status } = await getUserPostCount({
 		addresses,

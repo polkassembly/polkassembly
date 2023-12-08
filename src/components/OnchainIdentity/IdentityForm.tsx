@@ -282,16 +282,20 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='error'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
-						message={`Minimum Balance of ${formatedBalance(totalFee.toString(), unit, 2)} ${unit} is required to proceed`}
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+						message={
+							<span className='dark:text-blue-dark-high'>
+								Minimum Balance of {formatedBalance(totalFee.toString(), unit, 2)} {unit} is required to proceed
+							</span>
+						}
 					/>
 				)}
 				{alreadyVerifiedfields?.alreadyVerified && (
 					<Alert
 						showIcon
 						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high'
-						message='Your identity has already been set. Please edit a field to proceed.'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						message={<span className='dark:text-blue-dark-high'>Your identity has already been set. Please edit a field to proceed.</span>}
 					/>
 				)}
 				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
@@ -494,7 +498,7 @@ const IdentityForm = ({
 								name='twitter'
 								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
 								value={twitter?.value}
-								placeholder='Enter your twitter name'
+								placeholder='Enter your twitter handle (case sensitive)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
 									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
@@ -524,28 +528,14 @@ const IdentityForm = ({
 				</div> */}
 				</div>
 			</Form>
-			{!alreadyVerifiedfields?.alreadyVerified && !alreadyVerifiedfields.isIdentitySet && (
-				<div className='mt-6 flex items-center gap-4 text-sm'>
-					<span className='font-medium text-lightBlue dark:text-blue-dark-high'>
-						Min Deposit{' '}
-						<HelperTooltip
-							className='ml-1'
-							text='Amount that needs held in an address for a verified account.'
-						/>
-					</span>
-					<span className='rounded-2xl bg-[#EDEFF3] px-3 py-1 font-medium text-bodyBlue dark:border-separatorDark dark:bg-[#1D1D1D] dark:text-blue-dark-high'>
-						{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
-					</span>
-				</div>
-			)}
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert
-						className='mt-6 rounded-[4px]'
+						className='mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'
 						showIcon
 						message={
-							<span className='text-sm font-medium text-bodyBlue'>
+							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
@@ -561,20 +551,32 @@ const IdentityForm = ({
 							) : (
 								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
 									<span className='flex justify-between text-xs'>
+										<span className='text-lightBlue dark:text-blue-dark-medium '>
+											Min. Deposit (Refundable){' '}
+											<HelperTooltip
+												className='ml-1'
+												text='Deposit is refundable and can be redeemed once verification is removed'
+											/>
+										</span>
+										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
+											{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
+										</span>
+									</span>
+									<span className='flex justify-between text-xs'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(gasFee.toString(), unit)} {unit}
 										</span>
 									</span>
 									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium'>
+										<span className='text-lightBlue dark:text-blue-dark-medium '>
 											Bond{' '}
 											<HelperTooltip
 												className='ml-1'
 												text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(bondFee.toString(), unit)} {unit}
 										</span>
 									</span>
@@ -586,13 +588,13 @@ const IdentityForm = ({
 												className='ml-1'
 											/>
 										</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(registerarFee.toString(), unit)} {unit}
 										</span>
 									</span>
-									<span className='flex justify-between text-xs'>
+									<span className='text-md mt-1 flex justify-between'>
 										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
-										<span className='font-medium text-bodyBlue'>
+										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(totalFee.toString(), unit, 2)} {unit}
 										</span>
 									</span>

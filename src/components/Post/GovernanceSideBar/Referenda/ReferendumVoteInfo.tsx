@@ -10,7 +10,7 @@ import { ApiContext } from 'src/context/ApiContext';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { useFetch } from 'src/hooks';
 import { getFailingThreshold } from 'src/polkassemblyutils';
-import { LoadingStatusType, VoteInfo } from 'src/types';
+import { IVotesCount, LoadingStatusType, VoteInfo } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import Loader from 'src/ui-components/Loader';
 import PassingInfoTag from 'src/ui-components/PassingInfoTag';
@@ -23,17 +23,20 @@ import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL, GET_TOTAL_CONVICTION_VOTES_COUNT } from '~src/queries';
 import { useNetworkSelector } from '~src/redux/selectors';
-
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 interface IReferendumVoteInfoProps {
 	className?: string;
 	referendumId: number;
 	setOpen: (value: React.SetStateAction<boolean>) => void;
 	voteThreshold?: string;
+	ayeNayCounts: IVotesCount;
+	setAyeNayCounts: (pre: IVotesCount) => void;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen, voteThreshold }) => {
+const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen, voteThreshold, ayeNayCounts, setAyeNayCounts }) => {
 	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useContext(ApiContext);
@@ -49,9 +52,26 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		headers: subscanApiHeaders,
 		method: 'POST'
 	});
+	const handleAyeNayCount = async () => {
+		setLoadingStatus({ ...loadingStatus, isLoading: true });
+		const { data, error } = await nextApiClientFetch<{ aye: { totalCount: number }; nay: { totalCount: number }; abstain: { totalCount: number } }>(
+			'/api/v1/votes/ayeNayTotalCount',
+			{
+				postId: referendumId,
+				proposalType: getSubsquidLikeProposalType(ProposalType.REFERENDUMS)
+			}
+		);
+		if (data) {
+			setAyeNayCounts({ ayes: data.aye.totalCount, nays: data.nay.totalCount });
+			setLoadingStatus({ ...loadingStatus, isLoading: false });
+		} else {
+			console.log(error);
+			setLoadingStatus({ ...loadingStatus, isLoading: false });
+		}
+	};
 
 	useEffect(() => {
-		if (network != 'cere') return;
+		if (!['cere', 'equilibrium'].includes(network)) return;
 
 		(async () => {
 			setIsFetchingCereVoteInfo(true);
@@ -147,7 +167,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		if (!apiReady) {
 			return;
 		}
-
+		handleAyeNayCount();
 		let unsubscribe: () => void;
 
 		setLoadingStatus({
@@ -173,7 +193,8 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		}
 
 		return () => unsubscribe && unsubscribe();
-	}, [api, apiReady, network]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network, referendumId]);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -278,7 +299,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue dark:text-blue-dark-medium'>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
-										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye({ayeNayCounts.ayes})</span>
 									</div>
 									<div className='text-xs font-medium leading-[22px] text-lightBlue dark:text-blue-dark-medium'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
@@ -286,7 +307,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								</article>
 								<article className='flex items-center justify-between gap-x-2 text-lightBlue dark:text-blue-dark-medium'>
 									<div className='flex items-center gap-x-1'>
-										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay</span>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay({ayeNayCounts.nays})</span>
 									</div>
 									<div className='text-xs font-medium leading-[22px] text-lightBlue dark:text-blue-dark-medium'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
@@ -325,12 +346,12 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						</Spin>
 					</GovSidebarCard>
 				)
-			) : network === 'cere' ? (
+			) : ['cere', 'equilibrium'].includes(network) ? (
 				<>
 					<GovSidebarCard>
 						<Spin
 							spinning={isFetchingCereVoteInfo}
-							className='bg-white'
+							className='bg-white dark:bg-section-light-overlay'
 							indicator={<LoadingOutlined />}
 						>
 							<div className='flex items-center justify-between gap-x-2'>
@@ -356,7 +377,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] dark:text-blue-dark-medium'>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
-										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye({ayeNayCounts.ayes})</span>
 									</div>
 									<div className='text-xs font-medium leading-[22px] text-navBlue'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
@@ -364,7 +385,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								</article>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
-										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay</span>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay({ayeNayCounts.nays})</span>
 									</div>
 									<div className='text-xs font-medium leading-[22px] text-navBlue'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}

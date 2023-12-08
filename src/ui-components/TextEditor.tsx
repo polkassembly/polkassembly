@@ -15,6 +15,7 @@ import { algolia_client } from '~src/components/Search';
 import MarkdownEditor from './MarkdownEditor';
 import { SwapOutlined } from '@ant-design/icons';
 import { CloseIcon } from './CustomIcons';
+import { useTheme } from 'next-themes';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -36,7 +37,7 @@ interface ITextEditorProps {
 
 const gifSVGData = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512.000000 512.000000">
 <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill-rule="evenodd" stroke="none">
 <path d="M830 5104 c-42 -18 -86 -58 -108 -99 -15 -27 -17 -109 -20 -871 l-3
 -842 -92 -4 c-112 -5 -179 -32 -235 -92 -81 -88 -77 -39 -77 -946 0 -801 0
 -805 21 -851 54 -116 140 -169 291 -177 l92 -5 3 -536 c3 -588 1 -562 65 -623
@@ -101,12 +102,13 @@ img {
 `;
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, height, onChange, isDisabled, value, name, autofocus = false, theme } = props;
+	const { className, height, onChange, isDisabled, value, name, autofocus = false } = props;
 
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [mdEditor, setMdEditor] = useState<boolean>(true);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
@@ -116,6 +118,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
+	useEffect(() => {}, [theme]);
 
 	function handleEditorChange() {
 		// if it's being changed to md editor
@@ -178,6 +181,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					>
 						<div className={`${loading && 'invisible'}`}>
 							<Editor
+								key={theme}
 								onPaste={(e) => {
 									e.stopPropagation();
 									e.preventDefault();

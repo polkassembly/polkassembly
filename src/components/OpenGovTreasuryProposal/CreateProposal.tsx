@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { IBeneficiary, NotificationStatus } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
@@ -25,7 +25,10 @@ import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
+import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
+import MissingInfoAlert from './MissingInfoAlert';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -38,16 +41,19 @@ interface Props {
 	preimageHash: string;
 	preimageLength: number | null;
 	enactment: IEnactment;
-	beneficiaryAddress: string;
+	beneficiaryAddresses: IBeneficiary[];
 	setOpenModal: (pre: boolean) => void;
 	setOpenSuccess: (pre: boolean) => void;
 	title: string;
 	content: string;
 	tags: string[];
-	postId: number;
 	setPostId: (pre: number) => void;
 	availableBalance: BN;
 	discussionLink: string | null;
+	showMultisigInfoCard: boolean;
+	showIdentityInfoCardForBeneficiary: boolean;
+	showIdentityInfoCardForProposer: boolean;
+	isDiscussionLinked: boolean;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -63,7 +69,7 @@ const CreateProposal = ({
 	preimageHash,
 	preimageLength,
 	enactment,
-	beneficiaryAddress,
+	beneficiaryAddresses,
 	setOpenModal,
 	setOpenSuccess,
 	title,
@@ -71,9 +77,14 @@ const CreateProposal = ({
 	tags,
 	setPostId,
 	availableBalance,
-	discussionLink
+	discussionLink,
+	isDiscussionLinked,
+	showIdentityInfoCardForBeneficiary,
+	showIdentityInfoCardForProposer,
+	showMultisigInfoCard
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
 	const { api, apiReady } = useApiContext();
@@ -133,7 +144,7 @@ const CreateProposal = ({
 		setLoading(false);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
+	}, [proposerAddress, beneficiaryAddresses, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
@@ -146,15 +157,7 @@ const CreateProposal = ({
 			userId
 		});
 
-		if (data && !isNaN(Number(data?.post_id)) && data.post_id !== undefined) {
-			setPostId(data?.post_id);
-			setOpenSuccess(true);
-			console.log(postId, 'postId');
-			localStorage.removeItem('treasuryProposalProposerAddress');
-			localStorage.removeItem('treasuryProposalProposerWallet');
-			localStorage.removeItem('treasuryProposalData');
-			setOpenModal(false);
-		} else if (apiError || !data?.post_id) {
+		if (apiError || !data?.post_id) {
 			queueNotification({
 				header: 'Error',
 				message: apiError,
@@ -162,6 +165,7 @@ const CreateProposal = ({
 			});
 			console.error(apiError);
 		}
+
 		setLoading(false);
 	};
 
@@ -220,8 +224,15 @@ const CreateProposal = ({
 			);
 
 			const onSuccess = async () => {
-				await handleSaveTreasuryProposal(post_id);
+				handleSaveTreasuryProposal(post_id);
+				setPostId(post_id);
+				console.log('Saved referenda ID: ', post_id);
+				localStorage.removeItem('treasuryProposalProposerAddress');
+				localStorage.removeItem('treasuryProposalProposerWallet');
+				localStorage.removeItem('treasuryProposalData');
 				setLoading(false);
+				setOpenSuccess(true);
+				setOpenModal(false);
 			};
 
 			const onFailed = async () => {
@@ -256,16 +267,23 @@ const CreateProposal = ({
 				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
-						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark ${poppins.variable} ${poppins.className}`}
 						showIcon
-						message='Insufficient available balance.'
+						message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 					/>
 				)}
 				<Alert
-					message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`}
-					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+					message={<span className='text-[13px] dark:text-blue-dark-high'>Preimage {isPreimage ? 'linked' : 'created'} successfully</span>}
+					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
 					type='success'
 					showIcon
+				/>
+				<MissingInfoAlert
+					theme={theme}
+					isDiscussionLinked={isDiscussionLinked}
+					showIdentityInfoCardForBeneficiary={showIdentityInfoCardForBeneficiary}
+					showIdentityInfoCardForProposer={showIdentityInfoCardForProposer}
+					showMultisigInfoCard={showMultisigInfoCard}
 				/>
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<div className='mt-4 flex flex-col gap-2'>
@@ -281,13 +299,15 @@ const CreateProposal = ({
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Beneficiary Address:</span>
-							<Address
-								addressClassName='text-bodyBlue text-sm dark:text-blue-dark-high'
-								address={beneficiaryAddress}
-								iconSize={18}
-								displayInline
-								isTruncateUsername={false}
-							/>
+							<div className='flex flex-col gap-2'>
+								{beneficiaryAddresses.map((beneficiary, index) => (
+									<Beneficiary
+										beneficiary={beneficiary}
+										key={index}
+										disableBalanceFormatting
+									/>
+								))}
+							</div>
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Track:</span>
@@ -305,7 +325,7 @@ const CreateProposal = ({
 							<span className='w-[150px]'>Preimage Hash:</span>
 							<span className='font-medium  text-bodyBlue dark:text-blue-dark-high'>{preimageHash.slice(0, 10) + '...' + preimageHash.slice(55)}</span>
 							<span
-								className='flex cursor-pointer items-center'
+								className='ml-1 flex cursor-pointer items-center'
 								onClick={(e) => {
 									e.preventDefault();
 									copyLink(preimageHash);
@@ -344,11 +364,11 @@ const CreateProposal = ({
 				</div>
 				{showAlert && (
 					<Alert
-						className='mt-6 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+						className='mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						showIcon
 						type='info'
 						message={
-							<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
+							<span className='text-[13px] text-bodyBlue dark:text-blue-dark-high'>
 								An amount of{' '}
 								<span className='font-semibold'>
 									{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
@@ -358,8 +378,8 @@ const CreateProposal = ({
 						}
 						description={
 							<div className='mt-[10px] flex flex-col gap-1'>
-								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
-									<span className='w-[150px]'>Deposit amount</span>
+								<span className='flex justify-between pr-[70px] text-xs font-normal text-lightBlue dark:text-blue-900'>
+									<span className='w-[150px] dark:text-blue-dark-medium'>Deposit amount</span>
 									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}
 									</span>
@@ -370,7 +390,7 @@ const CreateProposal = ({
 										{formatedBalance(String(txFee.toString()), unit)} {unit}
 									</span>
 								</span>
-								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-medium'>
+								<span className='flex justify-between pr-[70px] text-sm font-semibold text-lightBlue dark:text-blue-dark-medium '>
 									<span className='w-[150px]'>Total</span>
 									<span className='text-bodyBlue dark:text-blue-dark-high'>
 										{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}
@@ -384,7 +404,7 @@ const CreateProposal = ({
 					<Button
 						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white ${
+						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
 							(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'
 						}`}
 					>
@@ -397,10 +417,11 @@ const CreateProposal = ({
 };
 export default styled(CreateProposal)`
 	.ant-alert-with-description {
-		padding-block: 15px !important;
+		padding-block: 10px !important;
+		padding: 10px 12px !important;
 	}
 	.ant-alert-with-description .ant-alert-icon {
-		font-size: 18px !important;
+		font-size: 16px !important;
 		margin-top: 4px;
 	}
 `;

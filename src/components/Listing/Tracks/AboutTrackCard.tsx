@@ -243,7 +243,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em]'>(#{trackMetaData.trackId})</h4>
 					</Tooltip>
 				</div>
-				<div className='justify-end xs:hidden md:flex md:p-1 lg:mr-3 xl:mr-1.5'>
+				<div className='justify-end xs:hidden md:flex md:p-1'>
 					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 				</div>
 			</article>

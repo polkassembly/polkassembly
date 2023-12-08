@@ -29,11 +29,12 @@ import Balance from '~src/components/Balance';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
-import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
+import DelegateProfilePinkIcon from '~assets/icons/delegation-listing-pink.svg';
 import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 
 const ZERO_BN = new BN(0);
 
@@ -328,15 +329,23 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	return (
 		<>
 			{!open && !setOpen && (
-				<Button
-					onClick={() => {
-						network === 'kusama' ? router.push('/delegation') : setDefaultOpen(true);
-					}}
-					className='flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary p-5 text-sm font-medium text-white'
-				>
-					<DelegateProfileWhiteIcon className='mr-2' />
-					<span>Delegate</span>
-				</Button>
+				<div className='flex gap-x-4'>
+					<Button
+						onClick={() => {
+							network === 'kusama' ? router.push('/delegation') : setDefaultOpen(true);
+						}}
+						className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-transparent px-3 py-5 text-sm font-medium text-pink_primary'
+					>
+						<DelegateProfilePinkIcon className='mr-2' />
+						<span>Delegate</span>
+					</Button>
+					<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
+						<OpenGovTreasuryProposal
+							theme={theme}
+							isUsedInTreasuryTrack={true}
+						/>
+					</Button>
+				</div>
 			)}
 			<Modal
 				maskClosable={false}
@@ -674,5 +683,11 @@ export default styled(DelegateModal)`
 		border-radius: 8px !important;
 		border: none !important;
 		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
+	}
+
+	@media (max-width: 365px) and (min-width: 320px) {
+		.delegation-buttons {
+			padding: 12px 0px !important;
+		}
 	}
 `;

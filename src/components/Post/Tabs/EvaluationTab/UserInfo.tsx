@@ -122,6 +122,9 @@ const UserInfo: FC<IUserInfo> = (props) => {
 							<p className='m-0 p-0 text-sm text-textGreyColor dark:text-lightGreyTextColor'>No bio added</p>
 						</div>
 					)}
+					<div className='mt-3'>
+						<EvalutionSummary isUsedInEvaluationTab={true} />
+					</div>
 					{profileData?.profile?.badges && profileData?.profile?.badges?.length > 0 && (
 						<div className='mt-3'>
 							<div className='flex gap-x-2'>
@@ -137,9 +140,6 @@ const UserInfo: FC<IUserInfo> = (props) => {
 							</div>
 						</div>
 					)}
-					<div className='mb-1 mt-3'>
-						<EvalutionSummary isUsedInEvaluationTab={true} />
-					</div>
 				</div>
 			</div>
 			<Divider

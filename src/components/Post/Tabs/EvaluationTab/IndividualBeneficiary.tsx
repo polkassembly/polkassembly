@@ -12,7 +12,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ApiPromise } from '@polkadot/api';
 import { ApiContext } from '~src/context/ApiContext';
-import ProposerData from './ProposerData';
+import UserInfo from './UserInfo';
 
 interface IIndividualBeneficiary {
 	className?: string;
@@ -86,7 +86,7 @@ const IndividualBeneficiary: FC<IIndividualBeneficiary> = ({ address, className 
 
 	return (
 		<div className={`${className}`}>
-			<ProposerData
+			<UserInfo
 				address={address}
 				profileData={profileData}
 				isGood={isGood}

@@ -5,7 +5,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, message } from 'antd';
-
 import React, { FC, useEffect, useState } from 'react';
 import ImageComponent from '~src/components/ImageComponent';
 import CopyIcon from '~assets/icons/content_copy_small.svg';
@@ -25,19 +24,20 @@ import BN from 'bn.js';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { getUserIdWithAddress } from 'pages/api/v1/auth/data/userProfileWithUsername';
 
 const ZERO_BN = new BN(0);
-interface IProposerData {
+interface IUserInfo {
 	className?: string;
 	address?: any;
 	profileData?: any;
 	isGood?: any;
 }
 
-const ProposerData: FC<IProposerData> = (props) => {
+const UserInfo: FC<IUserInfo> = (props) => {
 	const { className, address, profileData } = props;
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
+	const [proposalCount, setProposalCount] = useState(0);
+	const [discussionCount, setDiscussionCount] = useState(0);
 
 	const [messageApi, contextHolder] = message.useMessage();
 	const { resolvedTheme: theme } = useTheme();
@@ -55,10 +55,10 @@ const ProposerData: FC<IProposerData> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
-	// useEffect(() => {
-	// 	fetchData();
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [address]);
+	useEffect(() => {
+		fetchData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	const success = () => {
 		messageApi.open({
@@ -68,20 +68,18 @@ const ProposerData: FC<IProposerData> = (props) => {
 		});
 	};
 
-	// const fetchData = async () => {
-	// 	// const userId = await getUserIdWithAddress(address.toString());
-	// 	// console.log(userId);
-	// 	const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', {
-	// 		address: address,
-	// 		network: network,
-	// 		userId: userId
-	// 	});
-	// 	if (data) {
-	// 		console.log(data);
-	// 	} else {
-	// 		console.log(error);
-	// 	}
-	// };
+	const fetchData = async () => {
+		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', {
+			address: address,
+			network: network
+		});
+		if (data) {
+			setProposalCount(data?.proposals);
+			setDiscussionCount(data?.discussions);
+		} else {
+			console.log(error);
+		}
+	};
 
 	console.log(profileData);
 
@@ -165,7 +163,7 @@ const ProposerData: FC<IProposerData> = (props) => {
 					<ClipBoardIcon />
 					<div className='-mt-1'>
 						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
-						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}</span>
+						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{proposalCount < 10 ? `0${proposalCount}` : `${proposalCount}`}</span>
 					</div>
 				</div>
 				<Divider
@@ -177,7 +175,7 @@ const ProposerData: FC<IProposerData> = (props) => {
 					<MessageIcon />
 					<div className='-mt-1'>
 						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
-						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}</span>
+						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{discussionCount < 10 ? `0${discussionCount}` : `${discussionCount}`}</span>
 					</div>
 				</div>
 				<Divider
@@ -199,4 +197,4 @@ const ProposerData: FC<IProposerData> = (props) => {
 	);
 };
 
-export default ProposerData;
+export default UserInfo;

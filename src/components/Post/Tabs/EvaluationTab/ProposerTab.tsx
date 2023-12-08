@@ -11,7 +11,7 @@ import { usePostDataContext } from '~src/context';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
-import ProposerData from './ProposerData';
+import UserInfo from './UserInfo';
 
 const { Panel } = Collapse;
 
@@ -66,7 +66,7 @@ const ProposerTab: FC<IProposerTab> = (className) => {
 					}
 					key='1'
 				>
-					<ProposerData
+					<UserInfo
 						address={address}
 						profileData={profileData}
 					/>

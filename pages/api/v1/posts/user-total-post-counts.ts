@@ -32,7 +32,6 @@ export const getUserPostCount = async (params: Props) => {
 			user_addresses = await getAddressesFromUserId(userId);
 			user_addresses = user_addresses.map((addr) => addr.address);
 		}
-		console.log(addresses, user_addresses);
 		const subsquidRes = await fetchSubsquid({
 			network,
 			query: TOTAL_PROPOSALS_COUNT_BY_ADDRESSES,

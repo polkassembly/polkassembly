@@ -24,7 +24,8 @@ enum cardTags {
 	ADD_DEADLINE = 'add-deadline',
 	LINK_DISCUSSION = 'link-discussion',
 	DECISION_DEPOSIT = 'decision-deposit',
-	ADD_TAGS = 'add-tags'
+	ADD_TAGS = 'add-tags',
+	CREATE_PROPOSAL = 'create-proposal'
 }
 
 type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
@@ -103,6 +104,19 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				return newCards;
 			});
 		}
+
+		setRHSCards((prevCards) => {
+			const newCards = [...prevCards];
+			newCards.push({
+				clickHandler: () => 'TODO: Create proposal handler',
+				description: 'Convert this discussion into a treasury proposal',
+				icon: '/assets/icons/rhs-card-icons/Doc.png',
+				tag: cardTags.CREATE_PROPOSAL,
+				title: 'Create Proposal'
+			});
+
+			return newCards;
+		});
 
 		return () => {
 			setRHSCards([]);

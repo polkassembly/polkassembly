@@ -52,7 +52,7 @@ const BeneficiariesTab: FC<IBeneficiariesTab> = (className) => {
 									{beneficiaries.length > 1 && index !== beneficiaries.length - 1 && (
 										<Divider
 											style={{ background: '#D2D8E0', flexGrow: 1 }}
-											className='my-2 dark:bg-separatorDark'
+											className='mt-3 dark:bg-separatorDark'
 										/>
 									)}
 								</React.Fragment>

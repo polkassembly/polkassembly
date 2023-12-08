@@ -146,7 +146,7 @@ const UserInfo: FC<IUserInfo> = (props) => {
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
 				className='mb-0 mt-2 dark:bg-separatorDark'
 			/>
-			<div className='mt-3 flex h-[60px] items-center divide-x'>
+			<div className='mt-4 flex h-[60px] items-center divide-x'>
 				<div className='flex w-1/4 gap-x-2 p-4'>
 					<CalenderIcon />
 					<div className='-mt-1'>

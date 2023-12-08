@@ -802,6 +802,9 @@ z-index: 1050 !important;
   min-width: 0px !important;
 }
 
+.ant-timeline-item-head.ant-timeline-item-head-custom.ant-timeline-item-head-blue{
+  border-radius: 100%;
+}
 @media (max-width: 700px) and (min-width: 319px) {
   .beneficiary-container {
     margin-top: 8px !important;

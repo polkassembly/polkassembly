@@ -33,15 +33,15 @@ const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	ssr: false
 });
 
-interface iTagsListingProps {
+interface ITagListingProps {
 	className?: string;
-	tags: [] | string[];
+	tags: string[];
 	handleTagClick: (tag: string) => void;
 	handleTagModalOpen: () => void;
 	maxTags: number;
 }
 
-const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxTags }: iTagsListingProps) => {
+const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxTags }: ITagListingProps) => {
 	return (
 		<div className={`${className} flex items-center`}>
 			{tags?.slice(0, maxTags).map((tag, index) => (

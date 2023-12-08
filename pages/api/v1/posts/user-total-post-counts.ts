@@ -30,13 +30,14 @@ export const getUserPostCount = async (params: Props) => {
 
 		if (!addresses?.length || !addresses) {
 			user_addresses = await getAddressesFromUserId(userId);
+			user_addresses = user_addresses.map((addr) => addr.address);
 		}
-
+		console.log(addresses, user_addresses);
 		const subsquidRes = await fetchSubsquid({
 			network,
 			query: TOTAL_PROPOSALS_COUNT_BY_ADDRESSES,
 			variables: {
-				proposer_in: (addresses || user_addresses).map((address) => getEncodedAddress(address, network) || '')
+				proposer_in: (addresses?.length ? addresses : user_addresses).map((address) => getEncodedAddress(address, network) || '')
 			}
 		});
 		return {

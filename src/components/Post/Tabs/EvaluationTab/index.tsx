@@ -7,6 +7,7 @@ import AuditTab from './AuditTab';
 // import ProgressReport from './ProgressReport';
 import BeneficiariesTab from './BeneficiariesTab';
 import { usePostDataContext } from '~src/context';
+import { useTheme } from 'next-themes';
 // import { useTheme } from 'next-themes';
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
 }
 
 const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
-	// const { resolvedTheme: theme } = useTheme();
+	const { resolvedTheme: theme } = useTheme();
 	const postedBy = usePostDataContext();
 	return (
 		<div className=''>
@@ -25,6 +26,7 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 				auditData={auditData}
 				videoData={videoData}
 				className='my-4'
+				theme={theme}
 			/>
 			{/* progress report dropdown component */}
 			{/* <ProgressReport className='' /> */}

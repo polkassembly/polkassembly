@@ -13,11 +13,11 @@ const { Panel } = Collapse;
 interface IAuditTab {
 	auditData?: any;
 	videoData?: any;
-	theme?: any;
+	theme: string | undefined;
 	className?: string;
 }
 
-const AuditTab: FC<IAuditTab> = ({ auditData, videoData, className }) => {
+const AuditTab: FC<IAuditTab> = ({ auditData, videoData, className, theme }) => {
 	return (
 		<div className={`${className}`}>
 			<Collapse
@@ -27,7 +27,7 @@ const AuditTab: FC<IAuditTab> = ({ auditData, videoData, className }) => {
 				expandIcon={({ isActive }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
 				}}
-				// theme={theme}
+				theme={theme}
 			>
 				<Panel
 					header={

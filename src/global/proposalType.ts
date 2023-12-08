@@ -313,7 +313,7 @@ export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 		case CustomStatus.Voting:
 			return ['DecisionDepositPlaced', 'Deciding', 'ConfirmStarted', 'ConfirmAborted'];
 		case CustomStatus.Closed:
-			return ['Cancelled', 'TimedOut', 'Confirmed', 'Approved', 'Rejected', 'Executed'];
+			return ['Cancelled', 'TimedOut', 'Confirmed', 'Approved', 'Rejected', 'Executed', 'Killed', 'ExecutionFailed'];
 		case CustomStatus.Active:
 			return ['DecisionDepositPlaced', 'Submitted', 'Deciding', 'ConfirmStarted', 'ConfirmAborted'];
 	}

@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -22,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	if (!['kusama', 'polkadot'].includes(network)) {
+	if (!delegationSupportedNetworks.includes(network)) {
 		return {
 			props: {},
 			redirect: {

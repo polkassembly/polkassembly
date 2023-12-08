@@ -24,6 +24,7 @@ import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useRouter } from 'next/router';
 
 const ZERO_BN = new BN(0);
 
@@ -67,12 +68,12 @@ interface Props {
 }
 const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
 	const { network } = useNetworkSelector();
-	const { id: userId } = useUserDetailsSelector();
+	const { id: userId, loginAddress } = useUserDetailsSelector();
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
 	const { api, apiReady } = useContext(ApiContext);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
-	const [address, setAddress] = useState<string>('');
+	const [address, setAddress] = useState<string>(loginAddress);
 	const [name, setName] = useState<IName>({ displayName: '', legalName: '' });
 	const [socials, setSocials] = useState<ISocials>({
 		email: { value: '', verified: false },
@@ -96,6 +97,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		legalName: '',
 		twitter: ''
 	});
+	const router = useRouter();
 
 	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?: string | null): Promise<void> => {
 		if (!api || !apiReady) return;
@@ -320,6 +322,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			setOpen(false);
 			setStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		}
+		router.replace('?setidentity=true', '/opengov');
 	};
 
 	useEffect(() => {
@@ -375,8 +378,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 								setOpen(false);
 								handleLocalStorageSetUnverified();
 								setLoading({ ...loading, isLoading: false });
+								router.replace('?setidentity=true', '/opengov');
 							}}
-							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary'
+							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Yes, Exit
 						</Button>
@@ -412,7 +416,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						)}
 						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
 						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
-							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'>
+							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high'>
 								<IdentityProgressIcon />
 								In Progress
 							</span>
@@ -433,6 +437,8 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							perSocialBondFee={perSocialBondFee}
 							changeStep={setStep}
 							alreadyVerifiedfields={alreadyVerifiedfields}
+							address={address}
+							setStartLoading={setLoading}
 						/>
 					)}
 					{step === ESetIdentitySteps.SET_IDENTITY_FORM && (

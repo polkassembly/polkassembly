@@ -556,10 +556,11 @@ const Web3Login: FC<Props> = ({
 										{accountsNotFound && (
 											<div className='my-5 flex items-center justify-center px-4'>
 												<Alert
-													message='You need at least one account in Polkadot-js extension to login.'
-													description='Please reload this page after adding accounts.'
+													message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
+													description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
 													type='info'
 													showIcon
+													className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 												/>
 											</div>
 										)}
@@ -600,10 +601,10 @@ const Web3Login: FC<Props> = ({
 													{isSignUp && (
 														<Alert
 															showIcon
-															className='mb-2 px-4'
+															className='mb-2 px-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 															type='info'
 															message={
-																<>
+																<span className='dark:text-blue-dark-high'>
 																	By Signing up you agree to the terms of the{' '}
 																	<Link
 																		href='/terms-and-conditions'
@@ -612,7 +613,7 @@ const Web3Login: FC<Props> = ({
 																		Polkassembly end user agreement
 																	</Link>
 																	.
-																</>
+																</span>
 															}
 														/>
 													)}

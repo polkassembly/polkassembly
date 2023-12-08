@@ -94,8 +94,15 @@ const Menu = styled(AntdMenu)`
 	}
 `;
 
-function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-	label = <span className='font-medium text-lightBlue  dark:text-icon-dark-inactive'>{label}</span>;
+function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[], onClick?: any): MenuItem {
+	label = (
+		<span
+			className='font-medium text-lightBlue  dark:text-icon-dark-inactive'
+			onClick={onClick ? onClick : null}
+		>
+			{label}
+		</span>
+	);
 	return {
 		children,
 		icon,
@@ -264,6 +271,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
+	const [referendaModal, setReferendaModal] = useState<number>(0);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -483,7 +491,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		mainItems: [],
 		governanceItems: [],
 		treasuryItems: [],
-		fellowshipItems: [getSiderMenuItem('Members', '/members')]
+		fellowshipItems: [getSiderMenuItem('Members', '/members')],
+		referenda: [
+			getSiderMenuItem('Create Treasury Proposal', 'CreateProposal', null, undefined, () => setReferendaModal(1)),
+			getSiderMenuItem('Kill a referenda', 'KillAReferenda', null, undefined, () => setReferendaModal(2)),
+			getSiderMenuItem('Cancel a referenda', 'CancelAReferenda', null, undefined, () => setReferendaModal(3))
+		]
 	};
 
 	if (isFellowshipSupported(network)) {
@@ -607,6 +620,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]),
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='mt-1 font-medium text-lightBlue dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.fellowshipItems
+		]),
+		getSiderMenuItem('Referenda', 'referenda_group', <FellowshipGroupIcon className='mt-1 font-medium text-lightBlue dark:text-icon-dark-inactive' />, [
+			...gov2TrackItems.referenda
 		])
 	];
 
@@ -849,6 +865,24 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			)}
 
 			<Footer theme={theme} />
+			{referendaModal && (
+				<Modal
+					zIndex={100}
+					open={referendaModal !== 0}
+					footer={false}
+					closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
+					onCancel={() => setIdentityMobileModal(false)}
+					className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+					title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
+					wrapClassName='dark:bg-modalOverlayDark'
+				>
+					<div className='flex flex-col items-center gap-6 py-4 text-center'>
+						<DelegationDashboardEmptyState />
+						<span>Please use your desktop computer to verify on chain identity</span>
+					</div>
+				</Modal>
+			)}
+
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}

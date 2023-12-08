@@ -56,7 +56,9 @@ const UserInfo: FC<IUserInfo> = (props) => {
 	}, [address]);
 
 	useEffect(() => {
-		fetchData();
+		const userAddresses = [];
+		userAddresses.push(address);
+		fetchData(userAddresses);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
@@ -68,10 +70,11 @@ const UserInfo: FC<IUserInfo> = (props) => {
 		});
 	};
 
-	const fetchData = async () => {
+	const fetchData = async (userAddresses: any) => {
 		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', {
-			address: address,
-			network: network
+			addresses: userAddresses,
+			network: network,
+			userId: profileData?.user_id
 		});
 		if (data) {
 			setProposalCount(data?.proposals);

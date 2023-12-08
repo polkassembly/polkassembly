@@ -12,17 +12,17 @@ import messages from '~src/auth/utils/messages';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { TOTAL_PROPOSALS_COUNT_BY_ADDRESSES } from '~src/queries';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { getUserIdWithAddress } from '../auth/data/userProfileWithUsername';
 
 interface Props {
 	network: string;
-	userId: number | null;
-	address: string;
+	userId: number;
+	addresses: string[];
 }
 
 export const getUserPostCount = async (params: Props) => {
 	try {
-		const { network, userId, address } = params;
+		const { network, userId, addresses } = params;
+
 		const discussionsRef = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('isDeleted', '==', false).where('user_id', '==', Number(userId)).get();
 		const discussionsCounts = discussionsRef.size;
 
@@ -30,7 +30,7 @@ export const getUserPostCount = async (params: Props) => {
 			network,
 			query: TOTAL_PROPOSALS_COUNT_BY_ADDRESSES,
 			variables: {
-				proposer_in: getEncodedAddress(address, network)
+				proposer_in: addresses.map((address) => getEncodedAddress(address, network) || '')
 			}
 		});
 		return {
@@ -56,16 +56,13 @@ const handler: NextApiHandler<{ discussions: number; proposals: number } | Messa
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { address } = req.body;
-	const userIdResponse = await getUserIdWithAddress(address as string);
-	const userId = userIdResponse?.data;
-
+	const { userId, addresses } = req.body;
 	if (isNaN(Number(userId))) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	if (!address && !address.length) return res.status(403).json({ message: messages.INVALID_PARAMS });
+	if (!Array.isArray(addresses) || !addresses.length) return res.status(403).json({ message: messages.INVALID_PARAMS });
 
 	const { data, error, status } = await getUserPostCount({
-		address,
+		addresses,
 		network,
 		userId
 	});

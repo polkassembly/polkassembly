@@ -20,19 +20,18 @@ interface IProposerTab {
 }
 
 const ProposerTab: FC<IProposerTab> = (className) => {
-	// const { picture } = useUserDetailsSelector();
-	const postedBy = usePostDataContext();
-	console.log(postedBy);
-	const address = postedBy?.postData?.proposer;
+	const {
+		postData: { proposer }
+	} = usePostDataContext();
+	console.log(proposer);
 	const [profileData, setProfileData] = useState<IGetProfileWithAddressResponse | undefined>();
 	useEffect(() => {
-		fetchUsername(postedBy?.postData?.proposer);
+		fetchUsername(proposer);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const fetchUsername = async (address: string) => {
 		const substrateAddress = getSubstrateAddress(address);
-
 		if (substrateAddress) {
 			try {
 				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
@@ -67,7 +66,7 @@ const ProposerTab: FC<IProposerTab> = (className) => {
 					key='1'
 				>
 					<UserInfo
-						address={address}
+						address={proposer}
 						profileData={profileData}
 					/>
 				</Panel>

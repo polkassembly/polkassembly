@@ -9,7 +9,7 @@ import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
-import EmptyIcon from '~assets/icons/empty-state-image.svg';
+// import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useApiContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
@@ -20,6 +20,7 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const proposalType = ProposalType.REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -69,7 +70,13 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState
-				image={<EmptyIcon />}
+				image={
+					<ImageIcon
+						src='/public/assets/icons/empty-state-image.svg'
+						alt='empty state icon icon'
+						imgClassName='h-4 w-4'
+					/>
+				}
 				description={
 					<div className='p-5'>
 						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>

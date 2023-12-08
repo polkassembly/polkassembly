@@ -6,12 +6,13 @@ import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
 import Address from '~src/ui-components/Address';
-import SuccessIcon from '~assets/icons/identity-success.svg';
+// import SuccessIcon from '~assets/icons/identity-success.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -57,7 +58,13 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 		>
 			<>
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
-					<SuccessIcon />
+					{/* <SuccessIcon /> */}
+					<ImageIcon
+						src='/public/assets/icons/identity-success.svg'
+						alt='success icon'
+						imgWrapperClassName='h-4 w-4 flex items-center'
+						imgClassName='h-4 w-4'
+					/>
 					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>On-chain identity registration initiated</label>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>{displayName}</div>
 					<div className='mt-4 flex flex-col gap-2'>

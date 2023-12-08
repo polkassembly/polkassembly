@@ -4,7 +4,8 @@
 
 import { Avatar } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import DefaultProfile from '~assets/icons/dashboard-profile.svg';
+// import DefaultProfile from '~assets/icons/dashboard-profile.svg';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface IImageComponentProps {
 	className?: string;
@@ -34,7 +35,12 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 			alt={alt}
 			icon={
 				<span className={iconClassName}>
-					<DefaultProfile />
+					{/* <DefaultProfile /> */}
+					<ImageIcon
+						src='/public/assets/icons/dashboard-profile.svg'
+						alt='dashboard profile icon'
+						imgClassName='h-4 w-4'
+					/>
 				</span>
 			}
 		/>

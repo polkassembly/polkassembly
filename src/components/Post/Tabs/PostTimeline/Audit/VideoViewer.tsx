@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
 import ReactPlayer from 'react-player';
-import YouTubeIcon from '~assets/icons/video.svg';
+// import YouTubeIcon from '~assets/icons/video.svg';
 import { IDataVideoType } from '.';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface IVideoViewerProps {
 	item: IDataVideoType;
@@ -24,7 +25,12 @@ const VideoViewer: FC<IVideoViewerProps> = (props) => {
 				</article>
 				<article className='flex items-center gap-x-2 border-0 border-t border-solid border-t-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
 					<span className='flex items-center justify-center'>
-						<YouTubeIcon />
+						{/* <YouTubeIcon /> */}
+						<ImageIcon
+							src='/public/assets/icons/video.svg'
+							imgClassName='bg-cover bg-center bg-no-repeat'
+							alt='Youtube icon'
+						/>
 					</span>
 					<p className='m-0'>{item.title}</p>
 				</article>

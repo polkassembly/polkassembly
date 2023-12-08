@@ -15,13 +15,14 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
 import { PostEmptyState } from 'src/ui-components/UIStates';
-import EmptyIcon from '~assets/icons/empty-state-image.svg';
+// import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import { useApiContext } from '~src/context';
 import { useState } from 'react';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const proposalType = ProposalType.BOUNTIES;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -71,7 +72,13 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState
-				image={<EmptyIcon />}
+				image={
+					<ImageIcon
+						src='/public/assets/icons/empty-state-image.svg'
+						alt='empty state icon icon'
+						imgClassName='h-4 w-4'
+					/>
+				}
 				description={
 					<div className='p-5'>
 						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>

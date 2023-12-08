@@ -4,9 +4,10 @@
 import React, { useState } from 'react';
 import { poppins } from 'pages/_app';
 import { Button, Modal } from 'antd';
-import SuccessIcon from '~assets/icons/success-verification.svg';
+// import SuccessIcon from '~assets/icons/success-verification.svg';
 import { useRouter } from 'next/router';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -34,7 +35,13 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 			maskClosable={false}
 		>
 			<div className='-mt-[110px] flex flex-col items-center justify-center'>
-				<SuccessIcon />
+				{/* <SuccessIcon /> */}
+				<ImageIcon
+					src='/public/assets/icons/success-verification.svg'
+					alt='Success icon'
+					imgWrapperClassName='h-4 w-4 flex items-center'
+					imgClassName='h-4 w-4'
+				/>
 				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue dark:text-blue-dark-high'>{social} verified successfully</label>
 				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}
 				<Button

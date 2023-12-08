@@ -22,10 +22,10 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 
-import Tip1Icon from '~assets/icons/tip-1.svg';
-import Tip2Icon from '~assets/icons/tip-2.svg';
-import Tip3Icon from '~assets/icons/tip-3.svg';
-import Tip4Icon from '~assets/icons/tip-4.svg';
+// import Tip1Icon from '~assets/icons/tip-1.svg';
+// import Tip2Icon from '~assets/icons/tip-2.svg';
+// import Tip3Icon from '~assets/icons/tip-3.svg';
+// import Tip4Icon from '~assets/icons/tip-4.svg';
 import SaySomethingIcon from '~assets/icons/say-something.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import TipIcon from '~assets/icons/tip-title.svg';
@@ -40,6 +40,7 @@ import DownArrow from '~assets/icons/down-icon.svg';
 import { getKiltDidLinkedAccounts } from '~src/util/kiltDid';
 import { setReceiver } from '~src/redux/Tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const ZERO_BN = new BN(0);
 
@@ -419,10 +420,34 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 													form.setFieldValue('balance', Number(dollarToTokenBalance[tip.key]).toFixed(2));
 												}}
 											>
-												{tip.value === 3 && <Tip1Icon />}
-												{tip.value === 5 && <Tip2Icon />}
-												{tip.value === 10 && <Tip3Icon />}
-												{tip.value === 15 && <Tip4Icon />}
+												{tip.value === 3 && (
+													<ImageIcon
+														src='/public/assets/icons/tip-1.svg'
+														imgClassName='w-4 h-4'
+														alt='Tip 1 icon'
+													/>
+												)}
+												{tip.value === 5 && (
+													<ImageIcon
+														src='/public/assets/icons/tip-2.svg'
+														imgClassName='w-4 h-4'
+														alt='Tip 2 icon'
+													/>
+												)}
+												{tip.value === 10 && (
+													<ImageIcon
+														src='/public/assets/icons/tip-3.svg'
+														imgClassName='w-4 h-4'
+														alt='Tip 3 icon'
+													/>
+												)}
+												{tip.value === 15 && (
+													<ImageIcon
+														src='/public/assets/icons/tip-4.svg'
+														imgClassName='w-4 h-4'
+														alt='Tip 4 icon'
+													/>
+												)}
 												<span>${tip.value}</span>
 											</span>
 										);

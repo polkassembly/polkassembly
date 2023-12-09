@@ -41,7 +41,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 						<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 						<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Voting Data</span>
 					</h3>
-					<Divider className='my-2 mb-2 text-[#D2D8E0] dark:border-separatorDark min-[450px]:mb-5' />
+					<Divider className='my-2 mb-5 text-[#D2D8E0] dark:border-separatorDark' />
 				</div>
 			}
 			open={open}

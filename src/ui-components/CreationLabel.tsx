@@ -126,7 +126,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return (
-		<div className={`${className} flex w-[100%] flex-col justify-between gap-3 bg-none`}>
+		<div className={`${className} flex w-[100%] ${inPostHeading ? 'flex-col' : ''} justify-between gap-3 bg-none`}>
 			<div
 				className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} ${
 					inPostHeading && !beneficiaries?.length ? 'flex' : ''

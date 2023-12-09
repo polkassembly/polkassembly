@@ -126,8 +126,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return (
-		<div className={`${className} flex w-[100%] justify-between`}>
-			<div className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+		<div className={`${className} flex w-[100%] justify-between gap-3 bg-none`}>
+			<div
+				className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} ${
+					inPostHeading && !beneficiaries?.length ? 'flex' : ''
+				} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}
+			>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
 						{inPostHeading && <span className='mr-2 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
@@ -177,7 +181,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className={`details-container ${inPostHeading ? 'mt-2' : ''} flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1`}>
+				<div
+					className={`details-container ${
+						inPostHeading && beneficiaries && beneficiaries?.length > 0 ? 'mt-2' : ''
+					} flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1`}
+				>
 					{!inPostHeading && (
 						<div>
 							{(topic || text || created_at) && (
@@ -190,6 +198,13 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								</>
 							)}
 						</div>
+					)}
+					{inPostHeading && !beneficiaries?.length && (
+						<Divider
+							className='ml-1 hidden xs:mt-2 md:mt-0 md:inline-block'
+							type='vertical'
+							style={{ borderLeft: '1px solid #485F7D' }}
+						/>
 					)}
 					{created_at && (
 						<span className={`${inPostHeading ? '' : 'mr-1'} flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>

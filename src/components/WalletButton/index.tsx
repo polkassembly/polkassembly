@@ -22,7 +22,7 @@ const WalletButton = ({ isLoginFlow, disabled, onClick, icon, className, text, n
 		<>
 			{!isOptionalLogin && isLoginFlow && (
 				<Tooltip
-					title={`${text} wallet ${isAvailable ? '' : 'not'} installed`}
+					title={name === 'polkasafe' ? '' : `${text} wallet ${isAvailable ? '' : 'not'} installed`}
 					placement='top'
 				>
 					<Button

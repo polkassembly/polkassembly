@@ -132,7 +132,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 									className='ml-1 mt-3 h-9 w-7'
 								/>
 							}
-							isAvailable={availableWallets[Wallet.POLKASAFE]}
+							isAvailable={true}
 							isOptionalLogin={isOptionalLogin}
 							text='Polkasafe (Multisig)'
 							isLoginFlow={isLoginFlow}

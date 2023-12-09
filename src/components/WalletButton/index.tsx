@@ -23,7 +23,7 @@ const WalletButton = ({ isLoginFlow, disabled, onClick, icon, className, text, n
 		<>
 			{!isOptionalLogin && isLoginFlow && (
 				<Tooltip
-					title={`${text === 'Polkasafe (Multisig)' && !isAvailable ? 'Please install the any wallet to access Polkasafe' : `${text} ${isAvailable ? '' : '(not installed)'}`}`}
+					title={`${text === 'Polkasafe (Multisig)' && !isAvailable ? 'Please install any wallet to access Polkasafe' : `${text} ${isAvailable ? '' : '(not installed)'}`}`}
 					placement='top'
 				>
 					<Button
@@ -55,7 +55,7 @@ const WalletButton = ({ isLoginFlow, disabled, onClick, icon, className, text, n
 					)}
 					{isOptionalLogin && !isAvailable && text === 'Polkasafe (Multisig)' && (
 						<Tooltip
-							title='Please install the any wallet to access Polkasafe'
+							title='Please install any wallet to access Polkasafe'
 							placement='top'
 						>
 							<InfoCircleOutlined className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs dark:text-lightGreyTextColor' />

@@ -273,7 +273,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									/>
 								</div>
 							)}
-							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
+							<VoteContainer className='flex flex-col items-center px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
 									{!isUsedInVotedModal ? (
 										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>

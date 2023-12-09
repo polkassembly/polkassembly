@@ -189,7 +189,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 								style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 							>
-								<Button className='-ml-[3px] mr-[2px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>2</Button>
+								<Button className='-ml-[3px] mr-[2px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white hover:border-pink_primary  hover:bg-pink_secondary'>
+									2
+								</Button>
 								<span className='ml-[4px] pt-[3px]'>of 3</span>
 							</p>
 						</div>

@@ -80,8 +80,8 @@ const Socials: FC<ISocialsProps> = (props) => {
 			})}
 			{errorCheck && (
 				<Alert
-					className='mt-4 h-[40px] rounded-[4px] border-none px-5 py-2 text-sm text-bodyBlue outline-none dark:bg-borderColorDark dark:text-white '
-					message={errorCheck}
+					className='mt-4 h-[40px] rounded-[4px] border-none px-5 py-2 text-sm text-bodyBlue outline-none dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark '
+					message={<span className='dark:text-blue-dark-high'>{errorCheck}</span>}
 					type='info'
 					showIcon
 				/>

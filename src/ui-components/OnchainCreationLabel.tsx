@@ -90,7 +90,7 @@ const OnchainCreationLabel = ({ address, username, truncateUsername, className }
 									setOpen(e);
 								}}
 							>
-								<span className='max-w-[150px] overflow-hidden text-ellipsis font-semibold text-bodyBlue dark:text-blue-dark-high'>
+								<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>
 									<Link
 										href={`/user/${username}`}
 										target='_blank'

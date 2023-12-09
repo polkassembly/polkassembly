@@ -1,12 +1,14 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import PostAudit from '../PostTimeline/Audit';
 import { Collapse } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import AuditIcon from '~assets/icons/auditIcon.svg';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 const { Panel } = Collapse;
 
@@ -17,7 +19,16 @@ interface IAuditTab {
 	className?: string;
 }
 
-const AuditTab: FC<IAuditTab> = ({ auditData, videoData, className, theme }) => {
+const AuditTab: FC<IAuditTab> = ({ auditData, videoData, className }) => {
+	const currentUser = useUserDetailsSelector();
+	useEffect(() => {
+		trackEvent('audit_dropdown_clicked', 'clicked_audit_dropdown', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<div className={`${className}`}>
 			<Collapse
@@ -27,7 +38,6 @@ const AuditTab: FC<IAuditTab> = ({ auditData, videoData, className, theme }) => 
 				expandIcon={({ isActive }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
 				}}
-				theme={theme}
 			>
 				<Panel
 					header={

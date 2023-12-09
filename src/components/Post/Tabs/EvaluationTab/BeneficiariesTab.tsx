@@ -6,9 +6,11 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import BeneficiariesIcon from '~assets/icons/BeneficiariesIcon.svg';
 
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { usePostDataContext } from '~src/context';
 import IndividualBeneficiary from './IndividualBeneficiary';
+import { trackEvent } from 'analytics';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 const { Panel } = Collapse;
 
 interface IBeneficiariesTab {
@@ -17,7 +19,15 @@ interface IBeneficiariesTab {
 
 const BeneficiariesTab: FC<IBeneficiariesTab> = (className) => {
 	const postedBy = usePostDataContext();
-	console.log(postedBy);
+	const currentUser = useUserDetailsSelector();
+	useEffect(() => {
+		trackEvent('beneficiary_dropdown_clicked', 'clicked_beneficiary_dropdown', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	const beneficiaries = postedBy?.postData?.beneficiaries;
 	return (
 		<div className={`${className}`}>

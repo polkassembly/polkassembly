@@ -12,6 +12,8 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import UserInfo from './UserInfo';
+import { trackEvent } from 'analytics';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const { Panel } = Collapse;
 
@@ -23,9 +25,14 @@ const ProposerTab: FC<IProposerTab> = (className) => {
 	const {
 		postData: { proposer }
 	} = usePostDataContext();
-	console.log(proposer);
+	const currentUser = useUserDetailsSelector();
 	const [profileData, setProfileData] = useState<IGetProfileWithAddressResponse | undefined>();
 	useEffect(() => {
+		trackEvent('proposer_dropdown_clicked', 'clicked_proposer_dropdown', {
+			isWeb3Login: currentUser?.web3signup,
+			userId: currentUser?.id || '',
+			userName: currentUser?.username || ''
+		});
 		fetchUsername(proposer);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

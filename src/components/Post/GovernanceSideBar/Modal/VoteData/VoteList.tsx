@@ -259,7 +259,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					<div className='flex w-full flex-col justify-between'>
 						<div className='w-full'>
 							{!isUsedInVotedModal && (
-								<div className='mb-8 flex w-full items-center justify-center'>
+								<div className='mb-4 flex w-full items-center justify-center min-[450px]:mb-8'>
 									<Segmented
 										block
 										className='w-full rounded-[10px] px-1 py-2 min-[450px]:rounded-[30px] min-[450px]:px-3'
@@ -381,7 +381,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						</div>
 						{!isUsedInVotedModal && (
 							<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
-								<p className='m-0 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
+								<p className='m-0 mb-2 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
 								<Pagination
 									theme={theme}
 									size='small'

@@ -103,6 +103,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<Address
 						address={delegate?.address}
 						displayInline
+						destroyTooltipOnHide
 						iconSize={34}
 						usernameClassName='font-semibold'
 						isTruncateUsername={false}

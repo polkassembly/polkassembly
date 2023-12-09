@@ -24,6 +24,8 @@ import Loader from '~src/ui-components/Loader';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { DislikeFilled, LikeFilled } from '@ant-design/icons';
+import AbstainGray from '~assets/icons/abstainGray.svg';
 
 interface IVoterRow {
 	className?: string;
@@ -37,6 +39,7 @@ interface IVoterRow {
 	tally?: any;
 	referendumId?: any;
 	decision?: any;
+	isUsedInVotedModal?: boolean;
 }
 
 const StyledCollapse = styled(Collapse)`
@@ -84,11 +87,25 @@ const getPercentage = (userVotes: string, totalVotes: string) => {
 	return percentage;
 };
 
-const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData, className, setDelegationVoteModal, index, tally, referendumId, decision, isReferendum2 }) => {
+const VoterRow: FC<IVoterRow> = ({
+	currentKey,
+	setActiveKey,
+	voteType,
+	voteData,
+	className,
+	setDelegationVoteModal,
+	index,
+	tally,
+	referendumId,
+	isUsedInVotedModal,
+	decision,
+	isReferendum2
+}) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkSelector();
 	const [delegatorLoading, setDelegatorLoading] = useState(true);
 	const [delegatedData, setDelegatedData] = useState<any>(null);
+	const [voteDecision, setVoteDecision] = useState('');
 	const { resolvedTheme: theme } = useTheme();
 	useEffect(() => {
 		if (!active) {
@@ -113,45 +130,84 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 		}
 	}, [active, decision, delegatedData, referendumId, voteData.voter, voteType]);
 
+	useEffect(() => {
+		if (voteData.decision === 'yes') {
+			setVoteDecision('Aye');
+		} else if (voteData.decision === 'no') {
+			setVoteDecision('Nay');
+		} else {
+			setVoteDecision('Abstain');
+		}
+	}, [voteData.decision]);
+
 	const Title = () => (
 		<div className='m-0 p-0'>
 			<div className='m-0 flex w-full items-center'>
-				{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
-					<a
-						href={`https://${network}.moonscan.io/tx/${voteData?.txnHash}`}
-						className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
-					>
-						<Address
-							isVoterAddress
-							usernameClassName='w-[250px]'
-							isSubVisible={false}
-							displayInline
-							showFullAddress
-							address={voteData?.voter}
-						/>
-					</a>
+				{!isUsedInVotedModal ? (
+					<div>
+						{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
+							<a
+								href={`https://${network}.moonscan.io/tx/${voteData?.txnHash}`}
+								className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
+							>
+								<Address
+									isVoterAddress
+									usernameClassName='w-[250px]'
+									isSubVisible={false}
+									displayInline
+									showFullAddress
+									address={voteData?.voter}
+								/>
+							</a>
+						) : (
+							<div
+								className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
+								onClick={(e) => e.stopPropagation()}
+							>
+								<Address
+									usernameClassName='overflow-ellipsis w-[250px] '
+									isSubVisible={false}
+									displayInline
+									showFullAddress
+									address={voteData?.voter}
+								/>
+							</div>
+						)}
+					</div>
 				) : (
-					<div
-						className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
-						onClick={(e) => e.stopPropagation()}
-					>
-						<Address
-							usernameClassName='overflow-ellipsis w-[250px] '
-							isSubVisible={false}
-							displayInline
-							showFullAddress
-							address={voteData?.voter}
-						/>
+					<div className={`${isUsedInVotedModal ? '-ml-1' : ''} w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}>
+						{voteDecision === 'Nay' && (
+							<div className='flex gap-x-2'>
+								<DislikeFilled className='text-[red]' />
+								<p className='m-0 p-0 font-medium capitalize text-[red]'>{voteDecision}</p>
+							</div>
+						)}
+						{voteDecision === 'Aye' && (
+							<div className='flex gap-x-2'>
+								<LikeFilled className='text-[green]' />
+								<p className='m-0 p-0 font-medium capitalize text-[green]'>{voteDecision}</p>
+							</div>
+						)}
+						{voteDecision === 'Abstain' && (
+							<div className='flex gap-x-2'>
+								<AbstainGray className='mr-1' />
+								<p className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{voteDecision}</p>
+							</div>
+						)}
 					</div>
 				)}
 
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
-						<div className={`w-[120px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[160px]' : ''} text-bodyBlue dark:text-blue-dark-high`}>
+						<div
+							className={`${isUsedInVotedModal && voteData?.decision === 'abstain' ? '-ml-7' : ''} w-[120px] overflow-ellipsis ${
+								voteData?.decision === 'abstain' ? 'w-[160px]' : ''
+							} text-bodyBlue dark:text-blue-dark-high`}
+						>
 							{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{voteData?.decision !== 'abstain' && (
-							<div className={'w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'}>
+							<div className={`${isUsedInVotedModal && voteData?.decision !== 'abstain' ? 'ml-3' : ''} w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high`}>
 								{`${voteData.lockPeriod === 0 ? '0.1' : voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}`}
 							</div>
 						)}
@@ -163,7 +219,7 @@ const VoterRow: FC<IVoterRow> = ({ currentKey, setActiveKey, voteType, voteData,
 				)}
 
 				{(voteData.totalVotingPower || voteData.votingPower) && (
-					<div className='w-[90px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'>
+					<div className={`${isUsedInVotedModal && voteData?.decision === 'abstain' ? 'ml-[72px]' : ''} w-[90px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high`}>
 						{parseBalance(
 							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (BigInt(voteData?.balance?.abstain || 0) / BigInt(10)).toString(),
 							2,

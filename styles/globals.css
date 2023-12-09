@@ -520,6 +520,7 @@ color: var(--lightBlue) !important;
   .ant-menu-root > li:first-child {
     height: 2px !important;
   }
+  
 }
 
 @media (max-width: 768px) and (min-width: 319px) {
@@ -586,6 +587,9 @@ z-index: 1050 !important;
   .sentiment-vote-icon {
     display:block !important;
     margin-right: 4px !important;
+  }
+  .ant-modal.ant-modal-content {
+    padding: 8px 10px;
   }
 }
 
@@ -813,4 +817,14 @@ z-index: 1050 !important;
   .details-container{
     margin-top: 4px !important;
   }
+}
+
+@media (min-width: 420px) {
+  .ant-modal .ant-modal-content {
+    padding: 18px 22px;
+  }
+}
+
+.ant-modal .ant-modal-content {
+  padding: 8px 10px;
 }

@@ -29,8 +29,11 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-				if (event.target instanceof HTMLTextAreaElement && event.target.classList.contains('mde-text')) return;
-				if (event.target instanceof HTMLInputElement && event.target.classList.contains('tox-textfield')) return;
+				if (
+					(event.target instanceof HTMLTextAreaElement && event.target.classList.contains('mde-text')) ||
+					(event.target instanceof HTMLInputElement && event.target.classList.contains('tox-textfield'))
+				)
+					return;
 				setOpen((prev) => !prev);
 			}
 		};

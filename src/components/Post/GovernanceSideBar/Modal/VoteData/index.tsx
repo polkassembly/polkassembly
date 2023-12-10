@@ -29,14 +29,13 @@ const Modal = styled(AntdModal)`
 	.ant-modal-content {
 		padding-top: 12px;
 	}
-	@media (min-width: 420px) {
-		.ant-modal-content {
-			padding: 18px 22px;
-		}
-	}
-
 	.ant-modal-content {
 		padding: 8px 10px;
+	}
+	@media (min-width: 420px) {
+		.ant-modal-content {
+			padding: 20px 24px;
+		}
 	}
 `;
 

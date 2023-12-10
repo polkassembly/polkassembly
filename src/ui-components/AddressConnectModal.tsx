@@ -429,10 +429,9 @@ const AddressConnectModal = ({
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
 							{/* <ConnectAddressIcon /> */}
 							<ImageIcon
-								src='/public/assets/icons/connect-address.svg'
-								imgWrapperClassName='h-4 w-4 flex items-center'
-								imgClassName='h-4 w-4'
-								alt='Connect Address Icon'
+								src='/assets/icons/connect-address.svg'
+								imgWrapperClassName='ml-10 -mt-4'
+								alt='connect address Icon'
 							/>
 							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 								Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community

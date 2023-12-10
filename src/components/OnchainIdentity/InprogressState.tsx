@@ -60,10 +60,8 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
 					{/* <SuccessIcon /> */}
 					<ImageIcon
-						src='/public/assets/icons/identity-success.svg'
-						alt='success icon'
-						imgWrapperClassName='h-4 w-4 flex items-center'
-						imgClassName='h-4 w-4'
+						src='/assets/icons/identity-success.svg'
+						alt='identity success icon'
 					/>
 					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Email verification in progress</label>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>Check your email!</div>

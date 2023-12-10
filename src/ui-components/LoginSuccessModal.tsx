@@ -128,17 +128,15 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 
 	return (
 		<div>
-			{showSuccessModal && (
+			{!showSuccessModal && (
 				<AuthForm onSubmit={handleOptionalDetails}>
 					<div>
 						<div className='px-8 pb-2 pt-8 dark:bg-section-dark-overlay'>
 							<div className='flex justify-center'>
 								{/* <ConfirmationIcon className='confirm-logo-conatiner absolute -top-[78px]' /> */}
 								<ImageIcon
-									src='/public/assets/icons/Confirmation.svg'
-									alt='Confirmationn logo'
-									imgWrapperClassName='h-4 w-4 flex items-center absolute -top-[78px]'
-									imgClassName='h-4 w-4'
+									src='/assets/icons/Confirmation.svg'
+									alt='confirmation logo'
 								/>
 							</div>
 							<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>You are successfully logged in</p>

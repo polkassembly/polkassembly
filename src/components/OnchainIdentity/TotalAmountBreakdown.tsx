@@ -140,16 +140,14 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				/>
 			)}
 
-			<span className='-mt-6 flex items-center justify-center text-[350px]'>
-				{/* <AmountBreakdownModalIcon /> */}
-				<ImageIcon
-					alt='Amount brakdown icon'
-					src='/public/assets/icons/amount-breakdown-identity.svg'
-					imgWrapperClassName='h-4 w-4 flex items-center'
-					imgClassName='h-4 w-4'
-				/>
-			</span>
-			<ul className='-mt-6 flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>
+			{/* <AmountBreakdownModalIcon /> */}
+			<ImageIcon
+				alt='amount breakdown identity icon'
+				src='/assets/icons/amount-breakdown-identity.svg'
+				imgClassName='h-[210px] w-[350px]'
+				imgWrapperClassName='py-10 flex items-center justify-center '
+			/>
+			<ul className='flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>
 				<li>Polkadot offers on-chain identities that verify users&apos;s credentials through appointed registrars, instilling greater trust and support. </li>
 				<li>
 					Once successfully verified, users receive a green checkmark, symbolising their trusted status. This verified status symbol enhances trustworthiness when requesting funds

@@ -37,9 +37,8 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 				<span className={iconClassName}>
 					{/* <DefaultProfile /> */}
 					<ImageIcon
-						src='/public/assets/icons/dashboard-profile.svg'
+						src='/assets/icons/dashboard-profile.svg'
 						alt='dashboard profile icon'
-						imgClassName='h-4 w-4'
 					/>
 				</span>
 			}

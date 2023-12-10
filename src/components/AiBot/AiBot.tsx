@@ -148,8 +148,8 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				>
 					{/* <GrillChatIcon className='ml-[-149px] mt-[5px] cursor-pointer' /> */}
 					<ImageIcon
-						imgClassName='ml-[-149px] mt-[5px] cursor-pointer'
-						src='/public/assets/icons/grill-chat-icon.svg'
+						imgWrapperClassName='ml-[-149px] mt-[5px] cursor-pointer'
+						src='/assets/icons/grill-chat-icon.svg'
 						alt='grill chat icon'
 					/>
 					<p className='mb-3 ml-4 mt-2.5  text-sm font-medium leading-5 tracking-[1.25%]'>Grill Chat</p>

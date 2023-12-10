@@ -340,14 +340,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
 						{theme === 'dark' ? (
 							<ImageIcon
-								src='/public/assets/icons/AvailableDark.svg'
-								alt='Available dark icon'
+								src='/assets/icons/AvailableDark.svg'
+								alt='available dark icon'
 								imgClassName='lg:hidden'
 							/>
 						) : (
 							<ImageIcon
-								src='/public/assets/icons/available.svg'
-								alt='Available icon'
+								src='/assets/icons/available.svg'
+								alt='available icon'
 								imgClassName='lg:hidden'
 							/>
 						)}
@@ -392,16 +392,16 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				<div>
 					{theme === 'dark' ? (
 						<ImageIcon
-							src='/public/assets/icons/AvailableDark.svg'
-							alt='Available dark icon'
-							imgClassName=' xs: hidden lg:block'
+							src='/assets/icons/AvailableDark.svg'
+							alt='available dark icon'
+							imgClassName='xs:hidden lg:block'
 						/>
 					) : (
 						// <Available className='xs:hidden lg:block' />
 						<ImageIcon
-							src='/public/assets/icons/available.svg'
-							alt='Available icon'
-							imgClassName='lg:hidden'
+							src='/assets/icons/available.svg'
+							alt='available icon'
+							imgClassName='xs:hidden lg:block'
 						/>
 					)}
 				</div>
@@ -414,14 +414,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
 							{theme === 'dark' ? (
 								<ImageIcon
-									src='/public/assets/icons/CurrentPriceDark.svg'
-									alt='Current price dark icon'
+									src='/assets/icons/CurrentPriceDark.svg'
+									alt='current price dark icon'
 									imgClassName='lg:hidden'
 								/>
 							) : (
 								<ImageIcon
-									src='/public/assets/icons/currentprice.svg'
-									alt='Current price icon'
+									src='/assets/icons/currentprice.svg'
+									alt='current price icon'
 									imgClassName='lg:hidden'
 								/>
 							)}
@@ -476,14 +476,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					<div>
 						{theme === 'dark' ? (
 							<ImageIcon
-								src='/public/assets/icons/CurrentPriceDark.svg'
-								alt='Current price dark icon'
+								src='/assets/icons/CurrentPriceDark.svg'
+								alt='current price dark icon'
 								imgClassName='xs:hidden lg:block'
 							/>
 						) : (
 							<ImageIcon
-								src='/public/assets/icons/currentprice.svg'
-								alt='Current price icon'
+								src='/assets/icons/currentprice.svg'
+								alt='current price icon'
 								imgClassName='xs:hidden lg:block'
 							/>
 						)}
@@ -498,16 +498,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
 							{theme === 'dark' ? (
 								<ImageIcon
-									src='/public/assets/icons/NextBurnDark.svg'
-									alt='Next Burn Dark icon'
-									imgWrapperClassName='h-4 w-4 flex items-center'
+									src='/assets/icons/NextBurnDark.svg'
+									alt='next burn dark icon'
 									imgClassName='lg:hidden'
 								/>
 							) : (
 								<ImageIcon
-									src='/public/assets/icons/nextburn.svg'
-									alt='Next Burn Dark icon'
-									imgWrapperClassName='h-4 w-4 flex items-center'
+									src='/assets/icons/nextburn.svg'
+									alt='next burn icon'
 									imgClassName='lg:hidden'
 								/>
 							)}
@@ -543,16 +541,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					<div>
 						{theme === 'dark' ? (
 							<ImageIcon
-								src='/public/assets/icons/NextBurnDark.svg'
-								alt='Next Burn Dark icon'
-								imgWrapperClassName='h-4 w-4 flex items-center'
+								src='/assets/icons/NextBurnDark.svg'
+								alt='next burn dark icon'
 								imgClassName='xs:hidden lg:block'
 							/>
 						) : (
 							<ImageIcon
-								src='/public/assets/icons/NextBurnDark.svg'
-								alt='Next Burn Dark icon'
-								imgWrapperClassName='h-4 w-4 flex items-center'
+								src='/assets/icons/nextburn.svg'
+								alt='next burn icon'
 								imgClassName='xs:hidden lg:block'
 							/>
 						)}
@@ -569,13 +565,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
 									{theme === 'dark' ? (
 										<ImageIcon
-											src='/public/assets/icons/SpendPeriodDark.svg'
+											src='/assets/icons/SpendPeriodDark.svg'
 											alt='spend period dark icon'
 											imgClassName='lg:hidden'
 										/>
 									) : (
 										<ImageIcon
-											src='/public/assets/icons/spendperiod.svg'
+											src='/assets/icons/spendperiod.svg'
 											alt='spend period icon'
 											imgClassName='lg:hidden'
 										/>
@@ -643,13 +639,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							<div>
 								{theme === 'dark' ? (
 									<ImageIcon
-										src='/public/assets/icons/SpendPeriodDark.svg'
+										src='/assets/icons/SpendPeriodDark.svg'
 										alt='spend period dark icon'
 										imgClassName='mt-2 xs:hidden lg:block'
 									/>
 								) : (
 									<ImageIcon
-										src='/public/assets/icons/spendperiod.svg'
+										src='/assets/icons/spendperiod.svg'
 										alt='spend period icon'
 										imgClassName='mt-2 xs:hidden lg:block'
 									/>

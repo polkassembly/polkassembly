@@ -66,10 +66,8 @@ const Delegation = (props: { network: string }) => {
 				<div className='mt-12 flex flex-col items-center justify-center'>
 					{/* <DelegationDashboardEmptyState /> */}
 					<ImageIcon
-						src='/public/assets/icons/delegation-empty-state.svg'
-						alt='Delegation empty state'
-						imgWrapperClassName='h-4 w-4 flex items-center'
-						imgClassName='h-4 w-4'
+						src='/assets/icons/delegation-empty-state.svg'
+						alt='delegation empty state icon'
 					/>
 					<p className='mt-6 text-center text-base text-bodyBlue dark:text-blue-dark-high'>Please visit Delegation Dashboard from your Dekstop computer</p>
 					<button

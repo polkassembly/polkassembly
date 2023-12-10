@@ -99,9 +99,8 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 									<div className='flex items-center'>
 										{/* <PdfIcon className='bg-cover bg-center bg-no-repeat' /> */}
 										<ImageIcon
-											src='/public/assets/icons/pdfs.svg'
-											alt='Pdf icon'
-											imgWrapperClassName='h-4 w-4 flex items-center'
+											src='/assets/icons/pdfs.svg'
+											alt='pdfs icon'
 											imgClassName='bg-cover bg-center bg-no-repeat'
 										/>
 										<span className='pl-1 text-blue-light-high dark:text-blue-dark-high'>
@@ -118,9 +117,9 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 									<div className='flex items-center'>
 										{/* <YouTubeIcon className='bg-cover bg-center bg-no-repeat' /> */}
 										<ImageIcon
-											src='/public/assets/icons/video.svg'
+											src='/assets/icons/video.svg'
 											imgClassName='bg-cover bg-center bg-no-repeat'
-											alt='Youtube icon'
+											alt='video icon'
 										/>
 										<span className='pl-1 text-blue-light-high dark:text-blue-dark-high'>
 											<span className='hidden md:inline-block'>Videos</span> ({videoData.length})

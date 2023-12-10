@@ -284,9 +284,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
 					{/* <UnDelegatedIcon /> */}
 					<ImageIcon
-						src='/public/assets/icons/undelegated.svg'
+						src='/assets/icons/undelegated.svg'
 						alt='undelegated icon'
-						imgClassName='w-4 h-4'
+						imgWrapperClassName='w-[258px] h-[258px] flex items-center justify-center'
 					/>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Undelegated Tracks</h4>
@@ -301,9 +301,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
 					{/* <ReceivedDelegationIcon /> */}
 					<ImageIcon
-						src='/public/assets/icons/received-delegation.svg'
+						src='/assets/icons/received-delegation.svg'
 						alt='received delegation icon'
-						imgClassName='h-4 w-4'
+						imgWrapperClassName='w-[258px] h-[258px] flex items-center justify-center'
 					/>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegation Received</h4>

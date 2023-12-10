@@ -422,30 +422,26 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 											>
 												{tip.value === 3 && (
 													<ImageIcon
-														src='/public/assets/icons/tip-1.svg'
-														imgClassName='w-4 h-4'
-														alt='Tip 1 icon'
+														src='/assets/icons/tip-1.svg'
+														alt='tip 1 icon'
 													/>
 												)}
 												{tip.value === 5 && (
 													<ImageIcon
-														src='/public/assets/icons/tip-2.svg'
-														imgClassName='w-4 h-4'
-														alt='Tip 2 icon'
+														src='/assets/icons/tip-2.svg'
+														alt='tip 2 icon'
 													/>
 												)}
 												{tip.value === 10 && (
 													<ImageIcon
-														src='/public/assets/icons/tip-3.svg'
-														imgClassName='w-4 h-4'
-														alt='Tip 3 icon'
+														src='/assets/icons/tip-3.svg'
+														alt='tip 3 icon'
 													/>
 												)}
 												{tip.value === 15 && (
 													<ImageIcon
-														src='/public/assets/icons/tip-4.svg'
-														imgClassName='w-4 h-4'
-														alt='Tip 4 icon'
+														src='/assets/icons/tip-4.svg'
+														alt='tip 4 icon'
 													/>
 												)}
 												<span>${tip.value}</span>

@@ -37,10 +37,8 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 			<div className='-mt-[110px] flex flex-col items-center justify-center'>
 				{/* <SuccessIcon /> */}
 				<ImageIcon
-					src='/public/assets/icons/success-verification.svg'
-					alt='Success icon'
-					imgWrapperClassName='h-4 w-4 flex items-center'
-					imgClassName='h-4 w-4'
+					src='/assets/icons/success-verification.svg'
+					alt='success verification icon'
 				/>
 				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue dark:text-blue-dark-high'>{social} verified successfully</label>
 				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}

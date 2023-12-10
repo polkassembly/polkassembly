@@ -27,9 +27,9 @@ const VideoViewer: FC<IVideoViewerProps> = (props) => {
 					<span className='flex items-center justify-center'>
 						{/* <YouTubeIcon /> */}
 						<ImageIcon
-							src='/public/assets/icons/video.svg'
-							imgClassName='bg-cover bg-center bg-no-repeat'
-							alt='Youtube icon'
+							src='/assets/icons/video.svg'
+							imgWrapperClassName='w-4 h-4 flex items-center justify-center bg-cover bg-center bg-no-repeat'
+							alt='video icon'
 						/>
 					</span>
 					<p className='m-0'>{item.title}</p>

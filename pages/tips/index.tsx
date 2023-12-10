@@ -85,9 +85,9 @@ const Tips: FC<ITipsProps> = (props) => {
 			<div className='mt-3 flex items-center'>
 				{/* <TipIcon className='-mt-3.5' /> */}
 				<ImageIcon
-					src='/public/assets/icons/tip-icon.svg'
-					imgClassName='-mt-3.5'
+					src='/assets/icons/tip-icon.svg'
 					alt='tip icon'
+					imgClassName='-mt-3.5'
 				/>
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Tips ({count})</h1>
 			</div>

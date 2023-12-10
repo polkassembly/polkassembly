@@ -74,9 +74,8 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 			<PostEmptyState
 				image={
 					<ImageIcon
-						src='/public/assets/icons/empty-state-image.svg'
-						alt='empty state icon icon'
-						imgClassName='h-4 w-4'
+						src='/assets/icons/empty-state-image.svg'
+						alt='empty state image icon'
 					/>
 				}
 				description={

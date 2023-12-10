@@ -55,10 +55,8 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, total
 				<div className='-mt-[150px] flex items-center justify-center'>
 					{/* <UnlockSuccessIcon /> */}
 					<ImageIcon
-						src='/public/assets/icons/unlock-success-box.svg'
+						src='/assets/icons/unlock-success-box.svg'
 						alt='unlock success box icon'
-						imgWrapperClassName='h-4 w-4 flex items-center'
-						imgClassName='h-4 w-4'
 					/>
 				</div>
 				<div className='my-4 flex items-center justify-center text-xl font-semibold tracking-[0.15%] dark:text-white'>Tokens unlocked successfully</div>

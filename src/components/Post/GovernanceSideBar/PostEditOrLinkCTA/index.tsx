@@ -42,9 +42,8 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 				<section className='flex flex-col items-center justify-center p-3'>
 					{/* <PostEditLinkingIcon /> */}
 					<ImageIcon
-						src='/public/assets/icons/post-edit-linking.svg'
+						src='/assets/icons/post-edit-linking.svg'
 						alt='post edit linking icon'
-						imgClassName='h-4 w-4'
 					/>
 					<article className='mb-[35px] mt-[28px] flex flex-col items-center text-center text-xl leading-[30px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-high'>
 						<h3 className='m-0 p-0 text-lg font-medium'>Welcome Text</h3>

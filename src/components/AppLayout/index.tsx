@@ -863,12 +863,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
 					{/* <DelegationDashboardEmptyState /> */}
 					<ImageIcon
-						src='/public/assets/icons/delegation-empty-state.svg'
-						alt='Delegation empty state'
-						imgWrapperClassName='h-4 w-4 flex items-center'
-						imgClassName='h-4 w-4'
+						src='/assets/icons/delegation-empty-state.svg'
+						alt='delegation empty state icon'
 					/>
-					<span>Please use your desktop computer to verify on chain identity</span>
+					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
 		</Layout>

@@ -50,10 +50,8 @@ const ImageViewer: FC<IImageViewerProps> = (props) => {
 				<div className='flex items-center gap-x-2 border-0 border-t border-solid border-t-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
 					{/* <PdfIcon /> */}
 					<ImageIcon
-						src='/public/assets/icons/pdfs.svg'
-						alt='Pdf icon'
-						imgWrapperClassName='h-4 w-4 flex items-center'
-						imgClassName='h-4 w-4'
+						src='/assets/icons/pdfs.svg'
+						alt='pdfs icon'
 					/>
 					{item.name}
 				</div>

@@ -60,31 +60,6 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 
 	const sortByOptions: ItemType[] = [...statusOptions];
 
-	// const handleSortByClick = (key: any) => {
-	// 	if (key === 'clear_filter') {
-	// 		if (router.query.filterBy) {
-	// 			router.replace({
-	// 				pathname: '',
-	// 				query: {
-	// 					filterBy: router.query.filterBy
-	// 				}
-	// 			});
-	// 		} else {
-	// 			router.push({ pathname: '' });
-	// 		}
-	// 		setCheckedItems([]);
-	// 		setStatusItem?.([]);
-	// 	} else {
-	// 		router.replace({
-	// 			pathname: '',
-	// 			query: {
-	// 				...router.query,
-	// 				proposalStatus: encodeURIComponent(JSON.stringify(key))
-	// 			}
-	// 		});
-	// 		setStatusItem?.(key);
-	// 	}
-	// };
 	const handleSortByClick = (key: any) => {
 		if (key === 'clear_filter') {
 			if (router.query.filterBy) {

@@ -62,8 +62,17 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 
 	const handleSortByClick = (key: any) => {
 		if (key === 'clear_filter') {
+			if (router.query.filterBy) {
+				router.replace({
+					pathname: '',
+					query: {
+						filterBy: router.query.filterBy
+					}
+				});
+			} else {
+				router.push({ pathname: '' });
+			}
 			setCheckedItems([]);
-			router.push({ pathname: '' });
 			setStatusItem?.([]);
 		} else {
 			router.replace({

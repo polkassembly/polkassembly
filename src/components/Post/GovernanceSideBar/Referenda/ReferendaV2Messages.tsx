@@ -1,7 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal, Progress } from 'antd';
+import { Modal, Progress, Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
@@ -169,7 +170,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Prepare Period</span>
+							<div className='flex gap-1'>
+								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Prepare Period</span>
+								<Tooltip
+									color='#E5007A'
+									title='Minimum waiting time for a referendum to proceed from submission into decision period.'
+								>
+									<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+								</Tooltip>
+							</div>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}
 							</span>
@@ -207,7 +216,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-						<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Decision Period</span>
+						<div className='flex gap-1'>
+							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Decision Period</span>
+							<Tooltip
+								color='#E5007A'
+								title='Amount of time a proposal may take to be approved. If the proposal is not approved by the end of the decision period, it gets rejected.'
+							>
+								<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+							</Tooltip>
+						</div>
 						<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 							{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}
 						</span>
@@ -224,7 +241,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Confirmation Period</span>
+							<div className='flex gap-1'>
+								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Confirmation Period</span>
+								<Tooltip
+									color='#E5007A'
+									title='Total time the referenda must meet both the min approval and support criteria during the decision period in order to pass'
+								>
+									<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+								</Tooltip>
+							</div>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}
 							</span>
@@ -261,7 +286,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								/>
 							</div>
 							<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Enactment Period</span>
+								<div className='flex gap-1'>
+									<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Enactment Period</span>
+									<Tooltip
+										color='#E5007A'
+										title='Time that the proposal must be in dispatch queue after approval.'
+									>
+										<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+									</Tooltip>
+								</div>
 								<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 									{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}
 								</span>
@@ -279,7 +312,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									</div>
 									<p className='m-0 mt-2 flex items-center justify-between p-0 leading-[22px]'>
 										<>
-											<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
+											<div className='flex gap-1'>
+												<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
+												<Tooltip
+													color='#E5007A'
+													title='Funds will be automatically dispatched to the beneficiary at the spend periods end.'
+												>
+													<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+												</Tooltip>
+											</div>
 											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{spend.period}</span>
 										</>
 									</p>

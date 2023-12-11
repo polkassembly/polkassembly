@@ -32,6 +32,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	const noPosts = count === 0 || isNaN(Number(count));
 
 	if (error) return <ErrorState errorMessage={error} />;
+	console.log(posts.length);
 
 	if (noPosts || posts.length === 0) {
 		return (

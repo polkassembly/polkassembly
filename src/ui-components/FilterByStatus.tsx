@@ -128,28 +128,28 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	};
 
 	const content = (
-		<div className='px-2'>
+		<div className={`${poppins.className} ${poppins.variable} px-2`}>
 			<div
-				className='flex cursor-pointer justify-end p-1 text-xs text-pink_primary'
+				className='-mr-2 flex cursor-pointer justify-end p-1 text-[10px] text-pink_primary'
 				onClick={() => handleSortByClick('clear_filter')}
 			>
 				Clear Filter
 			</div>
 
 			<Divider
-				className='my-2 mb-4'
+				className='-ml-5 mb-3 mt-0 w-[250px] dark:bg-separatorDark'
 				style={{ background: '#D2D8E0' }}
 			/>
 			<Checkbox.Group
 				value={checkedItems}
 				onChange={onChange}
 				style={{ boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
-				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
+				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll px-2 py-2 tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
 			>
 				{sortByOptions.map((item, index) => (
 					<div key={index}>
 						<Checkbox value={item?.key}>
-							<div className='text-xs tracking-wide text-[#667589] dark:text-white'>{(item as any)?.label}</div>
+							<div className='mb-3 text-xs tracking-wide text-[#667589] dark:text-white'>{(item as any)?.label}</div>
 						</Checkbox>
 					</div>
 				))}

@@ -22,6 +22,7 @@ import DiscussionIconGrey from '~assets/icons/Discussion-Unselected.svg';
 import DiscussionIconWhite from '~assets/icons/Discussion-Unselected-white.svg';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -275,14 +276,27 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<section className='mt-6 flex w-full flex-wrap text-xs md:grid md:w-[70%] md:grid-cols-3'>
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Max Deciding</span>
+									<div className='flex gap-1'>
+										<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Max Deciding</span>
+										<HelperTooltip
+											text='Maximum number of referenda that can be in the decision period of a track all at once'
+											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+										/>
+									</div>
 									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>{trackMetaData.maxDeciding}</span>
 								</div>
 							</article>
 
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Confirm Period</span>
+									<div className='flex gap-1'>
+										<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Confirm Period</span>
+										<HelperTooltip
+											text='Total time the referenda must meet both the min approval and support criteria during the decision period in order to pass'
+											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+										/>
+									</div>
+
 									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
 										{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}
 									</span>
@@ -291,7 +305,14 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
-									<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Min. Enactment Period</span>
+									<div className='flex gap-1'>
+										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Min. Enactment Period</span>
+										<HelperTooltip
+											text='Minimum time that an approved proposal must be in dispatch queue after approval. Proposer can set enactment period at any value greater than this.'
+											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+										/>
+									</div>
+
 									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
 										{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}
 									</span>
@@ -300,7 +321,14 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
-									<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Period</span>
+									<div className='flex gap-1'>
+										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Period</span>
+										<HelperTooltip
+											text='Amount of time a proposal may take to be approved. If the proposal is not approved by the end of the decision period, it gets rejected.'
+											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+										/>
+									</div>
+
 									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
 										{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}
 									</span>
@@ -309,7 +337,14 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
-									<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Deposit</span>
+									<div className='flex gap-1'>
+										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Decision Deposit</span>
+										<HelperTooltip
+											text='Amount to be deposited for a referendum to progress from prepare to decision period.'
+											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+										/>
+									</div>
+
 									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
 										{trackMetaData.decisionDeposit &&
 											formatUSDWithUnits(
@@ -326,7 +361,14 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 							<article className='px-4 xs:w-1/2 sm:w-1/2 lg:w-auto'>
 								<div className='flex flex-col'>
-									<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Prepare Period</span>
+									<div className='flex gap-1'>
+										<span className='whitespace-pre text-sm font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Prepare Period</span>
+										<HelperTooltip
+											text='Minimum waiting time for a referendum to proceed from submission into decision period.'
+											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+										/>
+									</div>
+
 									<span className='my-1.5 whitespace-pre text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'>
 										{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}
 									</span>

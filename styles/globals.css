@@ -144,6 +144,10 @@ code {
   font-size: sm;
 }
 
+iframe {
+  max-width: 100%;
+}
+
 p > a {
   color: var(--pink_primary);
 }

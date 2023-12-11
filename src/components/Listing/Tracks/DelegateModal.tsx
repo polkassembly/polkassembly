@@ -34,7 +34,7 @@ import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
-import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
+import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 
 const ZERO_BN = new BN(0);
 
@@ -45,10 +45,9 @@ interface Props {
 	open?: boolean;
 	setOpen?: (pre: boolean) => void;
 	isMultisig?: boolean;
-	Trackgroup?: any;
 }
 
-const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig, Trackgroup }: Props) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
@@ -302,8 +301,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
 
-	console.log(Trackgroup);
-
 	const content = (
 		<div className='flex flex-col'>
 			<Checkbox.Group
@@ -332,25 +329,15 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	return (
 		<>
 			{!open && !setOpen && (
-				<div className='flex gap-x-4'>
-					<Button
-						onClick={() => {
-							network === 'kusama' ? router.push('/delegation') : setDefaultOpen(true);
-						}}
-						className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-transparent px-3 py-5 text-sm font-medium text-pink_primary'
-					>
-						<DelegatedProfileIcon className='mr-2' />
-						<span>Delegate</span>
-					</Button>
-					{Trackgroup === 'Treasury' && (
-						<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
-							<OpenGovTreasuryProposal
-								theme={theme}
-								isUsedInTreasuryTrack={true}
-							/>
-						</Button>
-					)}
-				</div>
+				<Button
+					onClick={() => {
+						delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
+					}}
+					className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-transparent px-3 py-5 text-sm font-medium text-pink_primary'
+				>
+					<DelegatedProfileIcon className='mr-2' />
+					<span>Delegate</span>
+				</Button>
 			)}
 			<Modal
 				maskClosable={false}

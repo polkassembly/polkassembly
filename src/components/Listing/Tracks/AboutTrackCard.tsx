@@ -22,8 +22,8 @@ import DiscussionIconGrey from '~assets/icons/Discussion-Unselected.svg';
 import DiscussionIconWhite from '~assets/icons/Discussion-Unselected-white.svg';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
-import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
+import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/AiBot';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -246,10 +246,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</Tooltip>
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
-					{delegationSupportedNetworks.includes(network) && (
+					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && (
 						<div className='flex gap-x-4'>
 							<DelegateModal trackNum={trackMetaData?.trackId}></DelegateModal>
-							{trackMetaData?.group === 'Treasury' && (
+							{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
 								<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
 									<OpenGovTreasuryProposal
 										theme={theme}
@@ -362,7 +362,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && (
 						<div className='flex gap-x-1'>
 							<DelegateModal trackNum={trackMetaData?.trackId} />
-							{trackMetaData?.group === 'Treasury' && (
+							{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
 								<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
 									<OpenGovTreasuryProposal
 										theme={theme}

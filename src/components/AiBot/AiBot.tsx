@@ -30,7 +30,7 @@ const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal
 	ssr: false
 });
 
-const treasuryProposalCreationAllowedNetwork = ['KUSAMA', 'POLKADOT'];
+export const treasuryProposalCreationAllowedNetwork = ['KUSAMA', 'POLKADOT'];
 const grillChatAllowedNetwork = ['CERE', 'KILT', 'KUSAMA', 'MOONBEAM', 'POLKADOT'];
 
 interface IAiChatbotProps {

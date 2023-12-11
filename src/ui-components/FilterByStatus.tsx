@@ -60,6 +60,31 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 
 	const sortByOptions: ItemType[] = [...statusOptions];
 
+	// const handleSortByClick = (key: any) => {
+	// 	if (key === 'clear_filter') {
+	// 		if (router.query.filterBy) {
+	// 			router.replace({
+	// 				pathname: '',
+	// 				query: {
+	// 					filterBy: router.query.filterBy
+	// 				}
+	// 			});
+	// 		} else {
+	// 			router.push({ pathname: '' });
+	// 		}
+	// 		setCheckedItems([]);
+	// 		setStatusItem?.([]);
+	// 	} else {
+	// 		router.replace({
+	// 			pathname: '',
+	// 			query: {
+	// 				...router.query,
+	// 				proposalStatus: encodeURIComponent(JSON.stringify(key))
+	// 			}
+	// 		});
+	// 		setStatusItem?.(key);
+	// 	}
+	// };
 	const handleSortByClick = (key: any) => {
 		if (key === 'clear_filter') {
 			if (router.query.filterBy) {
@@ -74,7 +99,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			}
 			setCheckedItems([]);
 			setStatusItem?.([]);
-		} else {
+		} else if (key.length > 0) {
 			router.replace({
 				pathname: '',
 				query: {
@@ -83,6 +108,17 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 				}
 			});
 			setStatusItem?.(key);
+		} else if (router.query.filterBy) {
+			router.replace({
+				pathname: '',
+				query: {
+					filterBy: router.query.filterBy
+				}
+			});
+			setStatusItem?.([]);
+		} else {
+			router.push({ pathname: '' });
+			setStatusItem?.([]);
 		}
 	};
 

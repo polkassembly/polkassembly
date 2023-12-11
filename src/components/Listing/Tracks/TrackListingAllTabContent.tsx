@@ -29,12 +29,11 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { className, posts, error, count, showSimilarPost, statusItem } = props;
-
 	const noPosts = count === 0 || isNaN(Number(count));
 
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (noPosts) {
+	if (noPosts || posts.length === 0) {
 		return (
 			<div className={className}>
 				<PostEmptyState />

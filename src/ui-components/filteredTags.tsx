@@ -52,6 +52,7 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 									key={index}
 								>
 									{status.charAt(0).toUpperCase() + status.slice(1)}
+									{statusItem?.length > 1 && index < statusItem.length - 1 ? ', ' : ''}
 								</div>
 							))}
 						</div>

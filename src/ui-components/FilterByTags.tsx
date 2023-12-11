@@ -74,6 +74,13 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 					sortBy: router.query.sortBy
 				}
 			});
+		} else if (router.query.proposalStatus) {
+			router.replace({
+				pathname: '',
+				query: {
+					filterBy: router.query.proposalStatus
+				}
+			});
 		} else {
 			router.push({ pathname: '' });
 		}

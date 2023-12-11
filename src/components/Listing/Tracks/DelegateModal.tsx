@@ -29,7 +29,7 @@ import Balance from '~src/components/Balance';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
-import DelegateProfilePinkIcon from '~assets/icons/delegation-listing-pink.svg';
+import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
@@ -45,9 +45,10 @@ interface Props {
 	open?: boolean;
 	setOpen?: (pre: boolean) => void;
 	isMultisig?: boolean;
+	Trackgroup?: any;
 }
 
-const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig, Trackgroup }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
@@ -301,6 +302,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
 
+	console.log(Trackgroup);
+
 	const content = (
 		<div className='flex flex-col'>
 			<Checkbox.Group
@@ -336,15 +339,17 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						}}
 						className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-transparent px-3 py-5 text-sm font-medium text-pink_primary'
 					>
-						<DelegateProfilePinkIcon className='mr-2' />
+						<DelegatedProfileIcon className='mr-2' />
 						<span>Delegate</span>
 					</Button>
-					<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
-						<OpenGovTreasuryProposal
-							theme={theme}
-							isUsedInTreasuryTrack={true}
-						/>
-					</Button>
+					{Trackgroup === 'Treasury' && (
+						<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
+							<OpenGovTreasuryProposal
+								theme={theme}
+								isUsedInTreasuryTrack={true}
+							/>
+						</Button>
+					)}
 				</div>
 			)}
 			<Modal

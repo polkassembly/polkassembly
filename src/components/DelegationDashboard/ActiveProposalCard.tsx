@@ -196,8 +196,8 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 				</div>
 				{(votingData && !status.includes(ETrackDelegationStatus.Undelegated) && isAye) || isNay || isAbstain ? (
 					<div
-						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'dark:bg-ayeDarkBGGreenColor border-aye_green bg-[#F0FCF6]'} ${
-							isNay && 'dark:bg-nayDarkBGRedColor border-nay_red bg-[#fff1f4]'
+						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'border-aye_green bg-[#F0FCF6] dark:bg-[#0F1B15]'} ${
+							isNay && 'border-nay_red bg-[#fff1f4] dark:bg-[#1E1013]'
 						} ${isAbstain && 'border-[#ABABAC] bg-[#f9f9f9] dark:border-abstainBlueColor dark:bg-alertColorDark'}`}
 					>
 						{status.includes(ETrackDelegationStatus.Delegated) && (

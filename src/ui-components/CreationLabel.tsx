@@ -276,10 +276,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								footer={false}
 								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-								wrapClassName={`${className} dark:bg-modalOverlayDark`}
+								wrapClassName='dark:bg-modalOverlayDark'
 								title={
-									<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-										<span className='ml-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Votes</span>
+									<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+										<span className='ml-6 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Votes</span>
 									</div>
 								}
 							>

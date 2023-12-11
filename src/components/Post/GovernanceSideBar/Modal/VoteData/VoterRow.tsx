@@ -361,7 +361,9 @@ const VoterRow: FC<IVoterRow> = ({
 		</StyledCollapse>
 	) : (
 		<div
-			className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high ${className}`}
+			className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high ${
+				isUsedInVotedModal ? '' : `${className}`
+			}`}
 		>
 			<Title />
 		</div>

@@ -247,19 +247,17 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</Tooltip>
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
-					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && (
-						<div className='flex gap-x-4'>
-							<DelegateModal trackNum={trackMetaData?.trackId}></DelegateModal>
-							{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network?.toUpperCase()) && (
-								<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
-									<OpenGovTreasuryProposal
-										theme={theme}
-										isUsedInTreasuryTrack={true}
-									/>
-								</Button>
-							)}
-						</div>
-					)}
+					<div className='flex gap-x-4'>
+						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
+							<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
+								<OpenGovTreasuryProposal
+									theme={theme}
+									isUsedInTreasuryTrack={true}
+								/>
+							</Button>
+						)}
+					</div>
 				</div>
 			</article>
 			<section className={`${className} mt-2 rounded-xxl bg-white drop-shadow-md dark:bg-section-dark-overlay md:p-4`}>

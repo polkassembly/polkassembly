@@ -107,6 +107,7 @@ const CreateProposal = ({
 	const currentUser = useUserDetailsSelector();
 	const [openAddDeadlineModal, setOpenAddDeadlineModal] = useState<boolean>(false);
 	const [isUpdate, setIsUpdate] = useState<boolean>(false);
+	const [status, setStatus] = useState<string>('in_progress');
 
 	const getProposalStatus = useCallback(async () => {
 		if (!postId) return;
@@ -146,7 +147,8 @@ const CreateProposal = ({
 			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/createProposalTracker', {
 				deadline: dayjs(deadlineDate).toDate(),
 				onchain_proposal_id: Number(post_id),
-				start_time: new Date()
+				start_time: dayjs(deadlineDate).toDate(),
+				status
 			});
 			if (error) {
 				console.log(error, 'error');
@@ -480,6 +482,8 @@ const CreateProposal = ({
 				setOpen={setOpenAddDeadlineModal}
 				setDeadlineDate={setDeadlineDate}
 				theme={theme}
+				status={status}
+				setStatus={setStatus}
 			/>
 		</Spin>
 	);

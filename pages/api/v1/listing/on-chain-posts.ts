@@ -30,9 +30,14 @@ import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
-export const fetchSubsquare = async (network: string, limit: number, page: number, track: number) => {
+export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
-		const res = await fetch(`https://${network}.subsquare.io/api/gov2/tracks/${track}/referendums?page=${page}&page_size=${limit}`);
+		let res: Response;
+		if (track) {
+			res = await fetch(`https://${network}.subsquare.io/api/gov2/tracks/${track}/referendums?page=${page}&page_size=${limit}`);
+		} else {
+			res = await fetch(`https://${network}.subsquare.io/api/gov2/referendums?page=${page}&page_size=${limit}`);
+		}
 		return await res.json();
 	} catch (error) {
 		return [];
@@ -422,7 +427,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const numTrackNo = Number(trackNo);
 			const strTrackStatus = String(trackStatus);
 			if (strProposalType === ProposalType.OPEN_GOV) {
-				if (!isTrackNoValid(numTrackNo, network)) {
+				if (numTrackNo && !isTrackNoValid(numTrackNo, network)) {
 					throw apiErrorWithStatusCode(`The OpenGov trackNo "${trackNo}" is invalid.`, 400);
 				}
 				if (trackStatus !== undefined && trackStatus !== null && !isCustomOpenGovStatusValid(strTrackStatus)) {
@@ -444,7 +449,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			if (proposalType === ProposalType.OPEN_GOV) {
 				strProposalType = 'referendums_v2';
-				postsVariables.trackNumber_in = numTrackNo;
+				if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
+					postsVariables.trackNumber_in = numTrackNo;
+				}
 				if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
 					postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
 				}
@@ -484,6 +491,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				});
 			} catch (error) {
 				const data = await fetchSubsquare(network, Number(listingLimit), Number(page), Number(trackNo));
+
 				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
 					subsquidRes['data'] = {
 						proposals: data.items.map((item: any) => {

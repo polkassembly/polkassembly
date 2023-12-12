@@ -39,7 +39,7 @@ export async function getOnChainPostsCount(params: IGetOnChainPostsCountParams):
 		const numTrackNo = Number(trackNo);
 		const strTrackStatus = String(trackStatus);
 		if (strProposalType === ProposalType.OPEN_GOV) {
-			if (!isTrackNoValid(numTrackNo, network)) {
+			if (numTrackNo && !isTrackNoValid(numTrackNo, network)) {
 				throw apiErrorWithStatusCode(`The OpenGov trackNo "${trackNo}" is invalid.`, 400);
 			}
 			if (trackStatus !== undefined && trackStatus !== null && !isCustomOpenGovStatusValid(strTrackStatus)) {
@@ -54,7 +54,9 @@ export async function getOnChainPostsCount(params: IGetOnChainPostsCountParams):
 		};
 
 		if (strProposalType === ProposalType.OPEN_GOV) {
-			postsVariables.trackNumber_in = numTrackNo;
+			if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
+				postsVariables.trackNumber_in = numTrackNo;
+			}
 			if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
 				postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
 			}

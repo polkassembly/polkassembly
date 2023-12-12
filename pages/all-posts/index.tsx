@@ -89,7 +89,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			} as IApiResponse<IPostsListingResponse>;
 		}
 	});
-	const props: ISmallSpenderProps = {
+	const props: IOverviewListingProps = {
 		network,
 		posts: {}
 	};
@@ -103,13 +103,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	return { props };
 };
-interface ISmallSpenderProps {
+interface IOverviewListingProps {
 	posts: IReferendumV2PostsByStatus;
 	network: string;
 	error?: string;
 }
 
-const SmallSpender: FC<ISmallSpenderProps> = (props) => {
+const OverviewListing: FC<IOverviewListingProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
 	useEffect(() => {
@@ -135,4 +135,4 @@ const SmallSpender: FC<ISmallSpenderProps> = (props) => {
 	);
 };
 
-export default SmallSpender;
+export default OverviewListing;

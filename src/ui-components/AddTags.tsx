@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { InputRef, MenuProps, Tag, Input } from 'antd';
-import { Dropdown } from '~src/ui-components/Dropdown';
+import { InputRef, MenuProps, Tag, Input, Dropdown } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { IPostTag } from '~src/types';
 import { PlusOutlined } from '@ant-design/icons';
@@ -12,6 +11,7 @@ import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import { useTheme } from 'next-themes';
 import { NoTagFoundIcon } from './CustomIcons';
+import styled from 'styled-components';
 
 interface Props {
 	tags: string[];
@@ -140,71 +140,80 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 				}`}
 			>
 				<Dropdown
-					theme={theme}
 					disabled={tags.length === 5 || disabled}
-					overlayClassName='ml-[-10px] min-w-[104px] rounded create-post z-[1056]'
+					overlayClassName={`dark:bg-section-dark-overlay overlay-class dark:border-separatorDark dark:rounded-lg dark:text-white [&>ul]:w-[126px] ${
+						theme == 'dark'
+							? '[&>ul]:bg-section-dark-garyBackground [&>ul>li]:text-white [&>ul>.ant-dropdown-menu-item-selected]:bg-section-dark-garyBackground [&>ul>.ant-dropdown-menu-item-selected]:text-pink_primary hover:[&>ul>li]:bg-section-dark-garyBackground hover:[&>ul>li]:text-pink_secondary'
+							: ''
+					} z-[2000] `}
 					menu={{ items }}
 					placement='topLeft'
+					trigger={['click']}
 				>
-					<div className={'flex'}>
-						{inputVisible && !disabled
-							? tags.length < 5 && (
-									<Input
-										disabled={disabled}
-										name='tags'
-										ref={inputRef}
-										type='text'
-										size='small'
-										style={{ width: 78 }}
-										value={inputValue}
-										onChange={handleInputChange}
-										onPressEnter={handleInputConfirm}
-										className={`text-normal  mr-2 flex items-center rounded-xl bg-white px-[16px] py-[4px] text-xs text-[#90A0B7] dark:bg-section-dark-overlay ${
-											charLimitReached && 'border-red-500'
-										} dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F] [&>input]:dark:bg-section-dark-overlay [&>input]:dark:text-blue-dark-high`}
-										suffix={
-											<span
-												className='cursor-pointer'
-												onClick={handleInputConfirm}
-											>
-												<PlusOutlined />
-											</span>
-										}
-									/>
-							  )
-							: tags.length < 5 &&
-							  !disabled && (
-									<Tag
-										onClick={showInput}
-										className='flex cursor-pointer items-center rounded-xl border-pink_primary bg-white px-[16px] py-[4px] text-xs text-pink_primary dark:bg-section-dark-overlay'
-									>
-										<PlusOutlined className='mr-1' />
-										Add new tag
-									</Tag>
-							  )}
-						<div className='max-sm:mt-1 max-sm:flex max-sm:flex-col max-sm:gap-1'>
-							{tags.map((tag, index) => (
-								<Tag
-									key={index}
-									className={`text-normal mt-1 rounded-xl border-[#90A0B7] bg-white px-[16px] py-[4px] text-xs tracking-wide text-[#90A0B7] dark:bg-section-dark-overlay ${
-										disabled ? 'bg-[#F5F5F5] dark:bg-disableStateDark dark:text-blue-dark-high' : 'hover:border-pink_primary'
-									}`}
-									closable={!disabled}
-									onClose={(e) => {
-										e.preventDefault();
-										handleClose(tag);
-									}}
-								>
-									{tag}
-								</Tag>
-							))}
+					<div className='flex w-full flex-wrap gap-1'>
+						<div className={'flex'}>
+							{inputVisible && !disabled
+								? tags.length < 5 && (
+										<Input
+											disabled={disabled}
+											name='tags'
+											ref={inputRef}
+											type='text'
+											size='small'
+											style={{ width: 78 }}
+											value={inputValue}
+											onChange={handleInputChange}
+											onPressEnter={handleInputConfirm}
+											className={`text-normal  mr-2 flex items-center rounded-xl bg-white px-[16px] py-[4px] text-xs text-[#90A0B7] dark:bg-section-dark-overlay ${
+												charLimitReached && 'border-red-500'
+											} dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F] [&>input]:dark:bg-section-dark-overlay [&>input]:dark:text-blue-dark-high`}
+											suffix={
+												<span
+													className='cursor-pointer'
+													onClick={handleInputConfirm}
+												>
+													<PlusOutlined />
+												</span>
+											}
+										/>
+								  )
+								: tags.length < 5 &&
+								  !disabled && (
+										<Tag
+											onClick={showInput}
+											className='flex cursor-pointer items-center rounded-xl border-pink_primary bg-white px-4 py-1 text-xs text-pink_primary dark:bg-section-dark-overlay'
+										>
+											<PlusOutlined className='mr-1' />
+											Add new tag
+										</Tag>
+								  )}
 						</div>
+						{tags.map((tag, index) => (
+							<Tag
+								key={index}
+								className={`text-normal mt-1 rounded-xl border-[#90A0B7] bg-white px-[16px] py-[4px] text-xs tracking-wide text-[#90A0B7] dark:bg-section-dark-overlay ${
+									disabled ? 'bg-[#F5F5F5] dark:bg-disableStateDark dark:text-blue-dark-high' : 'hover:border-pink_primary'
+								}`}
+								closable={!disabled}
+								onClose={(e) => {
+									e.preventDefault();
+									handleClose(tag);
+								}}
+							>
+								{tag}
+							</Tag>
+						))}
 					</div>
 				</Dropdown>
-				{!disabled && <div className={`text-xs ${5 - tags.length === 0 ? 'text-pink_primary' : 'text-[#90A0B7]'}`}>{5 - tags.length} Tags left</div>}
+				{!disabled && <div className={`w-[80px] text-xs ${5 - tags.length === 0 ? 'text-pink_primary' : 'text-[#90A0B7]'}`}>{5 - tags.length} Tags left</div>}
 			</div>
 			{charLimitReached && <h2 className='mt-1 text-xs font-medium tracking-wide text-red-500'>Character limit reached</h2>}
 		</div>
 	);
 };
-export default AddTags;
+export default styled(AddTags)`
+	.overlay-class {
+		width: 126px !important;
+		min-width: 0px !important;
+	}
+`;

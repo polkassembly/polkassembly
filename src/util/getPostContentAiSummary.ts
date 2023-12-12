@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import striptags from 'striptags';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType, getFirestoreProposalType } from '~src/global/proposalType';
 
@@ -27,8 +28,8 @@ export const getContentSummary = async (post: any, network: string, isExternalAp
 	}
 };
 
-export const fetchContentSummary = async (content: string, type: string) => {
-	const prompt = process.env.AI_PROMPT?.replace('{type}', type);
+export const fetchContentSummary = async (content: string, type: string, _prompt?: string) => {
+	const prompt = _prompt || process.env.AI_PROMPT?.replace('{type}', type);
 	const res = await fetch('https://api.openai.com/v1/chat/completions', {
 		body: JSON.stringify({
 			frequency_penalty: 0.0,
@@ -39,7 +40,7 @@ export const fetchContentSummary = async (content: string, type: string) => {
 					role: 'system'
 				},
 				{
-					content: `${content}\n\nTl;dr`,
+					content: `${striptags(content)}\n\nTl;dr`,
 					role: 'user'
 				}
 			],

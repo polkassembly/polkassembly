@@ -20,6 +20,7 @@ import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { trackEvent } from 'analytics';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -46,7 +47,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, className } = props;
 	const [grillChat, setGrillChat] = useState(false);
 	const router = useRouter();
-	const { id } = useUserDetailsSelector();
+	const { id, username } = useUserDetailsSelector();
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -172,6 +173,10 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 						onClick={() => {
+							trackEvent('fab_floating_button_clicked', 'clicked_fab_floating_button', {
+								userId: id || '',
+								userName: username || ''
+							});
 							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
 						}}
 					>

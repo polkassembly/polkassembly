@@ -21,6 +21,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { trackEvent } from 'analytics';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (
@@ -51,6 +52,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const {
 		postData: { content, postType, postIndex, title, post_reactions }
 	} = usePostDataContext();
+	const currentUser = useUserDetailsSelector();
 	const { allowed_roles } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const router = useRouter();
@@ -109,7 +111,16 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{canEdit && (
 						<Button
 							className={'flex items-center border-none px-1.5 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
-							onClick={toggleEdit}
+							onClick={() => {
+								trackEvent('post_edit_button_clicked', 'clicked_edit_post_button', {
+									postIndex: postIndex,
+									postType: postType,
+									title: title,
+									userId: currentUser?.id || '',
+									userName: currentUser?.username || ''
+								});
+								toggleEdit();
+							}}
 						>
 							<FormOutlined />
 							Edit

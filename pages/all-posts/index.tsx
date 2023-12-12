@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const subsquidProposalType = getSubsquidProposalType(proposalType);
 
-	const redisKey = generateKey({ filterBy, keyType: 'trackId', network, page, sortBy, subsquidProposalType, trackStatus });
+	const redisKey = generateKey({ filterBy, keyType: 'all', network, page, sortBy, subsquidProposalType, trackStatus });
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(redisKey);

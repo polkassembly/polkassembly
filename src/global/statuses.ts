@@ -308,6 +308,32 @@ export const approvalStatusOptions = [
 	}
 ];
 
+export const treasuryProposalStatus = {
+	APPROVED: 'approved',
+	AWARDED: 'Awarded',
+	PROPOSED: 'Proposed',
+	REJECTED: 'Rejected'
+};
+
+export const treasuryProposalStatusOptions = [
+	{
+		key: treasuryProposalStatus.APPROVED,
+		label: 'Approved'
+	},
+	{
+		key: treasuryProposalStatus.AWARDED,
+		label: 'Awarded'
+	},
+	{
+		key: treasuryProposalStatus.PROPOSED,
+		label: 'Proposed'
+	},
+	{
+		key: treasuryProposalStatus.REJECTED,
+		label: 'Rejected'
+	}
+];
+
 export const announcementStatus = {
 	Announced: 'Announced'
 };
@@ -316,6 +342,37 @@ export const announcementStatusOptions = [
 	{
 		key: announcementStatus.Announced,
 		label: 'Announced'
+	}
+];
+
+export const techCommiteeStatus = {
+	APPROVED: 'Approved',
+	CLOSED: 'Closed',
+	DISAPPROVED: 'Disapproved',
+	EXECUTED: 'Executed',
+	PROPOSED: 'Proposed'
+};
+
+export const techCommiteeStatusOptions = [
+	{
+		key: techCommiteeStatus.APPROVED,
+		label: 'Approved'
+	},
+	{
+		key: techCommiteeStatus.CLOSED,
+		label: 'Closed'
+	},
+	{
+		key: techCommiteeStatus.DISAPPROVED,
+		label: 'Disapproved'
+	},
+	{
+		key: techCommiteeStatus.EXECUTED,
+		label: 'Executed'
+	},
+	{
+		key: techCommiteeStatus.PROPOSED,
+		label: 'Proposed'
 	}
 ];
 

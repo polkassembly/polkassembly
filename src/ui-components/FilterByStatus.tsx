@@ -12,7 +12,9 @@ import {
 	motionStatusOptions,
 	proposalStatusOptions,
 	referendumStatusOptions,
-	tipStatusOptions
+	techCommiteeStatusOptions,
+	tipStatusOptions,
+	treasuryProposalStatusOptions
 } from '~src/global/statuses';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -49,6 +51,10 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 		path = 'proposal';
 	} else if (path === 'referenda') {
 		path = 'referendum';
+	} else if (path === 'treasury-proposals') {
+		path = 'treasury';
+	} else if (path === 'tech-comm-proposals') {
+		path = 'tech';
 	}
 
 	const postType = getProposalTypeFromSinglePostLink(path);
@@ -70,6 +76,12 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			break;
 		case 'referendums':
 			statusOptions = referendumStatusOptions;
+			break;
+		case 'treasury_proposals':
+			statusOptions = treasuryProposalStatusOptions;
+			break;
+		case 'tech_committee_proposals':
+			statusOptions = techCommiteeStatusOptions;
 			break;
 		default:
 			statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;

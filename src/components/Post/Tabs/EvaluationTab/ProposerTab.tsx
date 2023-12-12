@@ -51,6 +51,7 @@ const ProposerTab: FC<IProposerTab> = (className) => {
 			}
 		}
 	};
+	console.log(profileData);
 
 	return (
 		<div className={`${className}`}>

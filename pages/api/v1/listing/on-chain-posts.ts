@@ -490,12 +490,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					variables: postsVariables
 				});
 			} catch (error) {
-				let data;
-				if (trackNo) {
-					data = await fetchSubsquare(network, Number(listingLimit), Number(page), Number(trackNo));
-				} else {
-					data = await fetchSubsquare(network, Number(listingLimit), Number(page));
-				}
+				const data = await fetchSubsquare(network, Number(listingLimit), Number(page), Number(trackNo));
+
 				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
 					subsquidRes['data'] = {
 						proposals: data.items.map((item: any) => {

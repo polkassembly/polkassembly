@@ -82,8 +82,6 @@ const UserInfo: FC<IUserInfo> = (props) => {
 		}
 	};
 
-	console.log(profileData);
-
 	return (
 		<div className={`${className}`}>
 			<div className='flex gap-x-4'>
@@ -147,48 +145,52 @@ const UserInfo: FC<IUserInfo> = (props) => {
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
 				className='mb-0 mt-2 dark:bg-separatorDark'
 			/>
-			<div className='user-info-container mt-4 flex h-[60px] items-center divide-x'>
-				<div className='flex w-1/4 gap-x-2 py-4'>
-					<CalenderIcon />
-					<div className='-mt-1'>
-						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
-						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>
-							{profileData?.created_at ? `${dayjs(profileData?.created_at as string).format('DD MMM YYYY')}` : '-'}
-						</span>
+			<div className='user-info-container mt-4 flex h-[60px] items-center justify-between'>
+				{profileData?.created_at && (
+					<div className='info-container creation-date-container flex gap-x-2 py-4'>
+						<CalenderIcon className='icon-container' />
+						<div className='content-container -mt-1'>
+							<p className='m-0 whitespace-nowrap p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
+							<span className='m-0 whitespace-nowrap p-0 text-sm font-semibold text-bodyBlue dark:text-white'>
+								{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}
+							</span>
+						</div>
 					</div>
-				</div>
-				<Divider
-					type='vertical'
-					style={{ background: '#D2D8E0', flexGrow: 1 }}
-					className='h-[40px] dark:bg-separatorDark'
-				/>
-				<div className='flex w-1/4 justify-center gap-x-2 py-4'>
-					<ClipBoardIcon />
-					<div className='-mt-1'>
+				)}
+				{profileData?.created_at && (
+					<Divider
+						type='vertical'
+						style={{ background: '#D2D8E0' }}
+						className='divider-container h-[40px] dark:bg-separatorDark'
+					/>
+				)}
+				<div className='info-container flex justify-center gap-x-2 py-4'>
+					<ClipBoardIcon className='icon-container' />
+					<div className='content-container -mt-1'>
 						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{proposalCount < 10 ? `0${proposalCount}` : `${proposalCount}`}</span>
 					</div>
 				</div>
 				<Divider
 					type='vertical'
-					style={{ background: '#D2D8E0', flexGrow: 1 }}
+					style={{ background: '#D2D8E0' }}
 					className='h-[40px] dark:bg-separatorDark'
 				/>
-				<div className='flex w-1/4 justify-center gap-x-2 py-4'>
-					<MessageIcon />
-					<div className='-mt-1'>
+				<div className='info-container flex justify-center gap-x-2 py-4'>
+					<MessageIcon className='icon-container' />
+					<div className='content-container -mt-1'>
 						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{discussionCount < 10 ? `0${discussionCount}` : `${discussionCount}`}</span>
 					</div>
 				</div>
 				<Divider
 					type='vertical'
-					style={{ background: '#D2D8E0', flexGrow: 1 }}
-					className='h-[40px] dark:bg-separatorDark'
+					style={{ background: '#D2D8E0' }}
+					className='hide-div h-[40px] dark:bg-separatorDark'
 				/>
-				<div className='flex w-1/4 justify-end gap-x-2 py-4'>
-					<MessageIcon />
-					<div className='-mt-1'>
+				<div className='hide-div flex justify-end gap-x-2 py-4'>
+					<MessageIcon className='icon-container' />
+					<div className='content-container -mt-1'>
 						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Voting Power</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>
 							{formatedBalance((transferableBalance.toString() || '0').toString(), unit, 2)} {unit}
@@ -196,23 +198,27 @@ const UserInfo: FC<IUserInfo> = (props) => {
 					</div>
 				</div>
 			</div>
-			<div className='user-info-container-mweb mt-4 flex h-[60px] items-center divide-x'>
-				<div className='flex justify-center'>
-					<div className='flex w-1/3 justify-start gap-x-0.5 py-2'>
-						<CalenderIcon className='icon-container scale-90' />
-						<div className='data-container -mt-1'>
-							<p className='heading-container m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
-							<span className='value-container m-0 p-0 text-[12px] font-semibold text-bodyBlue dark:text-white'>
-								{profileData?.created_at ? `${dayjs(profileData?.created_at as string).format('DD MMM YYYY')}` : '-'}
-							</span>
+			{/* <div className='user-info-container-mweb mt-4 flex h-[60px] items-center justify-between'>
+				<div className={`flex ${profileData?.created_at ? 'justify-center' : 'justify-between'}`}>
+					{!profileData?.created_at && (
+						<div className='flex justify-start gap-x-0.5 py-2'>
+							<CalenderIcon className='icon-container scale-90' />
+							<div className='data-container -mt-1'>
+								<p className='heading-container m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
+								<span className='value-container m-0 p-0 text-[12px] font-semibold text-bodyBlue dark:text-white'>
+									{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}
+								</span>
+							</div>
 						</div>
-					</div>
-					<Divider
-						type='vertical'
-						style={{ background: '#D2D8E0', flexGrow: 1 }}
-						className='h-[40px] dark:bg-separatorDark'
-					/>
-					<div className='flex w-1/3 justify-center gap-x-0.5 py-2'>
+					)}
+					{!profileData?.created_at && (
+						<Divider
+							type='vertical'
+							style={{ background: '#D2D8E0' }}
+							className='h-[40px] dark:bg-separatorDark'
+						/>
+					)}
+					<div className='flex justify-center gap-x-0.5 py-2'>
 						<ClipBoardIcon className='icon-container scale-90' />
 						<div className='data-container -mt-1'>
 							<p className='heading-container m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
@@ -223,10 +229,10 @@ const UserInfo: FC<IUserInfo> = (props) => {
 					</div>
 					<Divider
 						type='vertical'
-						style={{ background: '#D2D8E0', flexGrow: 1 }}
+						style={{ background: '#D2D8E0' }}
 						className='h-[40px] dark:bg-separatorDark'
 					/>
-					<div className='flex w-1/3 justify-end gap-x-0.5 py-2'>
+					<div className='flex justify-end gap-x-0.5 py-2'>
 						<MessageIcon className='icon-container scale-90' />
 						<div className='data-container -mt-1'>
 							<p className='heading-container m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
@@ -236,46 +242,34 @@ const UserInfo: FC<IUserInfo> = (props) => {
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 };
 
 export default styled(UserInfo)`
-	@media (min-width: 756px) {
-		.user-info-container-mweb {
+	@media (max-width: 540px) and (min-width: 319px) {
+		.hide-div {
 			display: none !important;
 		}
 	}
-	@media (max-width: 756px) and (min-width: 420px) {
-		.user-info-container {
-			display: none !important;
+	@media (max-width: 420px) and (min-width: 392px) {
+		.icon-container {
+			transform: scale(0.8);
 		}
-		.user-info-container-mweb {
-			display: block !important;
+		.content-container {
+			margin-top: 0px !important;
 		}
-		.heading-container {
-			font-size: 10px !important;
-		}
-		.value-container {
-			font-size: 12px !important;
+		.info-container {
+			gap: 0 2px !important;
 		}
 	}
-	@media (max-width: 420px) and (min-width: 319px) {
-		.user-info-container {
+	@media (max-width: 390px) and (min-width: 319px) {
+		.creation-date-container {
 			display: none !important;
 		}
-		.user-info-container-mweb {
-			display: block !important;
-		}
-		.heading-container {
-			font-size: 8px !important;
-		}
-		.value-container {
-			font-size: 10px !important;
-		}
-		.data-container {
-			margin-top: 0 !important;
+		.divider-container {
+			display: none !important;
 		}
 	}
 `;

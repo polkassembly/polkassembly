@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import NextNProgress from 'nextjs-progressbar';
 import { useEffect, useState } from 'react';
 import AppLayout from 'src/components/AppLayout';
-import CMDK from 'src/components/CMDK';
+// import CMDK from 'src/components/CMDK';
 import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
@@ -57,8 +57,9 @@ function App({ Component, pageProps }: AppProps) {
 
 	useEffect(() => {
 		const networkStr = getNetwork();
-		if (!global?.window || !chainProperties[networkStr].gTag) return;
 		setNetwork(networkStr);
+
+		if (!global?.window || !chainProperties[networkStr].gTag) return;
 
 		if (!window.GA_INITIALIZED) {
 			initGA(networkStr);
@@ -93,7 +94,7 @@ function App({ Component, pageProps }: AppProps) {
 										{showSplashScreen && <SplashLoader />}
 										<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
 											<NextNProgress color='#E5007A' />
-											<CMDK />
+											{/* <CMDK /> */}
 											<AppLayout
 												Component={Component}
 												pageProps={pageProps}

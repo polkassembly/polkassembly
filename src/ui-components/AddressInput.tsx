@@ -52,7 +52,7 @@ const AddressInput = ({
 }: Props) => {
 	const { network } = useNetworkSelector();
 
-	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
+	const [address, setAddress] = useState<string>(defaultAddress || '');
 
 	const [isValid, setIsValid] = useState<boolean>(false);
 	const handleAddressChange = (address: string) => {
@@ -80,12 +80,13 @@ const AddressInput = ({
 	};
 
 	useEffect(() => {
+		const addr = (disabled ? defaultAddress : address) || '';
 		if (skipFormatCheck) {
-			if (address) {
-				if (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) {
+			if (addr) {
+				if (getEncodedAddress(addr, network) || Web3.utils.isAddress(addr)) {
 					setIsValid(true);
 					checkValidAddress?.(true);
-					onChange(address);
+					onChange(addr);
 				} else {
 					setIsValid(false);
 					checkValidAddress?.(false);
@@ -97,12 +98,12 @@ const AddressInput = ({
 			return;
 		}
 
-		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
-		const [validAddress] = checkAddress(address, addressPrefix[network]);
+		const isValidMetaAddress = Web3.utils.isAddress(addr, addressPrefix[network]);
+		const [validAddress] = checkAddress(addr, addressPrefix[network]);
 
 		if (validAddress || isValidMetaAddress) {
 			setIsValid(true);
-			onChange(address);
+			onChange(addr);
 		} else {
 			setIsValid(false);
 			onChange('');
@@ -114,29 +115,28 @@ const AddressInput = ({
 		<div className={`${className} mt-6`}>
 			{label && (
 				<label className=' mb-[2px] flex items-center text-sm'>
-					{' '}
-					{label}{' '}
+					{label}
 					{helpText && (
 						<HelperTooltip
 							className='ml-1'
 							text={helpText}
 						/>
-					)}{' '}
+					)}
 				</label>
 			)}
 			<div className={`${className} flex items-center`}>
 				{isValid && (
 					<>
-						{address.startsWith('0x') ? (
+						{((disabled ? defaultAddress : address) || '').startsWith('0x') ? (
 							<EthIdenticon
 								className={`absolute z-10 flex items-center justify-center ${iconClassName ? iconClassName : 'left-[8px]'}`}
 								size={identiconSize || 26}
-								address={address}
+								address={(disabled ? defaultAddress : address) || ''}
 							/>
 						) : (
 							<Identicon
 								className={`absolute z-10 ${iconClassName ? iconClassName : 'left-[8px]'}`}
-								value={address}
+								value={disabled ? defaultAddress : address}
 								size={identiconSize || 26}
 								theme={'polkadot'}
 							/>
@@ -151,12 +151,14 @@ const AddressInput = ({
 				>
 					<Input
 						onBlur={() => onBlur?.()}
-						value={address}
+						value={disabled ? defaultAddress : address}
 						disabled={disabled}
 						name={name || 'address'}
 						className={`${
 							!isValid ? 'px-[0.5em]' : 'pl-[46px]'
-						} h-[40px] w-full rounded-[4px] border-[1px] text-sm ${inputClassName} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
+						} h-[40px] w-full rounded-[4px] border-[1px] text-sm ${inputClassName} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high ${
+							disabled && 'dark:text-blue-dark-medium'
+						} dark:focus:border-[#91054F]`}
 						onChange={(e) => {
 							handleAddressChange(e.target.value);
 							onChange(e.target.value);

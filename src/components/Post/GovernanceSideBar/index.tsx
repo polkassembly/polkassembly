@@ -73,6 +73,7 @@ import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
+import PredictionCard from '~src/ui-components/PredictionCard';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -930,6 +931,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			{
 				<div className={className}>
 					<Form>
+						<PredictionCard
+							endDate='02 Dec ‘23'
+							yesCount={115}
+							predictCount={154}
+						/>
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}

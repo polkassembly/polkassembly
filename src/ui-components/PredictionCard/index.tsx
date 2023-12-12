@@ -2,19 +2,26 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-// import { Avatar } from 'antd';
-import React from 'react';
+import { Avatar } from 'antd';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-// import InfoIcon from '~assets/info.svg';
+import { Tooltip } from 'antd';
+import InfoIcon from '~assets/info.svg';
 
 interface Props {
 	predictCount: number;
+	yesCount: number;
+	endDate: string;
 }
 
 const Container = styled.div`
+	position: fixed;
+	bottom: 60px;
+	z-index: 9;
 	border-radius: 14px;
-	max-width: 500px;
-	height: 100px;
+	max-width: 360px;
+	width: 100%;
+	height: auto;
 	padding: 20px;
 	background: linear-gradient(92deg, #ff9494 2.08%, #ffc471 97.09%);
 	color: #243a57;
@@ -46,38 +53,56 @@ const Container = styled.div`
 	} */
 `;
 
-const PredictionCard = ({ predictCount }: Props) => {
-	if (predictCount === 0) {
-		return <></>;
-	}
+const PredictionCard = ({ predictCount, yesCount, endDate }: Props) => {
+	const [yesPercentage, setYesPercentage] = useState(0);
+
+	useEffect(() => {
+		setYesPercentage(Math.round((yesCount / predictCount) * 100));
+	}, [yesCount, predictCount]);
 	return (
 		<Container>
-			<div className='flex items-center justify-between'>
-				<h1 className='relative'>
+			<div className='flex items-center justify-between font-poppins'>
+				<h1 className='flex items-center gap-1 text-xl font-semibold leading-6'>
 					Prediction
-					{/* <span className='absolute '>
-						<InfoIcon />
-					</span> */}
+					<Tooltip
+						color='#243A57'
+						title='Will this proposal pass or fail?'
+					>
+						<InfoIcon className='text-xl text-[#243A57]' />
+					</Tooltip>
 				</h1>
-				{/* TODO:Aleem ==> Will uncomment this when get the pridiction count from API */}
-				{/* <p className='text-xs'>
-					<Avatar.Group size='small'>
-						<Avatar style={{ backgroundColor: '#87d068', border: 'none', height: 20, width: 20 }}>G</Avatar>
-						<Avatar style={{ backgroundColor: '#1677ff', border: 'none', height: 20, width: 20 }}>+{predictCount}</Avatar>
-					</Avatar.Group>
-					predictions
-				</p> */}
-			</div>
-			<div className='flex items-center justify-between'>
-				<p>Will this proposal pass or fail?</p>
 				<a
-					className='rounded-2xl bg-white px-2 py-1 text-xs text-[#F02A4E]'
+					className='font-mediums inline-block rounded-2xl border-2 border-[#F02A4E] bg-white/40 px-3 py-1 text-xs text-[#F02A4E]'
 					href='https://app.zeitgeist.pm/markets/307'
 					target='_blank'
 					rel='noreferrer'
 				>
 					Predict
 				</a>
+			</div>
+			<div className='w-full'>
+				<div className='relative h-5 w-full bg-white/40 transition-all'>
+					<div className='absolute flex h-full w-full items-center justify-between px-3.5 text-xs font-medium text-[#243A57]'>
+						<span>Yes</span>
+						<span className='transition-all'>{yesPercentage}%</span>
+					</div>
+					<div
+						className='h-full bg-white transition-all'
+						style={{ width: yesPercentage.toString() + '%' }}
+					></div>
+				</div>
+			</div>
+			<div className='flex items-center justify-between'>
+				<div className='flex items-center gap-0.5 text-xs text-[#485F7D]'>
+					Ends: <span className='font-medium text-[#243A57]'>{endDate}</span>
+				</div>
+				<p className='flex items-center gap-1 text-xs font-medium text-[#485F7D]'>
+					<Avatar.Group size='small'>
+						<Avatar style={{ backgroundColor: '#87d068', border: 'none', height: 20, width: 20 }}>G</Avatar>
+						<Avatar style={{ backgroundColor: '#1677ff', border: 'none', height: 20, width: 20 }}>+{predictCount}</Avatar>
+					</Avatar.Group>
+					{predictCount} predictions
+				</p>
 			</div>
 		</Container>
 	);

@@ -173,11 +173,11 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 						onClick={() => {
+							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
 							trackEvent('fab_floating_button_clicked', 'clicked_fab_floating_button', {
 								userId: id || '',
 								userName: username || ''
 							});
-							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
 						}}
 					>
 						<FabButton className='mt-1' />

@@ -112,6 +112,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						<Button
 							className={'flex items-center border-none px-1.5 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
 							onClick={() => {
+								toggleEdit();
 								trackEvent('post_edit_button_clicked', 'clicked_edit_post_button', {
 									postIndex: postIndex,
 									postType: postType,
@@ -119,7 +120,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 									userId: currentUser?.id || '',
 									userName: currentUser?.username || ''
 								});
-								toggleEdit();
 							}}
 						>
 							<FormOutlined />

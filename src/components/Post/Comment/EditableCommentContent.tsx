@@ -519,12 +519,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<div
 							className={`items-center text-[10px] leading-4 text-slate-400 shadow-none  ${poppins.variable} ${poppins.className}`}
 							onClick={() => {
+								toggleEdit();
 								trackEvent('comment_edit_button_clicked', 'clicked_edit_comment_cta', {
 									commentId: commentId,
 									userId: userId || '',
 									userName: userName || ''
 								});
-								toggleEdit();
 							}}
 						>
 							<span className='flex items-center'>
@@ -570,12 +570,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<div
 							className={`ml-[-1.8px] flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${poppins.variable} ${poppins.className} border-none`}
 							onClick={() => {
+								deleteComment();
 								trackEvent('comment_delete_button_clicked', 'clicked_delete_comment_cta', {
 									commentId: commentId,
 									userId: userId || '',
 									userName: userName || ''
 								});
-								deleteComment();
 							}}
 						>
 							<DeleteIcon className='mr-1' />

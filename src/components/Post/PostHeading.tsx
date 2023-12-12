@@ -237,7 +237,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								setOpenTagsModal(true);
 							}}
 							maxTags={3}
-							className='post-heading-tags'
+							className='post-heading-tags mt-1.5'
 						/>
 					)}
 					{/* for mobile */}

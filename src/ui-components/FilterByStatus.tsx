@@ -5,7 +5,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { bountyStatusOptions, childBountyStatusOptions, gov2ReferendumStatusOptions, motionStatusOptions, referendumStatusOptions, tipStatusOptions } from '~src/global/statuses';
+import {
+	bountyStatusOptions,
+	childBountyStatusOptions,
+	gov2ReferendumStatusOptions,
+	motionStatusOptions,
+	proposalStatusOptions,
+	referendumStatusOptions,
+	tipStatusOptions
+} from '~src/global/statuses';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector } from '~src/redux/selectors';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
@@ -37,6 +45,10 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 		path = 'tip';
 	} else if (path === 'motions') {
 		path = 'motion';
+	} else if (path === 'proposals') {
+		path = 'proposal';
+	} else if (path === 'referenda') {
+		path = 'referendum';
 	}
 
 	const postType = getProposalTypeFromSinglePostLink(path);
@@ -52,6 +64,12 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			break;
 		case 'council_motions':
 			statusOptions = motionStatusOptions;
+			break;
+		case 'democracy_proposals':
+			statusOptions = proposalStatusOptions;
+			break;
+		case 'referendums':
+			statusOptions = referendumStatusOptions;
 			break;
 		default:
 			statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;

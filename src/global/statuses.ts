@@ -11,6 +11,21 @@ export const proposalStatus = {
 	TABLED: 'Tabled'
 };
 
+export const proposalStatusOptions = [
+	{
+		key: proposalStatus.CLEARED,
+		label: 'Cleared'
+	},
+	{
+		key: proposalStatus.PROPOSED,
+		label: 'Proposed'
+	},
+	{
+		key: proposalStatus.TABLED,
+		label: 'Tabled'
+	}
+];
+
 export const referendumStatus = {
 	CANCELLED: 'Cancelled',
 	EXECUTED: 'Executed',

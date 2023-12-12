@@ -80,7 +80,7 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 				network={network}
 			/>
 			<div className='mt-3 flex sm:items-center'>
-				<TechComIconListing className='text-lightBlue dark:text-icon-dark-inactive xs:mt-1 sm:-mt-3.5' />
+				<TechComIconListing className='-mt-3.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Tech Committee Proposals</h1>
 			</div>
 			{/* Intro and Create Post Button */}

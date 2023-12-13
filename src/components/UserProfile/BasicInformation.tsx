@@ -245,8 +245,8 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			</div>
 			{errorCheck && (
 				<Alert
-					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue dark:text-blue-dark-high'
-					message={errorCheck}
+					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					message={<span className='dark:text-blue-dark-high'>{errorCheck}</span>}
 					type='info'
 					showIcon
 				/>

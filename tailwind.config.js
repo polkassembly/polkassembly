@@ -48,6 +48,25 @@ module.exports = {
 				disableStateDark: 'var(--disableStateDark)',
 				helperTextColorDark: 'var(--helperTextColorDark)',
 				borderColorDark: 'var(--borderColorDark)',
+				infoAlertBorderDark: 'var(--infoAlertBorderDark)',
+				infoAlertBgDark: 'var(--infoAlertBgDark)',
+				errorAlertBorderDark: 'var(--errorAlertBorderDark)',
+				errorAlertBgDark: 'var(--errorAlertBgDark)',
+				warningAlertBorderDark: 'var(--warningAlertBorderDark)',
+				warningAlertBgDark: 'var(--warningAlertBgDark)',
+				borderColor: 'var(--borderColor)',
+				disabledGreyColor: 'var(--greyColor)',
+				lightGreyTextColor: 'var(--lightGreyTextColor)',
+				lightWhite: 'var(--lightWhite)',
+				yellowColor: 'var(--yellowColor)',
+				darkOrangeColor: 'var(--darkOrangeColor)',
+				nayRedColor: 'var(--nayRedColor)',
+				nayDarkRedColor: 'var(--nayDarkRedColor)',
+				ayeGreenColor: 'var(--ayeGreenColor)',
+				ayeDarkGreenColor: 'var(--ayeDarkGreenColor)',
+				abstainBlueColor: 'var(--abstainBlueColor)',
+				abstainDarkBlueColor: 'var(--abstainBlueColor)',
+				textGreyColor: 'var(--textGreyColor)',
 				blue: {
 					light: {
 						disabled: '#96A4B6',
@@ -108,6 +127,11 @@ module.exports = {
 			},
 			borderRadius: {
 				xxl: '0.875rem'
+			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'rhs-card-gradient': 'linear-gradient(97deg, #04d9bb 0.25%, #06d7bb 0.26%, #6e49c9 112.25%)',
+				'rhs-indicator-gradient': 'linear-gradient(153deg, #08D4BB 16.67%, #6F47C9 100%)'
 			}
 		}
 	},

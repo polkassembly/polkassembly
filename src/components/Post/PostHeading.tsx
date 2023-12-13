@@ -20,6 +20,8 @@ import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import TagsModal from '~src/ui-components/TagsModal';
+import styled from 'styled-components';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -30,6 +32,43 @@ const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	),
 	ssr: false
 });
+
+interface ITagListingProps {
+	className?: string;
+	tags: string[];
+	handleTagClick: (tag: string) => void;
+	handleTagModalOpen: () => void;
+	maxTags: number;
+}
+
+const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxTags }: ITagListingProps) => {
+	return (
+		<div className={`${className} mt-1.5 flex items-center`}>
+			{tags?.slice(0, maxTags).map((tag, index) => (
+				<div
+					key={index}
+					className='traking-2 mr-1 inline-flex cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+					onClick={() => handleTagClick(tag)}
+				>
+					{tag}
+				</div>
+			))}
+			{tags.length > maxTags && (
+				<span
+					className='mr-1 cursor-pointer text-bodyBlue dark:text-blue-dark-high'
+					style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
+					onClick={(e) => {
+						e.stopPropagation();
+						e.preventDefault();
+						handleTagModalOpen();
+					}}
+				>
+					+{tags.length - maxTags}
+				</span>
+			)}
+		</div>
+	);
+};
 
 interface IPostHeadingProps {
 	className?: string;
@@ -67,7 +106,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
-
+	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
@@ -158,30 +197,28 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								/>
 							</div>
 						)}
-						<div className='flex items-center'>
-							<Divider
-								className=''
-								type='vertical'
-								style={{ borderLeft: '1px solid #485F7D' }}
-							/>
-							{tags && tags.length > 0 && (
-								<div className='mx-1 flex flex-wrap gap-[8px]'>
-									{tags?.map((tag, index) => (
-										<div
-											onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
-											className='traking-2 cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
-											key={index}
-										>
-											{tag}
-										</div>
-									))}
-								</div>
-							)}
-						</div>
+						{tags && tags.length > 0 && beneficiaries && beneficiaries?.length > 0 && (
+							<>
+								<Divider
+									className='mr-3 hidden md:inline-block'
+									type='vertical'
+									style={{ borderLeft: '1px solid var(--lightBlue)' }}
+								/>
+								<TagsListing
+									tags={tags}
+									handleTagClick={(tag: string) => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
+									handleTagModalOpen={() => {
+										setOpenTagsModal(true);
+									}}
+									maxTags={3}
+									className='post-heading-tags'
+								/>
+							</>
+						)}
 						{summary ? (
 							<>
 								<Divider
-									className='ml-1 xs:mt-2 xs:inline-block md:mt-0 md:hidden'
+									className='ml-1 mr-2 xs:mt-2 xs:inline-block md:mt-0 md:hidden'
 									type='vertical'
 									style={{ borderLeft: '1px solid #485F7D' }}
 								/>
@@ -192,6 +229,27 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							</>
 						) : null}
 					</CreationLabel>
+					{tags && tags.length > 0 && !beneficiaries?.length && (
+						<TagsListing
+							tags={tags}
+							handleTagClick={(tag: string) => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
+							handleTagModalOpen={() => {
+								setOpenTagsModal(true);
+							}}
+							maxTags={3}
+							className='post-heading-tags'
+						/>
+					)}
+					{/* for mobile */}
+					<TagsListing
+						tags={tags}
+						handleTagClick={(tag: string) => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
+						handleTagModalOpen={() => {
+							setOpenTagsModal(true);
+						}}
+						maxTags={2}
+						className='tag-container hidden'
+					/>
 				</>
 			</div>
 			{history && history.length > 0 && (
@@ -203,8 +261,24 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					defaultAddress={proposer}
 				/>
 			)}
+			<TagsModal
+				tags={tags}
+				track_name={track_name}
+				proposalType={proposalType}
+				openTagsModal={openTagsModal}
+				setOpenTagsModal={setOpenTagsModal}
+			/>
 		</div>
 	);
 };
 
-export default PostHeading;
+export default styled(PostHeading)`
+	@media (max-width: 768px) and (min-width: 319px) {
+		.post-heading-tags {
+			display: none !important;
+		}
+		.tag-container {
+			display: block !important;
+		}
+	}
+`;

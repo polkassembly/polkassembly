@@ -114,7 +114,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
 				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
-					<DiscussionsIcon className='text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-1.5' />
+					<DiscussionsIcon className='text-lg text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-[2px]' />
 					Latest Discussions({count})
 				</div>
 				<button

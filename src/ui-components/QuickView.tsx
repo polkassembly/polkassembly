@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { UserOutlined } from '@ant-design/icons';
@@ -14,7 +14,7 @@ import { socialLinks } from '~src/components/UserProfile/Details';
 import { Button, Tooltip, message } from 'antd';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { ISocial } from '~src/auth/types';
+import { ESocialType, ISocial } from '~src/auth/types';
 import ImageComponent from 'src/components/ImageComponent';
 import Link from 'next/link';
 import { network as AllNetworks } from '~src/global/networkConstants';
@@ -27,6 +27,8 @@ import WebIcon from '~assets/icons/web-icon.svg';
 import { PolkaverseIcon, VerifiedIcon } from './CustomIcons';
 import { useDispatch } from 'react-redux';
 import { setReceiver } from '~src/redux/Tipping';
+import { getKiltDidSocialEndpoints } from '~src/util/kiltDid';
+import { useApiContext } from '~src/context';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -37,6 +39,11 @@ export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBEAM,
 	AllNetworks.EQUILIBRIUM
 ];
+interface ISocialsType {
+	isVerified: boolean;
+	key: ESocialType;
+	value: string;
+}
 interface Props {
 	className?: string;
 	address: string;
@@ -50,6 +57,7 @@ interface Props {
 	setOpenTipping: (pre: boolean) => void;
 	setOpenAddressChangeModal: (pre: boolean) => void;
 	enableTipping?: boolean;
+	isKiltNameExists?: boolean;
 }
 const QuickView = ({
 	className,
@@ -63,9 +71,11 @@ const QuickView = ({
 	setOpenTipping,
 	socials,
 	setOpenAddressChangeModal,
-	enableTipping = true
+	enableTipping = true,
+	isKiltNameExists = false
 }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
+	const { api, apiReady } = useApiContext();
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
@@ -73,10 +83,20 @@ const QuickView = ({
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
-	const identityArr = [
-		{ isVerified: !!identity?.twitter, key: 'Twitter', value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || '' },
-		{ isVerified: false, key: 'Telegram', value: socials?.find((social) => social.type === 'Telegram')?.link || '' }
-	];
+	const [identityArr, setIdentityArr] = useState<ISocialsType[]>([
+		{
+			isVerified: (!!identity?.twitter && isGood) || false,
+			key: ESocialType.TWITTER,
+			value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || ''
+		},
+		{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' },
+		{
+			isVerified: (!!identity?.email && isGood) || false,
+			key: ESocialType.EMAIL,
+			value: identity?.email || socials?.find((social) => social.type === ESocialType.EMAIL)?.link || ''
+		},
+		{ isVerified: (!!identity?.riot && isGood) || false, key: ESocialType.RIOT, value: identity?.riot || socials?.find((social) => social.type === ESocialType.RIOT)?.link || '' }
+	]);
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const success = () => {
 		messageApi.open({
@@ -96,6 +116,71 @@ const QuickView = ({
 		}
 		setOpen(false);
 	};
+	const handleKiltSocialFields = (verified: boolean, key: ESocialType, value: string) => {
+		switch (key) {
+			case ESocialType.EMAIL:
+				return { isVerified: verified, key: ESocialType.EMAIL, value: value as string };
+			case ESocialType.TWITTER:
+				return { isVerified: verified, key: ESocialType.TWITTER, value: value as string };
+			case ESocialType.RIOT:
+				return { isVerified: verified, key: ESocialType.RIOT, value: value as string };
+			default:
+				return {};
+		}
+	};
+	const handleKiltSocials = async () => {
+		if (!api || !apiReady || network !== 'kilt') return;
+		const data = await getKiltDidSocialEndpoints(api, address);
+		if (data) {
+			const socialsArr: ISocialsType[] = [];
+			for (const service of data) {
+				if (['KiltPublishedCredentialCollectionV1'].includes(service?.serviceTypes?.[0])) {
+					try {
+						const res = await fetch(service?.urls?.[0]).then((e) => e.json());
+
+						for (const social of res) {
+							if (social?.credential?.claim?.contents) {
+								console.log(social);
+								Object.entries(social?.credential?.claim?.contents).map(([key, value]) => {
+									socialsArr.push(handleKiltSocialFields(true, key as ESocialType, value as string) as ISocialsType);
+									if (key === 'Username' && social?.metadata?.label === 'KILT Discord Credential') {
+										socialsArr.push({ isVerified: true, key: ESocialType.DISCORD, value: value as string });
+									} else if (key === 'Username' && social?.metadata?.label === 'Personal Telegram Credential') {
+										socialsArr.push({ isVerified: true, key: ESocialType.TELEGRAM, value: value as string });
+									}
+								});
+							}
+						}
+					} catch (err) {
+						console.log(err, 'error');
+					}
+				} else if (['Twitter', 'Email', 'Telegram', 'Discord', 'Riot'].includes(service?.serviceTypes?.[0])) {
+					try {
+						const res = await fetch(service?.urls?.[0]).then((e) => e.json());
+						if (res.request?.claim?.contents) {
+							Object.entries(res?.request?.claim?.contents).map(([key, value]) => {
+								socialsArr.push(handleKiltSocialFields(false, key as ESocialType, value as string) as ISocialsType);
+								if (key === 'Username' && res.cTypeTitle === ESocialType.DISCORD) {
+									socialsArr.push({ isVerified: false, key: ESocialType.DISCORD, value: value as string });
+								}
+								if (key === 'Username' && res.cTypeTitle === ESocialType.TELEGRAM) {
+									socialsArr.push({ isVerified: false, key: ESocialType.TELEGRAM, value: value as string });
+								}
+							});
+						}
+					} catch (err) {
+						console.log(err, 'error');
+					}
+				}
+			}
+			setIdentityArr(socialsArr);
+		}
+	};
+	useEffect(() => {
+		if (!isKiltNameExists || !api || !apiReady || network !== 'kilt') return;
+		handleKiltSocials();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isKiltNameExists, api, apiReady, network]);
 
 	return (
 		<div
@@ -114,7 +199,7 @@ const QuickView = ({
 				/>
 				<div className={`flex ${!address && !profileCreatedAt ? 'mb-2 justify-between' : 'flex-col gap-1.5'}`}>
 					<div className='mt-0 flex items-center justify-start gap-2'>
-						<span className='text-xl font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username?.length > 20 ? `${username?.slice(0, 20)}...` : username}</span>
+						<span className='text-xl font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username?.length > 15 ? `${username?.slice(0, 15)}...` : username}</span>
 						<div className='flex items-center justify-center '>{isGood ? <VerifiedIcon className='text-xl' /> : <MinusCircleFilled style={{ color }} />}</div>
 						<a
 							target='_blank'
@@ -195,7 +280,7 @@ const QuickView = ({
 										}}
 										href={identity?.web}
 										title={identity?.web}
-										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#51D36E] text-white'
+										className={`flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'text-[#96A4B6]'}`}
 									>
 										<WebIcon />
 									</Link>

@@ -41,8 +41,9 @@ interface Props {
 	conviction: number;
 	balance: BN;
 	isMultisig?: boolean;
+	onConfirm?: () => void;
 }
-const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, isMultisig }: Props) => {
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, isMultisig, onConfirm }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const router = useRouter();
@@ -102,6 +103,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			status: NotificationStatus.SUCCESS
 		});
 		setLoading(false);
+		onConfirm?.();
 		setOpenSuccessPopup(true);
 		setOpen(false);
 	};
@@ -187,9 +189,9 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			setLoading(true);
 			await unDelegationByMultisig(delegateTxn);
 			return;
+		} else {
+			await executeTx({ address: defaultAddress, api, apiReady, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
 		}
-
-		await executeTx({ address: defaultAddress, api, apiReady, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	return (
@@ -221,7 +223,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						<Button
 							htmlType='submit'
 							key='submit'
-							className='h-10 w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary'
+							className='h-10 w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary'
 							disabled={loading}
 							onClick={handleSubmit}
 						>
@@ -310,7 +312,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				</Spin>
 			</Modal>
 			<DelegationSuccessPopup
-				redirect={true}
 				open={openSuccessPopup}
 				setOpen={setOpenSuccessPopup}
 				balance={balance}

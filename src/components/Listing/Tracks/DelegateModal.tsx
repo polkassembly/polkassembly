@@ -45,9 +45,10 @@ interface Props {
 	open?: boolean;
 	setOpen?: (pre: boolean) => void;
 	isMultisig?: boolean;
+	onConfirm?: (balance: string, delegatedTo: string, lockPeriod: number) => void;
 }
 
-const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig, onConfirm }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
@@ -201,6 +202,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			status: NotificationStatus.SUCCESS
 		});
 		setOpenSuccessPopup(true);
+		onConfirm?.(bnBalance.toString(), target, conviction);
 		setLoading(false);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
@@ -459,7 +461,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								</div>
 
 								<BalanceInput
-									onBlur={getTxFee}
 									placeholder={'Enter balance'}
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-high'
 									address={delegationDashboardAddress}
@@ -588,7 +589,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			{checkedTrack?.name && (
 				<DelegationSuccessPopup
 					open={openSuccessPopup}
-					redirect={true}
 					setOpen={setOpenSuccessPopup}
 					tracks={[...checkedTrackArr.filter((track) => track !== checkedTrack?.name), checkedTrack?.name || '']}
 					address={target}

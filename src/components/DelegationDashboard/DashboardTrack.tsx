@@ -146,7 +146,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 			setOpenModal(true);
 		}
 		setOpenLoginModal(!id);
-		console.log('hello');
 		getData();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -176,7 +175,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 			</div>
 			{status ? (
 				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6 dark:border-separatorDark dark:bg-section-dark-overlay'>
-					<div className='flex items-center gap-3 text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
+					<div className='flex items-center gap-3 text-2xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 						{handleTracksIcon(handleTrack(String(track)), 28)}
 						<span>{handleTrack(String(track))}</span>
 						{status &&
@@ -301,6 +300,10 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 					trackNum={trackDetails?.trackId}
 					conviction={rowData.filter((row) => row.delegatedTo !== address)[0]?.lockPeriod}
 					isMultisig={isSelectedAddressMultisig}
+					onConfirm={() => {
+						setStatus([ETrackDelegationStatus.UNDELEGATED]);
+						setShowTable(false);
+					}}
 				/>
 			)}
 			<DelegateModal
@@ -308,6 +311,11 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 				setOpen={setOpenDelegateModal}
 				trackNum={trackDetails?.trackId}
 				isMultisig={isSelectedAddressMultisig}
+				onConfirm={(balance: string, delegatedTo: string, lockPeriod: number) => {
+					setStatus([ETrackDelegationStatus.DELEGATED]);
+					setRowData([{ action: 'Undelegate', balance, delegatedFrom: address, delegatedOn: new Date(), delegatedTo, index: 1, lockPeriod }]);
+					setShowTable(true);
+				}}
 			/>
 		</div>
 	);

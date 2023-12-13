@@ -2107,14 +2107,14 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			confirmPeriod: 7200,
 			minEnactmentPeriod: 7200,
 			minApproval: {
-				Reciprocal: {
+				reciprocal: {
 					factor: 480000010,
 					xOffset: 600000009,
 					yOffset: 199999995
 				}
 			},
 			minSupport: {
-				Reciprocal: {
+				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
 					yOffset: -166666668
@@ -2133,14 +2133,14 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			confirmPeriod: 900,
 			minEnactmentPeriod: 50,
 			minApproval: {
-				Reciprocal: {
+				reciprocal: {
 					factor: 480000010,
 					xOffset: 600000009,
 					yOffset: 199999995
 				}
 			},
 			minSupport: {
-				Reciprocal: {
+				reciprocal: {
 					factor: 1265625,
 					xOffset: 12500000,
 					yOffset: -1250000
@@ -2159,14 +2159,14 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			confirmPeriod: 900,
 			minEnactmentPeriod: 50,
 			minApproval: {
-				Reciprocal: {
+				reciprocal: {
 					factor: 480000010,
 					xOffset: 600000009,
 					yOffset: 199999995
 				}
 			},
 			minSupport: {
-				Reciprocal: {
+				reciprocal: {
 					factor: 1265625,
 					xOffset: 12500000,
 					yOffset: -1250000

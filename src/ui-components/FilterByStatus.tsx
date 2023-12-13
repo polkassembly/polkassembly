@@ -8,7 +8,10 @@ import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import {
 	bountyStatusOptions,
 	childBountyStatusOptions,
+	gov2ReferendumStatusClosedOptions,
 	gov2ReferendumStatusOptions,
+	gov2ReferendumStatusSubmittedOptions,
+	gov2ReferendumStatusVotingOptions,
 	motionStatusOptions,
 	proposalStatusOptions,
 	referendumStatusOptions,
@@ -33,6 +36,7 @@ interface SortByDropdownProps {
 
 const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const router = useRouter();
+	const trackStatus = router?.query?.trackStatus;
 	const { resolvedTheme: theme } = useTheme();
 	const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
 	const { network } = useNetworkSelector();
@@ -84,12 +88,23 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			statusOptions = techCommiteeStatusOptions;
 			break;
 		default:
-			statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
+			if (isOpenGovSupported(network)) {
+				if (trackStatus === 'all') {
+					statusOptions = gov2ReferendumStatusOptions;
+				} else if (trackStatus === 'submitted') {
+					statusOptions = gov2ReferendumStatusSubmittedOptions;
+				} else if (trackStatus === 'voting') {
+					statusOptions = gov2ReferendumStatusVotingOptions;
+				} else {
+					statusOptions = gov2ReferendumStatusClosedOptions;
+				}
+			} else {
+				statusOptions = referendumStatusOptions;
+			}
 			break;
 	}
 
 	const sortByOptions: ItemType[] = [...statusOptions];
-
 	const handleSortByClick = (key: any) => {
 		if (key === 'clear_filter') {
 			if (router.query.filterBy) {

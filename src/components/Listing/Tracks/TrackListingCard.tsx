@@ -36,6 +36,8 @@ export enum CustomStatus {
 
 const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
+	const trackStatus = router.query['trackStatus'];
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const [statusItem, setStatusItem] = useState([]);
 
@@ -114,7 +116,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		{
 			label: (
 				<div className='mt-1 flex items-center gap-x-2 '>
-					<FilterByStatus setStatusItem={setStatusItem} />
+					{trackStatus !== 'submitted' && <FilterByStatus setStatusItem={setStatusItem} />}
 					<FilterByTags />
 					<SortByDropdownComponent
 						sortBy={sortBy}
@@ -127,9 +129,6 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			key: 'Filter'
 		}
 	];
-	const router = useRouter();
-
-	const trackStatus = router.query['trackStatus'];
 
 	const defaultActiveTab =
 		trackStatus && ['closed', 'all', 'voting', 'submitted'].includes(String(trackStatus)) ? String(trackStatus).charAt(0).toUpperCase() + String(trackStatus).slice(1) : 'All';
@@ -138,13 +137,13 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const onTabClick = (key: string) => {
 		if (key === 'Filter') return;
 		setActiveTab(key);
+
+		const newQuery: { [key: string]: any } = { ...router.query, trackStatus: key.toLowerCase() };
+		delete newQuery.proposalStatus;
+
 		router.push({
 			pathname: router.pathname,
-			query: {
-				...router.query,
-				page: 1,
-				trackStatus: key.toLowerCase()
-			}
+			query: newQuery
 		});
 	};
 

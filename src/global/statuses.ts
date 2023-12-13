@@ -134,6 +134,59 @@ export const gov2ReferendumStatusOptions = [
 	}
 ];
 
+export const gov2ReferendumStatusVotingOptions = [
+	{
+		key: gov2ReferendumStatus.CONFIRM_ABORTED,
+		label: 'Confirm Aborted'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRM_STARTED,
+		label: 'Confirm Started'
+	},
+	{
+		key: gov2ReferendumStatus.DECIDING,
+		label: 'Deciding'
+	},
+	{
+		key: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+		label: 'Decision Deposit Placed'
+	}
+];
+
+export const gov2ReferendumStatusClosedOptions = [
+	{
+		key: gov2ReferendumStatus.CANCELLED,
+		label: 'Cancelled'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRMED,
+		label: 'Confirmed'
+	},
+	{
+		key: gov2ReferendumStatus.EXECUTION_FAILED,
+		label: 'Execution Failed'
+	},
+	{
+		key: gov2ReferendumStatus.KILLED,
+		label: 'Killed'
+	},
+	{
+		key: gov2ReferendumStatus.REJECTED,
+		label: 'Rejected'
+	},
+	{
+		key: gov2ReferendumStatus.TIMEDOUT,
+		label: 'Timed Out'
+	}
+];
+
+export const gov2ReferendumStatusSubmittedOptions = [
+	{
+		key: gov2ReferendumStatus.SUBMITTED,
+		label: 'Submitted'
+	}
+];
+
 export const motionStatus = {
 	APPROVED: 'Approved',
 	CLOSED: 'Closed',

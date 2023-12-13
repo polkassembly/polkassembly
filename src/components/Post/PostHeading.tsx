@@ -43,7 +43,7 @@ interface ITagListingProps {
 
 const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxTags }: ITagListingProps) => {
 	return (
-		<div className={`${className} flex items-center`}>
+		<div className={`${className} mt-1.5 flex items-center`}>
 			{tags?.slice(0, maxTags).map((tag, index) => (
 				<div
 					key={index}

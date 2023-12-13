@@ -29,6 +29,14 @@ const Modal = styled(AntdModal)`
 	.ant-modal-content {
 		padding-top: 12px;
 	}
+	.ant-modal-content {
+		padding: 8px 10px;
+	}
+	@media (min-width: 420px) {
+		.ant-modal-content {
+			padding: 20px 24px;
+		}
+	}
 `;
 
 const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally, ayeNayAbstainCounts }) => {

@@ -113,7 +113,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const decisionOptions = [
 		{
 			label: (
-				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-green-700 max-[450px]:text-xs min-[450px]:mt-0'>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-green-700 max-[449px]:text-xs min-[450px]:mt-0'>
 					<LikeFilled /> <span>Ayes({formatNumber(ayeNayAbstainCounts?.ayes)})</span>
 				</div>
 			),
@@ -121,7 +121,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		},
 		{
 			label: (
-				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-red-600  max-[450px]:text-xs min-[450px]:mt-0'>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-red-600  max-[449px]:text-xs min-[450px]:mt-0'>
 					<DislikeFilled /> <span>Nays({formatNumber(ayeNayAbstainCounts?.nays)})</span>
 				</div>
 			),
@@ -132,7 +132,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	if (voteType === VoteType.REFERENDUM_V2) {
 		decisionOptions.push({
 			label: (
-				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-blue-400 max-[450px]:text-xs min-[450px]:mt-0'>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-blue-400 max-[449px]:text-xs min-[450px]:mt-0'>
 					<MinusCircleFilled /> <span>Abstain({formatNumber(ayeNayAbstainCounts?.abstain)})</span>
 				</div>
 			),
@@ -273,7 +273,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									/>
 								</div>
 							)}
-							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
+							<VoteContainer className='flex flex-col items-center px-0 text-xs text-sidebarBlue'>
 								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
 									{!isUsedInVotedModal ? (
 										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>

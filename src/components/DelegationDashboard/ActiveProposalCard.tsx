@@ -88,12 +88,12 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 		if (!address || !proposal?.post_id) return;
 		let votesAddress = '';
 
-		if (status.includes(ETrackDelegationStatus.Undelegated)) {
+		if (status.includes(ETrackDelegationStatus.UNDELEGATED)) {
 			return;
 		}
-		if (status.includes(ETrackDelegationStatus.Received_Delegation)) {
+		if (status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) {
 			votesAddress = address;
-		} else if (status.includes(ETrackDelegationStatus.Delegated) && delegatedTo !== null) {
+		} else if (status.includes(ETrackDelegationStatus.DELEGATED) && delegatedTo !== null) {
 			votesAddress = delegatedTo;
 		}
 
@@ -186,21 +186,21 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 					</div>
 					<Button
 						className={`mt-2 flex justify-center gap-2 border-none bg-white shadow-none dark:bg-section-dark-overlay ${
-							status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'
+							status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'
 						}`}
-						disabled={status.includes(ETrackDelegationStatus.Delegated)}
+						disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
 					>
 						<VoteIcon />
 						<span className='text-sm font-medium text-pink_primary'>Cast Vote</span>
 					</Button>
 				</div>
-				{(votingData && !status.includes(ETrackDelegationStatus.Undelegated) && isAye) || isNay || isAbstain ? (
+				{(votingData && !status.includes(ETrackDelegationStatus.UNDELEGATED) && isAye) || isNay || isAbstain ? (
 					<div
 						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'border-[#2ED47A] bg-[#F0FCF6]'} ${isNay && 'border-[#FF3C5F] bg-[#fff1f4]'} ${
 							isAbstain && 'border-[#ABABAC] bg-[#f9f9f9]'
 						}`}
 					>
-						{status.includes(ETrackDelegationStatus.Delegated) && (
+						{status.includes(ETrackDelegationStatus.DELEGATED) && (
 							<Address
 								usernameClassName='text-xs font-medium'
 								address={String(delegatedTo)}
@@ -228,7 +228,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 				) : (
 					votingData && (
 						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-[#F89118] bg-[#fff7ef] px-6 py-2'>
-							{status.includes(ETrackDelegationStatus.Delegated) && (
+							{status.includes(ETrackDelegationStatus.DELEGATED) && (
 								<Address
 									address={String(delegatedTo)}
 									usernameClassName='text-xs font-medium'

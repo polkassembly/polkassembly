@@ -104,14 +104,12 @@ const AddressDropdown = ({
 		addressItems.push({
 			key: 1,
 			label: (
-				<div className='mt-2 flex items-center justify-center'>
-					<Button
-						onClick={() => setSwitchModalOpen(true)}
-						className={`flex h-[40px] w-full items-center justify-center rounded-[8px] bg-pink_primary text-sm font-medium tracking-wide text-[#fff] ${poppins.variable} ${poppins.className}`}
-					>
-						Switch Wallet
-					</Button>
-				</div>
+				<Button
+					onClick={() => setSwitchModalOpen(true)}
+					className={`mt-2 flex h-10 w-full items-center justify-center rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${poppins.variable} ${poppins.className}`}
+				>
+					Switch Wallet
+				</Button>
 			)
 		});
 	return (

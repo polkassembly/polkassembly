@@ -76,6 +76,15 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
 	const isTargetAddressSame =
 		delegationDashboardAddress && target ? delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network) : false;
+	const delegateButtonDisable =
+		!form.getFieldValue('targetAddress') ||
+		!delegationDashboardAddress ||
+		bnBalance.lte(ZERO_BN) ||
+		isNaN(conviction) ||
+		isTargetAddressSame ||
+		loading ||
+		txFee.lte(ZERO_BN) ||
+		availableBalance.lte(txFee.add(bnBalance));
 
 	useEffect(() => {
 		if (!network) return;
@@ -115,17 +124,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 		const delegateTo = form.getFieldValue('targetAddress');
 		if (!api || !apiReady || !delegateTo) return;
-		if (
-			!delegationDashboardAddress ||
-			!delegateTo ||
-			!getEncodedAddress(delegateTo, network) ||
-			isNaN(convictionVal) ||
-			!bnBalance ||
-			bnBalance.lte(ZERO_BN) ||
-			bnBalance.eq(ZERO_BN) ||
-			isTargetAddressSame
-		)
-			return;
+		if (!delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || isTargetAddressSame) return;
 		if (!checkedTrack && !checkedTracksList) return;
 
 		setLoading(true);
@@ -155,7 +154,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${delegationDashboardAddress}`);
 		if (data) {
-			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.Delegated));
+			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.DELEGATED));
 			if (network) {
 				const tracks = trackData.map((item) => {
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -290,7 +289,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		}
 		setConviction(conviction);
 		setLockValue(lockValue);
-		getTxFee(checkedList, conviction);
 	};
 
 	const handleCloseModal = () => {
@@ -359,7 +357,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						<Button
 							key='back'
 							disabled={loading}
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary tracking-wide text-pink_primary dark:bg-section-dark-overlay dark:text-white'
+							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary tracking-wide text-pink_primary dark:bg-section-dark-overlay dark:text-pink_primary'
 							onClick={handleCloseModal}
 						>
 							Cancel
@@ -367,28 +365,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						<Button
 							htmlType='submit'
 							key='submit'
-							className={`h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary
-							${
-								(!form.getFieldValue('targetAddress') ||
-									!delegationDashboardAddress ||
-									bnBalance.lte(ZERO_BN) ||
-									isNaN(conviction) ||
-									isTargetAddressSame ||
-									loading ||
-									txFee.lte(ZERO_BN) ||
-									availableBalance.lte(txFee.add(bnBalance))) &&
-								'opacity-50'
-							}`}
-							disabled={
-								!form.getFieldValue('targetAddress') ||
-								!delegationDashboardAddress ||
-								bnBalance.lte(ZERO_BN) ||
-								isNaN(conviction) ||
-								isTargetAddressSame ||
-								loading ||
-								txFee.lte(ZERO_BN) ||
-								availableBalance.lte(txFee.add(bnBalance))
-							}
+							className={`h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary
+							${delegateButtonDisable && 'opacity-50'}`}
+							disabled={delegateButtonDisable}
 							onClick={async () => {
 								await handleSubmit();
 							}}
@@ -431,7 +410,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									/>
 								</div>
 								<AddressInput
-									onBlur={getTxFee}
 									name='targetAddress'
 									defaultAddress={defaultTarget || target}
 									label={'Beneficiary Address'}
@@ -440,6 +418,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									onChange={(address) => {
 										setTarget(address);
 										handleSubstrateAddressChangeAlert(address);
+										getTxFee();
 									}}
 									helpText='The amount requested in the proposal will be received in this address.'
 									size='large'
@@ -458,7 +437,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 								{addressAlert && (
 									<Alert
-										className='mb mt-2 rounded-[4px] dark:border-[#125798] dark:bg-[#05263F]'
+										className='mb mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
 									/>
@@ -534,7 +513,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								</div>
 								<div className='mb-2 mt-6 flex items-center justify-between'>
 									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
-									{trackArr.length ? (
+									{trackArr?.length ? (
 										<Popover
 											defaultOpen={true}
 											content={content}
@@ -606,19 +585,21 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 					</div>
 				</Spin>
 			</Modal>
-			<DelegationSuccessPopup
-				open={openSuccessPopup}
-				redirect={true}
-				setOpen={setOpenSuccessPopup}
-				tracks={checkedTrackArr}
-				address={target}
-				isMultisig={isMultisig}
-				isDelegate={true}
-				balance={bnBalance}
-				trackNum={trackNum}
-				conviction={conviction}
-				title={isMultisig ? 'Delegation with Polkasafe initiated' : ' Delegated Successfully'}
-			/>
+			{checkedTrack?.name && (
+				<DelegationSuccessPopup
+					open={openSuccessPopup}
+					redirect={true}
+					setOpen={setOpenSuccessPopup}
+					tracks={[...checkedTrackArr.filter((track) => track !== checkedTrack?.name), checkedTrack?.name || '']}
+					address={target}
+					isMultisig={isMultisig}
+					isDelegate={true}
+					balance={bnBalance}
+					trackNum={trackNum}
+					conviction={conviction}
+					title={isMultisig ? 'Delegation with Polkasafe initiated' : ' Delegated Successfully'}
+				/>
+			)}
 		</>
 	);
 };

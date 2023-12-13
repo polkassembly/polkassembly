@@ -138,6 +138,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 											className='address ml-1.5'
 											displayInline
 											usernameClassName='text-xs font-medium'
+											isTruncateUsername={false}
 										/>
 									</span>
 								</div>

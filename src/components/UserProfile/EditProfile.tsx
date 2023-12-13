@@ -30,7 +30,7 @@ interface IEditProfileModalProps {
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
 	openModal?: boolean;
 	setOpenModal?: (pre: boolean) => void;
-	fromDelegation: boolean;
+	fromDelegation?: boolean;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {

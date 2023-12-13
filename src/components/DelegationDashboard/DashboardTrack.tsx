@@ -251,7 +251,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 					/>
 				</div>
 			) : (
-				<Skeleton className='mt-6 h-[200px]' />
+				<Skeleton className='mt-6 h-20' />
 			)}
 
 			{status ? (
@@ -355,5 +355,12 @@ export default styled(DashboardTrackListing)`
 		.column .ant-table-thead > tr > th:nth-child(2) {
 			text-align: center;
 		}
+	}
+	.ant-pagination .ant-pagination-item a {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+	}
+	.ant-pagination .ant-pagination-prev button,
+	.ant-pagination .ant-pagination-next button {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 `;

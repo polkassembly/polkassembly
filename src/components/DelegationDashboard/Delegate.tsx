@@ -9,16 +9,13 @@ import DelegateCard from './DelegateCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useApiContext } from '~src/context';
 import { IDelegate } from '~src/types';
-
 import Web3 from 'web3';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { trackEvent } from 'analytics';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
@@ -53,13 +50,8 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 		}, 5000);
 	}, [network, address]);
 
-	const handleClick = () => {
-		setOpen(true);
-		setAddress(address);
-	};
-
 	const getData = async () => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !address) return;
 
 		if (!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address.length > 0) return;
 		setLoading(true);
@@ -95,14 +87,14 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 					<DelegatedIcon className='mr-[4px]' />
 					<span className='text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Delegate</span>
 				</div>
-				<div className='p-2'>{!expandProposals ? <ExpandIcon /> : <CollapseIcon />}</div>
+				<div className='p-2'>{<ExpandIcon className={`${expandProposals && 'rotate-180'}`} />}</div>
 			</div>
 
 			{expandProposals && (
 				<div className='mt-[24px]'>
 					{disabled && (
 						<Alert
-							className='text-sm font-normal text-bodyBlue dark:border-[#125798] dark:bg-[#05263F]'
+							className='text-sm font-normal text-bodyBlue dark:border-separatorDark dark:bg-[#05263F]'
 							showIcon
 							message={<span className='dark:text-blue-dark-high'>You have already delegated for this track.</span>}
 						/>
@@ -122,7 +114,10 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 							/>
 
 							<Button
-								onClick={handleClick}
+								onClick={() => {
+									setOpen(true);
+									setAddress(address);
+								}}
 								disabled={
 									!address ||
 									!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) ||
@@ -157,27 +152,19 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 
 					{!loading ? (
 						<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
-							{delegatesData
-								.filter((item) => item?.address === 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ')
-								.map((delegate, index) => (
-									<DelegateCard
-										trackNum={trackDetails?.trackId}
-										key={index}
-										delegate={delegate}
-										disabled={disabled}
-									/>
-								))}
-							{delegatesData
-								.filter((item) => item?.address !== 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ')
-								.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
-								.map((delegate, index) => (
-									<DelegateCard
-										trackNum={trackDetails?.trackId}
-										key={index}
-										delegate={delegate}
-										disabled={disabled}
-									/>
-								))}
+							{[
+								...delegatesData.filter((item) => item?.address === 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
+								...delegatesData
+									.filter((item) => item?.address !== 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ')
+									.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+							].map((delegate, index) => (
+								<DelegateCard
+									trackNum={trackDetails?.trackId}
+									key={index}
+									delegate={delegate}
+									disabled={disabled}
+								/>
+							))}
 						</div>
 					) : (
 						<Skeleton className='mt-6' />

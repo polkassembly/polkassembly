@@ -2094,6 +2094,84 @@ export const networkTrackInfo: INetworkTrackInfo = {
 					yOffset: 41509433
 				}
 			}
+		},
+		[PostOrigin.GENERAL_ADMIN]: {
+			trackId: 2,
+			description: 'Origin for managing the registrar',
+			group: 'Governance',
+			name: 'general_admin',
+			maxDeciding: 10,
+			decisionDeposit: 1000000000000000000,
+			preparePeriod: 300,
+			decisionPeriod: 72000,
+			confirmPeriod: 7200,
+			minEnactmentPeriod: 7200,
+			minApproval: {
+				Reciprocal: {
+					factor: 480000010,
+					xOffset: 600000009,
+					yOffset: 199999995
+				}
+			},
+			minSupport: {
+				Reciprocal: {
+					factor: 222222224,
+					xOffset: 333333335,
+					yOffset: -166666668
+				}
+			}
+		},
+		[PostOrigin.REFERENDUM_CANCELLER]: {
+			trackId: 3,
+			description: 'Origin able to cancel referenda.',
+			group: 'Governance',
+			name: 'referendum_canceller',
+			maxDeciding: 10,
+			decisionDeposit: 1000000000000000000,
+			preparePeriod: 300,
+			decisionPeriod: 72000,
+			confirmPeriod: 900,
+			minEnactmentPeriod: 50,
+			minApproval: {
+				Reciprocal: {
+					factor: 480000010,
+					xOffset: 600000009,
+					yOffset: 199999995
+				}
+			},
+			minSupport: {
+				Reciprocal: {
+					factor: 1265625,
+					xOffset: 12500000,
+					yOffset: -1250000
+				}
+			}
+		},
+		[PostOrigin.REFERENDUM_KILLER]: {
+			trackId: 4,
+			description: 'Origin able to kill referenda.',
+			group: 'Governance',
+			name: 'referendum_killer',
+			maxDeciding: 25,
+			decisionDeposit: 1000000000000000000,
+			preparePeriod: 300,
+			decisionPeriod: 72000,
+			confirmPeriod: 900,
+			minEnactmentPeriod: 50,
+			minApproval: {
+				Reciprocal: {
+					factor: 480000010,
+					xOffset: 600000009,
+					yOffset: 199999995
+				}
+			},
+			minSupport: {
+				Reciprocal: {
+					factor: 1265625,
+					xOffset: 12500000,
+					yOffset: -1250000
+				}
+			}
 		}
 	},
 	rococo: {

@@ -632,20 +632,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network)) {
-		if (network !== 'picasso') {
-			let items = [...gov2TrackItems.treasuryItems];
-			if (isOpenGovSupported(network)) {
-				items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
-			}
-			gov2Items.splice(
-				-1,
-				0,
-				getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
-			);
-		} else {
-			gov2Items.splice(gov2Items.length - 2, 1);
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+		let items = [...gov2TrackItems.treasuryItems];
+		if (isOpenGovSupported(network)) {
+			items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
 		}
+		gov2Items.splice(
+			-1,
+			0,
+			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+		);
 	}
 
 	if (isFellowshipSupported(network)) {
@@ -658,18 +654,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network)) {
-		if (network !== 'picasso') {
-			gov2CollapsedItems.splice(
-				-1,
-				0,
-				getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
-					...gov2TrackItems.treasuryItems
-				])
-			);
-		} else {
-			gov2CollapsedItems.splice(gov2CollapsedItems.length - 2, 1);
-		}
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+		gov2CollapsedItems.splice(
+			-1,
+			0,
+			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+				...gov2TrackItems.treasuryItems
+			])
+		);
 	}
 
 	const handleMenuClick = (menuItem: any) => {

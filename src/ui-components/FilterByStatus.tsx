@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import {
@@ -39,6 +39,11 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const trackStatus = router?.query?.trackStatus;
 	const { resolvedTheme: theme } = useTheme();
 	const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
+	useEffect(() => {
+		setCheckedItems([]);
+		setStatusItem?.([]);
+	}, [trackStatus, setStatusItem]);
+
 	const { network } = useNetworkSelector();
 	let path = router.pathname.split('/')[1];
 	let statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;

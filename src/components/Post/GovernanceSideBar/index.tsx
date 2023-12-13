@@ -931,11 +931,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			{
 				<div className={className}>
 					<Form>
-						<PredictionCard
-							endDate='02 Dec ‘23'
-							yesCount={115}
-							predictCount={154}
-						/>
+						<PredictionCard />
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}

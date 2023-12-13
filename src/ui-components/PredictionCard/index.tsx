@@ -7,16 +7,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import InfoIcon from '~assets/info.svg';
 
-interface Props {
-	predictCount: number;
-	yesCount: number;
-	endDate: string;
-}
-
 const Container = styled.div`
-	position: fixed;
-	bottom: 60px;
-	z-index: 9;
 	border-radius: 14px;
 	max-width: 360px;
 	width: 100%;
@@ -52,12 +43,61 @@ const Container = styled.div`
 	} */
 `;
 
-const PredictionCard = ({ predictCount, yesCount, endDate }: Props) => {
-	const [yesPercentage, setYesPercentage] = useState(0);
+const PredictionCard = () => {
+	const [YesPercentage, setYesPercentage] = useState(0);
+	const [predictCount, setPredictCount] = useState(0);
+	const [shortCount, setShortCount] = useState(0);
+	const [endDate, setEndDate] = useState('');
 
 	useEffect(() => {
-		setYesPercentage(Math.round((yesCount / predictCount) * 100));
-	}, [yesCount, predictCount]);
+		async function getPredictionsData() {
+			const data = await fetch('https://processor.rpc-0.zeitgeist.pm/graphql', {
+				body: JSON.stringify({
+					query: `query MarketDetails($marketId: Int = 307) {
+                    markets(where: {marketId_eq: $marketId}) {
+                        period {
+                        end
+                        }
+                        assets {
+                        assetId
+                        price
+                        }
+                    }
+                    marketStats(marketId: [$marketId]) {
+                        participants
+                    }
+                    }`
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				next: { revalidate: 10 }
+			})
+				.then((res) => res.json())
+				.then((res) => res.data);
+
+			const timestamp = Number(data.markets[0].period.end);
+
+			setEndDate(convertTimestampToDate(timestamp));
+			setPredictCount(data.marketStats[0].participants);
+			setShortCount(data.markets[0].assets[0].price);
+		}
+		getPredictionsData();
+	}, []);
+
+	function convertTimestampToDate(timestamp: number): string {
+		const date = new Date(timestamp);
+		const day = String(date.getDate()).padStart(2, '0');
+		const month = date.toLocaleString('en-us', { month: 'short' });
+		const year = String(date.getFullYear()).slice(-2);
+		return `${day} ${month} ${year}`;
+	}
+
+	useEffect(() => {
+		setYesPercentage(Math.round((shortCount / 1) * 100));
+	}, [shortCount, predictCount]);
+
 	return (
 		<Container>
 			<div className='flex items-center justify-between font-poppins'>
@@ -82,12 +122,12 @@ const PredictionCard = ({ predictCount, yesCount, endDate }: Props) => {
 			<div className='w-full'>
 				<div className='relative h-5 w-full bg-white/40 transition-all'>
 					<div className='absolute flex h-full w-full items-center justify-between px-3.5 text-xs font-medium text-[#243A57]'>
-						<span>Yes</span>
-						<span className='transition-all'>{yesPercentage}%</span>
+						<span>Short</span>
+						<span className='transition-all'>{YesPercentage}%</span>
 					</div>
 					<div
 						className='h-full bg-white transition-all'
-						style={{ width: yesPercentage.toString() + '%' }}
+						style={{ width: YesPercentage.toString() + '%' }}
 					></div>
 				</div>
 			</div>

@@ -107,16 +107,12 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const sortByOptions: ItemType[] = [...statusOptions];
 	const handleSortByClick = (key: any) => {
 		if (key === 'clear_filter') {
-			if (router.query.filterBy) {
-				router.replace({
-					pathname: '',
-					query: {
-						filterBy: router.query.filterBy
-					}
-				});
-			} else {
-				router.push({ pathname: '' });
-			}
+			const newQuery = { ...router.query };
+			delete newQuery.proposalStatus;
+			router.replace({
+				pathname: '',
+				query: newQuery
+			});
 			setCheckedItems([]);
 			setStatusItem?.([]);
 		} else if (key.length > 0) {
@@ -128,16 +124,13 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 				}
 			});
 			setStatusItem?.(key);
-		} else if (router.query.filterBy) {
+		} else {
+			const newQuery = { ...router.query };
+			delete newQuery.proposalStatus;
 			router.replace({
 				pathname: '',
-				query: {
-					filterBy: router.query.filterBy
-				}
+				query: newQuery
 			});
-			setStatusItem?.([]);
-		} else {
-			router.push({ pathname: '' });
 			setStatusItem?.([]);
 		}
 	};

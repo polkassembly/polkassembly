@@ -4,7 +4,7 @@
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Listing from '~src/components/Listing';
@@ -22,6 +22,8 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import FilterByStatus from '~src/ui-components/FilterByStatus';
+import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -29,13 +31,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, proposalStatus } = query;
 	const proposalType = ProposalType.DEMOCRACY_PROPOSALS;
 	const { data, error } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
+		proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 		proposalType,
 		sortBy
 	});
@@ -50,6 +53,7 @@ interface IProposalsProps {
 
 const Proposals: FC<IProposalsProps> = (props) => {
 	const { data, error, network } = props;
+	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -98,7 +102,15 @@ const Proposals: FC<IProposalsProps> = (props) => {
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
 						<FilteredTags />
 					</div>
-					<FilterByTags className='my-6 xs:mx-6 xs:my-2 sm:mr-14' />
+					<div className='mb-5 flex items-center gap-x-2 '>
+						<FilterByStatus />
+						<FilterByTags />
+						<SortByDropdownComponent
+							sortBy={sortBy}
+							setSortBy={setSortBy}
+							isUsedInTrackListing={true}
+						/>
+					</div>
 				</div>
 
 				<div>

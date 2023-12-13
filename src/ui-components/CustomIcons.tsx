@@ -136,6 +136,7 @@ import PolkaverseSVG from '~assets/icons/SubsocialIcon.svg';
 import VerifiedSVG from '~assets/icons/verified-tick.svg';
 import BeneficiarySVG from '~assets/icons/Beneficiary.svg';
 import BeneficiaryGreySVG from '~assets/icons/BeneficiaryGrey.svg';
+import DropdownGreyIconSVG from '~assets/icons/dropdown-grey.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1018,6 +1019,13 @@ export const BeneficiaryIcon = (props: Partial<CustomIconComponentProps>) => (
 export const BeneficiaryGreyIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={BeneficiaryGreySVG}
+		{...props}
+	/>
+);
+
+export const DropdownGreyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DropdownGreyIconSVG}
 		{...props}
 	/>
 );

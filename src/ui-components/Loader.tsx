@@ -12,8 +12,9 @@ interface Props {
 	timeout?: number;
 	timeoutText?: string;
 	size?: 'default' | 'small' | 'large';
+	iconClassName?: string;
 }
-const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', size = 'default' }: Props) => {
+const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', size = 'default', iconClassName }: Props) => {
 	const [displayLoader, setDisplayLoader] = useState(true);
 
 	useEffect(() => {
@@ -35,13 +36,13 @@ const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', siz
 					<Spin
 						tip={text}
 						size={size}
-						indicator={<LoadingOutlined />}
+						indicator={<LoadingOutlined className={iconClassName} />}
 					/>
 				) : (
 					<Alert
-						className='w-2/3 text-center'
+						className='w-2/3 text-center dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 						type='error'
-						message={timeoutText}
+						message={<span className='dark:text-blue-dark-high'>{timeoutText}</span>}
 					/>
 				)}
 			</div>

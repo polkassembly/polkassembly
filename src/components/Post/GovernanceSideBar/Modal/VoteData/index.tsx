@@ -7,6 +7,7 @@ import VotersList from './VoteList';
 import { Divider, Modal as AntdModal } from 'antd';
 import styled from 'styled-components';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
+import { IVotesCount } from '~src/types';
 interface IVoteDataModal {
 	setOpen?: any;
 	open?: any;
@@ -21,15 +22,24 @@ interface IVoteDataModal {
 		progress: any;
 		setData: any;
 	};
+	ayeNayAbstainCounts: IVotesCount;
 }
 
 const Modal = styled(AntdModal)`
 	.ant-modal-content {
 		padding-top: 12px;
 	}
+	.ant-modal-content {
+		padding: 8px 10px;
+	}
+	@media (min-width: 420px) {
+		.ant-modal-content {
+			padding: 20px 24px;
+		}
+	}
 `;
 
-const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally }) => {
+const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally, ayeNayAbstainCounts }) => {
 	return (
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
@@ -39,7 +49,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 						<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 						<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Voting Data</span>
 					</h3>
-					<Divider className='my-2 mb-5 text-[#D2D8E0] dark:border-separatorDark' />
+					<Divider className='my-2 mb-2 text-[#D2D8E0] dark:border-separatorDark min-[450px]:mb-5' />
 				</div>
 			}
 			open={open}
@@ -56,6 +66,7 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 				referendumId={onchainId as number}
 				voteType={getVotingTypeFromProposalType(proposalType)}
 				thresholdData={thresholdData}
+				ayeNayAbstainCounts={ayeNayAbstainCounts}
 			/>
 		</Modal>
 	);

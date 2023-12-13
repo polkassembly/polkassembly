@@ -84,7 +84,7 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 		<div className={`${className} relative -mt-7 flex items-end justify-center gap-x-2`}>
 			<div className='mb-10 flex flex-col justify-center'>
 				<span className='text-[20px] font-semibold leading-6 text-[#2ED47A] dark:text-[#64A057]'>{isAyeNaN ? 50 : ayePercent.toFixed(1)}%</span>
-				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium dark:text-blue-dark-medium'>Aye</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Aye</span>
 			</div>
 			{/* {
 				turnoutPercentage?
@@ -98,7 +98,7 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 			} */}
 			<>
 				<PieChart
-					className='w-[60%]'
+					className='w-[47%] xl:w-[60%]'
 					center={[50, 75]}
 					startAngle={-180}
 					lengthAngle={180}
@@ -112,7 +112,7 @@ const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, a
 			</>
 			<div className='mb-10 flex flex-col justify-center'>
 				<span className='text-[20px] font-semibold leading-6 text-[#E84865] dark:text-[#BD2020]'>{isNayNaN ? 50 : nayPercent.toFixed(1)}%</span>
-				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium dark:text-blue-dark-medium'>Nay</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.01em] text-[#485F7D] dark:text-blue-dark-medium'>Nay</span>
 			</div>
 		</div>
 	);

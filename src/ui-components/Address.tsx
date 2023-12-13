@@ -63,6 +63,8 @@ interface Props {
 	isVoterAddress?: boolean;
 	disableTooltip?: boolean;
 	showKiltAddress?: boolean;
+	destroyTooltipOnHide?: boolean;
+	inPostHeading?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -94,7 +96,9 @@ const Address = (props: Props) => {
 		ethIdenticonSize,
 		isVoterAddress,
 		disableTooltip = false,
-		showKiltAddress = false
+		showKiltAddress = false,
+		destroyTooltipOnHide = false,
+		inPostHeading
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -263,6 +267,7 @@ const Address = (props: Props) => {
 				arrow
 				color='#fff'
 				overlayClassName={className}
+				destroyTooltipOnHide={destroyTooltipOnHide}
 				title={
 					<QuickView
 						socials={socials}
@@ -275,6 +280,7 @@ const Address = (props: Props) => {
 						polkassemblyUsername={username}
 						imgUrl={imgUrl}
 						setOpenAddressChangeModal={setOpenAddressChangeModal}
+						isKiltNameExists={!!kiltName}
 					/>
 				}
 				open={!disableTooltip ? open : false}
@@ -294,7 +300,7 @@ const Address = (props: Props) => {
 							<Identicon
 								className='image identicon'
 								value={encodedAddr}
-								size={iconSize || displayInline ? 20 : 32}
+								size={iconSize ? iconSize : displayInline ? 20 : 32}
 								theme={'polkadot'}
 							/>
 						))}
@@ -311,13 +317,13 @@ const Address = (props: Props) => {
 										/>
 									))}
 
-								<div className={`flex items-center font-semibold text-bodyBlue   dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
+								<div className={`flex items-center font-semibold text-bodyBlue  dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
 									<div
 										onClick={(e) => handleClick(e)}
 										title={mainDisplay || encodedAddr}
 										className={`flex gap-x-1 ${
-											usernameClassName ? usernameClassName : 'text-sm font-medium text-bodyBlue dark:text-blue-dark-high'
-										} hover:text-bodyBlue dark:text-blue-dark-high`}
+											usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
+										} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
 									>
 										{!!addressPrefix && (
 											<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
@@ -368,7 +374,7 @@ const Address = (props: Props) => {
 						) : (
 							<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>
 								{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-								{showKiltAddress && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+								{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue dark:text-blue-dark-medium'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
 							</div>
 						)}
 					</div>

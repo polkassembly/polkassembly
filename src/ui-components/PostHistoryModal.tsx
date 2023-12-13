@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { diffChars } from 'diff';
 import { Modal, Timeline, TimelineItemProps } from 'antd';
 import { IPostHistory } from '~src/types';
 import styled from 'styled-components';
@@ -14,7 +13,9 @@ import { poppins } from 'pages/_app';
 // import sanitizeMarkdown from '~src/util/sanitizeMarkdown';
 import Markdown from './Markdown';
 import { CloseIcon } from './CustomIcons';
-
+import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
+import { diffChars } from 'diff';
+import { useTheme } from 'next-themes';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -35,10 +36,17 @@ enum EExpandType {
 
 const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
 	const [historyData, setHistoryData] = useState<IHistoryData[]>([]);
+	const { resolvedTheme: theme } = useTheme();
 
 	const items: TimelineItemProps[] = historyData?.map((item, index) => {
 		const date = new Date(item?.created_at);
 		const title = item?.title || noTitle;
+		const currentContent = item && item.content;
+		const previousContent = index < historyData.length - 1 ? historyData[index + 1]?.content : null;
+		const previousContentString = previousContent ? removeSymbols(previousContent) : '';
+		const currentContentString = removeSymbols(currentContent);
+		const difference = previousContent ? GenerateDiffHtml(previousContentString, currentContentString) : currentContent;
+
 		// const difference = historyData[index+1] && historyData[index+1]?.content && item?.expanded ? diffChars(sanitizeMarkdown(historyData[index+1]?.content),  sanitizeMarkdown(item?.content)) : [];
 
 		return {
@@ -81,7 +89,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 									{diffChars(historyData[index + 1]?.title, item?.title)?.map((text, idx) => (
 										<span
 											key={idx}
-											className={`${text?.removed && 'bg-[#fff3b3]'}`}
+											className={`${text.added ? (theme === 'light' ? 'added' : 'added-dark') : ''} ${text.removed ? (theme === 'light' ? 'removed' : 'removed-dark') : ''}`}
 										>
 											{text.value}
 										</span>
@@ -98,7 +106,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 						{/* {historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content} */}
 						<Markdown
 							className='text-sm'
-							md={!item?.expandedContent && item?.content.length > 100 ? `${item?.content.slice(0, 100)}...` : item?.content}
+							md={!item?.expandedContent && item?.content.length > 100 ? `${difference.slice(0, 100)}...` : difference}
 						/>
 					</div>
 					{item?.content.length > 100 && (
@@ -183,6 +191,28 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 	);
 };
 export default styled(PostHistoryModal)`
+	.added {
+		background-color: var(--ayeGreenColor);
+		margin-right: 1.5px;
+		color: white;
+	}
+
+	.removed {
+		background-color: var(--nayRedColor);
+		text-decoration: line-through;
+		color: white;
+	}
+	.added-dark {
+		background-color: var(--ayeDarkGreenColor);
+		margin-right: 1.5px;
+		color: white;
+	}
+
+	.removed-dark {
+		background-color: var(--nayDarkRedColor);
+		text-decoration: line-through;
+		color: white;
+	}
 	.closeIcon .ant-modal-close-x {
 		margin-top: 4px;
 	}

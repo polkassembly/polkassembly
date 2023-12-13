@@ -8,6 +8,7 @@ import DashboardTrackListing from './TracksListing';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import { Skeleton } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -16,6 +17,8 @@ import { useTheme } from 'next-themes';
 interface Props {
 	className?: string;
 }
+
+export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	loading: () => <Skeleton.Avatar active />,

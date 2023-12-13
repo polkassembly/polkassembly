@@ -15,7 +15,7 @@ const BigToggleButton = () => {
 	const currentUser = useUserDetailsSelector();
 
 	return (
-		<div className='flex w-full items-center justify-center'>
+		<div className='mb-4 flex w-full items-center justify-center'>
 			<button
 				onClick={(e) => {
 					e.preventDefault();

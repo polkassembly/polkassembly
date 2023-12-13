@@ -29,11 +29,12 @@ import Balance from '~src/components/Balance';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
-import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
+import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 
 const ZERO_BN = new BN(0);
 
@@ -330,11 +331,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			{!open && !setOpen && (
 				<Button
 					onClick={() => {
-						network === 'kusama' ? router.push('/delegation') : setDefaultOpen(true);
+						delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
 					}}
-					className='flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary p-5 text-sm font-medium text-white'
+					className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-transparent px-3 py-5 text-sm font-medium text-pink_primary'
 				>
-					<DelegateProfileWhiteIcon className='mr-2' />
+					<DelegatedProfileIcon className='mr-2' />
 					<span>Delegate</span>
 				</Button>
 			)}
@@ -366,7 +367,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						<Button
 							htmlType='submit'
 							key='submit'
-							className={`h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary
+							className={`h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary
 							${
 								(!form.getFieldValue('targetAddress') ||
 									!delegationDashboardAddress ||
@@ -411,9 +412,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px]'
+										className='mb-4 h-10 rounded-[4px] dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 										showIcon
-										message='Insufficient balance'
+										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>
 								)}
 								<div className=''>
@@ -457,9 +458,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 								{addressAlert && (
 									<Alert
-										className='mb mt-2 rounded-[4px]'
+										className='mb mt-2 rounded-[4px] dark:border-[#125798] dark:bg-[#05263F]'
 										showIcon
-										message='The substrate address has been changed to Kusama address.'
+										message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
 									/>
 								)}
 
@@ -596,8 +597,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							<Alert
 								showIcon
 								type='info'
-								className='mb-4 rounded-[4px]'
-								message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}
+								className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								message={
+									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
+								}
 							/>
 						)}
 					</div>
@@ -672,5 +675,11 @@ export default styled(DelegateModal)`
 		border-radius: 8px !important;
 		border: none !important;
 		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
+	}
+
+	@media (max-width: 365px) and (min-width: 320px) {
+		.delegation-buttons {
+			padding: 12px 0px !important;
+		}
 	}
 `;

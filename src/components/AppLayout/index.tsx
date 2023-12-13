@@ -71,6 +71,7 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
+import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -249,7 +250,7 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { username, picture, loginAddress } = useUserDetailsSelector();
+	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -259,6 +260,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
+	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
@@ -318,6 +320,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
 				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 				setIsGood(Boolean(isGood));
+				setIsIdentitySet(!!(info.identity.display && !info?.identity?.judgements?.length));
 				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
 			})
 			.then((unsub) => {
@@ -598,6 +601,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			'tracksHeading',
 			null
 		),
+		getSiderMenuItem('All', '/all-posts', <OverviewIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.governanceItems
@@ -628,20 +632,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network)) {
-		if (network !== 'picasso') {
-			let items = [...gov2TrackItems.treasuryItems];
-			if (isOpenGovSupported(network)) {
-				items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
-			}
-			gov2Items.splice(
-				-1,
-				0,
-				getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
-			);
-		} else {
-			gov2Items.splice(gov2Items.length - 2, 1);
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+		let items = [...gov2TrackItems.treasuryItems];
+		if (isOpenGovSupported(network)) {
+			items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
 		}
+		gov2Items.splice(
+			-1,
+			0,
+			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+		);
 	}
 
 	if (isFellowshipSupported(network)) {
@@ -654,24 +654,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network)) {
-		if (network !== 'picasso') {
-			gov2CollapsedItems.splice(
-				-1,
-				0,
-				getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
-					...gov2TrackItems.treasuryItems
-				])
-			);
-		} else {
-			gov2CollapsedItems.splice(gov2CollapsedItems.length - 2, 1);
-		}
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+		gov2CollapsedItems.splice(
+			-1,
+			0,
+			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+				...gov2TrackItems.treasuryItems
+			])
+		);
 	}
 
 	const handleMenuClick = (menuItem: any) => {
 		if (['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
-		setSidedrawer(false);
+		{
+			isMobile && setSidedrawer(false);
+		}
 	};
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -740,6 +738,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
+			{!!userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+				<SetIdentityNudge
+					handleSetIdentityClick={handleIdentityButtonClick}
+					isIdentitySet={isIdentitySet}
+				/>
+			)}
 			<Layout hasSider>
 				<Sider
 					trigger={null}
@@ -776,9 +780,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						left: 0
 					}}
 					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
-					footer={<BigToggleButton />}
+					// footer={<BigToggleButton />}
 				>
-					<div className='flex h-full flex-col justify-between'>
+					<div
+						className='flex h-full flex-col justify-between'
+						onMouseLeave={() => setSidedrawer(false)}
+					>
 						<Menu
 							theme={theme}
 							mode='inline'
@@ -787,8 +794,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							items={sidebarItems}
 							onClick={handleMenuClick}
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
-							onMouseLeave={() => setSidedrawer(false)}
 						/>
+						<BigToggleButton />
 					</div>
 				</Drawer>
 				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (

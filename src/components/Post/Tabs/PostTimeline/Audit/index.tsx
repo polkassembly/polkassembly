@@ -73,11 +73,11 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 			{
 				<>
 					{pdfCount || videoData.length ? (
-						<div className='mt-3 flex items-center gap-x-[11px] rounded-[6px] bg-[#E6F4FF] p-[15px]'>
+						<div className='mt-3 flex items-center gap-x-[11px] rounded-[6px] bg-[#E6F4FF] p-[15px] dark:bg-section-dark-background'>
 							<span className='flex items-center justify-center'>
 								<CautionSVG />
 							</span>
-							<p className='m-0 text-sm font-normal leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
+							<p className='m-0 text-sm font-normal leading-[21px] text-blue-light-high dark:text-blue-dark-high '>
 								Reports provided here represent the auditor&apos;s views and are not endorsed by Polkassembly
 							</p>
 						</div>
@@ -93,7 +93,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 							{pdfCount !== 0 && (
 								<Radio
 									value='reports'
-									className={`${selectedType === 'reports' ? 'bg-pink-50' : 'bg-transparent'} flex items-center rounded-full px-4 py-[7px]`}
+									className='flex items-center rounded-full bg-pink-50 px-4 py-[7px] dark:bg-section-dark-background'
 								>
 									<div className='flex items-center'>
 										<PdfIcon className='bg-cover bg-center bg-no-repeat' />
@@ -106,7 +106,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 							{videoData.length !== 0 && (
 								<Radio
 									value='videos'
-									className={`${selectedType === 'videos' ? 'bg-pink-50' : 'bg-transparent'} flex items-center rounded-full px-4 py-[7px]`}
+									className='flex items-center rounded-full bg-pink-50 px-4 py-[7px] dark:bg-section-dark-background'
 								>
 									<div className='flex items-center'>
 										<YouTubeIcon className='bg-cover bg-center bg-no-repeat' />

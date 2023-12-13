@@ -2,10 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Avatar } from 'antd';
+import { Tooltip, Avatar } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Tooltip } from 'antd';
 import InfoIcon from '~assets/info.svg';
 
 interface Props {
@@ -72,7 +71,7 @@ const PredictionCard = ({ predictCount, yesCount, endDate }: Props) => {
 					</Tooltip>
 				</h1>
 				<a
-					className='font-mediums inline-block rounded-2xl border-2 border-[#F02A4E] bg-white/40 px-3 py-1 text-xs text-[#F02A4E]'
+					className='font-mediums inline-block rounded-2xl border border-solid border-[#F02A4E] bg-white/40 px-3 py-1 text-xs text-[#F02A4E]'
 					href='https://app.zeitgeist.pm/markets/307'
 					target='_blank'
 					rel='noreferrer'
@@ -98,8 +97,26 @@ const PredictionCard = ({ predictCount, yesCount, endDate }: Props) => {
 				</div>
 				<p className='flex items-center gap-1 text-xs font-medium text-[#485F7D]'>
 					<Avatar.Group size='small'>
-						<Avatar style={{ backgroundColor: '#87d068', border: 'none', height: 20, width: 20 }}>G</Avatar>
-						<Avatar style={{ backgroundColor: '#1677ff', border: 'none', height: 20, width: 20 }}>+{predictCount}</Avatar>
+						<Avatar
+							style={{
+								backgroundImage: 'url(/assets/icons/avatars/avatar-eth.png)',
+								backgroundRepeat: 'no-repeat',
+								backgroundSize: 'cover',
+								border: '1px solid #fff',
+								height: 20,
+								width: 20
+							}}
+						></Avatar>
+						<Avatar
+							style={{
+								backgroundImage: 'url(/assets/icons/avatars/avatar-polkadot.png)',
+								backgroundRepeat: 'no-repeat',
+								backgroundSize: 'cover',
+								border: '1px solid #fff',
+								height: 20,
+								width: 20
+							}}
+						></Avatar>
 					</Avatar.Group>
 					{predictCount} predictions
 				</p>

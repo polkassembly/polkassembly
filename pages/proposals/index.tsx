@@ -85,7 +85,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 				desc='Discover and review the latest proposals for managing and allocating our treasury funds, and have your voice heard in the decision-making process using Polkassembly.'
 			/>
 			<div className='mt-3 flex items-center'>
-				<ProposalsIconListing className='-mt-3.5 text-lightBlue dark:text-icon-dark-inactive' />
+				<ProposalsIconListing className='-mt-3.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Proposals</h1>
 			</div>
 

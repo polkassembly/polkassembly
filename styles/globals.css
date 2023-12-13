@@ -144,6 +144,10 @@ code {
   font-size: sm;
 }
 
+iframe {
+  max-width: 100%;
+}
+
 p > a {
   color: var(--pink_primary);
 }
@@ -819,5 +823,11 @@ z-index: 1050 !important;
 
   .details-container{
     margin-top: 4px !important;
+  }
+}
+
+@media (max-width: 365px) and (min-width: 320px) {
+  .delegation-buttons {
+    padding: 16px 6px !important;
   }
 }

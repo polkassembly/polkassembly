@@ -29,11 +29,12 @@ import Balance from '~src/components/Balance';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
-import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
+import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 
 const ZERO_BN = new BN(0);
 
@@ -330,11 +331,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			{!open && !setOpen && (
 				<Button
 					onClick={() => {
-						network === 'kusama' ? router.push('/delegation') : setDefaultOpen(true);
+						delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
 					}}
-					className='flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary p-5 text-sm font-medium text-white'
+					className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-transparent px-3 py-5 text-sm font-medium text-pink_primary'
 				>
-					<DelegateProfileWhiteIcon className='mr-2' />
+					<DelegatedProfileIcon className='mr-2' />
 					<span>Delegate</span>
 				</Button>
 			)}
@@ -674,5 +675,11 @@ export default styled(DelegateModal)`
 		border-radius: 8px !important;
 		border: none !important;
 		box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
+	}
+
+	@media (max-width: 365px) and (min-width: 320px) {
+		.delegation-buttons {
+			padding: 12px 0px !important;
+		}
 	}
 `;

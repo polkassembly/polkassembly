@@ -57,8 +57,9 @@ function App({ Component, pageProps }: AppProps) {
 
 	useEffect(() => {
 		const networkStr = getNetwork();
-		if (!global?.window || !chainProperties[networkStr].gTag) return;
 		setNetwork(networkStr);
+
+		if (!global?.window || !chainProperties[networkStr].gTag) return;
 
 		if (!window.GA_INITIALIZED) {
 			initGA(networkStr);

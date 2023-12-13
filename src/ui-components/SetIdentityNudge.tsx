@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState, useEffect } from 'react';
+import { useApiContext } from '~src/context';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ShieldUserIcon from '~assets/icons/shield-user-icon.svg';
 
@@ -11,9 +12,12 @@ interface Props {
 }
 
 const SetIdentityNudge = ({ isIdentitySet, handleSetIdentityClick }: Props) => {
+	const { api, apiReady } = useApiContext();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	useEffect(() => {
+		if (!api || !apiReady) return;
+
 		const nudgeStatus = localStorage.getItem('identityNudgeStatus');
 
 		if (nudgeStatus !== 'viewed') {
@@ -21,7 +25,7 @@ const SetIdentityNudge = ({ isIdentitySet, handleSetIdentityClick }: Props) => {
 		} else {
 			setIsOpen(false);
 		}
-	}, []);
+	}, [api, apiReady]);
 
 	function handleNudgeClose() {
 		localStorage.setItem('identityNudgeStatus', 'viewed');

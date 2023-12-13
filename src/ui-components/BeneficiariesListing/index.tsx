@@ -37,6 +37,7 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 									<Beneficiary
 										key={index}
 										beneficiary={beneficiary}
+										inPostHeading={inPostHeading}
 									/>
 								))}
 							</div>

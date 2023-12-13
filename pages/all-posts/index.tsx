@@ -132,7 +132,7 @@ const OverviewListing: FC<IOverviewListingProps> = (props) => {
 				<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>All Referenda</h2>
 			</div>
 			<TrackListingCard
-				className='mt-12'
+				className='mt-8'
 				posts={posts}
 				trackName='All Tracks'
 			/>

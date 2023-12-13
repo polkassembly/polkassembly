@@ -259,9 +259,7 @@ const QuickView = ({
 												key={index}
 											>
 												<SocialLink
-													className={`flex h-[24px] w-[24px] items-center justify-center rounded-full text-base hover:text-[#576D8B] ${
-														isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'
-													}`}
+													className={`flex h-6 w-6 items-center justify-center rounded-full text-base hover:text-[#576D8B] ${isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
 													link={link as string}
 													type={social}
 													iconClassName={`text-sm ${isVerified ? 'text-white' : 'text-[#96A4B6]'}`}
@@ -280,7 +278,7 @@ const QuickView = ({
 										}}
 										href={identity?.web}
 										title={identity?.web}
-										className={`flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'text-[#96A4B6]'}`}
+										className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-black'}`}
 									>
 										<WebIcon />
 									</Link>
@@ -295,7 +293,7 @@ const QuickView = ({
 										}}
 										title={`https://polkaverse.com/accounts/${address}`}
 										href={`https://polkaverse.com/accounts/${address}`}
-										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-xl'
+										className='flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-xl'
 									>
 										<PolkaverseIcon />
 									</Link>

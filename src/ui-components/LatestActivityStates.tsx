@@ -111,7 +111,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						</span>
 						<Divider
 							type='vertical'
-							className='border-l-1 mt-1 border-lightBlue text-xs font-normal font-normal dark:border-icon-dark-inactive'
+							className='border-l-1 mt-1 border-lightBlue text-xs font-normal dark:border-icon-dark-inactive'
 						/>
 						<span className='mx-1.5 text-xs font-normal text-lightBlue dark:text-icon-dark-inactive'>
 							{rowData.created_at

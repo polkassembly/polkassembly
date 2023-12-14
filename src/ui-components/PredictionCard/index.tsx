@@ -13,6 +13,7 @@ const Container = styled.div`
 	width: 100%;
 	height: auto;
 	padding: 20px;
+	margin-bottom: 20px;
 	background: linear-gradient(92deg, #ff9494 2.08%, #ffc471 97.09%);
 	color: #243a57;
 	display: flex;
@@ -37,10 +38,12 @@ const Container = styled.div`
 	svg {
 		color: #243a57;
 	}
-	/* @media (max-width: 500px) {
-		bottom: 100px;
-		right: 26px;
-	} */
+	@media (min-width: 1280px) {
+		position: fixed;
+		bottom: 80px;
+		right: auto;
+		z-index: 999;
+	}
 `;
 
 const PredictionCard = () => {

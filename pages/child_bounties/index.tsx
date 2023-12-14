@@ -54,7 +54,7 @@ interface IChildBountiesProps {
 const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	const { data, error, network } = props;
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
-
+	const [statusItem, setStatusItem] = useState([]);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -100,10 +100,10 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center justify-between'>
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
-						<FilteredTags />
+						<FilteredTags statusItem={statusItem} />
 					</div>
 					<div className='mb-5 flex items-center gap-x-2 '>
-						<FilterByStatus />
+						<FilterByStatus setStatusItem={setStatusItem} />
 						<FilterByTags />
 						<SortByDropdownComponent
 							sortBy={sortBy}

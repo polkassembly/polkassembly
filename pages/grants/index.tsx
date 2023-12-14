@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
@@ -21,6 +20,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -96,12 +96,14 @@ const Grants: FC<IGrantsProps> = (props) => {
 			/>
 			<div className='flex w-full flex-col sm:flex-row sm:items-center'>
 				<h1 className='dashboard-heading dark:text-blue-dark-hight mb-4 flex-1 sm:mb-0'>Grants Discussion</h1>
-				<Button
+				<CustomButton
+					text='New Grant post'
 					onClick={handleClick}
-					className='flex h-[59px] w-[174px] cursor-pointer items-center justify-center rounded-[4px] border-none bg-pink_primary px-6 py-4 text-lg font-medium leading-[27px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none'
-				>
-					New Grant post
-				</Button>
+					height={59}
+					width={174}
+					variant='primary'
+					fontSize='lg'
+				/>
 			</div>
 
 			{/* Intro and Create Post Button */}

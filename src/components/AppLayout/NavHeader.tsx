@@ -6,7 +6,7 @@
 import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Skeleton, Space } from 'antd';
+import { Divider, Skeleton, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
@@ -44,6 +44,7 @@ import { trackEvent } from 'analytics';
 import StakeIcon from '~assets/stake-icon.svg';
 import DelegateIcon from '~assets/delegate-icon.svg';
 import { delegationSupportedNetworks } from '../DelegationDashboard';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -335,16 +336,17 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
 						{!id ? (
 							<div className='flex items-center lg:gap-x-2'>
-								<Button
-									id='login-btn'
-									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white dark:border-none md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
+								<CustomButton
+									variant='primary'
+									height={22}
+									width={60}
+									text='Login'
+									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
 										setSidedrawer(false);
 										setLoginOpen(true);
 									}}
-								>
-									Login
-								</Button>
+								/>
 							</div>
 						) : (
 							<AuthDropdown>

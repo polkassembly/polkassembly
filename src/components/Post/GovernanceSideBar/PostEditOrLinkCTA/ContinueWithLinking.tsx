@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Form, Input, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart';
 import React, { FC, useState } from 'react';
@@ -13,6 +13,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import LinkPostPreview from './LinkPostPreview';
 import { useNetworkSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface IContinueWithLinking {
 	setLinkingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -180,16 +181,15 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 					key='save'
 					className='flex items-center justify-end'
 				>
-					<Button
+					<CustomButton
+						variant='primary'
 						loading={loading}
 						disabled={formDisabled}
 						onClick={() => form.submit()}
-						className={`'border-none capitalize' rounded-[4px] bg-pink_primary px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-white outline-none dark:border-none ${
-							formDisabled ? 'cursor-not-allowed' : 'cursor-pointer dark:border-none'
-						}`}
+						className={`px-4 py-1 capitalize ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer dark:border-none'}`}
 					>
 						{url && prevUrl === url ? 'Save' : 'Preview'}
-					</Button>
+					</CustomButton>
 				</div>
 			]}
 			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'

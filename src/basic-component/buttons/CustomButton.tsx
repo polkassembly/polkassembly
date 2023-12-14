@@ -12,7 +12,7 @@ interface ICustomButton {
 	fontSize?: string;
 	className?: string;
 	onClick?: (pre?: any) => void;
-	variant?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
+	variant: 'primary' | 'default' | 'dashed' | 'link' | 'text';
 	icon?: any;
 	width?: number;
 	height?: number;
@@ -23,8 +23,10 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 		<div>
 			<ANTDButton
 				className={`flex items-center justify-center gap-0 rounded-md ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium ${
-					variant === 'primary' ? 'hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary' : 'border border-pink_primary bg-transparent text-pink_primary'
-				} ${`w-[${width}px]`} ${`h-[${height}px]`} ${className} `}
+					variant === 'primary'
+						? 'hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary'
+						: 'border border-pink_primary bg-transparent text-pink_primary dark:text-blue-dark-helper'
+				} ${`w-[${width}px]`} ${`h-[${height ? height : '40'}px]`} ${className} `}
 				disabled={disabled}
 				type={variant}
 				loading={loading}

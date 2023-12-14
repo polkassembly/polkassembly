@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Form, Input, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import React, { FC, useEffect, useState } from 'react';
 import ContentForm from '~src/components/ContentForm';
@@ -17,6 +17,7 @@ import LinkPostPreview from './LinkPostPreview';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface ILinkingAndEditingProps {
 	setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -231,7 +232,8 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					key='save'
 					className='flex items-center justify-end'
 				>
-					<Button
+					<CustomButton
+						variant='primary'
 						loading={loading}
 						disabled={formDisabled}
 						onClick={() => {
@@ -243,12 +245,10 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								onFinish({ updatedContent: editPostValue.content, updatedTitle: editPostValue.title, url });
 							}
 						}}
-						className={`'border-none capitalize' rounded-[4px] bg-pink_primary px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-white outline-none ${
-							formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-						}`}
+						className={`px-4 py-1 capitalize ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
 					>
 						{prevUrl === url || content !== editPostValue.content || title !== editPostValue.title ? 'Save' : 'Preview'}
-					</Button>
+					</CustomButton>
 				</div>
 			]}
 			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
@@ -315,18 +315,16 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							<h3 className='mb-2 text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Linked Discussion</h3>
 							<LinkPostPreview post={post} />
 							<div className='my-2 flex items-center justify-end'>
-								<Button
+								<CustomButton
+									variant='primary'
+									text='Unlink'
 									loading={loading}
 									disabled={formDisabled}
 									onClick={() => {
 										form.submit();
 									}}
-									className={`'border-none capitalize' rounded-[4px] bg-pink_primary px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-white outline-none ${
-										formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-									}`}
-								>
-									Unlink
-								</Button>
+									className={`px-4 py-1 capitalize ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+								/>
 							</div>
 						</article>
 					) : (

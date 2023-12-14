@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Divider } from 'antd';
+import { Divider } from 'antd';
 
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
@@ -25,6 +25,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	proposal: IPostListing;
@@ -184,15 +185,14 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							)}
 						</div>
 					</div>
-					<Button
-						className={`mt-2 flex justify-center gap-2 border-none bg-white shadow-none dark:bg-section-dark-overlay ${
-							status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'
-						}`}
+					<CustomButton
+						className={`mt-2 gap-2 ${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'}`}
 						disabled={status.includes(ETrackDelegationStatus.Delegated)}
+						variant='primary'
 					>
 						<VoteIcon />
 						<span className='text-sm font-medium text-pink_primary'>Cast Vote</span>
-					</Button>
+					</CustomButton>
 				</div>
 				{(votingData && !status.includes(ETrackDelegationStatus.Undelegated) && isAye) || isNay || isAbstain ? (
 					<div

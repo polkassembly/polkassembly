@@ -24,6 +24,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	delegate: IDelegate;
@@ -138,6 +139,16 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<DelegatesProfileIcon />
 					<span className='text-sm font-medium'>Delegate</span>
 				</Button>
+				<CustomButton
+					disabled={disabled}
+					onClick={handleClick}
+					height={40}
+					variant='default'
+					className={`ml-1 mt-[1px] gap-2 px-2 ${disabled && 'opacity-50'}`}
+				>
+					<DelegatesProfileIcon />
+					<span className='text-sm font-medium'>Delegate</span>
+				</CustomButton>
 			</div>
 
 			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>

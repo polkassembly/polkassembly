@@ -5,7 +5,7 @@
 import { DownOutlined, EditOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import type { DatePickerProps } from 'antd';
-import { Button, DatePicker, Form, Modal, Space } from 'antd';
+import { DatePicker, Form, Modal, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -18,6 +18,7 @@ import styled from 'styled-components';
 import { ChallengeMessage } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	canEdit?: boolean | '' | undefined;
@@ -150,12 +151,13 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 	return (
 		<>
 			{canEdit && !isUpdate ? (
-				<Button
-					className='h-[60px] w-full  rounded-md bg-pink_primary text-white transition-colors duration-300 hover:bg-pink_secondary'
+				<CustomButton
+					text='Set Deadline Date'
 					onClick={() => setModalOpen(true)}
-				>
-					Set Deadline Date
-				</Button>
+					height={60}
+					className='w-full transition-colors duration-300'
+					variant='primary'
+				/>
 			) : canEdit && isUpdate ? (
 				<div className='transition:colors duration:500 edit-icon-wrapper flex h-[60px] w-full items-center justify-center rounded-md bg-white drop-shadow-md dark:bg-section-dark-overlay'>
 					<div className='text-center text-[18px] font-medium text-sidebarBlue'>
@@ -185,21 +187,23 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 				title={'Set Deadline Date'}
 				centered
 				footer={[
-					<Button
+					<CustomButton
+						text='Close'
 						key='close'
 						onClick={() => setModalOpen(false)}
-					>
-						Close
-					</Button>,
-					<Button
+						height={40}
+						variant='default'
+					/>,
+					<CustomButton
+						text='Save'
 						key='submit'
-						className='rounded-md bg-pink_primary  text-white transition-colors duration-300 hover:bg-pink_secondary'
 						onClick={handleSave}
 						loading={loading}
 						disabled={loading}
-					>
-						Save
-					</Button>
+						height={40}
+						variant='primary'
+						className='transition-colors duration-300'
+					/>
 				]}
 				onCancel={() => setModalOpen(false)}
 			>

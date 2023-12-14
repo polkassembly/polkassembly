@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Button, Form } from 'antd';
+import { Alert, Form } from 'antd';
 import BN from 'bn.js';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -18,6 +18,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -128,7 +129,11 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 			<Form.Item className='button-container'>
 				<div>Only council members can endorse tips.</div>
 				<br />
-				<Button onClick={getAccounts}>Endorse</Button>
+				<CustomButton
+					onClick={getAccounts}
+					text='Endorse'
+					variant='primary'
+				/>
 			</Form.Item>
 		</Form>
 	);
@@ -158,12 +163,12 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 				placeholder={'123'}
 				onChange={onValueChange}
 			/>
-			<Button
-				disabled={!apiReady}
+			<CustomButton
+				text='Endorse'
 				onClick={handleEndorse}
-			>
-				Endorse
-			</Button>
+				variant='primary'
+				disabled={!apiReady}
+			/>
 		</div>
 	);
 
@@ -185,12 +190,11 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 					</div>
 				}
 			/>
-			<Button
-				className='dark:bg-section-dark-overlay dark:text-white'
+			<CustomButton
+				variant='primary'
+				text='Let me try still'
 				onClick={() => setForceEndorse(true)}
-			>
-				Let me try still.
-			</Button>
+			/>
 		</>
 	);
 

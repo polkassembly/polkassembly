@@ -798,10 +798,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						<BigToggleButton />
 					</div>
 				</Drawer>
-				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
+				{[AllNetworks.PICASSO].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
-						<OpenGovHeaderBanner network={'moonbeam'} />
+						<OpenGovHeaderBanner network={network} />
 						<div className='flex flex-row'>
 							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 							<CustomContent

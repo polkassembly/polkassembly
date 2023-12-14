@@ -56,20 +56,22 @@ const PredictionCard = () => {
 		async function getPredictionsData() {
 			const data = await fetch('https://processor.rpc-0.zeitgeist.pm/graphql', {
 				body: JSON.stringify({
-					query: `query MarketDetails($marketId: Int = 307) {
-                    markets(where: {marketId_eq: $marketId}) {
-                        period {
-                        end
-                        }
-                        assets {
-                        assetId
-                        price
-                        }
-                    }
-                    marketStats(marketId: [$marketId]) {
-                        participants
-                    }
-                    }`
+					query: `
+						query MarketDetails($marketId: Int = 307) {
+							markets(where: {marketId_eq: $marketId}) {
+								period {
+									end
+								}
+								assets {
+									assetId
+									price
+								}
+							}
+							marketStats(marketId: [$marketId]) {
+								participants
+							}
+						}
+					`
 				}),
 				headers: {
 					'Content-Type': 'application/json'

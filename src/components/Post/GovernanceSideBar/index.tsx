@@ -757,6 +757,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
 					{!isDelegated && (
 						<CustomButton
+							variant='primary'
 							text='Remove Vote'
 							loading={loading}
 							onClick={handleRemoveVote}
@@ -846,6 +847,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				<div className='mb-1.5 flex items-center justify-between'>
 					<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
 					<CustomButton
+						variant='primary'
 						text='Remove Vote'
 						loading={loading}
 						onClick={handleRemoveVote}

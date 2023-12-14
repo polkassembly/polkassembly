@@ -314,6 +314,7 @@ const WriteProposal = ({
 						<CustomButton
 							htmlType='submit'
 							text='Next'
+							variant='primary'
 							height={40}
 							width={155}
 							className={`${(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50'}`}

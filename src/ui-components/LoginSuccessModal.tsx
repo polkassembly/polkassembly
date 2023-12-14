@@ -3,9 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import AuthForm from 'src/ui-components/AuthForm';
-import { Alert, Button, Divider, Form, Input } from 'antd';
-import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 import { Alert, Button, Divider, Form } from 'antd';
+// import ConfirmationIcon from '~assets/icons/Confirmation.svg';
+// import { Alert, Button, Divider, Form } from 'antd';
 // import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';

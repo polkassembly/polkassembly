@@ -3,12 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { AuditOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Select } from 'antd';
+import { Button, Form, Modal, Select } from 'antd';
 import { ICreatePollResponse } from 'pages/api/v1/auth/actions/createPoll';
 import React, { FC, useState } from 'react';
 import { IOptionPoll, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
+import Input from '~src/basic-components/Input';
 
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';

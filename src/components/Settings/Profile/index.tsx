@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Button, Form, Input, Row } from 'antd';
+import { Alert, Button, Form, Row } from 'antd';
 import { Rule } from 'antd/lib/form';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -18,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Header from '../Header';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import Input from '~src/basic-components/Input';
 
 interface IPasswordProps {
 	name: string;
@@ -48,7 +49,8 @@ const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) =>
 				name={name}
 				rules={rules}
 			>
-				<Input.Password
+				<Input
+					type='password'
 					onChange={onChange}
 					placeholder={placeholder}
 					className='rounded-md border-grey_border px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] md:min-w-[250px]'

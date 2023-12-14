@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Form, Input } from 'antd';
+import { Form } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -15,6 +15,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import Image from 'next/image';
+import Input from '~src/basic-components/Input';
 
 const ZERO_BN = new BN(0);
 

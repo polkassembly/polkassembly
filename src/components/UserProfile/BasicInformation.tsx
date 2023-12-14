@@ -3,11 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Alert, Button, Divider, Input, Skeleton, Tag } from 'antd';
+import { Alert, Button, Divider, Skeleton, Tag } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ProfileDetails } from '~src/auth/types';
+import Input from '~src/basic-components/Input';
+import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
@@ -123,6 +125,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						>
 							Job Title
 						</label>
+						{/* Input Component */}
 						<Input
 							id='title'
 							value={profile?.title}
@@ -144,6 +147,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					</article>
 					<article className='mt-4 cursor-pointer text-sm text-[#485F7D] dark:text-blue-dark-medium'>
 						<label className='mb-0 text-sm font-medium text-[#485F7D] dark:text-blue-dark-medium'>Username</label>
+						{/* Input Component */}
 						<Input
 							className='h-10 rounded-[4px] border border-solid border-[#d2d8e0] px-[14px] py-1 text-sm text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							placeholder='eg. John'
@@ -164,7 +168,8 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						>
 							Bio
 						</label>
-						<Input.TextArea
+						{/* Input Component */}
+						<InputTextarea
 							id='bio'
 							value={profile?.bio}
 							placeholder='eg. I am a Web Developer'
@@ -195,6 +200,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							text='Badges indicate individual successes, abilities, skills and/or interests'
 						/>
 						<div className='flex items-center gap-x-2'>
+							{/* Input Component */}
 							<Input
 								id='badges'
 								value={newBadge}

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
+import { Alert, Button, Form, FormInstance, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
 import { ISteps } from '.';
@@ -15,6 +15,7 @@ import _ from 'lodash';
 import styled from 'styled-components';
 import ContentForm from '../ContentForm';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	isDiscussionLinked: boolean | null;

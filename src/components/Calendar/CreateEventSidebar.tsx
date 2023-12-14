@@ -6,7 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import type { DatePickerProps } from 'antd';
 import { RadioChangeEvent } from 'antd';
-import { Button, DatePicker, Form, Input, Radio } from 'antd';
+import { Button, DatePicker, Form, Radio } from 'antd';
 import { dayjs } from 'dayjs-init';
 import React, { useState } from 'react';
 import SidebarRight from 'src/components/SidebarRight';
@@ -16,6 +16,7 @@ import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;

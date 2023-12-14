@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Input, Skeleton } from 'antd';
+import { Alert, Button, Skeleton } from 'antd';
 
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
@@ -19,6 +19,7 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import Input from '~src/basic-components/Input';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
@@ -113,12 +114,13 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 
 					<div className='flex items-center gap-4'>
 						<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-[#D2D8E0] text-[14px] font-normal text-[#576D8BCC] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'>
+							{/* Input Component */}
 							<Input
 								disabled={disabled}
 								placeholder='Enter address to Delegate vote'
 								onChange={(e) => setAddress(e.target.value)}
 								value={address}
-								className='h-[44px] border-none dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								className='h-[44px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							/>
 
 							<Button

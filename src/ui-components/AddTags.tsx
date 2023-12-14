@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { InputRef, MenuProps, Tag, Input, Dropdown } from 'antd';
+import { InputRef, MenuProps, Tag, Dropdown } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { IPostTag } from '~src/types';
 import { PlusOutlined } from '@ant-design/icons';
@@ -12,6 +12,7 @@ import handleFilterResults from '~src/util/handleFilterResults';
 import { useTheme } from 'next-themes';
 import { NoTagFoundIcon } from './CustomIcons';
 import styled from 'styled-components';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	tags: string[];

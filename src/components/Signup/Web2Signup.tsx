@@ -4,7 +4,7 @@
 
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Divider, Form, Input, Modal, Skeleton } from 'antd';
+import { Alert, Button, Divider, Form, Modal, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
@@ -24,6 +24,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { IconSignup } from '~src/ui-components/CustomIcons';
+import Input from '~src/basic-components/Input';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
@@ -240,7 +241,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 										}
 									]}
 								>
-									<Input.Password
+									<Input
+										type='password'
 										onChange={(e) => {
 											setFirstPassword(e.target.value);
 										}}
@@ -272,7 +274,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 										}
 									]}
 								>
-									<Input.Password
+									<Input
+										type='password'
 										onChange={() => setInputPassword(true)}
 										placeholder='Password'
 										className='rounded-md px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'

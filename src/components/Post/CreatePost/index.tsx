@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Form, Input, Switch } from 'antd';
+import { Button, Form, Switch } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
@@ -23,6 +23,7 @@ import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { trackEvent } from 'analytics';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;

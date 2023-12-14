@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Form, Input, Modal, Select, Spin } from 'antd';
+import { Alert, Button, Form, Modal, Select, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
@@ -40,6 +40,7 @@ import DownArrow from '~assets/icons/down-icon.svg';
 import { getKiltDidLinkedAccounts } from '~src/util/kiltDid';
 import { setReceiver } from '~src/redux/Tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import Input from '~src/basic-components/Input';
 
 const ZERO_BN = new BN(0);
 
@@ -451,6 +452,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 
 								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount.add(existentialDeposit)) && (
 									<div className='mt-12'>
+										{/* Input component */}
 										<Input
 											name='remark'
 											value={remark}

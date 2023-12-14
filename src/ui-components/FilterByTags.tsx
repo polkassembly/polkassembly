@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Checkbox, Input, Popover } from 'antd';
+import { Checkbox, Popover } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import useGetFilterByFromUrl from '~src/hooks/useGetFilterbyFromUrl';
@@ -16,6 +16,7 @@ import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { FilterIcon, NoTagFoundIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
 import { useTheme } from 'next-themes';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;
@@ -140,7 +141,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			) : (
 				''
 			)}
-
+			{/* Input Component */}
 			<Input
 				allowClear={{ clearIcon: <ClearIcon /> }}
 				type='search'

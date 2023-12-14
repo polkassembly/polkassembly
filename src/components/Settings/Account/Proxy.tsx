@@ -4,7 +4,7 @@
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider, Form, Input, Modal } from 'antd';
+import { Alert, Button, Divider, Form, Modal } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
@@ -18,6 +18,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChangeResponseType } from '~src/auth/types';
+import Input from '~src/basic-components/Input';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';

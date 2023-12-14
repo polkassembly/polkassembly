@@ -10,7 +10,7 @@ import type { Data, Option } from '@polkadot/types';
 import type { Registration } from '@polkadot/types/interfaces';
 import { u8aToString } from '@polkadot/util';
 import { checkAddress } from '@polkadot/util-crypto';
-import { Button, Form, Input, Modal, Tooltip } from 'antd';
+import { Button, Form, Modal, Tooltip } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
@@ -29,6 +29,7 @@ import EthIdenticon from '~src/ui-components/EthIdenticon';
 import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;

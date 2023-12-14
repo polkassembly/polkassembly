@@ -9,6 +9,7 @@ interface ICustomButton {
 	disabled?: boolean;
 	loading?: boolean;
 	htmlType?: any;
+	fontSize?: string;
 	className?: string;
 	onClick?: (pre?: any) => void;
 	variant?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
@@ -17,11 +18,11 @@ interface ICustomButton {
 	height?: number;
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
-	const { text, disabled, loading, htmlType, className, onClick, variant, icon, width, height } = props;
+	const { text, disabled, loading, htmlType, className, onClick, variant, icon, width, height, fontSize } = props;
 	return (
 		<div>
 			<ANTDButton
-				className={`flex items-center justify-center gap-0 rounded-md text-sm font-medium ${
+				className={`flex items-center justify-center gap-0 rounded-md ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium ${
 					variant === 'primary' ? 'hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary' : 'border border-pink_primary bg-transparent text-pink_primary'
 				} ${`w-[${width}px]`} ${`h-[${height}px]`} ${className} `}
 				disabled={disabled}

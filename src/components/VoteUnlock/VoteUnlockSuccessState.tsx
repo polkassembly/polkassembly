@@ -6,7 +6,7 @@ import BN from 'bn.js';
 import LockVotesList from './LockVotesList';
 import { Empty, Modal } from 'antd';
 import { poppins } from 'pages/_app';
-import UnlockSuccessIcon from '~assets/icons/unlock-success-box.svg';
+// import UnlockSuccessIcon from '~assets/icons/unlock-success-box.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector, useUserUnlockTokensDataSelector } from '~src/redux/selectors';
@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { formatBalance } from '@polkadot/util';
 import { handlePrevData } from '.';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -52,7 +53,11 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, total
 		>
 			<div className='mb-6'>
 				<div className='-mt-[150px] flex items-center justify-center'>
-					<UnlockSuccessIcon />
+					{/* <UnlockSuccessIcon /> */}
+					<ImageIcon
+						src='/assets/icons/unlock-success-box.svg'
+						alt='unlock success box icon'
+					/>
 				</div>
 				<div className='my-4 flex items-center justify-center text-xl font-semibold tracking-[0.15%] dark:text-white'>Tokens unlocked successfully</div>
 				<div className='mb-6 flex items-center justify-center text-2xl font-semibold tracking-[0.15%] text-pink_primary dark:text-blue-dark-helper'>

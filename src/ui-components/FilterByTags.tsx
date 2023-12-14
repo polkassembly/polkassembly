@@ -13,9 +13,10 @@ import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
-import { FilterIcon, NoTagFoundIcon, SearchIcon, TrendingIcon } from './CustomIcons';
+import { NoTagFoundIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
 import { useTheme } from 'next-themes';
+import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 import Input from '~src/basic-components/Input';
 
 interface Props {
@@ -72,6 +73,13 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 				pathname: '',
 				query: {
 					sortBy: router.query.sortBy
+				}
+			});
+		} else if (router.query.proposalStatus) {
+			router.replace({
+				pathname: '',
+				query: {
+					filterBy: router.query.proposalStatus
 				}
 			});
 		} else {
@@ -204,11 +212,9 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 			overlayClassName={`dark:bg-section-dark-overlay dark:rounded-lg dark:text-white ${theme == 'dark' ? '[&>ul]:bg-section-dark-background [&>ul>li]:text-white' : ''}`}
 		>
 			{!isSearch ? (
-				<div className={'mt-[3.5px] flex cursor-pointer items-center text-base font-normal tracking-wide text-pink_primary'}>
-					<span> Filter</span>
-					<span className='ml-2 text-lg'>
-						<FilterIcon />
-					</span>
+				<div className={'flex cursor-pointer items-center font-normal tracking-wide text-bodyBlue'}>
+					<span className='text-xs opacity-70 dark:text-[#96A4B6] dark:opacity-100'>Tags</span>
+					<DropdownGreyIcon className='ml-1' />
 				</div>
 			) : (
 				<div

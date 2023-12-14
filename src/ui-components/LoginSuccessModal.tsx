@@ -3,8 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import AuthForm from 'src/ui-components/AuthForm';
+import { Alert, Button, Divider, Form, Input } from 'antd';
 import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 import { Alert, Button, Divider, Form } from 'antd';
+// import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';
 import { MailIcon, WhiteMailIcon } from '~src/ui-components/CustomIcons';
@@ -19,7 +21,9 @@ import { IAddProfileResponse } from '~src/auth/types';
 import { handleTokenChange } from '~src/services/auth.service';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import ImageIcon from './ImageIcon';
 import Input from '~src/basic-components/Input';
+
 interface Props {
 	// setLoading: (pre: boolean) => void;
 	setLoginOpen?: (pre: boolean) => void;
@@ -128,12 +132,16 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 
 	return (
 		<div>
-			{showSuccessModal && (
+			{!showSuccessModal && (
 				<AuthForm onSubmit={handleOptionalDetails}>
 					<div>
 						<div className='px-8 pb-2 pt-8 dark:bg-section-dark-overlay'>
 							<div className='flex justify-center'>
-								<ConfirmationIcon className='confirm-logo-conatiner absolute -top-[78px]' />
+								{/* <ConfirmationIcon className='confirm-logo-conatiner absolute -top-[78px]' /> */}
+								<ImageIcon
+									src='/assets/icons/Confirmation.svg'
+									alt='confirmation logo'
+								/>
 							</div>
 							<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>You are successfully logged in</p>
 							<div className='flex flex-col gap-y-1'>

@@ -4,7 +4,7 @@
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Listing from '~src/components/Listing';
@@ -16,12 +16,15 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import TipIcon from '~assets/icons/tip-icon.svg';
+// import TipIcon from '~assets/icons/tip-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
+import FilterByStatus from '~src/ui-components/FilterByStatus';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -29,13 +32,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, proposalStatus } = query;
 	const proposalType = ProposalType.TIPS;
 	const { data, error } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
+		proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 		proposalType,
 		sortBy
 	});
@@ -53,6 +57,8 @@ const Tips: FC<ITipsProps> = (props) => {
 	const { data, error, page, network } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
+	const [statusItem, setStatusItem] = useState([]);
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -82,7 +88,12 @@ const Tips: FC<ITipsProps> = (props) => {
 				network={network}
 			/>
 			<div className='mt-3 flex items-center'>
-				<TipIcon className='-mt-3.5' />
+				{/* <TipIcon className='-mt-3.5' /> */}
+				<ImageIcon
+					src='/assets/icons/tip-icon.svg'
+					alt='tip icon'
+					imgClassName='-mt-3.5'
+				/>
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Tips ({count})</h1>
 			</div>
 
@@ -96,9 +107,17 @@ const Tips: FC<ITipsProps> = (props) => {
 			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center justify-between'>
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
-						<FilteredTags />
+						<FilteredTags statusItem={statusItem} />
 					</div>
-					<FilterByTags className='my-6 xs:mx-6 xs:my-2 sm:mr-14' />
+					<div className='mb-5 flex items-center gap-x-2 '>
+						<FilterByStatus setStatusItem={setStatusItem} />
+						<FilterByTags />
+						<SortByDropdownComponent
+							sortBy={sortBy}
+							setSortBy={setSortBy}
+							isUsedInTrackListing={true}
+						/>
+					</div>
 				</div>
 
 				<div>

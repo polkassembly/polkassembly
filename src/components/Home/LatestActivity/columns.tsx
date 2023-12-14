@@ -18,7 +18,9 @@ const Index: any = {
 	dataIndex: 'post_id',
 	fixed: 'left',
 	key: 'index',
-	render: (post_id: any) => <div className='truncate'>{post_id}</div>,
+	render: (post_id: any, data: any) => (
+		<div className='truncate'>{post_id === null ? `${data?.hash.slice(0, 2)}..${data?.hash.slice(data?.hash.length - 2, data?.hash.length)}` : post_id}</div>
+	),
 	title: '#',
 	width: 75
 };
@@ -196,7 +198,36 @@ const tipColumns: ColumnsType<IPostsRowData> = [
 	Status,
 	CreatedAt
 ];
-
+const AdvisoryMotionIndex: any = {
+	dataIndex: 'post_id',
+	fixed: 'left',
+	key: 'index',
+	render: (post_id: any, data: any) => (
+		<div className='truncate'>{post_id === null ? `${data?.hash.slice(0, 2)}..${data?.hash.slice(data?.hash.length - 2, data?.hash.length)}` : post_id}</div>
+	),
+	title: '#',
+	width: 75
+};
+const advisoryMotionColumns: ColumnsType<IPostsRowData> = [
+	AdvisoryMotionIndex,
+	{
+		dataIndex: 'title',
+		fixed: 'left',
+		key: 'title',
+		render: (title) => {
+			return (
+				<>
+					<div className='truncate'>{title === noTitle ? 'Advisory Council Motion' : title}</div>
+				</>
+			);
+		},
+		title: 'Title',
+		width: 350
+	},
+	Creator,
+	Status,
+	CreatedAt
+];
 const offChainColumns: ColumnsType<IPostsRowData> = [
 	Index,
 	{
@@ -236,6 +267,8 @@ export function getColumns(key: 'all' | ProposalType): ColumnsType<IPostsRowData
 		return offChainColumns;
 	} else if ([ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(key)) {
 		return PIPsColumns;
+	} else if ([ProposalType.ADVISORY_COMMITTEE].includes(key)) {
+		return advisoryMotionColumns;
 	}
 	return [];
 }

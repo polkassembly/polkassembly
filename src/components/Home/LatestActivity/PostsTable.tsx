@@ -94,9 +94,9 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 						);
 						const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
 						if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-							window?.open(`/${link}/${rowData.post_id}`, '_blank');
+							window?.open(`/${link}/${rowData.type === 'AdvisoryCommittee' ? (rowData.post_id === null ? rowData.hash : rowData.post_id) : rowData.post_id}`, '_blank');
 						} else {
-							router.push(`/${link}/${rowData.post_id}`);
+							router.push(`/${link}/${rowData.type === 'AdvisoryCommittee' ? (rowData.post_id === null ? rowData.hash : rowData.post_id) : rowData.post_id}`);
 						}
 					}}
 				/>
@@ -111,9 +111,9 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 						);
 						const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
 						if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-							window?.open(`/${link}/${rowData.post_id}`, '_blank');
+							window?.open(`/${link}/${rowData.type === 'AdvisoryCommittee' ? (rowData.post_id === null ? rowData.hash : rowData.post_id) : rowData.post_id}`, '_blank');
 						} else {
-							router.push(`/${link}/${rowData.post_id}`);
+							router.push(`/${link}/${rowData.type === 'AdvisoryCommittee' ? (rowData.post_id === null ? rowData.hash : rowData.post_id) : rowData.post_id}`);
 						}
 					}}
 				/>

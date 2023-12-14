@@ -46,7 +46,7 @@ const Container = styled.div`
 const PredictionCard = () => {
 	const [YesPercentage, setYesPercentage] = useState(0);
 	const [predictCount, setPredictCount] = useState(0);
-	const [shortCount, setShortCount] = useState(0);
+	const [longCount, setLongCount] = useState(0);
 	const [endDate, setEndDate] = useState('');
 
 	useEffect(() => {
@@ -81,7 +81,7 @@ const PredictionCard = () => {
 
 			setEndDate(convertTimestampToDate(timestamp));
 			setPredictCount(data.marketStats[0].participants);
-			setShortCount(data.markets[0].assets[0].price);
+			setLongCount(data.markets[0].assets[1].price);
 		}
 		getPredictionsData();
 	}, []);
@@ -89,14 +89,14 @@ const PredictionCard = () => {
 	function convertTimestampToDate(timestamp: number): string {
 		const date = new Date(timestamp);
 		const day = String(date.getDate()).padStart(2, '0');
-		const month = date.toLocaleString('en-us', { month: 'short' });
+		const month = date.toLocaleString('en-us', { month: 'long' });
 		const year = String(date.getFullYear()).slice(-2);
 		return `${day} ${month} ${year}`;
 	}
 
 	useEffect(() => {
-		setYesPercentage(Math.round((shortCount / 1) * 100));
-	}, [shortCount, predictCount]);
+		setYesPercentage(Math.round((longCount / 1) * 100));
+	}, [longCount, predictCount]);
 
 	return (
 		<Container>
@@ -122,7 +122,7 @@ const PredictionCard = () => {
 			<div className='w-full'>
 				<div className='relative h-5 w-full bg-white/40 transition-all'>
 					<div className='absolute flex h-full w-full items-center justify-between px-3.5 text-xs font-medium text-[#243A57]'>
-						<span>Short</span>
+						<span>Long</span>
 						<span className='transition-all'>{YesPercentage}%</span>
 					</div>
 					<div

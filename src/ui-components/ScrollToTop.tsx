@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useState, useEffect } from 'react';
 import ScrollIcon from '~assets/icons/keyboard-double-arrow-up.svg';
+import { Tooltip } from 'antd';
 const ScrollToTopButton = () => {
 	const [isVisible, setIsVisible] = useState(false);
 
@@ -29,12 +30,14 @@ const ScrollToTopButton = () => {
 	}, []);
 
 	return (
-		<div
-			className={`fixed bottom-8 right-24 cursor-pointer ${isVisible ? '' : 'hidden'}`}
-			onClick={scrollToTop}
-		>
-			<ScrollIcon />
-		</div>
+		<Tooltip title='scroll to top'>
+			<div
+				className={`fixed bottom-8 right-24 cursor-pointer ${isVisible ? '' : 'hidden'}`}
+				onClick={scrollToTop}
+			>
+				<ScrollIcon />
+			</div>
+		</Tooltip>
 	);
 };
 

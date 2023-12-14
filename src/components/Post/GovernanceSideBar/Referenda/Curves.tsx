@@ -105,14 +105,14 @@ const Curves: FC<ICurvesProps> = (props) => {
 							<span className='flex'>
 								<ChartIcon />
 							</span>
-							<p className='m-0'>
+							<p className='m-0 dark:text-white'>
 								Proposal{' '}
 								{canVote ? (
-									<span>
+									<span className='dark:text-white'>
 										is <span className='text-aye_green'>passing</span>
 									</span>
 								) : (
-									<span>
+									<span className='dark:text-white'>
 										has <span className='text-aye_green'>passed</span>
 									</span>
 								)}{' '}

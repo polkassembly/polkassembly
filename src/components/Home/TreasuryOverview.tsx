@@ -584,7 +584,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												<span className='mr-2 mt-1 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium lg:mt-0'>Spend Period</span>
 
 												<HelperTooltip
-													text='Funds held in the treasury can be spent by making a spending proposal that, if approved by the Council, will enter a spend period before distribution, it is subject to governance, with the current default set to 24 days.'
+													text='Funds requested from the treasury are periodically distributed at the end of the spend period.'
 													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
 												/>
 											</div>

@@ -144,6 +144,10 @@ code {
   font-size: sm;
 }
 
+iframe {
+  max-width: 100%;
+}
+
 p > a {
   color: var(--pink_primary);
 }
@@ -594,7 +598,7 @@ z-index: 1050 !important;
 }
 
 .dark .ant-popover-inner{
-  background-color: #1C1D1F;
+  background-color: #282a2d;
 }
 
 .dark .ant-popover-arrow::before{
@@ -802,9 +806,16 @@ z-index: 1050 !important;
   min-width: 0px !important;
 }
 
+.clear-filter-option {
+  font-size: 12px !important;
+  color: #e5007a;
+  text-align: left;
+}
+
 .ant-timeline-item-head.ant-timeline-item-head-custom.ant-timeline-item-head-blue{
   border-radius: 100%;
 }
+
 @media (max-width: 700px) and (min-width: 319px) {
   .beneficiary-container {
     margin-top: 8px !important;
@@ -812,5 +823,11 @@ z-index: 1050 !important;
 
   .details-container{
     margin-top: 4px !important;
+  }
+}
+
+@media (max-width: 365px) and (min-width: 320px) {
+  .delegation-buttons {
+    padding: 16px 6px !important;
   }
 }

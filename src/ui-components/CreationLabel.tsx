@@ -126,8 +126,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return (
-		<div className={`${className} flex w-[100%] justify-between`}>
-			<div className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}>
+		<div className={`${className} flex w-[100%] justify-between gap-3 bg-none`}>
+			<div
+				className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} ${
+					inPostHeading && !beneficiaries?.length ? 'flex' : ''
+				} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}
+			>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
 						{inPostHeading && <span className='mr-2 text-xs text-blue-light-medium dark:text-blue-dark-medium'>Proposer:</span>}
@@ -177,7 +181,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						) : null}
 					</div>
 				</div>
-				<div className={`details-container ${inPostHeading ? 'mt-2' : ''} flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1`}>
+				<div
+					className={`details-container ${
+						inPostHeading && beneficiaries && beneficiaries?.length > 0 ? 'mt-2' : ''
+					} flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1`}
+				>
 					{!inPostHeading && (
 						<div>
 							{(topic || text || created_at) && (
@@ -190,6 +198,13 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								</>
 							)}
 						</div>
+					)}
+					{inPostHeading && !beneficiaries?.length && (
+						<Divider
+							className='ml-1 hidden xs:mt-2 md:mt-0 md:inline-block'
+							type='vertical'
+							style={{ borderLeft: '1px solid #485F7D' }}
+						/>
 					)}
 					{created_at && (
 						<span className={`${inPostHeading ? '' : 'mr-1'} flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
@@ -261,10 +276,10 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								footer={false}
 								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-								wrapClassName={`${className} dark:bg-modalOverlayDark`}
+								wrapClassName='dark:bg-modalOverlayDark'
 								title={
-									<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-										<span className='ml-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Votes</span>
+									<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+										<span className='ml-6 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Votes</span>
 									</div>
 								}
 							>

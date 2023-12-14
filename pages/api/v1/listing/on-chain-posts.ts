@@ -30,9 +30,14 @@ import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
-export const fetchSubsquare = async (network: string, limit: number, page: number, track: number) => {
+export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
-		const res = await fetch(`https://${network}.subsquare.io/api/gov2/tracks/${track}/referendums?page=${page}&page_size=${limit}`);
+		let res: Response;
+		if (track) {
+			res = await fetch(`https://${network}.subsquare.io/api/gov2/tracks/${track}/referendums?page=${page}&page_size=${limit}`);
+		} else {
+			res = await fetch(`https://${network}.subsquare.io/api/gov2/referendums?page=${page}&page_size=${limit}`);
+		}
 		return await res.json();
 	} catch (error) {
 		return [];
@@ -115,6 +120,7 @@ interface IGetOnChainPostsParams {
 	proposalType?: string | string[];
 	postIds?: string | string[] | number[];
 	filterBy?: string[] | [];
+	proposalStatus?: string | string[];
 }
 
 export function getProposerAddressFromFirestorePostData(data: any, network: string) {
@@ -141,7 +147,7 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
-		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy } = params;
+		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy, proposalStatus } = params;
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
@@ -243,6 +249,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
+			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
+				postsVariables.status_in = proposalStatus;
+			}
 			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
@@ -252,7 +261,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				query,
 				variables: postsVariables
 			});
-
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals;
 
@@ -422,7 +430,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const numTrackNo = Number(trackNo);
 			const strTrackStatus = String(trackStatus);
 			if (strProposalType === ProposalType.OPEN_GOV) {
-				if (!isTrackNoValid(numTrackNo, network)) {
+				if (numTrackNo && !isTrackNoValid(numTrackNo, network)) {
 					throw apiErrorWithStatusCode(`The OpenGov trackNo "${trackNo}" is invalid.`, 400);
 				}
 				if (trackStatus !== undefined && trackStatus !== null && !isCustomOpenGovStatusValid(strTrackStatus)) {
@@ -441,12 +449,18 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				orderBy: orderBy,
 				type_in: subsquidProposalType
 			};
-
-			if (proposalType === ProposalType.OPEN_GOV) {
+			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
+				postsVariables.status_in = proposalStatus;
+			}
+			if (proposalType === ProposalType.OPEN_GOV && !!proposalStatus) {
 				strProposalType = 'referendums_v2';
-				postsVariables.trackNumber_in = numTrackNo;
-				if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
-					postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+				if (proposalType == ProposalType.OPEN_GOV) {
+					if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
+						postsVariables.trackNumber_in = numTrackNo;
+					}
+					if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
+						postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+					}
 				}
 			} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
 				if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
@@ -484,6 +498,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				});
 			} catch (error) {
 				const data = await fetchSubsquare(network, Number(listingLimit), Number(page), Number(trackNo));
+
 				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
 					subsquidRes['data'] = {
 						proposals: data.items.map((item: any) => {
@@ -965,7 +980,6 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
 	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
-
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;

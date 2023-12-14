@@ -1,13 +1,14 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Form, Switch } from 'antd';
+import { Form, Switch } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
 
 import { NotificationSettings, UpdatedDataResponseType } from '~src/auth/types';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -167,17 +168,14 @@ const NotificationSettings = () => {
 				/>
 			</article>
 			<article>
-				<Button
+				<CustomButton
+					text='Save'
 					loading={loading}
 					disabled={!changed}
-					size='large'
 					htmlType='submit'
-					className={`flex items-center justify-center rounded-lg border-none px-14 py-3 text-lg font-semibold leading-7 text-white outline-none ${
-						changed ? 'bg-pink_primary' : 'bg-icon_grey'
-					}`}
-				>
-					Save
-				</Button>
+					variant='primary'
+					className={`rounded-lg border-none px-14 py-3 text-lg font-semibold ${changed ? 'bg-pink_primary' : 'bg-icon_grey'}`}
+				/>
 			</article>
 		</Form>
 	);

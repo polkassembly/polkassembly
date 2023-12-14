@@ -5,7 +5,7 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider } from 'antd';
+import { Alert, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
@@ -38,6 +38,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useTheme } from 'next-themes';
 import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 import Image from 'next/image';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -431,16 +432,21 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 							className='my-4 p-0 dark:bg-separatorDark'
 						/>
 						<div className='flex justify-end'>
-							<Button
-								className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+							<CustomButton
+								text='Go Back'
+								variant='default'
+								className='mr-3'
+								width={144}
+								height={40}
 								onClick={() => handleBackToLogin()}
-							>
-								Go Back
-							</Button>
-							<Button
+							/>
+							<CustomButton
 								key='got-it'
 								icon={<CheckOutlined />}
-								className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-5 text-sm font-medium leading-none text-white outline-none'
+								text='Got it!'
+								variant='primary'
+								width={144}
+								height={40}
 								onClick={() => {
 									getAccounts()
 										.then(() => {
@@ -450,9 +456,8 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 											console.error(err);
 										});
 								}}
-							>
-								Got it!
-							</Button>
+								className='web3-button'
+							/>
 						</div>
 					</div>
 				</>
@@ -542,20 +547,22 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 											/>
 										)}
 										<div className='flex items-center justify-center gap-x-2'>
-											<Button
-												className='flex h-10 w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+											<CustomButton
+												text='Go Back'
+												variant='default'
+												width={144}
+												height={40}
 												onClick={() => handleBackToLogin()}
-											>
-												Go Back
-											</Button>
-											<Button
+												className='mr-3'
+											/>
+											<CustomButton
+												text='Login'
+												variant='primary'
+												width={144}
+												height={40}
 												loading={loading}
 												htmlType='submit'
-												size='large'
-												className='h-10 w-[144px] rounded-md border-none bg-pink_primary text-sm text-white outline-none'
-											>
-												Login
-											</Button>
+											/>
 										</div>
 									</>
 								)
@@ -566,12 +573,13 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 
 					{!!chosenWallet && !accounts.length && (
 						<div className='mb-6 mt-4 flex items-center justify-center'>
-							<Button
-								className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+							<CustomButton
+								text='Go Back'
+								variant='default'
+								width={144}
+								height={40}
 								onClick={() => handleBackToLogin()}
-							>
-								Go Back
-							</Button>
+							/>
 						</div>
 					)}
 				</>

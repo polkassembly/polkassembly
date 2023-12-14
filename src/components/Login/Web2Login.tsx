@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Divider, Form, Input, Skeleton } from 'antd';
+import { Alert, Divider, Form, Input, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 // import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -23,6 +23,7 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (
@@ -297,14 +298,14 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						</div>
 
 						<div className='flex items-center justify-center'>
-							<Button
+							<CustomButton
 								loading={loading}
 								htmlType='submit'
-								size='large'
-								className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
-							>
-								Login
-							</Button>
+								text='Login'
+								width={134}
+								height={40}
+								variant='primary'
+							/>
 						</div>
 
 						<div>

@@ -4,7 +4,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
+import { Alert, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
@@ -35,6 +35,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -329,15 +330,20 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	return (
 		<>
 			{!open && !setOpen && (
-				<Button
-					onClick={() => {
-						delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
-					}}
-					className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-transparent px-3 py-5 text-sm font-medium text-pink_primary'
-				>
-					<DelegatedProfileIcon className='mr-2' />
-					<span>Delegate</span>
-				</Button>
+				<div>
+					<CustomButton
+						className='delegation-buttons'
+						variant='default'
+						width={114}
+						height={40}
+						onClick={() => {
+							delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
+						}}
+					>
+						<DelegatedProfileIcon className='mr-2' />
+						<span>Delegate</span>
+					</CustomButton>
+				</div>
 			)}
 			<Modal
 				maskClosable={false}
@@ -356,19 +362,18 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				onCancel={handleCloseModal}
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
-						<Button
-							key='back'
-							disabled={loading}
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary tracking-wide text-pink_primary dark:bg-section-dark-overlay dark:text-white'
+						<CustomButton
+							text='Cancel'
+							className='rounded-[4px]'
+							variant='default'
+							width={134}
+							height={40}
 							onClick={handleCloseModal}
-						>
-							Cancel
-						</Button>
-						<Button
-							htmlType='submit'
-							key='submit'
-							className={`h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary
-							${
+						/>
+						<CustomButton
+							text='Delegate'
+							variant='primary'
+							className={`rounded-[4px] ${
 								(!form.getFieldValue('targetAddress') ||
 									!delegationDashboardAddress ||
 									bnBalance.lte(ZERO_BN) ||
@@ -392,9 +397,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							onClick={async () => {
 								await handleSubmit();
 							}}
-						>
-							Delegate
-						</Button>
+							height={40}
+							width={134}
+						/>
 					</div>
 				}
 			>

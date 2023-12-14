@@ -4,7 +4,7 @@
 import React, { useEffect } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
 import { poppins } from 'pages/_app';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import Address from '~src/ui-components/Address';
 import SuccessIcon from '~assets/icons/identity-success.svg';
 import { chainProperties } from '~src/global/networkConstants';
@@ -12,6 +12,7 @@ import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -98,7 +99,8 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 					</div>
 				</div>
 
-				<Button
+				<CustomButton
+					text='Let’s start your verification process'
 					onClick={() => {
 						// GAEvent for Let’s start your verification process button clicked
 						trackEvent('verification_cta_clicked', 'submitted_verification_request', {
@@ -109,10 +111,10 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 						changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 						openPreModal(true);
 					}}
-					className='mt-6 h-[40px] w-full rounded-[4px] border-none bg-pink_primary text-sm tracking-wide text-white'
-				>
-					Let’s start your verification process
-				</Button>
+					variant='primary'
+					height={40}
+					className='w-full'
+				/>
 			</>
 		</Modal>
 	);

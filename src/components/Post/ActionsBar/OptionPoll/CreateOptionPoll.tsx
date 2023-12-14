@@ -9,6 +9,7 @@ import React, { FC, useState } from 'react';
 import { IOptionPoll, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
@@ -140,13 +141,14 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 
 	return (
 		<>
-			<Button
-				className={'flex items-center border-none px-1.5 text-pink_primary shadow-none dark:border-none dark:bg-transparent dark:text-blue-dark-helper'}
+			<CustomButton
+				className='px-1.5'
+				variant='default'
 				onClick={() => setShowModal(true)}
 			>
 				<AuditOutlined />
 				<span className='ml-1'>Create Poll</span>
-			</Button>
+			</CustomButton>
 
 			<Modal
 				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
@@ -160,25 +162,28 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 				}}
 				confirmLoading={loading}
 				footer={[
-					<Button
+					<CustomButton
+						variant='default'
 						key='back'
+						text='Cancel'
+						width={134}
+						height={40}
 						disabled={loading}
 						onClick={() => {
 							form.resetFields();
 							setShowModal(false);
 						}}
-					>
-						Cancel
-					</Button>,
-					<Button
+					/>,
+					<CustomButton
+						variant='primary'
 						htmlType='submit'
 						key='submit'
-						className='bg-pink_primary text-white hover:bg-pink_secondary'
+						text='Create Poll'
+						width={134}
+						height={40}
 						disabled={loading}
 						onClick={handleCreate}
-					>
-						Create Poll
-					</Button>
+					/>
 				]}
 			>
 				<Form

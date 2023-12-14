@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Alert, Button, Form, Modal, Spin } from 'antd';
+import { Alert, Form, Modal, Spin } from 'antd';
 
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -29,6 +29,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -210,23 +211,26 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				onCancel={() => setOpen(false)}
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
-						<Button
+						<CustomButton
 							key='back'
+							text='Cancel'
+							height={40}
+							width={134}
+							variant='default'
 							disabled={loading}
-							className='h-10 w-[134px] rounded-[4px] border-pink_primary text-pink_primary dark:bg-section-dark-overlay dark:text-white'
 							onClick={() => setOpen(false)}
-						>
-							Cancel
-						</Button>
-						<Button
+						/>
+						,
+						<CustomButton
 							htmlType='submit'
 							key='submit'
-							className='h-10 w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary'
+							text='Undelegate'
+							height={40}
+							width={134}
+							variant='primary'
 							disabled={loading}
 							onClick={handleSubmit}
-						>
-							Undelegate
-						</Button>
+						/>
 					</div>
 				}
 			>

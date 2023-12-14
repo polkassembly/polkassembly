@@ -7,7 +7,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { ESetIdentitySteps, ITxFee, IVerifiedFields } from '.';
-import { Alert, Button } from 'antd';
+import { Alert } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
@@ -19,6 +19,7 @@ import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 import { ILoading, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -207,7 +208,8 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				)}
 			</div>
 			<div className='-mx-6 mt-6 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
-				<Button
+				<CustomButton
+					text="Let's Begin"
 					loading={loading}
 					onClick={() => {
 						// GAEvent for let's begin button clicked
@@ -217,10 +219,10 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 						});
 						changeStep(ESetIdentitySteps.SET_IDENTITY_FORM);
 					}}
-					className='h-[40px] w-full rounded-[4px] border-pink_primary bg-pink_primary text-sm tracking-wide text-white'
-				>
-					Let&apos;s Begin
-				</Button>
+					height={40}
+					className='w-full'
+					variant='primary'
+				/>
 				<button
 					onClick={handleRequestJudgement}
 					className='mt-2 h-[40px] w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay'

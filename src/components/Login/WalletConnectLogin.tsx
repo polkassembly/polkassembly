@@ -5,7 +5,7 @@
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Button, Divider } from 'antd';
+import { Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -23,6 +23,7 @@ import TFALoginForm from './TFALoginForm';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -435,12 +436,14 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 									/>
 								</div>
 								<div className={'mainButtonContainer'}>
-									<Button
+									<CustomButton
 										disabled={loading}
 										onClick={handleLogin}
-									>
-										Login
-									</Button>
+										variant='primary'
+										width={134}
+										height={40}
+										text='Login'
+									/>
 								</div>
 							</>
 						)}
@@ -450,21 +453,23 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 			<div className='mt-4'>{error && <FilteredError text={error} />}</div>
 			<Divider plain>Or</Divider>
 			<div className={'mainButtonContainer'}>
-				<Button
+				<CustomButton
 					disabled={loading}
-					onClick={() => setDisplayWeb2()}
-				>
-					Login with username
-				</Button>
+					onClick={() => setDisplayWeb2}
+					text='Login with username'
+					className='border-none'
+					variant='default'
+				/>
 			</div>
 			<Divider plain>Or</Divider>
 			<div className={'mainButtonContainer'}>
-				<Button
+				<CustomButton
 					disabled={loading}
 					onClick={() => setPolkadotWallet()}
-				>
-					Login with polkadot.js
-				</Button>
+					text='Login with polkadot.js'
+					className='border-none'
+					variant='default'
+				/>
 			</div>
 		</div>
 	);

@@ -3,10 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import { poppins } from 'pages/_app';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import SuccessIcon from '~assets/icons/success-verification.svg';
 import { useRouter } from 'next/router';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -37,16 +38,17 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 				<SuccessIcon />
 				<label className='-mt-2 text-xl font-semibold tracking-[0.15%] text-bodyBlue dark:text-blue-dark-high'>{social} verified successfully</label>
 				{socialHandle && <div className='mt-4 text-2xl font-semibold text-pink_primary'>{socialHandle}</div>}
-				<Button
-					className='mt-6 h-[40px] rounded-[4px] border-none bg-pink_primary text-sm text-white'
+				<CustomButton
 					onClick={() => {
 						setLoading(true);
 						router.push(`/?identityVerification=${true}`);
 					}}
 					loading={loading}
-				>
-					Continue verification
-				</Button>
+					text='Continue verification'
+					className='mt-6'
+					variant='primary'
+					height={40}
+				/>
 				<div className='-mb-5 -ml-12 -mr-12 mt-12 h-[18px] w-[600px] rounded-b-lg bg-[#51D36E] max-sm:w-full ' />
 			</div>
 		</Modal>

@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 import { ProposalType } from '~src/global/proposalType';
 
@@ -92,13 +92,14 @@ const TrackerButton: FC<IDiscussionProps> = function ({ onchainId, proposalType 
 	};
 
 	return (
-		<Button
-			className={'flex items-center border-none px-1 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper md:pl-2 md:pr-1'}
+		<CustomButton
 			onClick={handleTrack}
+			variant='default'
+			className='px-1'
 		>
 			{tracked ? <EyeInvisibleOutlined /> : <EyeOutlined />}
 			{tracked ? 'Untrack' : 'Track'}
-		</Button>
+		</CustomButton>
 	);
 };
 

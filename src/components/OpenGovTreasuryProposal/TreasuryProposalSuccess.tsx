@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Modal } from 'antd';
+import { Alert, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
@@ -19,6 +19,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -90,7 +91,12 @@ const TreasuryProposalSuccessPopup = ({
 					target='_blank'
 					rel='noopener noreferrer'
 				>
-					<Button className='h-[40px] w-full rounded-[4px] bg-pink_primary text-sm font-medium text-white'>View Proposal</Button>
+					<CustomButton
+						height={40}
+						className='w-full'
+						variant='primary'
+						text='View Proposal'
+					/>
 				</Link>
 			}
 			maskClosable={false}

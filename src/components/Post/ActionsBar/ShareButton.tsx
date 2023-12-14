@@ -4,8 +4,8 @@
 
 import { ShareAltOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
-import { Button } from 'antd';
 import React, { FC } from 'react';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
@@ -45,12 +45,12 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 
 	return (
 		<>
-			<Button
-				className={'flex items-center border-none px-1 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper md:px-2'}
+			<CustomButton
 				onClick={share}
+				variant='default'
 			>
 				<ShareAltOutlined /> {' Share'}
-			</Button>
+			</CustomButton>
 		</>
 	);
 };

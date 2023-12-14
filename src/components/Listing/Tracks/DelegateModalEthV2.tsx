@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Button, Form, Modal, Select, Spin } from 'antd';
+import { Form, Modal, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
@@ -20,6 +20,7 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
 import Web3 from 'web3';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -325,22 +326,24 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
 				footer={[
-					<Button
+					<CustomButton
 						key='back'
-						disabled={loading}
+						text='Cancel'
+						height={40}
+						width={144}
+						variant='default'
 						onClick={() => setShowModal(false)}
-					>
-						Cancel
-					</Button>,
-					<Button
+					/>,
+					<CustomButton
+						key='confirm'
+						text='Confirm'
 						htmlType='submit'
-						key='submit'
-						className='bg-pink_primary text-white hover:bg-pink_secondary'
 						disabled={loading}
+						height={40}
+						width={144}
+						variant='primary'
 						onClick={handleSubmit}
-					>
-						Confirm
-					</Button>
+					/>
 				]}
 			>
 				<Spin

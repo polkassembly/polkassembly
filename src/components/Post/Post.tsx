@@ -291,8 +291,6 @@ const Post: FC<IPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, trackName]);
 
-	// console.log(data);
-
 	if (!post) {
 		return (
 			<div className='mt-16'>
@@ -411,6 +409,7 @@ const Post: FC<IPostProps> = (props) => {
 							ended_at_block: post?.ended_at_block,
 							fee: post?.fee,
 							hash: post?.hash,
+							marketMetadata: post?.marketMetadata || null,
 							member_count: post?.member_count,
 							method: post?.method,
 							motion_method: post?.motion_method,
@@ -470,9 +469,11 @@ const Post: FC<IPostProps> = (props) => {
 				curator: post?.curator || '',
 				currentTimeline: post.currentTimeline,
 				description: post?.description,
+				hash: post.hash,
 				history: post?.history || [],
 				identityId: post?.identity || null,
 				last_edited_at: post?.last_edited_at,
+				marketMetadata: post?.marketMetadata || null,
 				postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
 				postType: proposalType,
 				post_link: post?.post_link,

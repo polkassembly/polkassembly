@@ -13,7 +13,8 @@ import {
 	GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
 	GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE,
 	GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE,
-	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE
+	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE,
+	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
@@ -648,14 +649,17 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
-		if (proposalType === ProposalType.TIPS) {
-			if (!strPostId) {
-				throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
+		if (proposalType !== ProposalType.ADVISORY_COMMITTEE) {
+			if (proposalType === ProposalType.TIPS) {
+				if (!strPostId) {
+					throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
+				}
+			} else if ((isNaN(numPostId) || numPostId < 0) && proposalType !== ProposalType.ANNOUNCEMENT) {
+				throw apiErrorWithStatusCode(`The postId "${postId}" is invalid.`, 400);
 			}
-		} else if ((isNaN(numPostId) || numPostId < 0) && proposalType !== ProposalType.ANNOUNCEMENT) {
-			throw apiErrorWithStatusCode(`The postId "${postId}" is invalid.`, 400);
+		} else if (!(strPostId || numPostId)) {
+			throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
 		}
-
 		const strProposalType = String(proposalType) as ProposalType;
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The proposal type "${proposalType}" is invalid.`, 400);
@@ -700,8 +704,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		if (proposalType === ProposalType.ANNOUNCEMENT) {
 			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
 		}
+		if (proposalType === ProposalType.ADVISORY_COMMITTEE) {
+			postQuery = GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE;
+		}
 
-		if (proposalType === ProposalType.TIPS) {
+		if (proposalType === ProposalType.TIPS || (proposalType === ProposalType.ADVISORY_COMMITTEE && strPostId.toLowerCase() !== strPostId.toUpperCase())) {
 			postVariables = {
 				hash_eq: strPostId,
 				type_eq: subsquidProposalType
@@ -714,8 +721,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				index_eq: numPostId,
 				type_eq: subsquidProposalType
 			};
+		} else if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
+			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		}
-
 		let subsquidRes: any = {};
 		try {
 			subsquidRes = await fetchSubsquid({
@@ -977,7 +985,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		// Council motions votes
-		if (proposalType === ProposalType.COUNCIL_MOTIONS) {
+		if (proposalType === ProposalType.COUNCIL_MOTIONS || proposalType === ProposalType.ADVISORY_COMMITTEE) {
 			post.motion_votes =
 				subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
 					if (edge && edge?.node) {

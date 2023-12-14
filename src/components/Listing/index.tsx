@@ -89,7 +89,7 @@ const Listing: FC<IListingProps> = (props) => {
 						className='my-0'
 					>
 						{
-							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
+							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${proposalType === ProposalType.ADVISORY_COMMITTEE ? id || hash : id}`}>
 								<GovernanceCard
 									className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
 									cid={cid}
@@ -112,6 +112,7 @@ const Listing: FC<IListingProps> = (props) => {
 									proposalType={proposalType}
 									votesData={votesData}
 									identityId={identity || null}
+									hash={hash}
 								/>
 							</Link>
 						}

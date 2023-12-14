@@ -468,6 +468,127 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
   }
 }`;
 
+export const GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE = `query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
+    index
+    proposer
+    status
+    marketMetadata
+    preimage {
+      proposer
+      method
+      hash
+      proposedCall {
+        method
+        args
+        description
+        section
+      }
+    }
+    description
+    parentBountyIndex
+    hash
+    curator
+    type
+    threshold {
+      ... on MotionThreshold {
+        __typename
+        value
+      }
+      ... on ReferendumThreshold {
+        __typename
+        type
+      }
+    }
+    origin
+    trackNumber
+    end
+    createdAt
+    updatedAt
+    delay
+    endedAt
+    deposit
+    bond
+    reward
+    payee
+    fee
+    curatorDeposit
+    proposalArguments {
+      method
+      args
+      description
+      section
+    }
+    voting(limit: 1, where: {voter_eq: $voter_eq}) {
+      decision
+    }
+    group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+    statusHistory(limit: 10) {
+      timestamp
+      status
+      block
+    }
+    tally {
+      ayes
+      bareAyes
+      nays
+      support
+    }
+    enactmentAfterBlock
+    enactmentAtBlock
+    decisionDeposit {
+      amount
+      who
+    }
+    submissionDeposit {
+      amount
+      who
+    }
+    deciding {
+      confirming
+      since
+    }
+  }
+  tippersConnection(orderBy: createdAt_DESC, where: {proposal: {hash_eq: $hash_eq, type_eq: $type_eq}}) {
+    totalCount
+    edges {
+      node {
+        value
+        tipper
+        createdAt
+        hash
+        createdAtBlock
+      }
+    }
+  }
+  votesConnection(orderBy: blockNumber_DESC, where: {type_eq: $vote_type_eq, proposal: {index_eq: $index_eq, type_eq: $type_eq}}) {
+    totalCount
+    edges {
+      node {
+        voter
+        decision
+      }
+    }
+  }
+}
+`;
+
 export const GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE = `query PolymeshProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType) {
   proposals(limit: 1, where: {index_eq: $index_eq, hash_eq: $hash_eq, type_eq: $type_eq}) {
     index

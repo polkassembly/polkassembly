@@ -82,10 +82,13 @@ const BackToListingView = ({ postCategory, trackName }: Props) => {
 			case PageLink.OVERVIEW_GOV_2:
 				path = 'opengov';
 				break;
+			case PostCategory.ADVISORY_COMMITTEE:
+				path = 'advisory-committee/motions';
+				break;
 		}
 	}
 
-	const listingPageText = path.replace(/-|_/g, ' ');
+	const listingPageText = postCategory === PostCategory.ADVISORY_COMMITTEE ? 'Motions' : path.replace(/-|_/g, ' ');
 
 	return (
 		<Link

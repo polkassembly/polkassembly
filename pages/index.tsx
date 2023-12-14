@@ -88,6 +88,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		})
 	};
 
+	if (chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST) {
+		const onChainFetches = {
+			advisory_committee: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.ADVISORY_COMMITTEE
+			})
+		};
+		fetches = { ...fetches, ...onChainFetches };
+	}
 	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({

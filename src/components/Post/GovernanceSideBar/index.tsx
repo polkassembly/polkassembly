@@ -363,6 +363,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const getVotingHistory = useCallback(async () => {
 		setIsLastVoteLoading(true);
 		const encoded = getEncodedAddress(address || loginAddress || defaultAddress || '', network);
+		if (![ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2].includes(proposalType)) return;
 
 		const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>('api/v1/votes/history', {
 			proposalIndex: onchainId,
@@ -947,7 +948,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								{extensionNotFound ? <ExtensionNotDetected /> : null}
 							</GovSidebarCard>
 						) : null}
-						{proposalType === ProposalType.COUNCIL_MOTIONS && (
+						{(proposalType === ProposalType.COUNCIL_MOTIONS || proposalType === ProposalType.ADVISORY_COMMITTEE) && (
 							<>
 								{canVote && !extensionNotFound && (
 									<VoteMotion

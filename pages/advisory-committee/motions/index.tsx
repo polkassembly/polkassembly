@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (networkRedirect) return networkRedirect;
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
-	const proposalType = ProposalType.COUNCIL_MOTIONS;
+	const proposalType = ProposalType.ADVISORY_COMMITTEE;
 	const { data, error } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
@@ -78,15 +78,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 			/>
 			<div className='mt-3 flex sm:items-center'>
 				<MotionsIcon className='xs:mt-0.5 sm:-mt-3.5' />
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Motions ({count})</h1>
-			</div>
-
-			{/* Intro and Create Post Button */}
-			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss on-chain motions. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able to edit
-					them.
-				</p>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Advisory Council Motions ({count})</h1>
 			</div>
 
 			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
@@ -100,7 +92,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 				<div>
 					<Listing
 						posts={posts}
-						proposalType={ProposalType.COUNCIL_MOTIONS}
+						proposalType={ProposalType.ADVISORY_COMMITTEE}
 					/>
 					<div className='mt-6 flex justify-end'>
 						{!!count && count > 0 && count > LISTING_LIMIT && (

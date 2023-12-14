@@ -116,6 +116,13 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			setCheckedItems([]);
 			setStatusItem?.([]);
 		} else if (key.length > 0) {
+			if (statusOptions === gov2ReferendumStatusOptions || statusOptions == gov2ReferendumStatusVotingOptions) {
+				if (key.includes('Deciding')) {
+					key.push('DecisionDepositPlaced');
+				} else {
+					key = key.filter((item: string) => item !== 'DecisionDepositPlaced');
+				}
+			}
 			router.replace({
 				pathname: '',
 				query: {

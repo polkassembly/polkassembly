@@ -109,10 +109,6 @@ export const gov2ReferendumStatusOptions = [
 		label: 'Deciding'
 	},
 	{
-		key: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
-		label: 'Decision Deposit Placed'
-	},
-	{
 		key: gov2ReferendumStatus.EXECUTION_FAILED,
 		label: 'Execution Failed'
 	},
@@ -146,10 +142,6 @@ export const gov2ReferendumStatusVotingOptions = [
 	{
 		key: gov2ReferendumStatus.DECIDING,
 		label: 'Deciding'
-	},
-	{
-		key: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
-		label: 'Decision Deposit Placed'
 	}
 ];
 

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
+import { Spin, Tooltip } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import BlockCountdown from 'src/components/BlockCountdown';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -12,8 +12,8 @@ import { IPollVote, Vote } from 'src/types';
 import AyeNayButtons from 'src/ui-components/AyeNayButtons';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
-import HelperTooltip from 'src/ui-components/HelperTooltip';
 import styled from 'styled-components';
+import InfoIcon from '~assets/info.svg';
 
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
@@ -195,7 +195,12 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 			>
 				<h3 className='flex items-center'>
 					<span className='dashboard-heading mr-2 dark:text-white'>Poll Signals</span>{' '}
-					<HelperTooltip text='This represents the off-chain votes of Polkassembly users including council members' />
+					<Tooltip
+						title='This represents the off-chain votes of Polkassembly users including council members'
+						color='#E5007A'
+					>
+						<InfoIcon />
+					</Tooltip>
 				</h3>
 
 				<div className='my-6 flex'>

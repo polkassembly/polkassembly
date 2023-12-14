@@ -89,9 +89,9 @@ const PredictionCard = () => {
 	function convertTimestampToDate(timestamp: number): string {
 		const date = new Date(timestamp);
 		const day = String(date.getDate()).padStart(2, '0');
-		const month = date.toLocaleString('en-us', { month: 'long' });
+		const month = date.toLocaleString('en-us', { month: 'short' });
 		const year = String(date.getFullYear()).slice(-2);
-		return `${day} ${month} ${year}`;
+		return `${day} ${month} ‘${year}`;
 	}
 
 	useEffect(() => {

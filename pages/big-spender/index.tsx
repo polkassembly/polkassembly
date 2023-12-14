@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus, proposalStatus } = query;
 	if (!trackStatus && !filterBy) {
 		return {
 			props: {},
@@ -47,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const subsquidProposalType = getSubsquidProposalType(proposalType);
 
-	const redisKey = generateKey({ filterBy, keyType: 'trackId', network, page, sortBy, subsquidProposalType, trackId, trackStatus });
+	const redisKey = generateKey({ filterBy, keyType: 'trackId', network, page, sortBy, subStatus: proposalStatus, subsquidProposalType, trackId, trackStatus });
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(redisKey);
@@ -67,6 +67,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
+				proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 				proposalType,
 				sortBy,
 				trackNo: trackId,

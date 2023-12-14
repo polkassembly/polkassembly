@@ -11,6 +11,21 @@ export const proposalStatus = {
 	TABLED: 'Tabled'
 };
 
+export const proposalStatusOptions = [
+	{
+		key: proposalStatus.CLEARED,
+		label: 'Cleared'
+	},
+	{
+		key: proposalStatus.PROPOSED,
+		label: 'Proposed'
+	},
+	{
+		key: proposalStatus.TABLED,
+		label: 'Tabled'
+	}
+];
+
 export const referendumStatus = {
 	CANCELLED: 'Cancelled',
 	EXECUTED: 'Executed',
@@ -21,6 +36,41 @@ export const referendumStatus = {
 	STARTED: 'Started',
 	VETOED: 'Vetoed'
 };
+
+export const referendumStatusOptions = [
+	{
+		key: referendumStatus.CANCELLED,
+		label: 'Cancelled'
+	},
+	{
+		key: referendumStatus.EXECUTED,
+		label: 'Executed'
+	},
+	{
+		key: referendumStatus.EXPIRED,
+		label: 'Expired'
+	},
+	{
+		key: referendumStatus.NOTPASSED,
+		label: 'Not Passed'
+	},
+	{
+		key: referendumStatus.PASSED,
+		label: 'Passed'
+	},
+	{
+		key: referendumStatus.SCHEDULED,
+		label: 'Scheduled'
+	},
+	{
+		key: referendumStatus.STARTED,
+		label: 'Started'
+	},
+	{
+		key: referendumStatus.VETOED,
+		label: 'Vetoed'
+	}
+];
 
 export const gov2ReferendumStatus = {
 	CANCELLED: 'Cancelled',
@@ -37,6 +87,106 @@ export const gov2ReferendumStatus = {
 	TIMEDOUT: 'TimedOut'
 };
 
+export const gov2ReferendumStatusOptions = [
+	{
+		key: gov2ReferendumStatus.CANCELLED,
+		label: 'Cancelled'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRMED,
+		label: 'Confirmed'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRM_ABORTED,
+		label: 'Confirm Aborted'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRM_STARTED,
+		label: 'Confirm Started'
+	},
+	{
+		key: gov2ReferendumStatus.DECIDING,
+		label: 'Deciding'
+	},
+	{
+		key: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+		label: 'Decision Deposit Placed'
+	},
+	{
+		key: gov2ReferendumStatus.EXECUTION_FAILED,
+		label: 'Execution Failed'
+	},
+	{
+		key: gov2ReferendumStatus.KILLED,
+		label: 'Killed'
+	},
+	{
+		key: gov2ReferendumStatus.REJECTED,
+		label: 'Rejected'
+	},
+	{
+		key: gov2ReferendumStatus.SUBMITTED,
+		label: 'Submitted'
+	},
+	{
+		key: gov2ReferendumStatus.TIMEDOUT,
+		label: 'Timed Out'
+	}
+];
+
+export const gov2ReferendumStatusVotingOptions = [
+	{
+		key: gov2ReferendumStatus.CONFIRM_ABORTED,
+		label: 'Confirm Aborted'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRM_STARTED,
+		label: 'Confirm Started'
+	},
+	{
+		key: gov2ReferendumStatus.DECIDING,
+		label: 'Deciding'
+	},
+	{
+		key: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+		label: 'Decision Deposit Placed'
+	}
+];
+
+export const gov2ReferendumStatusClosedOptions = [
+	{
+		key: gov2ReferendumStatus.CANCELLED,
+		label: 'Cancelled'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRMED,
+		label: 'Confirmed'
+	},
+	{
+		key: gov2ReferendumStatus.EXECUTION_FAILED,
+		label: 'Execution Failed'
+	},
+	{
+		key: gov2ReferendumStatus.KILLED,
+		label: 'Killed'
+	},
+	{
+		key: gov2ReferendumStatus.REJECTED,
+		label: 'Rejected'
+	},
+	{
+		key: gov2ReferendumStatus.TIMEDOUT,
+		label: 'Timed Out'
+	}
+];
+
+export const gov2ReferendumStatusSubmittedOptions = [
+	{
+		key: gov2ReferendumStatus.SUBMITTED,
+		label: 'Submitted'
+	}
+];
+
 export const motionStatus = {
 	APPROVED: 'Approved',
 	CLOSED: 'Closed',
@@ -46,12 +196,58 @@ export const motionStatus = {
 	VOTED: 'Voted'
 };
 
+export const motionStatusOptions = [
+	{
+		key: motionStatus.APPROVED,
+		label: 'Approved'
+	},
+	{
+		key: motionStatus.CLOSED,
+		label: 'Closed'
+	},
+	{
+		key: motionStatus.DISAPPROVED,
+		label: 'Disapproved'
+	},
+	{
+		key: motionStatus.EXECUTED,
+		label: 'Executed'
+	},
+	{
+		key: motionStatus.PROPOSED,
+		label: 'Proposed'
+	},
+	{
+		key: motionStatus.VOTED,
+		label: 'Voted'
+	}
+];
+
 export const tipStatus = {
 	CLOSED: 'Closed',
 	CLOSING: 'Closing',
 	OPENED: 'Opened',
 	RETRACTED: 'Retracted'
 };
+
+export const tipStatusOptions = [
+	{
+		key: tipStatus.CLOSING,
+		label: 'Closing'
+	},
+	{
+		key: tipStatus.CLOSED,
+		label: 'Closed'
+	},
+	{
+		key: tipStatus.OPENED,
+		label: 'Opened'
+	},
+	{
+		key: tipStatus.RETRACTED,
+		label: 'Retracted'
+	}
+];
 
 export const tipStatusMap = {
 	[tipStatus.OPENED]: 'Opened',
@@ -70,6 +266,37 @@ export const bountyStatus = {
 	REJECTED: 'Rejected'
 };
 
+export const bountyStatusOptions = [
+	{
+		key: bountyStatus.ACTIVE,
+		label: 'Active'
+	},
+	{
+		key: bountyStatus.AWARDED,
+		label: 'Awarded'
+	},
+	{
+		key: bountyStatus.CANCELED,
+		label: 'Canceled'
+	},
+	{
+		key: bountyStatus.CLAIMED,
+		label: 'Claimed'
+	},
+	{
+		key: bountyStatus.EXTENDED,
+		label: 'Extended'
+	},
+	{
+		key: bountyStatus.PROPOSED,
+		label: 'Proposed'
+	},
+	{
+		key: bountyStatus.REJECTED,
+		label: 'Rejected'
+	}
+];
+
 export const bountyStatusMap = {
 	[bountyStatus.AWARDED]: 'Awarded',
 	[bountyStatus.ACTIVE]: 'Active',
@@ -87,6 +314,25 @@ export const childBountyStatus = {
 	CLAIMED: 'Claimed'
 };
 
+export const childBountyStatusOptions = [
+	{
+		key: childBountyStatus.ADDED,
+		label: 'Added'
+	},
+	{
+		key: childBountyStatus.AWARDED,
+		label: 'Awarded'
+	},
+	{
+		key: childBountyStatus.CANCELED,
+		label: 'Canceled'
+	},
+	{
+		key: childBountyStatus.CLAIMED,
+		label: 'Claimed'
+	}
+];
+
 export const childBountyStatusMap = {
 	[childBountyStatus.ADDED]: 'Added',
 	[childBountyStatus.AWARDED]: 'Awarded',
@@ -100,9 +346,88 @@ export const approvalStatus = {
 	REJECTED: 'rejected'
 };
 
+export const approvalStatusOptions = [
+	{
+		key: approvalStatus.APPROVED,
+		label: 'Approved'
+	},
+	{
+		key: approvalStatus.PENDING,
+		label: 'Pending'
+	},
+	{
+		key: approvalStatus.REJECTED,
+		label: 'Rejected'
+	}
+];
+
+export const treasuryProposalStatus = {
+	APPROVED: 'approved',
+	AWARDED: 'Awarded',
+	PROPOSED: 'Proposed',
+	REJECTED: 'Rejected'
+};
+
+export const treasuryProposalStatusOptions = [
+	{
+		key: treasuryProposalStatus.APPROVED,
+		label: 'Approved'
+	},
+	{
+		key: treasuryProposalStatus.AWARDED,
+		label: 'Awarded'
+	},
+	{
+		key: treasuryProposalStatus.PROPOSED,
+		label: 'Proposed'
+	},
+	{
+		key: treasuryProposalStatus.REJECTED,
+		label: 'Rejected'
+	}
+];
+
 export const announcementStatus = {
 	Announced: 'Announced'
 };
+
+export const announcementStatusOptions = [
+	{
+		key: announcementStatus.Announced,
+		label: 'Announced'
+	}
+];
+
+export const techCommiteeStatus = {
+	APPROVED: 'Approved',
+	CLOSED: 'Closed',
+	DISAPPROVED: 'Disapproved',
+	EXECUTED: 'Executed',
+	PROPOSED: 'Proposed'
+};
+
+export const techCommiteeStatusOptions = [
+	{
+		key: techCommiteeStatus.APPROVED,
+		label: 'Approved'
+	},
+	{
+		key: techCommiteeStatus.CLOSED,
+		label: 'Closed'
+	},
+	{
+		key: techCommiteeStatus.DISAPPROVED,
+		label: 'Disapproved'
+	},
+	{
+		key: techCommiteeStatus.EXECUTED,
+		label: 'Executed'
+	},
+	{
+		key: techCommiteeStatus.PROPOSED,
+		label: 'Proposed'
+	}
+];
 
 export const announcementStatusMap = {
 	[announcementStatus.Announced]: 'Announced'

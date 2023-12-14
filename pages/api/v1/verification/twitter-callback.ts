@@ -80,8 +80,7 @@ export const getTwitterCallback = async ({ network, oauthVerifier, oauthRequestT
 			oauthAccessToken,
 			oauthAccessTokenSecret
 		});
-
-		if (twitterDocData?.twitter_handle !== twitterUser?.screen_name) throw apiErrorWithStatusCode('Twitter handle does not match', 400);
+		if (twitterDocData?.twitter_handle.toLowerCase() !== twitterUser?.screen_name.toLowerCase()) throw apiErrorWithStatusCode('Twitter handle does not match', 400);
 
 		await twitterDoc.ref.set({
 			...twitterDocData,

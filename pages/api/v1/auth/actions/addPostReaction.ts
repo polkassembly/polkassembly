@@ -6,9 +6,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { activityDocRef, activityReactionCollRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
-import { deleteKeys } from '~src/auth/redis';
+import { deleteKeys, redisDel } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
@@ -20,8 +20,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, postId, reaction, postType, trackNumber = null } = req.body;
-	if (!userId || isNaN(postId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { userId, postId, reaction, postType, trackNumber } = req.body;
+	if (!userId || isNaN(postId) || !reaction) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
@@ -29,8 +29,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const postRef = postsByTypeRef(network, postType).doc(String(postId));
-	const reactionsCollRef = postRef.collection('post_reactions');
+	const postRef = postType ? postsByTypeRef(network, postType).doc(String(postId)) : activityDocRef(network, String(postId));
+	const reactionsCollRef = postType ? postRef.collection('post_reactions') : activityReactionCollRef(network, String(postId));
 
 	const userReactionQuery = reactionsCollRef.where('user_id', '==', user.id);
 
@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			updated_at: new Date()
 		};
 	} else {
-		reactionDoc = postRef.collection('post_reactions').doc();
+		reactionDoc = postType ? postRef.collection('post_reactions').doc() : activityReactionCollRef(network, String(postId)).doc();
 
 		reactionData = {
 			created_at: new Date(),
@@ -58,17 +58,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		};
 	}
 
-	const subsquidProposalType = getSubsquidLikeProposalType(postType);
+	const subsquidProposalType = postType ? getSubsquidLikeProposalType(postType) : null;
 
-	if (process.env.IS_CACHING_ALLOWED == '1') {
+	if (process.env.IS_CACHING_ALLOWED == '1' && subsquidProposalType) {
 		if (!isNaN(trackNumber)) {
 			// delete referendum v2 redis cache
 			if (postType == ProposalType.REFERENDUM_V2) {
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${trackNumber}_*`;
+				const referendumDetailKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
+				await redisDel(referendumDetailKey);
 				await deleteKeys(trackListingKey);
 			}
 		} else if (postType == ProposalType.DISCUSSIONS) {
 			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+			const discussionDetailKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+			await redisDel(discussionDetailKey);
 			await deleteKeys(discussionListingKey);
 		}
 	}

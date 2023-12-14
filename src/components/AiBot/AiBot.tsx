@@ -19,6 +19,8 @@ import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import { trackEvent } from 'analytics';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -30,7 +32,7 @@ const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal
 	ssr: false
 });
 
-const treasuryProposalCreationAllowedNetwork = ['KUSAMA', 'POLKADOT'];
+export const treasuryProposalCreationAllowedNetwork = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 const grillChatAllowedNetwork = ['CERE', 'KILT', 'KUSAMA', 'MOONBEAM', 'POLKADOT'];
 
 interface IAiChatbotProps {
@@ -45,7 +47,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, className } = props;
 	const [grillChat, setGrillChat] = useState(false);
 	const router = useRouter();
-	const { id } = useUserDetailsSelector();
+	const { id, username } = useUserDetailsSelector();
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -93,7 +95,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		{
 			component: (
 				<div
-					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
+					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
 					<CreateDiscussionIcon className='ml-[-53px] mt-[5px] cursor-pointer' />
@@ -119,7 +121,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					href='https://polkassembly.hellonext.co/'
 					target='_blank'
 					rel='noreferrer'
-					className='ml-[-34px] text-lightBlue hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
+					className='ml-[-34px] text-lightBlue hover:text-bodyBlue dark:text-blue-dark-medium'
 				>
 					<div className='flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle transition delay-150  duration-300 hover:bg-[#e5007a12]'>
 						<CautionIcon className='ml-[-105px] mt-[5px] cursor-pointer' />
@@ -130,7 +132,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		}
 	];
 
-	if (treasuryProposalCreationAllowedNetwork.includes(network?.toUpperCase())) {
+	if (treasuryProposalCreationAllowedNetwork.includes(network)) {
 		data.splice(0, 0, {
 			component: <OpenGovTreasuryProposal theme={theme} />
 		});
@@ -140,7 +142,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		data.splice(data.length - 1, 0, {
 			component: (
 				<div
-					className='ml-[-34px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-medium'
+					className='ml-[-34px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 					onClick={() => {
 						if (!isAIChatBotOpen) setGrillChat(!grillChat);
 					}}
@@ -172,6 +174,10 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 						onClick={() => {
 							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
+							trackEvent('fab_floating_button_clicked', 'clicked_fab_floating_button', {
+								userId: id || '',
+								userName: username || ''
+							});
 						}}
 					>
 						<FabButton className='mt-1' />

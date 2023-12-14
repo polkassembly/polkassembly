@@ -17,6 +17,9 @@ import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { Pagination } from '~src/ui-components/Pagination';
+import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
+import { sortValues } from '~src/global/sortOptions';
+import FilterByStatus from '~src/ui-components/FilterByStatus';
 
 interface Props {
 	className?: string;
@@ -33,6 +36,11 @@ export enum CustomStatus {
 
 const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
+	const trackStatus = router.query['trackStatus'];
+	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
+	const [statusItem, setStatusItem] = useState([]);
+
 	const items = [
 		{
 			label: (
@@ -47,6 +55,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 					posts={posts?.all?.data?.posts || []}
 					error={posts?.all?.error}
 					count={posts?.all?.data?.count || 0}
+					statusItem={statusItem}
 				/>
 			)
 		},
@@ -105,13 +114,21 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			)
 		},
 		{
-			label: <FilterByTags className='xs:hidden sm:mr-5 sm:block' />,
+			label: (
+				<div className='mt-1 flex items-center gap-x-2 '>
+					{trackStatus !== 'submitted' && <FilterByStatus setStatusItem={setStatusItem} />}
+					<FilterByTags />
+					<SortByDropdownComponent
+						sortBy={sortBy}
+						setSortBy={setSortBy}
+						isUsedInTrackListing={true}
+					/>
+				</div>
+			),
+
 			key: 'Filter'
 		}
 	];
-	const router = useRouter();
-
-	const trackStatus = router.query['trackStatus'];
 
 	const defaultActiveTab =
 		trackStatus && ['closed', 'all', 'voting', 'submitted'].includes(String(trackStatus)) ? String(trackStatus).charAt(0).toUpperCase() + String(trackStatus).slice(1) : 'All';
@@ -120,13 +137,13 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const onTabClick = (key: string) => {
 		if (key === 'Filter') return;
 		setActiveTab(key);
+
+		const newQuery: { [key: string]: any } = { ...router.query, trackStatus: key.toLowerCase() };
+		delete newQuery.proposalStatus;
+
 		router.push({
 			pathname: router.pathname,
-			query: {
-				...router.query,
-				page: 1,
-				trackStatus: key.toLowerCase()
-			}
+			query: newQuery
 		});
 	};
 
@@ -142,9 +159,18 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
-			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:px-4 xs:pt-2 sm:hidden'>
-				<FilterByTags className='xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden' />
+		<div className={`${className} mt-[36px] rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
+			<div className='xs:mb-0 xs:flex xs:items-center xs:justify-end xs:pt-2 sm:hidden'>
+				<div className='mt-1 flex items-center gap-x-1 xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden'>
+					<FilterByStatus setStatusItem={setStatusItem} />
+					<FilterByTags />
+					<SortByDropdownComponent
+						sortBy={sortBy}
+						setSortBy={setSortBy}
+						isUsedInTrackListing={true}
+					/>
+				</div>
+				{/* <FilterByTags className='xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden' /> */}
 			</div>
 			<Tabs
 				theme={theme}

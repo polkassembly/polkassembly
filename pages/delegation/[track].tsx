@@ -17,6 +17,7 @@ import { setNetwork } from '~src/redux/network';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import getQueryToTrack from '~src/util/getQueryToTrack';
+import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -57,6 +58,7 @@ interface ITrackProps {
 const DashboardTracks: FC<ITrackProps> = (props) => {
 	const { data, error, trackDetails } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -76,6 +78,7 @@ const DashboardTracks: FC<ITrackProps> = (props) => {
 			<DashboardTrackListing
 				posts={posts}
 				trackDetails={trackDetails}
+				theme={theme}
 			/>
 		</>
 	);

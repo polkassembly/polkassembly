@@ -115,7 +115,7 @@ import profileSVG from '~assets/icons/userDropdown/profile.svg';
 import settingsIcon from '~assets/icons/userDropdown/setting.svg';
 import logoutSVG from '~assets/icons/userDropdown/logout.svg';
 import VoteHistoryIcon from '~assets/icons/history.svg';
-import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
+// import AmountBreakdownModalSVG from '~assets/icons/amount-breakdown-identity.svg';
 import ArchivedSVG from '~assets/icons/archived.svg';
 import NoTagsFoundSVG from '~assets/icons/no-tag.svg';
 import Comments from '~assets/icons/chat-icon.svg';
@@ -968,12 +968,13 @@ export const SetIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	/>
 );
 
-export const AmountBreakdownModalIcon = (props: Partial<CustomIconComponentProps>) => (
-	<Icon
-		component={AmountBreakdownModalSVG}
-		{...props}
-	/>
-);
+// export const AmountBreakdownModalIcon = (props: Partial<CustomIconComponentProps>) => (
+// <Icon
+// component={AmountBreakdownModalSVG}
+// {...props}
+// />
+// );
+
 export const ApplayoutIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ApplayoutIdentitySVG}

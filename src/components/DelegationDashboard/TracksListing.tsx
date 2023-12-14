@@ -11,13 +11,14 @@ import { useApiContext } from '~src/context';
 import { GetColumns } from './Coloumn';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 
-import { DelegateDelegationIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
+import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import { ETrackDelegationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import { IDelegation } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -281,7 +282,12 @@ const DashboardTrackListing = ({ className }: Props) => {
 
 			{status === ETrackDelegationStatus.Undelegated && undelegatedCount === 0 && (
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
-					<UnDelegatedIcon />
+					{/* <UnDelegatedIcon /> */}
+					<ImageIcon
+						src='/assets/icons/undelegated.svg'
+						alt='undelegated icon'
+						imgWrapperClassName='w-[258px] h-[258px] flex items-center justify-center'
+					/>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Undelegated Tracks</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
@@ -293,7 +299,12 @@ const DashboardTrackListing = ({ className }: Props) => {
 
 			{status === ETrackDelegationStatus.Received_Delegation && receivedDelegationCount === 0 && (
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
-					<ReceivedDelegationIcon />
+					{/* <ReceivedDelegationIcon /> */}
+					<ImageIcon
+						src='/assets/icons/received-delegation.svg'
+						alt='received delegation icon'
+						imgWrapperClassName='w-[258px] h-[258px] flex items-center justify-center'
+					/>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegation Received</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>

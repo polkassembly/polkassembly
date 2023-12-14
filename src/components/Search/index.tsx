@@ -26,7 +26,7 @@ import dayjs from 'dayjs';
 import Image from 'next/image';
 import { SearchOutlined } from '@ant-design/icons';
 import SearchLoader from '~assets/search/search-loader.gif';
-import StartSearchIcon from '~assets/search/search-start.svg';
+// import StartSearchIcon from '~assets/search/search-start.svg';
 import DownOutlined from '~assets/search/dropdown-down.svg';
 import HighlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import InputClearIcon from '~assets/icons/close-tags.svg';
@@ -36,6 +36,7 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -518,7 +519,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 				{/* Autocomplete results */}
 				{(autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && !searchInputErr?.err && !searchInputErr.clicked && (
-					<section className='absolute z-50 w-[94.3%] rounded-b-[4px] border-[1px] border-solid border-gray-300 bg-white dark:border-[#3B444F] dark:border-gray-600 dark:bg-section-dark-overlay max-md:w-[85.7%]'>
+					<section className='absolute z-50 w-[94.3%] rounded-b-[4px] border-[1px] border-solid border-gray-300 bg-white dark:border-[#3B444F] dark:bg-section-dark-overlay max-md:w-[85.7%]'>
 						{/* Posts List */}
 						<List
 							size='small'
@@ -940,7 +941,11 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 				{finalSearchInput.length === 0 && justStart && (
 					<div className='flex h-[360px] flex-col items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-						<StartSearchIcon />
+						{/* <StartSearchIcon /> */}
+						<ImageIcon
+							src='/assets/search/search-start.svg'
+							alt='search start icon'
+						/>
 						<span className='mt-8 text-center tracking-[0.01em]'>Welcome to the all new & supercharged search!</span>
 						<div className='mt-2 flex items-center gap-1 text-xs font-medium tracking-[0.01em]'>
 							powered by

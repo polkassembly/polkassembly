@@ -16,7 +16,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import TipIcon from '~assets/icons/tip-icon.svg';
+// import TipIcon from '~assets/icons/tip-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
@@ -24,6 +24,7 @@ import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -87,7 +88,12 @@ const Tips: FC<ITipsProps> = (props) => {
 				network={network}
 			/>
 			<div className='mt-3 flex items-center'>
-				<TipIcon className='-mt-3.5' />
+				{/* <TipIcon className='-mt-3.5' /> */}
+				<ImageIcon
+					src='/assets/icons/tip-icon.svg'
+					alt='tip icon'
+					imgClassName='-mt-3.5'
+				/>
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Tips ({count})</h1>
 			</div>
 

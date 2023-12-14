@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
 import { IDataType } from '.';
-import PdfIcon from '~assets/icons/pdfs.svg';
+import ImageIcon from '~src/ui-components/ImageIcon';
+// import PdfIcon from '~assets/icons/pdfs.svg';
 
 interface IImageViewerProps {
 	item: IDataType;
@@ -47,7 +48,11 @@ const ImageViewer: FC<IImageViewerProps> = (props) => {
 					/>
 				</div>
 				<div className='flex items-center gap-x-2 border-0 border-t border-solid border-t-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
-					<PdfIcon />
+					{/* <PdfIcon /> */}
+					<ImageIcon
+						src='/assets/icons/pdfs.svg'
+						alt='pdfs icon'
+					/>
 					{item.name}
 				</div>
 			</div>

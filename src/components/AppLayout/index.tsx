@@ -61,7 +61,7 @@ import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
+// import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -72,6 +72,7 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -853,8 +854,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					<DelegationDashboardEmptyState />
-					<span>Please use your desktop computer to verify on chain identity</span>
+					{/* <DelegationDashboardEmptyState /> */}
+					<ImageIcon
+						src='/assets/icons/delegation-empty-state.svg'
+						alt='delegation empty state icon'
+					/>
+					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
 		</Layout>

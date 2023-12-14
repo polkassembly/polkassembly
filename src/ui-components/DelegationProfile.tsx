@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Skeleton, Tooltip, message } from 'antd';
+import { Skeleton, Tooltip, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import SocialLink from './SocialLinks';
@@ -15,6 +15,7 @@ import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -152,13 +153,16 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					</Tooltip>
 					<span>
 						{username === userProfile.username && (
-							<Button
+							<CustomButton
 								onClick={() => setOpenEditModal(true)}
-								className='h-[40px] w-[87px] border-[1px] border-solid border-pink_primary font-medium text-pink_primary dark:bg-section-dark-overlay max-lg:w-auto'
+								height={40}
+								width={87}
+								variant='default'
+								className='max-lg:w-auto'
 							>
 								<EditIcon className='text-[14px] tracking-wide text-pink_primary ' />
 								<span className='max-md:hidden'>Edit</span>
-							</Button>
+							</CustomButton>
 						)}
 					</span>
 				</div>

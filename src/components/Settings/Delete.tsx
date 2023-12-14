@@ -22,6 +22,7 @@ import { useTheme } from 'next-themes';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DeleteBlueIcon, DeleteWhiteIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 const { Panel } = Collapse;
 
 const Delete: FC<{ className?: string }> = ({ className }) => {
@@ -129,14 +130,14 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								style={{ background: '#D2D8E0', flexGrow: 1 }}
 								className='my-4 dark:bg-separatorDark'
 							/>,
-							<Button
+							<CustomButton
+								text='Cancel'
 								key='cancel'
 								onClick={dismissModal}
-								className='inline-flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-semibold leading-7 text-pink_primary outline-none dark:bg-transparent'
-							>
-								Cancel
-							</Button>,
-							<Button
+								variant='default'
+								className='px-8 py-5 font-semibold'
+							/>,
+							<CustomButton
 								htmlType='submit'
 								key='delete'
 								onClick={() => {
@@ -144,11 +145,11 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								}}
 								loading={loading}
 								disabled={!isFormValid}
+								text='Delete'
+								variant='primary'
 								style={{ opacity: !isFormValid ? 0.6 : 1 }}
-								className='mr-6 inline-flex items-center justify-center rounded-md border-none bg-pink_primary px-8 py-5 text-sm font-semibold leading-7 text-white outline-none'
-							>
-								Delete
-							</Button>
+								className='mr-6 font-semibold'
+							/>
 						]}
 						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Divider, Form, Input, Modal, QRCode as QRCodeAntD, Spin, message } from 'antd';
+import { Divider, Form, Input, Modal, QRCode as QRCodeAntD, Spin, message } from 'antd';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import FilteredError from 'src/ui-components/FilteredError';
@@ -16,6 +16,7 @@ import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const Title = (
 	<>
@@ -128,25 +129,27 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 				title={Title}
 				open={showModal}
 				footer={[
-					<Button
+					<CustomButton
 						key='cancel'
 						onClick={dismissModal}
-						className='text-md inline-flex items-center justify-center rounded-lg border-solid border-pink_primary bg-white px-7 py-5 font-semibold leading-7 text-pink_primary outline-none dark:bg-section-dark-overlay'
+						className='px-7 py-5 font-semibold leading-7'
 						disabled={loading}
-					>
-						Cancel
-					</Button>,
-					<Button
+						variant='default'
+						text='Cancel'
+						fontSize='md'
+					/>,
+					<CustomButton
 						htmlType='submit'
 						key='enable'
 						onClick={() => {
 							form.submit();
 						}}
 						disabled={loading}
-						className='text-md inline-flex items-center justify-center rounded-lg border-none bg-pink_primary px-7 py-5 font-semibold leading-7 text-white outline-none'
-					>
-						Enable
-					</Button>
+						className='px-7 py-5 font-semibold leading-7'
+						variant='primary'
+						text='Enable'
+						fontSize='md'
+					/>
 				]}
 			>
 				{!currentUser.is2FAEnabled ? (
@@ -240,17 +243,17 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 					<div className='my-10 text-center'>Two factor authentication enabled successfully.</div>
 				)}
 			</Modal>
-
-			<Button
+			<CustomButton
 				onClick={handleModalOpen}
 				htmlType='submit'
-				className='h-full w-full border-[#D2D8E0] bg-[#F6F7F9] p-[16px] text-left text-blue-light-high dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-container dark:text-blue-dark-high dark:text-blue-dark-high'
+				variant='default'
+				className='h-full w-full border-none p-4 text-left text-blue-light-high dark:border-[#3B444F] dark:text-blue-dark-high'
 			>
-				<span className='align-center flex text-[16px] font-medium '>
+				<span className='align-center flex text-[16px] font-medium'>
 					Enable Two Factor Authentication <KeyboardDownIcon />
 				</span>
-				<span className='block text-[14px]'>Enhance account security with two factor authentication. Verify your identity with an extra step for added protection. </span>
-			</Button>
+				<span className='block text-[14px]'>Enhance account security with two factor authentication. Verify your identity with an extra step for added protection.</span>
+			</CustomButton>
 		</Form>
 	);
 };

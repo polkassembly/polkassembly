@@ -16,9 +16,10 @@ interface ICustomButton {
 	icon?: any;
 	width?: number;
 	height?: number;
+	style?: any;
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
-	const { text, disabled, loading, htmlType, className, onClick, variant, icon, width, height, fontSize } = props;
+	const { style, text, disabled, loading, htmlType, className, onClick, variant, icon, width, height, fontSize } = props;
 	return (
 		<div>
 			<ANTDButton
@@ -33,6 +34,7 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 				htmlType={htmlType}
 				onClick={onClick}
 				icon={icon}
+				style={style}
 			>
 				{props.children || text}
 			</ANTDButton>

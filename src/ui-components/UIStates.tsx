@@ -2,9 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { FrownOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Empty, Result } from 'antd';
+import { Empty, Result } from 'antd';
 import React, { FC } from 'react';
 import cleanError from 'src/util/cleanError';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 
@@ -29,12 +30,12 @@ export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVis
 			title={<span className='dark:text-blue-dark-high'>{cleanError(errorMessage)}</span>}
 			extra={
 				isRefreshBtnVisible ? (
-					<Button
-						className='rounded-md bg-pink_primary text-white transition-colors duration-300 hover:bg-pink_secondary'
+					<CustomButton
 						onClick={() => window.location.reload()}
-					>
-						Refresh
-					</Button>
+						variant='primary'
+						text='Refresh'
+						className='transition-colors duration-300'
+					/>
 				) : null
 			}
 		/>

@@ -2,11 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Alert, Button, Divider } from 'antd';
+import { Alert, Divider } from 'antd';
 import styled from 'styled-components';
 import CheckOutlineIcon from '~assets/icons/check-icon.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import Modal from '~src/ui-components/Modal';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const StyledAlert = styled(Alert)`
 	display: flex;
@@ -31,20 +32,18 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 			onCancel={onCancel}
 			onConfirm={onConfirm}
 			footer={[
-				<Button
+				<CustomButton
 					key='1'
 					onClick={onCancel}
-					className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
-				>
-					Cancel
-				</Button>,
-				<Button
+					variant='default'
+					text='Cancel'
+				/>,
+				<CustomButton
 					onClick={onConfirm}
 					key='2'
-					className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
-				>
-					Confirm
-				</Button>
+					variant='primary'
+					text='Confirm'
+				/>
 			]}
 		>
 			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>

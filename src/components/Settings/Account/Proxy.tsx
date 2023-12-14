@@ -4,7 +4,7 @@
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider, Form, Input, Modal } from 'antd';
+import { Alert, Divider, Form, Input, Modal } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
@@ -18,6 +18,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChangeResponseType } from '~src/auth/types';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -147,7 +148,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 			footer={
 				<div className='flex items-center justify-end'>
 					{[
-						<Button
+						<CustomButton
 							disabled={accountsNotFound}
 							key='sign'
 							htmlType='submit'
@@ -155,19 +156,19 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 								form.submit();
 							}}
 							loading={loading}
-							className={`flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-3 text-lg font-medium leading-none text-white outline-none ${
-								accountsNotFound ? 'bg-gray-300' : ''
-							}`}
-						>
-							Sign
-						</Button>,
-						<Button
+							variant='primary'
+							fontSize='lg'
+							className={`px-7 py-3 ${accountsNotFound ? 'bg-gray-300' : ''}`}
+							text='Sign'
+						/>,
+						<CustomButton
 							key='cancel'
 							onClick={dismissModal}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none dark:bg-section-dark-overlay'
-						>
-							Cancel
-						</Button>
+							variant='default'
+							fontSize='lg'
+							className={`px-7 py-3 ${accountsNotFound ? 'bg-gray-300' : ''}`}
+							text='Cancel'
+						/>
 					]}
 				</div>
 			}

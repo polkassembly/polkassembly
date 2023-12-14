@@ -2,10 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Modal, message } from 'antd';
+import { Modal, message } from 'antd';
 import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 type Props = {
 	icon: any;
@@ -69,13 +70,13 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 						>
 							<CopyIcon className='relative top-[6px]' /> {'<username>'} {'<verificationToken>'}
 						</span>
-						<Button
+						<CustomButton
 							loading={loading}
 							onClick={handleGenerateToken}
-							className='bg-pink_primary font-normal text-white'
-						>
-							Generate Token
-						</Button>
+							variant='primary'
+							text='Generate Token'
+						/>
+						,
 						<br />
 						{token && (
 							<>

@@ -8,7 +8,7 @@ import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, LoadingStatusType, NotificationStatus } from 'src/types';
-import { Button, Divider, Form } from 'antd';
+import { Divider, Form } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import Web3 from 'web3';
 
@@ -20,6 +20,7 @@ import { useApiContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { getUnlockVotesDetails } from './ReferendaUnlock';
 import { useNetworkSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const abi = require('../../moonbeamAbi.json');
 
@@ -278,13 +279,14 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 	const GetAccountsButton = () => (
 		<Form>
 			<Form.Item className='button-container'>
-				<Button
-					className='mt-2 rounded-md border-none bg-pink_primary text-white outline-none'
+				<CustomButton
 					onClick={getAccounts}
-					size={'large'}
-				>
-					Vote
-				</Button>
+					className='mt-2 border-none'
+					variant='primary'
+					text='Vote'
+					height={40}
+					width={134}
+				/>
 			</Form.Item>
 		</Form>
 	);
@@ -368,23 +370,23 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 												<span className='col-span-2'>
 													{id === 0 ? (
 														canBeUnlocked ? (
-															<Button
+															<CustomButton
 																onClick={handleUnlock}
 																loading={loadingStatus.isLoading}
-																size='small'
-																className='rounded-md border-none bg-pink_primary text-white outline-none'
-															>
-																Unlock
-															</Button>
+																variant='primary'
+																text='Unlock'
+																height={40}
+																width={144}
+															/>
 														) : (
-															<Button
-																size='small'
-																className='rounded-md border-none bg-pink_primary text-white outline-none'
+															<CustomButton
 																onClick={() => handleRemove(vote.refIndex)}
 																loading={loadingStatus.isLoading}
-															>
-																Remove
-															</Button>
+																variant='primary'
+																text='Remove'
+																height={40}
+																width={144}
+															/>
 														)
 													) : (
 														<></>
@@ -399,13 +401,15 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 							</>
 						) : (
 							<>
-								<Button
-									className='mt-2 rounded-md border-none bg-pink_primary text-white outline-none'
+								<CustomButton
 									onClick={handleUnlock}
 									loading={loadingStatus.isLoading}
-								>
-									Unlock
-								</Button>
+									variant='primary'
+									text='Unlock'
+									className='mt-2'
+									height={40}
+									width={144}
+								/>
 							</>
 						)}
 					</Form.Item>

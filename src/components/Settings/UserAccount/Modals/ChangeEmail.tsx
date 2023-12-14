@@ -2,12 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Button, Divider, Form, Input, Modal } from 'antd';
+import { Divider, Form, Input, Modal } from 'antd';
 import ChangeEmailIcon from '~assets/icons/change-email.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onConfirm?: () => void; onCancel: () => void; email: string }) => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -120,20 +121,25 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 							<Divider className='my-4 mt-0' />
 						</div>
 						<div className='flex justify-end gap-4'>
-							<Button
+							<CustomButton
+								text='Cancel'
 								key='1'
+								variant='default'
 								onClick={onCancel}
-								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
-							>
-								Cancel
-							</Button>
-							<Button
+								height={10}
+								width={134}
+								className='px-[36px] py-[4px] capitalize'
+							/>
+							<CustomButton
 								loading={loading}
 								htmlType='submit'
-								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
-							>
-								Save
-							</Button>
+								text='Save'
+								key='2'
+								variant='default'
+								height={10}
+								width={134}
+								className='px-[36px] py-[4px] capitalize'
+							/>
 						</div>
 					</div>
 				</Form>

@@ -9,7 +9,7 @@ import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from 'src/types';
-import { Button, Divider, Form, Spin } from 'antd';
+import { Divider, Form, Spin } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import Web3 from 'web3';
 
@@ -21,6 +21,7 @@ import { useApiContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const abi = require('../../moonbeamConvictionVoting.json');
 
@@ -418,13 +419,14 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 	const GetAccountsButton = () => (
 		<Form>
 			<Form.Item className='button-container'>
-				<Button
-					className='mt-2 rounded-md border-none bg-pink_primary text-white outline-none'
+				<CustomButton
 					onClick={getAccounts}
-					size={'large'}
-				>
-					Vote
-				</Button>
+					className='mt-2 border-none'
+					variant='primary'
+					text='Vote'
+					height={40}
+					width={134}
+				/>
 			</Form.Item>
 		</Form>
 	);
@@ -503,14 +505,15 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 													)}
 													<span className='col-span-2'>{vote.unlocksAt}</span>
 													<span className='col-span-2'>
-														<Button
-															size='small'
-															className='rounded-md border-none bg-pink_primary text-white outline-none'
+														<CustomButton
 															onClick={() => handleRemove(vote)}
 															loading={loadingStatus?.remove?.[vote?.refIndex?.toString()]?.isLoading}
-														>
-															Remove
-														</Button>
+															className='border-none'
+															variant='primary'
+															text='Remove'
+															height={40}
+															width={134}
+														/>
 													</span>
 												</li>
 												<Divider className='my-1' />
@@ -548,14 +551,15 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 														</span>
 														<span className='col-span-2'>{formatBnBalance(String(amount), { numberAfterComma: 2, withUnit: true }, network)}</span>
 														<span className='col-span-2'>
-															<Button
-																size='small'
-																className='rounded-md border-none bg-pink_primary text-white outline-none'
+															<CustomButton
 																onClick={() => handleUnlock(unlock)}
 																loading={loadingStatus?.unlock?.[unlock?.trackId?.toString()]?.isLoading}
-															>
-																Unlock
-															</Button>
+																className='border-none'
+																variant='primary'
+																text='Unlock'
+																height={40}
+																width={134}
+															/>
 														</span>
 													</li>
 													<Divider className='my-1' />

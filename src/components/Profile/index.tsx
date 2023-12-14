@@ -7,7 +7,7 @@ import { DeriveAccountFlags, DeriveAccountInfo, DeriveAccountRegistration } from
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Button, Col, Form, Row, Skeleton } from 'antd';
+import { Col, Form, Row, Skeleton } from 'antd';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -29,6 +29,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { MessageType, ProfileDetails } from '~src/auth/types';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -283,14 +284,14 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 					<ContentForm onChange={onDescriptionChange} />
 
 					<div className={'mt-[3rem] flex flex-col items-center justify-center'}>
-						<Button
+						<CustomButton
 							onClick={handleSend}
 							disabled={loading}
-							type='primary'
+							variant='primary'
 							htmlType='submit'
 						>
 							{loading ? <>Creating</> : 'Update'}
-						</Button>
+						</CustomButton>
 					</div>
 					{error && <FilteredError text={error} />}
 				</Form>
@@ -299,14 +300,14 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 					<>
 						{canEdit ? (
 							<div className={'mt-[3rem] flex flex-col items-center justify-center'}>
-								<Button
+								<CustomButton
 									onClick={handleEdit}
 									disabled={loading}
 									htmlType='submit'
-									type='primary'
+									variant='primary'
 								>
 									{loading ? <>Creating</> : 'Update'}
-								</Button>
+								</CustomButton>
 							</div>
 						) : null}
 					</>

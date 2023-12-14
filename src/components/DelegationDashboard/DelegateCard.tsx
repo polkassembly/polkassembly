@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
@@ -129,22 +129,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							})}
 					</div>
 				</div>
-				<Button
-					disabled={disabled}
-					onClick={handleClick}
-					className={`ml-1 mt-[1px] flex h-[40px] items-center justify-around gap-2 rounded-md border-none bg-transparent px-4 py-1 text-pink_primary shadow-none hover:border-solid hover:border-pink_primary ${
-						disabled && 'opacity-50'
-					}`}
-				>
-					<DelegatesProfileIcon />
-					<span className='text-sm font-medium'>Delegate</span>
-				</Button>
 				<CustomButton
 					disabled={disabled}
 					onClick={handleClick}
 					height={40}
 					variant='default'
-					className={`ml-1 mt-[1px] gap-2 px-2 ${disabled && 'opacity-50'}`}
+					className={`ml-1 mt-[1px] gap-2 border-none px-2 ${disabled && 'opacity-50'}`}
 				>
 					<DelegatesProfileIcon />
 					<span className='text-sm font-medium'>Delegate</span>

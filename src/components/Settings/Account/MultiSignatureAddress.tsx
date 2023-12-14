@@ -5,7 +5,7 @@ import { DownOutlined, PlusOutlined, UpOutlined, MinusCircleOutlined } from '@an
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Checkbox, Divider, Form, Input, InputNumber, Modal } from 'antd';
+import { Alert, Checkbox, Divider, Form, Input, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useApiContext } from 'src/context';
@@ -23,6 +23,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -281,24 +282,25 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			footer={
 				<div className='flex items-center justify-end'>
 					{[
-						<Button
+						<CustomButton
 							key='link'
 							htmlType='submit'
 							onClick={() => {
 								form.submit();
 							}}
 							loading={loading}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-3 text-lg font-medium leading-none text-white outline-none'
+							variant='primary'
+							height={40}
 						>
 							{linkStarted ? 'Sign' : 'Link'}
-						</Button>,
-						<Button
+						</CustomButton>,
+						<CustomButton
 							key='cancel'
 							onClick={dismissModal}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none dark:bg-section-dark-overlay'
-						>
-							Cancel
-						</Button>
+							variant='default'
+							height={40}
+							text='Cancel'
+						/>
 					]}
 				</div>
 			}
@@ -354,20 +356,24 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 					</div>
 					{!extensionNotAvailable && (
 						<div className='flex items-center justify-between'>
-							<Button
+							<CustomButton
 								onClick={handleDetect}
-								className='m-0 flex items-center border-none bg-transparent p-0 text-sm font-medium text-pink_primary outline-none'
+								variant='default'
+								height={40}
+								className='m-0 border-none p-0'
 							>
 								<span>Choose from available account</span>
 								{showSignatoryAccounts ? <UpOutlined /> : <DownOutlined />}
-							</Button>
-							<Button
+							</CustomButton>
+							<CustomButton
 								onClick={() => handleAddSignatories(true, '')}
-								className='m-0 flex items-center border-none bg-transparent p-0 text-sm font-medium text-pink_primary outline-none'
+								variant='default'
+								height={40}
+								className='m-0 border-none p-0'
 							>
 								<PlusOutlined />
 								<span>Add Account</span>
-							</Button>
+							</CustomButton>
 						</div>
 					)}
 					{showSignatoryAccounts && signatoryAccounts.length > 0 && <article className='flex flex-col gap-y-3'>{getSignatoryAccounts()}</article>}

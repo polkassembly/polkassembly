@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Button, Divider, Image, Switch, Tag } from 'antd';
+import { Divider, Image, Switch, Tag } from 'antd';
 import SmallParachainIcon from '~assets/icons/parachain-small.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -10,6 +10,7 @@ import { networkLabel } from './utils';
 import { ISelectedNetwork } from '../types';
 import Modal from '~src/ui-components/Modal';
 import { useNetworkSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const AddNetworkModal = ({
 	open,
@@ -79,7 +80,7 @@ const AddNetworkModal = ({
 				}}
 				onConfirm={handleConfirm}
 				footer={[
-					<Button
+					<CustomButton
 						key='1'
 						onClick={() => {
 							if (showSureModal) {
@@ -88,17 +89,15 @@ const AddNetworkModal = ({
 							}
 							onCancel();
 						}}
-						className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
-					>
-						Cancel
-					</Button>,
-					<Button
+						variant='default'
+						text='Cancel'
+					/>,
+					<CustomButton
 						onClick={handleConfirm}
 						key='2'
-						className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
-					>
-						Confirm
-					</Button>
+						variant='primary'
+						text='Confirm'
+					/>
 				]}
 			>
 				<p className='text-[16px] font-medium text-blue-light-high dark:text-blue-dark-high'>

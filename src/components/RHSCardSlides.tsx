@@ -11,7 +11,7 @@ import { usePostDataContext } from '~src/context';
 import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import { checkIsOnChainPost } from '~src/global/proposalType';
+import { ProposalType, checkIsOnChainPost } from '~src/global/proposalType';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -105,23 +105,25 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			});
 		}
 
-		setRHSCards((prevCards) => {
-			const newCards = [...prevCards];
-			newCards.push({
-				clickHandler: () => 'TODO: Create proposal handler',
-				description: 'Convert this discussion into a treasury proposal',
-				icon: '/assets/icons/rhs-card-icons/Doc.png',
-				tag: cardTags.CREATE_PROPOSAL,
-				title: 'Create Proposal'
-			});
+		if (canEdit && postType === ProposalType.DISCUSSIONS) {
+			setRHSCards((prevCards) => {
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => 'TODO: Create proposal handler',
+					description: 'Convert this discussion into a treasury proposal',
+					icon: '/assets/icons/rhs-card-icons/Doc.png',
+					tag: cardTags.CREATE_PROPOSAL,
+					title: 'Create Proposal'
+				});
 
-			return newCards;
-		});
+				return newCards;
+			});
+		}
 
 		return () => {
 			setRHSCards([]);
 		};
-	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost]);
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, postType]);
 
 	useEffect(() => {
 		if (RHSCards.length <= 1) {

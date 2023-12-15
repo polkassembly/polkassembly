@@ -502,7 +502,7 @@ const Web3Login: FC<Props> = ({
 										width={144}
 										height={40}
 										onClick={() => handleBackToLogin()}
-										className='web3-button mr-3'
+										className='web3-button mr-3 w-[144px]'
 									/>
 									{!withPolkasafe && (
 										<CustomButton
@@ -520,7 +520,7 @@ const Web3Login: FC<Props> = ({
 														console.error(err);
 													});
 											}}
-											className='web3-button'
+											className='web3-button w-[144px]'
 										/>
 									)}
 								</div>

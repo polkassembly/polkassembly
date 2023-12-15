@@ -23,6 +23,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import dynamic from 'next/dynamic';
+import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
 	ssr: false
@@ -40,6 +41,7 @@ const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConne
 interface Props {
 	className?: string;
 	theme?: string;
+	isUsedInTreasuryTrack?: boolean;
 }
 
 export interface ISteps {
@@ -129,7 +131,7 @@ export const INIT_BENEFICIARIES = [
 	}
 ];
 
-const OpenGovTreasuryProposal = ({ className }: Props) => {
+const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) => {
 	const { api, apiReady } = useApiContext();
 
 	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
@@ -287,11 +289,23 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	return (
 		<div className={className}>
 			<div
-				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+				className={`${
+					isUsedInTreasuryTrack
+						? 'flex'
+						: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+				}`}
 				onClick={handleClick}
 			>
-				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
-				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
+				{isUsedInTreasuryTrack ? (
+					<CreateProposalWhiteIcon className='mr-2' />
+				) : (
+					<CreatePropoosalIcon className={`${isUsedInTreasuryTrack ? 'scale-200' : 'ml-[-31px] cursor-pointer'}`} />
+				)}
+				{isUsedInTreasuryTrack ? (
+					<p className='m-0 p-0'>Create Proposal</p>
+				) : (
+					<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
+				)}
 			</div>
 			{openAddressLinkedModal && (
 				<AddressConnectModal

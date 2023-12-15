@@ -11,14 +11,13 @@ import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { redisGet, redisSet } from '~src/auth/redis';
-import TrackListing from '~src/components/Listing/Tracks/TrackListing';
+import TrackListingCard from '~src/components/Listing/Tracks/TrackListingCard';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { setNetwork } from '~src/redux/network';
-import { IApiResponse, PostOrigin } from '~src/types';
+import { IApiResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { generateKey } from '~src/util/getRedisKeys';
@@ -29,26 +28,22 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus, proposalStatus } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
 	if (!trackStatus && !filterBy) {
 		return {
 			props: {},
 			redirect: {
-				destination: '/medium-spender?trackStatus=all&page=1'
+				destination: '/all-posts?trackStatus=all&page=1'
 			}
 		};
 	}
 
-	if (!networkTrackInfo[network][PostOrigin.MEDIUM_SPENDER]) {
-		return { props: { error: `Invalid track for ${network}` } };
-	}
-
-	const { trackId } = networkTrackInfo[network][PostOrigin.MEDIUM_SPENDER];
 	const proposalType = ProposalType.OPEN_GOV;
 
 	const subsquidProposalType = getSubsquidProposalType(proposalType);
 
-	const redisKey = generateKey({ filterBy, keyType: 'trackId', network, page, sortBy, subStatus: proposalStatus, subsquidProposalType, trackId, trackStatus });
+	const redisKey = generateKey({ filterBy, keyType: 'all', network, page, sortBy, subsquidProposalType, trackStatus });
+
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(redisKey);
 		if (redisData) {
@@ -67,10 +62,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
-				proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 				proposalType,
 				sortBy,
-				trackNo: trackId,
 				trackStatus: status
 			});
 		} else {
@@ -78,7 +71,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 				network,
 				page,
 				proposalType,
-				trackNo: trackId,
 				trackStatus: status
 			});
 		}
@@ -97,7 +89,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			} as IApiResponse<IPostsListingResponse>;
 		}
 	});
-	const props: IMediumSpenderProps = {
+	const props: IOverviewListingProps = {
 		network,
 		posts: {}
 	};
@@ -111,35 +103,36 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	return { props };
 };
-interface IMediumSpenderProps {
+interface IOverviewListingProps {
 	posts: IReferendumV2PostsByStatus;
 	network: string;
 	error?: string;
 }
 
-const MediumSpender: FC<IMediumSpenderProps> = (props) => {
-	const { posts, error } = props;
+const OverviewListing: FC<IOverviewListingProps> = (props) => {
+	const { posts, error, network } = props;
 	const dispatch = useDispatch();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return (
 		<>
 			<SEOHead
-				title={PostOrigin.MEDIUM_SPENDER.split(/(?=[A-Z])/).join(' ')}
-				network={props.network}
+				title='All Tracks'
+				network={network}
 			/>
-			<TrackListing
-				trackName={PostOrigin.MEDIUM_SPENDER}
+			<TrackListingCard
+				className='mt-12'
 				posts={posts}
+				trackName='All Tracks'
 			/>
 		</>
 	);
 };
 
-export default MediumSpender;
+export default OverviewListing;

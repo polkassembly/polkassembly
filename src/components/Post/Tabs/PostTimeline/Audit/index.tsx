@@ -5,12 +5,13 @@ import React, { useEffect, useState } from 'react';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Radio } from 'antd';
 import CautionSVG from '~assets/icons/caution.svg';
-import YouTubeIcon from '~assets/icons/video.svg';
-import PdfIcon from '~assets/icons/pdfs.svg';
+// import YouTubeIcon from '~assets/icons/video.svg';
+// import PdfIcon from '~assets/icons/pdfs.svg';
 import PdfViewer from './PdfViewer';
 import VideoViewer from './VideoViewer';
 import NoAuditReport from './NoAuditReport';
 import ImageViewer from './ImageViewer';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 export interface IDataType {
 	download_url: string;
@@ -96,7 +97,12 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 									className='flex items-center rounded-full bg-pink-50 px-4 py-[7px] dark:bg-section-dark-background'
 								>
 									<div className='flex items-center'>
-										<PdfIcon className='bg-cover bg-center bg-no-repeat' />
+										{/* <PdfIcon className='bg-cover bg-center bg-no-repeat' /> */}
+										<ImageIcon
+											src='/assets/icons/pdfs.svg'
+											alt='pdfs icon'
+											imgClassName='bg-cover bg-center bg-no-repeat'
+										/>
 										<span className='pl-1 text-blue-light-high dark:text-blue-dark-high'>
 											<span className='hidden md:inline-block'>Reports</span> ({pdfCount})
 										</span>
@@ -109,7 +115,12 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 									className='flex items-center rounded-full bg-pink-50 px-4 py-[7px] dark:bg-section-dark-background'
 								>
 									<div className='flex items-center'>
-										<YouTubeIcon className='bg-cover bg-center bg-no-repeat' />
+										{/* <YouTubeIcon className='bg-cover bg-center bg-no-repeat' /> */}
+										<ImageIcon
+											src='/assets/icons/video.svg'
+											imgClassName='bg-cover bg-center bg-no-repeat'
+											alt='video icon'
+										/>
 										<span className='pl-1 text-blue-light-high dark:text-blue-dark-high'>
 											<span className='hidden md:inline-block'>Videos</span> ({videoData.length})
 										</span>

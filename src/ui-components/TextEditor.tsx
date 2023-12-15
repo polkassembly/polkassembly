@@ -185,8 +185,9 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								onPaste={(e) => {
 									e.stopPropagation();
 									e.preventDefault();
-									const content = e.clipboardData?.getData('text/html') || '';
+									let content = e.clipboardData?.getData('text/html') || '';
 									const caretPosition = ref.current?.editor?.selection.getRng();
+									content = content.replace(/color\s*:\s*[^;{}]+[;}]/gi, '').replace(/background-color\s*:\s*[^;{}]+[;}]/gi, '');
 									const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
 									const parsed_content = converter.makeHtml(sanitisedContent);
 									ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });

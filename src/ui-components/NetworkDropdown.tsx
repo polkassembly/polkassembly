@@ -221,7 +221,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 					}}
 				>
 					<Image
-						className='h-[20px] w-[20px] rounded-full'
+						className='h-[20px] w-[20px] rounded-full dark:border-[1px] dark:border-solid dark:border-separatorDark'
 						src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
 						alt='Logo'
 					/>

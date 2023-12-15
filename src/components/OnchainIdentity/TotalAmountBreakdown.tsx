@@ -11,7 +11,7 @@ import { Alert, Button } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
+// import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
@@ -19,6 +19,7 @@ import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 import { ILoading, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -139,10 +140,14 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				/>
 			)}
 
-			<span className='-mt-6 flex items-center justify-center text-[350px]'>
-				<AmountBreakdownModalIcon />
-			</span>
-			<ul className='-mt-6 flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>
+			{/* <AmountBreakdownModalIcon /> */}
+			<ImageIcon
+				alt='amount breakdown identity icon'
+				src='/assets/icons/amount-breakdown-identity.svg'
+				imgClassName='h-[210px] w-[350px]'
+				imgWrapperClassName='py-10 flex items-center justify-center '
+			/>
+			<ul className='flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>
 				<li>Polkadot offers on-chain identities that verify users&apos;s credentials through appointed registrars, instilling greater trust and support. </li>
 				<li>
 					Once successfully verified, users receive a green checkmark, symbolising their trusted status. This verified status symbol enhances trustworthiness when requesting funds

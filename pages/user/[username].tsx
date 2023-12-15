@@ -17,7 +17,7 @@ import { EGovType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
-import UserNotFound from '~assets/user-not-found.svg';
+// import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import { network as AllNetworks } from '~src/global/networkConstants';
@@ -28,6 +28,7 @@ import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const VoteUnlock = dynamic(() => import('~src/components/VoteUnlock'), {
 	ssr: false
@@ -144,7 +145,13 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		return (
 			<EmptyState>
 				<ErrorAlert errorMsg="Invalid User. This user does't have any account with Polkassembly" />
-				<UserNotFound />
+				{/* <UserNotFound /> */}
+				<ImageIcon
+					src='/assets/user-not-found.svg'
+					alt='user not found icon'
+					imgWrapperClassName='w-full h-full flex justify-center items-center'
+					imgClassName='max-w-[600px] max-h-[600px]'
+				/>
 			</EmptyState>
 		);
 	}

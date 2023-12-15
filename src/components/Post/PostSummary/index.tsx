@@ -6,10 +6,11 @@ import React, { FC, useState } from 'react';
 import classNames from 'classnames';
 import Markdown from '~src/ui-components/Markdown';
 import styled from 'styled-components';
-import { AiStarIcon, OpenAiIcon, SummaryModalClose } from '~src/ui-components/CustomIcons';
+import { AiStarIcon, SummaryModalClose } from '~src/ui-components/CustomIcons';
 import { usePostDataContext } from '~src/context';
 import { poppins } from 'pages/_app';
 import EvalutionSummary from './EvalutionSummary';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface IPostSummaryProps {
 	className?: string;
@@ -67,7 +68,12 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue dark:text-blue-dark-high md:text-xl md:leading-6'>AI Summary</span>
 							</h3>
 							<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.20)] py-1 pl-[6px] pr-[8px] dark:border-[#3B444F] md:py-[6px] md:pl-[10px] md:pr-3'>
-								<OpenAiIcon className='text-base md:text-2xl' />
+								{/* <OpenAiIcon className='text-base md:text-2xl' /> */}
+								<ImageIcon
+									src='/assets/icons/openai.svg'
+									alt='openai icon'
+									imgWrapperClassName='w-6 h-6  text-base md:text-2xl flex justify-center items-center'
+								/>
 								<p className='m-0 text-[10px] font-semibold leading-normal tracking-[0.24px] text-bodyBlue dark:text-blue-dark-high md:text-xs'>Powered by OpenAI</p>
 							</div>
 						</article>

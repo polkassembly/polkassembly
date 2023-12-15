@@ -12,6 +12,7 @@ import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import { ProposalType, checkIsOnChainPost } from '~src/global/proposalType';
+import { post_topic } from '~src/global/post_topics';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -38,7 +39,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	const [openLinkCta, setOpenLinkCta] = useState(false);
 
 	const {
-		postData: { post_link, tags, postType }
+		postData: { post_link, tags, postType, topic }
 	} = usePostDataContext();
 
 	const isOnchainPost = checkIsOnChainPost(postType);
@@ -105,7 +106,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			});
 		}
 
-		if (canEdit && postType === ProposalType.DISCUSSIONS) {
+		if (canEdit && postType === ProposalType.DISCUSSIONS && topic?.id === post_topic.TREASURY) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
@@ -123,7 +124,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		return () => {
 			setRHSCards([]);
 		};
-	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, postType]);
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, postType, topic]);
 
 	useEffect(() => {
 		if (RHSCards.length <= 1) {

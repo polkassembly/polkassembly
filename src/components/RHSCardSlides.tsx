@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NavigateNextIcon from '~assets/icons/navigate-next.svg';
 import NavigatePrevIcon from '~assets/icons/navigate-prev.svg';
 import CloseCardIcon from '~assets/icons/rhs-card-icons/close-card.svg';
@@ -13,6 +13,8 @@ import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import { ProposalType, checkIsOnChainPost } from '~src/global/proposalType';
 import { post_topic } from '~src/global/post_topics';
+import { useTheme } from 'next-themes';
+import OpenGovTreasuryProposal, { CreateProposalRef } from '~src/components/OpenGovTreasuryProposal';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -31,12 +33,15 @@ enum cardTags {
 
 type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isReversed, setIsReversed] = useState(false);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
 	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [openLinkCta, setOpenLinkCta] = useState(false);
+
+	const createProposalRef = useRef<CreateProposalRef | null>(null);
 
 	const {
 		postData: { post_link, tags, postType, topic }
@@ -110,7 +115,9 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
-					clickHandler: () => 'TODO: Create proposal handler',
+					clickHandler: () => {
+						createProposalRef.current && createProposalRef.current.triggerCreateProposalClick();
+					},
 					description: 'Convert this discussion into a treasury proposal',
 					icon: '/assets/icons/rhs-card-icons/Doc.png',
 					tag: cardTags.CREATE_PROPOSAL,
@@ -156,6 +163,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					setOpenModal={setOpenDecisionDeposit}
 				/>
 			)}
+			<OpenGovTreasuryProposal
+				theme={theme}
+				useDefaultButton={false}
+				ref={createProposalRef}
+			/>
 			<PostEditOrLinkCTA
 				open={openLinkCta}
 				setOpen={setOpenLinkCta}

@@ -20,12 +20,9 @@ interface ICustomButton {
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 	const { style, text, disabled, loading, htmlType, className, onClick, variant, icon, width, height, fontSize } = props;
-	console.log(width);
 	return (
 		<ANTDButton
-			className={`${`w-[${width}px]`} ${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 rounded-md ${
-				fontSize ? `text-${fontSize}` : 'text-sm'
-			} font-medium ${
+			className={`${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 rounded-md ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium ${
 				variant === 'primary'
 					? 'border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:text-white'
 					: 'border border-pink_primary bg-transparent text-pink_primary'
@@ -36,7 +33,8 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 			htmlType={htmlType}
 			onClick={onClick}
 			icon={icon}
-			style={style}
+			size='large'
+			style={{ height: `${height}px !important`, width: `${width}px !important`, ...style }}
 		>
 			{props.children || text}
 		</ANTDButton>

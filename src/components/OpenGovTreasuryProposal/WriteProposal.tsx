@@ -167,6 +167,14 @@ const WriteProposal = ({
 		setSteps({ percent: 66.6, step: 0 });
 	};
 
+	useEffect(() => {
+		setDiscussionLink(discussionLink);
+
+		if (isDiscussionLinked && discussionLink) {
+			getDiscussionPostData(discussionLink, isDiscussionLinked);
+		}
+	}, []);
+
 	return (
 		<>
 			<Spin

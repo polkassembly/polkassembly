@@ -6,7 +6,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider } from 'antd';
+import { Alert, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -360,12 +360,6 @@ const Web3Signup: FC<Props> = ({
 									className='m-0 mb-4 mt-1 p-0 dark:bg-separatorDark'
 								/>
 								<div className='web3-button-container ml-auto flex justify-end'>
-									<Button
-										className='web3-button mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
-										onClick={() => handleBackToSignUp()}
-									>
-										Go Back
-									</Button>
 									<CustomButton
 										text='Go Back'
 										variant='default'

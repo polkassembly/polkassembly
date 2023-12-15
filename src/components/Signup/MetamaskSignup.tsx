@@ -5,7 +5,7 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider } from 'antd';
+import { Alert, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
 import { handleTokenChange } from 'src/services/auth.service';
@@ -26,6 +26,7 @@ import { WalletIcon } from '../Login/MetamaskLogin';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -228,16 +229,22 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 						className='my-4 p-0 dark:bg-separatorDark'
 					/>
 					<div className='flex justify-end'>
-						<Button
-							className='mr-3 flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+						<CustomButton
+							text='Go Back'
+							variant='default'
+							className='mt-3 px-7 py-5'
+							width={144}
+							height={40}
 							onClick={() => handleBackToLogin()}
-						>
-							Go Back
-						</Button>
-						<Button
+						/>
+						<CustomButton
 							key='got-it'
+							width={144}
+							height={40}
 							icon={<CheckOutlined />}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-5 text-sm font-medium leading-none text-white outline-none'
+							variant='primary'
+							className='px-7 py-5'
+							text='Got it!'
 							onClick={() => {
 								getAccounts()
 									.then(() => {
@@ -247,9 +254,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 										console.error(err);
 									});
 							}}
-						>
-							Got it!
-						</Button>
+						/>
 					</div>
 				</div>
 			) : (
@@ -308,20 +313,23 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 										/>
 									</div>
 									<div className='mb-6 flex items-center justify-center gap-x-2'>
-										<Button
-											className='flex w-[144px] items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-sm font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+										<CustomButton
+											text='Go Back'
+											variant='default'
+											className='mt-3 px-8 py-5'
+											width={144}
+											height={40}
 											onClick={() => handleBackToLogin()}
-										>
-											Go Back
-										</Button>
-										<Button
+										/>
+										<CustomButton
+											text='Sign-up'
+											variant='primary'
+											className='mt-3 px-8 py-5'
+											width={144}
+											height={40}
 											disabled={loading}
 											htmlType='submit'
-											size='large'
-											className='w-[144px] rounded-md border-none bg-pink_primary text-sm text-white outline-none'
-										>
-											Sign-up
-										</Button>
+										/>
 									</div>
 								</>
 							)
@@ -330,12 +338,14 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 					</AuthForm>
 					{!!chosenWallet && !accounts.length && (
 						<div className='my-6 flex items-center justify-center'>
-							<Button
-								className='flex items-center justify-center rounded-md border border-solid border-pink_primary px-8 py-5 text-lg font-medium leading-none text-[#E5007A] outline-none dark:bg-transparent'
+							<CustomButton
+								text='Go Back'
+								variant='default'
+								className='mt-3 px-8 py-5'
+								width={144}
+								height={40}
 								onClick={() => handleBackToLogin()}
-							>
-								Go Back
-							</Button>
+							/>
 						</div>
 					)}
 				</>

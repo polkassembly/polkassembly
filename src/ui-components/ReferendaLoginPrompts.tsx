@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import React, { useState } from 'react';
 import { poppins } from 'pages/_app';
 import SignupPopup from './SignupPopup';
@@ -10,6 +10,7 @@ import LoginPopup from './loginPopup';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	image: String;
@@ -46,18 +47,20 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				footer={
 					<div className='center-aligned mt-[32px] flex flex-col items-center justify-center gap-4 pb-8'>
-						<Button
-							className='flex h-[40px] w-[60%] items-center justify-center rounded border-pink_primary bg-pink_primary p-5 text-sm font-medium leading-5 text-white hover:border-pink_primary hover:bg-pink_secondary'
+						<CustomButton
+							text='Login'
 							onClick={() => handleClick('login')}
-						>
-							Login
-						</Button>
-						<Button
-							className='-ml-0 flex h-[40px] w-[60%] items-center justify-center rounded border-pink_primary p-5 text-sm font-medium leading-5 text-pink_primary hover:border-pink_primary hover:bg-pink_secondary hover:text-white dark:bg-transparent'
+							variant='primary'
+							className='w-[360px] p-5'
+							height={40}
+						/>
+						<CustomButton
+							text='Signup'
 							onClick={() => handleClick('signup')}
-						>
-							Signup
-						</Button>
+							variant='default'
+							className='w-[360px] p-5'
+							height={40}
+						/>
 					</div>
 				}
 			>

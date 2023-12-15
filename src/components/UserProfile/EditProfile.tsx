@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Divider, Modal } from 'antd';
+import { Divider, Modal } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
@@ -23,6 +23,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface IEditProfileModalProps {
 	id?: number | null;
@@ -210,19 +211,21 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					<div className='-mx-6 -mb-5 px-6 pb-4'>
 						<Divider className='mb-4 mt-6' />
 						{[
-							<Button
+							<CustomButton
+								variant='default'
 								key='cancel'
 								onClick={() => {
 									setOpenModal && setOpenModal(false);
 									setOpen(false);
 								}}
 								disabled={loading}
-								size='middle'
-								className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm font-medium text-pink_primary dark:bg-section-dark-overlay'
-							>
-								Cancel
-							</Button>,
-							<Button
+								className='font-medium'
+								width={134}
+								height={40}
+								text='Cancel'
+							/>,
+							<CustomButton
+								variant='default'
 								key='update profile'
 								disabled={loading}
 								loading={loading}
@@ -243,11 +246,10 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 										}));
 									}
 								}}
-								size='middle'
-								className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary bg-pink_primary text-sm font-medium text-white'
-							>
-								Save
-							</Button>
+								width={134}
+								height={40}
+								text='Save'
+							/>
 						]}
 					</div>
 				}

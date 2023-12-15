@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Form, Input, Modal, Select, Spin } from 'antd';
+import { Alert, Form, Input, Modal, Select, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
@@ -40,6 +40,7 @@ import DownArrow from '~assets/icons/down-icon.svg';
 import { getKiltDidLinkedAccounts } from '~src/util/kiltDid';
 import { setReceiver } from '~src/redux/Tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -295,25 +296,26 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				className={`${poppins.className} ${poppins.variable} w-[604px] max-sm:w-full ${className}`}
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 text-sm dark:border-[#3B444F]'>
-						<Button
-							key='back'
-							className='h-[40px] w-[134px] rounded-[4px] border-pink_primary font-semibold tracking-wide text-pink_primary dark:bg-transparent'
+						<CustomButton
+							variant='default'
 							onClick={handleCancel}
+							className='font-semibold'
 							disabled={loadingStatus.isLoading}
-						>
-							Go Back
-						</Button>
-						<Button
+							width={134}
+							height={40}
+							text='Go Back'
+						/>
+						<CustomButton
+							variant='primary'
 							disabled={disable}
 							htmlType='submit'
 							key='submit'
 							onClick={handleTip}
-							className={`h-[40px] w-[134px] rounded-[4px] border-pink_primary bg-pink_primary font-semibold tracking-wide text-white hover:bg-pink_secondary ${
-								disable && 'opacity-50'
-							}`}
-						>
-							Tip
-						</Button>
+							className={`font-semibold ${disable && 'opacity-50'}`}
+							width={134}
+							height={40}
+							text='Tip'
+						/>
 					</div>
 				}
 			>
@@ -347,15 +349,17 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 								displayInline
 								disableTooltip
 							/>
-							<Button
+							<CustomButton
+								variant='primary'
 								onClick={() => {
 									setOpenAddressChangeModal(true);
 									setOpen(false);
 								}}
-								className='flex h-[26px] w-[70px] items-center justify-center rounded-[4px] border-none bg-pink_primary text-xs text-white'
-							>
-								Change
-							</Button>
+								fontSize='xs'
+								width={70}
+								height={26}
+								text='Change'
+							/>
 						</div>
 					</div>
 

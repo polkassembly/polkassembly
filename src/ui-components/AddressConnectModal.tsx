@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, Button, Divider, Form, Modal, Spin } from 'antd';
+import { Alert, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
@@ -37,6 +37,7 @@ import { useDispatch } from 'react-redux';
 import AvailableWallets from './AvailableWallet';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
+import CustomButton from '~src/basic-component/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -395,25 +396,30 @@ const AddressConnectModal = ({
 				</div>
 			}
 			footer={
-				<Button
-					onClick={handleSubmit}
-					disabled={
-						!accounts ||
-						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
-					}
-					className={`mt-4 h-[40px] w-[134px] rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${
-						accounts.length === 0 ||
-						(showMultisig && !multisig) ||
-						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
-							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false) ||
-							(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
-							'opacity-50')
-					}`}
-				>
-					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
-				</Button>
+				<div>
+					<CustomButton
+						onClick={handleSubmit}
+						disabled={
+							!accounts ||
+							(showMultisig && !multisig) ||
+							(showMultisig && initiatorBalance.lte(totalDeposit)) ||
+							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+						}
+						width={134}
+						height={40}
+						variant='primary'
+						className={`${
+							accounts.length === 0 ||
+							(showMultisig && !multisig) ||
+							(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
+								(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false) ||
+								(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
+								'opacity-50')
+						}`}
+					>
+						{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
+					</CustomButton>
+				</div>
 			}
 			closable={closable}
 			onCancel={() => setOpen(false)}

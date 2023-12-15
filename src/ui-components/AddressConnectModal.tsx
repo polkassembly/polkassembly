@@ -404,7 +404,7 @@ const AddressConnectModal = ({
 						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
 					}
-					width={134}
+					width={155}
 					height={40}
 					variant='primary'
 					className={`mt-4 ${

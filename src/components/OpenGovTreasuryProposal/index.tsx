@@ -351,7 +351,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) =>
 						<CustomButton
 							onClick={handleClose}
 							height={40}
-							width={145}
+							width={144}
 							text='Yes, Exit'
 							variant='default'
 						/>

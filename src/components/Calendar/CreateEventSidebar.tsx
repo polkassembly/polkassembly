@@ -253,7 +253,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						</div>
 					)}
 
-					<div className='form-actions'>
+					<div className='form-actions gap-x-2'>
 						<CustomButton
 							text='Cancel'
 							variant='default'
@@ -266,7 +266,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							variant='primary'
 							onClick={handleCreateEvent}
 							loading={loading}
-							width={224}
+							width={160}
 							height={40}
 						/>
 					</div>

@@ -43,6 +43,7 @@ interface Props {
 	theme?: string;
 	isUsedInTreasuryTrack?: boolean;
 	useDefaultButton?: boolean;
+	postLink?: string;
 }
 
 export interface ISteps {
@@ -136,7 +137,7 @@ export interface CreateProposalRef {
 	triggerCreateProposalClick: () => void;
 }
 
-const OpenGovTreasuryProposal = forwardRef<CreateProposalRef, any>(({ className, isUsedInTreasuryTrack, useDefaultButton = true }: Props, ref) => {
+const OpenGovTreasuryProposal = forwardRef<CreateProposalRef, any>(({ className, isUsedInTreasuryTrack, useDefaultButton = true, postLink }: Props, ref) => {
 	const { api, apiReady } = useApiContext();
 
 	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
@@ -437,9 +438,9 @@ const OpenGovTreasuryProposal = forwardRef<CreateProposalRef, any>(({ className,
 							title={title}
 							content={content}
 							tags={tags}
-							isDiscussionLinked={isDiscussionLinked}
+							isDiscussionLinked={postLink ? true : isDiscussionLinked}
 							setIsDiscussionLinked={setIsDiscussionLinked}
-							discussionLink={discussionLink}
+							discussionLink={postLink ? postLink : discussionLink}
 							setDiscussionLink={setDiscussionLink}
 							setTags={setTags}
 							setContent={setContent}

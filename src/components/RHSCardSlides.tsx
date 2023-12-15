@@ -14,6 +14,7 @@ import dynamic from 'next/dynamic';
 import { ProposalType, checkIsOnChainPost } from '~src/global/proposalType';
 import { post_topic } from '~src/global/post_topics';
 import { useTheme } from 'next-themes';
+import { useNetworkSelector } from '~src/redux/selectors';
 import OpenGovTreasuryProposal, { CreateProposalRef } from '~src/components/OpenGovTreasuryProposal';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
@@ -34,6 +35,7 @@ enum cardTags {
 type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isReversed, setIsReversed] = useState(false);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
@@ -44,10 +46,12 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	const createProposalRef = useRef<CreateProposalRef | null>(null);
 
 	const {
-		postData: { post_link, tags, postType, topic }
+		postData: { post_link, tags, postType, topic, postIndex }
 	} = usePostDataContext();
 
 	const isOnchainPost = checkIsOnChainPost(postType);
+
+	const postLink = `https://${network}.polkassembly.io/post/${postIndex}`;
 
 	const nextSlide = () => {
 		setCurrentIndex((prevIndex) => {
@@ -167,6 +171,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				theme={theme}
 				useDefaultButton={false}
 				ref={createProposalRef}
+				postLink={postLink}
 			/>
 			<PostEditOrLinkCTA
 				open={openLinkCta}

@@ -510,8 +510,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 											<CustomButton
 												onClick={() => setShowModal(false)}
 												className='mr-[15px] font-semibold'
-												width={134}
-												height={40}
+												buttonSize='xs'
 												variant='default'
 												text='Cancel'
 											/>
@@ -520,8 +519,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 												htmlType='submit'
 												disabled={!wallet || !lockedBalance}
 												className='mr-[24px] font-semibold'
-												width={134}
-												height={40}
+												buttonSize='xs'
 												variant='primary'
 												text='Confirm'
 											/>

@@ -135,8 +135,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 								loading={loading}
 								onClick={toggleEdit}
 								className='mr-2'
-								height={40}
-								width={134}
+								buttonSize='xs'
 							>
 								<CloseOutlined /> Cancel
 							</CustomButton>
@@ -144,8 +143,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 								variant='primary'
 								htmlType='submit'
 								loading={loading}
-								height={40}
-								width={134}
+								buttonSize='xs'
 							>
 								<CheckOutlined /> Submit
 							</CustomButton>

@@ -166,8 +166,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 						variant='default'
 						key='back'
 						text='Cancel'
-						width={134}
-						height={40}
+						buttonSize='xs'
 						disabled={loading}
 						onClick={() => {
 							form.resetFields();
@@ -179,8 +178,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 						htmlType='submit'
 						key='submit'
 						text='Create Poll'
-						width={134}
-						height={40}
+						buttonSize='xs'
 						disabled={loading}
 						onClick={handleCreate}
 					/>

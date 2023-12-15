@@ -209,8 +209,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					onClick={handleRemove}
 					className='mr-auto'
 					text='Remove'
-					height={40}
-					width={134}
+					buttonSize='xs'
 				/>
 			);
 		} else if (data) {
@@ -224,8 +223,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					onClick={handleConfirm}
 					className='bg-green_primary'
 					text='Confirm'
-					height={40}
-					width={134}
+					buttonSize='xs'
 				/>
 			);
 		} else {
@@ -238,8 +236,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					disabled={loading}
 					onClick={handleSubmit}
 					text='Link'
-					height={40}
-					width={134}
+					buttonSize='xs'
 				/>
 			);
 		}

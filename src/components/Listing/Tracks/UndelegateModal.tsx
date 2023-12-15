@@ -214,8 +214,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						<CustomButton
 							key='back'
 							text='Cancel'
-							height={40}
-							width={134}
+							buttonSize='xs'
 							variant='default'
 							disabled={loading}
 							onClick={() => setOpen(false)}
@@ -225,8 +224,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							htmlType='submit'
 							key='submit'
 							text='Undelegate'
-							height={40}
-							width={134}
+							buttonSize='xs'
 							variant='primary'
 							disabled={loading}
 							onClick={handleSubmit}

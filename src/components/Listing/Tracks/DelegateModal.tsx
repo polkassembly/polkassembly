@@ -366,8 +366,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							text='Cancel'
 							className='rounded-[4px]'
 							variant='default'
-							width={134}
-							height={40}
+							buttonSize='xs'
 							onClick={handleCloseModal}
 						/>
 						<CustomButton
@@ -397,8 +396,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							onClick={async () => {
 								await handleSubmit();
 							}}
-							height={40}
-							width={134}
+							buttonSize='xs'
 						/>
 					</div>
 				}

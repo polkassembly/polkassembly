@@ -259,8 +259,7 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							variant='default'
 							onClick={closeCreateEventSidebar}
 							disabled={loading}
-							width={144}
-							height={40}
+							buttonSize='sm'
 						/>
 						<CustomButton
 							text='Create Event'

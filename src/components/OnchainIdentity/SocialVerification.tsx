@@ -301,16 +301,14 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 				<CustomButton
 					text='Cancel'
 					onClick={onCancel}
-					height={40}
-					width={134}
+					buttonSize='xs'
 					variant='default'
 				/>
 				<CustomButton
 					text='Proceed'
 					onClick={handleJudgement}
 					disabled={handleProceedDisabled()}
-					height={40}
-					width={134}
+					buttonSize='xs'
 					variant='primary'
 				/>
 			</div>

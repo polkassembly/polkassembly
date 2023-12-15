@@ -499,8 +499,7 @@ const Web3Login: FC<Props> = ({
 									<CustomButton
 										text='Go Back'
 										variant='default'
-										width={144}
-										height={40}
+										buttonSize='sm'
 										onClick={() => handleBackToLogin()}
 										className='web3-button mr-3 w-[144px]'
 									/>
@@ -509,8 +508,7 @@ const Web3Login: FC<Props> = ({
 											icon={<CheckOutlined />}
 											text='Got it!'
 											variant='primary'
-											width={144}
-											height={40}
+											buttonSize='sm'
 											onClick={() => {
 												getAccounts(chosenWallet)
 													.then(() => {
@@ -617,16 +615,14 @@ const Web3Login: FC<Props> = ({
 														<CustomButton
 															text='Go Back'
 															variant='default'
-															width={144}
-															height={40}
+															buttonSize='sm'
 															onClick={() => handleBackToLogin()}
 															className='mr-3'
 														/>
 														<CustomButton
 															text='Login'
 															variant='primary'
-															width={144}
-															height={40}
+															buttonSize='sm'
 															loading={loading}
 															disabled={withPolkasafe && !multisigAddress}
 															htmlType='submit'
@@ -643,8 +639,7 @@ const Web3Login: FC<Props> = ({
 										<CustomButton
 											text='Go Back'
 											variant='default'
-											width={144}
-											height={40}
+											buttonSize='sm'
 											onClick={() => handleBackToLogin()}
 										/>
 									</div>

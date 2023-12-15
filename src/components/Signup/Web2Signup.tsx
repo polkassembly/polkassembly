@@ -376,8 +376,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<div className='-mt-1 flex items-center justify-end px-8'>
 						<CustomButton
 							variant='primary'
-							width={144}
-							height={40}
+							buttonSize='sm'
 							disabled={loading}
 							htmlType='submit'
 						>
@@ -401,8 +400,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								variant='primary'
 								text='Got it!'
 								icon={<CheckOutlined />}
-								width={144}
-								height={40}
+								buttonSize='sm'
 								onClick={() => {
 									setOpen(false);
 									!isModal && router.back();

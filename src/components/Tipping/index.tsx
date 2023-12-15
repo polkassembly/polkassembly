@@ -297,8 +297,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							onClick={handleCancel}
 							className='font-semibold'
 							disabled={loadingStatus.isLoading}
-							width={134}
-							height={40}
+							buttonSize='xs'
 							text='Go Back'
 						/>
 						<CustomButton
@@ -308,8 +307,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							key='submit'
 							onClick={handleTip}
 							className={`font-semibold ${disable && 'opacity-50'}`}
-							width={134}
-							height={40}
+							buttonSize='xs'
 							text='Tip'
 						/>
 					</div>

@@ -246,16 +246,14 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 				<div className='border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
 					<CustomButton
 						onClick={() => setOpenModal(false)}
-						height={40}
-						width={134}
+						buttonSize='xs'
 						variant='default'
 						text='Back'
 					/>
 					<CustomButton
 						onClick={handleSubmit}
 						disabled={!accounts.length || availableBalance.lte(amount)}
-						height={40}
-						width={134}
+						buttonSize='xs'
 						variant='primary'
 						text='Continue'
 						className={`${!accounts.length || (availableBalance.lte(amount) && 'opacity-50')}`}

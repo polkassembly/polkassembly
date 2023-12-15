@@ -302,8 +302,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								loading={loading}
 								htmlType='submit'
 								text='Login'
-								width={134}
-								height={40}
+								buttonSize='xs'
 								variant='primary'
 							/>
 						</div>

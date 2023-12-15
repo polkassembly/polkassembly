@@ -363,8 +363,7 @@ const Web3Signup: FC<Props> = ({
 									<CustomButton
 										text='Go Back'
 										variant='default'
-										width={144}
-										height={40}
+										buttonSize='sm'
 										onClick={() => handleBackToSignUp()}
 										className='web3-button mr-3'
 									/>
@@ -373,8 +372,7 @@ const Web3Signup: FC<Props> = ({
 											icon={<CheckOutlined />}
 											text='Got it!'
 											variant='primary'
-											width={144}
-											height={40}
+											buttonSize='sm'
 											onClick={() => {
 												getAccounts(chosenWallet)
 													.then(() => {
@@ -449,16 +447,14 @@ const Web3Signup: FC<Props> = ({
 													<CustomButton
 														text='Go Back'
 														variant='default'
-														width={144}
-														height={40}
+														buttonSize='sm'
 														onClick={() => handleBackToSignUp()}
 														className='mr-3'
 													/>
 													<CustomButton
 														text='Sign-up'
 														variant='primary'
-														width={144}
-														height={40}
+														buttonSize='sm'
 														disabled={loading}
 														htmlType='submit'
 													/>
@@ -473,8 +469,7 @@ const Web3Signup: FC<Props> = ({
 										<CustomButton
 											text='Go Back'
 											variant='default'
-											width={144}
-											height={40}
+											buttonSize='sm'
 											onClick={() => handleBackToSignUp()}
 										/>
 									</div>

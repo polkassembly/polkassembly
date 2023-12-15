@@ -210,8 +210,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									<CustomButton
 										text='Got it!'
 										variant='primary'
-										width={134}
-										height={40}
+										buttonSize='xs'
 										onClick={() => setVoteCalculationModalOpen(false)}
 										className='gap-10 px-4 py-1'
 									/>

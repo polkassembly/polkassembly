@@ -233,14 +233,12 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 							text='Go Back'
 							variant='default'
 							className='mt-3 px-7 py-5'
-							width={144}
-							height={40}
+							buttonSize='sm'
 							onClick={() => handleBackToLogin()}
 						/>
 						<CustomButton
 							key='got-it'
-							width={144}
-							height={40}
+							buttonSize='sm'
 							icon={<CheckOutlined />}
 							variant='primary'
 							className='px-7 py-5'
@@ -317,16 +315,14 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 											text='Go Back'
 											variant='default'
 											className='mt-3 px-8 py-5'
-											width={144}
-											height={40}
+											buttonSize='sm'
 											onClick={() => handleBackToLogin()}
 										/>
 										<CustomButton
 											text='Sign-up'
 											variant='primary'
 											className='mt-3 px-8 py-5'
-											width={144}
-											height={40}
+											buttonSize='sm'
 											disabled={loading}
 											htmlType='submit'
 										/>
@@ -342,8 +338,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 								text='Go Back'
 								variant='default'
 								className='mt-3 px-8 py-5'
-								width={144}
-								height={40}
+								buttonSize='sm'
 								onClick={() => handleBackToLogin()}
 							/>
 						</div>

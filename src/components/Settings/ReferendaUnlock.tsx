@@ -424,8 +424,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 					className='mt-2 border-none'
 					variant='primary'
 					text='Vote'
-					height={40}
-					width={134}
+					buttonSize='xs'
 				/>
 			</Form.Item>
 		</Form>
@@ -511,8 +510,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 															className='border-none'
 															variant='primary'
 															text='Remove'
-															height={40}
-															width={134}
+															buttonSize='xs'
 														/>
 													</span>
 												</li>
@@ -557,8 +555,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 																className='border-none'
 																variant='primary'
 																text='Unlock'
-																height={40}
-																width={134}
+																buttonSize='xs'
 															/>
 														</span>
 													</li>

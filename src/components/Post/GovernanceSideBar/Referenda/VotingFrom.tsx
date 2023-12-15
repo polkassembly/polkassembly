@@ -121,8 +121,7 @@ const VotingForm = ({
 					disabled={disabled}
 					text='Confirm'
 					variant='primary'
-					width={134}
-					height={40}
+					buttonSize='xs'
 					className={`mr-6 ${disabled && 'opacity-50'} font-semibold`}
 				/>
 			</div>

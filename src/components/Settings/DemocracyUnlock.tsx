@@ -284,8 +284,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 					className='mt-2 border-none'
 					variant='primary'
 					text='Vote'
-					height={40}
-					width={134}
+					buttonSize='xs'
 				/>
 			</Form.Item>
 		</Form>
@@ -375,8 +374,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 																loading={loadingStatus.isLoading}
 																variant='primary'
 																text='Unlock'
-																height={40}
-																width={144}
+																buttonSize='sm'
 															/>
 														) : (
 															<CustomButton
@@ -384,8 +382,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 																loading={loadingStatus.isLoading}
 																variant='primary'
 																text='Remove'
-																height={40}
-																width={144}
+																buttonSize='sm'
 															/>
 														)
 													) : (
@@ -407,8 +404,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 									variant='primary'
 									text='Unlock'
 									className='mt-2'
-									height={40}
-									width={144}
+									buttonSize='sm'
 								/>
 							</>
 						)}

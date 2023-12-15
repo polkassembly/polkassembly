@@ -713,6 +713,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				hash_eq: strPostId,
 				type_eq: subsquidProposalType
 			};
+			if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
+				postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
+			}
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		} else if (network === 'polymesh') {
@@ -721,8 +724,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				index_eq: numPostId,
 				type_eq: subsquidProposalType
 			};
-		} else if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
-			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		}
 		let subsquidRes: any = {};
 		try {

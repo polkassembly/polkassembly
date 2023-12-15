@@ -20,25 +20,26 @@ interface ICustomButton {
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 	const { style, text, disabled, loading, htmlType, className, onClick, variant, icon, width, height, fontSize } = props;
+	console.log(width);
 	return (
-		<div>
-			<ANTDButton
-				className={`flex items-center justify-center gap-0 rounded-md ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium ${
-					variant === 'primary'
-						? 'hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary'
-						: 'border border-pink_primary bg-transparent text-pink_primary dark:text-blue-dark-helper'
-				} ${`w-[${width}px]`} ${`h-[${height ? height : '40'}px]`} ${className} `}
-				disabled={disabled}
-				type={variant}
-				loading={loading}
-				htmlType={htmlType}
-				onClick={onClick}
-				icon={icon}
-				style={style}
-			>
-				{props.children || text}
-			</ANTDButton>
-		</div>
+		<ANTDButton
+			className={`${`w-[${width}px]`} ${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 rounded-md ${
+				fontSize ? `text-${fontSize}` : 'text-sm'
+			} font-medium ${
+				variant === 'primary'
+					? 'border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:text-white'
+					: 'border border-pink_primary bg-transparent text-pink_primary'
+			} ${className} `}
+			disabled={disabled}
+			type={variant}
+			loading={loading}
+			htmlType={htmlType}
+			onClick={onClick}
+			icon={icon}
+			style={style}
+		>
+			{props.children || text}
+		</ANTDButton>
 	);
 };
 

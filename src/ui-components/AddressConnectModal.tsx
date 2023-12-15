@@ -396,30 +396,28 @@ const AddressConnectModal = ({
 				</div>
 			}
 			footer={
-				<div>
-					<CustomButton
-						onClick={handleSubmit}
-						disabled={
-							!accounts ||
-							(showMultisig && !multisig) ||
-							(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
-						}
-						width={134}
-						height={40}
-						variant='primary'
-						className={`${
-							accounts.length === 0 ||
-							(showMultisig && !multisig) ||
-							(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
-								(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false) ||
-								(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
-								'opacity-50')
-						}`}
-					>
-						{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
-					</CustomButton>
-				</div>
+				<CustomButton
+					onClick={handleSubmit}
+					disabled={
+						!accounts ||
+						(showMultisig && !multisig) ||
+						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
+						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+					}
+					width={134}
+					height={40}
+					variant='primary'
+					className={`mt-4 ${
+						accounts.length === 0 ||
+						(showMultisig && !multisig) ||
+						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
+							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false) ||
+							(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
+							'opacity-50')
+					}`}
+				>
+					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
+				</CustomButton>
 			}
 			closable={closable}
 			onCancel={() => setOpen(false)}
@@ -626,5 +624,9 @@ export default styled(AddressConnectModal)`
 	.ant-alert-with-description .ant-alert-icon {
 		font-size: 14px !important;
 		margin-top: 7px;
+	}
+	.ant-modal .ant-modal-footer {
+		display: flex;
+		justify-content: end !important;
 	}
 `;

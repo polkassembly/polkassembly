@@ -5,13 +5,14 @@
 import React, { FC, useState } from 'react';
 import { usePostDataContext } from '~src/context';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import PostEditLinkingIcon from 'public/assets/icons/post-edit-linking.svg';
+// import PostEditLinkingIcon from 'public/assets/icons/post-edit-linking.svg';
 import { Modal } from 'antd';
 import ContinueWithoutLinking from './ContinueWithoutLinking';
 import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
@@ -39,7 +40,11 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
-					<PostEditLinkingIcon />
+					{/* <PostEditLinkingIcon /> */}
+					<ImageIcon
+						src='/assets/icons/post-edit-linking.svg'
+						alt='post edit linking icon'
+					/>
 					<article className='mb-[35px] mt-[28px] flex flex-col items-center text-center text-xl leading-[30px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-high'>
 						<h3 className='m-0 p-0 text-lg font-medium'>Welcome Text</h3>
 						<p className='m-0 mt-2 text-base'>Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals.</p>

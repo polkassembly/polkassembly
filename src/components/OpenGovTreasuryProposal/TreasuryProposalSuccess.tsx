@@ -13,13 +13,13 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
-import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import Link from 'next/link';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import CustomButton from '~src/basic-component/buttons/CustomButton';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -102,7 +102,11 @@ const TreasuryProposalSuccessPopup = ({
 			maskClosable={false}
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
-				<SuccessIcon />
+				{/* <SuccessIcon /> */}
+				<ImageIcon
+					src='/assets/delegation-tracks/success-delegate.svg'
+					alt='success delegate icon'
+				/>
 				<label className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Proposal created successfully for</label>
 				{fundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>

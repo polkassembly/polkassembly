@@ -17,7 +17,6 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
-import ConnectAddressIcon from '~assets/icons/connect-address.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from './QueueNotification';
@@ -38,6 +37,7 @@ import AvailableWallets from './AvailableWallet';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import CustomButton from '~src/basic-component/buttons/CustomButton';
+import ImageIcon from './ImageIcon';
 
 interface Props {
 	className?: string;
@@ -432,7 +432,12 @@ const AddressConnectModal = ({
 				<div className='flex flex-col'>
 					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
-							<ConnectAddressIcon />
+							{/* <ConnectAddressIcon /> */}
+							<ImageIcon
+								src='/assets/icons/connect-address.svg'
+								imgWrapperClassName='ml-10 -mt-4'
+								alt='connect address Icon'
+							/>
 							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 								Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
 							</span>

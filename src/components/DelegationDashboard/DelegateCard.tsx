@@ -8,7 +8,7 @@ import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import { Modal } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
-import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
+// import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,6 +25,7 @@ import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-component/buttons/CustomButton';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	delegate: IDelegate;
@@ -87,7 +88,11 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		>
 			{delegate?.dataSource === 'nova' && (
 				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
-					<NovaWalletIcon />
+					{/* <NovaWalletIcon /> */}
+					<ImageIcon
+						src='/assets/delegation-tracks/nova-wallet.svg'
+						alt='nova wallet icon'
+					/>
 					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet Delegate</span>
 				</div>
 			)}

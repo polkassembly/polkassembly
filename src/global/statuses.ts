@@ -80,6 +80,7 @@ export const gov2ReferendumStatus = {
 	CREATED: 'Created',
 	DECIDING: 'Deciding',
 	DECISION_DEPOSIT_PLACED: 'DecisionDepositPlaced',
+	EXECUTED: 'Executed',
 	EXECUTION_FAILED: 'ExecutionFailed',
 	KILLED: 'Killed',
 	REJECTED: 'Rejected',
@@ -107,6 +108,10 @@ export const gov2ReferendumStatusOptions = [
 	{
 		key: gov2ReferendumStatus.DECIDING,
 		label: 'Deciding'
+	},
+	{
+		key: gov2ReferendumStatus.EXECUTED,
+		label: 'Executed'
 	},
 	{
 		key: gov2ReferendumStatus.EXECUTION_FAILED,
@@ -153,6 +158,10 @@ export const gov2ReferendumStatusClosedOptions = [
 	{
 		key: gov2ReferendumStatus.CONFIRMED,
 		label: 'Confirmed'
+	},
+	{
+		key: gov2ReferendumStatus.EXECUTED,
+		label: 'Executed'
 	},
 	{
 		key: gov2ReferendumStatus.EXECUTION_FAILED,

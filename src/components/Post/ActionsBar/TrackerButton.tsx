@@ -95,7 +95,7 @@ const TrackerButton: FC<IDiscussionProps> = function ({ onchainId, proposalType 
 		<CustomButton
 			onClick={handleTrack}
 			variant='default'
-			className='px-1'
+			className='border-none px-1'
 		>
 			{tracked ? <EyeInvisibleOutlined /> : <EyeOutlined />}
 			{tracked ? 'Untrack' : 'Track'}

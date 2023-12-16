@@ -202,24 +202,32 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				destroyOnClose={true}
 				zIndex={1067}
 				footer={[
-					<CustomButton
-						key='back'
-						disabled={loading}
-						onClick={() => setShowModal(false)}
-						text='Cancel'
-						variant='default'
-					/>,
-					<CustomButton
-						htmlType='submit'
-						key='submit'
-						disabled={loading}
-						onClick={() => {
-							isDeleteModal ? handleDelete() : handleReport();
-						}}
-						variant='primary'
+					<div
+						key='buttons'
+						className='mt-4 flex justify-end'
 					>
-						{isDeleteModal ? 'Delete' : 'Report'}
-					</CustomButton>
+						<CustomButton
+							key='back'
+							disabled={loading}
+							onClick={() => setShowModal(false)}
+							text='Cancel'
+							variant='default'
+							buttonSize='xs'
+						/>
+						,
+						<CustomButton
+							htmlType='submit'
+							key='submit'
+							disabled={loading}
+							onClick={() => {
+								isDeleteModal ? handleDelete() : handleReport();
+							}}
+							variant='primary'
+							buttonSize='xs'
+						>
+							{isDeleteModal ? 'Delete' : 'Report'}
+						</CustomButton>
+					</div>
 				]}
 			>
 				<Form

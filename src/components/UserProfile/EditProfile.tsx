@@ -208,46 +208,52 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				title={<div className='text-xl font-semibold text-[#1D2632] dark:bg-section-dark-overlay dark:text-white'>Edit Profile</div>}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				footer={
-					<div className='-mx-6 -mb-5 px-6 pb-4'>
-						<Divider className='mb-4 mt-6' />
+					<div className='flex-mb-5 -mx-6 px-6 pb-4'>
+						<Divider className='mb-4 mt-6 flex' />
 						{[
-							<CustomButton
-								variant='default'
-								key='cancel'
-								onClick={() => {
-									setOpenModal && setOpenModal(false);
-									setOpen(false);
-								}}
-								disabled={loading}
-								className='font-medium'
-								buttonSize='xs'
-								text='Cancel'
-							/>,
-							<CustomButton
-								variant='default'
-								key='update profile'
-								disabled={loading}
-								loading={loading}
-								onClick={async () => {
-									try {
-										await updateProfileData();
+							<div
+								key='buttons'
+								className='flex justify-end'
+							>
+								<CustomButton
+									variant='default'
+									key='cancel'
+									onClick={() => {
+										setOpenModal && setOpenModal(false);
+										setOpen(false);
+									}}
+									disabled={loading}
+									className='font-medium'
+									buttonSize='xs'
+									text='Cancel'
+								/>
+								,
+								<CustomButton
+									variant='primary'
+									key='update profile'
+									disabled={loading}
+									loading={loading}
+									onClick={async () => {
+										try {
+											await updateProfileData();
 
-										//GAEvent to track user profile edit
-										trackEvent('user_profile_updated', 'user_profile_edit', {
-											userId: currentUser?.id || '',
-											username: username || currentUser.username || ''
-										});
-									} catch (error) {
-										setErrorCheck((prevState) => ({
-											...prevState,
-											basicInformationError: error?.message || error,
-											socialInformationError: error?.socialInformationError
-										}));
-									}
-								}}
-								buttonSize='xs'
-								text='Save'
-							/>
+											//GAEvent to track user profile edit
+											trackEvent('user_profile_updated', 'user_profile_edit', {
+												userId: currentUser?.id || '',
+												username: username || currentUser.username || ''
+											});
+										} catch (error) {
+											setErrorCheck((prevState) => ({
+												...prevState,
+												basicInformationError: error?.message || error,
+												socialInformationError: error?.socialInformationError
+											}));
+										}
+									}}
+									buttonSize='xs'
+									text='Save'
+								/>
+							</div>
 						]}
 					</div>
 				}

@@ -132,11 +132,10 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 					<div>
 						<div className='px-8 pb-2 pt-8 dark:bg-section-dark-overlay'>
 							<div className='flex justify-center'>
-								{/* <ConfirmationIcon className='confirm-logo-conatiner absolute -top-[78px]' /> */}
 								<ImageIcon
 									src='/assets/icons/Confirmation.svg'
 									alt='confirmation logo'
-									className='confirm-logo-conatiner absolute -top-[80px]'
+									className='absolute -top-[80px]'
 								/>
 							</div>
 							<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>You are successfully logged in</p>

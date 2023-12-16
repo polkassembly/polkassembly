@@ -13,7 +13,7 @@ interface Props {
 
 const SetIdentityNudge = ({ isIdentitySet, handleSetIdentityClick }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isOpen, setIsOpen] = useState<boolean | null>(null);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -32,7 +32,7 @@ const SetIdentityNudge = ({ isIdentitySet, handleSetIdentityClick }: Props) => {
 		setIsOpen(false);
 	}
 
-	if (!isOpen) return null;
+	if (isOpen === null || !isOpen) return null;
 
 	return (
 		<div className='flex flex-row border-none bg-[#5D38F4]'>

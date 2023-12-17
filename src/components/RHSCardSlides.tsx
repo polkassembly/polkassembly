@@ -4,6 +4,7 @@
 
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
+import { trackEvent } from 'analytics';
 import NavigateNextIcon from '~assets/icons/navigate-next.svg';
 import NavigatePrevIcon from '~assets/icons/navigate-prev.svg';
 import CloseCardIcon from '~assets/icons/rhs-card-icons/close-card.svg';
@@ -14,7 +15,7 @@ import dynamic from 'next/dynamic';
 import { ProposalType, checkIsOnChainPost } from '~src/global/proposalType';
 import { post_topic } from '~src/global/post_topics';
 import { useTheme } from 'next-themes';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import OpenGovTreasuryProposal, { CreateProposalRef } from '~src/components/OpenGovTreasuryProposal';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
@@ -36,6 +37,7 @@ type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggle
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isReversed, setIsReversed] = useState(false);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
@@ -72,7 +74,13 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
-					clickHandler: () => setOpenDecisionDeposit(true),
+					clickHandler: () => {
+						trackEvent('decision_deposit_card_clicked', 'clicked_decision_deposit_rhs_card', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
+						setOpenDecisionDeposit(true);
+					},
 					description: 'To be paid before completion of decision period; payable by anyone',
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.DECISION_DEPOSIT,
@@ -88,6 +96,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => {
+						trackEvent('add_tags_card_clicked', 'clicked_add_tags_rhs_card', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
 						toggleEdit && toggleEdit();
 					},
 					description: 'Please include relevant tags to enhance post discoverability.',
@@ -104,7 +116,21 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
-					clickHandler: () => (isOnchainPost ? setOpenLinkCta(true) : setLinkingAndEditingOpen(true)),
+					clickHandler: () => {
+						if (isOnchainPost) {
+							trackEvent('link_discussion_card_clicked', 'clicked_link_discussion_rhs_card', {
+								userId: currentUser?.id || '',
+								userName: currentUser?.username || ''
+							});
+							setOpenLinkCta(true);
+						} else {
+							trackEvent('link_onchain_post_card_clicked', 'clicked_link_onchain_post_rhs_card', {
+								userId: currentUser?.id || '',
+								userName: currentUser?.username || ''
+							});
+							setLinkingAndEditingOpen(true);
+						}
+					},
 					description: 'Please add contextual info for voters to make an informed decision',
 					icon: '/assets/icons/rhs-card-icons/Doc.png',
 					tag: cardTags.LINK_DISCUSSION,
@@ -120,6 +146,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => {
+						trackEvent('create_proposal_card_clicked', 'clicked_create_proposal_rhs_card', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
 						createProposalRef.current && createProposalRef.current.triggerCreateProposalClick();
 					},
 					description: 'Convert this discussion into a treasury proposal',
@@ -135,7 +165,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		return () => {
 			setRHSCards([]);
 		};
-	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, postType, topic]);
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, postType, topic, currentUser]);
 
 	useEffect(() => {
 		if (RHSCards.length <= 1) {

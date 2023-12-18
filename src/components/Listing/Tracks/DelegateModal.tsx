@@ -334,8 +334,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 					<CustomButton
 						className='delegation-buttons'
 						variant='default'
-						width={114}
-						height={40}
+						buttonSize='xs'
 						onClick={() => {
 							delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
 						}}

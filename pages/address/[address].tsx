@@ -17,7 +17,7 @@ import { EGovType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
-import UserNotFound from '~assets/user-not-found.svg';
+// import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
@@ -27,6 +27,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -120,7 +121,13 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		return (
 			<EmptyState>
 				<ErrorAlert errorMsg="Invalid User. This user does't have any account with Polkassembly" />
-				<UserNotFound />
+				{/* <UserNotFound /> */}
+				<ImageIcon
+					src='/assets/user-not-found.svg'
+					alt='user not found icon'
+					imgWrapperClassName='w-full h-full flex justify-center items-center'
+					imgClassName='max-w-[600px] max-h-[600px]'
+				/>
 			</EmptyState>
 		);
 	}

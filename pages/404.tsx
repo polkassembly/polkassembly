@@ -7,8 +7,9 @@ import { Result } from 'antd';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 
-import NothingFoundSVG from '~assets/nothing-found.svg';
+// import NothingFoundSVG from '~assets/nothing-found.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const NotFound = () => {
 	const currentUser = useUserDetailsSelector();
@@ -26,7 +27,11 @@ const NotFound = () => {
 		<Result
 			icon={
 				<div className='mx-auto h-auto w-1/2 max-w-[900px]'>
-					<NothingFoundSVG />
+					{/* <NothingFoundSVG /> */}
+					<ImageIcon
+						src='/assets/nothing-found.svg'
+						alt='nothing found icon'
+					/>
 				</div>
 			}
 			title="Uh oh, it seems this route doesn't exist."

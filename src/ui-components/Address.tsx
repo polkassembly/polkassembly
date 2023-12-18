@@ -280,6 +280,7 @@ const Address = (props: Props) => {
 						polkassemblyUsername={username}
 						imgUrl={imgUrl}
 						setOpenAddressChangeModal={setOpenAddressChangeModal}
+						isKiltNameExists={!!kiltName}
 					/>
 				}
 				open={!disableTooltip ? open : false}
@@ -299,7 +300,7 @@ const Address = (props: Props) => {
 							<Identicon
 								className='image identicon'
 								value={encodedAddr}
-								size={iconSize ? iconSize : displayInline ? 20 : 32}
+								size={iconSize && iconSize >= 20 ? iconSize : displayInline ? 20 : 32}
 								theme={'polkadot'}
 							/>
 						))}
@@ -373,7 +374,7 @@ const Address = (props: Props) => {
 						) : (
 							<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>
 								{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-								{showKiltAddress && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+								{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue dark:text-blue-dark-medium'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
 							</div>
 						)}
 					</div>

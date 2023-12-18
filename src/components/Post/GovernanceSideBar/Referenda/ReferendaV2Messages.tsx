@@ -125,7 +125,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		setMinEnactment(minEnactment);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
 	useEffect(() => {
 		if (isTreasuryProposal) {
 			if (!api || !apiReady) return;
@@ -158,8 +157,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	};
 
 	const isDisbursalPeriodCardVisible = isTreasuryProposal ? (requested ? (isTreasuryProposalPresent ? (awardedStatusBlock ? false : true) : false) : false) : false;
-	const isPreparePeriodExpired = periodStartAt(prepare.period, prepare.periodPercent) / Number(prepare.period.split(' ')[0]) === 1;
-
 	return (
 		<>
 			{!decidingStatusBlock && !isProposalFailed && (
@@ -195,8 +192,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</>
 					</p>
 					<ConfirmationAttemptsRow timeline={timeline || []} />
-					{isPreparePeriodExpired && (
-						<div className='mt-6 border-0 border-t-[1px] border-dashed pt-6 text-xs leading-5 tracking-[0.015em] text-lightBlue dark:border-separatorDark dark:text-blue-dark-high'>
+					{dayjs(prepare.periodEndsAt).isAfter(new Date()) && (
+						<div className='mt-4 border-0 border-t-[1px] border-solid border-grey_border pt-3 text-xs leading-5 tracking-[0.015em] text-lightBlue dark:text-blue-dark-high'>
 							For the proposal to move into voting period, decision deposit needs to be placed or else it will be timed out in{' '}
 							{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))}.
 						</div>

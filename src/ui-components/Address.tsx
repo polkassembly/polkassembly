@@ -55,7 +55,6 @@ interface Props {
 	isTruncateUsername?: boolean;
 	usernameClassName?: string;
 	disableIdenticon?: boolean;
-	isUsedInDisplayData?: boolean;
 	disableAddressClick?: boolean;
 	showFullAddress?: boolean;
 	extensionName?: string;
@@ -67,6 +66,7 @@ interface Props {
 	showKiltAddress?: boolean;
 	destroyTooltipOnHide?: boolean;
 	inPostHeading?: boolean;
+	isUsedInDisplayData?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {

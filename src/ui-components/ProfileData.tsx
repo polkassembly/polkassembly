@@ -10,7 +10,6 @@ import ImageComponent from '~src/components/ImageComponent';
 import CopyIcon from '~assets/icons/content_copy_small.svg';
 import WhiteCopyIcon from '~assets/icons/content_copy_small_white.svg';
 import copyToClipboard from '~src/util/copyToClipboard';
-import EvalutionSummary from '../../PostSummary/EvalutionSummary';
 import MessageIcon from '~assets/icons/ChatIcon.svg';
 import ClipBoardIcon from '~assets/icons/ClipboardText.svg';
 import CalenderIcon from '~assets/icons/Calendar.svg';
@@ -25,17 +24,18 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import styled from 'styled-components';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import EvalutionSummary from '~src/components/Post/PostSummary/EvalutionSummary';
 
 const ZERO_BN = new BN(0);
-interface IUserInfo {
+interface IProfileData {
 	className?: string;
 	address?: any;
-	profileData?: any;
-	isGood?: any;
 }
 
-const UserInfo: FC<IUserInfo> = (props) => {
-	const { className, address, profileData } = props;
+const ProfileData: FC<IProfileData> = (props) => {
+	const { className, address } = props;
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [proposalCount, setProposalCount] = useState(0);
 	const [discussionCount, setDiscussionCount] = useState(0);
@@ -45,18 +45,34 @@ const UserInfo: FC<IUserInfo> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const unit = chainProperties[network]?.tokenSymbol;
+	const [profileData, setProfileData] = useState<IGetProfileWithAddressResponse | undefined>();
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		(async () => {
 			const balances = await userProfileBalances({ address, api, apiReady, network });
 			setTransferableBalance(balances?.transferableBalance || ZERO_BN);
-			console.log(balances, transferableBalance);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
+	const fetchUsername = async (address: string) => {
+		const substrateAddress = getSubstrateAddress(address);
+		if (substrateAddress) {
+			try {
+				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
+				if (error || !data || !data.username) {
+					return;
+				}
+				setProfileData(data);
+			} catch (error) {
+				// console.log(error);
+			}
+		}
+	};
+
 	useEffect(() => {
+		fetchUsername(address);
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
@@ -118,7 +134,7 @@ const UserInfo: FC<IUserInfo> = (props) => {
 						</div>
 					) : (
 						<div className='mt-3'>
-							<p className='m-0 p-0 text-sm text-textGreyColor dark:text-lightGreyTextColor'>No bio added</p>
+							<p className='m-0 p-0 text-sm font-normal text-textGreyColor dark:text-lightGreyTextColor'>No bio added</p>
 						</div>
 					)}
 					<div className='mt-3'>
@@ -141,18 +157,18 @@ const UserInfo: FC<IUserInfo> = (props) => {
 					)}
 				</div>
 			</div>
-			<Divider
-				style={{ background: '#D2D8E0', flexGrow: 1 }}
+			<div
 				className='mb-0 mt-2 dark:bg-separatorDark'
-			/>
-			<div className='user-info-container mt-4 flex h-[60px] items-center justify-between'>
+				style={{ borderTop: `1px dashed ${theme === 'dark' ? '' : '#D2D8E0'}` }}
+			></div>
+			<div className='user-info-container mt-3 flex h-[60px] items-center justify-between'>
 				{profileData?.created_at && (
 					<div className='info-container creation-date-container flex gap-x-2 py-4'>
 						<CalenderIcon className='icon-container' />
 						<div className='content-container -mt-1'>
-							<p className='m-0 whitespace-nowrap p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
+							<p className='m-0 whitespace-nowrap p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
 							<span className='m-0 whitespace-nowrap p-0 text-sm font-semibold text-bodyBlue dark:text-white'>
-								{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}
+								{dayjs(profileData?.created_at as unknown as string).format('DD MMM YYYY')}
 							</span>
 						</div>
 					</div>
@@ -167,7 +183,7 @@ const UserInfo: FC<IUserInfo> = (props) => {
 				<div className='info-container flex justify-center gap-x-2 py-4'>
 					<ClipBoardIcon className='icon-container' />
 					<div className='content-container -mt-1'>
-						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
+						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{proposalCount < 10 ? `0${proposalCount}` : `${proposalCount}`}</span>
 					</div>
 				</div>
@@ -179,7 +195,7 @@ const UserInfo: FC<IUserInfo> = (props) => {
 				<div className='info-container flex justify-center gap-x-2 py-4'>
 					<MessageIcon className='icon-container' />
 					<div className='content-container -mt-1'>
-						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
+						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{discussionCount < 10 ? `0${discussionCount}` : `${discussionCount}`}</span>
 					</div>
 				</div>
@@ -191,63 +207,18 @@ const UserInfo: FC<IUserInfo> = (props) => {
 				<div className='hide-div flex justify-end gap-x-2 py-4'>
 					<MessageIcon className='icon-container' />
 					<div className='content-container -mt-1'>
-						<p className='m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Voting Power</p>
+						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Voting Power</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>
 							{formatedBalance((transferableBalance.toString() || '0').toString(), unit, 2)} {unit}
 						</span>
 					</div>
 				</div>
 			</div>
-			{/* <div className='user-info-container-mweb mt-4 flex h-[60px] items-center justify-between'>
-				<div className={`flex ${profileData?.created_at ? 'justify-center' : 'justify-between'}`}>
-					{!profileData?.created_at && (
-						<div className='flex justify-start gap-x-0.5 py-2'>
-							<CalenderIcon className='icon-container scale-90' />
-							<div className='data-container -mt-1'>
-								<p className='heading-container m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
-								<span className='value-container m-0 p-0 text-[12px] font-semibold text-bodyBlue dark:text-white'>
-									{dayjs(profileData?.created_at as string).format('DD MMM YYYY')}
-								</span>
-							</div>
-						</div>
-					)}
-					{!profileData?.created_at && (
-						<Divider
-							type='vertical'
-							style={{ background: '#D2D8E0' }}
-							className='h-[40px] dark:bg-separatorDark'
-						/>
-					)}
-					<div className='flex justify-center gap-x-0.5 py-2'>
-						<ClipBoardIcon className='icon-container scale-90' />
-						<div className='data-container -mt-1'>
-							<p className='heading-container m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
-							<span className='value-container m-0 p-0 text-[12px] font-semibold text-bodyBlue dark:text-white'>
-								{proposalCount < 10 ? `0${proposalCount}` : `${proposalCount}`}
-							</span>
-						</div>
-					</div>
-					<Divider
-						type='vertical'
-						style={{ background: '#D2D8E0' }}
-						className='h-[40px] dark:bg-separatorDark'
-					/>
-					<div className='flex justify-end gap-x-0.5 py-2'>
-						<MessageIcon className='icon-container scale-90' />
-						<div className='data-container -mt-1'>
-							<p className='heading-container m-0 p-0 text-[10px] text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
-							<span className='value-container m-0 p-0 text-[12px] font-semibold text-bodyBlue dark:text-white'>
-								{discussionCount < 10 ? `0${discussionCount}` : `${discussionCount}`}
-							</span>
-						</div>
-					</div>
-				</div>
-			</div> */}
 		</div>
 	);
 };
 
-export default styled(UserInfo)`
+export default styled(ProfileData)`
 	@media (max-width: 540px) and (min-width: 319px) {
 		.hide-div {
 			display: none !important;

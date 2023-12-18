@@ -2,15 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useEffect } from 'react';
-import ProposerTab from './ProposerTab';
 import AuditTab from './AuditTab';
-// import ProgressReport from './ProgressReport';
-import BeneficiariesTab from './BeneficiariesTab';
-import { usePostDataContext } from '~src/context';
 import { useTheme } from 'next-themes';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-// import { useTheme } from 'next-themes';
+import UserInfoTab from './UserInfoTab';
+import { usePostDataContext } from '~src/context';
 
 interface Props {
 	auditData?: any;
@@ -28,20 +25,22 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
 	const postedBy = usePostDataContext();
 	return (
 		<div className=''>
-			<ProposerTab className='' />
-			{postedBy?.postData?.beneficiaries && postedBy?.postData?.beneficiaries?.length > 0 && <BeneficiariesTab className='' />}
+			<UserInfoTab item='proposer' />
+			{postedBy?.postData?.beneficiaries && (
+				<UserInfoTab
+					item='beneficiary'
+					className='mt-4'
+				/>
+			)}
 			<AuditTab
 				auditData={auditData}
 				videoData={videoData}
 				className='my-4'
 				theme={theme}
 			/>
-			{/* progress report dropdown component */}
-			{/* <ProgressReport className='' /> */}
 		</div>
 	);
 };

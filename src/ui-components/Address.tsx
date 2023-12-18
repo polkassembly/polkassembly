@@ -321,7 +321,7 @@ const Address = (props: Props) => {
 										onClick={(e) => handleClick(e)}
 										title={mainDisplay || encodedAddr}
 										className={`flex gap-x-1 ${
-											usernameClassName ? usernameClassName : 'font-medium text-bodyBlue dark:text-blue-dark-high'
+											usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
 										} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
 									>
 										{!!addressPrefix && (

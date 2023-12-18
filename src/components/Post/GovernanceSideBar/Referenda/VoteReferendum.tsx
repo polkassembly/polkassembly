@@ -502,7 +502,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.AYE ? 'bg-[#2ED47A] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.AYE ? 'bg-ayeGreenColor text-white dark:bg-ayeDarkGreenColor' : ''
+					}`}
 				>
 					{vote === EVoteDecisionType.AYE ? (
 						<LikeWhite className='mb-[3px] mr-2' />
@@ -519,7 +521,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.NAY ? 'bg-[#F53C3C] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.NAY ? 'bg-nayRedColor text-white dark:bg-nayDarkRedColor' : ''
+					}`}
 				>
 					{vote === EVoteDecisionType.NAY ? (
 						<DislikeWhite className='-mb-[3px] mr-2' />
@@ -541,7 +545,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white' : ''}`}
+							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
+							}`}
 						>
 							{' '}
 							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
@@ -553,11 +559,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				{
 					label: (
 						<div
-							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
-								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white' : ''
+							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
-							<StopOutlined className='mb-[3px] mr-2 dark:text-[#909090]' />
+							<StopOutlined className={`mb-[3px] mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
 							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
 						</div>
 					),
@@ -593,13 +599,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										setShowMultisig(false);
 										setMultisig('');
 									}}
-									className='absolute left-[24px] mt-1 cursor-pointer'
+									className='absolute left-6 -mt-1 cursor-pointer'
 								/>
 								<div className='flex items-center gap-[8px]'>
 									{theme === 'dark' ? (
 										<WalletIcon
 											which={Wallet.POLKASAFE}
-											className='ml-14 h-6 w-6'
+											className='ml-14 mt-2.5 h-6 w-6'
 										/>
 									) : (
 										<PolkasafeIcon className='ml-14' />
@@ -609,7 +615,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								</div>
 							</div>
 						) : (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
 								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 							</div>

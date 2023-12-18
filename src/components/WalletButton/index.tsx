@@ -14,39 +14,53 @@ interface Props {
 	text?: string;
 	isOptionalLogin?: boolean;
 	isAvailable?: boolean;
+	isLoginFlow?: boolean;
 }
 
-const WalletButton = ({ disabled, onClick, icon, className, text, name, isOptionalLogin, isAvailable }: Props) => {
+const WalletButton = ({ isLoginFlow, disabled, onClick, icon, className, text, name, isOptionalLogin, isAvailable }: Props) => {
 	return (
 		<>
-			{!isOptionalLogin && (
+			{!isOptionalLogin && isLoginFlow && (
 				<Tooltip
-					// color='#E5007A'
 					title={`${text} wallet ${isAvailable ? '' : 'not'} installed`}
 					placement='top'
 				>
 					<Button
-						className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-[#F8E3EE]'} ${
-							isAvailable ? 'bg-white' : 'bg-grey_stroke bg-[#F6F7F9] dark:bg-[#3d3d3d]'
-						} items-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
-						onClick={onClick}
+						className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-borderColor'} ${
+							isAvailable ? 'bg-white dark:bg-disabledGreyColor ' : 'cursor-not-allowed bg-lightWhite dark:bg-inactiveIconDark'
+						} border-grey_stroke items-center rounded-[7px] dark:border-section-dark-container ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
+						onClick={(e) => {
+							if (!isAvailable) return;
+							onClick(e as any);
+						}}
 						disabled={disabled}
 					>
 						<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 					</Button>
 				</Tooltip>
 			)}
-			{isOptionalLogin && (
+			{isOptionalLogin && isLoginFlow && (
 				<Button
-					className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-[#F8E3EE]'} ${
-						isAvailable ? 'text- bg-white' : 'bg-[#F6F7F9] dark:bg-[#3d3d3d]'
-					} items-center rounded-[7px] border-[#F8E3EE] dark:border-section-dark-container dark:bg-[#222222] ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
+					className={`flex ${isOptionalLogin ? 'border_grey_stroke w-full' : 'justify-center border-borderColor'} ${
+						isAvailable ? 'text- bg-white dark:bg-disabledGreyColor' : 'bg-lightWhite dark:bg-inactiveIconDark'
+					} border-grey_stroke items-center rounded-[7px] dark:border-section-dark-container ${name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'} ${className}`}
 					onClick={onClick}
 					disabled={!isAvailable}
 				>
 					<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 					{text && isOptionalLogin && <p className={`wallet-text-container m-0 ml-4 p-0 ${!isAvailable ? 'text-disableText' : 'text-lightBlue'} dark:text-white`}>{text}</p>}
-					{isOptionalLogin && !isAvailable && <p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs'>Not Installed</p>}
+					{isOptionalLogin && !isAvailable && <p className='not-installed-container text-disableText m-0 ml-auto p-0 text-xs dark:text-lightGreyTextColor'>Not Installed</p>}
+				</Button>
+			)}
+			{!isLoginFlow && (
+				<Button
+					className={`flex items-center justify-center rounded-[7px] border-borderColor dark:border-section-dark-container dark:bg-inactiveIconDark ${
+						name !== 'Polkasafe' ? 'px-5 py-6' : 'px-3 py-5'
+					} ${className}`}
+					onClick={onClick}
+					disabled={disabled}
+				>
+					<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
 				</Button>
 			)}
 		</>

@@ -835,7 +835,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						>
 							<span title='Conviction'>
 								{theme === 'dark' ? <DarkConvictionIcon className='mr-1' /> : <ConvictionIcon className='mr-1' />}
-								{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x
+								{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x{isDelegated && '/d'}
+								{''}
 							</span>
 						</Tooltip>
 					)}

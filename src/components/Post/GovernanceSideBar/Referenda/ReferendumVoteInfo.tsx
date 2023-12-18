@@ -71,7 +71,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 	};
 
 	useEffect(() => {
-		if (network != 'cere') return;
+		if (!['cere', 'equilibrium'].includes(network)) return;
 
 		(async () => {
 			setIsFetchingCereVoteInfo(true);
@@ -346,12 +346,12 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						</Spin>
 					</GovSidebarCard>
 				)
-			) : network === 'cere' ? (
+			) : ['cere', 'equilibrium'].includes(network) ? (
 				<>
 					<GovSidebarCard>
 						<Spin
 							spinning={isFetchingCereVoteInfo}
-							className='bg-white'
+							className='bg-white dark:bg-section-light-overlay'
 							indicator={<LoadingOutlined />}
 						>
 							<div className='flex items-center justify-between gap-x-2'>
@@ -377,7 +377,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							<section className='-mt-4 grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] dark:text-blue-dark-medium'>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
-										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye</span>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Aye({ayeNayCounts.ayes})</span>
 									</div>
 									<div className='text-xs font-medium leading-[22px] text-navBlue'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
@@ -385,7 +385,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								</article>
 								<article className='flex items-center justify-between gap-x-2'>
 									<div className='flex items-center gap-x-1'>
-										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay</span>
+										<span className='text-xs font-medium leading-[18px] tracking-[0.01em]'>Nay({ayeNayCounts.nays})</span>
 									</div>
 									<div className='text-xs font-medium leading-[22px] text-navBlue'>
 										{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}

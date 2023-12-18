@@ -171,7 +171,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	};
 
 	const handleVerify = async (fieldName: ESocials, checkingVerified?: boolean) => {
-		const account = fieldName === ESocials.TWITTER ? (socials?.[fieldName]?.value?.split('@')?.[1] || socials?.[fieldName]?.value)?.toLowerCase() : socials?.[fieldName]?.value;
+		const account = fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] || socials?.[fieldName]?.value : socials?.[fieldName]?.value;
 
 		if (!checkingVerified) {
 			setFieldLoading({ ...fieldLoading, [fieldName]: true });

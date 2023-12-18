@@ -113,7 +113,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		proposalType,
 		votesData,
 		identityId = null,
-		truncateUsername = true,
+		truncateUsername = false,
 		showSimilarPost,
 		description
 	} = props;
@@ -450,7 +450,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			<div
 				className={`${className} ${
 					ownProposal && 'border-l-4 border-l-pink_primary'
-				} h-auto min-h-[147px] border-2 border-grey_light transition-all duration-200  hover:border-pink_primary hover:shadow-xl xs:flex xs:px-2 xs:py-2 sm:hidden md:pb-6`}
+				} h-auto min-h-[147px] border-2 border-grey_light transition-all duration-200  hover:border-pink_primary hover:shadow-xl xs:px-2 xs:py-2 sm:hidden md:pb-6`}
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					<div className='justify-between xs:flex sm:my-0 sm:hidden'>
@@ -569,7 +569,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						)}
 
-						<div className='mb-1 items-center justify-between xs:flex xs:gap-x-2'>
+						<div className='mb-1 items-center xs:flex xs:gap-x-2'>
 							{status && (
 								<StatusTag
 									theme={theme}

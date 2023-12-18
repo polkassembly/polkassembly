@@ -4,7 +4,7 @@
 
 import { DesktopOutlined, FileTextOutlined, HomeFilled, PlayCircleFilled, TwitterOutlined, YoutubeFilled } from '@ant-design/icons';
 import { Space } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { CubeIcon, DiscordIcon, GithubIcon, RedditIcon, TelegramIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 
@@ -122,6 +122,7 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText }: { className
 );
 
 const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
+	const [showGallery, setShowGallery] = useState(false);
 	return (
 		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
@@ -129,38 +130,60 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 				<div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 			</div>
 
-			<p className='medium mt-1.5 text-sm text-bodyBlue dark:text-blue-dark-high'>Join our Community to discuss, contribute and get regular updates from us!</p>
+			<p className='medium mt-1.5 items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
+				Join our Community to discuss, contribute and get regular updates from us!
+				{showGallery && (
+					<span
+						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
+						onClick={() => setShowGallery(false)}
+					>
+						Minimize Gallery
+					</span>
+				)}
+				{!showGallery && (
+					<span
+						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
+						onClick={() => setShowGallery(true)}
+					>
+						View Gallery
+					</span>
+				)}
+			</p>
 
 			<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 
-			{showGov2Links && (
-				<div className='mt-10 flex justify-between overflow-x-auto pb-2 xl:w-[90%]'>
-					{gov2Link({
-						bgImage: '/assets/gavin-keynote.png',
-						className: 'mr-12 lg:mr-9',
-						icon: <PlayCircleFilled className='text-xl text-white' />,
-						link: 'https://www.youtube.com/watch?v=FhC10CCw9Qg',
-						subText: '1:40 hours',
-						text: "Gavin's keynote @Decoded 2023"
-					})}
+			{showGallery && (
+				<div>
+					{showGov2Links && (
+						<div className='mt-10 flex justify-between overflow-x-auto pb-2 xl:w-[90%]'>
+							{gov2Link({
+								bgImage: '/assets/gavin-keynote.png',
+								className: 'mr-12 lg:mr-9',
+								icon: <PlayCircleFilled className='text-xl text-white' />,
+								link: 'https://www.youtube.com/watch?v=FhC10CCw9Qg',
+								subText: '1:40 hours',
+								text: "Gavin's keynote @Decoded 2023"
+							})}
 
-					{gov2Link({
-						bgImage: '/assets/gov2-info-bg-2.png',
-						className: 'mr-12 lg:mr-9',
-						icon: <DesktopOutlined className='text-xl text-white' />,
-						link: 'https://medium.com/polkadot-network/gov2-polkadots-next-generation-of-decentralised-governance-4d9ef657d11b',
-						subText: '17 min read',
-						text: "Gavin's blog on Medium"
-					})}
+							{gov2Link({
+								bgImage: '/assets/gov2-info-bg-2.png',
+								className: 'mr-12 lg:mr-9',
+								icon: <DesktopOutlined className='text-xl text-white' />,
+								link: 'https://medium.com/polkadot-network/gov2-polkadots-next-generation-of-decentralised-governance-4d9ef657d11b',
+								subText: '17 min read',
+								text: "Gavin's blog on Medium"
+							})}
 
-					{gov2Link({
-						bgImage: '/assets/gov2-info-bg-3.png',
-						className: 'mr-12 lg:mr-0',
-						icon: <FileTextOutlined className='text-xl text-white' />,
-						link: 'https://docs.polkassembly.io',
-						subText: 'Wiki',
-						text: 'Polkassembly user guide'
-					})}
+							{gov2Link({
+								bgImage: '/assets/gov2-info-bg-3.png',
+								className: 'mr-12 lg:mr-0',
+								icon: <FileTextOutlined className='text-xl text-white' />,
+								link: 'https://docs.polkassembly.io',
+								subText: 'Wiki',
+								text: 'Polkassembly user guide'
+							})}
+						</div>
+					)}
 				</div>
 			)}
 		</div>

@@ -19,10 +19,13 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, title, postId, userId, proposerAddress, tags, discussionId } = req.body;
+	const { content, title, postId, userId, proposerAddress, tags, discussionId, proposalType } = req.body;
 	if (!content || !title || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (isNaN(Number(userId)) || isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid parameters in request body' });
+
+	// for fellowship
+	if (proposalType && !Object.values(ProposalType).includes(proposalType)) return res.status(400).json({ message: 'Invalid proposal type in request body' });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
@@ -30,7 +33,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || user.id != Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2).doc(String(postId));
+	const postDocRef = postsByTypeRef(network, proposalType ?? ProposalType.REFERENDUM_V2).doc(String(postId));
 
 	const postDoc = await postDocRef.get();
 	if (postDoc.exists) {
@@ -47,7 +50,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 				last_edited_at: current_datetime,
 				post_link: {
 					id: Number(postId),
-					type: ProposalType.REFERENDUM_V2
+					type: proposalType ?? ProposalType.REFERENDUM_V2
 				}
 			},
 			{ merge: true }

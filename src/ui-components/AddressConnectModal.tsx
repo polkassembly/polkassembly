@@ -17,7 +17,7 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
-import ConnectAddressIcon from '~assets/icons/connect-address.svg';
+// import ConnectAddressIcon from '~assets/icons/connect-address.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from './QueueNotification';
@@ -37,6 +37,7 @@ import { useDispatch } from 'react-redux';
 import AvailableWallets from './AvailableWallet';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
+import ImageIcon from './ImageIcon';
 
 interface Props {
 	className?: string;
@@ -378,7 +379,7 @@ const AddressConnectModal = ({
 	return (
 		<Modal
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.className} ${poppins.variable} radius w-[530px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${poppins.className} ${poppins.variable} radius w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={open}
 			title={
 				<div className='text-center text-[20px] font-semibold text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>
@@ -403,7 +404,7 @@ const AddressConnectModal = ({
 						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
 					}
-					className={`mt-4 h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white ${
+					className={`mt-4 h-[40px] w-[134px] rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||
 						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
@@ -426,7 +427,12 @@ const AddressConnectModal = ({
 				<div className='flex flex-col'>
 					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
-							<ConnectAddressIcon />
+							{/* <ConnectAddressIcon /> */}
+							<ImageIcon
+								src='/assets/icons/connect-address.svg'
+								imgWrapperClassName='ml-10 -mt-4'
+								alt='connect address Icon'
+							/>
 							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 								Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
 							</span>
@@ -564,7 +570,7 @@ const AddressConnectModal = ({
 						showIcon
 						message={
 							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-								Please maintain minimum balance for these transactions:
+								Please maintain minimum {formatedBalance(String(baseDeposit.add(submissionDeposite).toString()), unit)} {unit} balance for these transactions:
 								<span
 									className='ml-1 cursor-pointer text-xs text-pink_primary'
 									onClick={() => setHideDetails(!hideDetails)}
@@ -579,13 +585,13 @@ const AddressConnectModal = ({
 							) : (
 								<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
 									<li className='flex w-full justify-between'>
-										<div className='mr-1 text-lightBlue dark:text-blue-dark-high'>Preimage Creation</div>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Preimage Creation</div>
 										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(String(baseDeposit.toString()), unit)} {unit}
 										</span>
 									</li>
 									<li className='mt-0 flex w-full justify-between'>
-										<div className='mr-1 text-lightBlue dark:text-blue-dark-high'>Proposal Submission</div>
+										<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
 										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 											{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
 										</span>

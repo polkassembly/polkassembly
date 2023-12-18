@@ -43,6 +43,8 @@ import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
+import Link from 'next/link';
+import Image from 'next/image';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -75,6 +77,9 @@ interface Props {
 	availableBalance: BN;
 	setAvailableBalance: (pre: BN) => void;
 	isUpdatedAvailableBalance: boolean;
+	showIdentityInfoCardForBeneficiary: boolean;
+	showIdentityInfoCardForProposer: boolean;
+	showMultisigInfoCard: boolean;
 }
 
 interface IAdvancedDetails {
@@ -104,6 +109,9 @@ const CreatePreimage = ({
 	availableBalance,
 	setAvailableBalance,
 	isUpdatedAvailableBalance,
+	showMultisigInfoCard,
+	showIdentityInfoCardForBeneficiary,
+	showIdentityInfoCardForProposer,
 	form
 }: Props) => {
 	const { api, apiReady } = useApiContext();
@@ -832,7 +840,7 @@ const CreatePreimage = ({
 								<Form.Item name='preimage_hash'>
 									<Input
 										name='preimage_hash'
-										className='h-[40px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										className='h-10 rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={preimageHash}
 										onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}
 									/>
@@ -844,7 +852,7 @@ const CreatePreimage = ({
 								<Form.Item name='preimage_length'>
 									<Input
 										name='preimage_length'
-										className='h-[40px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										className='h-10 rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										onChange={(e) => {
 											setPreimageLength(Number(e.target.value));
 											onChangeLocalStorageSet({ preimageLength: e.target.value }, isPreimage);
@@ -862,11 +870,11 @@ const CreatePreimage = ({
 									type='error'
 									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark ${poppins.variable} ${poppins.className}`}
 									showIcon
-									message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
+									message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 								/>
 							)}
 							<div className='mt-6'>
-								<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+								<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium '>
 									Proposer Address
 									<span>
 										<Balance
@@ -878,14 +886,39 @@ const CreatePreimage = ({
 								</div>
 								<AddressInput
 									name='proposer_address'
-									defaultAddress={proposerAddress}
+									defaultAddress={getEncodedAddress(proposerAddress, network) || ''}
 									onChange={() => setLoading(false)}
-									inputClassName={' font-normal text-sm h-[40px]'}
+									inputClassName={' font-normal text-sm h-10'}
 									className='-mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									disabled
 									size='large'
 									identiconSize={30}
 								/>
+								{showIdentityInfoCardForProposer && network.includes('polkadot') && (
+									<Alert
+										className='icon-fix mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-blue-dark-high'
+										showIcon
+										type='info'
+										message={
+											<div className='text-[13px] dark:text-blue-dark-high'>
+												Your proposer address is currently unverified. Please set your on-chain identity to increase the likelihood of your proposal being approved.
+												<Link
+													target='_blank'
+													href={'?setidentity=true'}
+													className='ml-1 text-xs font-medium text-pink_primary'
+													onClick={(e) => {
+														if (!currentUser.id) {
+															e.preventDefault();
+															e.stopPropagation();
+														}
+													}}
+												>
+													Set onchain identity
+												</Link>
+											</div>
+										}
+									/>
+								)}
 							</div>
 
 							{beneficiaryAddresses.map((beneficiary, index) => {
@@ -905,7 +938,7 @@ const CreatePreimage = ({
 												helpText='The amount requested in the proposal will be received in this address.'
 												size='large'
 												identiconSize={30}
-												inputClassName={'font-normal text-sm h-[40px]'}
+												inputClassName={'font-normal text-sm h-10'}
 												skipFormatCheck={true}
 												checkValidAddress={setValidBeneficiaryAddress}
 											/>
@@ -954,12 +987,63 @@ const CreatePreimage = ({
 
 							{addressAlert && (
 								<Alert
-									className='mt-2 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									className='mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									showIcon
+									message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
 									type='info'
-									message={<span className='text-[13px] dark:text-blue-dark-high'>The substrate address has been changed to {network} network address.</span>}
 								/>
 							)}
+
+							{showMultisigInfoCard && (
+								<Alert
+									className='mt-2 rounded-[4px] text-[13px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									showIcon
+									message={<span className='text-[13px] dark:text-blue-dark-high'>Using a multisig proposal address provides a higher chance for the proposal to pass. </span>}
+									description={
+										<Link
+											className='text-xs font-medium text-pink_primary'
+											target='_blank'
+											href='https://polkasafe.xyz/'
+										>
+											<Image
+												width={16}
+												height={16}
+												src='/assets/polkasafe-logo.svg'
+												alt='polkasafe'
+												className={`${theme === 'dark' && 'icon-color'} mr-0.5`}
+											/>
+											Create a Multisig Wallet on PolkaSafe now
+										</Link>
+									}
+									type='info'
+								/>
+							)}
+							{showIdentityInfoCardForBeneficiary && network.includes('polkadot') && (
+								<Alert
+									className='icon-fix mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-blue-dark-high'
+									showIcon
+									type='info'
+									message={
+										<div className='text-[13px] dark:text-blue-dark-high'>
+											Your beneficiary address is currently unverified. Please set your on-chain identity to increase the likelihood of your proposal being approved.
+											<Link
+												target='_blank'
+												href={'?setidentity=true'}
+												className='ml-1 text-xs font-medium text-pink_primary'
+												onClick={(e) => {
+													if (!currentUser.id) {
+														e.preventDefault();
+														e.stopPropagation();
+													}
+												}}
+											>
+												Set onchain identity
+											</Link>
+										</div>
+									}
+								/>
+							)}
+
 							<div className='-mb-6 mt-6'>
 								<div className='mb-[2px] flex items-center justify-between text-sm text-lightBlue dark:text-blue-dark-medium'>
 									<label>
@@ -1042,7 +1126,7 @@ const CreatePreimage = ({
 									value={EEnactment.At_Block_No}
 									className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 								>
-									<div className='flex h-[40px] items-center gap-2'>
+									<div className='flex h-10 items-center gap-2'>
 										<span className='w-[150px]'>
 											At Block no.
 											<HelperTooltip
@@ -1143,13 +1227,13 @@ const CreatePreimage = ({
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
 						<Button
 							onClick={() => setSteps({ percent: 100, step: 0 })}
-							className='h-[40px] w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back
 						</Button>
 						<Button
 							htmlType='submit'
-							className={`h-[40px] w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white ${
+							className={`h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
 								(isPreimage !== null && !isPreimage
 									? !(
 											!beneficiaryAddresses.find((beneficiary) => !beneficiary.address || isNaN(Number(beneficiary.amount)) || Number(beneficiary.amount) <= 0) &&
@@ -1197,14 +1281,25 @@ export default styled(CreatePreimage)`
 		gap: 6px !important;
 	}
 	.ant-alert-with-description {
-		padding-block: 15px !important;
+		padding-block: 10px !important;
+		padding: 10px 12px !important;
 	}
+	.icon-fix .ant-alert-icon {
+		font-size: 14px !important;
+		margin-top: -20px;
+	}
+
 	.ant-alert-with-description .ant-alert-icon {
-		font-size: 18px !important;
-		margin-top: 4px;
+		font-size: 15px !important;
+		margin-top: 6px;
+		margin-right: 8px;
 	}
 
 	.ant-alert-with-description .ant-alert-description {
-		color: black !important;
+		color: var(--bodyBlue) !important;
+		margin-top: -6px;
+	}
+	.icon-color {
+		filter: brightness(100%) saturate(0%) contrast(3.5) invert(100%) !important;
 	}
 `;

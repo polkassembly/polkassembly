@@ -114,7 +114,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 			<div className='mt-3 flex w-full flex-col justify-between align-middle sm:flex-row'>
 				<div className='mx-2 flex text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
-					<DiscussionsIcon className='text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-1.5' />
+					<DiscussionsIcon className='text-lg text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-[2px]' />
 					Latest Discussions({count})
 				</div>
 				<button
@@ -128,7 +128,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			{/* Intro and Create Post Button */}
 			<div className='mt-3 flex flex-col md:flex-row'>
 				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss all things polkadot. Anyone can start a new discussion.
+					This is the place to discuss all things Polkadot. Anyone can start a new discussion.
 				</p>
 			</div>
 			<OffChainPostsContainer

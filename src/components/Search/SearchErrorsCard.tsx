@@ -4,11 +4,12 @@
 import { Button, Divider } from 'antd';
 import React from 'react';
 import SuperSearchIcon from '~assets/icons/super-search.svg';
-import EmptyResultsIcon from '~assets/search/empty-search.svg';
+// import EmptyResultsIcon from '~assets/search/empty-search.svg';
 import { EFilterBy } from '.';
 import { useRouter } from 'next/router';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector } from '~src/redux/selectors';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	setIsSuperSearch: (pre: boolean) => void;
@@ -42,7 +43,11 @@ const SearchErrorsCard = ({
 		<div className='mb-5 mt-6 flex flex-col items-center justify-center'>
 			<div className='text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 				<div className='mt-5 flex flex-col items-center justify-center'>
-					<EmptyResultsIcon />
+					{/* <EmptyResultsIcon /> */}
+					<ImageIcon
+						src='/assets/search/empty-search.svg'
+						alt='empty search icon'
+					/>
 					<span className='mt-6 text-center text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>
 						{!isSearchErr ? 'No search results found. You may want to try using different keywords.' : 'Please enter at least 3 characters to proceed.'}
 					</span>

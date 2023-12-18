@@ -202,8 +202,8 @@ query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset
 }
 `;
 
-export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
-  proposals(where: {type_eq: $type_eq, index_in: $index_in}, limit: $limit) {
+export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!]) {
+  proposals(where: {type_eq: $type_eq, index_in: $index_in, status_in: $status_in}, limit: $limit) {
     proposer
     curator
     createdAt
@@ -1588,20 +1588,42 @@ query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOr
     totalCount
   }
   convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
-    decision
-    voter
-    balance {
-      ... on StandardVoteBalance {
-        value
-      }
-      ... on SplitVoteBalance {
-        aye
-        nay
-        abstain
-      }
-    }
-    lockPeriod
-    createdAt
+    id
+        decision
+        voter
+        balance {
+          ... on StandardVoteBalance {
+            value
+          }
+          ... on SplitVoteBalance {
+            aye
+            nay
+            abstain
+          }
+        }
+        createdAt
+        lockPeriod
+        selfVotingPower
+        totalVotingPower
+        delegatedVotingPower
+        delegatedVotes(limit: 5, orderBy: votingPower_DESC, where: {
+          removedAtBlock_isNull: true
+        }) {
+          decision
+          lockPeriod
+          voter
+          votingPower
+          balance {
+            ... on StandardVoteBalance {
+              value
+            }
+            ... on SplitVoteBalance {
+              aye
+              nay
+              abstain
+            }
+          }
+        }
   }
 }
 `;

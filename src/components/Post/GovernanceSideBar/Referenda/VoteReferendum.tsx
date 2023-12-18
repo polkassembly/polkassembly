@@ -38,8 +38,8 @@ import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
-import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
+// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
+// import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
@@ -49,6 +49,8 @@ import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import ImageIcon from '~src/ui-components/ImageIcon';
+
 import { trackEvent } from 'analytics';
 const ZERO_BN = new BN(0);
 
@@ -630,7 +632,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						>
 							<>
 								<div className='my-6'>
-									<div className='mt-1 flex items-center gap-x-2'>
+									<div className='mt-1 flex items-center justify-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>Select a wallet</div>
+									<div className='mt-1 flex items-center justify-center gap-x-2'>
 										{availableWallets[Wallet.POLKADOT] && (
 											<WalletButton
 												className={`${wallet === Wallet.POLKADOT ? ' h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
@@ -921,7 +924,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					ayeVoteValue={voteValues.ayeVoteValue}
 					nayVoteValue={voteValues.nayVoteValue}
 					abstainVoteValue={voteValues.abstainVoteValue}
-					icon={multisig ? <MultisigSuccessIcon /> : <SuccessIcon />}
+					icon={
+						multisig ? (
+							<ImageIcon
+								src='/assets/multi-vote-initiated.svg'
+								alt='multi vote initiated icon'
+							/>
+						) : (
+							<ImageIcon
+								src='/assets/delegation-tracks/success-delegate.svg'
+								alt='success delegate icon'
+							/>
+						)
+					}
 				/>
 			</div>
 		</>

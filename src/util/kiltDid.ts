@@ -32,3 +32,16 @@ export async function getKiltDidLinkedAccounts(api: ApiPromise, lookupAccountAdd
 
 	return didDetails.toHuman().accounts || [];
 }
+
+export async function getKiltDidSocialEndpoints(api: ApiPromise, lookupAccountAddress: string): Promise<any[] | null> {
+	if (lookupAccountAddress.startsWith('0x')) return null;
+	const didDetails = (await api?.call?.did?.queryByAccount({
+		AccountId32: lookupAccountAddress
+	})) as any;
+
+	if (didDetails.isNone) {
+		return null;
+	}
+
+	return didDetails.toHuman().serviceEndpoints || [];
+}

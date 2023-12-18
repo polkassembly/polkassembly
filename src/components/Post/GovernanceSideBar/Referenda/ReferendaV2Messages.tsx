@@ -21,6 +21,8 @@ import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ConfirmMessage from './ConfirmMessage';
+import { useCurrentBlock } from '~src/hooks';
+import { getBlockNumber } from '../../Tabs/PostOnChainInfo';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -68,7 +70,7 @@ export const checkProposalPresent = (timeline: any[], type: string) => {
 const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const { progress } = props;
 	const {
-		postData: { track_name, track_number, created_at, status, timeline, requested }
+		postData: { track_name, track_number, created_at, status, timeline, requested, statusHistory }
 	} = usePostDataContext();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -90,6 +92,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const awardedStatusBlock = getStatusBlock(timeline || [], ['TreasuryProposal'], 'Awarded');
 	const isTreasuryProposalPresent = checkProposalPresent(timeline || [], 'TreasuryProposal');
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
+	const currentBlock = useCurrentBlock() || 0;
+	const blockNumber = getBlockNumber(statusHistory) || 0;
 
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, track_name));
@@ -106,7 +110,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			</button>
 		);
 	};
-
 	useEffect(() => {
 		if (!trackData) return;
 
@@ -126,6 +129,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		setMinEnactment(minEnactment);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
 	useEffect(() => {
 		if (isTreasuryProposal) {
 			if (!api || !apiReady) return;
@@ -201,10 +205,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</>
 					</p>
 					<ConfirmationAttemptsRow timeline={timeline || []} />
-					{dayjs(prepare.periodEndsAt).isAfter(new Date()) && (
+					{dayjs(prepare.periodEndsAt).isBefore(new Date()) && (
 						<div className='mt-4 border-0 border-t-[1px] border-solid border-grey_border pt-3 text-xs leading-5 tracking-[0.015em] text-lightBlue dark:text-blue-dark-high'>
 							For the proposal to move into voting period, decision deposit needs to be placed or else it will be timed out in{' '}
-							{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))}.
+							{blocksToRelevantTime(network, Number(((trackMetaData.decisionPeriod + trackMetaData.preparePeriod + blockNumber) as any) - ((currentBlock || 0) as any)))}
 						</div>
 					)}
 				</GovSidebarCard>

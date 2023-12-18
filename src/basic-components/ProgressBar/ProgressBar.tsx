@@ -6,28 +6,13 @@ import { Progress as ANTDProgressBar } from 'antd';
 
 interface IProgressBar {
 	className?: string;
-	showInfo?: boolean;
-	percent?: any;
-	strokeColor?: string;
-	size?: any;
-	trailColor?: string;
-	strokeWidth?: number;
-	format?: any;
-	type?: any;
 }
 const ProgressBar: FC<PropsWithChildren<IProgressBar>> = (props) => {
-	const { strokeWidth, type, format, showInfo, percent, strokeColor, size, trailColor, className } = props;
+	const { className } = props;
 	return (
 		<ANTDProgressBar
 			className={`${className}`}
-			type={type}
-			format={format}
-			showInfo={showInfo}
-			percent={percent}
-			strokeColor={strokeColor}
-			size={size}
-			strokeWidth={strokeWidth}
-			trailColor={trailColor}
+			{...props}
 		/>
 	);
 };

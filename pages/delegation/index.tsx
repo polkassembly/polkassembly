@@ -6,7 +6,7 @@ import { GetServerSideProps } from 'next';
 import React, { useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import DelegationDashboard from '~src/components/DelegationDashboard';
-import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
+// import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import CopyContentIcon from '~assets/icons/content-copy.svg';
 import copyToClipboard from 'src/util/copyToClipboard';
 import { message } from 'antd';
@@ -16,6 +16,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -63,7 +64,11 @@ const Delegation = (props: { network: string }) => {
 			<div className='w-full sm:hidden'>
 				<h1 className='text-center text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Dashboard</h1>
 				<div className='mt-12 flex flex-col items-center justify-center'>
-					<DelegationDashboardEmptyState />
+					{/* <DelegationDashboardEmptyState /> */}
+					<ImageIcon
+						src='/assets/icons/delegation-empty-state.svg'
+						alt='delegation empty state icon'
+					/>
 					<p className='mt-6 text-center text-base text-bodyBlue dark:text-blue-dark-high'>Please visit Delegation Dashboard from your Dekstop computer</p>
 					<button
 						className='mt-5 flex items-center justify-center rounded-full border border-solid border-[#D2D8E0] bg-transparent px-3.5 py-1.5 text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'

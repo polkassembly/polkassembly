@@ -2,13 +2,16 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import {
 	bountyStatusOptions,
 	childBountyStatusOptions,
+	gov2ReferendumStatusClosedOptions,
 	gov2ReferendumStatusOptions,
+	gov2ReferendumStatusSubmittedOptions,
+	gov2ReferendumStatusVotingOptions,
 	motionStatusOptions,
 	proposalStatusOptions,
 	referendumStatusOptions,
@@ -33,8 +36,14 @@ interface SortByDropdownProps {
 
 const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const router = useRouter();
+	const trackStatus = router?.query?.trackStatus;
 	const { resolvedTheme: theme } = useTheme();
 	const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
+	useEffect(() => {
+		setCheckedItems([]);
+		setStatusItem?.([]);
+	}, [trackStatus, setStatusItem]);
+
 	const { network } = useNetworkSelector();
 	let path = router.pathname.split('/')[1];
 	let statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
@@ -84,27 +93,41 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			statusOptions = techCommiteeStatusOptions;
 			break;
 		default:
-			statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
+			if (isOpenGovSupported(network)) {
+				if (trackStatus === 'all') {
+					statusOptions = gov2ReferendumStatusOptions;
+				} else if (trackStatus === 'submitted') {
+					statusOptions = gov2ReferendumStatusSubmittedOptions;
+				} else if (trackStatus === 'voting') {
+					statusOptions = gov2ReferendumStatusVotingOptions;
+				} else {
+					statusOptions = gov2ReferendumStatusClosedOptions;
+				}
+			} else {
+				statusOptions = referendumStatusOptions;
+			}
 			break;
 	}
 
 	const sortByOptions: ItemType[] = [...statusOptions];
-
 	const handleSortByClick = (key: any) => {
 		if (key === 'clear_filter') {
-			if (router.query.filterBy) {
-				router.replace({
-					pathname: '',
-					query: {
-						filterBy: router.query.filterBy
-					}
-				});
-			} else {
-				router.push({ pathname: '' });
-			}
+			const newQuery = { ...router.query };
+			delete newQuery.proposalStatus;
+			router.replace({
+				pathname: '',
+				query: newQuery
+			});
 			setCheckedItems([]);
 			setStatusItem?.([]);
 		} else if (key.length > 0) {
+			if (statusOptions === gov2ReferendumStatusOptions || statusOptions == gov2ReferendumStatusVotingOptions) {
+				if (key.includes('Deciding')) {
+					key.push('DecisionDepositPlaced');
+				} else {
+					key = key.filter((item: string) => item !== 'DecisionDepositPlaced');
+				}
+			}
 			router.replace({
 				pathname: '',
 				query: {
@@ -113,16 +136,13 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 				}
 			});
 			setStatusItem?.(key);
-		} else if (router.query.filterBy) {
+		} else {
+			const newQuery = { ...router.query };
+			delete newQuery.proposalStatus;
 			router.replace({
 				pathname: '',
-				query: {
-					filterBy: router.query.filterBy
-				}
+				query: newQuery
 			});
-			setStatusItem?.([]);
-		} else {
-			router.push({ pathname: '' });
 			setStatusItem?.([]);
 		}
 	};

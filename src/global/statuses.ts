@@ -80,6 +80,7 @@ export const gov2ReferendumStatus = {
 	CREATED: 'Created',
 	DECIDING: 'Deciding',
 	DECISION_DEPOSIT_PLACED: 'DecisionDepositPlaced',
+	EXECUTED: 'Executed',
 	EXECUTION_FAILED: 'ExecutionFailed',
 	KILLED: 'Killed',
 	REJECTED: 'Rejected',
@@ -109,8 +110,8 @@ export const gov2ReferendumStatusOptions = [
 		label: 'Deciding'
 	},
 	{
-		key: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
-		label: 'Decision Deposit Placed'
+		key: gov2ReferendumStatus.EXECUTED,
+		label: 'Executed'
 	},
 	{
 		key: gov2ReferendumStatus.EXECUTION_FAILED,
@@ -131,6 +132,59 @@ export const gov2ReferendumStatusOptions = [
 	{
 		key: gov2ReferendumStatus.TIMEDOUT,
 		label: 'Timed Out'
+	}
+];
+
+export const gov2ReferendumStatusVotingOptions = [
+	{
+		key: gov2ReferendumStatus.CONFIRM_ABORTED,
+		label: 'Confirm Aborted'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRM_STARTED,
+		label: 'Confirm Started'
+	},
+	{
+		key: gov2ReferendumStatus.DECIDING,
+		label: 'Deciding'
+	}
+];
+
+export const gov2ReferendumStatusClosedOptions = [
+	{
+		key: gov2ReferendumStatus.CANCELLED,
+		label: 'Cancelled'
+	},
+	{
+		key: gov2ReferendumStatus.CONFIRMED,
+		label: 'Confirmed'
+	},
+	{
+		key: gov2ReferendumStatus.EXECUTED,
+		label: 'Executed'
+	},
+	{
+		key: gov2ReferendumStatus.EXECUTION_FAILED,
+		label: 'Execution Failed'
+	},
+	{
+		key: gov2ReferendumStatus.KILLED,
+		label: 'Killed'
+	},
+	{
+		key: gov2ReferendumStatus.REJECTED,
+		label: 'Rejected'
+	},
+	{
+		key: gov2ReferendumStatus.TIMEDOUT,
+		label: 'Timed Out'
+	}
+];
+
+export const gov2ReferendumStatusSubmittedOptions = [
+	{
+		key: gov2ReferendumStatus.SUBMITTED,
+		label: 'Submitted'
 	}
 ];
 

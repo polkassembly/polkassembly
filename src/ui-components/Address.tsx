@@ -303,7 +303,7 @@ const Address = (props: Props) => {
 							<Identicon
 								className='image identicon'
 								value={encodedAddr}
-								size={iconSize ? iconSize : displayInline ? 20 : 32}
+								size={iconSize && iconSize >= 20 ? iconSize : displayInline ? 20 : 32}
 								theme={'polkadot'}
 							/>
 						))}

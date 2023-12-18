@@ -13,7 +13,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import LinkPostPreview from './LinkPostPreview';
 import { useNetworkSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IContinueWithLinking {
 	setLinkingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;

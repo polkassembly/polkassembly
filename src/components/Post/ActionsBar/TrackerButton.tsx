@@ -6,7 +6,7 @@ import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { ProposalType } from '~src/global/proposalType';
 

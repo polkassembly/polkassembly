@@ -6,7 +6,7 @@ import { Modal, message } from 'antd';
 import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 type Props = {
 	icon: any;

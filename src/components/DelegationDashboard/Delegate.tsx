@@ -19,7 +19,7 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,

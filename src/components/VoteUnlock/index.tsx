@@ -34,7 +34,7 @@ import { setUserUnlockTokensData } from '~src/redux/tokenUnlocksData';
 import { useDispatch } from 'react-redux';
 import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 interface Props {
 	className?: string;
 	addresses: string[];

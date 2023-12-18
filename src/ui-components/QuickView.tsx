@@ -29,7 +29,7 @@ import { useDispatch } from 'react-redux';
 import { setReceiver } from '~src/redux/Tipping';
 import { getKiltDidSocialEndpoints } from '~src/util/kiltDid';
 import { useApiContext } from '~src/context';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,

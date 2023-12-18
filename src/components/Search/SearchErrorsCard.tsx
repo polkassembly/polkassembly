@@ -8,7 +8,7 @@ import { EFilterBy } from '.';
 import { useRouter } from 'next/router';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {

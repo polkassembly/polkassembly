@@ -38,7 +38,7 @@ import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 

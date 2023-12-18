@@ -23,7 +23,7 @@ import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 

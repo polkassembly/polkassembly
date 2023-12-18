@@ -10,7 +10,7 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 
 import { ChangeResponseType } from '~src/auth/types';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { useUserDetailsSelector } from '~src/redux/selectors';

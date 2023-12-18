@@ -22,7 +22,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export interface SecondProposalProps {
 	className?: string;

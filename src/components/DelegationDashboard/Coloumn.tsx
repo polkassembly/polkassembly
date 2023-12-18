@@ -29,7 +29,7 @@ import {
 } from '~src/ui-components/CustomIcons';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export const handleTracksIcon = (index: string, size: number) => {
 	switch (index) {

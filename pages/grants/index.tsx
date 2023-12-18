@@ -20,7 +20,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;

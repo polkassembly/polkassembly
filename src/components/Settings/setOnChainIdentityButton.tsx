@@ -29,7 +29,7 @@ import EthIdenticon from '~src/ui-components/EthIdenticon';
 import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;

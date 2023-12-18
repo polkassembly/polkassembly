@@ -41,7 +41,7 @@ import { useTheme } from 'next-themes';
 import LoginSuccessModal from '~src/ui-components/LoginSuccessModal';
 import styled from 'styled-components';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 interface Props {

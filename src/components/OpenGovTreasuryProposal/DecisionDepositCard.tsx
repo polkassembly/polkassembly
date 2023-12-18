@@ -28,7 +28,7 @@ import { gov2ReferendumStatus } from '~src/global/statuses';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 

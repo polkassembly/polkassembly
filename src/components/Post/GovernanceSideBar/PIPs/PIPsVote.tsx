@@ -34,7 +34,7 @@ import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 const ZERO_BN = new BN(0);

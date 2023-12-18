@@ -10,7 +10,7 @@ import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart'
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { isOffChainProposalTypeValid } from '~src/api-utils';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';

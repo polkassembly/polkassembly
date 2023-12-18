@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import { ChallengeMessage } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	canEdit?: boolean | '' | undefined;

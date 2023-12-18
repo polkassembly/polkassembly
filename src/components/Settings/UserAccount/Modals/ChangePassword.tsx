@@ -9,7 +9,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
 import * as validation from 'src/util/validation';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfirm?: () => void; onCancel: () => void }) => {
 	const [loading, setLoading] = useState<boolean>(false);

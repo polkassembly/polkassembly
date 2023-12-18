@@ -24,7 +24,7 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import dynamic from 'next/dynamic';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
 	ssr: false

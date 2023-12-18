@@ -10,7 +10,7 @@ import LoginPopup from './loginPopup';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	image: String;

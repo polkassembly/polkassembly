@@ -16,7 +16,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IComment } from '../../Comment/Comment';
 import { deleteContentByMod } from '~src/util/deleteContentByMod';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IReportButtonProps {
 	type: string;

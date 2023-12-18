@@ -16,7 +16,7 @@ import calendar_today from '~assets/calendar_today.png';
 
 import NetworkSelect from './NetworkSelect';
 import { useTheme } from 'next-themes';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 function CustomToolbar(props: any) {
 	const { resolvedTheme: theme } = useTheme();

@@ -36,7 +36,7 @@ import { useDispatch } from 'react-redux';
 import AvailableWallets from './AvailableWallet';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
 
 interface Props {

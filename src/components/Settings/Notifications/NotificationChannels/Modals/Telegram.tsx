@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { CHANNEL } from '..';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 type Props = {
 	icon: any;

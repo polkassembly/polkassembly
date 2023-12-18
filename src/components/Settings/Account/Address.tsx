@@ -23,7 +23,7 @@ import { poppins } from 'pages/_app';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	open?: boolean;

@@ -12,7 +12,7 @@ import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {

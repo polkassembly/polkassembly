@@ -5,7 +5,7 @@ import { Form, Input, Modal } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ContentForm from '~src/components/ContentForm';
 import { usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';

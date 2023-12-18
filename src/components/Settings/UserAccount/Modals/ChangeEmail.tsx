@@ -8,7 +8,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onConfirm?: () => void; onCancel: () => void; email: string }) => {
 	const [loading, setLoading] = useState<boolean>(false);

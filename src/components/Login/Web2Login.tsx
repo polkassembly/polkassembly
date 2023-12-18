@@ -23,7 +23,7 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (

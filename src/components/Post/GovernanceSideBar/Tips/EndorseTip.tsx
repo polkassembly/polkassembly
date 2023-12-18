@@ -18,7 +18,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];

@@ -29,7 +29,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 

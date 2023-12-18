@@ -25,7 +25,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	proposal: IPostListing;

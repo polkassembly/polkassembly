@@ -13,7 +13,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean; onConfirm?: () => void; onCancel: () => void; username: string }) => {
 	const [loading, setLoading] = useState<boolean>(false);

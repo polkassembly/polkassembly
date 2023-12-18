@@ -20,7 +20,7 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
 import Web3 from 'web3';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';

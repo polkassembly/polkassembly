@@ -73,7 +73,7 @@ import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;

@@ -17,7 +17,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../../ContentForm';
 import AddTags from '~src/ui-components/AddTags';
 import styled from 'styled-components';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;

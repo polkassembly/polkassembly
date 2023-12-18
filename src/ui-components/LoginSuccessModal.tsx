@@ -18,7 +18,7 @@ import { IAddProfileResponse } from '~src/auth/types';
 import { handleTokenChange } from '~src/services/auth.service';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
 interface Props {
 	// setLoading: (pre: boolean) => void;

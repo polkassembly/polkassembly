@@ -18,7 +18,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChangeResponseType } from '~src/auth/types';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';

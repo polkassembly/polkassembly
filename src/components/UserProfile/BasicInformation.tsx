@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ProfileDetails } from '~src/auth/types';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {

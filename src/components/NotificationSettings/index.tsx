@@ -8,7 +8,7 @@ import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
 
 import { NotificationSettings, UpdatedDataResponseType } from '~src/auth/types';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 

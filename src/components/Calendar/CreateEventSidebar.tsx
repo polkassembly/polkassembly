@@ -16,7 +16,7 @@ import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;

@@ -14,7 +14,7 @@ import BN from 'bn.js';
 import InprogressState from './InprogressState';
 import { useRouter } from 'next/router';
 import { useApiContext } from '~src/context';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;

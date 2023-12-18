@@ -38,7 +38,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useTheme } from 'next-themes';
 import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 import Image from 'next/image';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	chosenWallet: Wallet;

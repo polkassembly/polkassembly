@@ -15,7 +15,7 @@ import { useDispatch } from 'react-redux';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;

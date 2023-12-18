@@ -22,7 +22,7 @@ import { poppins } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (

@@ -4,7 +4,7 @@
 
 import { useTheme } from 'next-themes';
 import React, { FC, useState } from 'react';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
 interface ILoginToVoteOrEndorseProps {

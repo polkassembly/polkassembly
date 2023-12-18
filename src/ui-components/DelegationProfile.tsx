@@ -15,7 +15,7 @@ import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,

@@ -22,7 +22,7 @@ import { useTheme } from 'next-themes';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DeleteBlueIcon, DeleteWhiteIcon } from '~src/ui-components/CustomIcons';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 const { Panel } = Collapse;
 
 const Delete: FC<{ className?: string }> = ({ className }) => {

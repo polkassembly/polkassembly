@@ -23,7 +23,7 @@ import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;

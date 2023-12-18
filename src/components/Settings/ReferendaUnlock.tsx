@@ -21,7 +21,7 @@ import { useApiContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const abi = require('../../moonbeamConvictionVoting.json');
 

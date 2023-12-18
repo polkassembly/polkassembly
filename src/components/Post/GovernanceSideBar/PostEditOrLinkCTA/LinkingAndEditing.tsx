@@ -17,7 +17,7 @@ import LinkPostPreview from './LinkPostPreview';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface ILinkingAndEditingProps {
 	setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;

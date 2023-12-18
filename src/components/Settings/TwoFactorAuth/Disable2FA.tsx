@@ -15,7 +15,7 @@ import { handleTokenChange } from '~src/services/auth.service';
 import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const Title = (
 	<>

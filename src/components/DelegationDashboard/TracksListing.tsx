@@ -18,7 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import { IDelegation } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {

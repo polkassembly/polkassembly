@@ -22,7 +22,7 @@ import styled from 'styled-components';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesCount } from '~src/types';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;

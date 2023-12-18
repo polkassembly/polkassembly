@@ -18,7 +18,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {

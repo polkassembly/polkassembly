@@ -25,7 +25,7 @@ import styled from 'styled-components';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/AiBot';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,

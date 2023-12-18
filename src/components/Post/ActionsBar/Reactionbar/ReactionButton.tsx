@@ -9,7 +9,7 @@ import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC } from 'react';
 
 import { MessageType } from '~src/auth/types';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';

@@ -23,7 +23,7 @@ import TFALoginForm from './TFALoginForm';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;

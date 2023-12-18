@@ -12,7 +12,7 @@ import { APPNAME } from 'src/global/appName';
 import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import executeTx from '~src/util/executeTx';
 

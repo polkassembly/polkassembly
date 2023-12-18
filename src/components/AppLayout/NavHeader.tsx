@@ -44,7 +44,7 @@ import { trackEvent } from 'analytics';
 import StakeIcon from '~assets/stake-icon.svg';
 import DelegateIcon from '~assets/delegate-icon.svg';
 import { delegationSupportedNetworks } from '../DelegationDashboard';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,

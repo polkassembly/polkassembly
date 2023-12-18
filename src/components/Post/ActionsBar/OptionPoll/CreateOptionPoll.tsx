@@ -9,7 +9,7 @@ import React, { FC, useState } from 'react';
 import { IOptionPoll, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';

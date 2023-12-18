@@ -13,7 +13,7 @@ import * as validation from 'src/util/validation';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import { NotificationStatus } from '~src/types';

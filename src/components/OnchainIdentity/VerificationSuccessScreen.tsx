@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import { poppins } from 'pages/_app';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { Modal } from 'antd';
 import { useRouter } from 'next/router';
 import { CloseIcon } from '~src/ui-components/CustomIcons';

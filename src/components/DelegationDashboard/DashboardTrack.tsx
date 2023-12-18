@@ -22,7 +22,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 interface Props {
 	className?: string;
 	posts: any[];

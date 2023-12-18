@@ -24,7 +24,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { IconSignup } from '~src/ui-components/CustomIcons';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (

@@ -18,7 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Header from '../Header';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IPasswordProps {
 	name: string;

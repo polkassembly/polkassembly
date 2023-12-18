@@ -5,7 +5,7 @@
 import { ShareAltOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
 import React, { FC } from 'react';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 

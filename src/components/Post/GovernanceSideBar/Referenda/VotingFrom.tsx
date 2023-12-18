@@ -8,7 +8,7 @@ import { ReactNode } from 'react-markdown/lib/ast-to-react';
 import DownIcon from '~assets/icons/down-icon.svg';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',

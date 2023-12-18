@@ -15,7 +15,7 @@ import { LoadingStatusType, NotificationStatus } from '../../../../types';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export interface SecondProposalProps {
 	accounts: InjectedAccount[];

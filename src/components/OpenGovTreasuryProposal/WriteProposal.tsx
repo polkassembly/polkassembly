@@ -15,7 +15,7 @@ import _ from 'lodash';
 import styled from 'styled-components';
 import ContentForm from '../ContentForm';
 import { useNetworkSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	isDiscussionLinked: boolean | null;

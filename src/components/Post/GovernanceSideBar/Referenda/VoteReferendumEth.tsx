@@ -37,7 +37,7 @@ import { useDispatch } from 'react-redux';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 

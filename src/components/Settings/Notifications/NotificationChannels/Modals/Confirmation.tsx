@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import CheckOutlineIcon from '~assets/icons/check-icon.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import Modal from '~src/ui-components/Modal';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const StyledAlert = styled(Alert)`
 	display: flex;

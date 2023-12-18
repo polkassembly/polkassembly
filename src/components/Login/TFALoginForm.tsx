@@ -5,7 +5,7 @@
 import { Divider, Form, Input } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AuthForm from '~src/ui-components/AuthForm';
 import FilteredError from '~src/ui-components/FilteredError';
 

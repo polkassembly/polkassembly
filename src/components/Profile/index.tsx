@@ -29,7 +29,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { MessageType, ProfileDetails } from '~src/auth/types';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';

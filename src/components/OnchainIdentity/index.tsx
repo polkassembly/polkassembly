@@ -25,7 +25,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 

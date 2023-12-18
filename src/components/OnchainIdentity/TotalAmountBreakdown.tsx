@@ -19,7 +19,7 @@ import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 import { ILoading, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {

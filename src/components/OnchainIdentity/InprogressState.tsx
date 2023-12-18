@@ -10,7 +10,7 @@ import { formatBalance } from '@polkadot/util';
 import { ESocials } from '~src/types';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {

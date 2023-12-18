@@ -10,7 +10,7 @@ import { networkLabel } from './utils';
 import { ISelectedNetwork } from '../types';
 import Modal from '~src/ui-components/Modal';
 import { useNetworkSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const AddNetworkModal = ({
 	open,

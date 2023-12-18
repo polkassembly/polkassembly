@@ -5,7 +5,7 @@ import { FrownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Empty, Result } from 'antd';
 import React, { FC } from 'react';
 import cleanError from 'src/util/cleanError';
-import CustomButton from '~src/basic-component/buttons/CustomButton';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 

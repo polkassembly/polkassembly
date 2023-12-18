@@ -4,6 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
+import { ApiPromise } from '@polkadot/api';
 import { Button, Modal, Table as AntdTable } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
@@ -13,8 +14,14 @@ import NameLabel from 'src/ui-components/NameLabel';
 import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 import styled from 'styled-components';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { IPreimagesListing } from '~src/types';
+import { useApiContext } from '~src/context';
+// import { useApiContext } from '~src/context';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { IPreimagesListing, NotificationStatus } from '~src/types';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import queueNotification from '~src/ui-components/QueueNotification';
+import executeTx from '~src/util/executeTx';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -44,11 +51,77 @@ const Table = styled(AntdTable)`
 	}
 `;
 
+interface UnnoteButtonProps {
+	proposer: string;
+	hash: string;
+	api?: ApiPromise;
+	apiReady: boolean;
+	network: string;
+	substrateAddresses?: (string | null)[];
+}
+
+const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddresses }: UnnoteButtonProps) => {
+	const isProposer = substrateAddresses?.includes(getSubstrateAddress(proposer) || proposer);
+
+	if (!isProposer) return null;
+
+	const handleSubmit = async () => {
+		if (!api || !apiReady) {
+			return;
+		}
+
+		const preimageTx = api.tx.preimage.unnotePreimage(hash);
+
+		const onSuccess = () => {
+			queueNotification({
+				header: 'Success!',
+				message: 'Preimage deleted successfully.',
+				status: NotificationStatus.SUCCESS
+			});
+		};
+		const onFailed = (message: string) => {
+			queueNotification({
+				header: 'Failed!',
+				message,
+				status: NotificationStatus.ERROR
+			});
+		};
+		if (!preimageTx) return;
+
+		await executeTx({
+			address: proposer,
+			api,
+			apiReady,
+			errorMessageFallback: 'Transaction failed.',
+			network,
+			onFailed,
+			onSuccess,
+			tx: preimageTx
+		});
+	};
+	return (
+		<button onClick={handleSubmit}>
+			<ImageIcon
+				src='/assets/icons/close-icon.svg'
+				alt='close icon'
+				imgClassName='w-4 h-4'
+				imgWrapperClassName='flex cursor-pointer justify-center border border-solid border-grey_border rounded-sm text-sm text-grey_border'
+			/>
+		</button>
+	);
+};
+
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const { preimages, theme } = props;
 	const [modalArgs, setModalArgs] = useState<any>(null);
+	const { api, apiReady } = useApiContext();
+	const { addresses } = useUserDetailsSelector();
+
+	const substrateAddresses = addresses?.map((address) => {
+		return getSubstrateAddress(address);
+	});
 
 	useEffect(() => {
 		if (!router?.query?.hash) return;
@@ -74,7 +147,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'hash',
 			key: 'hash',
 			width: 350,
-			render: (hash) => <span className='font-medium text-sidebarBlue dark:text-white'>{hash}</span>
+			render: (hash) => <span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 7)}...${hash.substring(hash.length - 5)}`}</span>
 		},
 		{
 			title: 'Author',
@@ -129,7 +202,19 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'status',
 			key: 'status',
 			width: 135,
-			render: (status) => <span className='font-medium text-sidebarBlue dark:text-white'>{status}</span>
+			render: (status, obj) => (
+				<div className='flex items-center justify-center space-x-4'>
+					<span className='font-medium text-sidebarBlue dark:text-white'>{status}</span>
+					<UnnoteButton
+						proposer={obj.proposer}
+						hash={obj.hash}
+						api={api}
+						apiReady={apiReady}
+						network={network}
+						substrateAddresses={substrateAddresses}
+					/>
+				</div>
+			)
 		}
 	];
 

@@ -114,13 +114,13 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			});
 
 			const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-			if (!post) return res.status(500).json({ message: 'Something went wrong.' });
-			if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
+			if (!post) return res.status(500).json({ message: 'Post not found on our on-chain database. Something went wrong.' });
+			if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Post proposer not found on our on-chain database. Something went wrong.' });
 
 			proposerAddress = post?.proposer || post?.preimage?.proposer;
 
 			const substrateAddress = getSubstrateAddress(proposerAddress);
-			if (!substrateAddress) return res.status(500).json({ message: 'Something went wrong.' });
+			if (!substrateAddress) return res.status(500).json({ message: 'Invalid address for proposer. Something went wrong.' });
 			proposer_address = substrateAddress;
 			isAuthor = Boolean(userAddresses.find((address) => address.address === substrateAddress));
 			if (network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post?.id === 23) {
@@ -213,13 +213,13 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 
 		const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-		if (!post) return res.status(500).json({ message: 'Something went wrong.' });
-		if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
+		if (!post) return res.status(500).json({ message: 'Post not found on-chain. Something went wrong.' });
+		if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Post proposer not found on-chain. Something went wrong.' });
 
 		const proposerAddress = post?.proposer || post?.preimage?.proposer;
 
 		const substrateAddress = getSubstrateAddress(proposerAddress);
-		if (!substrateAddress) return res.status(500).json({ message: 'Something went wrong.' });
+		if (!substrateAddress) return res.status(500).json({ message: 'Invalid Proposer address. Something went wrong.' });
 		proposer_address = substrateAddress;
 		let isAuthor: any = userAddresses.find((address) => address.address === substrateAddress);
 		if (network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post.index === 23) {

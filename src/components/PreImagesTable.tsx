@@ -5,7 +5,7 @@
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
 import { ApiPromise } from '@polkadot/api';
-import { Button, Modal, Table as AntdTable } from 'antd';
+import { Button, Modal, Table as AntdTable, Tooltip, message } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import copyToClipboard from '~src/util/copyToClipboard';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -100,14 +101,23 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 		});
 	};
 	return (
-		<button onClick={handleSubmit}>
-			<ImageIcon
-				src='/assets/icons/close-icon.svg'
-				alt='close icon'
-				imgClassName='w-4 h-4'
-				imgWrapperClassName='flex cursor-pointer justify-center border border-solid border-grey_border rounded-sm text-sm text-grey_border'
-			/>
-		</button>
+		<Tooltip
+			placement='top'
+			title={'Unnote'}
+			trigger={'hover'}
+		>
+			<button
+				onClick={handleSubmit}
+				className='rounded-[4px] border border-grey_border bg-white '
+			>
+				<ImageIcon
+					src='/assets/icons/close-icon.svg'
+					alt='close icon'
+					imgClassName='w-4 h-4'
+					imgWrapperClassName='flex cursor-pointer justify-center text-sm text-grey_border dark:text-white'
+				/>
+			</button>
+		</Tooltip>
 	);
 };
 
@@ -118,6 +128,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const [modalArgs, setModalArgs] = useState<any>(null);
 	const { api, apiReady } = useApiContext();
 	const { addresses } = useUserDetailsSelector();
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const substrateAddresses = addresses?.map((address) => {
 		return getSubstrateAddress(address);
@@ -128,6 +139,13 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 		setModalArgs(preimages?.[0]?.proposedCall.args);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
+
+	const success = () => {
+		messageApi.open({
+			content: 'Hash copied to clipboard',
+			type: 'success'
+		});
+	};
 
 	const handleModalArgs = async (args: any) => {
 		Object.entries(args).map(([name, value]) => {
@@ -146,14 +164,49 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			title: 'Hash',
 			dataIndex: 'hash',
 			key: 'hash',
-			width: 350,
-			render: (hash) => <span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 7)}...${hash.substring(hash.length - 5)}`}</span>
+			width: 300,
+			render: (hash, obj) => (
+				<div className='flex space-x-[6px]'>
+					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 8)}................${hash.substring(hash.length - 6)}`}</span>
+					<Tooltip title='Copy Address'>
+						<span
+							className='mt-[2px] cursor-pointer'
+							onClick={(e) => {
+								e.preventDefault();
+								copyToClipboard(hash);
+								success();
+							}}
+						>
+							{contextHolder}
+							<ImageIcon
+								src='assets/icons/content_copy_small.svg'
+								alt='copy icon'
+								imgClassName='w-4 h-4'
+								imgWrapperClassName=' flex cursor-pointer justify-center text-sm text-grey_border'
+							/>
+						</span>
+					</Tooltip>
+					<Tooltip title='Subscan'>
+						<span
+							className='cursor-pointer'
+							onClick={() => window.open(`https://www.subscan.io/account/${obj.proposer}`, '_blank')}
+						>
+							<ImageIcon
+								src='/assets/icons/subscan-link.svg'
+								alt='subscan link icon'
+								imgClassName='w-4 h-4'
+								imgWrapperClassName='mt-[2px] flex cursor-pointer justify-center text-sm text-grey_border'
+							/>
+						</span>
+					</Tooltip>
+				</div>
+			)
 		},
 		{
 			title: 'Author',
 			dataIndex: 'proposer',
 			key: 'author',
-			width: 200,
+			width: 250,
 			render: (proposer) => <NameLabel defaultAddress={proposer} />
 		},
 		{
@@ -203,7 +256,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			key: 'status',
 			width: 135,
 			render: (status, obj) => (
-				<div className='flex items-center justify-center space-x-4'>
+				<div className='flex items-center justify-start space-x-4'>
 					<span className='font-medium text-sidebarBlue dark:text-white'>{status}</span>
 					<UnnoteButton
 						proposer={obj.proposer}

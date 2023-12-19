@@ -17,11 +17,12 @@ interface IGetPreimagesParams {
 	network: string;
 	listingLimit: number | string | string[];
 	page: number | string | string[];
+	hash_contains?: string | string[];
 }
 
 export async function getPreimages(params: IGetPreimagesParams): Promise<IApiResponse<IPreimagesListingResponse>> {
 	try {
-		const { network, listingLimit, page } = params;
+		const { network, listingLimit, page, hash_contains } = params;
 
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
@@ -36,6 +37,7 @@ export async function getPreimages(params: IGetPreimagesParams): Promise<IApiRes
 			network,
 			query: GET_PREIMAGES_TABLE_QUERY,
 			variables: {
+				hash_contains: hash_contains,
 				limit: numListingLimit,
 				offset: numListingLimit * (numPage - 1)
 			}
@@ -67,6 +69,7 @@ const handler: NextApiHandler<IPreimagesListingResponse | { error: string }> = a
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getPreimages({
+		hash_contains: '',
 		listingLimit,
 		network,
 		page

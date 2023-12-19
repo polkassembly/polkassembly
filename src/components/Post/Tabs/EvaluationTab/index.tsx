@@ -29,7 +29,7 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 	return (
 		<div className=''>
 			<UserInfoTab item='proposer' />
-			{postedBy?.postData?.beneficiaries && (
+			{postedBy?.postData?.beneficiaries && postedBy?.postData?.beneficiaries.length > 0 && (
 				<UserInfoTab
 					item='beneficiary'
 					className='mt-4'

@@ -120,6 +120,7 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 											]}
 										>
 											<Input
+												type='password'
 												onChange={(e) => setNewPassword(e.target.value)}
 												placeholder='eg. password123'
 												className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'

@@ -53,7 +53,7 @@ const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesPro
 
 interface IUserVotesProps {
 	amount: string;
-	count: string;
+	conviction: string;
 	decision: string;
 }
 
@@ -222,7 +222,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 			setUserVotesData({
 				amount: parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network),
-				count: `${voteData.lockPeriod}`,
+				conviction: `${voteData.lockPeriod}`,
 				decision: decisionType[`${voteData.decision}`]
 			});
 		};
@@ -290,7 +290,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									title={
 										userVotesData.decision === 'ABSTAIN'
 											? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
-											: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.count}x Conviction`
+											: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`
 									}
 								>
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />

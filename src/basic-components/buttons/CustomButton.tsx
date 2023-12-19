@@ -3,9 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, PropsWithChildren, ReactNode } from 'react';
 import { Button as ANTDButton } from 'antd';
-import { CompoundedComponent } from 'antd/es/float-button/interface';
 
-interface ICustomButton extends CompoundedComponent {
+interface ICustomButton {
 	text?: string | ReactNode;
 	disabled?: boolean;
 	loading?: boolean;

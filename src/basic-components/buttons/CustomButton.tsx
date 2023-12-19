@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, PropsWithChildren, ReactNode } from 'react';
 import { Button as ANTDButton } from 'antd';
+import { CompoundedComponent } from 'antd/es/float-button/interface';
 
-interface ICustomButton {
+interface ICustomButton extends CompoundedComponent {
 	text?: string | ReactNode;
 	disabled?: boolean;
 	loading?: boolean;
@@ -37,7 +38,6 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 					: 'border border-pink_primary bg-transparent text-pink_primary'
 			} ${className} `}
 			disabled={disabled}
-			type={variant}
 			loading={loading}
 			htmlType={htmlType}
 			onClick={onClick}

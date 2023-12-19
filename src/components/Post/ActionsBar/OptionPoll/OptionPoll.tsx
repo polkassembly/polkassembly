@@ -3,12 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Divider, Progress, Spin } from 'antd';
+import { Divider, Spin } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 
 import { MessageType } from '~src/auth/types';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
@@ -159,11 +160,13 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 						onClick={() => castVote(option)}
 					>
 						<div>{option}</div>
-						<Progress
+						<ProgressBar
 							type='line'
 							strokeWidth={11}
 							percent={totalVotes && Math.round(((optionMap[option] || 0) * 100) / totalVotes)}
-							format={(percent) => <div> {percent} % </div>}
+							format={(
+								percent: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined
+							) => <div> {percent} % </div>}
 						/>
 					</div>
 				))}

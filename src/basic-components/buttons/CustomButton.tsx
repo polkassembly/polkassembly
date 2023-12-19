@@ -2,25 +2,20 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, PropsWithChildren, ReactNode } from 'react';
-import { Button as ANTDButton } from 'antd';
+import { Button as ANTDButton, ButtonProps } from 'antd';
 
-interface ICustomButton {
+interface ICustomButton extends ButtonProps {
 	text?: string | ReactNode;
-	disabled?: boolean;
-	loading?: boolean;
-	htmlType?: any;
 	fontSize?: string;
 	className?: string;
-	onClick?: (pre?: any) => void;
 	variant: 'primary' | 'default' | 'dashed' | 'link' | 'text';
-	icon?: any;
 	width?: number;
 	height?: number;
 	style?: any;
 	buttonSize?: string;
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
-	const { buttonSize, style, text, disabled, loading, htmlType, className, onClick, variant, icon, fontSize } = props;
+	const { buttonSize, style, text, className, variant, fontSize } = props;
 	let { height, width } = props;
 	if (buttonSize && buttonSize === 'xs') {
 		width = 134;
@@ -31,16 +26,12 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 	}
 	return (
 		<ANTDButton
+			{...props}
 			className={`${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 rounded-md ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium ${
 				variant === 'primary'
 					? 'border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:text-white'
 					: 'border border-pink_primary bg-transparent text-pink_primary'
 			} ${className} `}
-			disabled={disabled}
-			loading={loading}
-			htmlType={htmlType}
-			onClick={onClick}
-			icon={icon}
 			style={{ height: `${height}px`, width: `${width}px`, ...style }}
 		>
 			{props.children || text}

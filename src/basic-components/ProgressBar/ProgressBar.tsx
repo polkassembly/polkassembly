@@ -11,8 +11,8 @@ const ProgressBar: FC<PropsWithChildren<IProgressBar>> = (props) => {
 	const { className } = props;
 	return (
 		<ANTDProgressBar
-			className={`${className}`}
 			{...props}
+			className={`${className}`}
 		/>
 	);
 };

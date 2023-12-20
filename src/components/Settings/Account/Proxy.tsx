@@ -45,6 +45,16 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 	const dispatch = useDispatch();
 
+	const onProxiedAccountChange = (address: string) => {
+		const substrateAddress = getSubstrateAddress(address) || address;
+		if (!currentUser.addresses?.includes(substrateAddress)) {
+			setError('Please select a linked address or link an address before linking a proxy for it.');
+		} else {
+			setError('');
+		}
+		setProxiedAddress(address);
+	};
+
 	const handleSelectWallet = async (wallet: Wallet) => {
 		const injectedWindow = window as Window & InjectedWindow;
 		const injectedWallet = injectedWindow?.injectedWeb3?.[String(wallet)];
@@ -123,6 +133,13 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 			return;
 		}
 
+		const substrateProxiedAddress = getSubstrateAddress(proxiedAddress) || proxiedAddress;
+
+		if (!currentUser.addresses?.includes(substrateProxiedAddress)) {
+			setError('Please select a linked address or link an address before linking a proxy for it.');
+			return;
+		}
+
 		setLoading(true);
 
 		const injected = injectedWallet && injectedWallet.enable && (await injectedWallet.enable(APPNAME));
@@ -143,7 +160,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 		const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/linkProxyAddress', {
 			message,
-			proxied: getSubstrateAddress(proxiedAddress) || proxiedAddress,
+			proxied: substrateProxiedAddress || proxiedAddress,
 			proxy: substrateProxyAddress,
 			signature
 		});
@@ -178,105 +195,121 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 			open={open}
 			className='mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			footer={
-				<div className='flex items-center justify-end'>
-					{[
-						<Button
-							disabled={!proxyAddress || !proxiedAddress || loading}
-							key='sign'
-							htmlType='submit'
-							onClick={() => {
-								form.submit();
-							}}
-							loading={loading}
-							className={`flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-3 text-lg font-medium leading-none text-white outline-none ${
-								!proxyAddress || !proxiedAddress || loading ? 'bg-gray-300' : ''
-							}`}
-						>
-							Sign
-						</Button>,
-						<Button
-							key='cancel'
-							onClick={dismissModal}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none dark:bg-section-dark-overlay'
-						>
-							Cancel
-						</Button>
-					]}
-				</div>
+				!currentUser.id ? null : (
+					<div className='flex items-center justify-end'>
+						{[
+							<Button
+								disabled={!proxyAddress || !proxiedAddress || loading}
+								key='sign'
+								htmlType='submit'
+								onClick={() => {
+									form.submit();
+								}}
+								loading={loading}
+								className={`flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-3 text-lg font-medium leading-none text-white outline-none ${
+									!proxyAddress || !proxiedAddress || loading ? 'bg-gray-300' : ''
+								}`}
+							>
+								Sign
+							</Button>,
+							<Button
+								key='cancel'
+								onClick={dismissModal}
+								className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none dark:bg-section-dark-overlay'
+							>
+								Cancel
+							</Button>
+						]}
+					</div>
+				)
 			}
 		>
-			<Form
-				form={form}
-				onFinish={handleSign}
-				className='mb-6 flex flex-col gap-y-8'
-			>
-				<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Please Select a wallet</p>
-				<div>
-					<WalletButtons
-						disabled={loading}
-						onWalletSelect={handleSelectWallet}
-						showPolkasafe={false}
-						isLoginFlow={false}
-						noHeader={true}
-					/>
-				</div>
-
-				{selectedWallet && (extensionNotFound || accountsNotFound) && (
-					<Alert
-						type='warning'
-						message={
-							extensionNotFound ? (
-								<span className='dark:text-blue-dark-high'>
-									<p>Extension not found.</p>
-									<p>Please install the {selectedWallet} extension or switch to a different wallet.</p>
-								</span>
-							) : (
-								<span className='dark:text-blue-dark-high'>
-									<p>No accounts found.</p>
-									<p>Please add an account to your {selectedWallet} extension or switch to a different wallet.</p>
-								</span>
-							)
-						}
-						className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
-					/>
-				)}
-
-				{!selectedWallet ? (
-					<Alert
-						type='warning'
-						message={
-							<span className='dark:text-blue-dark-high'>
-								<p>Please select a wallet to continue.</p>
-							</span>
-						}
-						className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
-					/>
-				) : (
-					<>
-						<section>
-							<AccountSelectionForm
-								title='Select proxied account'
-								accounts={accounts}
-								address={proxiedAddress}
-								onAccountChange={(address) => setProxiedAddress(address)}
+			{!currentUser.id ? (
+				<Alert
+					type='warning'
+					message={
+						<span className='dark:text-blue-dark-high'>
+							<p>Please login to continue.</p>
+						</span>
+					}
+					className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+				/>
+			) : (
+				<>
+					<Form
+						form={form}
+						onFinish={handleSign}
+						className='mb-6 flex flex-col gap-y-8'
+					>
+						<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Please Select a wallet</p>
+						<div>
+							<WalletButtons
+								disabled={loading}
+								onWalletSelect={handleSelectWallet}
+								showPolkasafe={false}
+								isLoginFlow={false}
+								noHeader={true}
 							/>
-						</section>
-						<section>
-							<AccountSelectionForm
-								title='Select proxy account'
-								accounts={accounts}
-								address={proxyAddress}
-								onAccountChange={(address) => setProxyAddress(address)}
-							/>
-						</section>
-					</>
-				)}
-				{error && <FilteredError text={error} />}
-			</Form>
+						</div>
 
-			<div className='ml-[-24px] mr-[-24px]'>
-				<Divider className='my-4 mt-0' />
-			</div>
+						{selectedWallet && (extensionNotFound || accountsNotFound) && (
+							<Alert
+								type='warning'
+								message={
+									extensionNotFound ? (
+										<span className='dark:text-blue-dark-high'>
+											<p>Extension not found.</p>
+											<p>Please install the {selectedWallet} extension or switch to a different wallet.</p>
+										</span>
+									) : (
+										<span className='dark:text-blue-dark-high'>
+											<p>No accounts found.</p>
+											<p>Please add an account to your {selectedWallet} extension or switch to a different wallet.</p>
+										</span>
+									)
+								}
+								className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+							/>
+						)}
+
+						{!selectedWallet ? (
+							<Alert
+								type='warning'
+								message={
+									<span className='dark:text-blue-dark-high'>
+										<p>Please select a wallet to continue.</p>
+									</span>
+								}
+								className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+							/>
+						) : (
+							<>
+								<section>
+									<AccountSelectionForm
+										title='Select proxied account'
+										accounts={accounts}
+										address={proxiedAddress}
+										onAccountChange={onProxiedAccountChange}
+									/>
+								</section>
+								<section>
+									<AccountSelectionForm
+										title='Select proxy account'
+										accounts={accounts}
+										address={proxyAddress}
+										onAccountChange={(address) => setProxyAddress(address)}
+									/>
+								</section>
+							</>
+						)}
+						{error && <FilteredError text={error} />}
+					</Form>
+
+					<div className='ml-[-24px] mr-[-24px]'>
+						<Divider className='my-4 mt-0' />
+					</div>
+				</>
+			)}
 		</Modal>
 	);
 };

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext } from '~src/context';
 import { GetColumns } from './Coloumn';
-import { DelegateDelegationIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
+import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import { ETrackDelegationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -15,6 +15,7 @@ import { ITrackDelegation } from 'pages/api/v1/delegations';
 import { IDelegation } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -213,7 +214,11 @@ const DashboardTrackListing = ({ className }: Props) => {
 			{((status === ETrackDelegationStatus.UNDELEGATED && !statusCounts.undelegated) ||
 				(status === ETrackDelegationStatus.RECEIVED_DELEGATION && !statusCounts.received_delegation)) && (
 				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-24 text-[258px] dark:bg-section-dark-overlay'>
-					{status === ETrackDelegationStatus.UNDELEGATED ? <UnDelegatedIcon /> : <ReceivedDelegationIcon />}
+					<ImageIcon
+						src={status === ETrackDelegationStatus.UNDELEGATED ? '/assets/icons/undelegated.svg' : '/assets/icons/received-delegation.svg'}
+						alt='status icon'
+						imgWrapperClassName='w-[258px] h-[258px] flex items-center justify-center'
+					/>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>{status === ETrackDelegationStatus.UNDELEGATED ? 'No Undelegated Tracks' : 'No Delegation Received'}</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>

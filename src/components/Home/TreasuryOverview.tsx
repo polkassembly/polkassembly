@@ -18,19 +18,20 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
-import Available from '~assets/icons/available.svg';
-import CurrentPrice from '~assets/icons/currentprice.svg';
-import NextBurn from '~assets/icons/nextburn.svg';
-import SpendPeriod from '~assets/icons/spendperiod.svg';
-import AvailableDark from '~assets/icons/AvailableDark.svg';
-import CurrentPriceDark from '~assets/icons/CurrentPriceDark.svg';
-import NextBurnDark from '~assets/icons/NextBurnDark.svg';
-import SpendPeriodDark from '~assets/icons/SpendPeriodDark.svg';
+// import Available from '~assets/icons/available.svg';
+// import CurrentPrice from '~assets/icons/currentprice.svg';
+// import NextBurn from '~assets/icons/nextburn.svg';
+// import SpendPeriod from '~assets/icons/spendperiod.svg';
+// import AvailableDark from '~assets/icons/AvailableDark.svg';
+// import CurrentPriceDark from '~assets/icons/CurrentPriceDark.svg';
+// import NextBurnDark from '~assets/icons/NextBurnDark.svg';
+// import SpendPeriodDark from '~assets/icons/SpendPeriodDark.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -335,9 +336,21 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:gap-4`}>
 			{/* Available */}
 			<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
-				<div className='w-full flex-1 flex-col gap-x-0 lg:flex'>
+				<div className='w-full flex-col gap-x-0 lg:flex'>
 					<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-						{theme === 'dark' ? <AvailableDark className='lg:hidden' /> : <Available className='lg:hidden' />}
+						{theme === 'dark' ? (
+							<ImageIcon
+								src='/assets/icons/AvailableDark.svg'
+								alt='available dark icon'
+								imgClassName='lg:hidden'
+							/>
+						) : (
+							<ImageIcon
+								src='/assets/icons/available.svg'
+								alt='available icon'
+								imgClassName='lg:hidden'
+							/>
+						)}
 					</div>
 					{!available.isLoading ? (
 						<>
@@ -376,7 +389,22 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						</div>
 					)}
 				</div>
-				<div>{theme === 'dark' ? <AvailableDark className='xs:hidden lg:block' /> : <Available className='xs:hidden lg:block' />}</div>
+				<div>
+					{theme === 'dark' ? (
+						<ImageIcon
+							src='/assets/icons/AvailableDark.svg'
+							alt='available dark icon'
+							imgClassName='xs:hidden lg:block w-full'
+						/>
+					) : (
+						// <Available className='xs:hidden lg:block' />
+						<ImageIcon
+							src='/assets/icons/available.svg'
+							alt='available icon'
+							imgClassName='xs:hidden lg:block w-full'
+						/>
+					)}
+				</div>
 			</div>
 
 			{/* CurrentPrice */}
@@ -384,7 +412,19 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-							{theme === 'dark' ? <CurrentPriceDark className='lg:hidden' /> : <CurrentPrice className='lg:hidden' />}
+							{theme === 'dark' ? (
+								<ImageIcon
+									src='/assets/icons/CurrentPriceDark.svg'
+									alt='current price dark icon'
+									imgClassName='lg:hidden'
+								/>
+							) : (
+								<ImageIcon
+									src='/assets/icons/currentprice.svg'
+									alt='current price icon'
+									imgClassName='lg:hidden'
+								/>
+							)}
 						</div>
 						{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
 							<>
@@ -433,7 +473,21 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							</div>
 						)}
 					</div>
-					<div>{theme === 'dark' ? <CurrentPriceDark className='xs:hidden lg:block' /> : <CurrentPrice className='xs:hidden lg:block' />}</div>
+					<div>
+						{theme === 'dark' ? (
+							<ImageIcon
+								src='/assets/icons/CurrentPriceDark.svg'
+								alt='current price dark icon'
+								imgClassName='xs:hidden lg:block w-full'
+							/>
+						) : (
+							<ImageIcon
+								src='/assets/icons/currentprice.svg'
+								alt='current price icon'
+								imgClassName='xs:hidden lg:block w-full'
+							/>
+						)}
+					</div>
 				</div>
 			)}
 
@@ -442,7 +496,19 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-							{theme === 'dark' ? <NextBurnDark className='lg:hidden' /> : <NextBurn className='lg:hidden' />}
+							{theme === 'dark' ? (
+								<ImageIcon
+									src='/assets/icons/NextBurnDark.svg'
+									alt='next burn dark icon'
+									imgClassName='lg:hidden'
+								/>
+							) : (
+								<ImageIcon
+									src='/assets/icons/nextburn.svg'
+									alt='next burn icon'
+									imgClassName='lg:hidden'
+								/>
+							)}
 						</div>
 						{!nextBurn.isLoading ? (
 							<>
@@ -472,7 +538,21 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							</div>
 						)}
 					</div>
-					<div>{theme === 'dark' ? <NextBurnDark className='xs:hidden lg:block' /> : <NextBurn className='xs:hidden lg:block' />}</div>
+					<div>
+						{theme === 'dark' ? (
+							<ImageIcon
+								src='/assets/icons/NextBurnDark.svg'
+								alt='next burn dark icon'
+								imgClassName='xs:hidden lg:block w-full'
+							/>
+						) : (
+							<ImageIcon
+								src='/assets/icons/nextburn.svg'
+								alt='next burn icon'
+								imgClassName='xs:hidden lg:block w-full'
+							/>
+						)}
+					</div>
 				</div>
 			)}
 
@@ -483,7 +563,19 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 							<div className='w-full flex-col gap-x-0 lg:flex'>
 								<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-									{theme === 'dark' ? <SpendPeriodDark className='lg:hidden' /> : <SpendPeriod className='lg:hidden' />}
+									{theme === 'dark' ? (
+										<ImageIcon
+											src='/assets/icons/SpendPeriodDark.svg'
+											alt='spend period dark icon'
+											imgClassName='lg:hidden'
+										/>
+									) : (
+										<ImageIcon
+											src='/assets/icons/spendperiod.svg'
+											alt='spend period icon'
+											imgClassName='lg:hidden'
+										/>
+									)}
 								</div>
 								{!spendPeriod.isLoading ? (
 									<>
@@ -544,7 +636,21 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									</div>
 								)}
 							</div>
-							<div>{theme === 'dark' ? <SpendPeriodDark className='mt-2 xs:hidden lg:block' /> : <SpendPeriod className='mt-2 xs:hidden lg:block' />}</div>
+							<div>
+								{theme === 'dark' ? (
+									<ImageIcon
+										src='/assets/icons/SpendPeriodDark.svg'
+										alt='spend period dark icon'
+										imgClassName='mt-2 xs:hidden lg:block w-full'
+									/>
+								) : (
+									<ImageIcon
+										src='/assets/icons/spendperiod.svg'
+										alt='spend period icon'
+										imgClassName='mt-2 xs:hidden lg:block w-full'
+									/>
+								)}
+							</div>
 						</div>
 					)}
 				</>

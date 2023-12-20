@@ -5,8 +5,6 @@
 import React, { useEffect } from 'react';
 import { Modal } from 'antd';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
@@ -23,6 +21,7 @@ import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -92,8 +91,11 @@ const DelegationSuccessPopup = ({
 			maskClosable={false}
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
-				{isMultisig ? <MultisigSuccessIcon /> : <SuccessIcon />}
 				<h2 className='mt-4 text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
+					<ImageIcon
+						src={isMultisig ? '/assets/multi-vote-initiated.svg' : '/assets/delegation-tracks/success-delegate.svg'}
+						alt='multi vote initiated icon'
+					/>
 					{title ? title : isDelegate ? (isMultisig ? `${title}` : `${title} successfully`) : isMultisig ? `${title}` : 'Undelegated successfully'}
 				</h2>
 				{isDelegate && (

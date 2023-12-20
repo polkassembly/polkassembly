@@ -27,7 +27,7 @@ import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNet
 import dayjs from 'dayjs';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
-import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
+// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import executeTx from '~src/util/executeTx';
 import VoteInitiatedModal from '../Referenda/Modal/VoteSuccessModal';
@@ -35,6 +35,7 @@ import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const ZERO_BN = new BN(0);
 
@@ -532,7 +533,12 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					setOpen={setSuccessModal}
 					address={address}
 					votedAt={dayjs().format('HH:mm, Do MMMM YYYY')}
-					icon={<SuccessIcon />}
+					icon={
+						<ImageIcon
+							src='/assets/delegation-tracks/success-delegate.svg'
+							alt='success delegate icon'
+						/>
+					}
 				/>
 			</div>
 		</>

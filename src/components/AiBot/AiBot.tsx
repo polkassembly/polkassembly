@@ -15,11 +15,13 @@ import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
 import CloseWhite from '~assets/icons/close-cross-thinner.svg';
 import FabButton from '~assets/icons/fab-icon.svg';
-import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
+// import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { trackEvent } from 'analytics';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -46,7 +48,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, className } = props;
 	const [grillChat, setGrillChat] = useState(false);
 	const router = useRouter();
-	const { id } = useUserDetailsSelector();
+	const { id, username } = useUserDetailsSelector();
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -146,7 +148,12 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						if (!isAIChatBotOpen) setGrillChat(!grillChat);
 					}}
 				>
-					<GrillChatIcon className='ml-[-149px] mt-[5px] cursor-pointer' />
+					{/* <GrillChatIcon className='ml-[-149px] mt-[5px] cursor-pointer' /> */}
+					<ImageIcon
+						imgWrapperClassName='ml-[-149px] mt-[5px] cursor-pointer'
+						src='/assets/icons/grill-chat-icon.svg'
+						alt='grill chat icon'
+					/>
 					<p className='mb-3 ml-4 mt-2.5  text-sm font-medium leading-5 tracking-[1.25%]'>Grill Chat</p>
 				</div>
 			)
@@ -173,6 +180,10 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 						onClick={() => {
 							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
+							trackEvent('fab_floating_button_clicked', 'clicked_fab_floating_button', {
+								userId: id || '',
+								userName: username || ''
+							});
 						}}
 					>
 						<FabButton className='mt-1' />

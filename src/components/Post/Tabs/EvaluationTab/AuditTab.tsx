@@ -6,10 +6,10 @@ import PostAudit from '../PostTimeline/Audit';
 import { Collapse } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
-import AuditIcon from '~assets/icons/auditIcon.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import styled from 'styled-components';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const { Panel } = Collapse;
 
@@ -43,7 +43,10 @@ const AuditTab: FC<IAuditTab> = ({ auditData, videoData, className }) => {
 				<Panel
 					header={
 						<div className='channel-header flex items-center gap-[6px]'>
-							<AuditIcon />
+							<ImageIcon
+								src='/assets/icons/auditIcon.svg'
+								alt='auditIcon'
+							/>
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>Audit</h3>
 						</div>
 					}

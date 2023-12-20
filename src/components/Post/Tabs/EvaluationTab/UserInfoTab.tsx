@@ -4,12 +4,11 @@
 import { Collapse, Divider } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
-import ProposerIcon from '~assets/icons/proposerIcon.svg';
 import React from 'react';
 import { usePostDataContext } from '~src/context';
-import BeneficiariesIcon from '~assets/icons/BeneficiariesIcon.svg';
 import ProfileData from '~src/ui-components/ProfileData';
 import styled from 'styled-components';
+import ImageIcon from '~src/ui-components/ImageIcon';
 const { Panel } = Collapse;
 
 interface Props {
@@ -37,12 +36,21 @@ const UserInfoTab = ({ className, item }: Props) => {
 				expandIcon={({ isActive }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
 				}}
-				// theme={theme}
 			>
 				<Panel
 					header={
 						<div className='channel-header flex items-center gap-[6px]'>
-							{item === 'proposer' ? <ProposerIcon /> : <BeneficiariesIcon />}
+							{item === 'proposer' ? (
+								<ImageIcon
+									src='/assets/icons/proposerIcon.svg'
+									alt='proposerIcon'
+								/>
+							) : (
+								<ImageIcon
+									src='/assets/icons/BeneficiariesIcon.svg'
+									alt='beneficiaryIcon'
+								/>
+							)}
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 								{item === 'proposer' ? 'Proposer' : 'Beneficiary(ies)'}
 							</h3>

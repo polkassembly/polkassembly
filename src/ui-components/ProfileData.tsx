@@ -7,12 +7,7 @@
 import { Divider, message } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import ImageComponent from '~src/components/ImageComponent';
-import CopyIcon from '~assets/icons/content_copy_small.svg';
-import WhiteCopyIcon from '~assets/icons/content_copy_small_white.svg';
 import copyToClipboard from '~src/util/copyToClipboard';
-import MessageIcon from '~assets/icons/ChatIcon.svg';
-import ClipBoardIcon from '~assets/icons/ClipboardText.svg';
-import CalenderIcon from '~assets/icons/Calendar.svg';
 import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
 import Address from '~src/ui-components/Address';
@@ -27,6 +22,7 @@ import styled from 'styled-components';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import EvalutionSummary from '~src/components/Post/PostSummary/EvalutionSummary';
+import ImageIcon from './ImageIcon';
 
 const ZERO_BN = new BN(0);
 interface IProfileData {
@@ -91,12 +87,14 @@ const ProfileData: FC<IProfileData> = (props) => {
 
 	const fetchData = async () => {
 		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', {
+			address: address,
 			network: network,
 			userId: profileData?.user_id
 		});
 		if (data) {
 			setProposalCount(data?.proposals);
 			setDiscussionCount(data?.discussions);
+			console.log(data);
 		} else {
 			console.log(error);
 		}
@@ -129,7 +127,19 @@ const ProfileData: FC<IProfileData> = (props) => {
 							}}
 						>
 							{contextHolder}
-							{theme === 'dark' ? <WhiteCopyIcon className='ml-2 scale-125' /> : <CopyIcon className='ml-2 scale-125' />}
+							{theme === 'dark' ? (
+								<ImageIcon
+									src='/assets/icons/content_copy_small_white.svg'
+									className='ml-2 scale-125'
+									alt='WhitecopyIcon'
+								/>
+							) : (
+								<ImageIcon
+									src='/assets/icons/content_copy_small.svg'
+									className='ml-2 scale-125'
+									alt='GreyCopyIcon'
+								/>
+							)}
 						</span>
 					</div>
 					{profileData?.profile?.bio ? (
@@ -168,7 +178,11 @@ const ProfileData: FC<IProfileData> = (props) => {
 			<div className='user-info-container mt-3 flex h-[60px] items-center justify-between'>
 				{profileData?.created_at && (
 					<div className='info-container creation-date-container flex gap-x-2 py-4'>
-						<CalenderIcon className='icon-container' />
+						<ImageIcon
+							src='/assets/icons/Calendar.svg'
+							alt='calenderIcon'
+							className='icon-container'
+						/>
 						<div className='content-container -mt-1'>
 							<p className='m-0 whitespace-nowrap p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Account Since</p>
 							<span className='m-0 whitespace-nowrap p-0 text-sm font-semibold text-bodyBlue dark:text-white'>
@@ -185,7 +199,11 @@ const ProfileData: FC<IProfileData> = (props) => {
 					/>
 				)}
 				<div className='info-container flex justify-center gap-x-2 py-4'>
-					<ClipBoardIcon className='icon-container' />
+					<ImageIcon
+						src='/assets/icons/ClipboardText.svg'
+						alt='clipboardIcon'
+						className='icon-container'
+					/>
 					<div className='content-container -mt-1'>
 						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Proposals</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{proposalCount < 10 ? `0${proposalCount}` : `${proposalCount}`}</span>
@@ -197,7 +215,11 @@ const ProfileData: FC<IProfileData> = (props) => {
 					className='h-[40px] dark:bg-separatorDark'
 				/>
 				<div className='info-container flex justify-center gap-x-2 py-4'>
-					<MessageIcon className='icon-container' />
+					<ImageIcon
+						src='/assets/icons/ChatIcon.svg'
+						alt='MessageIcon'
+						className='icon-container'
+					/>
 					<div className='content-container -mt-1'>
 						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Discussions</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>{discussionCount < 10 ? `0${discussionCount}` : `${discussionCount}`}</span>
@@ -209,7 +231,11 @@ const ProfileData: FC<IProfileData> = (props) => {
 					className='hide-div h-[40px] dark:bg-separatorDark'
 				/>
 				<div className='hide-div flex justify-end gap-x-2 py-4'>
-					<MessageIcon className='icon-container' />
+					<ImageIcon
+						src='/assets/icons/ChatIcon.svg'
+						alt='MessageIcon'
+						className='icon-container'
+					/>
 					<div className='content-container -mt-1'>
 						<p className='m-0 p-0 text-[10px] font-normal text-lightBlue opacity-70 dark:text-lightGreyTextColor'>Voting Power</p>
 						<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>

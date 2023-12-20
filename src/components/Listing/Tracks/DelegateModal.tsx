@@ -4,7 +4,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
+import { Alert, Button, Checkbox, Form, Modal, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
@@ -35,6 +35,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
+import Popover from '~src/basic-components/Popover';
 
 const ZERO_BN = new BN(0);
 

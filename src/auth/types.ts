@@ -88,6 +88,19 @@ export interface Address {
 	is_erc20?: boolean;
 	wallet?: string;
 	isMultisig?: boolean;
+	proxy_for?: boolean;
+}
+
+export interface PublicAddress {
+	address: string;
+	default: boolean;
+	network: string;
+	public_key: string;
+	verified: boolean;
+	is_erc20?: boolean;
+	wallet?: string;
+	isMultisig?: boolean;
+	proxy_for?: string;
 }
 
 export interface NotificationSettings {

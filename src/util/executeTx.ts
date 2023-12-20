@@ -4,6 +4,8 @@
 
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { PublicAddress } from '~src/auth/types';
+import nextApiClientFetch from './nextApiClientFetch';
 
 interface Props {
 	api: ApiPromise;
@@ -21,12 +23,19 @@ interface Props {
 const executeTx = async ({ api, apiReady, network, tx, address, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
 	if (!api || !apiReady || !tx) return;
 
-	const isProxyAddress = false;
-	const realAddress = '';
+	let proxyForAddress = '';
 
-	// TODO: find a way to find if it is a proxy address and to get the real address from the proxy address
+	try {
+		const { data: publicAddress, error: fetchError } = await nextApiClientFetch<PublicAddress>(`api/v1/auth/data/address?address=${address}`);
 
-	const extrinsic = isProxyAddress && realAddress ? api.tx.proxy.proxy(realAddress, null, tx) : tx;
+		if (!fetchError && publicAddress) {
+			proxyForAddress = publicAddress.proxy_for || '';
+		}
+	} catch (error) {
+		console.log('Error in fetching address details', error);
+	}
+
+	const extrinsic = proxyForAddress ? api.tx.proxy.proxy(proxyForAddress, null, tx) : tx;
 
 	extrinsic
 		.signAndSend(address, params, async ({ status, events, txHash }: any) => {

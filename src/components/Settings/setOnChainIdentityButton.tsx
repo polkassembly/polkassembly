@@ -17,7 +17,6 @@ import { APPNAME } from 'src/global/appName';
 import { addressPrefix } from 'src/global/networkConstants';
 import { chainProperties } from 'src/global/networkConstants';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
-import Card from 'src/ui-components/Card';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -29,6 +28,7 @@ import EthIdenticon from '~src/ui-components/EthIdenticon';
 import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import Cards from '~src/basic-components/Cards/Cards';
 
 interface Props {
 	className?: string;
@@ -403,9 +403,9 @@ const SetOnChainIdentityButton = ({
 	);
 
 	return loadingStatus.isLoading ? (
-		<Card className={'LoaderWrapper'}>
+		<Cards className={'LoaderWrapper'}>
 			<Loader text={loadingStatus.message} />
-		</Card>
+		</Cards>
 	) : (
 		<>
 			{!id ? triggerBtnLoginDisabled : triggerBtn}

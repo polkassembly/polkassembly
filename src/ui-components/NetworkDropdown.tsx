@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Card, Col, Row, Dropdown } from 'antd';
+import { Col, Row, Dropdown } from 'antd';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
 import { chainProperties, network } from 'src/global/networkConstants';
@@ -13,6 +13,7 @@ import DownOutlined from '~assets/search/dropdown-down.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Cards from '~src/basic-components/Cards/Cards';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -111,7 +112,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			trigger={[isSearch ? 'hover' : 'click']}
 			dropdownRender={() => {
 				return (
-					<Card className='max-h-[52vh] max-w-[356px] overflow-y-auto dark:border-none dark:bg-section-dark-overlay'>
+					<Cards className='max-h-[52vh] max-w-[356px] overflow-y-auto dark:border-none dark:bg-section-dark-overlay'>
 						<>
 							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>Polkadot &amp; Parachains</div>
 							<Row className='mt-2'>
@@ -177,7 +178,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								))}
 							</Row>
 						</>
-					</Card>
+					</Cards>
 				);
 			}}
 		>

@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<PublicAddress |
 		isMultisig: Boolean(addressData.isMultisig) || false,
 		is_erc20: Boolean(addressData.is_erc20) || substrateAddress.startsWith('0x'),
 		network: addressData.network || '',
-		proxy_for: addressData.proxy_for || '',
+		proxy_for: addressData.proxy_for || [],
 		public_key: addressData.public_key || '',
 		verified: Boolean(addressData.verified) || false,
 		wallet: addressData.wallet || ''

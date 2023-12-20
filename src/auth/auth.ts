@@ -26,6 +26,7 @@ import {
 	AuthObjectType,
 	CalendarEvent,
 	HashedPassword,
+	IAddressProxyForEntry,
 	IAuthResponse,
 	IUserPreference,
 	JWTPayloadType,
@@ -41,6 +42,7 @@ import getUserFromUserId from './utils/getUserFromUserId';
 import nameBlacklist from './utils/nameBlacklist';
 import { verifyMetamaskSignature } from './utils/verifyMetamaskSignature';
 import verifyUserPassword from './utils/verifyUserPassword';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 process.env.JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY && process.env.JWT_PRIVATE_KEY.replace(/\\n/gm, '\n');
 process.env.JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY && process.env.JWT_PUBLIC_KEY.replace(/\\n/gm, '\n');
@@ -145,7 +147,8 @@ class AuthService {
 		user_id: number,
 		is_erc20?: boolean,
 		wallet?: Wallet,
-		isMultisig?: boolean
+		isMultisig?: boolean,
+		proxyFor?: IAddressProxyForEntry[]
 	): Promise<Address> {
 		if (address.startsWith('0x')) {
 			address = address.toLowerCase();
@@ -157,6 +160,7 @@ class AuthService {
 			isMultisig: isMultisig || false,
 			is_erc20: is_erc20 || false,
 			network,
+			proxy_for: proxyFor || [],
 			public_key: getPublicKey(address),
 			sign_message: '',
 			user_id,
@@ -379,6 +383,7 @@ class AuthService {
 		if (!isValidSr) throw apiErrorWithStatusCode('Proxy address linking failed. Invalid signature', 400);
 
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
+		if (!userId) throw apiErrorWithStatusCode('User not found', 404);
 
 		const networkEndpoint = getProxiesEndpoint(network, proxied);
 
@@ -390,20 +395,50 @@ class AuthService {
 		});
 
 		const { proxies } = (await getProxies.json()) as any;
+		const substrateProxies: string[] = proxies.map((addr: string) => getSubstrateAddress(addr) ?? addr);
 
-		if (!proxies || proxies.length === 0) throw apiErrorWithStatusCode(`Address ${proxy} has no proxy accounts.`, 400);
-		if (proxies.includes(proxy) === false) apiErrorWithStatusCode(`Address ${proxy} is not a proxy of ${proxied}`, 403);
+		const substrateProxy = getSubstrateAddress(proxy) ?? proxy;
+		const substrateProxied = getSubstrateAddress(proxied) ?? proxied;
+
+		if (!substrateProxies || substrateProxies.length === 0) throw apiErrorWithStatusCode(`Address ${proxy} has no proxy accounts.`, 400);
+		if (!substrateProxies.includes(substrateProxy)) throw apiErrorWithStatusCode(`Address ${proxy} is not a proxy of ${proxied}`, 403);
 
 		const firestore = firebaseAdmin.firestore();
 
-		const alreadyExists = (await firestore.collection('addresses').doc(proxied).get()).exists;
-		if (alreadyExists) apiErrorWithStatusCode('There is already an account associated with this proxied address', 403);
+		const proxyAddressDocRef = firestore.collection('addresses').doc(substrateProxy);
+		const proxyAddressData = (await proxyAddressDocRef.get()).data() as Address;
+
+		if (proxyAddressData && proxyAddressData.user_id !== userId) throw apiErrorWithStatusCode(`Proxy address: ${proxy} is already linked to another user.`, 403);
 
 		// If this linked address is the first address to be linked. Then set it as default.
 		// querying other verified addresses of user to check the same.
 		const userAddresses = await getAddressesFromUserId(userId, true);
 		const setAsDefault = userAddresses.length === 0;
-		await this.createAddress(network, proxied, setAsDefault, userId);
+
+		if (proxyAddressData) {
+			const updatedProxyAddress: Address = {
+				...proxyAddressData,
+				default: setAsDefault,
+				proxy_for: [
+					...(proxyAddressData.proxy_for || []),
+					{
+						address: substrateProxied,
+						network
+					}
+				]
+			};
+
+			proxyAddressDocRef.set(updatedProxyAddress, { merge: true });
+		} else {
+			const proxyFor: IAddressProxyForEntry[] = [
+				{
+					address: substrateProxied,
+					network
+				}
+			];
+
+			await this.createAddress(network, substrateProxy, setAsDefault, userId, substrateProxy.startsWith('0x'), undefined, undefined, proxyFor);
+		}
 
 		const user = await getUserFromUserId(userId);
 		return this.getSignedToken(user);

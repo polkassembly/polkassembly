@@ -6,6 +6,7 @@ import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { PublicAddress } from '~src/auth/types';
 import nextApiClientFetch from './nextApiClientFetch';
+import getSubstrateAddress from './getSubstrateAddress';
 
 interface Props {
 	api: ApiPromise;
@@ -29,11 +30,13 @@ const executeTx = async ({ api, apiReady, network, tx, address, params = {}, err
 		const { data: publicAddress, error: fetchError } = await nextApiClientFetch<PublicAddress>(`api/v1/auth/data/address?address=${address}`);
 
 		if (!fetchError && publicAddress) {
-			proxyForAddress = publicAddress.proxy_for || '';
+			proxyForAddress = publicAddress.proxy_for?.find((proxyForEntry) => proxyForEntry.network === network)?.address || '';
 		}
 	} catch (error) {
 		console.log('Error in fetching address details', error);
 	}
+
+	proxyForAddress = proxyForAddress ? getSubstrateAddress(proxyForAddress) ?? '' : '';
 
 	const extrinsic = proxyForAddress ? api.tx.proxy.proxy(proxyForAddress, null, tx) : tx;
 

@@ -73,9 +73,13 @@ const ProfileData: FC<IProfileData> = (props) => {
 
 	useEffect(() => {
 		fetchUsername(address);
-		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+
+	useEffect(() => {
+		fetchData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [profileData]);
 
 	const success = () => {
 		messageApi.open({

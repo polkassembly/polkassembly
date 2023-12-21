@@ -17,18 +17,16 @@ import { APPNAME } from 'src/global/appName';
 import { addressPrefix } from 'src/global/networkConstants';
 import { chainProperties } from 'src/global/networkConstants';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
-import Card from 'src/ui-components/Card';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
-
 import EthIdenticon from '~src/ui-components/EthIdenticon';
-
 import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import Card from '~src/basic-components/Cards/Card';
 import Input from '~src/basic-components/Input';
 
 interface Props {

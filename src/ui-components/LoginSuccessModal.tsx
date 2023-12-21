@@ -6,7 +6,6 @@ import AuthForm from 'src/ui-components/AuthForm';
 // import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 // import { Alert, Button, Divider, Form } from 'antd';
 // import ConfirmationIcon from '~assets/icons/Confirmation.svg';
-import { Alert, Button, Divider, Form, Input } from 'antd';
 import { Alert, Button, Divider, Form } from 'antd';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';

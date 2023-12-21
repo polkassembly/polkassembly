@@ -196,9 +196,9 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 				</div>
 				{(votingData && !status.includes(ETrackDelegationStatus.Undelegated) && isAye) || isNay || isAbstain ? (
 					<div
-						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'border-[#2ED47A] bg-[#F0FCF6]'} ${isNay && 'border-[#FF3C5F] bg-[#fff1f4]'} ${
-							isAbstain && 'border-[#ABABAC] bg-[#f9f9f9]'
-						}`}
+						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'border-aye_green bg-[#F0FCF6] dark:bg-[#0F1B15]'} ${
+							isNay && 'border-nay_red bg-[#fff1f4] dark:bg-[#1E1013]'
+						} ${isAbstain && 'border-[#ABABAC] bg-[#f9f9f9] dark:border-abstainBlueColor dark:bg-alertColorDark'}`}
 					>
 						{status.includes(ETrackDelegationStatus.Delegated) && (
 							<Address
@@ -207,27 +207,27 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 								displayInline
 							/>
 						)}
-						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799]'>Voted:</div>
+						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>Voted:</div>
 						{!isAbstain ? (
 							<div className='flex gap-2'>
 								<span className='-ml-1 flex items-center justify-center'>
 									{isAye && <AyeIcon />} {isNay && <NayIcon />}
 								</span>
-								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799]'>
+								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>
 									Balance:<span className='font-medium text-bodyBlue dark:text-white'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
 								</div>
-								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799]'>
+								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>
 									Conviction:{' '}
 									<span className='font-medium text-bodyBlue dark:text-white'>{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
 								</div>
 							</div>
 						) : (
-							<div className='ml-1 flex items-center text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Abstain</div>
+							<div className='ml-1 flex items-center text-xs font-medium text-abstainBlueColor dark:text-abstainDarkBlueColor'>Abstain</div>
 						)}
 					</div>
 				) : (
 					votingData && (
-						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-[#F89118] bg-[#fff7ef] px-6 py-2'>
+						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-warningAlertBorderDark bg-[#fff7ef] px-6 py-2 dark:bg-[#1D160E]'>
 							{status.includes(ETrackDelegationStatus.Delegated) && (
 								<Address
 									address={String(delegatedTo)}

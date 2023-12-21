@@ -61,7 +61,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 					status: NotificationStatus.ERROR
 				});
 				errorUsername += 1;
-				setLoading(true);
+				setLoading(false);
 			}
 		}
 		return errorUsername === 0;

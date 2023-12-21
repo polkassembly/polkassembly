@@ -338,7 +338,7 @@ const Address = (props: Props) => {
 								</div>
 							</div>
 						) : !!extensionName || !!mainDisplay ? (
-							<div className={`${isUsedInDisplayData ? 'flex gap-x-2' : 'ml-0.5'} font-semibold text-bodyBlue`}>
+							<div className={`${isUsedInDisplayData ? 'flex items-center gap-x-2' : 'ml-0.5'} font-semibold text-bodyBlue`}>
 								{!disableHeader && (
 									<div>
 										<div className='flex items-center'>

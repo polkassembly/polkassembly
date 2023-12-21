@@ -49,12 +49,6 @@ const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
 	ssr: false
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
-
 const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab/index'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -374,10 +368,6 @@ const Post: FC<IPostProps> = (props) => {
 		if (proposalType === ProposalType.REFERENDUM_V2 && ['polkadot', 'kusama'].includes(network)) {
 			tabs.push({
 				children: (
-					// <PostAudit
-					// auditData={auditData}
-					// videoData={videoData}
-					// />
 					<EvaluationTab
 						auditData={auditData}
 						videoData={videoData}

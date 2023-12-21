@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PostAudit from '../PostTimeline/Audit';
 import { Collapse } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
@@ -13,14 +13,14 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 
 const { Panel } = Collapse;
 
-interface IAuditTab {
+interface Props {
 	auditData?: any;
 	videoData?: any;
 	theme: string | undefined;
 	className?: string;
 }
 
-const AuditTab: FC<IAuditTab> = ({ auditData, videoData, className }) => {
+const AuditTab = ({ auditData, videoData, className }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	useEffect(() => {
 		trackEvent('audit_dropdown_clicked', 'clicked_audit_dropdown', {

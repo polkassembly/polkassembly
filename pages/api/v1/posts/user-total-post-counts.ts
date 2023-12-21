@@ -13,71 +13,23 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { TOTAL_PROPOSALS_COUNT_BY_ADDRESSES } from '~src/queries';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
-import { getOnChainUserPosts } from '../listing/get-on-chain-user-post';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
-
 interface Props {
 	network: string;
-	userId: any;
+	userId?: any;
 	addresses?: string[];
-	address?: any;
 }
 
 export const getUserPostCount = async (params: Props) => {
 	try {
-		const { network, addresses, address, userId } = params;
-
-		const discussionsRef = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('isDeleted', '==', false).where('user_id', '==', Number(userId)).get();
-		const discussionsCounts = discussionsRef.size;
-		let user_addresses: any[] = [];
-		let totalUserPost;
-		let totalProposal;
-		let totalDiscussion;
-		if (!userId) {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			totalUserPost = await getOnChainUserPosts({
-				addresses: [address] || [],
-				network
-			});
-			if (totalUserPost) {
-				if (isOpenGovSupported(network)) {
-					const treasuryProposals = totalUserPost?.data?.open_gov?.treasury;
-					if (treasuryProposals) {
-						totalProposal =
-							treasuryProposals?.big_spender?.length +
-							treasuryProposals?.small_spender?.length +
-							treasuryProposals?.medium_spender?.length +
-							treasuryProposals?.big_tipper?.length +
-							treasuryProposals?.small_tipper?.length +
-							treasuryProposals?.treasurer?.length;
-					}
-					totalDiscussion = totalUserPost?.data?.open_gov?.discussions?.posts?.length;
-				} else {
-					const treasuryProposals = totalUserPost?.data?.gov1?.treasury;
-					if (treasuryProposals) {
-						totalProposal = treasuryProposals?.bounties?.length + treasuryProposals?.tips?.length + treasuryProposals?.treasury_proposals?.length;
-					}
-					totalDiscussion = totalUserPost?.data?.gov1?.discussions?.posts?.length;
-				}
-				return {
-					data: JSON.parse(
-						JSON.stringify({
-							discussions: totalDiscussion || 0,
-							proposals: totalProposal || 0
-						})
-					),
-					error: null,
-					status: 200
-				};
-			} else {
-				return {
-					data: null,
-					error: messages.INVALID_PARAMS,
-					status: 500
-				};
-			}
+		const { network, addresses, userId } = params;
+		let discussionsCounts = 0;
+		if (userId) {
+			const discussionsRef = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('isDeleted', '==', false).where('user_id', '==', Number(userId)).get();
+			discussionsCounts = discussionsRef.size;
 		}
-		if (!addresses?.length || !addresses) {
+		let user_addresses: any[] = [];
+
+		if ((!addresses?.length || !addresses) && userId) {
 			user_addresses = await getAddressesFromUserId(userId);
 			user_addresses = user_addresses.map((addr) => addr.address);
 		}
@@ -111,11 +63,11 @@ const handler: NextApiHandler<{ discussions: number; proposals: number } | Messa
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { userId, addresses = [], address } = req.body;
-	if (userId !== 0 && !userId && isNaN(Number(userId)) && !address) return res.status(403).json({ message: messages.INVALID_PARAMS });
+	const { userId, addresses = [] } = req.body;
+
+	if (!userId && userId !== 0 && !addresses.length) return res.status(403).json({ message: messages.INVALID_PARAMS });
 
 	const { data, error, status } = await getUserPostCount({
-		address,
 		addresses,
 		network,
 		userId

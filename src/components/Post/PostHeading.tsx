@@ -43,7 +43,7 @@ interface ITagListingProps {
 
 const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxTags }: ITagListingProps) => {
 	return (
-		<div className={`${className} mt-1.5 flex items-center`}>
+		<div className={`${className} flex items-center`}>
 			{tags?.slice(0, maxTags).map((tag, index) => (
 				<div
 					key={index}
@@ -237,7 +237,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								setOpenTagsModal(true);
 							}}
 							maxTags={3}
-							className='post-heading-tags'
+							className='post-heading-tags mt-1.5'
 						/>
 					)}
 					{/* for mobile */}
@@ -248,7 +248,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							setOpenTagsModal(true);
 						}}
 						maxTags={2}
-						className='tag-container hidden'
+						className='tag-container mt-1.5 hidden'
 					/>
 				</>
 			</div>

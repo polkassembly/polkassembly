@@ -242,7 +242,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<Tooltip
 						color='#E5007A'
 						title='Track Number'
-						className='cursor-pointer'
+						className='cursor-pointer text-bodyBlue'
 					>
 						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em]'>(#{trackMetaData.trackId})</h4>
 					</Tooltip>

@@ -21,6 +21,7 @@ import { IApiResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { generateKey } from '~src/util/getRedisKeys';
+import { OverviewIcon } from '~src/ui-components/CustomIcons';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -28,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus, proposalStatus } = query;
 	if (!trackStatus && !filterBy) {
 		return {
 			props: {},
@@ -42,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const subsquidProposalType = getSubsquidProposalType(proposalType);
 
-	const redisKey = generateKey({ filterBy, keyType: 'all', network, page, sortBy, subsquidProposalType, trackStatus });
+	const redisKey = generateKey({ filterBy, keyType: 'all', network, page, sortBy, subStatus: proposalStatus, subsquidProposalType, trackStatus });
 
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(redisKey);
@@ -62,6 +63,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 				listingLimit: LISTING_LIMIT,
 				network,
 				page,
+				proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 				proposalType,
 				sortBy,
 				trackStatus: status
@@ -126,8 +128,12 @@ const OverviewListing: FC<IOverviewListingProps> = (props) => {
 				title='All Tracks'
 				network={network}
 			/>
+			<div className='flex items-center gap-x-2 xs:mt-2 md:mt-0'>
+				<OverviewIcon className='text-lg font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+				<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>All Referenda</h2>
+			</div>
 			<TrackListingCard
-				className='mt-12'
+				className='mt-8'
 				posts={posts}
 				trackName='All Tracks'
 			/>

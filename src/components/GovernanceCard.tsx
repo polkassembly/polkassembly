@@ -35,6 +35,12 @@ import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import Markdown from '~src/ui-components/Markdown';
 import TagsModal from '~src/ui-components/TagsModal';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import VoteIcon from '~assets/icons/vote-icon.svg';
+import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { getFirestoreProposalType } from '~src/global/proposalType';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -44,6 +50,12 @@ const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesPro
 	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
+
+interface IUserVotesProps {
+	amount: string;
+	conviction: string;
+	decision: string;
+}
 
 interface IGovernanceProps {
 	postReactionCount: {
@@ -140,6 +152,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	const [showMore, setShowMore] = useState(false);
 
+	const { loginAddress, defaultAddress } = useUserDetailsSelector();
+
+	const [userVotesData, setUserVotesData] = useState<IUserVotesProps | null>(null);
+
+	const decisionType = {
+		abstain: 'ABSTAIN',
+		no: 'NAY',
+		yes: 'AYE'
+	};
+
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
@@ -172,6 +194,43 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			return key;
 		}
 	};
+
+	useEffect(() => {
+		if (!api) {
+			return;
+		}
+
+		if (!apiReady) {
+			return;
+		}
+		const encoded = getEncodedAddress(loginAddress || defaultAddress || '', network);
+
+		const fetchHistory = async () => {
+			const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>('api/v1/votes/history', {
+				proposalIndex: onchainId,
+				proposalType: getFirestoreProposalType(`${proposalType}`),
+				voterAddress: encoded
+			});
+
+			if (error || !data) {
+				console.error('Error in fetching votes history: ', error);
+				return;
+			}
+
+			const voteData = data?.votes[0];
+			if (!voteData) return;
+
+			setUserVotesData({
+				amount: parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network),
+				conviction: `${voteData.lockPeriod}`,
+				decision: decisionType[`${voteData.decision}`]
+			});
+		};
+
+		fetchHistory();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network]);
 
 	useEffect(() => {
 		if (!window || trackNumber === null) return;
@@ -225,6 +284,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								username={username}
 								truncateUsername={truncateUsername}
 							/>
+							{userVotesData && (
+								<Tooltip
+									color='#363636'
+									title={
+										userVotesData.decision === 'ABSTAIN'
+											? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
+											: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`
+									}
+								>
+									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
+								</Tooltip>
+							)}
 						</div>
 						<div className={' flex items-center justify-end'}>
 							{status && (
@@ -450,7 +521,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			<div
 				className={`${className} ${
 					ownProposal && 'border-l-4 border-l-pink_primary'
-				} h-auto min-h-[147px] border-2 border-grey_light transition-all duration-200  hover:border-pink_primary hover:shadow-xl xs:flex xs:px-2 xs:py-2 sm:hidden md:pb-6`}
+				} h-auto min-h-[147px] border-2 border-grey_light transition-all duration-200  hover:border-pink_primary hover:shadow-xl xs:px-2 xs:py-2 sm:hidden md:pb-6`}
 			>
 				<div className='flex-1 flex-col xs:mt-1 xs:flex sm:hidden'>
 					<div className='justify-between xs:flex sm:my-0 sm:hidden'>
@@ -569,7 +640,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						)}
 
-						<div className='mb-1 items-center justify-between xs:flex xs:gap-x-2'>
+						<div className='mb-1 items-center xs:flex xs:gap-x-2'>
 							{status && (
 								<StatusTag
 									theme={theme}

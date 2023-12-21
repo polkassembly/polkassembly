@@ -21,11 +21,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 		postData: { proposer, beneficiaries }
 	} = usePostDataContext();
 	let postAddr: any = [];
-	if (isProposerTab) {
-		postAddr.push(proposer);
-	} else {
-		postAddr = beneficiaries;
-	}
+	postAddr = isProposerTab ? [proposer] : beneficiaries?.map((beneficiary) => beneficiary.address);
 
 	return (
 		<div className={`${className}`}>
@@ -61,8 +57,8 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 					<div>
 						{postAddr?.map((addr: any, index: number) => (
 							<React.Fragment key={index}>
-								{isProposerTab && <ProfileData address={addr} />}
-								{!isProposerTab && <ProfileData address={addr?.address} />}
+								{<ProfileData address={addr} />}
+								{/* {!isProposerTab && <ProfileData address={addr?.address} />} */}
 								{!isProposerTab && postAddr.length > 1 && index !== postAddr.length - 1 && (
 									<Divider
 										style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -100,6 +96,11 @@ export default styled(UserInfoTab)`
 		.verified-container {
 			margin-top: 8px !important;
 			max-width: 112px !important;
+		}
+	}
+	@media (max-width: 365px) and (min-width: 320px) {
+		.delegation-buttons {
+			padding: 16px 6px !important;
 		}
 	}
 `;

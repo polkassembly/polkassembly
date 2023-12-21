@@ -826,12 +826,6 @@ z-index: 1050 !important;
   }
 }
 
-@media (max-width: 365px) and (min-width: 320px) {
-  .delegation-buttons {
-    padding: 16px 6px !important;
-  }
-}
-
 .ant-modal .ant-modal-content {
   padding: 8px 10px;
 }

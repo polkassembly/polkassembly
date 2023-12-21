@@ -25,11 +25,13 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	const postedBy = usePostDataContext();
+	const {
+		postData: { beneficiaries }
+	} = usePostDataContext();
 	return (
 		<div className=''>
 			<UserInfoTab isProposerTab={true} />
-			{postedBy?.postData?.beneficiaries && postedBy?.postData?.beneficiaries.length > 0 && (
+			{beneficiaries && beneficiaries.length > 0 && (
 				<UserInfoTab
 					isProposerTab={false}
 					className='mt-4'

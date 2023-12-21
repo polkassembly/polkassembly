@@ -4,14 +4,14 @@
 
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
-import { Button, Tooltip } from 'antd';
+import { Button } from 'antd';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC } from 'react';
-
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Tooltip from '~src/basic-components/Tooltip';
 
 export interface IReactionButtonProps {
 	className?: string;

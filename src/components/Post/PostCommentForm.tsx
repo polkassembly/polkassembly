@@ -3,13 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined } from '@ant-design/icons';
-import { Button, Form, Tooltip } from 'antd';
+import { Button, Form } from 'antd';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
-
 import { ChangeResponseType } from '~src/auth/types';
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
@@ -33,6 +32,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface IPostCommentFormProps {
 	className?: string;

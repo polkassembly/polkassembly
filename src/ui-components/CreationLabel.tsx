@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, MenuProps, Modal, Tooltip } from 'antd';
+import { Divider, MenuProps, Modal } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { FC, ReactNode, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
@@ -27,6 +27,7 @@ import { usePostDataContext } from '~src/context';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VoteList from '~src/components/Post/GovernanceSideBar/Modal/VoteData/VoteList';
 import BeneficiariesListing from './BeneficiariesListing';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const Styled = styled.div`
 	padding: 0;

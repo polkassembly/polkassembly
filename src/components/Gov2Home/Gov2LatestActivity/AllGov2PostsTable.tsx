@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
@@ -14,6 +13,7 @@ import NameLabel from 'src/ui-components/NameLabel';
 import StatusTag from 'src/ui-components/StatusTag';
 import { ErrorState } from 'src/ui-components/UIStates';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
+import Tooltip from '~src/basic-components/Tooltip';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';

@@ -19,12 +19,13 @@ import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
-import { Skeleton, Space, Tooltip } from 'antd';
+import { Skeleton, Space } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false

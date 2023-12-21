@@ -4,7 +4,7 @@
 import { CheckOutlined, LinkOutlined } from '@ant-design/icons';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Button, Divider, Modal, Spin, Tooltip } from 'antd';
+import { Button, Divider, Modal, Spin } from 'antd';
 import React, { FC, useState } from 'react';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
 import { useApiContext } from 'src/context';
@@ -23,6 +23,7 @@ import { poppins } from 'pages/_app';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
 	open?: boolean;

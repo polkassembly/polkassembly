@@ -6,7 +6,7 @@ import { ClockCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal, Spin, Tooltip } from 'antd';
+import { Button, Form, Modal, Spin } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -73,6 +73,7 @@ import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Alert, Button, Modal, Spin, Tooltip } from 'antd';
+import { Alert, Button, Modal, Spin } from 'antd';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
@@ -27,6 +27,7 @@ import executeTx from '~src/util/executeTx';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];

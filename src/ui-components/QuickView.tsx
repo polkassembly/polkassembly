@@ -11,7 +11,7 @@ import Address from './Address';
 import dayjs from 'dayjs';
 import SocialLink from './SocialLinks';
 import { socialLinks } from '~src/components/UserProfile/Details';
-import { Button, Tooltip, message } from 'antd';
+import { Button, message } from 'antd';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ESocialType, ISocial } from '~src/auth/types';
@@ -29,6 +29,7 @@ import { useDispatch } from 'react-redux';
 import { setReceiver } from '~src/redux/Tipping';
 import { getKiltDidSocialEndpoints } from '~src/util/kiltDid';
 import { useApiContext } from '~src/context';
+import Tooltip from '~src/basic-components/Tooltip';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,

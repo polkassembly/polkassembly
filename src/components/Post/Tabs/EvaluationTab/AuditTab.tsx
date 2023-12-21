@@ -8,7 +8,6 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import styled from 'styled-components';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 const { Panel } = Collapse;
@@ -62,13 +61,4 @@ const AuditTab = ({ auditData, videoData, className }: Props) => {
 	);
 };
 
-export default styled(AuditTab)`
-	.ant-collapse > .ant-collapse-item:last-child,
-	.ant-collapse > .ant-collapse-item:last-child > .ant-collapse-header {
-		border-radius: 14px !important;
-	}
-
-	.ant-collapse {
-		border-radius: 14px !important;
-	}
-`;
+export default AuditTab;

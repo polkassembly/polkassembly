@@ -74,14 +74,6 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 };
 
 export default styled(UserInfoTab)`
-	.ant-collapse > .ant-collapse-item:last-child,
-	.ant-collapse > .ant-collapse-item:last-child > .ant-collapse-header {
-		border-radius: 14px !important;
-	}
-
-	.ant-collapse {
-		border-radius: 14px !important;
-	}
 	@media (max-width: 816px) and (min-width: 319px) {
 		.my-custom-collapse .ant-collapse-content-box {
 			padding: 24px 8px !important;

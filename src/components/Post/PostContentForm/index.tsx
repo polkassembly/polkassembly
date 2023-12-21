@@ -5,15 +5,19 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { EGovType } from 'src/types';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 import { usePostDataContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
+import TopicsRadio from '../CreatePost/TopicsRadio';
 import ContentForm from '../../ContentForm';
 import AddTags from '~src/ui-components/AddTags';
 import styled from 'styled-components';
@@ -28,9 +32,11 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
+	const [topicId, setTopicId] = useState<number>(5);
+	const { network } = useNetworkSelector();
 
 	const {
-		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags },
+		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags, topic: currentTopic },
 		setPostData
 	} = usePostDataContext();
 
@@ -48,7 +54,8 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 			proposalType,
 			tags,
 			timeline,
-			title
+			title,
+			topicId
 		});
 
 		if (editError || !data) {
@@ -87,6 +94,12 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 		setLoading(false);
 	};
 
+	useEffect(() => {
+		if (currentTopic) {
+			setTopicId(currentTopic.id);
+		}
+	}, [currentTopic]);
+
 	return (
 		<div className={className}>
 			{error && (
@@ -119,6 +132,37 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 					/>
 				</Form.Item>
 				<ContentForm />
+				{currentTopic && currentTopic.id && (
+					<Form.Item
+						className='mt-8'
+						name='topic'
+						rules={[
+							{
+								message: "Please select a 'topic'",
+								validator(rule, value = currentTopic.id, callback) {
+									if (callback && !value) {
+										callback(rule?.message?.toString());
+									} else {
+										callback();
+									}
+								}
+							}
+						]}
+					>
+						<>
+							<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue dark:text-white'>
+								Select Topic <span className='ml-1 text-red-500'>*</span>
+							</label>
+							<TopicsRadio
+								govType={isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1}
+								onTopicSelection={(id) => {
+									setTopicId(id);
+								}}
+								topicId={topicId}
+							/>
+						</>
+					</Form.Item>
+				)}
 				<h5 className='text-color mt-8 text-sm font-normal'>Tags</h5>
 				<AddTags
 					tags={tags}

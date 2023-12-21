@@ -28,7 +28,7 @@ import { IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
+import { getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import { checkIsProposer } from './utils/checkIsProposer';
 import { getUserWithAddress } from '../data/userProfileWithUsername';
 
@@ -50,11 +50,11 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, postId, proposalType, title, timeline, tags } = req.body;
+	const { content, postId, proposalType, title, timeline, tags, topicId } = req.body;
 	if (proposalType === ProposalType.ANNOUNCEMENT) {
-		if (!postId || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+		if (!postId || !title || !content || !proposalType || !topicId) return res.status(400).json({ message: 'Missing parameters in request body' });
 	} else {
-		if (isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+		if (isNaN(postId) || !title || !content || !proposalType || !topicId) return res.status(400).json({ message: 'Missing parameters in request body' });
 	}
 
 	if (tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
@@ -72,7 +72,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 
 	let created_at = new Date();
-	let topic_id: any = null;
 	let post_link: any = null;
 	let proposer_address = '';
 
@@ -175,7 +174,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 		if (!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
 		created_at = post?.created_at?.toDate() || created_at;
-		topic_id = post?.topic_id || topic_id;
 		post_link = post?.post_link || post_link;
 		proposer_address = post?.proposer_address || proposer_address;
 	} else {
@@ -280,7 +278,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		summary: summary,
 		tags: tags || [],
 		title,
-		topic_id: topic_id || getTopicFromType(proposalType).id,
+		topic_id: strProposalType === ProposalType.GRANTS ? 6 : Number(topicId),
 		user_id: postUser?.userId || user.id,
 		username: postUser?.username || user.username
 	};
@@ -319,7 +317,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 						summary: summary,
 						tags: tags || [],
 						title,
-						topic_id: topic_id || getTopicFromType(proposalType).id,
+						topic_id: strProposalType === ProposalType.GRANTS ? 6 : Number(topicId),
 						user_id: post?.user_id || user.id,
 						username: post?.username || user.username
 					},
@@ -334,7 +332,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		await postDocRef.set(newPostDoc, { merge: true });
 	}
 
-	const { last_edited_at, topic_id: topicId } = newPostDoc;
+	const { last_edited_at, topic_id } = newPostDoc;
 
 	res.status(200).json({
 		content,
@@ -343,8 +341,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		summary: summary,
 		title,
 		topic: {
-			id: topicId,
-			name: getTopicNameFromTopicId(topicId as any)
+			id: topic_id,
+			name: getTopicNameFromTopicId(topic_id as any)
 		}
 	});
 

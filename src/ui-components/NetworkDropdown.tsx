@@ -13,7 +13,7 @@ import DownOutlined from '~assets/search/dropdown-down.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
-import Cards from '~src/basic-components/Cards/Cards';
+import Card from '~src/basic-components/Cards/Card';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -112,7 +112,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			trigger={[isSearch ? 'hover' : 'click']}
 			dropdownRender={() => {
 				return (
-					<Cards className='max-h-[52vh] max-w-[356px] overflow-y-auto dark:border-none dark:bg-section-dark-overlay'>
+					<Card className='max-h-[52vh] max-w-[356px] overflow-y-auto dark:border-none dark:bg-section-dark-overlay'>
 						<>
 							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>Polkadot &amp; Parachains</div>
 							<Row className='mt-2'>
@@ -178,7 +178,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								))}
 							</Row>
 						</>
-					</Cards>
+					</Card>
 				);
 			}}
 		>

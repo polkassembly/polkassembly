@@ -28,7 +28,7 @@ import EthIdenticon from '~src/ui-components/EthIdenticon';
 import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import Cards from '~src/basic-components/Cards/Cards';
+import Card from '~src/basic-components/Cards/Card';
 
 interface Props {
 	className?: string;
@@ -403,9 +403,9 @@ const SetOnChainIdentityButton = ({
 	);
 
 	return loadingStatus.isLoading ? (
-		<Cards className={'LoaderWrapper'}>
+		<Card className={'LoaderWrapper'}>
 			<Loader text={loadingStatus.message} />
-		</Cards>
+		</Card>
 	) : (
 		<>
 			{!id ? triggerBtnLoginDisabled : triggerBtn}

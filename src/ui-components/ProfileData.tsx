@@ -58,11 +58,16 @@ const ProfileData: FC<IProfileData> = (props) => {
 			try {
 				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
 				if (error || !data || !data.username) {
-					return;
+					console.error(error);
 				}
 				setProfileData(data);
+				if (profileData && profileData?.user_id) {
+					fetchData({ userId: profileData?.user_id });
+				} else {
+					fetchData({ addresses: [address] });
+				}
 			} catch (error) {
-				// console.log(error);
+				console.log(error);
 			}
 		}
 	};
@@ -72,11 +77,6 @@ const ProfileData: FC<IProfileData> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
-	useEffect(() => {
-		fetchData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [profileData]);
-
 	const success = () => {
 		messageApi.open({
 			content: 'Address copied to clipboard',
@@ -85,16 +85,17 @@ const ProfileData: FC<IProfileData> = (props) => {
 		});
 	};
 
-	const fetchData = async () => {
-		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', {
-			address: address,
-			network: network,
-			userId: profileData?.user_id
-		});
+	const fetchData = async ({ addresses, userId }: { addresses?: string[]; userId?: number }) => {
+		let payload;
+		if (userId !== 0 && !userId) {
+			payload = { addresses: addresses };
+		} else {
+			payload = { userId: userId };
+		}
+		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
 		if (data) {
 			setProposalCount(data?.proposals);
 			setDiscussionCount(data?.discussions);
-			console.log(data);
 		} else {
 			console.log(error);
 		}

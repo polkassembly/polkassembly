@@ -58,7 +58,6 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 						{postAddr?.map((addr: any, index: number) => (
 							<React.Fragment key={index}>
 								{<ProfileData address={addr} />}
-								{/* {!isProposerTab && <ProfileData address={addr?.address} />} */}
 								{!isProposerTab && postAddr.length > 1 && index !== postAddr.length - 1 && (
 									<Divider
 										style={{ background: '#D2D8E0', flexGrow: 1 }}

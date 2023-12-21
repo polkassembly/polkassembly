@@ -365,7 +365,7 @@ const Post: FC<IPostProps> = (props) => {
 			}
 		];
 
-		if (proposalType === ProposalType.REFERENDUM_V2 && ['polkadot', 'kusama'].includes(network)) {
+		if (proposalType === ProposalType.REFERENDUM_V2) {
 			tabs.push({
 				children: (
 					<EvaluationTab

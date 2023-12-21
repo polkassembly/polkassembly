@@ -66,7 +66,7 @@ interface Props {
 	showKiltAddress?: boolean;
 	destroyTooltipOnHide?: boolean;
 	inPostHeading?: boolean;
-	isProfileView: boolean;
+	isProfileView?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -307,7 +307,7 @@ const Address = (props: Props) => {
 								theme={'polkadot'}
 							/>
 						))}
-					{isProfileView ? (
+					{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 							{displayInline ? (
 								<div className='inline-address flex items-center'>
@@ -387,7 +387,7 @@ const Address = (props: Props) => {
 							{!disableHeader && (
 								<div>
 									<div className='flex items-center'>
-										<div>
+										{/* <div>
 											{!!kiltName ||
 												(!!identity && !!mainDisplay && (
 													<IdentityBadge
@@ -395,7 +395,7 @@ const Address = (props: Props) => {
 														flags={flags}
 													/>
 												))}
-										</div>
+										</div> */}
 
 										<Space className={'header'}>
 											<div

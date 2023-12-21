@@ -64,7 +64,6 @@ const handler: NextApiHandler<{ discussions: number; proposals: number } | Messa
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { userId, addresses = [] } = req.body;
-
 	if (!userId && userId !== 0 && !addresses.length) return res.status(403).json({ message: messages.INVALID_PARAMS });
 
 	const { data, error, status } = await getUserPostCount({

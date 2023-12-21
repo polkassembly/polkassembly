@@ -25,7 +25,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
-import { VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { VerifiedIcon } from './CustomIcons';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -66,7 +66,7 @@ interface Props {
 	showKiltAddress?: boolean;
 	destroyTooltipOnHide?: boolean;
 	inPostHeading?: boolean;
-	isUsedInProfileData?: boolean;
+	isProfileView: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -101,7 +101,7 @@ const Address = (props: Props) => {
 		showKiltAddress = false,
 		destroyTooltipOnHide = false,
 		inPostHeading,
-		isUsedInProfileData
+		isProfileView = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -307,130 +307,123 @@ const Address = (props: Props) => {
 								theme={'polkadot'}
 							/>
 						))}
-					<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
-						{displayInline ? (
-							<div className='inline-address flex items-center'>
-								{!!kiltName ||
-									(!!identity && !!mainDisplay && (
-										<IdentityBadge
-											theme={theme}
-											identity={identity}
-											flags={flags}
-											className='text-navBlue'
-										/>
-									))}
+					{isProfileView ? (
+						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
+							{displayInline ? (
+								<div className='inline-address flex items-center'>
+									{!!kiltName ||
+										(!!identity && !!mainDisplay && (
+											<IdentityBadge
+												theme={theme}
+												identity={identity}
+												flags={flags}
+												className='text-navBlue'
+											/>
+										))}
 
-								<div className={`flex items-center font-semibold text-bodyBlue  dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
-									<div
-										onClick={(e) => handleClick(e)}
-										title={mainDisplay || encodedAddr}
-										className={`flex gap-x-1 ${
-											usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
-										} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
-									>
-										{!!addressPrefix && (
-											<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
-												{usernameMaxLength ? (addressPrefix.length > usernameMaxLength ? `${addressPrefix.slice(0, usernameMaxLength)}...` : addressPrefix) : addressPrefix}
-											</span>
-										)}
-										{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
+									<div className={`flex items-center font-semibold text-bodyBlue  dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
+										<div
+											onClick={(e) => handleClick(e)}
+											title={mainDisplay || encodedAddr}
+											className={`flex gap-x-1 ${
+												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
+											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
+										>
+											{!!addressPrefix && (
+												<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>
+													{usernameMaxLength ? (addressPrefix.length > usernameMaxLength ? `${addressPrefix.slice(0, usernameMaxLength)}...` : addressPrefix) : addressPrefix}
+												</span>
+											)}
+											{!!sub && !!isSubVisible && <span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>{sub}</span>}
+										</div>
 									</div>
 								</div>
-							</div>
-						) : !!extensionName || !!mainDisplay ? (
-							<div>
-								{!isUsedInProfileData && (
-									<div className='ml-0.5 font-semibold text-bodyBlue'>
-										{!disableHeader && (
-											<div>
-												<div className='flex items-center'>
-													{!!kiltName ||
-														(!!identity && !!mainDisplay && (
-															<IdentityBadge
-																identity={identity}
-																flags={flags}
-															/>
-														))}
-													<Space className={'header'}>
-														<div
-															onClick={(e) => handleClick(e)}
-															className={`flex flex-col font-semibold text-bodyBlue  ${
-																!disableAddressClick && 'cursor-pointer hover:underline'
-															} hover:text-bodyBlue dark:text-blue-dark-high`}
-														>
-															{!!addressSuffix && (
-																<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>
-															)}
-															{!extensionName && !!sub && isSubVisible && (
-																<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
-															)}
-														</div>
-													</Space>
-												</div>
-											</div>
-										)}
-										<div
-											className={`${!addressClassName ? 'text-xs' : addressClassName} ${
-												!disableAddressClick && 'cursor-pointer hover:underline'
-											} font-normal dark:text-blue-dark-medium`}
-											onClick={(e) => handleClick(e)}
-										>
-											{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-										</div>
-									</div>
-								)}
-								{isUsedInProfileData && (
-									<div className='flex items-center gap-x-2 font-semibold text-bodyBlue'>
-										{!disableHeader && (
-											<div>
-												<div className='flex items-center'>
-													<div>
-														{!!kiltName ||
-															(!!identity && !!mainDisplay && (
-																<IdentityBadge
-																	identity={identity}
-																	flags={flags}
-																/>
-															))}
+							) : !!extensionName || !!mainDisplay ? (
+								<div className='ml-0.5 font-semibold text-bodyBlue'>
+									{!disableHeader && (
+										<div>
+											<div className='flex items-center'>
+												{!!kiltName ||
+													(!!identity && !!mainDisplay && (
+														<IdentityBadge
+															identity={identity}
+															flags={flags}
+														/>
+													))}
+												<Space className={'header'}>
+													<div
+														onClick={(e) => handleClick(e)}
+														className={`flex flex-col font-semibold text-bodyBlue  ${
+															!disableAddressClick && 'cursor-pointer hover:underline'
+														} hover:text-bodyBlue dark:text-blue-dark-high`}
+													>
+														{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
+														{!extensionName && !!sub && isSubVisible && (
+															<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
+														)}
 													</div>
-
-													<Space className={'header'}>
-														<div
-															onClick={(e) => handleClick(e)}
-															className={`flex flex-col font-semibold text-bodyBlue  ${
-																!disableAddressClick && 'cursor-pointer hover:underline'
-															} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
-														>
-															{!!addressSuffix && (
-																<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>
-															)}
-															{!extensionName && !!sub && isSubVisible && (
-																<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
-															)}
-														</div>
-													</Space>
-												</div>
+												</Space>
 											</div>
-										)}
-										<div
-											className={`${!addressClassName ? 'text-base' : addressClassName} ${
-												!disableAddressClick && 'cursor-pointer hover:underline'
-											} font-normal dark:text-blue-dark-medium `}
-											onClick={(e) => handleClick(e)}
-										>
-											{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 										</div>
-										<div>{!!kiltName || (!!identity && !!mainDisplay && <VerifiedIcon className='scale-125' />)}</div>
+									)}
+									<div
+										className={`${!addressClassName ? 'text-xs' : addressClassName} ${
+											!disableAddressClick && 'cursor-pointer hover:underline'
+										} font-normal dark:text-blue-dark-medium`}
+										onClick={(e) => handleClick(e)}
+									>
+										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 									</div>
-								)}
-							</div>
-						) : (
-							<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>
+								</div>
+							) : (
+								<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>
+									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue dark:text-blue-dark-medium'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+								</div>
+							)}
+						</div>
+					) : (
+						<div className='flex items-center gap-x-2 font-semibold text-bodyBlue'>
+							{!disableHeader && (
+								<div>
+									<div className='flex items-center'>
+										<div>
+											{!!kiltName ||
+												(!!identity && !!mainDisplay && (
+													<IdentityBadge
+														identity={identity}
+														flags={flags}
+													/>
+												))}
+										</div>
+
+										<Space className={'header'}>
+											<div
+												onClick={(e) => handleClick(e)}
+												className={`flex flex-col font-semibold text-bodyBlue  ${
+													!disableAddressClick && 'cursor-pointer hover:underline'
+												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
+											>
+												{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
+												{!extensionName && !!sub && isSubVisible && (
+													<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
+												)}
+											</div>
+										</Space>
+									</div>
+								</div>
+							)}
+							<div
+								className={`${!addressClassName ? 'text-base' : addressClassName} ${
+									!disableAddressClick && 'cursor-pointer hover:underline'
+								} font-normal dark:text-blue-dark-medium `}
+								onClick={(e) => handleClick(e)}
+							>
 								{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-								{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue dark:text-blue-dark-medium'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
 							</div>
-						)}
-					</div>
+							<div>{!!kiltName || (!!identity && !!mainDisplay && <VerifiedIcon className='scale-125' />)}</div>
+						</div>
+					)}
 					{addressOtherTextType ? (
 						<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue dark:text-blue-dark-medium'}>
 							<span

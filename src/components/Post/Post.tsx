@@ -365,7 +365,7 @@ const Post: FC<IPostProps> = (props) => {
 			}
 		];
 
-		if (proposalType === ProposalType.REFERENDUM_V2) {
+		if ([ProposalType.REFERENDUM_V2, ProposalType.REFERENDUMS].includes(proposalType)) {
 			tabs.push({
 				children: (
 					<EvaluationTab

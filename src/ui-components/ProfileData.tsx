@@ -117,7 +117,7 @@ const ProfileData: FC<IProfileData> = (props) => {
 						<Address
 							address={address}
 							disableIdenticon={true}
-							isUsedInDisplayData={true}
+							isUsedInProfileData={true}
 						/>
 						<span
 							className='-ml-2 -mt-0.5 flex cursor-pointer items-center'

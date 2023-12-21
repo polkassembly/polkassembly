@@ -28,10 +28,10 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 	const postedBy = usePostDataContext();
 	return (
 		<div className=''>
-			<UserInfoTab item='proposer' />
+			<UserInfoTab isProposerTab={true} />
 			{postedBy?.postData?.beneficiaries && postedBy?.postData?.beneficiaries.length > 0 && (
 				<UserInfoTab
-					item='beneficiary'
+					isProposerTab={false}
 					className='mt-4'
 				/>
 			)}

@@ -836,18 +836,3 @@ z-index: 1050 !important;
   padding: 8px 10px;
 }
 
-@media (max-width: 816px) and (min-width: 319px) {
-  .my-custom-collapse .ant-collapse-content-box {
-    padding: 24px 8px !important;
-  }
-}
-
-@media (max-width: 430px) and (min-width: 319px) {
-  .tags-container {
-    display: block !important;
-  }
-  .verified-container {
-    margin-top: 8px !important;
-    max-width: 112px !important;
-  }
-}

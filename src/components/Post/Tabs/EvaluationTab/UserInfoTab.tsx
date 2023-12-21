@@ -13,15 +13,15 @@ const { Panel } = Collapse;
 
 interface Props {
 	className?: string;
-	item?: string;
+	isProposerTab?: boolean;
 }
 
-const UserInfoTab = ({ className, item }: Props) => {
+const UserInfoTab = ({ className, isProposerTab }: Props) => {
 	const {
 		postData: { proposer, beneficiaries }
 	} = usePostDataContext();
 	let postAddr: any = [];
-	if (item === 'proposer') {
+	if (isProposerTab) {
 		postAddr.push(proposer);
 	} else {
 		postAddr = beneficiaries;
@@ -40,7 +40,7 @@ const UserInfoTab = ({ className, item }: Props) => {
 				<Panel
 					header={
 						<div className='channel-header flex items-center gap-[6px]'>
-							{item === 'proposer' ? (
+							{isProposerTab ? (
 								<ImageIcon
 									src='/assets/icons/proposerIcon.svg'
 									alt='proposerIcon'
@@ -52,7 +52,7 @@ const UserInfoTab = ({ className, item }: Props) => {
 								/>
 							)}
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
-								{item === 'proposer' ? 'Proposer' : 'Beneficiary(ies)'}
+								{isProposerTab ? 'Proposer' : 'Beneficiary(ies)'}
 							</h3>
 						</div>
 					}
@@ -61,9 +61,9 @@ const UserInfoTab = ({ className, item }: Props) => {
 					<div>
 						{postAddr?.map((addr: any, index: number) => (
 							<React.Fragment key={index}>
-								{item === 'proposer' && <ProfileData address={addr} />}
-								{item === 'beneficiary' && <ProfileData address={addr?.address} />}
-								{item === 'beneficiary' && postAddr.length > 1 && index !== postAddr.length - 1 && (
+								{isProposerTab && <ProfileData address={addr} />}
+								{!isProposerTab && <ProfileData address={addr?.address} />}
+								{!isProposerTab && postAddr.length > 1 && index !== postAddr.length - 1 && (
 									<Divider
 										style={{ background: '#D2D8E0', flexGrow: 1 }}
 										className='mt-3 dark:bg-separatorDark'
@@ -86,5 +86,20 @@ export default styled(UserInfoTab)`
 
 	.ant-collapse {
 		border-radius: 14px !important;
+	}
+	@media (max-width: 816px) and (min-width: 319px) {
+		.my-custom-collapse .ant-collapse-content-box {
+			padding: 24px 8px !important;
+		}
+	}
+
+	@media (max-width: 430px) and (min-width: 319px) {
+		.tags-container {
+			display: block !important;
+		}
+		.verified-container {
+			margin-top: 8px !important;
+			max-width: 112px !important;
+		}
 	}
 `;

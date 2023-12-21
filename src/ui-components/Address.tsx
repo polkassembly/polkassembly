@@ -66,7 +66,7 @@ interface Props {
 	showKiltAddress?: boolean;
 	destroyTooltipOnHide?: boolean;
 	inPostHeading?: boolean;
-	isUsedInDisplayData?: boolean;
+	isUsedInProfileData?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -101,7 +101,7 @@ const Address = (props: Props) => {
 		showKiltAddress = false,
 		destroyTooltipOnHide = false,
 		inPostHeading,
-		isUsedInDisplayData
+		isUsedInProfileData
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -338,12 +338,12 @@ const Address = (props: Props) => {
 								</div>
 							</div>
 						) : !!extensionName || !!mainDisplay ? (
-							<div className={`${isUsedInDisplayData ? 'flex items-center gap-x-2' : 'ml-0.5'} font-semibold text-bodyBlue`}>
-								{!disableHeader && (
-									<div>
-										<div className='flex items-center'>
-											{!isUsedInDisplayData && (
-												<div>
+							<div>
+								{!isUsedInProfileData && (
+									<div className='ml-0.5 font-semibold text-bodyBlue'>
+										{!disableHeader && (
+											<div>
+												<div className='flex items-center'>
 													{!!kiltName ||
 														(!!identity && !!mainDisplay && (
 															<IdentityBadge
@@ -351,33 +351,78 @@ const Address = (props: Props) => {
 																flags={flags}
 															/>
 														))}
+													<Space className={'header'}>
+														<div
+															onClick={(e) => handleClick(e)}
+															className={`flex flex-col font-semibold text-bodyBlue  ${
+																!disableAddressClick && 'cursor-pointer hover:underline'
+															} hover:text-bodyBlue dark:text-blue-dark-high`}
+														>
+															{!!addressSuffix && (
+																<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>
+															)}
+															{!extensionName && !!sub && isSubVisible && (
+																<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
+															)}
+														</div>
+													</Space>
 												</div>
-											)}
-											<Space className={'header'}>
-												<div
-													onClick={(e) => handleClick(e)}
-													className={`flex flex-col font-semibold text-bodyBlue  ${
-														!disableAddressClick && 'cursor-pointer hover:underline'
-													} hover:text-bodyBlue dark:text-blue-dark-high ${isUsedInDisplayData ? 'text-base' : ''}`}
-												>
-													{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
-													{!extensionName && !!sub && isSubVisible && (
-														<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
-													)}
-												</div>
-											</Space>
+											</div>
+										)}
+										<div
+											className={`${!addressClassName ? 'text-xs' : addressClassName} ${
+												!disableAddressClick && 'cursor-pointer hover:underline'
+											} font-normal dark:text-blue-dark-medium`}
+											onClick={(e) => handleClick(e)}
+										>
+											{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 										</div>
 									</div>
 								)}
-								<div
-									className={`${!addressClassName ? `${isUsedInDisplayData ? 'text-base' : 'text-xs'}` : addressClassName} ${
-										!disableAddressClick && 'cursor-pointer hover:underline'
-									} font-normal dark:text-blue-dark-medium `}
-									onClick={(e) => handleClick(e)}
-								>
-									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-								</div>
-								{isUsedInDisplayData && <div>{!!kiltName || (!!identity && !!mainDisplay && <VerifiedIcon className='scale-125' />)}</div>}
+								{isUsedInProfileData && (
+									<div className='flex items-center gap-x-2 font-semibold text-bodyBlue'>
+										{!disableHeader && (
+											<div>
+												<div className='flex items-center'>
+													<div>
+														{!!kiltName ||
+															(!!identity && !!mainDisplay && (
+																<IdentityBadge
+																	identity={identity}
+																	flags={flags}
+																/>
+															))}
+													</div>
+
+													<Space className={'header'}>
+														<div
+															onClick={(e) => handleClick(e)}
+															className={`flex flex-col font-semibold text-bodyBlue  ${
+																!disableAddressClick && 'cursor-pointer hover:underline'
+															} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
+														>
+															{!!addressSuffix && (
+																<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>
+															)}
+															{!extensionName && !!sub && isSubVisible && (
+																<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
+															)}
+														</div>
+													</Space>
+												</div>
+											</div>
+										)}
+										<div
+											className={`${!addressClassName ? 'text-base' : addressClassName} ${
+												!disableAddressClick && 'cursor-pointer hover:underline'
+											} font-normal dark:text-blue-dark-medium `}
+											onClick={(e) => handleClick(e)}
+										>
+											{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+										</div>
+										<div>{!!kiltName || (!!identity && !!mainDisplay && <VerifiedIcon className='scale-125' />)}</div>
+									</div>
+								)}
 							</div>
 						) : (
 							<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>

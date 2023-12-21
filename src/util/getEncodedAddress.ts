@@ -22,7 +22,7 @@ export default function getEncodedAddress(address: string, network: string): str
 		return null;
 	}
 
-	if (address && address?.startsWith('0x')) return address;
+	if (address?.startsWith('0x')) return address;
 
 	try {
 		return encodeAddress(address, ss58Format);

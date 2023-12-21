@@ -63,7 +63,7 @@ const UserInfoTab = ({ className, item }: Props) => {
 							<React.Fragment key={index}>
 								{item === 'proposer' && <ProfileData address={addr} />}
 								{item === 'beneficiary' && <ProfileData address={addr?.address} />}
-								{addr.length > 1 && index !== addr.length - 1 && item === 'beneficiary' && (
+								{item === 'beneficiary' && postAddr.length > 1 && index !== postAddr.length - 1 && (
 									<Divider
 										style={{ background: '#D2D8E0', flexGrow: 1 }}
 										className='mt-3 dark:bg-separatorDark'

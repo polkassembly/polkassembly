@@ -286,6 +286,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 							<>
 								<section>
 									<AccountSelectionForm
+										isDisabled={loading}
 										title='Select proxied account'
 										accounts={accounts}
 										address={proxiedAddress}
@@ -294,6 +295,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 								</section>
 								<section>
 									<AccountSelectionForm
+										isDisabled={loading}
 										title='Select proxy account'
 										accounts={accounts}
 										address={proxyAddress}

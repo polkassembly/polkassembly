@@ -492,6 +492,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (network && networkTrackInfo[network]) {
+		gov2TrackItems.mainItems.push(getSiderMenuItem('All', '/all-posts', <OverviewIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
+
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
 			if (!networkTrackInfo[network][trackName] || !('group' in networkTrackInfo[network][trackName])) continue;
 
@@ -531,7 +533,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					break;
 				default: {
 					const icon =
-						trackName === PostOrigin.ROOT ? (
+						trackName === 'all' ? (
+							<RootIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						) : trackName === PostOrigin.ROOT ? (
 							<RootIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
 							<AuctionAdminIcon className='mt-[1px] font-medium text-lightBlue dark:text-icon-dark-inactive' />
@@ -602,7 +606,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			'tracksHeading',
 			null
 		),
-		getSiderMenuItem('All', '/all-posts', <OverviewIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.governanceItems

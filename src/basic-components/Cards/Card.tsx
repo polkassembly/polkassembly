@@ -4,10 +4,10 @@
 import React, { FC, PropsWithChildren } from 'react';
 import { Card as ANTDCards } from 'antd';
 
-interface ICards {
+interface ICard {
 	className?: string;
 }
-const Cards: FC<PropsWithChildren<ICards>> = (props) => {
+const Card: FC<PropsWithChildren<ICard>> = (props) => {
 	const { className } = props;
 	return (
 		<ANTDCards
@@ -17,4 +17,4 @@ const Cards: FC<PropsWithChildren<ICards>> = (props) => {
 	);
 };
 
-export default Cards;
+export default Card;

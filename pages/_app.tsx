@@ -25,6 +25,7 @@ import { wrapper } from '~src/redux/store';
 import { useStore } from 'react-redux';
 import { chainProperties } from '~src/global/networkConstants';
 import { ThemeProvider } from 'next-themes';
+import { useTheme } from 'next-themes';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -70,17 +71,22 @@ function App({ Component, pageProps }: AppProps) {
 		logPageView();
 	}, []);
 
-	const SplashLoader = () => (
-		<div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
-			<Image
-				style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
-				width={32}
-				height={32}
-				src='/favicon.ico'
-				alt={'Loading'}
-			/>
-		</div>
-	);
+	const SplashLoader = () => {
+		const { resolvedTheme: theme } = useTheme();
+		const backgroundColor = theme === 'dark' ? '#000000' : '#F5F5F5';
+
+		return (
+			<div style={{ background: backgroundColor, minHeight: '100vh', minWidth: '100vw' }}>
+				<Image
+					style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
+					width={32}
+					height={32}
+					src='/favicon.ico'
+					alt={'Loading'}
+				/>
+			</div>
+		);
+	};
 
 	return (
 		<PersistGate persistor={store.__persistor}>

@@ -49,7 +49,7 @@ const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
 	ssr: false
 });
 
-const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
+const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab/index'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -365,18 +365,18 @@ const Post: FC<IPostProps> = (props) => {
 			}
 		];
 
-		if (proposalType === ProposalType.REFERENDUM_V2 && ['polkadot', 'kusama'].includes(network)) {
+		if (proposalType === ProposalType.REFERENDUM_V2) {
 			tabs.push({
 				children: (
-					<PostAudit
+					<EvaluationTab
 						auditData={auditData}
 						videoData={videoData}
 					/>
 				),
-				key: 'audit',
+				key: 'evaluation',
 				label: (
 					<div className='audit flex items-center justify-center gap-2'>
-						Audit
+						Evaluation
 						{totalAuditCount + totalVideoCount > 0 && (
 							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:bg-section-dark-container dark:text-blue-dark-high'>
 								{totalAuditCount + totalVideoCount}

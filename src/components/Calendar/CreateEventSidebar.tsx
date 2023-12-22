@@ -199,8 +199,9 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<label className='input-label'>Start Date</label>
 							<Form.Item validateStatus={errorsFound.includes('eventStartDateTime') ? 'error' : ''}>
 								<DatePicker
+									popupClassName='z-[9999]'
 									onChange={onEventStartDateChange}
-									value={eventStartDateTime && dayjs(eventStartDateTime, 'DD-MM-YYYY')}
+									value={eventStartDateTime && dayjs(eventStartDateTime)}
 									disabled={loading}
 									format='DD-MM-YYYY'
 								/>
@@ -211,8 +212,9 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<label className='input-label'>End Date</label>
 							<Form.Item validateStatus={errorsFound.includes('eventEndDateTime') ? 'error' : ''}>
 								<DatePicker
+									popupClassName='z-[9999]'
 									onChange={onEventEndDateChange}
-									value={eventEndDateTime && dayjs(eventEndDateTime, 'DD-MM-YYYY')}
+									value={eventEndDateTime && dayjs(eventEndDateTime)}
 									disabled={loading || eventStartDateTime === null}
 									format='DD-MM-YYYY'
 									disabledDate={(current) => {

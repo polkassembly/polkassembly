@@ -385,12 +385,12 @@ const Address = (props: Props) => {
 					) : (
 						<div className='flex items-center gap-x-2 font-semibold text-bodyBlue'>
 							{!disableHeader && (
-								<div>
+								<div className='flex'>
 									<div className='flex items-center'>
 										<Space className={'header'}>
 											<div
 												onClick={(e) => handleClick(e)}
-												className={`flex flex-col font-semibold text-bodyBlue  ${
+												className={`flex font-semibold text-bodyBlue  ${
 													!disableAddressClick && 'cursor-pointer hover:underline'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>

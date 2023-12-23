@@ -6,6 +6,7 @@
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
+import Snowfall from 'react-snowfall';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -865,6 +866,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
+			{ theme == 'dark' && process.browser && <Snowfall snowflakeCount={100} />}
 		</Layout>
 	);
 };

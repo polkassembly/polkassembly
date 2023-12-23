@@ -35,6 +35,7 @@ import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import Markdown from '~src/ui-components/Markdown';
 import TagsModal from '~src/ui-components/TagsModal';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import VoteIcon from '~assets/icons/vote-icon.svg';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
@@ -448,7 +449,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										color='#575255'
 									>
 										<div className='mt-2 min-w-[30px]'>
-											<Progress
+											<ProgressBar
 												strokeWidth={5}
 												percent={decision.periodPercent || 0}
 												strokeColor='#407AFC'
@@ -591,7 +592,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
 									/>
 									<div className='mt-2 min-w-[30px]'>
-										<Progress
+										<ProgressBar
 											percent={decision.periodPercent || 0}
 											strokeColor='#407AFC'
 											trailColor='#D4E0FC'

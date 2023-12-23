@@ -21,6 +21,7 @@ import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ConfirmMessage from './ConfirmMessage';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import Tooltip from '~src/basic-components/Tooltip';
 
 interface IReferendaV2Messages {
@@ -160,7 +161,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</div>
 					</div>
 					<div className='mt-[20px]'>
-						<Progress
+						<ProgressBar
 							className='m-0 flex items-center p-0'
 							showInfo={false}
 							percent={prepare.periodPercent}
@@ -207,7 +208,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</div>
 					</div>
 					<div className='mt-[30px]'>
-						<Progress
+						<ProgressBar
 							className='m-0 flex items-center rounded-lg p-0'
 							showInfo={false}
 							percent={decision.periodPercent}
@@ -231,7 +232,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</span>
 					</p>
 					<div className='mt-[20px]'>
-						<Progress
+						<ProgressBar
 							className='m-0 flex items-center p-0'
 							showInfo={false}
 							percent={confirm.periodPercent}
@@ -277,7 +278,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								</div>
 							</div>
 							<div className='mt-[20px]'>
-								<Progress
+								<ProgressBar
 									className='m-0 flex items-center p-0'
 									showInfo={false}
 									percent={minEnactment.periodPercent}
@@ -303,7 +304,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							{isDisbursalPeriodCardVisible && (
 								<>
 									<div className='mt-[20px]'>
-										<Progress
+										<ProgressBar
 											className='m-0 flex items-center p-0'
 											percent={spend.periodPercent}
 											strokeColor='#E5007A'

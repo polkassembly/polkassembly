@@ -118,6 +118,7 @@ const ProfileData: FC<IProfileData> = (props) => {
 							address={address}
 							disableIdenticon={true}
 							isProfileView
+							isTruncateUsername={false}
 						/>
 						<span
 							className='-ml-2 -mt-0.5 flex cursor-pointer items-center'

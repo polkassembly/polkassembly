@@ -8,6 +8,7 @@ import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import { ProposalType, TSubsquidProposalType, getSubsquidProposalType } from '~src/global/proposalType';
@@ -226,7 +227,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 					}
 				>
 					<div>
-						<Progress
+						<ProgressBar
 							size={30}
 							percent={50}
 							success={{ percent: (isAyeNaN ? 50 : ayePercent) / 2 }}
@@ -240,7 +241,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 				</Tooltip>
 			</div>
 			<div className='sm:hidden'>
-				<Progress
+				<ProgressBar
 					size={30}
 					percent={50}
 					success={{ percent: (isAyeNaN ? 50 : ayePercent) / 2 }}

@@ -8,6 +8,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import UserInfoTab from './UserInfoTab';
 import { usePostDataContext } from '~src/context';
+import { ProposalType } from '~src/global/proposalType';
 
 interface Props {
 	auditData?: any;
@@ -26,7 +27,7 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const {
-		postData: { beneficiaries }
+		postData: { beneficiaries, postType }
 	} = usePostDataContext();
 	return (
 		<div className=''>
@@ -37,12 +38,14 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 					className='mt-4'
 				/>
 			)}
-			<AuditTab
-				auditData={auditData}
-				videoData={videoData}
-				className='my-4'
-				theme={theme}
-			/>
+			{[ProposalType.REFERENDUM_V2].includes(postType) && (
+				<AuditTab
+					auditData={auditData}
+					videoData={videoData}
+					className='my-4'
+					theme={theme}
+				/>
+			)}
 		</div>
 	);
 };

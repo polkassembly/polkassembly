@@ -129,13 +129,14 @@ export const blocksToRelevantTime = (network: string, blocks: number): string =>
 		text = 'min';
 	} else if (blockSeconds > 3600 && blockSeconds < 86400) {
 		divisor = 3600;
-		text = 'hrs';
+		text = 'hr';
 	} else if (blockSeconds >= 86400) {
 		divisor = 86400;
-		text = 'days';
+		text = 'day';
 	}
 
-	return `${Math.round(blockSeconds / divisor)} ${text}`;
+	const roundedValue = Math.round(blockSeconds / divisor);
+	return `${roundedValue} ${text}${roundedValue !== 1 ? 's' : ''}`;
 };
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {

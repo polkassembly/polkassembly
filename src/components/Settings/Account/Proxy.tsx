@@ -5,7 +5,6 @@ import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-i
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider, Form, Modal } from 'antd';
 import React, { FC, useState } from 'react';
-import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { handleTokenChange } from 'src/services/auth.service';
 import { NotificationStatus, Wallet } from 'src/types';
@@ -16,7 +15,6 @@ import cleanError from 'src/util/cleanError';
 import { ChangeResponseType } from '~src/auth/types';
 import WalletButtons from '~src/components/Login/WalletButtons';
 import { APPNAME } from '~src/global/appName';
-import Input from '~src/basic-components/Input';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';

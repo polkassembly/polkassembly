@@ -24,7 +24,7 @@ const StyledTabs = styled(AntdTabs)`
 	.ant-tabs-nav-list::after {
 		content: '';
 		width: 100%;
-		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '')} !important;
+		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '1px solid #e1e6eb')} !important;
 	}
 
 	.ant-tabs-tab-active {

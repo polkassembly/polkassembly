@@ -176,11 +176,15 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		});
 
 		if (['equilibrium'].includes(network)) {
-			setTotalIssuance(ZERO);
+			(async () => {
+				const { collateral } = (await api.query.eqAggregates.totalUserGroups('Balances', { '0': 25969 })) as any;
+				setTotalIssuance(collateral);
+			})();
 		} else if (['genshiro'].includes(network)) {
-			// eslint-disable-next-line  @typescript-eslint/no-unused-vars
-			const { collateral, debt } = api.query.eqAggregates.totalUserGroup('Balances', { '0': 1734700659 }) as any;
-			setTotalIssuance(collateral);
+			(async () => {
+				const { collateral } = (await api.query.eqAggregates.totalUserGroups('Balances', { '0': 1734700659 })) as any;
+				setTotalIssuance(collateral);
+			})();
 		} else {
 			api.query.balances
 				.totalIssuance((result) => {

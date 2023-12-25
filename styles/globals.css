@@ -59,8 +59,10 @@
   --darkOrangeColor: #D05704;
   --nayRedColor: #F53C3C;
   --nayDarkRedColor: #A8071A;
+  --nayDarkBGRedColor:#1E1013;
   --ayeGreenColor: #2ED47A;
   --ayeDarkGreenColor: #478F37;
+  --ayeDarkBGGreenColor:#0F1B15;
   --abstainBlueColor: #407BFF;
   --abstainDarkBlueColor: #3866CE;
   --lightGreyTextColor: #909090;
@@ -142,6 +144,10 @@ code {
   background-color: var(--grey_light);
   color: var(--black_primary);
   font-size: sm;
+}
+
+iframe {
+  max-width: 100%;
 }
 
 p > a {
@@ -594,7 +600,7 @@ z-index: 1050 !important;
 }
 
 .dark .ant-popover-inner{
-  background-color: #1C1D1F;
+  background-color: #282a2d;
 }
 
 .dark .ant-popover-arrow::before{
@@ -802,9 +808,16 @@ z-index: 1050 !important;
   min-width: 0px !important;
 }
 
+.clear-filter-option {
+  font-size: 12px !important;
+  color: #e5007a;
+  text-align: left;
+}
+
 .ant-timeline-item-head.ant-timeline-item-head-custom.ant-timeline-item-head-blue{
   border-radius: 100%;
 }
+
 @media (max-width: 700px) and (min-width: 319px) {
   .beneficiary-container {
     margin-top: 8px !important;
@@ -826,3 +839,4 @@ z-index: 1050 !important;
 .dark .ant-picker-dropdown .ant-picker-cell-disabled{
   color:  var(--lightGreyTextColor) !important;
 }
+

@@ -52,9 +52,6 @@ interface Props {
 	setPostId: (pre: number) => void;
 	availableBalance: BN;
 	discussionLink: string | null;
-	showMultisigInfoCard: boolean;
-	showIdentityInfoCardForBeneficiary: boolean;
-	showIdentityInfoCardForProposer: boolean;
 	isDiscussionLinked: boolean;
 	showDeadlineCard: boolean;
 	deadlineDate: Date;
@@ -84,14 +81,11 @@ const CreateProposal = ({
 	setPostId,
 	availableBalance,
 	discussionLink,
-	isDiscussionLinked,
-	showIdentityInfoCardForBeneficiary,
-	showIdentityInfoCardForProposer,
-	showMultisigInfoCard,
 	showDeadlineCard,
 	deadlineDate,
 	postId,
-	setDeadlineDate
+	setDeadlineDate,
+	isDiscussionLinked
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -346,9 +340,6 @@ const CreateProposal = ({
 					setOpenAddDeadlineModal={setOpenAddDeadlineModal}
 					showDeadlineCard={showDeadlineCard}
 					isDiscussionLinked={isDiscussionLinked}
-					showIdentityInfoCardForBeneficiary={showIdentityInfoCardForBeneficiary}
-					showIdentityInfoCardForProposer={showIdentityInfoCardForProposer}
-					showMultisigInfoCard={showMultisigInfoCard}
 				/>
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<div className='mt-4 flex flex-col gap-2'>

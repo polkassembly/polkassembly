@@ -73,7 +73,8 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 				topicToOptionText('GOVERNANCE'),
 				topicToOptionText('ROOT'),
 				topicToOptionText('STAKING_ADMIN'),
-				topicToOptionText('TREASURY')
+				topicToOptionText('TREASURY'),
+				topicToOptionText('GENERAL_ADMIN')
 			]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

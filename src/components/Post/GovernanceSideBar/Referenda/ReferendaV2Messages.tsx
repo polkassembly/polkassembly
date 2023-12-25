@@ -1,7 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal, Progress } from 'antd';
+import { Modal, Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
@@ -20,6 +21,7 @@ import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ConfirmMessage from './ConfirmMessage';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -146,7 +148,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{!decidingStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Prepare Period</h3>
+						<h3 className='m-0 w-full whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Prepare Period</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
 							<p
 								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
@@ -158,7 +160,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</div>
 					</div>
 					<div className='mt-[20px]'>
-						<Progress
+						<ProgressBar
 							className='m-0 flex items-center p-0'
 							showInfo={false}
 							percent={prepare.periodPercent}
@@ -169,7 +171,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Prepare Period</span>
+							<div className='flex gap-1'>
+								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Prepare Period</span>
+								<Tooltip
+									color='#E5007A'
+									title='Minimum waiting time for a referendum to proceed from submission into decision period.'
+								>
+									<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+								</Tooltip>
+							</div>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}
 							</span>
@@ -181,7 +191,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
-						<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-xl font-normal leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
+						<h3 className='m-0 w-full justify-center whitespace-nowrap text-xl font-normal leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 							Voting has Started
 						</h3>
 						<div className='w-13 flex h-[33px] gap-1'>
@@ -189,13 +199,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
 								style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}
 							>
-								<Button className='-ml-[3px] mr-[2px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white'>2</Button>
+								<Button className='-ml-[3px] mr-[2px] h-[23px] w-[23px] bg-pink_primary text-center text-xs text-white hover:border-pink_primary  hover:bg-pink_secondary'>
+									2
+								</Button>
 								<span className='ml-[4px] pt-[3px]'>of 3</span>
 							</p>
 						</div>
 					</div>
 					<div className='mt-[30px]'>
-						<Progress
+						<ProgressBar
 							className='m-0 flex items-center rounded-lg p-0'
 							showInfo={false}
 							percent={decision.periodPercent}
@@ -205,13 +217,21 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						/>
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-						<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Decision Period</span>
+						<div className='flex gap-1'>
+							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Decision Period</span>
+							<Tooltip
+								color='#E5007A'
+								title='Amount of time a proposal may take to be approved. If the proposal is not approved by the end of the decision period, it gets rejected.'
+							>
+								<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+							</Tooltip>
+						</div>
 						<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 							{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}
 						</span>
 					</p>
 					<div className='mt-[20px]'>
-						<Progress
+						<ProgressBar
 							className='m-0 flex items-center p-0'
 							showInfo={false}
 							percent={confirm.periodPercent}
@@ -222,7 +242,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					</div>
 					<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 						<>
-							<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Confirmation Period</span>
+							<div className='flex gap-1'>
+								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Confirmation Period</span>
+								<Tooltip
+									color='#E5007A'
+									title='Total time the referenda must meet both the min approval and support criteria during the decision period in order to pass'
+								>
+									<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+								</Tooltip>
+							</div>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 								{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}
 							</span>
@@ -237,7 +265,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					{isDisbursalPeriodCardVisible || minEnactment.periodCardVisible ? (
 						<GovSidebarCard>
 							<div className='flex items-center justify-between'>
-								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
+								<h3 className='m-0 w-full whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
 								<div className='w-13 flex h-[33px] gap-1'>
 									<p
 										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'
@@ -249,7 +277,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								</div>
 							</div>
 							<div className='mt-[20px]'>
-								<Progress
+								<ProgressBar
 									className='m-0 flex items-center p-0'
 									showInfo={false}
 									percent={minEnactment.periodPercent}
@@ -259,7 +287,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								/>
 							</div>
 							<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
-								<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Enactment Period</span>
+								<div className='flex gap-1'>
+									<span className='text-bodyblue text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Enactment Period</span>
+									<Tooltip
+										color='#E5007A'
+										title='Time that the proposal must be in dispatch queue after approval.'
+									>
+										<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+									</Tooltip>
+								</div>
 								<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 									{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}
 								</span>
@@ -267,7 +303,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							{isDisbursalPeriodCardVisible && (
 								<>
 									<div className='mt-[20px]'>
-										<Progress
+										<ProgressBar
 											className='m-0 flex items-center p-0'
 											percent={spend.periodPercent}
 											strokeColor='#E5007A'
@@ -277,7 +313,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									</div>
 									<p className='m-0 mt-2 flex items-center justify-between p-0 leading-[22px]'>
 										<>
-											<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
+											<div className='flex gap-1'>
+												<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
+												<Tooltip
+													color='#E5007A'
+													title='Funds will be automatically dispatched to the beneficiary at the spend periods end.'
+												>
+													<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
+												</Tooltip>
+											</div>
 											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{spend.period}</span>
 										</>
 									</p>
@@ -288,7 +332,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					) : (
 						<GovSidebarCard>
 							<div className='flex items-center justify-between'>
-								<h3 className='m-0 mr-[69px] whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
+								<h3 className='m-0 w-full whitespace-nowrap text-xl font-semibold leading-6 tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Proposal Passed</h3>
 								<div className='w-13 flex h-[33px] gap-1'>
 									<p
 										className='m-0 mt-[1px] flex justify-between whitespace-nowrap pr-2 pt-[1px] text-lightBlue dark:text-blue-dark-medium'

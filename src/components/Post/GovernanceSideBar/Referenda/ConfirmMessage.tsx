@@ -100,7 +100,11 @@ const ConfirmMessage = () => {
 				<p className='m-0 text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
 					Proposal estimated to pass in
 					<span className='ml-1 text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>
-						{getDays(estimateHour) ? `${getDays(estimateHour)} days` : ''} {getExtraHrs(estimateHour) ? `, ${getExtraHrs(estimateHour)} hrs` : ''}
+						{[
+							getDays(estimateHour) ? `${getDays(estimateHour)} days` : '',
+							getExtraHrs(estimateHour) && getDays(estimateHour) ? ', ' : '',
+							getExtraHrs(estimateHour) ? `${getExtraHrs(estimateHour)} hrs` : ''
+						].join('')}
 					</span>
 				</p>
 			</div>

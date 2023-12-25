@@ -6,6 +6,7 @@
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
+import Snowfall from 'react-snowfall';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -61,7 +62,7 @@ import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
+// import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -72,6 +73,7 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -491,6 +493,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (network && networkTrackInfo[network]) {
+		gov2TrackItems.mainItems.push(getSiderMenuItem('All', '/all-posts', <OverviewIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
+
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
 			if (!networkTrackInfo[network][trackName] || !('group' in networkTrackInfo[network][trackName])) continue;
 
@@ -530,7 +534,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					break;
 				default: {
 					const icon =
-						trackName === PostOrigin.ROOT ? (
+						trackName === 'all' ? (
+							<RootIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						) : trackName === PostOrigin.ROOT ? (
 							<RootIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
 							<AuctionAdminIcon className='mt-[1px] font-medium text-lightBlue dark:text-icon-dark-inactive' />
@@ -631,20 +637,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network)) {
-		if (network !== 'picasso') {
-			let items = [...gov2TrackItems.treasuryItems];
-			if (isOpenGovSupported(network)) {
-				items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
-			}
-			gov2Items.splice(
-				-1,
-				0,
-				getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
-			);
-		} else {
-			gov2Items.splice(gov2Items.length - 2, 1);
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+		let items = [...gov2TrackItems.treasuryItems];
+		if (isOpenGovSupported(network)) {
+			items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
 		}
+		gov2Items.splice(
+			-1,
+			0,
+			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+		);
 	}
 
 	if (isFellowshipSupported(network)) {
@@ -657,18 +659,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
-	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network)) {
-		if (network !== 'picasso') {
-			gov2CollapsedItems.splice(
-				-1,
-				0,
-				getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
-					...gov2TrackItems.treasuryItems
-				])
-			);
-		} else {
-			gov2CollapsedItems.splice(gov2CollapsedItems.length - 2, 1);
-		}
+	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
+		gov2CollapsedItems.splice(
+			-1,
+			0,
+			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+				...gov2TrackItems.treasuryItems
+			])
+		);
 	}
 
 	const handleMenuClick = (menuItem: any) => {
@@ -805,10 +803,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						<BigToggleButton />
 					</div>
 				</Drawer>
-				{[AllNetworks.MOONBEAM, AllNetworks.MOONRIVER].includes(network) && ['/', 'opengov', '/gov-2'].includes(router.asPath) ? (
+				{[AllNetworks.PICASSO].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
-						<OpenGovHeaderBanner network={'moonbeam'} />
+						<OpenGovHeaderBanner network={network} />
 						<div className='flex flex-row'>
 							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 							<CustomContent
@@ -860,10 +858,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					<DelegationDashboardEmptyState />
-					<span>Please use your desktop computer to verify on chain identity</span>
+					{/* <DelegationDashboardEmptyState /> */}
+					<ImageIcon
+						src='/assets/icons/delegation-empty-state.svg'
+						alt='delegation empty state icon'
+					/>
+					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
+			{theme == 'dark' && process.browser && <Snowfall snowflakeCount={100} />}
 		</Layout>
 	);
 };

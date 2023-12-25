@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Card, Col, Row, Dropdown } from 'antd';
+import { Col, Row, Dropdown } from 'antd';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
 import { chainProperties, network } from 'src/global/networkConstants';
@@ -13,6 +13,7 @@ import DownOutlined from '~assets/search/dropdown-down.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Card from '~src/basic-components/Cards/Card';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -221,7 +222,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 					}}
 				>
 					<Image
-						className='h-[20px] w-[20px] rounded-full'
+						className='h-[20px] w-[20px] rounded-full dark:border-[1px] dark:border-solid dark:border-separatorDark'
 						src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
 						alt='Logo'
 					/>

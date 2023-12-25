@@ -8,14 +8,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import DownArrowIcon from '~assets/icons/down-icon.svg';
 import styled from 'styled-components';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useTreasuryProposalSelector } from '~src/redux/selectors';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 
 interface Props {
-	showMultisigInfoCard: boolean;
 	showDeadlineCard: boolean;
-	showIdentityInfoCardForBeneficiary: boolean;
-	showIdentityInfoCardForProposer: boolean;
 	isDiscussionLinked: boolean;
 	className?: string;
 	theme: string;
@@ -61,17 +58,9 @@ const IdentityList = ({ aleredySet, title }: { aleredySet: boolean; title: strin
 		</li>
 	);
 };
-const MissingInfoAlert = ({
-	className,
-	showIdentityInfoCardForProposer,
-	showIdentityInfoCardForBeneficiary,
-	showMultisigInfoCard,
-	isDiscussionLinked,
-	theme,
-	showDeadlineCard,
-	setOpenAddDeadlineModal
-}: Props) => {
+const MissingInfoAlert = ({ className, isDiscussionLinked, theme, setOpenAddDeadlineModal, showDeadlineCard }: Props) => {
 	const { network } = useNetworkSelector();
+	const { showIdentityInfoCardForBeneficiary, showIdentityInfoCardForProposer, showMultisigInfoCard } = useTreasuryProposalSelector();
 	const [showWarnings, setShowWarning] = useState<boolean>(true);
 	const [showCompletedActions, setShowCompletedActions] = useState<boolean>(true);
 	const leftAction =
@@ -140,7 +129,6 @@ const MissingInfoAlert = ({
 											</span>
 										</li>
 									)}
-
 									{onchainIdentitySupportedNetwork.includes(network) && showIdentityInfoCardForProposer && (
 										<IdentityList
 											aleredySet={false}

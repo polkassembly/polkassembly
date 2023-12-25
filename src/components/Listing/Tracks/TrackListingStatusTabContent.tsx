@@ -23,12 +23,12 @@ interface ITrackListingStatusTabContentProps {
 	posts: any[];
 	error?: any;
 	count: number;
+	statusItem: any;
 }
 
 const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (props) => {
-	const { posts, className, error, count } = props;
+	const { posts, className, error, count, statusItem } = props;
 	const noPosts = count === 0 || isNaN(Number(count));
-
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (error)
@@ -38,13 +38,13 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 			</div>
 		);
 
-	if (noPosts) return <PostEmptyState />;
+	if (noPosts && posts?.length < 1) return <PostEmptyState />;
 
 	if (posts && posts.length > 0) {
 		return (
 			<>
 				<div className='sm:mx-3'>
-					<FilteredTags />
+					<FilteredTags statusItem={statusItem} />
 				</div>
 				<div className={`${className} proposals__list`}>
 					{posts.map((post, index) => {

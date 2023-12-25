@@ -42,6 +42,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -192,6 +193,8 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const dispatch = useDispatch();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
 	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(Boolean(router.query.identityVerification) || false);
+	const { resolvedTheme: theme } = useTheme();
+
 	useEffect(() => {
 		dispatch(setNetwork(network));
 		if (!api || !apiReady) return;
@@ -261,7 +264,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				<div className='mx-1 mt-6'>{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}</div>
 				{network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && (
 					<div className='mx-1 mt-8'>
-						<TreasuryOverview />
+						<TreasuryOverview theme={theme} />
 					</div>
 				)}
 				<div className='mx-1 mt-8'>

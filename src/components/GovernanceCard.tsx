@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, Progress, Skeleton } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { formatBalance } from '@polkadot/util';
-import { Progress, Skeleton } from 'antd';
+import { Skeleton } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';

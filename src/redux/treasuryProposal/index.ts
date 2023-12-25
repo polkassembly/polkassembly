@@ -53,6 +53,7 @@ const setBeneficiaries: any = (beneficiaries: string[]) => {
 		dispatch(treasuryProposalActions.setBeneficiaries(beneficiaries));
 	};
 };
+
 const setShowIdentityInfoCardForBeneficiary: any = (state: boolean) => {
 	return (dispatch: any) => {
 		dispatch(treasuryProposalActions.setShowIdentityInfoCardForBeneficiary(state));

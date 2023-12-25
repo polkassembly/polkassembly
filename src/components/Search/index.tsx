@@ -561,7 +561,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							setPeoplePage({ ...peoplePage, page: 1 });
 						}}
 						value={filterBy}
-						className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-sm:flex-wrap`}
+						className={`flex gap-[1px] ${poppins.variable} ${poppins.className} sm:flex-wrap`}
 					>
 						<Radio
 							value={finalSearchInput.length > 0 && EFilterBy.Referenda}

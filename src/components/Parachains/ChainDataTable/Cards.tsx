@@ -70,7 +70,7 @@ const Cards = function ({
 	return (
 		<div className={`${className} mb-6 cursor-pointer rounded border border-gray-300 bg-white p-3 shadow-md dark:border-[#3B444F] dark:bg-section-dark-overlay`}>
 			<div className='parachain-card-header'>
-				<div>
+				<div className='flex items-center'>
 					<Image
 						src={logoURL}
 						height={34}

@@ -47,7 +47,7 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 			{tags?.slice(0, maxTags).map((tag, index) => (
 				<div
 					key={index}
-					className='traking-2 mr-1 inline-flex cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+					className='traking-2 mr-1 inline-flex cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary dark:border-section-dark-container dark:text-[#C1C1C1]'
 					onClick={() => handleTagClick(tag)}
 				>
 					{tag}
@@ -55,7 +55,7 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 			))}
 			{tags.length > maxTags && (
 				<span
-					className='mr-1 cursor-pointer text-bodyBlue dark:text-blue-dark-high'
+					className='mr-1 cursor-pointer text-bodyBlue dark:bg-[##222222] dark:text-[#8B8B8B]'
 					style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
 					onClick={(e) => {
 						e.stopPropagation();

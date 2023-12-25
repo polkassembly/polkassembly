@@ -48,7 +48,6 @@ const WriteProposal = ({
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionFound, setIsDiscussionFound] = useState<boolean>(true);
-	const [limitError, setLimitError] = useState(false);
 
 	const handleSubmit = async () => {
 		await form.validateFields();
@@ -260,32 +259,32 @@ const WriteProposal = ({
 								<label className='mb-0.5'>
 									Title <span className='text-nay_red'>*</span>
 								</label>
-								<Form.Item name='title'>
+								<Form.Item
+									name='title'
+									rules={[
+										{
+											message: 'Title should not exceed 150 characters.',
+											validator(rule, value, callback) {
+												if (callback && value?.length > 150) {
+													callback(rule?.message?.toString());
+												} else {
+													callback();
+												}
+											}
+										}
+									]}
+								>
 									<Input
 										name='title'
 										className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										onChange={(e) => {
-											const value = e.target.value;
-											if (value.length <= 150) {
-												setTitle(value);
-												onChangeLocalStorageSet({ title: value }, Boolean(isDiscussionLinked));
-												setSteps({ percent: content.length === 0 ? 83.33 : 100, step: 0 });
-												setLimitError(false);
-											} else {
-												setLimitError(true);
-											}
+											setTitle(e.target.value);
+											onChangeLocalStorageSet({ title: e.target.value }, Boolean(isDiscussionLinked));
+											setSteps({ percent: content.length === 0 ? 83.33 : 100, step: 0 });
 										}}
 										disabled={isDiscussionLinked}
 									/>
 								</Form.Item>
-								{limitError && (
-									<Alert
-										type='error'
-										className='icon-alert dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
-										showIcon
-										message={<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>Title should not exceed 150 characters.</span>}
-									/>
-								)}
 							</div>
 							<div className='mt-6'>
 								<label className='mb-0.5'>{isDiscussionLinked ? 'Tags' : 'Add Tags'}</label>
@@ -328,9 +327,9 @@ const WriteProposal = ({
 						<Button
 							htmlType='submit'
 							className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
-								(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) || limitError ? 'opacity-50' : ''
+								(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50'
 							}`}
-							disabled={(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) || limitError}
+							disabled={!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)}
 						>
 							Next
 						</Button>

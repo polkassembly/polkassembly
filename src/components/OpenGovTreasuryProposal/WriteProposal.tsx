@@ -259,7 +259,21 @@ const WriteProposal = ({
 								<label className='mb-0.5'>
 									Title <span className='text-nay_red'>*</span>
 								</label>
-								<Form.Item name='title'>
+								<Form.Item
+									name='title'
+									rules={[
+										{
+											message: 'Title should not exceed 150 characters.',
+											validator(rule, value, callback) {
+												if (callback && value?.length > 150) {
+													callback(rule?.message?.toString());
+												} else {
+													callback();
+												}
+											}
+										}
+									]}
+								>
 									<Input
 										name='title'
 										className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'

@@ -52,8 +52,7 @@ const WriteProposal = ({
 	tags,
 	setTags,
 	form,
-	setDeadlineDate,
-	deadlineDate
+	setDeadlineDate
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -352,7 +351,6 @@ const WriteProposal = ({
 								popupClassName={`z-[1060] dark:bg-section-dark-overlay ${theme}`}
 								rootClassName='dark:text-blue-dark-high'
 								className='h-10 w-full rounded-[4px] dark:bg-section-dark-overlay dark:text-blue-dark-high'
-								value={dayjs(deadlineDate)}
 							/>
 						</div>
 					)}

@@ -447,7 +447,6 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) =>
 							setTitle={setTitle}
 							theme={theme}
 							setDeadlineDate={setDeadlineDate}
-							deadlineDate={deadlineDate}
 						/>
 					)}
 

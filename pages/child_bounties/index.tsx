@@ -97,7 +97,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 				</p>
 			</div>
 
-			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
+			<div className='mt-6 rounded-xxl bg-white px-0 py-3 shadow-md dark:bg-section-dark-overlay md:py-5'>
 				<div className='flex items-center justify-between'>
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
 						<FilteredTags statusItem={statusItem} />

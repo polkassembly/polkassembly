@@ -33,6 +33,7 @@ interface AllParachainsCardProps {
 
 const Cards = function ({
 	className,
+	index,
 	// id,
 	badgeArray,
 	githubLink,
@@ -68,7 +69,11 @@ const Cards = function ({
 	const title = grantPopupContent();
 
 	return (
-		<div className={`${className} mb-6 cursor-pointer rounded border border-gray-300 bg-white p-3 shadow-md dark:border-[#3B444F] dark:bg-section-dark-overlay`}>
+		<div
+			className={`${className} ${
+				(Number(index) + 1) % 2 !== 0 ? 'dark:bg-section-dark-background' : 'dark:bg-section-dark-overlay'
+			} mb-6 cursor-pointer rounded border border-gray-300 bg-white p-3 shadow-md dark:border-[#3B444F]`}
+		>
 			<div className='parachain-card-header'>
 				<div className='flex items-center'>
 					<Image

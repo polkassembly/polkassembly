@@ -48,7 +48,7 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 			setTopicOptions([topicToOptionText('COMMUNITY_PIPS'), topicToOptionText('TECHNICAL_PIPS'), topicToOptionText('UPGRADE_PIPS'), topicToOptionText('GENERAL')]);
 		} else if (govType === EGovType.GOV1) {
 			if (![post_topic.COUNCIL, post_topic.DEMOCRACY, post_topic.GENERAL, post_topic.TECHNICAL_COMMITTEE, post_topic.TREASURY].includes(topicId)) {
-				onTopicSelection(2);
+				onTopicSelection(5);
 			}
 
 			setTopicOptions([

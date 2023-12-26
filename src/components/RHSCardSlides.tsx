@@ -188,17 +188,17 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				linkingAndEditingOpen={linkingAndEditingOpen}
 				setLinkingAndEditingOpen={setLinkingAndEditingOpen}
 			/>
-			<div className='card relative mx-auto mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl bg-[#f5f6f8] font-poppins shadow-lg dark:bg-section-dark-background'>
+			<div className='card relative mx-auto mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl rounded-tr-none bg-[#f5f6f8] font-poppins shadow-lg dark:bg-section-dark-background'>
 				<div className='box relative h-full w-full'>
 					<div className='slide relative flex h-3/4'>
 						{RHSCards.map((card, index) => (
 							<div
 								key={card.title}
-								className={`${index === currentIndex ? 'flex' : 'hidden'}`}
+								className={`${index === currentIndex ? 'flex' : 'hidden'} transition-all`}
 							>
 								<div className='absolute right-0 top-0 h-[45px] w-[90px] cursor-pointer rounded-bl-3xl bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
 									<div
-										className='navigation-btn absolute bottom-2 left-2 right-1 top-0 z-10 flex items-center justify-center  rounded-full bg-pink_primary p-1 text-base font-medium capitalize text-white shadow-md'
+										className='navigation-btn absolute bottom-2 left-2 right-0 top-0 z-10 flex items-center justify-center  rounded-full bg-pink_primary p-1 text-base font-medium capitalize text-white shadow-md'
 										onClick={card.clickHandler}
 									>
 										{card.tag}

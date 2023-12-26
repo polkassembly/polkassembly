@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { FC, useState } from 'react';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
 interface ILoginToVoteOrEndorseProps {
@@ -18,14 +18,14 @@ const LoginToVoteOrEndorse: FC<ILoginToVoteOrEndorseProps> = (props) => {
 
 	return (
 		<div>
-			<Button
-				className='mb-3 flex w-[100%] items-center justify-center rounded-lg border-pink_primary bg-pink_primary p-7 text-lg text-white hover:border-pink_primary  hover:bg-pink_secondary '
+			<CustomButton
+				variant='primary'
+				text='Cast Vote'
 				onClick={() => {
 					setModalOpen(!modalOpen);
 				}}
-			>
-				Cast Vote
-			</Button>
+				className='mb-3 w-[100%]'
+			/>
 			<ReferendaLoginPrompts
 				theme={theme}
 				modalOpen={modalOpen}

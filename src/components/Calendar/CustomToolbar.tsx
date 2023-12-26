@@ -6,7 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Space, Tooltip } from 'antd';
+import { Space, Tooltip } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
 import Image from 'next/image';
@@ -16,6 +16,7 @@ import calendar_today from '~assets/calendar_today.png';
 
 import NetworkSelect from './NetworkSelect';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 function CustomToolbar(props: any) {
 	const { resolvedTheme: theme } = useTheme();
@@ -143,17 +144,18 @@ function CustomToolbar(props: any) {
 
 	function createEventButton(disabled: boolean = false) {
 		return (
-			<Button
-				type='primary'
-				size={props.width < 768 ? 'small' : 'middle'}
-				className='ml-2 rounded-md  transition-colors duration-300'
-				disabled={disabled}
-				onClick={() => {
-					if (!disabled) props.setSidebarCreateEvent(true);
-				}}
-			>
-				Create Event
-			</Button>
+			<div>
+				<CustomButton
+					variant='primary'
+					disabled={disabled}
+					onClick={() => {
+						if (!disabled) props.setSidebarCreateEvent(true);
+					}}
+					className='ml-2 rounded-md border-pink_primary text-white'
+					buttonSize='xs'
+					text='Create Event'
+				/>
+			</div>
 		);
 	}
 
@@ -195,14 +197,14 @@ function CustomToolbar(props: any) {
 							/>
 						</div>
 
-						{/* <Button className='search-btn' icon='search' /> */}
 						<div className='ml-auto flex items-center'>
-							<Button
-								className='rounded-md dark:bg-section-dark-overlay dark:text-white'
+							<CustomButton
+								text='Today'
+								className='border-white dark:bg-section-dark-overlay dark:text-white'
 								onClick={goToToday}
-							>
-								Today
-							</Button>
+								buttonSize='xs'
+								variant='default'
+							/>
 
 							{!props.isLoggedIn ? (
 								<Tooltip
@@ -252,7 +254,6 @@ function CustomToolbar(props: any) {
 							<span className='year-text'>{dayjs(props.date).format('YYYY')}</span>
 
 							<div className='actions-right'>
-								{/* <Button className='search-btn' icon='search' /> */}
 								<Image
 									className='today-btn-img'
 									onClick={goToToday}

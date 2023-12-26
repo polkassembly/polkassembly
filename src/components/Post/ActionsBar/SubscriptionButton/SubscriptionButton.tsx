@@ -4,13 +4,13 @@
 
 import { BookFilled, BookOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
-import { Button } from 'antd';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 
 import { ChangeResponseType } from '~src/auth/types';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -97,16 +97,15 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 	};
 
 	const SubscribeButton = () => (
-		<Button
-			className={`${
-				subscribed && id ? ' negative' : ''
-			} flex items-center border-none px-1.5 text-pink_primary shadow-none disabled:bg-transparent disabled:opacity-[0.5] dark:bg-transparent dark:text-blue-dark-helper`}
+		<CustomButton
+			variant='default'
 			disabled={loading || !id}
 			onClick={handleSubscribe}
+			className={`border-none px-1.5 disabled:bg-transparent disabled:opacity-[0.5] dark:text-blue-dark-helper ${subscribed && id ? ' negative' : ''}`}
 		>
 			{subscribed && id ? <BookFilled /> : <BookOutlined />}
 			{subscribed && id ? 'Unsubscribe' : 'Subscribe'}
-		</Button>
+		</CustomButton>
 	);
 
 	return id ? <SubscribeButton /> : <></>;

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Tooltip, Skeleton, Button } from 'antd';
+import { Divider, Tooltip, Skeleton } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -25,6 +25,7 @@ import styled from 'styled-components';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/AiBot';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -251,12 +252,17 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<div className='flex gap-x-4'>
 						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
-							<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
+							<CustomButton
+								className='delegation-buttons'
+								variant='primary'
+								width={175}
+								height={40}
+							>
 								<OpenGovTreasuryProposal
 									theme={theme}
 									isUsedInTreasuryTrack={true}
 								/>
-							</Button>
+							</CustomButton>
 						)}
 					</div>
 				</div>
@@ -403,12 +409,17 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<div className='flex gap-x-1'>
 						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
-							<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
+							<CustomButton
+								className='delegation-buttons'
+								variant='primary'
+								width={175}
+								height={40}
+							>
 								<OpenGovTreasuryProposal
 									theme={theme}
 									isUsedInTreasuryTrack={true}
 								/>
-							</Button>
+							</CustomButton>
 						)}
 					</div>
 				</article>

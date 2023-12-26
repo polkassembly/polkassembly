@@ -6,7 +6,7 @@ import { ClockCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal, Spin, Tooltip } from 'antd';
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -73,6 +73,7 @@ import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -755,13 +756,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				<div className='mb-1.5 flex items-center justify-between'>
 					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
 					{!isDelegated && (
-						<Button
+						<CustomButton
+							variant='primary'
+							text='Remove Vote'
 							loading={loading}
 							onClick={handleRemoveVote}
-							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
-						>
-							Remove Vote
-						</Button>
+							height={18}
+							fontSize='xs'
+							className='border-none p-0 text-red-500 underline dark:bg-section-dark-overlay'
+						/>
 					)}
 				</div>
 
@@ -843,13 +846,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			<div>
 				<div className='mb-1.5 flex items-center justify-between'>
 					<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
-					<Button
+					<CustomButton
+						variant='primary'
+						text='Remove Vote'
 						loading={loading}
 						onClick={handleRemoveVote}
-						className=' flex h-[18px] items-center justify-center rounded-[4px] border-none pr-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
-					>
-						Remove Vote
-					</Button>
+						height={18}
+						fontSize='xs'
+						className='border-none p-0 text-red-500 underline dark:bg-section-dark-overlay'
+					/>
 				</div>
 				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
 					<Tooltip

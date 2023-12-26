@@ -6,7 +6,7 @@ import { CheckCircleFilled, DownOutlined, LoadingOutlined, UpOutlined, WarningFi
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import Identicon from '@polkadot/react-identicon';
-import { Button, Divider, Form, Input, Modal, Spin, Tooltip } from 'antd';
+import { Divider, Form, Input, Modal, Spin, Tooltip } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 //TODO: import { useAddPolkassemblyProposalMutation } from 'src/generated/graphql';
@@ -30,6 +30,7 @@ import TitleForm from '../TitleForm';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -357,13 +358,12 @@ const TreasuryProposalFormButton = ({
 				zIndex={1002}
 				title='Create Treasury Proposal'
 				footer={[
-					<Button
+					<CustomButton
 						key='submit'
-						className='bg-pink_primary text-white'
 						onClick={handleSignAndSubmit}
-					>
-						Sign &amp; Submit
-					</Button>
+						variant='primary'
+						text='Sign & Submit'
+					/>
 				]}
 				open={modalOpen}
 			>

@@ -6,7 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import type { DatePickerProps } from 'antd';
 import { RadioChangeEvent } from 'antd';
-import { Button, DatePicker, Form, Input, Radio } from 'antd';
+import { DatePicker, Form, Input, Radio } from 'antd';
 import { dayjs } from 'dayjs-init';
 import React, { useState } from 'react';
 import SidebarRight from 'src/components/SidebarRight';
@@ -16,6 +16,7 @@ import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -254,21 +255,22 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						</div>
 					)}
 
-					<div className='form-actions'>
-						<Button
+					<div className='form-actions gap-x-2'>
+						<CustomButton
+							text='Cancel'
+							variant='default'
 							onClick={closeCreateEventSidebar}
 							disabled={loading}
-							className='dark:bg-transparent dark:text-white'
-						>
-							Cancel
-						</Button>
-						<Button
-							className='ml-1 rounded-md  bg-pink_primary text-white transition-colors duration-300 hover:bg-pink_secondary'
+							buttonSize='sm'
+						/>
+						<CustomButton
+							text='Create Event'
+							variant='primary'
 							onClick={handleCreateEvent}
 							loading={loading}
-						>
-							Create Event
-						</Button>
+							width={160}
+							height={40}
+						/>
 					</div>
 				</Form>
 			</div>

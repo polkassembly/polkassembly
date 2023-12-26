@@ -4,7 +4,7 @@
 import { CheckOutlined, LinkOutlined } from '@ant-design/icons';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Button, Divider, Modal, Spin, Tooltip } from 'antd';
+import { Divider, Modal, Spin, Tooltip } from 'antd';
 import React, { FC, useState } from 'react';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
 import { useApiContext } from 'src/context';
@@ -23,6 +23,7 @@ import { poppins } from 'pages/_app';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	open?: boolean;
@@ -256,15 +257,14 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 	const UnlinkButton: FC<{ address: string }> = ({ address }) => {
 		const StyledUnlinkButton: FC<{ withClickHandler?: boolean }> = ({ withClickHandler = false }) => {
 			return (
-				<Button
-					className={`m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-red_primary outline-none dark:border-separatorDark dark:bg-section-dark-overlay ${
-						!withClickHandler ? 'opacity-50' : ''
-					}`}
+				<CustomButton
 					disabled={withClickHandler ? false : true}
 					onClick={() => (withClickHandler ? handleUnlink(address) : null)}
-				>
-					Unlink
-				</Button>
+					variant='default'
+					className={`m-0 border-none p-0 text-red_primary ${!withClickHandler ? 'opacity-50' : ''}`}
+					text='Unlink'
+					height={40}
+				/>
 			);
 		};
 
@@ -282,12 +282,13 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 	const SetDefaultAddress: FC<{ address: string }> = ({ address }) => {
 		return currentUser.defaultAddress !== address ? (
-			<Button
-				className='m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-grey_primary outline-none dark:bg-section-dark-overlay dark:text-white'
+			<CustomButton
 				onClick={() => handleDefault(address)}
-			>
-				Set default
-			</Button>
+				variant='default'
+				className='m-0 border-none p-0 text-grey_primary'
+				text='Set default'
+				height={40}
+			/>
 		) : (
 			<span className='flex items-center gap-x-2 text-sm font-medium text-green_primary'>
 				<CheckOutlined />
@@ -399,13 +400,14 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 															) : (
 																<>
 																	<div className='col-span-1'>
-																		<Button
-																			className='m-0 flex items-center justify-center border-none p-0 text-sm font-medium text-grey_primary outline-none dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'
+																		<CustomButton
 																			onClick={() => handleLink(address, key as Wallet)}
 																			icon={<LinkOutlined />}
-																		>
-																			Link
-																		</Button>
+																			variant='default'
+																			className='m-0 border-none p-0 text-grey_primary'
+																			text='Link'
+																			height={40}
+																		/>
 																	</div>
 																</>
 															)}
@@ -440,10 +442,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				<div className='flex items-center justify-end'>
 					{[
 						fetchAccountsInfo ? (
-							<Button
-								key='got-it'
-								icon={<CheckOutlined />}
-								className='flex items-center justify-center rounded-[4px] border border-solid border-pink_primary bg-pink_primary px-7 py-4 text-sm font-medium tracking-wide text-white outline-none'
+							<CustomButton
 								onClick={() => {
 									getAllAccounts({
 										api,
@@ -459,17 +458,20 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 											console.error(err);
 										});
 								}}
-							>
-								Got it!
-							</Button>
+								key='got-it'
+								icon={<CheckOutlined />}
+								variant='primary'
+								className='m-0 border-none  px-7 py-4 text-grey_primary'
+								text='Got it!'
+								height={40}
+							/>
 						) : null,
-						<Button
-							key='cancel'
+						<CustomButton
 							onClick={dismissModal}
-							className='flex items-center justify-center rounded-[4px] border border-solid border-pink_primary bg-white px-7 py-3 text-sm font-medium tracking-wide text-pink_primary outline-none dark:bg-section-dark-overlay'
-						>
-							Cancel
-						</Button>
+							text='Cancel'
+							variant='default'
+							key='cancel'
+						/>
 					]}
 				</div>
 			}

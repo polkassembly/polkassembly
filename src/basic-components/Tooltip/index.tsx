@@ -20,7 +20,7 @@ interface Props {
 	onOpenChange?: (e: any) => void;
 }
 
-export default function Popover({ children, key, arrow, open, placement, destroyTooltipOnHide, title, className, color, overlayClassName, onOpenChange }: Props) {
+export default function Popover({ children, key, arrow = true, open, placement, destroyTooltipOnHide, title, className, color, overlayClassName, onOpenChange }: Props) {
 	return (
 		<AntdTooltip
 			key={key}

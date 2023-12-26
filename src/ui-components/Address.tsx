@@ -383,7 +383,7 @@ const Address = (props: Props) => {
 							)}
 						</div>
 					) : (
-						<div className='flex items-center gap-x-2 font-semibold text-bodyBlue'>
+						<div className={`flex items-center gap-x-2 font-semibold text-bodyBlue ${!addressSuffix && 'gap-0'}`}>
 							{!disableHeader && (
 								<div className='flex'>
 									<div className='flex items-center'>
@@ -395,9 +395,6 @@ const Address = (props: Props) => {
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
 												{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
-												{!extensionName && !!sub && isSubVisible && (
-													<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
-												)}
 											</div>
 										</Space>
 									</div>
@@ -406,7 +403,7 @@ const Address = (props: Props) => {
 							<div
 								className={`${!addressClassName ? 'text-sm' : addressClassName} ${
 									!disableAddressClick && 'cursor-pointer hover:underline'
-								} font-normal dark:text-blue-dark-medium `}
+								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'}`}
 								onClick={(e) => handleClick(e)}
 							>
 								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})

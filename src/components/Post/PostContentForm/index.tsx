@@ -5,7 +5,7 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -32,13 +32,13 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [topicId, setTopicId] = useState<number>(5);
-	const { network } = useNetworkSelector();
-
 	const {
 		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags, topic: currentTopic },
 		setPostData
 	} = usePostDataContext();
+
+	const [topicId, setTopicId] = useState<number>(currentTopic?.id || 5);
+	const { network } = useNetworkSelector();
 
 	const [tags, setTags] = useState<string[]>(oldTags);
 
@@ -93,12 +93,6 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 		}
 		setLoading(false);
 	};
-
-	useEffect(() => {
-		if (currentTopic) {
-			setTopicId(currentTopic.id);
-		}
-	}, [currentTopic]);
 
 	return (
 		<div className={className}>

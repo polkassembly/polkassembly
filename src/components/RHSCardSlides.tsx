@@ -25,11 +25,11 @@ const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasur
 type card = { title: string; description: string; icon: string; tag: string; clickHandler?: (() => void) | ((prop: any) => void) };
 
 enum cardTags {
-	ADD_DEADLINE = 'add-deadline',
-	LINK_DISCUSSION = 'link-discussion',
-	DECISION_DEPOSIT = 'decision-deposit',
-	ADD_TAGS = 'add-tags',
-	CREATE_PROPOSAL = 'create-proposal'
+	ADD_DEADLINE = 'add',
+	LINK_DISCUSSION = 'link',
+	DECISION_DEPOSIT = 'pay',
+	ADD_TAGS = 'add',
+	CREATE_PROPOSAL = 'create'
 }
 
 type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
@@ -190,30 +190,31 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			/>
 			<div className='card relative mx-auto mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl bg-[#f5f6f8] font-poppins shadow-lg dark:bg-section-dark-background'>
 				<div className='box relative h-full w-full'>
-					<div className='absolute right-0 top-0 aspect-video w-[90px] rounded-bl-3xl bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
-						<div
-							className='navigation-btn absolute inset-2 z-10 flex items-center justify-center rounded-full bg-pink_primary shadow-md'
-							onClick={() => {
-								//handle card click
-							}}
-						></div>
-					</div>
-					<div className='card-slide h-3/4'>
+					<div className='slide relative flex h-3/4'>
 						{RHSCards.map((card, index) => (
 							<div
-								className={`slide flex h-full w-full cursor-pointer items-center justify-center gap-2 bg-rhs-card-gradient p-3 ${index === currentIndex ? 'flex' : 'hidden'}`}
 								key={card.title}
-								onClick={card.clickHandler}
+								className={`${index === currentIndex ? 'flex' : 'hidden'}`}
 							>
-								<Image
-									src={card.icon}
-									alt={card.title}
-									width={60}
-									height={60}
-								/>
-								<div className='content mr-14 text-white'>
-									<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
-									<p className='mb-0 break-words text-xs leading-tight'>{card.description}</p>
+								<div className='absolute right-0 top-0 h-[45px] w-[90px] cursor-pointer rounded-bl-3xl bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
+									<div
+										className='navigation-btn absolute bottom-2 left-2 right-1 top-0 z-10 flex items-center justify-center  rounded-full bg-pink_primary p-1 text-base font-medium capitalize text-white shadow-md'
+										onClick={card.clickHandler}
+									>
+										{card.tag}
+									</div>
+								</div>
+								<div className='card-slide flex h-full w-full  items-center justify-center gap-2 bg-rhs-card-gradient p-3'>
+									<Image
+										src={card.icon}
+										alt={card.title}
+										width={60}
+										height={60}
+									/>
+									<div className='content mr-14 text-white'>
+										<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
+										<p className='mb-0 break-words text-xs leading-tight'>{card.description}</p>
+									</div>
 								</div>
 							</div>
 						))}

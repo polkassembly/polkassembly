@@ -832,7 +832,7 @@ z-index: 1050 !important;
 }
 
 .dark .ant-picker-dropdown .ant-picker-cell-in-view, .dark .ant-picker-dropdown .ant-picker-header, .dark .ant-picker-dropdown .ant-picker-body .ant-picker-content th,
-.ant-picker-dropdown .ant-picker-header button,
+.dark .ant-picker-dropdown .ant-picker-header button,
 .dark .ant-picker-dropdown {
   color: white !important;
 }

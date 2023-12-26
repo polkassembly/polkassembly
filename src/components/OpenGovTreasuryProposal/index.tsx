@@ -100,7 +100,6 @@ export interface EBeneficiaryAddressesAction {
 		newState?: IBeneficiary[];
 	};
 }
-
 const beneficiaryAddressesReducer = (state: IBeneficiary[], action: EBeneficiaryAddressesAction) => {
 	switch (action.type) {
 		case EBeneficiaryAddressesActionType.UPDATE_ADDRESS:

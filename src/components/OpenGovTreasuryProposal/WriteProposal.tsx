@@ -74,10 +74,11 @@ const WriteProposal = ({
 			form.setFieldValue('title', data?.title || '');
 			form.setFieldValue('content', data?.content || '');
 			form.setFieldValue('tags', data?.tags || []);
+			form.setFieldValue('discussion_link', link || '');
 			setIsDiscussionFound(true);
 			setSteps({ percent: 100, step: 0 });
 			setLoading(false);
-			onChangeLocalStorageSet({ content: data?.content || '', tags: data?.tags || [], title: data?.title || '' }, Boolean(isDiscussionLinked));
+			onChangeLocalStorageSet({ content: data?.content || '', discussionLink: link || '', tags: data?.tags || [], title: data?.title || '' }, Boolean(isDiscussionLinked));
 		} else if (error) {
 			setIsDiscussionFound(false);
 			queueNotification({
@@ -168,12 +169,10 @@ const WriteProposal = ({
 	};
 
 	useEffect(() => {
-		setDiscussionLink(discussionLink);
-
 		if (isDiscussionLinked && discussionLink) {
 			getDiscussionPostData(discussionLink, isDiscussionLinked);
 		}
-	}, []);
+	}, [discussionLink, isDiscussionLinked]);
 
 	return (
 		<>

@@ -155,7 +155,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 			{showGallery && (
 				<div>
 					{showGov2Links && (
-						<div className='mt-10 flex justify-between overflow-x-auto pb-2 xl:w-[90%]'>
+						<div className='mt-5 flex flex-wrap justify-between gap-3 overflow-x-auto pb-2 md:mt-10 md:flex-nowrap xl:w-[90%]'>
 							{gov2Link({
 								bgImage: '/assets/gavin-keynote.png',
 								className: 'mr-12 lg:mr-9',

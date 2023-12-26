@@ -161,7 +161,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	return (
 		<Container className={`flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay ${className} `}>
 			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
-				{theme === 'dark' ? <LoginLogoDark className='md:mr-3' /> : <LoginLogo className='md:mr-3' />}
+				{theme === 'dark' ? <LoginLogoDark className='mr-3' /> : <LoginLogo className='mr-3' />}
 				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>Login to Polkassembly</span>
 			</div>
 			<Divider
@@ -283,7 +283,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 									id='password'
 								/>
 							</Form.Item>
-							<div className='mt-[-20px] text-right text-pink_primary dark:text-blue-dark-helper'>
+							<div className='mt-[-20px] text-right text-pink_primary'>
 								<div
 									className='cursor-pointer'
 									onClick={() => {
@@ -323,7 +323,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 							<div
 								onClick={handleClick}
-								className='text-md cursor-pointer text-pink_primary dark:text-blue-dark-helper'
+								className='text-md cursor-pointer text-pink_primary'
 							>
 								{' '}
 								Sign Up{' '}

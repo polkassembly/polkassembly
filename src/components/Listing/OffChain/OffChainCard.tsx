@@ -206,7 +206,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							/>
 							{relativeCreatedAt && (
 								<>
-									<div className='mt-0 items-center text-sm xs:-mt-0.5 xs:flex xs:text-lightBlue xs:dark:text-icon-dark-inactive lg:flex'>
+									<div className='mt-0 items-center text-[10.5px] xs:-mt-0.5 xs:flex xs:text-lightBlue xs:dark:text-icon-dark-inactive sm:text-sm lg:flex'>
 										<ClockCircleOutlined className='mr-1 mt-0' /> {relativeCreatedAt}
 									</div>
 								</>

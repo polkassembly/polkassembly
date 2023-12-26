@@ -52,30 +52,22 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 			}
 
 			setTopicOptions([
-				topicToOptionText('GENERAL'),
 				topicToOptionText('COUNCIL'),
 				topicToOptionText('DEMOCRACY'),
+				topicToOptionText('GENERAL'),
 				topicToOptionText('TECHNICAL_COMMITTEE'),
 				topicToOptionText('TREASURY')
 			]);
 		} else if (govType === EGovType.OPEN_GOV) {
 			if (
-				![
-					post_topic.AUCTION_ADMIN,
-					post_topic.FELLOWSHIP,
-					post_topic.GOVERNANCE,
-					post_topic.ROOT,
-					post_topic.STAKING_ADMIN,
-					post_topic.TREASURY,
-					post_topic.WHITELIST,
-					post_topic.GENERAL
-				].includes(topicId)
+				![post_topic.AUCTION_ADMIN, post_topic.FELLOWSHIP, post_topic.GOVERNANCE, post_topic.ROOT, post_topic.STAKING_ADMIN, post_topic.TREASURY, post_topic.WHITELIST].includes(
+					topicId
+				)
 			) {
-				onTopicSelection(5);
+				onTopicSelection(8);
 			}
 
 			setTopicOptions([
-				topicToOptionText('GENERAL'),
 				topicToOptionText('AUCTION_ADMIN'),
 				topicToOptionText('FELLOWSHIP'),
 				topicToOptionText('GOVERNANCE'),

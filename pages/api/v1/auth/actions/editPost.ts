@@ -28,7 +28,7 @@ import { IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { getTopicNameFromTopicId } from '~src/util/getTopicFromType';
+import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import { checkIsProposer } from './utils/checkIsProposer';
 import { getUserWithAddress } from '../data/userProfileWithUsername';
 
@@ -278,7 +278,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		summary: summary,
 		tags: tags || [],
 		title,
-		topic_id: strProposalType === ProposalType.GRANTS ? 6 : Number(topicId),
+		topic_id: topicId || getTopicFromType(proposalType).id,
 		user_id: postUser?.userId || user.id,
 		username: postUser?.username || user.username
 	};
@@ -317,7 +317,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 						summary: summary,
 						tags: tags || [],
 						title,
-						topic_id: strProposalType === ProposalType.GRANTS ? 6 : Number(topicId),
+						topic_id: topic_id || getTopicFromType(proposalType).id,
 						user_id: post?.user_id || user.id,
 						username: post?.username || user.username
 					},

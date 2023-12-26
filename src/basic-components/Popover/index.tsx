@@ -30,7 +30,7 @@ export default function Popover({
 	className,
 	zIndex,
 	placement,
-	arrow,
+	arrow = true,
 	onOpenChange,
 	overlayClassName,
 	rootClassName,

@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import styled from 'styled-components';
-import { Button, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -22,6 +22,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export interface SecondProposalProps {
 	className?: string;
@@ -277,12 +278,12 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 
 	return (
 		<div className={className}>
-			<Button
-				className='mx-auto mb-10 flex w-[90%] items-center justify-center rounded-lg border-pink_primary bg-pink_primary p-7 text-lg text-white hover:border-pink_primary hover:bg-pink_secondary'
+			<CustomButton
+				variant='primary'
+				text='Second'
 				onClick={openModal}
-			>
-				Second
-			</Button>
+				className='mx-auto mb-10 flex w-[90%]'
+			/>
 			<Modal
 				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'
@@ -290,15 +291,15 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={[
-					<Button
-						className='my-1 border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary'
+					<CustomButton
+						variant='primary'
+						text='Second'
 						key='second'
 						loading={loadingStatus.isLoading}
 						disabled={!apiReady}
 						onClick={secondProposal}
-					>
-						Second
-					</Button>
+						className='my-1'
+					/>
 				]}
 			>
 				<Spin

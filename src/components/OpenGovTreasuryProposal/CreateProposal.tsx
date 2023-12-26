@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Alert, Button, Spin, message } from 'antd';
+import { Alert, Spin, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
@@ -29,6 +29,7 @@ import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
 import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -50,9 +51,6 @@ interface Props {
 	setPostId: (pre: number) => void;
 	availableBalance: BN;
 	discussionLink: string | null;
-	showMultisigInfoCard: boolean;
-	showIdentityInfoCardForBeneficiary: boolean;
-	showIdentityInfoCardForProposer: boolean;
 	isDiscussionLinked: boolean;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
@@ -78,10 +76,7 @@ const CreateProposal = ({
 	setPostId,
 	availableBalance,
 	discussionLink,
-	isDiscussionLinked,
-	showIdentityInfoCardForBeneficiary,
-	showIdentityInfoCardForProposer,
-	showMultisigInfoCard
+	isDiscussionLinked
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -281,9 +276,6 @@ const CreateProposal = ({
 				<MissingInfoAlert
 					theme={theme}
 					isDiscussionLinked={isDiscussionLinked}
-					showIdentityInfoCardForBeneficiary={showIdentityInfoCardForBeneficiary}
-					showIdentityInfoCardForProposer={showIdentityInfoCardForProposer}
-					showMultisigInfoCard={showMultisigInfoCard}
 				/>
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<div className='mt-4 flex flex-col gap-2'>
@@ -401,15 +393,15 @@ const CreateProposal = ({
 					/>
 				)}
 				<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
-					<Button
+					<CustomButton
+						text='Create Proposal'
+						variant='primary'
+						height={40}
+						width={155}
 						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
-							(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'
-						}`}
-					>
-						Create Proposal
-					</Button>
+						className={`${(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'}`}
+					/>
 				</div>
 			</div>
 		</Spin>

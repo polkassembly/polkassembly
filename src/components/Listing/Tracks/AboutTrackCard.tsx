@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Skeleton, Button } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -24,6 +24,7 @@ import styled from 'styled-components';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/AiBot';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 
 const Curves = dynamic(() => import('./Curves'), {
@@ -129,13 +130,14 @@ export const blocksToRelevantTime = (network: string, blocks: number): string =>
 		text = 'min';
 	} else if (blockSeconds > 3600 && blockSeconds < 86400) {
 		divisor = 3600;
-		text = 'hrs';
+		text = 'hr';
 	} else if (blockSeconds >= 86400) {
 		divisor = 86400;
-		text = 'days';
+		text = 'day';
 	}
 
-	return `${Math.round(blockSeconds / divisor)} ${text}`;
+	const roundedValue = Math.round(blockSeconds / divisor);
+	return `${roundedValue} ${text}${roundedValue !== 1 ? 's' : ''}`;
 };
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
@@ -250,12 +252,17 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<div className='flex gap-x-4'>
 						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
-							<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
+							<CustomButton
+								className='delegation-buttons'
+								variant='primary'
+								width={175}
+								height={40}
+							>
 								<OpenGovTreasuryProposal
 									theme={theme}
 									isUsedInTreasuryTrack={true}
 								/>
-							</Button>
+							</CustomButton>
 						)}
 					</div>
 				</div>
@@ -402,12 +409,17 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<div className='flex gap-x-1'>
 						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
-							<Button className='delegation-buttons flex items-center justify-center gap-0 rounded-md border-pink_primary bg-pink_primary px-3 py-5 text-sm font-medium text-white'>
+							<CustomButton
+								className='delegation-buttons'
+								variant='primary'
+								width={175}
+								height={40}
+							>
 								<OpenGovTreasuryProposal
 									theme={theme}
 									isUsedInTreasuryTrack={true}
 								/>
-							</Button>
+							</CustomButton>
 						)}
 					</div>
 				</article>

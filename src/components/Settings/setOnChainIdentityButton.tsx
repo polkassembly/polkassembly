@@ -10,7 +10,7 @@ import type { Data, Option } from '@polkadot/types';
 import type { Registration } from '@polkadot/types/interfaces';
 import { u8aToString } from '@polkadot/util';
 import { checkAddress } from '@polkadot/util-crypto';
-import { Button, Form, Input, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
@@ -27,6 +27,7 @@ import AddressComponent from '../../ui-components/Address';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Card from '~src/basic-components/Cards/Card';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
@@ -374,14 +375,13 @@ const SetOnChainIdentityButton = ({
 	};
 	const triggerBtn = (
 		<div>
-			<Button
+			<CustomButton
 				disabled={!id}
-				className='h-[40px] rounded-md bg-pink_primary text-white  transition-colors duration-300 hover:bg-pink_secondary md:h-[69px]'
 				onClick={() => setModalOpen(true)}
-			>
-				{' '}
-				Set On-Chain Identity
-			</Button>
+				variant='primary'
+				text='Set On-Chain Identity'
+				height={40}
+			/>
 		</div>
 	);
 	const triggerBtnLoginDisabled = (
@@ -390,14 +390,13 @@ const SetOnChainIdentityButton = ({
 			title='Please signup/login to set on-chain identity'
 		>
 			{' '}
-			<Button
-				type='primary'
+			<CustomButton
 				disabled={true}
-				className='h-[40px] w-full rounded-md md:h-[69px]'
-			>
-				{' '}
-				Set On-Chain Identity
-			</Button>
+				variant='primary'
+				text='Set On-Chain Identity'
+				height={40}
+				className='w-full md:h-[69px]'
+			/>
 		</Tooltip>
 	);
 
@@ -416,20 +415,21 @@ const SetOnChainIdentityButton = ({
 				open={modalOpen}
 				centered
 				footer={[
-					<Button
+					<CustomButton
 						key='close'
 						onClick={() => setModalOpen(false)}
-					>
-						Close
-					</Button>,
-					<Button
+						variant='primary'
+						text='Close'
+						buttonSize='xs'
+					/>,
+					<CustomButton
 						key='submit'
 						disabled={!okAll}
-						className='submitBtn'
 						onClick={handleSignAndSubmit}
-					>
-						Set Identity
-					</Button>
+						variant='primary'
+						text='Set Identity'
+						height={40}
+					/>
 				]}
 				onCancel={() => setModalOpen(false)}
 			>

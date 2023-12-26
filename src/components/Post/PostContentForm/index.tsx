@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -17,6 +17,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../../ContentForm';
 import AddTags from '~src/ui-components/AddTags';
 import styled from 'styled-components';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -128,21 +129,24 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 				<Form.Item>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center justify-end'>
-							<Button
+							<CustomButton
+								variant='default'
 								htmlType='button'
 								loading={loading}
 								onClick={toggleEdit}
-								className='mr-2 flex items-center dark:border-pink_primary dark:bg-transparent dark:text-pink_primary'
+								className='mr-2'
+								buttonSize='xs'
 							>
 								<CloseOutlined /> Cancel
-							</Button>
-							<Button
+							</CustomButton>
+							<CustomButton
+								variant='primary'
 								htmlType='submit'
 								loading={loading}
-								className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-[#3B444F]'
+								buttonSize='xs'
 							>
 								<CheckOutlined /> Submit
-							</Button>
+							</CustomButton>
 						</div>
 					</div>
 				</Form.Item>

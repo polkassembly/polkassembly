@@ -27,6 +27,7 @@ import executeTx from '~src/util/executeTx';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
@@ -209,12 +210,13 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 	const VotingForm = () => (
 		<GovSidebarCard>
 			<h3 className='mb-6 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Cast your Vote!</h3>
-			<Button
-				className='mx-auto my-3 flex w-[95%] items-center justify-center rounded-lg border-pink_primary bg-pink_primary p-7 text-lg text-white hover:border-pink_primary hover:bg-pink_secondary'
+			<CustomButton
+				variant='primary'
+				text='Cast Vote'
 				onClick={openModal}
-			>
-				Cast Vote
-			</Button>
+				fontSize='lg'
+				className='mx-auto my-3 w-[95%] p-7'
+			/>
 
 			<Modal
 				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'

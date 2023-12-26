@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Form, Input, Switch } from 'antd';
+import { Form, Input, Switch } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
@@ -23,6 +23,7 @@ import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -255,13 +256,16 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						onChange={(arr) => savePostFormCacheValue('tags', JSON.stringify(arr))}
 					/>
 					<Form.Item>
-						<Button
+						<CustomButton
+							text='Create Post'
 							htmlType='submit'
 							disabled={!currentUser.id || formDisabled || loading}
-							className='mt-10 flex h-[50px] w-[215px] items-center justify-center rounded-md border-white bg-pink_primary text-lg text-white hover:bg-pink_secondary dark:border-none dark:border-[#3B444F]'
-						>
-							Create Post
-						</Button>
+							className='mt-10'
+							fontSize='lg'
+							width={215}
+							height={50}
+							variant='primary'
+						/>
 					</Form.Item>
 				</Form>
 			</div>

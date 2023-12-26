@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Button, Spin } from 'antd';
+import { Spin } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import BlockCountdown from 'src/components/BlockCountdown';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -21,6 +21,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 
 interface IGeneralSignalsProps {
@@ -253,12 +254,12 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 							<span className='mr-5'>
 								Poll ended.{' '}
 								{canEdit ? (
-									<Button
-										className='info dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'
+									<CustomButton
 										onClick={extendsPoll}
-									>
-										Extend Poll
-									</Button>
+										text='Extend Poll'
+										className='info'
+										variant='primary'
+									/>
 								) : (
 									''
 								)}
@@ -267,13 +268,13 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 
 						<div>
 							{ownVote && canVote && (
-								<Button
-									size='middle'
-									className='info text-muted cancelVoteLink dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'
+								<CustomButton
 									onClick={cancelVote}
+									className='info text-muted cancelVoteLink'
+									variant='primary'
 								>
 									Cancel <span className='capitalize'>&nbsp;{ownVote.toLowerCase()}&nbsp;</span> vote
-								</Button>
+								</CustomButton>
 							)}
 						</div>
 					</div>

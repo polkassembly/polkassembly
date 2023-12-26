@@ -15,7 +15,7 @@ interface Props {
 	inPostHeading?: boolean;
 }
 
-const BeneficiariesListing = ({ className, beneficiaries }: Props) => {
+const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	if (!beneficiaries || beneficiaries.length === 0) return null;
 

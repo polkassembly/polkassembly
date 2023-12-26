@@ -261,18 +261,22 @@ const WriteProposal = ({
 								</label>
 								<Form.Item
 									name='title'
-									rules={[
-										{
-											message: 'Title should not exceed 150 characters.',
-											validator(rule, value, callback) {
-												if (callback && value?.length > 150) {
-													callback(rule?.message?.toString());
-												} else {
-													callback();
-												}
-											}
-										}
-									]}
+									rules={
+										isDiscussionLinked
+											? []
+											: [
+													{
+														message: 'Title should not exceed 150 characters.',
+														validator(rule, value, callback) {
+															if (callback && value?.length > 150) {
+																callback(rule?.message?.toString());
+															} else {
+																callback();
+															}
+														}
+													}
+											  ]
+									}
 								>
 									<Input
 										name='title'

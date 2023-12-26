@@ -6,7 +6,6 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Space } from 'antd';
 import { Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';

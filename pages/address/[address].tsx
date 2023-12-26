@@ -120,7 +120,10 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	if (userPosts?.error === 'UserId is invalid' || error) {
 		return (
 			<EmptyState>
-				<ErrorAlert errorMsg="Invalid User. This user does't have any account with Polkassembly" />
+				<ErrorAlert
+					className='dark:text-white'
+					errorMsg="Invalid User. This user does't have any account with Polkassembly"
+				/>
 				{/* <UserNotFound /> */}
 				<ImageIcon
 					src='/assets/user-not-found.svg'

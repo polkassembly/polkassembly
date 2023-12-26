@@ -9,6 +9,7 @@ export const post_topic = {
 	DEMOCRACY: 1,
 	FELLOWSHIP: 10,
 	GENERAL: 5,
+	GENERAL_ADMIN: 15,
 	GOVERNANCE: 9,
 	ROOT: 6,
 	STAKING_ADMIN: 7,

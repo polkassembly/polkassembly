@@ -65,7 +65,7 @@ const AddTreasuryProposalDeadlineModal = ({ className, open, setOpen, theme, set
 				<DatePicker
 					placeholder='DD/MM/YYYY'
 					format='DD-MM-YYYY'
-					disabledDate={(date) => dayjs(new Date()).format('dd-mm-yyyy') !== date.format('dd-mm-yyyy') && dayjs(new Date()).isAfter(date)}
+					disabledDate={(date) => dayjs(new Date()).format('DD/MM/YYYY') !== date.format('DD/MM/YYYY') && dayjs(new Date()).isAfter(date)}
 					onChange={onChange}
 					allowClear={false}
 					popupClassName={`z-[1060] dark:bg-section-dark-overlay ${theme}`}

@@ -494,7 +494,7 @@ const UpcomingEvents = ({ className }: Props) => {
 						<span className='text-xs text-navBlue'>*DateTime in UTC</span>
 					</div>
 				) : (
-					<div className='ml-4 h-[430px] w-full p-2'>
+					<div className='h-[430px] w-full p-2'>
 						<EventsListElement />
 					</div>
 				)}

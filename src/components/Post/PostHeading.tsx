@@ -55,8 +55,8 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 			))}
 			{tags.length > maxTags && (
 				<span
-					className='mr-1 cursor-pointer text-bodyBlue dark:bg-[##222222] dark:text-[#8B8B8B]'
-					style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
+					className='mr-1 cursor-pointer bg-[#D2D8E080] text-bodyBlue dark:bg-[#222222] dark:text-[#8B8B8B]'
+					style={{ borderRadius: '20px', padding: '4px 8px' }}
 					onClick={(e) => {
 						e.stopPropagation();
 						e.preventDefault();

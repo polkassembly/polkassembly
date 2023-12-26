@@ -4,7 +4,7 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
+import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 import { IVotesCount, LoadingStatusType } from 'src/types';
@@ -28,6 +28,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 import { ApiPromise } from '@polkadot/api';
+import Tooltip from '~src/basic-components/Tooltip';
 
 // const ZERO = new BN(0);
 const ZERO = '0';

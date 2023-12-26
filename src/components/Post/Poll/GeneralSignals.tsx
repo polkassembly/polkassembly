@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin, Tooltip } from 'antd';
+import { Spin } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import BlockCountdown from 'src/components/BlockCountdown';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -14,7 +14,6 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import styled from 'styled-components';
 import InfoIcon from '~assets/info.svg';
-
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
@@ -23,6 +22,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface IGeneralSignalsProps {
 	className?: string;

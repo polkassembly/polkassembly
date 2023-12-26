@@ -11,14 +11,12 @@ import Address from './Address';
 import dayjs from 'dayjs';
 import SocialLink from './SocialLinks';
 import { socialLinks } from '~src/components/UserProfile/Details';
-import { Tooltip, message } from 'antd';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ESocialType, ISocial } from '~src/auth/types';
 import ImageComponent from 'src/components/ImageComponent';
 import Link from 'next/link';
 import { network as AllNetworks } from '~src/global/networkConstants';
-
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
@@ -30,6 +28,8 @@ import { setReceiver } from '~src/redux/Tipping';
 import { getKiltDidSocialEndpoints } from '~src/util/kiltDid';
 import { useApiContext } from '~src/context';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Tooltip from '~src/basic-components/Tooltip';
+import { message } from 'antd';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,

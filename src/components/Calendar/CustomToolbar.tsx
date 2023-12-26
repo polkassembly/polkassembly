@@ -6,7 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { DownOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Space, Tooltip } from 'antd';
+import { Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
 import Image from 'next/image';
@@ -17,6 +17,7 @@ import calendar_today from '~assets/calendar_today.png';
 import NetworkSelect from './NetworkSelect';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Tooltip from '~src/basic-components/Tooltip';
 
 function CustomToolbar(props: any) {
 	const { resolvedTheme: theme } = useTheme();

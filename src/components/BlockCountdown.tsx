@@ -2,15 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Tooltip } from 'antd';
 import BN from 'bn.js';
 import React from 'react';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
 import blockToTime from 'src/util/blockToTime';
 import styled from 'styled-components';
-
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
 	className?: string;

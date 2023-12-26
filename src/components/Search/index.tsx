@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Checkbox, Input, List, Modal, Popover, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
+import { Checkbox, Input, List, Modal, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
 import _ from 'lodash';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -37,6 +37,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Popover from '~src/basic-components/Popover';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;

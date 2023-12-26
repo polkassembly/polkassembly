@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import StatusTag from './StatusTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IProfileVoteHistoryRespose } from 'pages/api/v1/votesHistory/getVotesByVoter';
-import { Empty, Popover, Spin, Checkbox, Pagination as AntdPagination } from 'antd';
+import { Empty, Spin, Checkbox, Pagination as AntdPagination } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -28,6 +28,7 @@ import { MinusCircleFilled } from '@ant-design/icons';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import Popover from '~src/basic-components/Popover';
 
 interface Props {
 	className?: string;

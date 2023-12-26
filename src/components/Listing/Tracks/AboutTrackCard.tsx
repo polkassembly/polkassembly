@@ -2,11 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Tooltip, Skeleton } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
-
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
@@ -26,6 +25,7 @@ import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/AiBot';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,

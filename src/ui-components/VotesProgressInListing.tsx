@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { formatBalance } from '@polkadot/util';
-import { Skeleton, Tooltip } from 'antd';
+import { Skeleton } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
@@ -17,6 +17,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const ZERO = new BN(0);
 

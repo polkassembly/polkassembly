@@ -60,14 +60,22 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 			]);
 		} else if (govType === EGovType.OPEN_GOV) {
 			if (
-				![post_topic.AUCTION_ADMIN, post_topic.FELLOWSHIP, post_topic.GOVERNANCE, post_topic.ROOT, post_topic.STAKING_ADMIN, post_topic.TREASURY, post_topic.WHITELIST].includes(
-					topicId
-				)
+				![
+					post_topic.AUCTION_ADMIN,
+					post_topic.FELLOWSHIP,
+					post_topic.GOVERNANCE,
+					post_topic.ROOT,
+					post_topic.STAKING_ADMIN,
+					post_topic.TREASURY,
+					post_topic.WHITELIST,
+					post_topic.GENERAL
+				].includes(topicId)
 			) {
-				onTopicSelection(8);
+				onTopicSelection(5);
 			}
 
 			setTopicOptions([
+				topicToOptionText('GENERAL'),
 				topicToOptionText('AUCTION_ADMIN'),
 				topicToOptionText('FELLOWSHIP'),
 				topicToOptionText('GOVERNANCE'),

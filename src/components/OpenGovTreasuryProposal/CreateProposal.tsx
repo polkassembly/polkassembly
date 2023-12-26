@@ -50,9 +50,6 @@ interface Props {
 	setPostId: (pre: number) => void;
 	availableBalance: BN;
 	discussionLink: string | null;
-	showMultisigInfoCard: boolean;
-	showIdentityInfoCardForBeneficiary: boolean;
-	showIdentityInfoCardForProposer: boolean;
 	isDiscussionLinked: boolean;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
@@ -78,10 +75,7 @@ const CreateProposal = ({
 	setPostId,
 	availableBalance,
 	discussionLink,
-	isDiscussionLinked,
-	showIdentityInfoCardForBeneficiary,
-	showIdentityInfoCardForProposer,
-	showMultisigInfoCard
+	isDiscussionLinked
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -281,9 +275,6 @@ const CreateProposal = ({
 				<MissingInfoAlert
 					theme={theme}
 					isDiscussionLinked={isDiscussionLinked}
-					showIdentityInfoCardForBeneficiary={showIdentityInfoCardForBeneficiary}
-					showIdentityInfoCardForProposer={showIdentityInfoCardForProposer}
-					showMultisigInfoCard={showMultisigInfoCard}
 				/>
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 					<div className='mt-4 flex flex-col gap-2'>

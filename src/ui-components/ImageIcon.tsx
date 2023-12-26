@@ -10,12 +10,13 @@ interface IImageIconProps {
 	imgClassName?: string;
 	alt: string;
 	imgWrapperClassName?: string;
+	className?: string;
 }
 
 const ImageIcon: FC<IImageIconProps> = (props) => {
-	const { src, imgClassName, alt, imgWrapperClassName } = props;
+	const { src, imgClassName, alt, imgWrapperClassName, className } = props;
 	return (
-		<div className={imgWrapperClassName}>
+		<div className={`${imgWrapperClassName} ${className}`}>
 			<img
 				src={src}
 				className={imgClassName}

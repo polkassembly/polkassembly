@@ -10,6 +10,7 @@ import { IUnlockTokenskDataStore } from './tokenUnlocksData/@types';
 import { ICurrentTokenPriceStore } from './currentTokenPrice/@types';
 import { ICurvesInformationStore } from './curvesInformation/@types';
 import { ITippingStore } from './Tipping/@types';
+import { ITreasuryProposalStore } from './treasuryProposal/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -31,5 +32,16 @@ const useCurvesInformationSelector = () => {
 const useTippingDataSelector = () => {
 	return useSelector<TAppState, ITippingStore>((state) => state.tipping);
 };
+const useTreasuryProposalSelector = () => {
+	return useSelector<TAppState, ITreasuryProposalStore>((state) => state.treasuryProposal);
+};
 
-export { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector, useCurrentTokenDataSelector, useCurvesInformationSelector, useTippingDataSelector };
+export {
+	useNetworkSelector,
+	useUserDetailsSelector,
+	useUserUnlockTokensDataSelector,
+	useCurrentTokenDataSelector,
+	useCurvesInformationSelector,
+	useTippingDataSelector,
+	useTreasuryProposalSelector
+};

@@ -452,7 +452,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
 			}
-			if (proposalType === ProposalType.OPEN_GOV && !!proposalStatus) {
+			if (proposalType === ProposalType.OPEN_GOV) {
 				strProposalType = 'referendums_v2';
 				if (proposalType == ProposalType.OPEN_GOV) {
 					if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {

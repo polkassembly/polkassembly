@@ -42,7 +42,8 @@ export const topicIdToNameMap = {
 	11: 'Whitelist',
 	12: 'Technical PIPs',
 	13: 'Upgrade PIPs',
-	14: 'Community PIPs'
+	14: 'Community PIPs',
+	15: 'General Admin'
 };
 
 export const isTopicIdValid = (topicId: any) => {

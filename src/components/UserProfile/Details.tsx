@@ -154,7 +154,7 @@ const Details: FC<IDetailsProps> = (props) => {
 			}
 			if (twitter && !isTwitterAvailable) {
 				social_links.push({
-					link: `https://twitter.com/${twitter.substring(1)}`,
+					link: `https://twitter.com/${twitter}`,
 					type: ESocialType.TWITTER
 				});
 			}

@@ -221,10 +221,12 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					</div>
 					<div className='slide-indicator flex h-1/4 w-full items-center justify-center gap-2 bg-white dark:bg-section-dark-overlay'>
 						{RHSCards.length > 1 && (
-							<NavigatePrevIcon
+							<span
+								className='mr-8 px-2'
 								onClick={prevSlide}
-								className='mr-8 fill-current text-black dark:text-white'
-							/>
+							>
+								<NavigatePrevIcon className='fill-current text-black dark:text-white' />
+							</span>
 						)}
 						{RHSCards.map((_, index) => (
 							<div
@@ -233,10 +235,12 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 							></div>
 						))}
 						{RHSCards.length > 1 && (
-							<NavigateNextIcon
+							<span
+								className='ml-8 px-2'
 								onClick={nextSlide}
-								className='ml-8 fill-current text-black dark:text-white'
-							/>
+							>
+								<NavigateNextIcon className='fill-current text-black dark:text-white' />
+							</span>
 						)}
 					</div>
 				</div>

@@ -290,9 +290,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<Tooltip
 									color='#363636'
 									title={
-										userVotesData.decision === 'ABSTAIN'
-											? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
-											: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`
+										<span className='break-all text-xs'>
+											{userVotesData.decision === 'ABSTAIN'
+												? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
+												: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`}
+										</span>
 									}
 								>
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />

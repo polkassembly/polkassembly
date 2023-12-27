@@ -24,7 +24,7 @@ const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isReactionOnReply, c
 	const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
 	return (
 		<div className={className}>
-			<div>
+			<div className='flex'>
 				{Object?.keys(comment_reactions || {}).map((reaction) => {
 					return (
 						<ReactionButton

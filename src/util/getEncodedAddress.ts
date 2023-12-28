@@ -22,7 +22,7 @@ export default function getEncodedAddress(address: any, network: string): string
 		return null;
 	}
 
-	const newAddress = address?.value || address
+	const newAddress = address?.value || address;
 
 	if (newAddress?.startsWith('0x')) return newAddress;
 

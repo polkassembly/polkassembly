@@ -3,15 +3,19 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { trackEvent } from 'analytics';
 import NavigateNextIcon from '~assets/icons/navigate-next.svg';
 import NavigatePrevIcon from '~assets/icons/navigate-prev.svg';
-import CloseCardIcon from '~assets/icons/rhs-card-icons/close-card.svg';
 import { usePostDataContext } from '~src/context';
 import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import { checkIsOnChainPost } from '~src/global/proposalType';
+import { ProposalType, checkIsOnChainPost } from '~src/global/proposalType';
+import { post_topic } from '~src/global/post_topics';
+import { useTheme } from 'next-themes';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import OpenGovTreasuryProposal, { CreateProposalRef } from '~src/components/OpenGovTreasuryProposal';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active />,
@@ -21,38 +25,45 @@ const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasur
 type card = { title: string; description: string; icon: string; tag: string; clickHandler?: (() => void) | ((prop: any) => void) };
 
 enum cardTags {
-	ADD_DEADLINE = 'add-deadline',
-	LINK_DISCUSSION = 'link-discussion',
-	DECISION_DEPOSIT = 'decision-deposit',
-	ADD_TAGS = 'add-tags'
+	ADD_DEADLINE = 'add',
+	LINK_DISCUSSION = 'link',
+	DECISION_DEPOSIT = 'pay',
+	ADD_TAGS = 'add',
+	CREATE_PROPOSAL = 'create'
 }
 
 type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
+	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
-	const [isReversed, setIsReversed] = useState(false);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
 	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [openLinkCta, setOpenLinkCta] = useState(false);
 
+	const createProposalRef = useRef<CreateProposalRef | null>(null);
+
 	const {
-		postData: { post_link, tags, postType }
+		postData: { post_link, tags, postType, topic, postIndex }
 	} = usePostDataContext();
 
 	const isOnchainPost = checkIsOnChainPost(postType);
 
+	const postLink = `https://${network}.polkassembly.io/post/${postIndex}`;
+
 	const nextSlide = () => {
 		setCurrentIndex((prevIndex) => {
-			const newIndex = prevIndex === RHSCards.length - 1 ? 0 : prevIndex + 1;
-			return isReversed && newIndex === 0 ? prevIndex : newIndex;
+			const newIndex = prevIndex === RHSCards.length - 1 ? prevIndex : prevIndex + 1;
+			return newIndex;
 		});
 	};
 
 	const prevSlide = () => {
 		setCurrentIndex((prevIndex) => {
-			const newIndex = prevIndex === 0 ? RHSCards.length - 1 : prevIndex - 1;
-			return !isReversed && newIndex === RHSCards.length - 1 ? prevIndex : newIndex;
+			const newIndex = prevIndex === 0 ? prevIndex : prevIndex - 1;
+			return newIndex;
 		});
 	};
 
@@ -61,7 +72,13 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
-					clickHandler: () => setOpenDecisionDeposit(true),
+					clickHandler: () => {
+						trackEvent('decision_deposit_card_clicked', 'clicked_decision_deposit_rhs_card', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
+						setOpenDecisionDeposit(true);
+					},
 					description: 'To be paid before completion of decision period; payable by anyone',
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.DECISION_DEPOSIT,
@@ -77,6 +94,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => {
+						trackEvent('add_tags_card_clicked', 'clicked_add_tags_rhs_card', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
 						toggleEdit && toggleEdit();
 					},
 					description: 'Please include relevant tags to enhance post discoverability.',
@@ -93,7 +114,21 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
-					clickHandler: () => (isOnchainPost ? setOpenLinkCta(true) : setLinkingAndEditingOpen(true)),
+					clickHandler: () => {
+						if (isOnchainPost) {
+							trackEvent('link_discussion_card_clicked', 'clicked_link_discussion_rhs_card', {
+								userId: currentUser?.id || '',
+								userName: currentUser?.username || ''
+							});
+							setOpenLinkCta(true);
+						} else {
+							trackEvent('link_onchain_post_card_clicked', 'clicked_link_onchain_post_rhs_card', {
+								userId: currentUser?.id || '',
+								userName: currentUser?.username || ''
+							});
+							setLinkingAndEditingOpen(true);
+						}
+					},
 					description: 'Please add contextual info for voters to make an informed decision',
 					icon: '/assets/icons/rhs-card-icons/Doc.png',
 					tag: cardTags.LINK_DISCUSSION,
@@ -104,29 +139,31 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			});
 		}
 
+		if (canEdit && postType === ProposalType.DISCUSSIONS && topic?.id === post_topic.TREASURY) {
+			setRHSCards((prevCards) => {
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => {
+						trackEvent('create_proposal_card_clicked', 'clicked_create_proposal_rhs_card', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						});
+						createProposalRef.current && createProposalRef.current.triggerCreateProposalClick();
+					},
+					description: 'Convert this discussion into a treasury proposal',
+					icon: '/assets/icons/rhs-card-icons/Doc.png',
+					tag: cardTags.CREATE_PROPOSAL,
+					title: 'Create Proposal'
+				});
+
+				return newCards;
+			});
+		}
+
 		return () => {
 			setRHSCards([]);
 		};
-	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost]);
-
-	useEffect(() => {
-		if (RHSCards.length <= 1) {
-			return;
-		}
-		if (currentIndex === RHSCards.length - 1 && !isReversed) {
-			setIsReversed(true);
-		} else if (currentIndex === 0 && isReversed) {
-			setIsReversed(false);
-		}
-	}, [currentIndex, isReversed, RHSCards]);
-
-	const handleTransitionButtonClick = () => {
-		if (!isReversed) {
-			nextSlide();
-		} else {
-			prevSlide();
-		}
-	};
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, postType, topic, currentUser]);
 
 	if (!RHSCards || RHSCards.length === 0) return null;
 
@@ -139,55 +176,72 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					setOpenModal={setOpenDecisionDeposit}
 				/>
 			)}
+			<OpenGovTreasuryProposal
+				theme={theme}
+				useDefaultButton={false}
+				ref={createProposalRef}
+				postLink={postLink}
+			/>
 			<PostEditOrLinkCTA
 				open={openLinkCta}
 				setOpen={setOpenLinkCta}
 				linkingAndEditingOpen={linkingAndEditingOpen}
 				setLinkingAndEditingOpen={setLinkingAndEditingOpen}
 			/>
-			<div className='card relative mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl bg-[#f5f6f8] font-poppins shadow-lg dark:bg-section-dark-background'>
+			<div className='card relative mx-auto mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl rounded-tr-none bg-[#f5f6f8] font-poppins shadow-lg dark:bg-section-dark-background'>
 				<div className='box relative h-full w-full'>
-					<div className='absolute right-0 top-0 aspect-square w-16 rounded-bl-[50%] bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
-						<div
-							className='navigation-btn absolute inset-2 z-10 flex items-center justify-center rounded-full bg-white shadow-md dark:bg-section-dark-overlay'
-							onClick={() => (RHSCards.length === 1 ? setRHSCards([]) : handleTransitionButtonClick())}
-						>
-							{RHSCards.length === 1 ? (
-								<CloseCardIcon className='fill-current text-black dark:text-white' />
-							) : !isReversed ? (
-								<NavigateNextIcon className='fill-current text-black dark:text-white' />
-							) : (
-								<NavigatePrevIcon className='fill-current text-black dark:text-white' />
-							)}
-						</div>
-					</div>
-					<div className='card-slide h-3/4'>
+					<div className='slide relative flex h-3/4'>
 						{RHSCards.map((card, index) => (
 							<div
-								className={`slide flex h-full w-full cursor-pointer items-center justify-center gap-2 bg-rhs-card-gradient p-3 ${index === currentIndex ? 'flex' : 'hidden'}`}
 								key={card.title}
-								onClick={card.clickHandler}
+								className={`${index === currentIndex ? 'flex' : 'hidden'} transition-all`}
 							>
-								<Image
-									src={card.icon}
-									alt={card.title}
-									width={60}
-									height={60}
-								/>
-								<div className='content mr-14 text-white'>
-									<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
-									<p className='mb-0 break-words text-xs leading-tight'>{card.description}</p>
+								<div className='absolute right-0 top-0 h-[45px] w-[90px] cursor-pointer rounded-bl-3xl bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
+									<div
+										className='navigation-btn absolute bottom-2 left-2 right-0 top-0 z-10 flex items-center justify-center  rounded-full bg-pink_primary p-1 text-base font-medium capitalize text-white shadow-md'
+										onClick={card.clickHandler}
+									>
+										{card.tag}
+									</div>
+								</div>
+								<div className='card-slide flex h-full w-full  items-center justify-center gap-2 bg-rhs-card-gradient p-3'>
+									<Image
+										src={card.icon}
+										alt={card.title}
+										width={60}
+										height={60}
+									/>
+									<div className='content mr-14 text-white'>
+										<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
+										<p className='mb-0 break-words text-xs leading-tight'>{card.description}</p>
+									</div>
 								</div>
 							</div>
 						))}
 					</div>
 					<div className='slide-indicator flex h-1/4 w-full items-center justify-center gap-2 bg-white dark:bg-section-dark-overlay'>
+						{RHSCards.length > 1 && (
+							<span
+								className='mr-8 px-2'
+								onClick={prevSlide}
+							>
+								<NavigatePrevIcon className='fill-current text-black dark:text-white' />
+							</span>
+						)}
 						{RHSCards.map((_, index) => (
 							<div
 								key={index}
 								className={`indicator h-2 w-2 rounded-full  ${index === currentIndex ? 'bg-rhs-indicator-gradient' : 'bg-[#D2D8E0]'}`}
 							></div>
 						))}
+						{RHSCards.length > 1 && (
+							<span
+								className='ml-8 px-2'
+								onClick={nextSlide}
+							>
+								<NavigateNextIcon className='fill-current text-black dark:text-white' />
+							</span>
+						)}
 					</div>
 				</div>
 			</div>

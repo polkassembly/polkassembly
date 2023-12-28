@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState, forwardRef, useImperativeHandle } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
@@ -51,6 +51,8 @@ interface Props {
 	className?: string;
 	theme?: string;
 	isUsedInTreasuryTrack?: boolean;
+	useDefaultButton?: boolean;
+	postLink?: string;
 }
 
 export interface ISteps {
@@ -140,7 +142,11 @@ export const INIT_BENEFICIARIES = [
 	}
 ];
 
-const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) => {
+export interface CreateProposalRef {
+	triggerCreateProposalClick: () => void;
+}
+
+const OpenGovTreasuryProposal = forwardRef<CreateProposalRef, any>(({ className, isUsedInTreasuryTrack, useDefaultButton = true, postLink }: Props, ref) => {
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
 	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
@@ -300,27 +306,35 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) =>
 		}
 	};
 
+	useImperativeHandle(ref, () => ({
+		triggerCreateProposalClick: () => {
+			handleClick();
+		}
+	}));
+
 	return (
 		<div className={className}>
-			<div
-				className={`${
-					isUsedInTreasuryTrack
-						? 'flex'
-						: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
-				}`}
-				onClick={handleClick}
-			>
-				{isUsedInTreasuryTrack ? (
-					<CreateProposalWhiteIcon className='mr-2' />
-				) : (
-					<CreatePropoosalIcon className={`${isUsedInTreasuryTrack ? 'scale-200' : 'ml-[-31px] cursor-pointer'}`} />
-				)}
-				{isUsedInTreasuryTrack ? (
-					<p className='m-0 p-0'>Create Proposal</p>
-				) : (
-					<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
-				)}
-			</div>
+			{useDefaultButton && (
+				<div
+					className={`${
+						isUsedInTreasuryTrack
+							? 'flex'
+							: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+					}`}
+					onClick={handleClick}
+				>
+					{isUsedInTreasuryTrack ? (
+						<CreateProposalWhiteIcon className='mr-2' />
+					) : (
+						<CreatePropoosalIcon className={`${isUsedInTreasuryTrack ? 'scale-200' : 'ml-[-31px] cursor-pointer'}`} />
+					)}
+					{isUsedInTreasuryTrack ? (
+						<p className='m-0 p-0'>Create Proposal</p>
+					) : (
+						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
+					)}
+				</div>
+			)}
 			{openAddressLinkedModal && (
 				<AddressConnectModal
 					open={openAddressLinkedModal}
@@ -439,9 +453,9 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) =>
 							title={title}
 							content={content}
 							tags={tags}
-							isDiscussionLinked={isDiscussionLinked}
+							isDiscussionLinked={postLink ? true : isDiscussionLinked}
 							setIsDiscussionLinked={setIsDiscussionLinked}
-							discussionLink={discussionLink}
+							discussionLink={postLink ? postLink : discussionLink}
 							setDiscussionLink={setDiscussionLink}
 							setTags={setTags}
 							setContent={setContent}
@@ -507,7 +521,10 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) =>
 			/>
 		</div>
 	);
-};
+});
+
+OpenGovTreasuryProposal.displayName = 'OpenGovTreasuryProposal';
+
 export default styled(OpenGovTreasuryProposal)`
 	.opengov-proposals .ant-modal-content {
 		padding: 16px 0px !important;

@@ -64,7 +64,6 @@ function App({ Component, pageProps }: AppProps) {
 	const store: any = useStore();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
-	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		router.isReady && setShowSplashScreen(false);
@@ -86,6 +85,7 @@ function App({ Component, pageProps }: AppProps) {
 	}, []);
 
 	const SplashLoader = () => {
+		const { resolvedTheme: theme } = useTheme();
 		const backgroundColor = theme === 'dark' ? '#000000' : '#F5F5F5';
 
 		return (
@@ -101,12 +101,21 @@ function App({ Component, pageProps }: AppProps) {
 		);
 	};
 
+	const GlobalStyleWithTheme = () => {
+		const { resolvedTheme: theme } = useTheme();
+		return (
+			<div>
+				<GlobalStyle theme={theme} />
+			</div>
+		);
+	};
+
 	return (
 		<PersistGate persistor={store.__persistor}>
 			{() => (
 				<ThemeProvider attribute='class'>
 					<ConfigProvider theme={antdTheme}>
-						<GlobalStyle theme={theme} />
+						<GlobalStyleWithTheme />
 						<ModalProvider>
 							<ErrorBoundary>
 								<ApiContextProvider network={network}>

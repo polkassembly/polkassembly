@@ -274,8 +274,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									/>
 								</div>
 							)}
-							<VoteContainer className='flex flex-col items-center px-0 text-xs text-sidebarBlue'>
-								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
+							<VoteContainer className='px-0 text-xs text-sidebarBlue'>
+								<div className='mb-2 flex w-min items-center px-2 text-xs font-semibold'>
 									{!isUsedInVotedModal ? (
 										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									) : (
@@ -332,7 +332,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 								</div>
 								{!isUsedInVotedModal ? (
-									<div className='max-h-[360px]'>
+									<div className='max-h-[360px] w-min'>
 										{votesRes &&
 											decision &&
 											!!votesRes[decision]?.votes?.length &&
@@ -355,7 +355,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
 									</div>
 								) : (
-									<div className='max-h-[360px]'>
+									<div className='max-h-[360px] w-min'>
 										{combinedVotes &&
 											!!combinedVotes.length &&
 											combinedVotes.map((voteData: any, index: number) => (

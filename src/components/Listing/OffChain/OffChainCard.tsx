@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
-import { Divider, Tooltip } from 'antd';
+import { Divider } from 'antd';
 import React, { FC, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { CommentsIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
@@ -13,6 +13,7 @@ import TopicTag from '~src/ui-components/TopicTag';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import TagsModal from '~src/ui-components/TagsModal';
+import Tooltip from '~src/basic-components/Tooltip';
 
 export interface IDiscussionProps {
 	created_at: Date;

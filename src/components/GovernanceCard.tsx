@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, Skeleton, Tooltip } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
@@ -42,6 +42,7 @@ import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/pars
 import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -289,9 +290,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<Tooltip
 									color='#363636'
 									title={
-										userVotesData.decision === 'ABSTAIN'
-											? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
-											: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`
+										<span className='break-all text-xs'>
+											{userVotesData.decision === 'ABSTAIN'
+												? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
+												: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`}
+										</span>
 									}
 								>
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />

@@ -19,13 +19,14 @@ import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
-import { Skeleton, Space, Tooltip } from 'antd';
+import { Skeleton, Space } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
 import { VerifiedIcon } from './CustomIcons';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -383,7 +384,7 @@ const Address = (props: Props) => {
 							)}
 						</div>
 					) : (
-						<div className='flex items-center gap-x-2 font-semibold text-bodyBlue'>
+						<div className={`flex items-center gap-x-2 font-semibold text-bodyBlue ${!addressSuffix && 'gap-0'}`}>
 							{!disableHeader && (
 								<div className='flex'>
 									<div className='flex items-center'>
@@ -395,9 +396,6 @@ const Address = (props: Props) => {
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
 												{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
-												{!extensionName && !!sub && isSubVisible && (
-													<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
-												)}
 											</div>
 										</Space>
 									</div>
@@ -406,7 +404,7 @@ const Address = (props: Props) => {
 							<div
 								className={`${!addressClassName ? 'text-sm' : addressClassName} ${
 									!disableAddressClick && 'cursor-pointer hover:underline'
-								} font-normal dark:text-blue-dark-medium `}
+								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'}`}
 								onClick={(e) => handleClick(e)}
 							>
 								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})

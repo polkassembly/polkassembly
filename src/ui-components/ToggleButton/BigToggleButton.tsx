@@ -28,7 +28,7 @@ const BigToggleButton = () => {
 						userName: currentUser?.username || ''
 					});
 				}}
-				className={classNames('flex w-[90%] cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-2 py-2 outline-none', {
+				className={classNames('mx-6 flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-[26px] border border-solid bg-transparent px-2 py-2 outline-none', {
 					'border-[#3B444F]': theme === 'dark',
 					'border-[#D2D8E0] dark:border-[#3B444F]': theme === 'light'
 				})}

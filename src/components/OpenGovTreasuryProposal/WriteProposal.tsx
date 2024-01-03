@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, DatePicker, Form, FormInstance, Input, Radio, Spin } from 'antd';
+import { Alert, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
 import { ISteps } from '.';
@@ -17,6 +17,7 @@ import ContentForm from '../ContentForm';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { dayjs } from 'dayjs-init';
 import type { DatePickerProps } from 'antd';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -291,18 +292,22 @@ const WriteProposal = ({
 								</label>
 								<Form.Item
 									name='title'
-									rules={[
-										{
-											message: 'Title should not exceed 150 characters.',
-											validator(rule, value, callback) {
-												if (callback && value?.length > 150) {
-													callback(rule?.message?.toString());
-												} else {
-													callback();
-												}
-											}
-										}
-									]}
+									rules={
+										isDiscussionLinked
+											? []
+											: [
+													{
+														message: 'Title should not exceed 150 characters.',
+														validator(rule, value, callback) {
+															if (callback && value?.length > 150) {
+																callback(rule?.message?.toString());
+															} else {
+																callback();
+															}
+														}
+													}
+											  ]
+									}
 								>
 									<Input
 										name='title'
@@ -369,15 +374,15 @@ const WriteProposal = ({
 						</div>
 					)}
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
-						<Button
+						<CustomButton
 							htmlType='submit'
-							className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
-								(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50'
-							}`}
+							text='Next'
+							variant='primary'
+							height={40}
+							width={155}
+							className={`${(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50'}`}
 							disabled={!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)}
-						>
-							Next
-						</Button>
+						/>
 					</div>
 				</Form>
 			</Spin>

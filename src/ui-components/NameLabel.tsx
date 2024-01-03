@@ -5,13 +5,13 @@
 import React, { useEffect, useState } from 'react';
 
 import Address from './Address';
-import { Tooltip } from 'antd';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ISocial } from '~src/auth/types';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import dynamic from 'next/dynamic';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false

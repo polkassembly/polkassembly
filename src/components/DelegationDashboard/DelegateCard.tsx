@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 // import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
@@ -24,6 +24,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
@@ -133,16 +134,16 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							})}
 					</div>
 				</div>
-				<Button
+				<CustomButton
 					disabled={disabled}
 					onClick={handleClick}
-					className={`ml-1 mt-[1px] flex h-[40px] items-center justify-around gap-2 rounded-md border-none bg-transparent px-4 py-1 text-pink_primary shadow-none hover:border-solid hover:border-pink_primary ${
-						disabled && 'opacity-50'
-					}`}
+					height={40}
+					variant='default'
+					className={`ml-1 mt-[1px] gap-2 border-none px-2 ${disabled && 'opacity-50'}`}
 				>
 					<DelegatesProfileIcon />
 					<span className='text-sm font-medium'>Delegate</span>
-				</Button>
+				</CustomButton>
 			</div>
 
 			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>

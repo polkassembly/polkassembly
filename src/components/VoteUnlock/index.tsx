@@ -34,6 +34,7 @@ import { setUserUnlockTokensData } from '~src/redux/tokenUnlocksData';
 import { useDispatch } from 'react-redux';
 import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 interface Props {
 	className?: string;
 	addresses: string[];
@@ -368,15 +369,18 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 							isTruncateUsername={false}
 							displayInline
 						/>
-						<Button
-							className='mr-[27px] flex h-[26px] w-[70px] items-center justify-center rounded-[4px] border-none bg-pink_primary text-xs text-white'
+						<CustomButton
+							variant='primary'
+							className='mr-[27px] border-none'
+							height={27}
+							width={70}
+							fontSize='xs'
 							onClick={() => {
 								setOpenChangeAddressModal(true);
 								setOpen(false);
 							}}
-						>
-							Change
-						</Button>
+							text='Change'
+						/>
 					</div>
 
 					<LockVotesList
@@ -385,16 +389,18 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					/>
 					{![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network) && (
 						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 dark:border-[#3B444F] dark:border-separatorDark'>
-							<Button
+							<CustomButton
+								variant='primary'
+								icon={<WhiteUnlockIcon />}
+								className={`{ totalUnlockableBalance.eq(ZERO_BN) &&
+									'opacity-50' } mt-4
+								w-[100%]`}
+								height={40}
+								fontSize='xs'
 								onClick={() => handleUnlock()}
 								disabled={totalUnlockableBalance.eq(ZERO_BN)}
-								className={`mt-4 flex h-[40px] w-[100%] items-center justify-center rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${
-									totalUnlockableBalance.eq(ZERO_BN) && 'opacity-50'
-								}`}
-							>
-								<WhiteUnlockIcon className='mr-1' />
-								Unlock Tokens
-							</Button>
+								text='Unlock Tokens'
+							/>
 						</div>
 					)}
 				</Spin>

@@ -5,7 +5,7 @@ import React, { useEffect, useReducer, useState } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
-import { Button, Form, Modal, Steps } from 'antd';
+import { Form, Modal, Steps } from 'antd';
 import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -32,6 +32,7 @@ import {
 	setShowIdentityInfoCardForProposer,
 	setShowMultisigInfoCard
 } from '~src/redux/treasuryProposal';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
 	ssr: false
@@ -360,21 +361,22 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) =>
 						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
 					</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
-						<Button
+						<CustomButton
 							onClick={handleClose}
-							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
-						>
-							Yes, Exit
-						</Button>
-						<Button
+							buttonSize='sm'
+							text='Yes, Exit'
+							variant='default'
+						/>
+						<CustomButton
 							onClick={() => {
 								setCloseConfirm(false);
 								setOpenModal(true);
 							}}
-							className={'h-[40px] w-[200px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary'}
-						>
-							No, Continue Editing
-						</Button>
+							height={40}
+							width={200}
+							text='No, Continue Editing'
+							variant='primary'
+						/>
 					</div>
 				</div>
 			</Modal>

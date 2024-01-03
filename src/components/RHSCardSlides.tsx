@@ -24,6 +24,7 @@ enum cardTags {
 	ADD_DEADLINE = 'add-deadline',
 	LINK_DISCUSSION = 'link-discussion',
 	DECISION_DEPOSIT = 'decision-deposit',
+	ADD_DESCRIPTION = 'add-description',
 	ADD_TAGS = 'add-tags'
 }
 
@@ -37,7 +38,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	const [openLinkCta, setOpenLinkCta] = useState(false);
 
 	const {
-		postData: { post_link, tags, postType }
+		postData: { post_link, tags, postType, content }
 	} = usePostDataContext();
 
 	const isOnchainPost = checkIsOnChainPost(postType);
@@ -92,13 +93,24 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		if (!post_link && canEdit) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
-				newCards.push({
-					clickHandler: () => (isOnchainPost ? setOpenLinkCta(true) : setLinkingAndEditingOpen(true)),
-					description: 'Please add contextual info for voters to make an informed decision',
-					icon: '/assets/icons/rhs-card-icons/Doc.png',
-					tag: cardTags.LINK_DISCUSSION,
-					title: isOnchainPost ? 'Link Discussion' : 'Link Onchain Post'
-				});
+				if (isOnchainPost) {
+					newCards.push({
+						clickHandler: () => setOpenLinkCta(true),
+						description: 'Please add contextual info for voters to make an informed decision',
+						icon: '/assets/icons/rhs-card-icons/Doc.png',
+						tag: cardTags.LINK_DISCUSSION,
+						title: 'Link Discussion'
+					});
+					if (!content?.length) {
+						newCards.push({
+							clickHandler: () => setLinkingAndEditingOpen(true),
+							description: 'Please add contextual info for voters to make an informed decision',
+							icon: '/assets/icons/rhs-card-icons/Doc.png',
+							tag: cardTags.ADD_DESCRIPTION,
+							title: 'Add Description'
+						});
+					}
+				}
 
 				return newCards;
 			});
@@ -107,7 +119,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		return () => {
 			setRHSCards([]);
 		};
-	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost]);
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, content]);
 
 	useEffect(() => {
 		if (RHSCards.length <= 1) {

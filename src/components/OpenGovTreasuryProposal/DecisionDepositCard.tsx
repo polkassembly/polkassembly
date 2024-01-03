@@ -4,7 +4,7 @@
 
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Spin } from 'antd';
+import { Form, Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { poppins } from 'pages/_app';
@@ -29,6 +29,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -431,7 +432,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 							description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.'
 							type='info'
 							showIcon
-							className='changeColor text-blue-light-high dark:text-blue-dark-high'
+							className='changeColor dark:text-blue-dark-high'
 						/>
 					)}
 

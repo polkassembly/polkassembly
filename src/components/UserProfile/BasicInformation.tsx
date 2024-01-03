@@ -3,11 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Alert, Divider, Input, Skeleton, Tag } from 'antd';
+import { Divider, Input, Skeleton, Tag } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ProfileDetails } from '~src/auth/types';
+import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 
@@ -246,7 +247,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			</div>
 			{errorCheck && (
 				<Alert
-					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					className='mt-4 h-[40px] rounded-[4px] px-5 py-2 text-sm text-bodyBlue'
 					message={<span className='dark:text-blue-dark-high'>{errorCheck}</span>}
 					type='info'
 					showIcon

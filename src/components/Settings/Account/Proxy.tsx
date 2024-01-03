@@ -4,7 +4,7 @@
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import React, { FC, useState } from 'react';
-import { Alert, Divider, Form, Modal } from 'antd';
+import { Divider, Form, Modal } from 'antd';
 import { useDispatch } from 'react-redux';
 import { handleTokenChange } from 'src/services/auth.service';
 import { NotificationStatus, Wallet } from 'src/types';
@@ -21,6 +21,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	open?: boolean;
@@ -231,7 +232,6 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 							<p>Please login to continue.</p>
 						</span>
 					}
-					className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
 				/>
 			) : (
 				<>
@@ -267,7 +267,6 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 										</span>
 									)
 								}
-								className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
 							/>
 						)}
 
@@ -279,7 +278,6 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 										<p>Please select a wallet to continue.</p>
 									</span>
 								}
-								className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
 							/>
 						) : (
 							<>

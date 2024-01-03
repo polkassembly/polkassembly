@@ -2,14 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Anchor, Empty } from 'antd';
+import { Anchor, Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
-
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
 import RefendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
@@ -42,6 +40,7 @@ import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Tooltip from '~src/basic-components/Tooltip';
+import Alert from '~src/basic-components/Alert';
 
 const { Link: AnchorLink } = Anchor;
 

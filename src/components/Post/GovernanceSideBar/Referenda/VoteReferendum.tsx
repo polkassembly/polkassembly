@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -53,6 +53,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -767,7 +768,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 												type='info'
 												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 												showIcon
-												className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+												className='mb-4 rounded-[4px]'
 											/>
 										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
@@ -782,7 +783,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -823,7 +823,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
 

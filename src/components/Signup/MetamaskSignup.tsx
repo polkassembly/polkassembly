@@ -5,7 +5,7 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Divider } from 'antd';
+import { Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
 import { handleTokenChange } from 'src/services/auth.service';
@@ -27,6 +27,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useDispatch } from 'react-redux';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -273,7 +274,6 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 									description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
 									type='info'
 									showIcon
-									className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								/>
 							</div>
 						)}

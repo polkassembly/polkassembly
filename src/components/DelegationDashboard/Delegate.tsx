@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Input, Skeleton } from 'antd';
+import { Input, Skeleton } from 'antd';
 
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
@@ -20,6 +20,7 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
@@ -149,7 +150,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						(!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
 					{addressAlert && (
 						<Alert
-							className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='mb-4 mt-4'
 							showIcon
 							type='info'
 							message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Alert, Button, Modal, Spin } from 'antd';
+import { Button, Modal, Spin } from 'antd';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
@@ -29,6 +29,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -292,7 +293,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 		<GovSidebarCard>
 			<h3 className='dashboard-heading mb-6 dark:text-white'>Cast your Vote!</h3>
 			<Alert
-				className='mb-6 dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+				className='mb-6'
 				type='warning'
 				message={
 					<div className='flex items-center gap-x-2 dark:text-blue-dark-high'>

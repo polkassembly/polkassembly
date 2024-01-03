@@ -3,11 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Alert, Button, Divider, Input, Skeleton, Tag } from 'antd';
+import { Alert, Divider, Input, Skeleton, Tag } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ProfileDetails } from '~src/auth/types';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
@@ -207,14 +208,14 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 									input: 'dark:placeholder:text-borderColorDark dark:text-white'
 								}}
 							/>
-							<Button
-								className='h-10 rounded border border-solid border-pink_primary bg-transparent text-sm font-medium text-pink_primary'
-								icon={<PlusOutlined />}
+							<CustomButton
+								variant='default'
 								onClick={() => addNewBadge()}
+								className='font-medium'
+								icon={<PlusOutlined />}
 								disabled={loading}
-							>
-								Add Badge
-							</Button>
+								text='Add Badge'
+							/>
 						</div>
 						{profile && profile?.badges && Array.isArray(profile?.badges) && profile?.badges.length >= 0 ? (
 							<div>

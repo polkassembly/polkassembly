@@ -8,13 +8,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import DownArrowIcon from '~assets/icons/down-icon.svg';
 import styled from 'styled-components';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useTreasuryProposalSelector } from '~src/redux/selectors';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 
 interface Props {
-	showMultisigInfoCard: boolean;
-	showIdentityInfoCardForBeneficiary: boolean;
-	showIdentityInfoCardForProposer: boolean;
 	isDiscussionLinked: boolean;
 	className?: string;
 	theme: string;
@@ -59,8 +56,9 @@ const IdentityList = ({ aleredySet, title }: { aleredySet: boolean; title: strin
 		</li>
 	);
 };
-const MissingInfoAlert = ({ className, showIdentityInfoCardForProposer, showIdentityInfoCardForBeneficiary, showMultisigInfoCard, isDiscussionLinked, theme }: Props) => {
+const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 	const { network } = useNetworkSelector();
+	const { showIdentityInfoCardForBeneficiary, showIdentityInfoCardForProposer, showMultisigInfoCard } = useTreasuryProposalSelector();
 	const [showWarnings, setShowWarning] = useState<boolean>(true);
 	const [showCompletedActions, setShowCompletedActions] = useState<boolean>(true);
 	const leftAction =
@@ -110,21 +108,6 @@ const MissingInfoAlert = ({ className, showIdentityInfoCardForProposer, showIden
 											</div>
 										</li>
 									)}
-									{/* {showMultisigInfoCard && (
-								<li>
-									Deadline not added.
-									<span className='text-pink_primary'>
-										<Image
-											width={14}
-											height={14}
-											src='/assets/icons/add-deadline.svg'
-											alt='polkasafe'
-											className='mx-1'
-										/>
-										Add Deadline
-									</span>
-								</li>
-							)} */}
 
 									{onchainIdentitySupportedNetwork.includes(network) && showIdentityInfoCardForProposer && (
 										<IdentityList

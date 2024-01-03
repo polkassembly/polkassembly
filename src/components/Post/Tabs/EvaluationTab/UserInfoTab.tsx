@@ -48,7 +48,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 								/>
 							)}
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
-								{isProposerTab ? 'Proposer' : 'Beneficiary(ies)'}
+								{isProposerTab ? 'Proposer' : postAddr.length > 1 ? 'Beneficiaries' : 'Beneficiary'}
 							</h3>
 						</div>
 					}

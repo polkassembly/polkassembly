@@ -3,20 +3,25 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { EGovType } from 'src/types';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 import { usePostDataContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
+import TopicsRadio from '../CreatePost/TopicsRadio';
 import ContentForm from '../../ContentForm';
 import AddTags from '~src/ui-components/AddTags';
 import styled from 'styled-components';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -28,11 +33,13 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
-
 	const {
-		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags },
+		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags, topic: currentTopic },
 		setPostData
 	} = usePostDataContext();
+
+	const [topicId, setTopicId] = useState<number>(currentTopic?.id || 5);
+	const { network } = useNetworkSelector();
 
 	const [tags, setTags] = useState<string[]>(oldTags);
 
@@ -48,7 +55,8 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 			proposalType,
 			tags,
 			timeline,
-			title
+			title,
+			topicId
 		});
 
 		if (editError || !data) {
@@ -119,6 +127,37 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 					/>
 				</Form.Item>
 				<ContentForm />
+				{currentTopic && currentTopic.id && (
+					<Form.Item
+						className='mt-8'
+						name='topic'
+						rules={[
+							{
+								message: "Please select a 'topic'",
+								validator(rule, value = currentTopic.id, callback) {
+									if (callback && !value) {
+										callback(rule?.message?.toString());
+									} else {
+										callback();
+									}
+								}
+							}
+						]}
+					>
+						<>
+							<label className='mb-1 text-sm font-normal tracking-wide text-sidebarBlue dark:text-white'>
+								Select Topic <span className='ml-1 text-red-500'>*</span>
+							</label>
+							<TopicsRadio
+								govType={isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1}
+								onTopicSelection={(id) => {
+									setTopicId(id);
+								}}
+								topicId={topicId}
+							/>
+						</>
+					</Form.Item>
+				)}
 				<h5 className='text-color mt-8 text-sm font-normal'>Tags</h5>
 				<AddTags
 					tags={tags}
@@ -128,21 +167,24 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 				<Form.Item>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center justify-end'>
-							<Button
+							<CustomButton
+								variant='default'
 								htmlType='button'
 								loading={loading}
 								onClick={toggleEdit}
-								className='mr-2 flex items-center dark:border-pink_primary dark:bg-transparent dark:text-pink_primary'
+								className='mr-2'
+								buttonSize='xs'
 							>
 								<CloseOutlined /> Cancel
-							</Button>
-							<Button
+							</CustomButton>
+							<CustomButton
+								variant='primary'
 								htmlType='submit'
 								loading={loading}
-								className='flex items-center border-white bg-pink_primary text-white hover:bg-pink_secondary dark:border-[#3B444F]'
+								buttonSize='xs'
 							>
 								<CheckOutlined /> Submit
-							</Button>
+							</CustomButton>
 						</div>
 					</div>
 				</Form.Item>

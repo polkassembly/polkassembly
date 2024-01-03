@@ -6,20 +6,28 @@ import BeneficiaryCard from './AddressDetailsCard';
 import { usePostDataContext } from '~src/context';
 
 interface Props {
-	isUsedInEvaluationTab?: boolean;
+	isProfileView?: boolean;
+	address?: string;
 }
 
-const EvalutionSummary = ({ isUsedInEvaluationTab }: Props) => {
+const EvalutionSummary = ({ isProfileView, address }: Props) => {
 	const {
 		postData: { proposer, beneficiaries }
 	} = usePostDataContext();
 
-	return (
+	return isProfileView && address ? (
+		<div>
+			<BeneficiaryCard
+				key={address}
+				address={address}
+			/>
+		</div>
+	) : (
 		<div className='mt-4 pb-4 text-bodyBlue dark:text-blue-dark-high'>
-			{!isUsedInEvaluationTab && <label className='tracking[0.01em] text-lg font-medium'>Evaluation Summary</label>}
+			<label className='tracking[0.01em] text-lg font-medium'>Evaluation Summary</label>
 			{beneficiaries?.length === 1 || !beneficiaries?.length ? (
 				<div className='mt-4 flex items-center gap-2.5'>
-					{!isUsedInEvaluationTab && <span className='text-sm tracking-[0.01em]'>{beneficiaries?.length === 1 ? 'Beneficiary is' : 'Proposer is'}</span>}
+					{<span className='text-sm tracking-[0.01em]'>{beneficiaries?.length === 1 ? 'Beneficiary is' : 'Proposer is'}</span>}
 					<BeneficiaryCard
 						key={beneficiaries?.length === 1 ? beneficiaries?.[0]?.address : proposer}
 						address={beneficiaries?.length === 1 ? beneficiaries?.[0]?.address : proposer}

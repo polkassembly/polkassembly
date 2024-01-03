@@ -24,10 +24,11 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 import { getProposalTypeFromSinglePostLink } from '~src/global/proposalType';
 import { useTheme } from 'next-themes';
-import { Checkbox, Divider, Popover } from 'antd';
+import { Checkbox, Divider } from 'antd';
 import styled from 'styled-components';
 import { poppins } from 'pages/_app';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
+import Popover from '~src/basic-components/Popover';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;

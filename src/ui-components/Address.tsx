@@ -19,13 +19,14 @@ import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
-import { Skeleton, Space, Tooltip } from 'antd';
+import { Skeleton, Space } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
 import { VerifiedIcon } from './CustomIcons';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -383,47 +384,35 @@ const Address = (props: Props) => {
 							)}
 						</div>
 					) : (
-						<div className='flex items-center gap-x-2 font-semibold text-bodyBlue'>
+						<div className={`flex items-center gap-x-2 font-semibold text-bodyBlue ${!addressSuffix && 'gap-0'}`}>
 							{!disableHeader && (
-								<div>
+								<div className='flex'>
 									<div className='flex items-center'>
-										{/* <div>
-											{!!kiltName ||
-												(!!identity && !!mainDisplay && (
-													<IdentityBadge
-														identity={identity}
-														flags={flags}
-													/>
-												))}
-										</div> */}
-
 										<Space className={'header'}>
 											<div
 												onClick={(e) => handleClick(e)}
-												className={`flex flex-col font-semibold text-bodyBlue  ${
+												className={`flex font-semibold text-bodyBlue  ${
 													!disableAddressClick && 'cursor-pointer hover:underline'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
 												{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
-												{!extensionName && !!sub && isSubVisible && (
-													<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{sub}</span>
-												)}
 											</div>
 										</Space>
 									</div>
 								</div>
 							)}
 							<div
-								className={`${!addressClassName ? 'text-base' : addressClassName} ${
+								className={`${!addressClassName ? 'text-sm' : addressClassName} ${
 									!disableAddressClick && 'cursor-pointer hover:underline'
-								} font-normal dark:text-blue-dark-medium `}
+								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'}`}
 								onClick={(e) => handleClick(e)}
 							>
-								{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
 							</div>
 							<div>{!!kiltName || (!!identity && !!mainDisplay && <VerifiedIcon className='scale-125' />)}</div>
 						</div>
 					)}
+
 					{addressOtherTextType ? (
 						<p className={'m-0 ml-auto flex items-center gap-x-1 text-[10px] leading-[15px] text-lightBlue dark:text-blue-dark-medium'}>
 							<span

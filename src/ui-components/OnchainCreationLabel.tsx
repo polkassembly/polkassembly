@@ -7,12 +7,12 @@ import React, { useEffect, useState } from 'react';
 import Address from './Address';
 import Link from 'next/link';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
-import { Tooltip } from 'antd';
 import { ISocial } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import styled from 'styled-components';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Tooltip from '~src/basic-components/Tooltip';
 //import TopicTag from './TopicTag';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {

@@ -4,7 +4,7 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
+import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 import { IVotesCount, LoadingStatusType } from 'src/types';
@@ -28,6 +28,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 import { ApiPromise } from '@polkadot/api';
+import Tooltip from '~src/basic-components/Tooltip';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -273,8 +274,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									/>
 								</div>
 							)}
-							<VoteContainer className='flex flex-col items-center px-0 text-xs text-sidebarBlue'>
-								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
+							<VoteContainer className='px-0 text-xs text-sidebarBlue'>
+								<div className='mb-2 flex w-min items-center px-2 text-xs font-semibold'>
 									{!isUsedInVotedModal ? (
 										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									) : (
@@ -331,7 +332,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 								</div>
 								{!isUsedInVotedModal ? (
-									<div className='max-h-[360px]'>
+									<div className='max-h-[360px] w-min'>
 										{votesRes &&
 											decision &&
 											!!votesRes[decision]?.votes?.length &&
@@ -354,7 +355,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
 									</div>
 								) : (
-									<div className='max-h-[360px]'>
+									<div className='max-h-[360px] w-min'>
 										{combinedVotes &&
 											!!combinedVotes.length &&
 											combinedVotes.map((voteData: any, index: number) => (

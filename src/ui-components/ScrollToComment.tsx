@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ScrollDownIcon from '~assets/icons/keyboard-double-arrow-down.svg';
-import { Tooltip } from 'antd';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const ScrollToCommentsButton = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -44,7 +44,7 @@ const ScrollToCommentsButton = () => {
 	}, [toggleVisibility]);
 
 	return (
-		<Tooltip title='scroll to comments'>
+		<Tooltip title='Scroll to comments'>
 			<div
 				className={`fixed bottom-8 right-24 z-10 cursor-pointer ${isVisible ? '' : 'hidden'}`}
 				onClick={scrollToComments}

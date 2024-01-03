@@ -21,6 +21,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 		postData: { proposer, beneficiaries }
 	} = usePostDataContext();
 	let postAddr: any = [];
+
 	postAddr = isProposerTab ? [proposer] : beneficiaries?.map((beneficiary) => beneficiary.address);
 
 	return (

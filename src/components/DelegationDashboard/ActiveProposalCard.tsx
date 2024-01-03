@@ -188,7 +188,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 					<CustomButton
 						className={`mt-2 gap-2 ${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'}`}
 						disabled={status.includes(ETrackDelegationStatus.Delegated)}
-						variant='primary'
+						variant='default'
 					>
 						<VoteIcon />
 						<span className='text-sm font-medium text-pink_primary'>Cast Vote</span>

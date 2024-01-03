@@ -123,7 +123,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 							/>
 
 							<CustomButton
-								variant='default'
+								variant='primary'
 								className={`ml-1 mr-1 justify-around gap-2 px-4 py-1 ${disabled && 'opacity-50'}`}
 								height={40}
 								onClick={handleClick}

@@ -345,7 +345,7 @@ const QuickView = ({
 					<div className='flex w-full items-center'>
 						<CustomButton
 							onClick={handleTipping}
-							variant='default'
+							variant='primary'
 							text='Tip'
 							height={32}
 							className={`w-full p-5 ${(!id || !enableTipping) && 'cursor-not-allowed opacity-50'}`}

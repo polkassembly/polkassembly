@@ -67,10 +67,6 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 				return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
 			}
 			if (checkingVerified) return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
-
-			if (emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT) {
-				return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
-			}
 		}
 		if (checkingVerified) {
 			return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });

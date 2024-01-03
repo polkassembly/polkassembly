@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Button, Tag } from 'antd';
+import { Tag } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -104,12 +105,14 @@ const AddressDropdown = ({
 		addressItems.push({
 			key: 1,
 			label: (
-				<Button
-					onClick={() => setSwitchModalOpen(true)}
-					className={`mt-2 flex h-10 w-full items-center justify-center rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${poppins.variable} ${poppins.className}`}
-				>
-					Switch Wallet
-				</Button>
+				<div className='mt-2 flex items-center justify-center'>
+					<CustomButton
+						variant='primary'
+						onClick={() => setSwitchModalOpen(true)}
+						text='Switch Wallet'
+						className={`w-full ${poppins.variable} ${poppins.className}`}
+					/>
+				</div>
 			)
 		});
 	return (

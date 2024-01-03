@@ -12,6 +12,7 @@ import { userUnlockTokensDataStore } from './tokenUnlocksData';
 import { currentTokenPriceStore } from './currentTokenPrice';
 import { curvesInformationStore } from './curvesInformation';
 import { tippingStore } from './Tipping';
+import { treasuryProposalStore } from './treasuryProposal';
 
 export const makeStore = () => {
 	const isServer = typeof window === 'undefined';
@@ -22,7 +23,8 @@ export const makeStore = () => {
 		[userUnlockTokensDataStore.name]: userUnlockTokensDataStore.reducer,
 		[currentTokenPriceStore.name]: currentTokenPriceStore.reducer,
 		[curvesInformationStore.name]: curvesInformationStore.reducer,
-		[tippingStore.name]: tippingStore.reducer
+		[tippingStore.name]: tippingStore.reducer,
+		[treasuryProposalStore.name]: treasuryProposalStore.reducer
 	});
 
 	if (isServer) {

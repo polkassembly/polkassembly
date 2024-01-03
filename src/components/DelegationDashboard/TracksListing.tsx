@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Radio, Table, Button } from 'antd';
+import { Radio, Table } from 'antd';
+
 import styled from 'styled-components';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext } from '~src/context';
@@ -16,6 +17,7 @@ import { IDelegation } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -193,20 +195,19 @@ const DashboardTrackListing = ({ className }: Props) => {
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegated Tracks</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 							You can see a track here once it has been delegated
-							<Button
+							<CustomButton
+								className={`ml-[16px] border-none dark:bg-transparent max-md:mt-[10px] ${!api || (!apiReady && 'opacity-50')}`}
 								disabled={!api || !apiReady}
+								variant='default'
 								onClick={() => {
 									setStatusValue(ETrackDelegationStatus.UNDELEGATED);
 									filterByStatus(ETrackDelegationStatus.UNDELEGATED);
 									setShowTable(!!statusCounts[ETrackDelegationStatus.UNDELEGATED]);
 								}}
-								className={`ml-1 flex cursor-pointer items-center justify-center border-none text-sm font-normal tracking-wide text-pink_primary shadow-none dark:bg-transparent max-md:mt-2 ${
-									!api || (!apiReady && 'opacity-50')
-								}`}
 							>
-								<DelegatedProfileIcon className='mr-2' />
-								Delegate
-							</Button>
+								<DelegatedProfileIcon className='mr-[7px]' />
+								<span className='mt-[-1px]'>Delegate</span>
+							</CustomButton>
 						</div>
 					</div>
 				</div>

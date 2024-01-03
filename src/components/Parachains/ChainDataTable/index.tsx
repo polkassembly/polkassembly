@@ -1,13 +1,11 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Tooltip } from 'antd';
 import { Table as AntdTable } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import Image from 'next/image';
 import React, { Key, useEffect, useState } from 'react';
 import { LoadingLatestActivity } from 'src/ui-components/LatestActivityStates';
-
 import announcedIcon from '~assets/parachains/announced.png';
 import auctionIcon from '~assets/parachains/auction.png';
 import liveIcon from '~assets/parachains/chain-link.png';
@@ -16,10 +14,10 @@ import testingIcon from '~assets/parachains/testing.png';
 import w3fBlackLogo from '~assets/parachains/w3f-black.png';
 import w3fGreenLogo from '~assets/parachains/w3f-green.png';
 import w3fRedLogo from '~assets/parachains/w3f-red.png';
-
 import Cards from './Cards';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
 	chain: string;

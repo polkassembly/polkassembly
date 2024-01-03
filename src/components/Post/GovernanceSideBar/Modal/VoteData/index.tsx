@@ -44,8 +44,8 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
-					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
+				<div className='text-[18px] dark:bg-section-dark-overlay'>
+					<h3 className='align-center mb-0 flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 						<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Voting Data</span>
 					</h3>

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Divider } from 'antd';
+import { Divider } from 'antd';
 
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
@@ -25,6 +25,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	proposal: IPostListing;
@@ -171,21 +172,20 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							)}
 						</div>
 					</div>
-					<Button
-						className={`mt-2 flex justify-center gap-2 border-none bg-white shadow-none dark:bg-section-dark-overlay ${
-							status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'
-						}`}
+					<CustomButton
+						className={`mt-2 gap-2 ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
 						disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
+						variant='primary'
 					>
 						<VoteIcon />
 						<span className='text-sm font-medium text-pink_primary'>Cast Vote</span>
-					</Button>
+					</CustomButton>
 				</div>
 				{(votingData && !status.includes(ETrackDelegationStatus.UNDELEGATED) && isAye) || isNay || isAbstain ? (
 					<div
-						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'border-[#2ED47A] bg-[#F0FCF6]'} ${isNay && 'border-[#FF3C5F] bg-[#fff1f4]'} ${
-							isAbstain && 'border-[#ABABAC] bg-[#f9f9f9]'
-						}`}
+						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'border-aye_green bg-[#F0FCF6] dark:bg-[#0F1B15]'} ${
+							isNay && 'border-nay_red bg-[#fff1f4] dark:bg-[#1E1013]'
+						} ${isAbstain && 'border-[#ABABAC] bg-[#f9f9f9] dark:border-abstainBlueColor dark:bg-alertColorDark'}`}
 					>
 						{status.includes(ETrackDelegationStatus.DELEGATED) && (
 							<Address
@@ -195,27 +195,27 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 								isTruncateUsername={false}
 							/>
 						)}
-						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-bodyBlue'>Voted:</div>
+						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>Voted:</div>
 						{!isAbstain ? (
 							<div className='flex gap-2'>
 								<span className='-ml-1 flex items-center justify-center'>
 									{isAye && <AyeIcon />} {isNay && <NayIcon />}
 								</span>
-								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-bodyBlue'>
+								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>
 									Balance:<span className='font-medium text-bodyBlue dark:text-white'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
 								</div>
-								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-bodyBlue'>
+								<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>
 									Conviction:{' '}
 									<span className='font-medium text-bodyBlue dark:text-white'>{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
 								</div>
 							</div>
 						) : (
-							<div className='ml-1 flex items-center text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Abstain</div>
+							<div className='ml-1 flex items-center text-xs font-medium text-abstainBlueColor dark:text-abstainDarkBlueColor'>Abstain</div>
 						)}
 					</div>
 				) : (
 					votingData && (
-						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-[#F89118] bg-[#fff7ef] px-6 py-2'>
+						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-warningAlertBorderDark bg-[#fff7ef] px-6 py-2 dark:bg-[#1D160E]'>
 							{status.includes(ETrackDelegationStatus.DELEGATED) && (
 								<Address
 									address={String(delegatedTo)}

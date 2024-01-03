@@ -3,13 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, DeleteOutlined, LinkOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Select, Spin } from 'antd';
+import { Form, Input, Modal, Select, Spin } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import { ILinkPostRemoveResponse } from 'pages/api/v1/auth/actions/linkPostRemove';
 import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { isOffChainProposalTypeValid } from '~src/api-utils';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
@@ -199,43 +200,44 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 		const footer: JSX.Element[] = [];
 		if (postData.post_link) {
 			footer.push(
-				<Button
+				<CustomButton
+					variant='default'
 					icon={<DeleteOutlined />}
 					htmlType='reset'
 					key='reset'
 					disabled={loading}
 					onClick={handleRemove}
 					className='mr-auto'
-				>
-					Remove
-				</Button>
+					text='Remove'
+					buttonSize='xs'
+				/>
 			);
 		} else if (data) {
 			footer.push(
-				<Button
+				<CustomButton
+					variant='primary'
 					icon={<CheckOutlined />}
 					htmlType='submit'
 					key='submit'
-					type='primary'
 					disabled={loading}
 					onClick={handleConfirm}
 					className='bg-green_primary'
-				>
-					Confirm
-				</Button>
+					text='Confirm'
+					buttonSize='xs'
+				/>
 			);
 		} else {
 			footer.push(
-				<Button
+				<CustomButton
+					variant='primary'
 					icon={<LinkOutlined />}
 					htmlType='submit'
 					key='submit'
-					type='primary'
 					disabled={loading}
 					onClick={handleSubmit}
-				>
-					Link
-				</Button>
+					text='Link'
+					buttonSize='xs'
+				/>
 			);
 		}
 		setFooter(<div className='flex items-center justify-end'>{footer}</div>);
@@ -256,7 +258,8 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 	}, [postData]);
 	return (
 		<>
-			<Button
+			<CustomButton
+				variant='primary'
 				htmlType='button'
 				className={className}
 				onClick={() => {
@@ -273,7 +276,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				}}
 			>
 				<LinkOutlined /> Link Post
-			</Button>
+			</CustomButton>
 
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'

@@ -7,7 +7,6 @@ import { ColumnsType } from 'antd/es/table';
 import Address from '~src/ui-components/Address';
 import { ITrackDataType } from './TracksListing';
 import { ITrackRowData } from './DashboardTrack';
-import { Button } from 'antd';
 import UndelegatedProfileIcon from '~assets/icons/undelegate-profile.svg';
 import { ETrackDelegationStatus } from '~src/types';
 import dayjs from 'dayjs';
@@ -30,6 +29,7 @@ import {
 } from '~src/ui-components/CustomIcons';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export const handleTracksIcon = (index: string, size: number) => {
 	switch (index) {
@@ -458,13 +458,15 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 				key: 1,
 				render: (action) => (
 					<div className='flex items-start justify-center'>
-						<Button
+						<CustomButton
 							onClick={() => setOpen(true)}
-							className='flex h-[40px] items-center justify-center gap-2 border-[1px] border-solid border-pink_primary px-2 text-sm font-normal text-bodyBlue dark:bg-[#33071E] dark:text-white max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
+							height={40}
+							variant='default'
+							className='gap-2 px-2 max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
 						>
 							<UndelegatedProfileIcon />
 							<span className='text-sm font-medium tracking-wide text-pink_primary '>{action}</span>
-						</Button>
+						</CustomButton>
 					</div>
 				),
 				title: 'Action',

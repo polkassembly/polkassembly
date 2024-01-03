@@ -4,7 +4,7 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -27,7 +27,6 @@ import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNet
 import dayjs from 'dayjs';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
-// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import executeTx from '~src/util/executeTx';
 import VoteInitiatedModal from '../Referenda/Modal/VoteSuccessModal';
@@ -35,6 +34,7 @@ import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 const ZERO_BN = new BN(0);
@@ -312,12 +312,14 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 	const VoteUI = (
 		<>
 			<div className={className}>
-				<Button
-					className='mb-3 flex w-[100%] items-center justify-center rounded-lg border-pink_primary bg-pink_primary p-7 text-lg text-white hover:border-pink_primary hover:bg-pink_secondary'
+				<CustomButton
+					className='mb-3 w-[100%] p-7'
+					fontSize='lg'
+					variant='primary'
 					onClick={() => setShowModal(true)}
 				>
 					{lastVote === null || lastVote === undefined ? 'Cast Vote Now' : 'Cast Vote Again'}
-				</Button>
+				</CustomButton>
 				<Modal
 					open={showModal}
 					onCancel={() => setShowModal(false)}
@@ -505,19 +507,22 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										)}
 
 										<div className='ml-[-24px] mr-[-24px] mt-[-3px] flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] pt-5 dark:border-[#3B444F]'>
-											<Button
-												className='mr-[15px] h-[40px] w-[134px] rounded-[4px] border-[#E5007A] bg-[white] font-semibold text-[#E5007A]'
+											<CustomButton
 												onClick={() => setShowModal(false)}
-											>
-												Cancel
-											</Button>
-											<Button
-												className={`mr-[24px] h-[40px] w-[134px] rounded-[4px] border-0 bg-[#E5007A] font-semibold text-[white] ${(!wallet || !lockedBalance) && 'opacity-50'}`}
+												className='mr-[15px] font-semibold'
+												buttonSize='xs'
+												variant='default'
+												text='Cancel'
+											/>
+											<CustomButton
+												onClick={() => setShowModal(false)}
 												htmlType='submit'
 												disabled={!wallet || !lockedBalance}
-											>
-												Confirm
-											</Button>
+												className='mr-[24px] font-semibold'
+												buttonSize='xs'
+												variant='primary'
+												text='Confirm'
+											/>
 										</div>
 									</Form>
 								)}

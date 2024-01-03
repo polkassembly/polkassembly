@@ -5,7 +5,7 @@
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Button, Divider } from 'antd';
+import { Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
@@ -25,6 +25,7 @@ import getNetwork from '../../util/getNetwork';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const NETWORK = getNetwork();
 
@@ -297,12 +298,13 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 							To see how we use your personal data please see our <Link href='/privacy'>privacy notice</Link>.
 						</div>
 						<div className={'mainButtonContainer'}>
-							<Button
+							<CustomButton
+								variant='primary'
+								text='Sign-up'
+								buttonSize='sm'
 								disabled={loading}
 								onClick={handleSignup}
-							>
-								Sign-up
-							</Button>
+							/>
 						</div>
 					</>
 				)
@@ -310,21 +312,23 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 			<div className='my-2'>{error && <FilteredError text={error} />}</div>
 			<Divider plain>Or</Divider>
 			<div className={'mainButtonContainer'}>
-				<Button
+				<CustomButton
+					variant='default'
+					className='m-0 border-none p-0'
+					text='Sign-up with username'
 					disabled={loading}
 					onClick={() => setMethod('web2')}
-				>
-					Sign-up with username
-				</Button>
+				/>
 			</div>
 			<Divider plain>Or</Divider>
 			<div className={'mainButtonContainer'}>
-				<Button
+				<CustomButton
+					variant='default'
+					className='m-0 border-none p-0'
+					text='Sign-up with polkadot.js'
 					disabled={loading}
 					onClick={() => setMethod('polkadotjs')}
-				>
-					Sign-up with polkadot.js
-				</Button>
+				/>
 			</div>
 		</div>
 	);

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import { LoadingOutlined, InfoCircleOutlined, DislikeFilled } from '@ant-design/icons';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ import styled from 'styled-components';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesCount } from '~src/types';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -206,12 +207,13 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								style={{ borderTop: '1.5px solid #E1E6EB' }}
 							>
 								<div className='mt-5 flex items-center justify-end px-6'>
-									<Button
-										className='flex h-[40px] w-[134px] flex-shrink-0 flex-col items-center justify-center gap-10 rounded-[4px] border-none bg-pink_primary px-4 py-1 text-sm font-medium text-white'
+									<CustomButton
+										text='Got it!'
+										variant='primary'
+										buttonSize='xs'
 										onClick={() => setVoteCalculationModalOpen(false)}
-									>
-										Got It
-									</Button>
+										className='gap-10 px-4 py-1'
+									/>
 								</div>
 							</div>
 						]}

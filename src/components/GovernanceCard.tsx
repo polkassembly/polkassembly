@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, Progress, Skeleton, Tooltip } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
@@ -35,12 +35,14 @@ import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import Markdown from '~src/ui-components/Markdown';
 import TagsModal from '~src/ui-components/TagsModal';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import VoteIcon from '~assets/icons/vote-icon.svg';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
@@ -288,9 +290,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<Tooltip
 									color='#363636'
 									title={
-										userVotesData.decision === 'ABSTAIN'
-											? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
-											: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`
+										<span className='break-all text-xs'>
+											{userVotesData.decision === 'ABSTAIN'
+												? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
+												: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`}
+										</span>
 									}
 								>
 									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
@@ -447,7 +451,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										color='#575255'
 									>
 										<div className='mt-2 min-w-[30px]'>
-											<Progress
+											<ProgressBar
 												strokeWidth={5}
 												percent={decision.periodPercent || 0}
 												strokeColor='#407AFC'
@@ -590,7 +594,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
 									/>
 									<div className='mt-2 min-w-[30px]'>
-										<Progress
+										<ProgressBar
 											percent={decision.periodPercent || 0}
 											strokeColor='#407AFC'
 											trailColor='#D4E0FC'

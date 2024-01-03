@@ -9,7 +9,7 @@ import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
-import { Button, Skeleton, Table } from 'antd';
+import { Skeleton, Table } from 'antd';
 import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import { ETrackDelegationStatus, IDelegation } from '~src/types';
@@ -22,6 +22,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 interface Props {
 	className?: string;
 	posts: any[];
@@ -223,13 +224,14 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 							<div className='mt-5 text-center text-bodyBlue dark:text-blue-dark-high'>
 								<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 									Voting power for this track has not been delegated yet
-									<Button
+									<CustomButton
+										className='border-none dark:bg-transparent max-md:mt-[10px]'
 										onClick={() => setOpenDelegateModal(true)}
-										className='ml-1 flex items-center justify-center border-none text-sm font-normal tracking-wide text-pink_primary shadow-none dark:bg-transparent max-md:mt-3'
+										variant='default'
 									>
 										<DelegatedProfileIcon className='mr-2' />
 										<span className='mt-[1px]'>Delegate</span>
-									</Button>
+									</CustomButton>
 								</div>
 							</div>
 						</div>

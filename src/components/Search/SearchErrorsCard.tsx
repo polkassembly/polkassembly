@@ -1,14 +1,14 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Divider } from 'antd';
+import { Divider } from 'antd';
 import React from 'react';
 import SuperSearchIcon from '~assets/icons/super-search.svg';
-// import EmptyResultsIcon from '~assets/search/empty-search.svg';
 import { EFilterBy } from '.';
 import { useRouter } from 'next/router';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
@@ -54,18 +54,19 @@ const SearchErrorsCard = ({
 				</div>
 			</div>
 			{!isSuperSearch && (
-				<Button
+				<CustomButton
+					variant='primary'
 					onClick={() => {
 						setFilterBy(EFilterBy.Referenda);
 						setPostsPage(1);
 						setPeoplePage({ page: 1, totalPeople: 0 });
 						setIsSuperSearch(true);
 					}}
-					className='mt-6 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:border-none'
+					className='mt-6 gap-1.5'
 				>
 					<SuperSearchIcon />
 					<span>Use Super Search</span>
-				</Button>
+				</CustomButton>
 			)}
 			<div className='my-4 w-[50%] max-md:w-[80%]'>
 				<Divider className='border-[1px] text-[#90A0B7]'>
@@ -89,18 +90,19 @@ const SearchErrorsCard = ({
 	) : !isSuperSearch ? (
 		<div className='mb-2 flex flex-col items-center justify-center'>
 			<label className='text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>Didn’t find what you were looking for?</label>
-			<Button
+			<CustomButton
+				variant='primary'
 				onClick={() => {
 					setFilterBy(EFilterBy.Referenda);
 					setPostsPage(1);
 					setPeoplePage({ page: 1, totalPeople: 0 });
 					setIsSuperSearch(true);
 				}}
-				className='mt-4 flex items-center justify-center gap-1.5 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:border-none'
+				className='mt-4 gap-1.5'
 			>
 				<SuperSearchIcon />
 				<span>Use Super Search</span>
-			</Button>
+			</CustomButton>
 		</div>
 	) : null;
 };

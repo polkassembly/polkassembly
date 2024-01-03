@@ -119,25 +119,6 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		};
 	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, content]);
 
-	useEffect(() => {
-		if (RHSCards.length <= 1) {
-			return;
-		}
-		if (currentIndex === RHSCards.length - 1 && !isReversed) {
-			setIsReversed(true);
-		} else if (currentIndex === 0 && isReversed) {
-			setIsReversed(false);
-		}
-	}, [currentIndex, isReversed, RHSCards]);
-
-	const handleTransitionButtonClick = () => {
-		if (!isReversed) {
-			nextSlide();
-		} else {
-			prevSlide();
-		}
-	};
-
 	if (!RHSCards || RHSCards.length === 0) return null;
 
 	return (

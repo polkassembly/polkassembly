@@ -48,9 +48,9 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 			<CustomButton
 				onClick={share}
 				variant='default'
-				className='m-0 border-none px-1 py-2'
+				className='m-0 border-none px-1 py-2 shadow-none disabled:bg-transparent disabled:opacity-[0.5] dark:text-blue-dark-helper '
 			>
-				<ShareAltOutlined /> {' Share'}
+				<ShareAltOutlined /> Share
 			</CustomButton>
 		</>
 	);

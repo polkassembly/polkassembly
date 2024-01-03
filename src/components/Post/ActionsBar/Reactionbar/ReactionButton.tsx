@@ -4,14 +4,14 @@
 
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
-import { Button, Tooltip } from 'antd';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC } from 'react';
-
 import { MessageType } from '~src/auth/types';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Tooltip from '~src/basic-components/Tooltip';
 
 export interface IReactionButtonProps {
 	className?: string;
@@ -147,16 +147,18 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const button = (
 		<span className={className}>
-			<Button
-				disabled={reactionsDisabled}
-				className={'border-none px-2 shadow-none disabled:bg-transparent disabled:opacity-[0.5] dark:bg-transparent'}
+			<CustomButton
+				variant='default'
 				onClick={handleReact}
+				className='m-0 mr-3 border-none p-0 disabled:bg-transparent disabled:opacity-[0.5]'
+				disabled={reactionsDisabled}
+				height={40}
 			>
 				<span className='flex items-center text-pink_primary dark:text-blue-dark-helper'>
 					{getReactionIcon(reaction, reacted)}
 					<span className='ml-2 text-xs'>{reactions?.[reaction as IReaction].count}</span>
 				</span>
-			</Button>
+			</CustomButton>
 		</span>
 	);
 

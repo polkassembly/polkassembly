@@ -2,10 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Button, Divider, Image, Tag } from 'antd';
+import { Divider, Image, Tag } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
 import Modal from '~src/ui-components/Modal';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ImportPrimaryNetworkSettingModal = ({
 	open,
@@ -27,26 +28,24 @@ const ImportPrimaryNetworkSettingModal = ({
 			onCancel={onCancel}
 			onConfirm={onConfirm}
 			footer={[
-				<Button
+				<CustomButton
 					key='1'
 					onClick={onCancel}
-					className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
-				>
-					Cancel
-				</Button>,
-				<Button
+					variant='default'
+					text='Cancel'
+				/>,
+				<CustomButton
 					onClick={onConfirm}
 					key='2'
-					className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
-				>
-					Confirm
-				</Button>
+					variant='primary'
+					text='Confirm'
+				/>
 			]}
 		>
 			<div className='mb-6 flex flex-wrap items-center gap-[10px]'>
 				<Tag
 					className={
-						'max-w-[200px] cursor-pointer items-center rounded-[34px] border border-solid border-[#E5007A] bg-[#FEF2F8] px-[12px] py-[8px] pb-[5px] text-navBlue hover:bg-[#FEF2F8] dark:bg-[#33071E] dark:bg-[#33071E]'
+						'max-w-[200px] cursor-pointer items-center rounded-[34px] border border-solid border-[#E5007A] bg-[#FEF2F8] px-[12px] py-[8px] pb-[5px] text-navBlue hover:bg-[#FEF2F8] dark:bg-[#33071E]'
 					}
 				>
 					<Image

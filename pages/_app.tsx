@@ -26,6 +26,7 @@ import { useStore } from 'react-redux';
 import { chainProperties } from '~src/global/networkConstants';
 import { ThemeProvider } from 'next-themes';
 import { useTheme } from 'next-themes';
+import { createGlobalStyle } from 'styled-components';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -45,6 +46,18 @@ const workSans = Work_Sans({
 	display: 'swap',
 	subsets: ['latin']
 });
+
+const GlobalStyle = createGlobalStyle`
+  ::-webkit-scrollbar-track {
+    background: ${(props) => (props.theme === 'dark' ? '#1D1D1D' : '#f1f1f1')};
+  }
+  ::-webkit-scrollbar-thumb {
+    background: ${(props) => (props.theme === 'dark' ? '#3B444F' : '#888')};
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: ${(props) => (props.theme === 'dark' ? '#555' : '#555')};
+  }
+`;
 
 function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
@@ -88,11 +101,21 @@ function App({ Component, pageProps }: AppProps) {
 		);
 	};
 
+	const GlobalStyleWithTheme = () => {
+		const { resolvedTheme: theme } = useTheme();
+		return (
+			<div>
+				<GlobalStyle theme={theme} />
+			</div>
+		);
+	};
+
 	return (
 		<PersistGate persistor={store.__persistor}>
 			{() => (
 				<ThemeProvider attribute='class'>
 					<ConfigProvider theme={antdTheme}>
+						<GlobalStyleWithTheme />
 						<ModalProvider>
 							<ErrorBoundary>
 								<ApiContextProvider network={network}>

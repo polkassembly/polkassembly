@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Button, Radio, Table } from 'antd';
+import { Radio, Table } from 'antd';
 
 import styled from 'styled-components';
 
@@ -18,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import { IDelegation } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
@@ -262,19 +263,18 @@ const DashboardTrackListing = ({ className }: Props) => {
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegated Tracks</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 							You can see a track here once it has been delegated
-							<Button
+							<CustomButton
+								className={`ml-[16px] border-none dark:bg-transparent max-md:mt-[10px] ${!api || (!apiReady && 'opacity-50')}`}
 								disabled={!api || !apiReady}
+								variant='default'
 								onClick={() => {
 									setStatusValue(ETrackDelegationStatus.Undelegated);
 									filterByStatus(ETrackDelegationStatus.Undelegated);
 								}}
-								className={`ml-[17px] flex cursor-pointer items-center justify-center border-none text-sm font-normal  tracking-wide text-[#E5007A] shadow-none dark:bg-transparent max-md:mt-[10px] ${
-									!api || (!apiReady && 'opacity-50')
-								}`}
 							>
 								<DelegatedProfileIcon className='mr-[7px]' />
 								<span className='mt-[-1px]'>Delegate</span>
-							</Button>
+							</CustomButton>
 						</div>
 					</div>
 				</div>

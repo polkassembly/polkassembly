@@ -118,6 +118,7 @@ const ProfileData: FC<IProfileData> = (props) => {
 							address={address}
 							disableIdenticon={true}
 							isProfileView
+							isTruncateUsername={false}
 						/>
 						<span
 							className='-ml-2 -mt-0.5 flex cursor-pointer items-center'
@@ -153,7 +154,10 @@ const ProfileData: FC<IProfileData> = (props) => {
 						</div>
 					)}
 					<div className='mt-3'>
-						<EvalutionSummary isUsedInEvaluationTab={true} />
+						<EvalutionSummary
+							isProfileView
+							address={address}
+						/>
 					</div>
 					{profileData?.profile?.badges && profileData?.profile?.badges?.length > 0 && (
 						<div className='mt-3'>

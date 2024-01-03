@@ -2,9 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Divider, Form, Input } from 'antd';
+import { Divider, Form, Input } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AuthForm from '~src/ui-components/AuthForm';
 import FilteredError from '~src/ui-components/FilteredError';
 
@@ -65,26 +66,25 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 				</Form.Item>
 
 				<div className='flex flex-col items-center justify-center gap-y-4'>
-					<Button
-						loading={loading}
+					<CustomButton
+						text='Login'
 						htmlType='submit'
-						size='large'
-						className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
-					>
-						Login
-					</Button>
+						loading={loading}
+						width={224}
+						height={40}
+						variant='primary'
+					/>
 
 					<div className='w-[260px]'>
 						<Divider className='border-[0.5px] border-[#90A0B7]'>
-							<Button
+							<CustomButton
 								onClick={onBack}
-								disabled={loading}
+								text='Go back'
 								htmlType='button'
-								size='small'
-								className='rounded-md border-none text-pink_primary outline-none'
-							>
-								Go back
-							</Button>
+								disabled={loading}
+								variant='default'
+								height={40}
+							/>
 						</Divider>
 					</div>
 				</div>

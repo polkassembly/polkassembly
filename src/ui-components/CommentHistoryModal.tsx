@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Modal, Timeline, TimelineItemProps, Tooltip } from 'antd';
+import { Modal, Timeline, TimelineItemProps } from 'antd';
 import { ESentiment, ICommentHistory } from '~src/types';
 import styled from 'styled-components';
 import NameLabel from './NameLabel';
@@ -19,6 +19,7 @@ import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
+import Tooltip from '~src/basic-components/Tooltip';
 interface Props {
 	className?: string;
 	open: boolean;

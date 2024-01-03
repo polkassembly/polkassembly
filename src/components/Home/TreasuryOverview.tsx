@@ -5,7 +5,7 @@
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
-import { Divider, Progress } from 'antd';
+import { Divider } from 'antd';
 import BN from 'bn.js';
 import { dayjs } from 'dayjs-init';
 import React, { FC, useEffect, useState } from 'react';
@@ -18,20 +18,13 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
-// import Available from '~assets/icons/available.svg';
-// import CurrentPrice from '~assets/icons/currentprice.svg';
-// import NextBurn from '~assets/icons/nextburn.svg';
-// import SpendPeriod from '~assets/icons/spendperiod.svg';
-// import AvailableDark from '~assets/icons/AvailableDark.svg';
-// import CurrentPriceDark from '~assets/icons/CurrentPriceDark.svg';
-// import NextBurnDark from '~assets/icons/NextBurnDark.svg';
-// import SpendPeriodDark from '~assets/icons/SpendPeriodDark.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -619,7 +612,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											<div className='flex flex-col justify-center gap-y-3 font-medium'>
 												<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
 												<span className='flex items-center'>
-													<Progress
+													<ProgressBar
 														className='m-0 flex items-center p-0'
 														percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
 														trailColor={trailColor}

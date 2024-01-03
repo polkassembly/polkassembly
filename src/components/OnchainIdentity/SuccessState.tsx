@@ -118,7 +118,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 					}}
 					variant='primary'
 					height={40}
-					className='w-full'
+					className='mt-4 w-full'
 				/>
 			</>
 		</Modal>

@@ -20,6 +20,7 @@ interface IReq {
 	account: string;
 	network: string;
 	token: any;
+	emailNotReceive?: boolean;
 }
 
 export interface IVerificationResponse {
@@ -39,7 +40,7 @@ if (apiKey) {
 const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
-	const { account, type, checkingVerified } = req.body as unknown as IReq;
+	const { account, type, checkingVerified, emailNotReceive } = req.body as unknown as IReq;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
@@ -66,13 +67,13 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			if (emailData?.verified) {
 				return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
 			}
-			if (checkingVerified) return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 
-			if (emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT) {
+			if (emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT && !emailNotReceive) {
 				return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
 			}
 		}
-		if (checkingVerified) {
+
+		if (checkingVerified && !emailNotReceive) {
 			return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 		} else {
 			const message = {

@@ -34,17 +34,32 @@ interface ISocialLayout {
 	description: string;
 	value: string | null;
 	onVerify: () => void;
+	onEmailNotReceive?: () => void;
 	verified?: boolean;
 	status?: VerificationStatus;
 	loading: boolean;
 	fieldName?: ESocials;
+	onDisableResendEmail?: () => void;
+	disableResendEmail?: boolean;
 }
 interface IJudgementResponse {
 	message?: string;
 	hash?: string;
 }
 
-const SocialsLayout = ({ title, description, value, onVerify, verified, status, loading, fieldName }: ISocialLayout) => {
+const SocialsLayout = ({
+	title,
+	description,
+	value,
+	onVerify,
+	verified,
+	status,
+	loading,
+	fieldName,
+	onEmailNotReceive,
+	onDisableResendEmail,
+	disableResendEmail
+}: ISocialLayout) => {
 	return (
 		<Spin
 			spinning={loading}
@@ -66,7 +81,12 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 							</span>
 						) : (
 							<CustomButton
-								onClick={onVerify}
+								onClick={() => {
+									onVerify();
+									if (fieldName === ESocials.EMAIL) {
+										onDisableResendEmail?.();
+									}
+								}}
 								className={`text-xs ${
 									[VerificationStatus.VERFICATION_EMAIL_SENT, VerificationStatus.PLEASE_VERIFY_TWITTER]?.includes(status as VerificationStatus) ? 'w-[120px]' : 'w-[68px]'
 								}`}
@@ -81,6 +101,19 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 						)}
 					</div>
 					{!verified && <span className='text-xs'>{description}</span>}
+					{fieldName === ESocials.EMAIL && !verified && status === VerificationStatus.VERFICATION_EMAIL_SENT && (
+						<CustomButton
+							variant='link'
+							onClick={() => {
+								onEmailNotReceive?.();
+								onDisableResendEmail?.();
+							}}
+							className={`flex cursor-pointer justify-start border-none px-0 pb-4 text-xs text-pink_primary ${disableResendEmail && 'cursor-progress opacity-50'}`}
+							disabled={disableResendEmail}
+						>
+							Didn&apos;t receive email
+						</CustomButton>
+					)}
 				</div>
 			</div>
 		</Spin>
@@ -95,9 +128,16 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 	const [fieldLoading, setFieldLoading] = useState<{ twitter: boolean; email: boolean }>({ email: false, twitter: false });
 	const [twitterVerificationStart, setTwitterVerificationStart] = useState<boolean>(false);
 	const router = useRouter();
+	const [disableResendEmail, setDisableResendEmail] = useState<boolean>(true);
 
 	const items: TimelineItemProps[] = [];
 
+	const onDisableResendEmail = () => {
+		setDisableResendEmail(true);
+		setTimeout(() => {
+			setDisableResendEmail(false);
+		}, 30000);
+	};
 	const handleTwitterVerificationClick = async () => {
 		if (twitterVerificationStart) {
 			await handleVerify(ESocials.TWITTER, true);
@@ -117,9 +157,13 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 					verified={email?.verified}
 					status={status?.email as VerificationStatus}
 					loading={fieldLoading.email}
+					fieldName={ESocials.EMAIL}
+					onEmailNotReceive={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT ? true : false, false, true)}
+					disableResendEmail={disableResendEmail}
+					onDisableResendEmail={onDisableResendEmail}
 				/>
 			),
-			dot: <EmailIcon className={` ${email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />,
+			dot: <EmailIcon className={`${email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />,
 			key: 1
 		});
 	}
@@ -174,7 +218,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 		}
 	};
 
-	const handleVerify = async (fieldName: ESocials, checkingVerified?: boolean) => {
+	const handleVerify = async (fieldName: ESocials, checkingVerified?: boolean, initiallyLoadingData?: boolean, emailNotReceive?: boolean) => {
 		const account = fieldName === ESocials.TWITTER ? socials?.[fieldName]?.value?.split('@')?.[1] || socials?.[fieldName]?.value : socials?.[fieldName]?.value;
 
 		if (!checkingVerified) {
@@ -186,6 +230,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 		const { data, error } = await nextApiClientFetch<IVerificationResponse>('api/v1/verification', {
 			account,
 			checkingVerified: Boolean(checkingVerified),
+			emailNotReceive: emailNotReceive || false,
 			type: fieldName
 		});
 		if (error) {
@@ -199,7 +244,11 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 				setFieldLoading({ ...fieldLoading, [fieldName]: false });
 			} else if (checkingVerified && data?.message === VerificationStatus.VERFICATION_EMAIL_SENT) {
 				setFieldLoading({ ...fieldLoading, [fieldName]: false });
+
 				if (ESocials.EMAIL === fieldName) {
+					if (initiallyLoadingData) {
+						setDisableResendEmail(false);
+					}
 					handleSetStates(fieldName, false, VerificationStatus.VERFICATION_EMAIL_SENT);
 				} else if (ESocials.TWITTER === fieldName) {
 					handleSetStates(fieldName, false, VerificationStatus.PLEASE_VERIFY_TWITTER);
@@ -268,10 +317,10 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 
 	useEffect(() => {
 		(async () => {
-			await handleVerify(ESocials.TWITTER, true);
+			await handleVerify(ESocials.TWITTER, true, true);
 		})();
 		(async () => {
-			await handleVerify(ESocials.EMAIL, true);
+			await handleVerify(ESocials.EMAIL, true, true);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);

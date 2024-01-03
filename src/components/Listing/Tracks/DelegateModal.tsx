@@ -327,7 +327,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			</Checkbox.Group>
 		</div>
 	);
-	console.log(trackArr, trackNum);
 	return (
 		<>
 			{!open && !setOpen && (

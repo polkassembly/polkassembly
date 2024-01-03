@@ -44,7 +44,7 @@ const ScrollToCommentsButton = () => {
 	}, [toggleVisibility]);
 
 	return (
-		<Tooltip title='scroll to comments'>
+		<Tooltip title='Scroll to comments'>
 			<div
 				className={`fixed bottom-8 right-24 z-10 cursor-pointer ${isVisible ? '' : 'hidden'}`}
 				onClick={scrollToComments}

@@ -8,14 +8,17 @@ interface ICustomButton extends ButtonProps {
 	text?: string | ReactNode;
 	fontSize?: string;
 	className?: string;
-	variant: 'primary' | 'default' | 'dashed' | 'link' | 'text';
+	variant?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
 	width?: number;
 	height?: number;
 	style?: any;
 	buttonSize?: string;
+	customColor?: string;
+	customBorderColor?: string;
+	customTextColor?: string;
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
-	const { buttonSize, style, text, className, variant, fontSize } = props;
+	const { buttonSize, style, text, className, variant, fontSize, customColor, customTextColor, customBorderColor } = props;
 	let { height, width } = props;
 	if (buttonSize && buttonSize === 'xs') {
 		width = 134;
@@ -27,10 +30,14 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 	return (
 		<ANTDButton
 			{...props}
-			className={`${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 rounded-md ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium ${
-				variant === 'primary'
-					? 'border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:text-white'
-					: 'border border-pink_primary bg-transparent text-pink_primary'
+			className={`${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 rounded-md ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium  ${
+				!customColor
+					? `${
+							variant === 'primary'
+								? 'border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:text-white'
+								: 'border border-pink_primary bg-transparent text-pink_primary'
+					  }`
+					: `border-${customBorderColor} text-${customTextColor} bg-${customColor}`
 			} ${className} `}
 			style={{ height: `${height}px`, width: `${width}px`, ...style }}
 		>

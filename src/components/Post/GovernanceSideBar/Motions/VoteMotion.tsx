@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Button, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
@@ -307,7 +307,12 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 					</div>
 				}
 			/>
-			<Button onClick={() => setForceVote(true)}>Let me try still.</Button>
+			<CustomButton
+				variant='default'
+				onClick={() => setForceVote(true)}
+				text='Let me try still.'
+				className='border-none'
+			/>
 		</GovSidebarCard>
 	);
 

@@ -12,7 +12,6 @@ import { ApiContext } from 'src/context/ApiContext';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
@@ -26,7 +25,6 @@ import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
-import usePolkasafe from '~src/hooks/usePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -42,9 +40,9 @@ interface Props {
 	setOpen: (pre: boolean) => void;
 	conviction: number;
 	balance: BN;
-	isMultisig?: boolean;
+	onConfirm?: () => void;
 }
-const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, isMultisig }: Props) => {
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, onConfirm }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const router = useRouter();
@@ -58,9 +56,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-
-	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
-	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
 
 	useEffect(() => {
 		if (!network) return;
@@ -104,6 +99,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			status: NotificationStatus.SUCCESS
 		});
 		setLoading(false);
+		onConfirm?.();
 		setOpenSuccessPopup(true);
 		setOpen(false);
 	};
@@ -161,35 +157,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		setLoading(true);
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
-
-		if (isMultisig) {
-			const unDelegationByMultisig = async (tx: any) => {
-				try {
-					setLoading(true);
-					await connect();
-					const { error } = await client.customTransactionAsMulti(defaultAddress, tx);
-					if (error) {
-						throw new Error(error.error);
-					}
-					queueNotification({
-						header: 'Success!',
-						message: 'Undelegate will be successful once approved by other signatories.',
-						status: NotificationStatus.SUCCESS
-					});
-
-					setLoading(false);
-					setOpenSuccessPopup(true);
-					setOpen(false);
-				} catch (error) {
-					onFailed(error.message);
-				} finally {
-					setLoading(false);
-				}
-			};
-			setLoading(true);
-			await unDelegationByMultisig(delegateTxn);
-			return;
-		}
 
 		await executeTx({ address: defaultAddress, api, apiReady, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
@@ -313,12 +280,10 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				</Spin>
 			</Modal>
 			<DelegationSuccessPopup
-				redirect={true}
 				open={openSuccessPopup}
 				setOpen={setOpenSuccessPopup}
 				balance={balance}
-				isMultisig={isMultisig}
-				title={isMultisig ? 'Undelegation with Polkasafe initiated' : 'Undelegated Successfully'}
+				title='Undelegated Successfully'
 			/>
 		</>
 	);

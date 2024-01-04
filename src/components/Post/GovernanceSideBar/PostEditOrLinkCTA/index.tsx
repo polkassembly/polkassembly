@@ -5,7 +5,6 @@
 import React, { FC, useState } from 'react';
 import { usePostDataContext } from '~src/context';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-// import PostEditLinkingIcon from 'public/assets/icons/post-edit-linking.svg';
 import { Modal } from 'antd';
 import ContinueWithoutLinking from './ContinueWithoutLinking';
 import ContinueWithLinking from './ContinueWithLinking';

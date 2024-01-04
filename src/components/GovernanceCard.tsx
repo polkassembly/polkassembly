@@ -334,7 +334,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 					{showSimilarPost && content && (
 						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'}`}>
-							<h1 className='desc-container mr-12 mt-0.5 flex max-h-[94px] overflow-hidden text-sm text-bodyBlue dark:text-white'>
+							<h1 className='desc-container shadow-0 mr-12 mt-0.5 flex max-h-[94px] overflow-hidden text-sm text-bodyBlue dark:text-white'>
 								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>
 									<Markdown
 										className='post-content'

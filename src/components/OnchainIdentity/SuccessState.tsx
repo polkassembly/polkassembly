@@ -31,7 +31,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 	const { network } = useNetworkSelector();
 	const { displayName } = name;
 	const { email, web, twitter, riot } = socials;
-	const currentUser = useUserDetailsSelector();
+	const { id, username } = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (!network) return;
@@ -109,8 +109,8 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 					onClick={() => {
 						// GAEvent for Let’s start your verification process button clicked
 						trackEvent('verification_cta_clicked', 'submitted_verification_request', {
-							userId: currentUser?.id || '',
-							userName: currentUser?.username || ''
+							userId: id || '',
+							userName: username || ''
 						});
 						close(true);
 						changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
@@ -118,7 +118,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 					}}
 					variant='primary'
 					height={40}
-					className='w-full'
+					className='mt-4 w-full'
 				/>
 			</>
 		</Modal>

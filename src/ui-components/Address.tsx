@@ -308,7 +308,6 @@ const Address = (props: Props) => {
 								theme={'polkadot'}
 							/>
 						))}
-
 				{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 							{displayInline ? (
@@ -322,7 +321,6 @@ const Address = (props: Props) => {
 												className='text-navBlue'
 											/>
 										))}
-            
 									<div className={`flex items-center font-semibold text-bodyBlue  dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
 										<div
 											onClick={(e) => handleClick(e)}

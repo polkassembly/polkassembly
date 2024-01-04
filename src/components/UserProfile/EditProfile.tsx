@@ -31,6 +31,7 @@ interface IEditProfileModalProps {
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
 	openModal?: boolean;
 	setOpenModal?: (pre: boolean) => void;
+	fromDelegation?: boolean;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {
@@ -45,7 +46,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { data, id, setProfileDetails, openModal, setOpenModal } = props;
+	const { data, id, setProfileDetails, openModal, setOpenModal, fromDelegation = false } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
@@ -188,7 +189,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			});
 			setProfile(getDefaultProfile());
 			handleTokenChange(data?.token, { ...userDetailsContext, picture: image }, dispatch);
-			router.push(`/user/${username}`);
+			if (!fromDelegation) {
+				router.push(`/user/${username}`);
+			}
 		}
 
 		setLoading(false);

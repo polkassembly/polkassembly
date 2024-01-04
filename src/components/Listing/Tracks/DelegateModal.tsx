@@ -275,7 +275,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	};
 
 	useEffect(() => {
-		open && getData();
+		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
@@ -327,7 +327,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			</Checkbox.Group>
 		</div>
 	);
-
 	return (
 		<>
 			{!open && !setOpen && (

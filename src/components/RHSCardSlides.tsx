@@ -73,7 +73,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		const onSuccess = async () => {
 			queueNotification({
 				header: 'Success!',
-				message: 'Refund Successully proccessed',
+				message: 'Refund successully proccessed',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);

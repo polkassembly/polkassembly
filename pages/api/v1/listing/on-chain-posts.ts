@@ -449,9 +449,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				orderBy: orderBy,
 				type_in: subsquidProposalType
 			};
-			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
-				postsVariables.status_in = proposalStatus;
-			}
+
 			if (proposalType === ProposalType.OPEN_GOV) {
 				strProposalType = 'referendums_v2';
 				if (proposalType == ProposalType.OPEN_GOV) {
@@ -460,12 +458,18 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 					if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
 						postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+						if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
+							postsVariables.status_in = proposalStatus;
+						}
 					}
 				}
 			} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
 				if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
 					postsVariables.trackNumber_in = numTrackNo;
 				}
+			}
+			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
+				postsVariables.status_in = proposalStatus;
 			}
 
 			if (postIds && postIds.length > 0) {

@@ -30,12 +30,14 @@ export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVis
 			title={<span className='dark:text-blue-dark-high'>{cleanError(errorMessage)}</span>}
 			extra={
 				isRefreshBtnVisible ? (
-					<CustomButton
-						onClick={() => window.location.reload()}
-						variant='primary'
-						text='Refresh'
-						className='transition-colors duration-300'
-					/>
+					<div className='flex justify-center'>
+						<CustomButton
+							onClick={() => window.location.reload()}
+							variant='primary'
+							text='Refresh'
+							className='transition-colors duration-300'
+						/>
+					</div>
 				) : null
 			}
 		/>

@@ -21,15 +21,15 @@ interface ISocialsProps {
 const getPlaceholder = (socialLink: string) => {
 	switch (socialLink) {
 		case 'Email':
-			return 'ex: abc@gmail.com';
+			return 'Enter Email';
 		case 'Riot':
-			return 'ex: https://riot.im/app/#/user/handle';
+			return 'ex: https://riot.im/app/#/user/@handle:matrix.org';
 		case 'Twitter':
 			return 'ex: https://twitter.com/handle';
 		case 'Telegram':
 			return 'ex: https://t.me/handle';
 		case 'Discord':
-			return 'ex: https://discord.com/handle';
+			return 'ex: https://discordapp.com/users/handle';
 		default:
 			return `Enter ${socialLink} URL`;
 	}
@@ -38,7 +38,6 @@ const getPlaceholder = (socialLink: string) => {
 const Socials: FC<ISocialsProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { loading, profile, setProfile, errorCheck, theme } = props;
-	console.log('Social Links', socialLinks);
 
 	return (
 		<div className='flex max-h-[552px] flex-col gap-y-4'>

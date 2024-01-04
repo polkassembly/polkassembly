@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -22,10 +23,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Wrapper = styled.div`
 	width: 100%;
 	padding: 32px;
-	background: white;
+	background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')};
 	border-radius: 14px;
 	line-height: 23px;
-	color: #243a57;
+	color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243a57')};
 `;
 const CustomHeading = styled.div`
 	font-weight: 600;
@@ -46,6 +47,7 @@ const StylParagraph = styled.p`
 const TermAndCondition = (props: any) => {
 	const { network } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -54,7 +56,7 @@ const TermAndCondition = (props: any) => {
 
 	return (
 		<div className='flex flex-col gap-6'>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'> Polkassembly End User Agreement</CustomHeading>
 				<p>
 					Premiurly OÜ is a company registered in Estonia under company number 16162207 with its registered office at Tornimäe tn 7, Kesklinna linnaosa, Tallinn,Harju maakond,
@@ -62,7 +64,7 @@ const TermAndCondition = (props: any) => {
 					.polkassembly.io (the <strong>Website</strong>).
 				</p>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'>1. Understanding these terms</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
@@ -92,7 +94,7 @@ const TermAndCondition = (props: any) => {
 					</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'>2. The Forum</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
@@ -110,7 +112,7 @@ const TermAndCondition = (props: any) => {
 				</StyledParagraph>
 			</Wrapper>
 
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'>3. Your account and password</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
@@ -132,7 +134,7 @@ const TermAndCondition = (props: any) => {
 					</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'>4. Acceptable use</CustomHeading>
 				<p className='font-medium'>General</p>
 				<StyleParagraph>
@@ -195,7 +197,7 @@ const TermAndCondition = (props: any) => {
 				</StyleParagraph>
 			</Wrapper>
 
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'> 5. Intellectual property</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
@@ -226,7 +228,7 @@ const TermAndCondition = (props: any) => {
 					</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'> 6. Our liability</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'> 1. Nothing in these Terms excludes or limits our liability for: </p>
@@ -264,7 +266,7 @@ const TermAndCondition = (props: any) => {
 					</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'> 7. Suspension and termination</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>1. Either you or we may terminate these Terms (and your access to Forum) at any time for any reason.</p>
@@ -283,7 +285,7 @@ const TermAndCondition = (props: any) => {
 					<p className='mb-[2px]'>2. you must immediately cease all activities authorised by these Terms, including your use of any services provided through the Forum.</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'> 8. Changes to these Terms</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
@@ -293,7 +295,7 @@ const TermAndCondition = (props: any) => {
 					</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'> 9. Other important information</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
@@ -313,7 +315,7 @@ const TermAndCondition = (props: any) => {
 					</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'> 10. Governing law and jurisdiction</CustomHeading>
 				<StyledParagraph>
 					If you are a business{' '}
@@ -342,7 +344,7 @@ const TermAndCondition = (props: any) => {
 					</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<CustomHeading className='mb-4'> 11. Contacting us</CustomHeading>
 				<StyledParagraph>
 					<p>
@@ -354,7 +356,7 @@ const TermAndCondition = (props: any) => {
 					<p> Email address: contact@premiurly.in</p>
 				</StyledParagraph>
 			</Wrapper>
-			<Wrapper>
+			<Wrapper theme={theme}>
 				<StyledParagraph>
 					<p>Thank you.</p>
 				</StyledParagraph>

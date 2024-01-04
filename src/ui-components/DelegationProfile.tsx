@@ -43,7 +43,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		username: ''
 	});
 
-	const { image, social_links, bio, username: userName, addresses } = profileDetails;
+	const { image, social_links, bio, username: userName } = profileDetails;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -95,7 +95,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 								className='flex cursor-pointer items-center text-xl'
 								onClick={(e) => {
 									isSearch && e.preventDefault();
-									copyLink(address || addresses[0]);
+									copyLink(address);
 									success();
 								}}
 							>
@@ -174,11 +174,12 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					setOpenModal={setOpenEditModal}
 					data={profileDetails}
 					setProfileDetails={setProfileDetails}
+					fromDelegation
 				/>
 			)}
 		</div>
 	) : (
-		<div className='p-6'>
+		<div className='h-52 p-6'>
 			<Skeleton />
 		</div>
 	);

@@ -18,9 +18,27 @@ interface ISocialsProps {
 	theme?: string;
 }
 
+const getPlaceholder = (socialLink: string) => {
+	switch (socialLink) {
+		case 'Email':
+			return 'Enter Email';
+		case 'Riot':
+			return 'ex: https://riot.im/app/#/user/@handle:matrix.org';
+		case 'Twitter':
+			return 'ex: https://twitter.com/handle';
+		case 'Telegram':
+			return 'ex: https://t.me/handle';
+		case 'Discord':
+			return 'ex: https://discordapp.com/users/handle';
+		default:
+			return `Enter ${socialLink} URL`;
+	}
+};
+
 const Socials: FC<ISocialsProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { loading, profile, setProfile, errorCheck, theme } = props;
+
 	return (
 		<div className='flex max-h-[552px] flex-col gap-y-4'>
 			{socialLinks.map((socialLink) => {
@@ -42,7 +60,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 								input: 'dark:bg-transparent dark:placeholder:text-borderColorDark dark:text-white'
 							}}
 							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)] dark:text-borderColorDark' />}
-							placeholder={`Enter ${strLink} ${strLink === 'Email' ? '' : 'URL'}`}
+							placeholder={getPlaceholder(strLink)}
 							onChange={(e) => {
 								const value = e.target.value.trim();
 								setProfile((prev) => {

@@ -141,7 +141,6 @@ const ProfileBalances = ({ className }: Props) => {
 			</div>
 			<AddressConnectModal
 				localStorageWalletKeyName='delegationWallet'
-				usingMultisig
 				localStorageAddressKeyName='delegationDashboardAddress'
 				open={openModal}
 				setOpen={setOpenModal}

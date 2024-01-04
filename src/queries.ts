@@ -1979,3 +1979,10 @@ export const GET_AYE_NAY_TOTAL_COUNT = `query getAyeNayTotalCount($type_eq: Prop
     totalCount
   }
 }`;
+
+export const TOTAL_PROPOSALS_COUNT_BY_ADDRESSES = `query ProposalsCountByProposerAddresses($proposer_in: [String!]) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $proposer_in}) {
+    totalCount
+  }
+}
+`;

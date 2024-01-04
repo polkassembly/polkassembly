@@ -4,7 +4,7 @@
 
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Divider, Form, Input, Modal, Skeleton } from 'antd';
+import { Alert, Divider, Form, Input, Modal, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
@@ -24,6 +24,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { IconSignup } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
@@ -373,14 +374,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						style={{ borderTop: '1px solid #E1E6EB' }}
 					></Divider>
 					<div className='-mt-1 flex items-center justify-end px-8'>
-						<Button
+						<CustomButton
+							variant='primary'
+							buttonSize='sm'
 							disabled={loading}
 							htmlType='submit'
-							size='large'
-							className='w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
 						>
 							{isPassword ? 'Sign Up' : 'Next'}
-						</Button>
+						</CustomButton>
 					</div>
 				</AuthForm>
 				<Modal
@@ -395,16 +396,16 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							className='flex w-full justify-center'
 							key='got-it'
 						>
-							<Button
+							<CustomButton
+								variant='primary'
+								text='Got it!'
 								icon={<CheckOutlined />}
-								className='flex items-center justify-center rounded-md border-none bg-pink_primary px-5 text-lg font-medium leading-none text-white outline-none'
+								buttonSize='sm'
 								onClick={() => {
 									setOpen(false);
 									!isModal && router.back();
 								}}
-							>
-								Got it!
-							</Button>
+							/>
 						</div>
 					]}
 				>

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Form, MenuProps, Tooltip } from 'antd';
+import { Button, Form, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useCallback, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
@@ -33,6 +33,7 @@ import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { IComment } from './Comment';
 import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
 	userId: number;

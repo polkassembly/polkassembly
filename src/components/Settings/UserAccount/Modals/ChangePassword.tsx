@@ -2,13 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Button, Divider, Form, Input, Modal } from 'antd';
+import { Divider, Form, Input, Modal } from 'antd';
 import ChangePasswordIcon from '~assets/icons/change-password.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
 import * as validation from 'src/util/validation';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfirm?: () => void; onCancel: () => void }) => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -176,22 +177,24 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 							<Divider className='my-4' />
 						</div>
 						<div className='flex justify-end gap-4'>
-							<Button
+							<CustomButton
+								text='Cancel'
 								key='1'
+								variant='default'
 								onClick={onCancel}
-								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary'
-							>
-								Cancel
-							</Button>
-							<Button
+								buttonSize='xs'
+								className='px-[36px] py-[4px] capitalize'
+							/>
+							<CustomButton
 								onClick={onConfirm}
 								loading={loading}
 								htmlType='submit'
+								text='Save'
 								key='2'
-								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
-							>
-								Save
-							</Button>
+								variant='default'
+								buttonSize='xs'
+								className='px-[36px] py-[4px] capitalize'
+							/>
 						</div>
 					</div>
 				</Form>

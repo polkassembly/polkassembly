@@ -5,7 +5,7 @@
 import '@polkadot/api-augment';
 
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
-import { Divider, Progress } from 'antd';
+import { Divider } from 'antd';
 import { IAddressesResponse } from 'pages/api/v1/getAddressesData';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { CouncilVote, IPollVote, Vote } from 'src/types';
@@ -16,6 +16,7 @@ import { ApiContext } from '~src/context/ApiContext';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
+import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 
 interface Props {
 	className?: string;
@@ -109,7 +110,7 @@ const CouncilSignals = ({ className, votes }: Props) => {
 
 					<div className='mt-6 flex'>
 						<div>
-							<Progress
+							<ProgressBar
 								percent={100}
 								success={{ percent: (ayes / (ayes + nays)) * 100, strokeColor: '#2ED47A' }}
 								type='circle'

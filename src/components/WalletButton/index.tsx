@@ -2,9 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Tooltip } from 'antd';
+import { Button } from 'antd';
 import styled from 'styled-components';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
 	onClick: React.MouseEventHandler<HTMLAnchorElement> & React.MouseEventHandler<HTMLButtonElement>;

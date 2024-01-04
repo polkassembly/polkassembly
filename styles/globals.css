@@ -59,8 +59,10 @@
   --darkOrangeColor: #D05704;
   --nayRedColor: #F53C3C;
   --nayDarkRedColor: #A8071A;
+  --nayDarkBGRedColor:#1E1013;
   --ayeGreenColor: #2ED47A;
   --ayeDarkGreenColor: #478F37;
+  --ayeDarkBGGreenColor:#0F1B15;
   --abstainBlueColor: #407BFF;
   --abstainDarkBlueColor: #3866CE;
   --lightGreyTextColor: #909090;
@@ -73,17 +75,8 @@
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .scroll-hidden::-webkit-scrollbar {
@@ -826,8 +819,3 @@ z-index: 1050 !important;
   }
 }
 
-@media (max-width: 365px) and (min-width: 320px) {
-  .delegation-buttons {
-    padding: 16px 6px !important;
-  }
-}

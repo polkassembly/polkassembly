@@ -19,7 +19,7 @@ import AyeIcon from '~assets/delegation-tracks/aye-delegation.svg';
 import NayIcon from '~assets/delegation-tracks/nay-delegation.svg';
 import CautionIcon from '~assets/delegation-tracks/caution.svg';
 import BN from 'bn.js';
-import { BN_ZERO, formatBalance } from '@polkadot/util';
+import { formatBalance } from '@polkadot/util';
 import { ETrackDelegationStatus, IPeriod } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
 import { getStatusBlock } from '~src/util/getStatusBlock';
@@ -33,6 +33,7 @@ interface Props {
 	status: ETrackDelegationStatus[];
 	delegatedTo: string | null;
 }
+const ZERO_BN = new BN(0);
 
 const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Props) => {
 	const { network } = useNetworkSelector();
@@ -42,7 +43,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	const [decision, setDecision] = useState<IPeriod>(getDefaultPeriod());
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const [votingData, setVotingData] = useState<IVotesResponse>();
-	const [balance, setBalance] = useState<BN>(BN_ZERO);
+	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const [isAye, setIsAye] = useState<boolean>(false);
 	const [isNay, setIsNay] = useState<boolean>(false);
 	const [isAbstain, setIsAbstain] = useState<boolean>(false);
@@ -54,7 +55,9 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 
 	const mainTitle = (
 		<span>
-			<div>{titleString}</div>
+			<div>
+				#{proposal.post_id} {titleString}
+			</div>
 		</span>
 	);
 	const relativeCreatedAt = getRelativeCreatedAt(new Date(proposal?.created_at));
@@ -86,33 +89,29 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	}, [network]);
 
 	const getData = async () => {
-		if (!address || !proposal?.post_id) return;
-		let votesAddress = '';
-
-		if (status.includes(ETrackDelegationStatus.Undelegated)) {
-			return;
-		}
-		if (status.includes(ETrackDelegationStatus.Received_Delegation)) {
-			votesAddress = address;
-		} else if (status.includes(ETrackDelegationStatus.Delegated) && delegatedTo !== null) {
-			votesAddress = delegatedTo;
-		}
+		if (!address || !proposal?.post_id || status.includes(ETrackDelegationStatus.UNDELEGATED)) return;
+		const votesAddress = status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION) ? address : delegatedTo;
 
 		const { data, error } = await nextApiClientFetch<IVotesResponse>(
 			`api/v1/votes?listingLimit=10&postId=${proposal?.post_id}&voteType=ReferendumV2&page=1&address=${votesAddress}`
 		);
 		if (data) {
 			setVotingData(data);
+			setIsAye(data?.yes?.count === 1);
+			setBalance(data?.yes?.votes[0]?.balance?.value || ZERO_BN);
+			setIsNay(data?.no?.count === 1);
+			setBalance(data?.no?.votes[0]?.balance?.value || ZERO_BN);
+			setIsAbstain(data?.abstain?.count === 1);
+			setBalance(data?.abstain?.votes[0]?.balance?.value || ZERO_BN);
 		} else {
 			console.log(error);
 		}
 	};
 
 	useEffect(() => {
-		!votingData && getData();
-
+		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [votingData]);
+	}, []);
 
 	useEffect(() => {
 		const prepare = getPeriodData(network, dayjs(proposal.created_at), trackDetails, 'preparePeriod');
@@ -120,19 +119,6 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 		const decisionPeriodStartsAt = decidingStatusBlock && decidingStatusBlock.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
-
-		if (votingData) {
-			if (votingData?.yes?.count === 1) {
-				setIsAye(true);
-				setBalance(votingData?.yes?.votes[0].balance.value);
-			} else if (votingData?.no?.count === 1) {
-				setIsNay(true);
-				setBalance(votingData?.no?.votes[0].balance.value);
-			} else if (votingData?.abstain?.count === 1) {
-				setIsAbstain(true);
-				setBalance(votingData?.abstain?.votes[0].balance.value);
-			}
-		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, votingData]);
@@ -153,6 +139,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 											className='address ml-1.5'
 											displayInline
 											usernameClassName='text-xs font-medium'
+											isTruncateUsername={false}
 										/>
 									</span>
 								</div>
@@ -186,25 +173,26 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						</div>
 					</div>
 					<CustomButton
-						className={`mt-2 gap-2 ${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'}`}
-						disabled={status.includes(ETrackDelegationStatus.Delegated)}
-						variant='default'
+						className={`mt-2 gap-2 ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
+						disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
+						variant='primary'
 					>
 						<VoteIcon />
 						<span className='text-sm font-medium text-pink_primary'>Cast Vote</span>
 					</CustomButton>
 				</div>
-				{(votingData && !status.includes(ETrackDelegationStatus.Undelegated) && isAye) || isNay || isAbstain ? (
+				{(votingData && !status.includes(ETrackDelegationStatus.UNDELEGATED) && isAye) || isNay || isAbstain ? (
 					<div
 						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'border-aye_green bg-[#F0FCF6] dark:bg-[#0F1B15]'} ${
 							isNay && 'border-nay_red bg-[#fff1f4] dark:bg-[#1E1013]'
 						} ${isAbstain && 'border-[#ABABAC] bg-[#f9f9f9] dark:border-abstainBlueColor dark:bg-alertColorDark'}`}
 					>
-						{status.includes(ETrackDelegationStatus.Delegated) && (
+						{status.includes(ETrackDelegationStatus.DELEGATED) && (
 							<Address
 								usernameClassName='text-xs font-medium'
 								address={String(delegatedTo)}
 								displayInline
+								isTruncateUsername={false}
 							/>
 						)}
 						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>Voted:</div>
@@ -228,11 +216,12 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 				) : (
 					votingData && (
 						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-warningAlertBorderDark bg-[#fff7ef] px-6 py-2 dark:bg-[#1D160E]'>
-							{status.includes(ETrackDelegationStatus.Delegated) && (
+							{status.includes(ETrackDelegationStatus.DELEGATED) && (
 								<Address
 									address={String(delegatedTo)}
 									usernameClassName='text-xs font-medium'
 									displayInline
+									isTruncateUsername={false}
 								/>
 							)}
 							<div className='flex items-center justify-center text-xs text-lightBlue dark:text-blue-dark-medium'>

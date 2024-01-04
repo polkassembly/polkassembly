@@ -4,11 +4,13 @@
 import React, { useState } from 'react';
 import ActiveProposalsIcon from '~assets/icons/active-proposals.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
 import dynamic from 'next/dynamic';
-import { Empty, Skeleton } from 'antd';
+import { Empty, Pagination, Skeleton } from 'antd';
 import { ETrackDelegationStatus } from '~src/types';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -16,6 +18,8 @@ interface Props {
 	trackDetails: any;
 	status: ETrackDelegationStatus[];
 	delegatedTo: string | null;
+	totalCount: number;
+	theme: string;
 }
 
 const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
@@ -23,44 +27,75 @@ const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
 	ssr: false
 });
 
-const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo }: Props) => {
-	const count = posts.length;
+const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, totalCount }: Props) => {
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
+	const router = useRouter();
+	const [page, setPage] = useState<number>(1);
 
 	return (
-		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-[24px] dark:bg-section-dark-overlay`}>
+		<div className={`${className} mt-5 rounded-xl bg-white px-8 py-6 dark:bg-section-dark-overlay`}>
 			<div
 				onClick={() => setExpandProposals(!expandProposals)}
 				className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex cursor-pointer items-center justify-between'
 			>
 				<div className='jutify-center flex items-center gap-2'>
-					<ActiveProposalsIcon className='mr-[4px]' />
-					<span className='text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Active Proposals</span>
-					<span className='flex h-[34px] items-center justify-center rounded-[26px] bg-[#D2D8E04D] px-3 py-[6px] font-semibold text-bodyBlue dark:text-white'>
-						{count < 10 && count !== 0 && 0}
-						{count}
-					</span>
+					<ActiveProposalsIcon className='mr-1' />
+					<span className='text-2xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-white'>Active Proposals</span>
+					<span className='flex h-8 items-center justify-center rounded-3xl bg-[#D2D8E04D] px-3 py-1.5 font-semibold text-bodyBlue dark:text-white'>{totalCount}</span>
 				</div>
-				<div className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon /> : <CollapseIcon />}</div>
+				<div className='cursor-pointer p-2'>
+					<ExpandIcon className={`${expandProposals && 'rotate-180'}`} />
+				</div>
 			</div>
-			{expandProposals && (
-				<div className='mt-[24px] flex flex-col gap-6'>
-					{posts?.length > 0 ? (
-						posts?.map((proposal, index) => (
-							<ActiveProposalCard
-								proposal={proposal}
-								key={index}
-								trackDetails={trackDetails}
-								status={status}
-								delegatedTo={delegatedTo}
+			{expandProposals ? (
+				posts?.length > 0 ? (
+					<div className='mt-5 flex flex-col gap-4'>
+						<div className='flex max-h-[630px] flex-col gap-6 overflow-y-auto pr-2'>
+							{posts?.map((proposal, index) => (
+								<ActiveProposalCard
+									proposal={proposal}
+									key={index}
+									trackDetails={trackDetails}
+									status={status}
+									delegatedTo={delegatedTo}
+								/>
+							))}
+						</div>
+						<div className='flex items-center justify-end'>
+							<Pagination
+								defaultCurrent={1}
+								pageSize={LISTING_LIMIT}
+								total={totalCount}
+								showSizeChanger={false}
+								hideOnSinglePage={true}
+								current={page}
+								onChange={(page) => {
+									router.replace({
+										pathname: '',
+										query: {
+											...router.query,
+											page
+										}
+									});
+									setPage(page);
+								}}
+								responsive={true}
 							/>
-						))
-					) : (
-						<Empty className='mb-4' />
-					)}
-				</div>
-			)}
+						</div>
+					</div>
+				) : (
+					<Empty className='mb-4' />
+				)
+			) : null}
 		</div>
 	);
 };
-export default ActiveProposals;
+export default styled(ActiveProposals)`
+	.ant-pagination .ant-pagination-item a {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+	}
+	.ant-pagination .ant-pagination-prev button,
+	.ant-pagination .ant-pagination-next button {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+	}
+`;

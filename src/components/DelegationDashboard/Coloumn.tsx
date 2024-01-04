@@ -415,7 +415,7 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 
 	if (status === ETrackDelegationStatus.Delegated) {
 		const TrackColumn: ColumnsType<ITrackRowData> = [
-			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{index}</div>, title: '#', width: '10%' },
+			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-center text-sm font-normal text-bodyBlue dark:text-white'>{index}</div>, title: '#', width: '10%' },
 			{
 				dataIndex: 'delegatedTo',
 				key: 1,

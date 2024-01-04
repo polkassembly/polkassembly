@@ -309,18 +309,19 @@ const Address = (props: Props) => {
 							/>
 						))}
 
-					<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
-						{displayInline ? (
-							<div className='inline-address flex'>
-								{!!kiltName ||
-									(!!identity && !!mainDisplay && (
-										<IdentityBadge
-											theme={theme}
-											identity={identity}
-											flags={flags}
-											className='mt-[2.5px] text-navBlue'
-										/>
-									))}
+				{!isProfileView ? (
+						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
+							{displayInline ? (
+								<div className='inline-address flex items-center'>
+									{!!kiltName ||
+										(!!identity && !!mainDisplay && (
+											<IdentityBadge
+												theme={theme}
+												identity={identity}
+												flags={flags}
+												className='text-navBlue'
+											/>
+										))}
             
 									<div className={`flex items-center font-semibold text-bodyBlue  dark:text-blue-dark-high  ${!disableAddressClick && 'cursor-pointer hover:underline'}`}>
 										<div

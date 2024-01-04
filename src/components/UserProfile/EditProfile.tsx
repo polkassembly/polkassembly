@@ -227,7 +227,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									buttonSize='xs'
 									text='Cancel'
 								/>
-								,
 								<CustomButton
 									variant='primary'
 									key='update profile'

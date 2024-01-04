@@ -52,7 +52,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	}, [network, address]);
 
 	const getData = async () => {
-		if (!api || !apiReady || !address) return;
+		if (!api || !apiReady) return;
 
 		if (!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address.length > 0) return;
 		setLoading(true);

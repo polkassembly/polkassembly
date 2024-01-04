@@ -898,6 +898,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								postsPage={postsPage}
 								setPostsPage={setPostsPage}
 								searchInput={searchInput}
+								theme={theme}
 							/>
 						)}
 

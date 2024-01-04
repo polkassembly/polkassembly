@@ -31,12 +31,14 @@ export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVis
 			className='flex flex-col items-center gap-1'
 			extra={
 				isRefreshBtnVisible ? (
-					<CustomButton
-						onClick={() => window.location.reload()}
-						variant='primary'
-						text='Refresh'
-						className='transition-colors duration-300'
-					/>
+					<div className='flex justify-center'>
+						<CustomButton
+							onClick={() => window.location.reload()}
+							variant='primary'
+							text='Refresh'
+							className='transition-colors duration-300'
+						/>
+					</div>
 				) : null
 			}
 		/>

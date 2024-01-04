@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useState, useEffect } from 'react';
 import ScrollIcon from '~assets/icons/keyboard-double-arrow-up.svg';
-import { Tooltip } from 'antd';
+import Tooltip from '~src/basic-components/Tooltip';
 const ScrollToTopButton = () => {
 	const [isVisible, setIsVisible] = useState(false);
 

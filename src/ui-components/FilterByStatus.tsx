@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import {
@@ -24,10 +24,11 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 import { getProposalTypeFromSinglePostLink } from '~src/global/proposalType';
 import { useTheme } from 'next-themes';
-import { Checkbox, Divider, Popover } from 'antd';
+import { Checkbox, Divider } from 'antd';
 import styled from 'styled-components';
 import { poppins } from 'pages/_app';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
+import Popover from '~src/basic-components/Popover';
 
 interface SortByDropdownProps {
 	theme?: string | undefined;
@@ -39,6 +40,11 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const trackStatus = router?.query?.trackStatus;
 	const { resolvedTheme: theme } = useTheme();
 	const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
+	useEffect(() => {
+		setCheckedItems([]);
+		setStatusItem?.([]);
+	}, [trackStatus, setStatusItem]);
+
 	const { network } = useNetworkSelector();
 	let path = router.pathname.split('/')[1];
 	let statusOptions = isOpenGovSupported(network) ? gov2ReferendumStatusOptions : referendumStatusOptions;
@@ -163,7 +169,6 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			<Checkbox.Group
 				value={checkedItems}
 				onChange={onChange}
-				style={{ boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
 				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll px-2 py-2 tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
 			>
 				{sortByOptions.map((item, index) => (

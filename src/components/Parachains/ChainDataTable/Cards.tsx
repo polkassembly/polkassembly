@@ -2,11 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Tooltip } from 'antd';
 import Image from 'next/image';
 import React from 'react';
 import styled from 'styled-components';
-
 import announcedIcon from '~assets/parachains/announced.png';
 import auctionIcon from '~assets/parachains/auction.png';
 import liveIcon from '~assets/parachains/chain-link.png';
@@ -15,6 +13,7 @@ import testingIcon from '~assets/parachains/testing.png';
 import w3fBlackLogo from '~assets/parachains/w3f-black.png';
 import w3fGreenLogo from '~assets/parachains/w3f-green.png';
 import w3fRedLogo from '~assets/parachains/w3f-red.png';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface AllParachainsCardProps {
 	index: number | string;

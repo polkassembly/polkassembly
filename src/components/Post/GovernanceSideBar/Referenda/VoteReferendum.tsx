@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -38,8 +38,8 @@ import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
-import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
+// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
+// import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
@@ -49,7 +49,10 @@ import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import ImageIcon from '~src/ui-components/ImageIcon';
+
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -575,12 +578,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const VoteUI = (
 		<>
 			<div className={className}>
-				<Button
-					className='mb-3 flex w-[100%] items-center justify-center rounded-lg border-pink_primary bg-pink_primary p-7 text-lg text-white hover:border-pink_primary hover:bg-pink_secondary'
+				<CustomButton
+					variant='primary'
+					fontSize='lg'
+					className='mb-3 w-[100%] p-7'
 					onClick={() => setShowModal(true)}
 				>
 					{!lastVote ? 'Cast Vote Now' : 'Cast Vote Again'}
-				</Button>
+				</CustomButton>
 				<Modal
 					open={showModal}
 					onCancel={() => {
@@ -922,7 +927,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					ayeVoteValue={voteValues.ayeVoteValue}
 					nayVoteValue={voteValues.nayVoteValue}
 					abstainVoteValue={voteValues.abstainVoteValue}
-					icon={multisig ? <MultisigSuccessIcon /> : <SuccessIcon />}
+					icon={
+						multisig ? (
+							<ImageIcon
+								src='/assets/multi-vote-initiated.svg'
+								alt='multi vote initiated icon'
+							/>
+						) : (
+							<ImageIcon
+								src='/assets/delegation-tracks/success-delegate.svg'
+								alt='success delegate icon'
+							/>
+						)
+					}
 				/>
 			</div>
 		</>

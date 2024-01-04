@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { FormOutlined } from '@ant-design/icons';
-import { Button, Skeleton } from 'antd';
+import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
 import Markdown from 'src/ui-components/Markdown';
@@ -22,6 +22,7 @@ import { poppins } from 'pages/_app';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (
@@ -94,7 +95,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			{/* Actions Bar */}
 			<div
 				id='actions-bar'
-				className={'mb-8 mt-2 flex flex-wrap'}
+				className={'mb-8 mt-2 flex flex-wrap gap-x-2'}
 			>
 				<div className='flex items-center'>
 					<PostReactionBar
@@ -109,8 +110,9 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						/>
 					)}
 					{canEdit && (
-						<Button
-							className={'flex items-center border-none px-1.5 text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
+						<CustomButton
+							variant='default'
+							className='border-none px-1.5 dark:text-blue-dark-helper'
 							onClick={() => {
 								toggleEdit();
 								trackEvent('post_edit_button_clicked', 'clicked_edit_post_button', {
@@ -124,10 +126,10 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						>
 							<FormOutlined />
 							Edit
-						</Button>
+						</CustomButton>
 					)}
 				</div>
-				<div className='flex flex-wrap items-center'>
+				<div className='flex flex-wrap items-center gap-x-1'>
 					{id && !isEditing && (
 						<ReportButton
 							className={'flex items-center border-none p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}

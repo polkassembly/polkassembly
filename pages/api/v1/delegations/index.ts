@@ -57,7 +57,7 @@ export const getDelegationDashboardData = async (address: string, network: strin
 
 		// undelegated
 		if (!votingDelegationsArr.length) {
-			trackDelegation.status.push(ETrackDelegationStatus.Undelegated);
+			trackDelegation.status.push(ETrackDelegationStatus.UNDELEGATED);
 			result.push(trackDelegation);
 			continue;
 		}
@@ -66,13 +66,13 @@ export const getDelegationDashboardData = async (address: string, network: strin
 			if (trackDelegation.status.length >= 2) break;
 
 			if (votingDelegation.from === address) {
-				if (!trackDelegation.status.includes(ETrackDelegationStatus.Delegated)) trackDelegation.status.push(ETrackDelegationStatus.Delegated);
+				if (!trackDelegation.status.includes(ETrackDelegationStatus.DELEGATED)) trackDelegation.status.push(ETrackDelegationStatus.DELEGATED);
 			} else {
-				if (!trackDelegation.status.includes(ETrackDelegationStatus.Received_Delegation)) trackDelegation.status.push(ETrackDelegationStatus.Received_Delegation);
+				if (!trackDelegation.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) trackDelegation.status.push(ETrackDelegationStatus.RECEIVED_DELEGATION);
 			}
 		}
 
-		if (trackDelegation.status.includes(ETrackDelegationStatus.Received_Delegation)) {
+		if (trackDelegation.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) {
 			trackDelegation.recieved_delegation_count = votingDelegationsArr.filter((delegation) => delegation.from !== address).length;
 		}
 

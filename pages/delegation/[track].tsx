@@ -67,7 +67,7 @@ const DashboardTracks: FC<ITrackProps> = (props) => {
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
-	const { posts } = data;
+	const { posts, count } = data;
 
 	return (
 		<>
@@ -79,6 +79,7 @@ const DashboardTracks: FC<ITrackProps> = (props) => {
 				posts={posts}
 				trackDetails={trackDetails}
 				theme={theme}
+				totalCount={count}
 			/>
 		</>
 	);

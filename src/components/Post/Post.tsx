@@ -49,7 +49,7 @@ const StickyBox = dynamic(() => import('~src/util/Stickytop'), {
 	ssr: false
 });
 
-const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
+const EvaluationTab = dynamic(() => import('./Tabs/EvaluationTab/index'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -363,77 +363,76 @@ const Post: FC<IPostProps> = (props) => {
 			}
 		];
 
-		if (proposalType === ProposalType.REFERENDUM_V2 && ['polkadot', 'kusama'].includes(network)) {
-			tabs.push({
-				children: (
-					<PostAudit
-						auditData={auditData}
-						videoData={videoData}
-					/>
-				),
-				key: 'audit',
-				label: (
-					<div className='audit flex items-center justify-center gap-2'>
-						Audit
-						{totalAuditCount + totalVideoCount > 0 && (
-							<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:bg-section-dark-container dark:text-blue-dark-high'>
-								{totalAuditCount + totalVideoCount}
-							</span>
-						)}{' '}
-					</div>
-				)
-			});
-		}
-
 		if (!isOffChainProposalTypeValid(proposalType)) {
-			tabs.push({
-				children: (
-					<PostOnChainInfo
-						onChainInfo={{
-							beneficiaries: post?.beneficiaries || [],
-							bond: post?.bond,
-							cid: post?.cid,
-							code: post?.code,
-							codec: post?.codec,
-							curator: post?.curator,
-							curator_deposit: post?.curator_deposit,
-							deciding: post?.deciding,
-							decision_deposit_amount: post?.decision_deposit_amount,
-							delay: post?.delay,
-							deposit: post?.deposit,
-							description: post?.description,
-							enactment_after_block: post.enactment_after_block,
-							enactment_at_block: post.enactment_at_block,
-							end: post?.end,
-							ended_at: post?.ended_at,
-							ended_at_block: post?.ended_at_block,
-							fee: post?.fee,
-							hash: post?.hash,
-							marketMetadata: post?.marketMetadata || null,
-							member_count: post?.member_count,
-							method: post?.method,
-							motion_method: post?.motion_method,
-							origin: post?.origin,
-							payee: post?.payee,
-							post_id: post?.post_id,
-							proposal_arguments: post?.proposal_arguments,
-							proposed_call: post?.proposed_call,
-							proposer: post?.proposer,
-							reward: post?.reward,
-							status: post?.status,
-							statusHistory: post?.statusHistory,
-							submission_deposit_amount: post?.submission_deposit_amount,
-							submitted_amount: post?.submitted_amount,
-							track_number: post?.track_number,
-							version: post?.version,
-							vote_threshold: post?.vote_threshold
-						}}
-						proposalType={proposalType}
-					/>
-				),
-				key: 'onChainInfo',
-				label: 'On Chain Info'
-			});
+			tabs.push(
+				{
+					children: (
+						<EvaluationTab
+							auditData={auditData}
+							videoData={videoData}
+						/>
+					),
+					key: 'evaluation',
+					label: (
+						<div className='audit flex items-center justify-center gap-2'>
+							Evaluation
+							{totalAuditCount + totalVideoCount > 0 && (
+								<span className='card-bg rounded-full bg-[#d6d8da] px-1.5 py-0.5 text-xs font-medium text-bodyBlue dark:bg-section-dark-container dark:text-blue-dark-high'>
+									{totalAuditCount + totalVideoCount}
+								</span>
+							)}{' '}
+						</div>
+					)
+				},
+				{
+					children: (
+						<PostOnChainInfo
+							onChainInfo={{
+								beneficiaries: post?.beneficiaries || [],
+								bond: post?.bond,
+								cid: post?.cid,
+								code: post?.code,
+								codec: post?.codec,
+								curator: post?.curator,
+								curator_deposit: post?.curator_deposit,
+								deciding: post?.deciding,
+								decision_deposit_amount: post?.decision_deposit_amount,
+								delay: post?.delay,
+								deposit: post?.deposit,
+								description: post?.description,
+								enactment_after_block: post.enactment_after_block,
+								enactment_at_block: post.enactment_at_block,
+								end: post?.end,
+								ended_at: post?.ended_at,
+								ended_at_block: post?.ended_at_block,
+								fee: post?.fee,
+								hash: post?.hash,
+								marketMetadata: post?.marketMetadata || null,
+								member_count: post?.member_count,
+								method: post?.method,
+								motion_method: post?.motion_method,
+								origin: post?.origin,
+								payee: post?.payee,
+								post_id: post?.post_id,
+								proposal_arguments: post?.proposal_arguments,
+								proposed_call: post?.proposed_call,
+								proposer: post?.proposer,
+								reward: post?.reward,
+								status: post?.status,
+								statusHistory: post?.statusHistory,
+								submission_deposit_amount: post?.submission_deposit_amount,
+								submitted_amount: post?.submitted_amount,
+								track_number: post?.track_number,
+								version: post?.version,
+								vote_threshold: post?.vote_threshold
+							}}
+							proposalType={proposalType}
+						/>
+					),
+					key: 'onChainInfo',
+					label: 'On Chain Info'
+				}
+			);
 		}
 
 		return tabs;

@@ -1,24 +1,24 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider, Form, Input, Modal } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
+import { Alert, Divider, Form, Modal } from 'antd';
 import { useDispatch } from 'react-redux';
-import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
-import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
-import { NotificationStatus } from 'src/types';
+import { NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
-import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChangeResponseType } from '~src/auth/types';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import WalletButtons from '~src/components/Login/WalletButtons';
+import { APPNAME } from '~src/global/appName';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -30,76 +30,126 @@ interface Props {
 const Proxy: FC<Props> = ({ dismissModal, open }) => {
 	const [form] = Form.useForm();
 
+	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 
-	const currentUser = useUserDetailsSelector();
-	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-	const [proxyAddress, setProxyAddress] = useState<string>('');
+	const [selectedWallet, setSelectedWallet] = useState<Wallet>();
+	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [extensionNotFound, setExtensionNotFound] = useState(false);
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
+
+	const [proxyAddress, setProxyAddress] = useState<string>('');
+	const [proxiedAddress, setProxiedAddress] = useState<string>('');
+
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+
 	const dispatch = useDispatch();
 
-	const onProxyAddressChange = (address: string) => {
-		setProxyAddress(address);
+	const onProxiedAccountChange = (address: string) => {
+		const substrateAddress = getSubstrateAddress(address) || address;
+		if (!currentUser.addresses?.includes(substrateAddress)) {
+			setError('Please select a linked address or link an address before linking a proxy for it.');
+		} else {
+			setError('');
+		}
+		setProxiedAddress(address);
 	};
 
-	//open modal and fetch and populate addressOptions (dropdown);
-	const fetchAddressOptions = async () => {
-		const extensions = await web3Enable(APPNAME);
+	const handleSelectWallet = async (wallet: Wallet) => {
+		const injectedWindow = window as Window & InjectedWindow;
+		const injectedWallet = injectedWindow?.injectedWeb3?.[String(wallet)];
 
-		if (extensions.length === 0) {
-			setExtensionNotFound(true);
+		if (!injectedWallet) {
+			setExtensionNotFound?.(true);
+			setLoading?.(false);
 			return;
-		} else {
-			setExtensionNotFound(false);
 		}
 
-		const availableAccounts = await web3Accounts();
+		setExtensionNotFound?.(false);
+		setSelectedWallet(wallet);
 
-		availableAccounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
+		let injected: Injected | null = null;
+		try {
+			injected = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('Wallet Timeout'));
+				}, 60000); // wait 60 sec
+
+				if (injectedWallet && injectedWallet.enable) {
+					injectedWallet
+						.enable(APPNAME)
+						.then((value) => {
+							clearTimeout(timeoutId);
+							resolve(value);
+						})
+						.catch((error) => {
+							reject(error);
+						});
+				}
+			});
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (err: any) {
+			setLoading?.(false);
+
+			// eslint-disable-next-line no-console
+			console.error('Error in getting injected: ', err?.message);
+
+			if (err?.message === 'Rejected') {
+				setError('');
+			} else if (err?.message === 'Pending authorisation request already exists for this site. Please accept or reject the request.') {
+				setError('Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.');
+			} else if (err?.message === 'Wallet Timeout') {
+				setError('Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.');
+			}
+		}
+
+		if (!injected) return;
+		setLoading(false);
+
+		const injectedAccounts = await injected.accounts.get();
+		if (injectedAccounts.length === 0) {
+			setAccountsNotFound?.(true);
+			setLoading(false);
+			return;
+		}
+
+		const accountsLocal = injectedAccounts;
+
+		accountsLocal.forEach((account, i) => {
+			accountsLocal[Number(i)].address = getEncodedAddress(account.address, network) || account.address;
 		});
 
-		const accounts = availableAccounts;
-
-		if (accounts.length === 0) {
-			setAccountsNotFound(true);
-			return;
-		} else {
-			setAccountsNotFound(false);
-		}
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			setProxyAddress(accounts[0]?.address);
-		}
+		setAccounts?.(accountsLocal);
+		setLoading(false);
 	};
 
-	useEffect(() => {
-		fetchAddressOptions();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const handleSign = async (formData: any) => {
+	const handleSign = async () => {
 		if (!accounts.length) return;
 
-		const injected = await web3FromSource(accounts[0].meta.source);
-		const signRaw = injected && injected.signer && injected.signer.signRaw;
-		if (!signRaw) return console.error('Signer not available');
-
-		const proxied = formData?.proxiedAccount;
-
-		let substrate_address: string | null;
-		if (!proxied.startsWith('0x')) {
-			substrate_address = getSubstrateAddress(proxied);
-			if (!substrate_address) return console.error('Invalid address');
-		} else {
-			substrate_address = proxied;
+		const injectedWindow = window as Window & InjectedWindow;
+		const injectedWallet = injectedWindow?.injectedWeb3?.[String(selectedWallet)];
+		if (!injectedWallet || !proxyAddress || !proxiedAddress || proxyAddress === proxiedAddress) {
+			setError('Please select valid addresses  to continue.');
+			return;
 		}
 
-		const message = `<Bytes>I am linking proxied address ${substrate_address}</Bytes>`;
+		const substrateProxiedAddress = getSubstrateAddress(proxiedAddress) || proxiedAddress;
+
+		if (!currentUser.addresses?.includes(substrateProxiedAddress)) {
+			setError('Please select a linked address or link an address before linking a proxy for it.');
+			return;
+		}
+
+		setLoading(true);
+
+		const injected = injectedWallet && injectedWallet.enable && (await injectedWallet.enable(APPNAME));
+		const signRaw = injected && injected.signer && injected.signer.signRaw;
+		if (!signRaw) return console.error('Signer not available. Please refresh and try again.');
+
+		const substrateProxyAddress = getSubstrateAddress(proxyAddress) || proxyAddress;
+
+		const message = `<Bytes>I am linking proxy address ${proxyAddress}</Bytes>`;
 
 		const { signature } = await signRaw({
 			address: proxyAddress,
@@ -111,8 +161,8 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 		const { data, error } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/linkProxyAddress', {
 			message,
-			proxied: substrate_address,
-			proxy: proxyAddress,
+			proxied: substrateProxiedAddress || proxiedAddress,
+			proxy: substrateProxyAddress,
 			signature
 		});
 
@@ -132,6 +182,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 		setLoading(false);
 	};
+
 	return (
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
@@ -147,7 +198,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 			footer={
 				<div className='flex items-center justify-end'>
 					{[
-						<Button
+						<CustomButton
 							disabled={accountsNotFound}
 							key='sign'
 							htmlType='submit'
@@ -155,80 +206,111 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 								form.submit();
 							}}
 							loading={loading}
-							className={`flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-3 text-lg font-medium leading-none text-white outline-none ${
-								accountsNotFound ? 'bg-gray-300' : ''
-							}`}
-						>
-							Sign
-						</Button>,
-						<Button
+							variant='primary'
+							fontSize='lg'
+							className={`px-7 py-3 ${accountsNotFound ? 'bg-gray-300' : ''}`}
+							text='Sign'
+						/>,
+						<CustomButton
 							key='cancel'
 							onClick={dismissModal}
-							className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none dark:bg-section-dark-overlay'
-						>
-							Cancel
-						</Button>
+							variant='default'
+							fontSize='lg'
+							className={`px-7 py-3 ${accountsNotFound ? 'bg-gray-300' : ''}`}
+							text='Cancel'
+						/>
 					]}
 				</div>
 			}
 		>
-			{extensionNotFound ? (
-				<div className='max-w-[600px]'>
-					<ExtensionNotDetected />
-				</div>
+			{!currentUser.id ? (
+				<Alert
+					type='warning'
+					message={
+						<span className='dark:text-blue-dark-high'>
+							<p>Please login to continue.</p>
+						</span>
+					}
+					className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+				/>
 			) : (
-				<Form
-					form={form}
-					onFinish={handleSign}
-					className='mb-6 flex flex-col gap-y-8'
-				>
-					{accountsNotFound ? (
-						<Alert
-							type='warning'
-							message={
-								<span className='dark:text-blue-dark-high'>
-									<p>At least one proxy account should be in your polkadot js extension.</p>
-									<p>Please reload this page after adding accounts.</p>
-								</span>
-							}
-							className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
-						/>
-					) : (
-						<>
-							<section>
-								<label
-									className='flex items-center gap-x-3 text-sm font-normal leading-6 tracking-wide text-sidebarBlue dark:text-white dark:text-white'
-									htmlFor='proxiedAccount'
-								>
-									Proxied Address
-								</label>
-								<Form.Item
-									name='proxiedAccount'
-									className='m-0 mt-2.5'
-								>
-									<Input
-										placeholder='Enter a valid proxy address'
-										className='rounded-md border-grey_border px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-										id='proxiedAccount'
+				<>
+					<Form
+						form={form}
+						onFinish={handleSign}
+						className='mb-6 flex flex-col gap-y-8'
+					>
+						<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Please Select a wallet</p>
+						<div>
+							<WalletButtons
+								disabled={loading}
+								onWalletSelect={handleSelectWallet}
+								showPolkasafe={false}
+								isLoginFlow={false}
+								noHeader={true}
+							/>
+						</div>
+
+						{selectedWallet && (extensionNotFound || accountsNotFound) && (
+							<Alert
+								type='warning'
+								message={
+									extensionNotFound ? (
+										<span className='dark:text-blue-dark-high'>
+											<p>Extension not found.</p>
+											<p>Please install the {selectedWallet} extension or switch to a different wallet.</p>
+										</span>
+									) : (
+										<span className='dark:text-blue-dark-high'>
+											<p>No accounts found.</p>
+											<p>Please add an account to your {selectedWallet} extension or switch to a different wallet.</p>
+										</span>
+									)
+								}
+								className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+							/>
+						)}
+
+						{!selectedWallet ? (
+							<Alert
+								type='warning'
+								message={
+									<span className='dark:text-blue-dark-high'>
+										<p>Please select a wallet to continue.</p>
+									</span>
+								}
+								className='dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+							/>
+						) : (
+							<>
+								<section>
+									<AccountSelectionForm
+										isDisabled={loading}
+										title='Select proxied account'
+										accounts={accounts}
+										address={proxiedAddress}
+										onAccountChange={onProxiedAccountChange}
 									/>
-								</Form.Item>
-							</section>
-							<section>
-								<AccountSelectionForm
-									title='Select proxy account'
-									accounts={accounts}
-									address={proxyAddress}
-									onAccountChange={onProxyAddressChange}
-								/>
-							</section>
-						</>
-					)}
-					{error && <FilteredError text={error} />}
-				</Form>
+								</section>
+								<section>
+									<AccountSelectionForm
+										isDisabled={loading}
+										title='Select proxy account'
+										accounts={accounts}
+										address={proxyAddress}
+										onAccountChange={(address) => setProxyAddress(address)}
+									/>
+								</section>
+							</>
+						)}
+						{error && <FilteredError text={error} />}
+					</Form>
+
+					<div className='ml-[-24px] mr-[-24px]'>
+						<Divider className='my-4 mt-0' />
+					</div>
+				</>
 			)}
-			<div className='ml-[-24px] mr-[-24px]'>
-				<Divider className='my-4 mt-0' />
-			</div>
 		</Modal>
 	);
 };

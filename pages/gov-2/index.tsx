@@ -26,6 +26,7 @@ import { setNetwork } from '~src/redux/network';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useTheme } from 'next-themes';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -106,6 +107,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -132,7 +134,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 			</div>
 
 			<div className='mx-1 mt-8'>
-				<TreasuryOverview />
+				<TreasuryOverview theme={theme} />
 			</div>
 
 			<div className='mx-1 mt-8'>

@@ -77,6 +77,11 @@ export interface ProfileDetailsResponse extends ProfileDetails {
 	addresses: string[];
 }
 
+export interface IAddressProxyForEntry {
+	address: string;
+	network: string;
+}
+
 export interface Address {
 	address: string;
 	default: boolean;
@@ -88,6 +93,19 @@ export interface Address {
 	is_erc20?: boolean;
 	wallet?: string;
 	isMultisig?: boolean;
+	proxy_for?: IAddressProxyForEntry[];
+}
+
+export interface PublicAddress {
+	address: string;
+	default: boolean;
+	network: string;
+	public_key: string;
+	verified: boolean;
+	is_erc20?: boolean;
+	wallet?: string;
+	isMultisig?: boolean;
+	proxy_for?: IAddressProxyForEntry[];
 }
 
 export interface NotificationSettings {

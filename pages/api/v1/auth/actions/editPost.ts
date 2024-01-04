@@ -50,11 +50,11 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, postId, proposalType, title, timeline, tags } = req.body;
+	const { content, postId, proposalType, title, timeline, tags, topicId } = req.body;
 	if (proposalType === ProposalType.ANNOUNCEMENT) {
-		if (!postId || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+		if (!postId || !title || !content || !proposalType || !topicId) return res.status(400).json({ message: 'Missing parameters in request body' });
 	} else {
-		if (isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+		if (isNaN(postId) || !title || !content || !proposalType || !topicId) return res.status(400).json({ message: 'Missing parameters in request body' });
 	}
 
 	if (tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
@@ -72,7 +72,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 
 	let created_at = new Date();
-	let topic_id: any = null;
 	let post_link: any = null;
 	let proposer_address = '';
 
@@ -90,6 +89,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE
 					: proposalType === ProposalType.ANNOUNCEMENT
 					? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
+					: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
+					? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
 					: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
 			if (network === 'polymesh') {
@@ -114,13 +115,13 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			});
 
 			const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-			if (!post) return res.status(500).json({ message: 'Something went wrong.' });
-			if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
+			if (!post) return res.status(500).json({ message: 'Post not found on our on-chain database. Something went wrong.' });
+			if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Post proposer not found on our on-chain database. Something went wrong.' });
 
 			proposerAddress = post?.proposer || post?.preimage?.proposer;
 
 			const substrateAddress = getSubstrateAddress(proposerAddress);
-			if (!substrateAddress) return res.status(500).json({ message: 'Something went wrong.' });
+			if (!substrateAddress) return res.status(500).json({ message: 'Invalid address for proposer. Something went wrong.' });
 			proposer_address = substrateAddress;
 			isAuthor = Boolean(userAddresses.find((address) => address.address === substrateAddress));
 			if (network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post?.id === 23) {
@@ -173,7 +174,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 		if (!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
 		created_at = post?.created_at?.toDate() || created_at;
-		topic_id = post?.topic_id || topic_id;
 		post_link = post?.post_link || post_link;
 		proposer_address = post?.proposer_address || proposer_address;
 	} else {
@@ -186,7 +186,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE
 				: proposalType === ProposalType.ANNOUNCEMENT
 				? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
-				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && network === 'collectives'
+				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
 				? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
 				: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
@@ -213,13 +213,13 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 
 		const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-		if (!post) return res.status(500).json({ message: 'Something went wrong.' });
-		if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
+		if (!post) return res.status(500).json({ message: 'Post not found on-chain. Something went wrong.' });
+		if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Post proposer not found on-chain. Something went wrong.' });
 
 		const proposerAddress = post?.proposer || post?.preimage?.proposer;
 
 		const substrateAddress = getSubstrateAddress(proposerAddress);
-		if (!substrateAddress) return res.status(500).json({ message: 'Something went wrong.' });
+		if (!substrateAddress) return res.status(500).json({ message: 'Invalid Proposer address. Something went wrong.' });
 		proposer_address = substrateAddress;
 		let isAuthor: any = userAddresses.find((address) => address.address === substrateAddress);
 		if (network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post.index === 23) {
@@ -278,7 +278,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		summary: summary,
 		tags: tags || [],
 		title,
-		topic_id: topic_id || getTopicFromType(proposalType).id,
+		topic_id: topicId || getTopicFromType(proposalType).id,
 		user_id: postUser?.userId || user.id,
 		username: postUser?.username || user.username
 	};
@@ -332,7 +332,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		await postDocRef.set(newPostDoc, { merge: true });
 	}
 
-	const { last_edited_at, topic_id: topicId } = newPostDoc;
+	const { last_edited_at, topic_id } = newPostDoc;
 
 	res.status(200).json({
 		content,
@@ -341,8 +341,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		summary: summary,
 		title,
 		topic: {
-			id: topicId,
-			name: getTopicNameFromTopicId(topicId as any)
+			id: topic_id,
+			name: getTopicNameFromTopicId(topic_id as any)
 		}
 	});
 

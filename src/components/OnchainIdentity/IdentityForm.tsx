@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Alert, Button, Divider, Form, FormInstance, Input, Spin } from 'antd';
+import { Alert, Divider, Form, FormInstance, Input, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -23,6 +23,7 @@ import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -320,15 +321,17 @@ const IdentityForm = ({
 							isTruncateUsername={false}
 							displayInline
 						/>
-						<Button
+						<CustomButton
+							text='Change'
 							onClick={() => {
 								setAddressChangeModalOpen();
 								closeModal(true);
 							}}
-							className='flex h-[26px] w-[70px] items-center justify-center rounded-[4px] border-none bg-pink_primary text-xs text-white'
-						>
-							Change
-						</Button>
+							width={80}
+							className='text-xs'
+							height={26}
+							variant='primary'
+						/>
 					</div>
 				</div>
 				<div className='mt-6'>
@@ -605,22 +608,24 @@ const IdentityForm = ({
 				</Spin>
 			)}
 			<div className='-mx-6 mt-6 flex justify-end gap-4 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
-				<Button
+				<CustomButton
 					onClick={onCancel}
-					className='h-10 w-[134px] rounded-[4px]  border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary dark:bg-transparent'
-				>
-					Cancel
-				</Button>
-				<Button
+					className='rounded-[4px]'
+					text='Cancel'
+					variant='default'
+					buttonSize='xs'
+				/>
+				<CustomButton
 					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
-					className={`h-10 w-[134px] rounded-[4px] border-none bg-pink_primary text-sm tracking-wide text-white ${
-						(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee)) || handleAllowSetIdentity()) && 'opacity-50'
-					}`}
 					onClick={handleSetIdentity}
 					loading={loading}
-				>
-					Set Identity
-				</Button>
+					className={`rounded-[4px] ${
+						(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee)) || handleAllowSetIdentity()) && 'opacity-50'
+					}`}
+					text='Set Identity'
+					variant='primary'
+					buttonSize='xs'
+				/>
 			</div>
 			<SuccessState
 				open={open}

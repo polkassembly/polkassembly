@@ -7,7 +7,6 @@ import { ColumnsType } from 'antd/es/table';
 import Address from '~src/ui-components/Address';
 import { ITrackDataType } from './TracksListing';
 import { ITrackRowData } from './DashboardTrack';
-import { Button } from 'antd';
 import UndelegatedProfileIcon from '~assets/icons/undelegate-profile.svg';
 import { ETrackDelegationStatus } from '~src/types';
 import dayjs from 'dayjs';
@@ -30,6 +29,7 @@ import {
 } from '~src/ui-components/CustomIcons';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export const handleTracksIcon = (index: string, size: number) => {
 	switch (index) {
@@ -149,7 +149,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'index',
 			key: 1,
 			render: (index) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
+				return <div className='flex items-center justify-center text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
 			},
 			title: '#',
 			width: '7%'
@@ -160,7 +160,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 2,
 			render: (track) => {
 				return (
-					<div className='flex shrink-0 items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
+					<div className='flex shrink-0 items-center justify-start gap-1 text-sm font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 						{handleTracksIcon(track, 24)}
 						<span className=' flex items-center'>{track}</span>
 					</div>
@@ -174,7 +174,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'description',
 			key: 3,
 			render: (des) => {
-				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
+				return <div className='flex items-center justify-start text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
 			},
 			title: 'Description',
 			width: '40%'
@@ -184,7 +184,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'active_proposals',
 			key: 4,
 			render: (activeProposals) => {
-				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
+				return <div className='flex items-center justify-start text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',
 			width: '10%'
@@ -199,10 +199,10 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 						{status.map((item: ETrackDelegationStatus, index: number) => (
 							<h2
 								key={index}
-								className={`text-xs ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] dark:bg-[#6C2CF8]'} ${
-									item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8] dark:bg-[#69600B]'
-								} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'} rounded-[26px] px-[12px] py-[6px] text-center ${
-									item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'w-[95px] truncate'
+								className={`text-xs ${item === ETrackDelegationStatus.RECEIVED_DELEGATION && 'bg-[#E7DCFF] dark:bg-[#6C2CF8]'} ${
+									item === ETrackDelegationStatus.DELEGATED && 'bg-[#FFFBD8] dark:bg-[#69600B]'
+								} ${item === ETrackDelegationStatus.UNDELEGATED && 'bg-[#FFDAD8] dark:bg-[#EF6158]'} rounded-[26px] px-3 py-1.5 text-center ${
+									item === ETrackDelegationStatus.RECEIVED_DELEGATION && status?.length > 1 && 'w-[95px] truncate'
 								} `}
 							>
 								{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
@@ -221,7 +221,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'index',
 			key: 1,
 			render: (index) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
+				return <div className='flex items-center justify-center text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
 			},
 			title: '#',
 			width: '7%'
@@ -232,7 +232,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 2,
 			render: (track) => {
 				return (
-					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
+					<div className='flex items-center justify-start gap-1 text-sm font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 						{handleTracksIcon(track, 24)}
 						<span className=' flex items-center border-[1px]'>{track}</span>
 					</div>
@@ -246,7 +246,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'description',
 			key: 3,
 			render: (des) => {
-				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
+				return <div className='flex items-center justify-start text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
 			},
 			title: 'Description',
 			width: '38%'
@@ -257,7 +257,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 4,
 			render: (addresses) => {
 				return (
-					<div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>
+					<div className='flex items-center justify-start text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>
 						<Address
 							address={addresses?.[0]?.to || ''}
 							displayInline
@@ -275,7 +275,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'active_proposals',
 			key: 5,
 			render: (activeProposals) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
+				return <div className='flex items-center justify-center text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',
 			width: '15%'
@@ -287,7 +287,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'index',
 			key: 1,
 			render: (index) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
+				return <div className='flex items-center justify-center text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
 			},
 			title: '#',
 			width: '7%'
@@ -298,7 +298,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 2,
 			render: (track) => {
 				return (
-					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
+					<div className='flex items-center justify-start gap-1 text-sm font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 						{handleTracksIcon(track, 24)}
 						<span className=' flex items-center border-[1px]'>{track}</span>
 					</div>
@@ -312,7 +312,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'description',
 			key: 3,
 			render: (des) => {
-				return <div className='flex items-center justify-start text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
+				return <div className='flex items-center justify-start text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{des}</div>;
 			},
 			title: 'Description',
 			width: '50%'
@@ -322,7 +322,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'active_proposals',
 			key: 4,
 			render: (activeProposals) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
+				return <div className='flex items-center justify-center text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',
 			width: '15%'
@@ -334,7 +334,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			dataIndex: 'index',
 			key: 1,
 			render: (index) => {
-				return <div className='flex items-center justify-center text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
+				return <div className='flex items-center justify-center text-sm font-normal tracking-wide text-bodyBlue dark:text-white'>{index}</div>;
 			},
 			title: '#',
 			width: '7%'
@@ -345,7 +345,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 			key: 2,
 			render: (track) => {
 				return (
-					<div className='flex items-center justify-start gap-1 text-[14px] font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
+					<div className='flex items-center justify-start gap-1 text-sm font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 						{handleTracksIcon(track, 24)}
 						<span className=' flex items-center border-[1px]'>{track}</span>
 					</div>
@@ -376,8 +376,8 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 							isTruncateUsername={false}
 							displayInline
 							iconSize={24}
-						/>{' '}
-						<span className='text-xs font-medium tracking-[0.0015em] text-bodyBlue dark:text-white'>{addresses.length - 1 !== 0 && `+ ${addresses.length - 1} more`} </span>
+						/>
+						<span className='text-xs font-medium tracking-[0.0015em] text-bodyBlue dark:text-white'>{addresses?.length - 1 !== 0 && `+ ${addresses?.length - 1} more`} </span>
 					</div>
 				);
 			},
@@ -396,16 +396,16 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 		}
 	];
 
-	if (status === ETrackDelegationStatus.All) {
+	if (status === ETrackDelegationStatus.ALL) {
 		return AllColumns;
 	}
-	if (status === ETrackDelegationStatus.Delegated) {
+	if (status === ETrackDelegationStatus.DELEGATED) {
 		return DelegatedColumns;
 	}
-	if (status === ETrackDelegationStatus.Undelegated) {
+	if (status === ETrackDelegationStatus.UNDELEGATED) {
 		return UndelegatedColumns;
 	}
-	if (status === ETrackDelegationStatus.Received_Delegation) {
+	if (status === ETrackDelegationStatus.RECEIVED_DELEGATION) {
 		return ReceivedDelegationColumns;
 	}
 };
@@ -413,9 +413,9 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 	if (!network) return;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
-	if (status === ETrackDelegationStatus.Delegated) {
+	if (status === ETrackDelegationStatus.DELEGATED) {
 		const TrackColumn: ColumnsType<ITrackRowData> = [
-			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{index}</div>, title: '#', width: '10%' },
+			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-center text-sm font-normal text-bodyBlue dark:text-white'>{index}</div>, title: '#', width: '10%' },
 			{
 				dataIndex: 'delegatedTo',
 				key: 1,
@@ -458,13 +458,15 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 				key: 1,
 				render: (action) => (
 					<div className='flex items-start justify-center'>
-						<Button
+						<CustomButton
 							onClick={() => setOpen(true)}
-							className='flex h-[40px] items-center justify-center gap-2 border-[1px] border-solid border-pink_primary px-2 text-sm font-normal text-bodyBlue dark:bg-[#33071E] dark:text-white max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
+							height={40}
+							variant='default'
+							className='gap-2 px-2 max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
 						>
 							<UndelegatedProfileIcon />
 							<span className='text-sm font-medium tracking-wide text-pink_primary '>{action}</span>
-						</Button>
+						</CustomButton>
 					</div>
 				),
 				title: 'Action',
@@ -472,9 +474,9 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 			}
 		];
 		return TrackColumn;
-	} else if (status === ETrackDelegationStatus.Received_Delegation) {
+	} else if (status === ETrackDelegationStatus.RECEIVED_DELEGATION) {
 		const TrackColumn: ColumnsType<ITrackRowData> = [
-			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-start text-sm font-normal text-bodyBlue dark:text-white'>{index}</div>, title: '#', width: '10%' },
+			{ dataIndex: 'index', key: 1, render: (index) => <div className='text-center text-sm font-normal text-bodyBlue dark:text-white'>{index}</div>, title: '#', width: '10%' },
 			{
 				dataIndex: 'delegatedFrom',
 				key: 1,

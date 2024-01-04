@@ -1165,8 +1165,7 @@ query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $v
 }
 `;
 
-export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `
-query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: String = "") {
+export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: String = "") {
   votingDelegations(orderBy: createdAt_DESC, where: {track_eq: $track_eq, endedAtBlock_isNull: true, AND: {from_eq: $address, OR: {to_eq: $address}}}) {
     track
     to
@@ -2100,3 +2099,10 @@ export const GET_AYE_NAY_TOTAL_COUNT = `query getAyeNayTotalCount($type_eq: Prop
     totalCount
   }
 }`;
+
+export const TOTAL_PROPOSALS_COUNT_BY_ADDRESSES = `query ProposalsCountByProposerAddresses($proposer_in: [String!]) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $proposer_in}) {
+    totalCount
+  }
+}
+`;

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Form, Input, Modal, Select, Divider } from 'antd';
+import { Form, Input, Modal, Select, Divider } from 'antd';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
 
@@ -240,13 +240,14 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							)}
 						</article>
 					</Modal>
-					<Button
+					<CustomButton
 						onClick={openModal}
 						htmlType='submit'
-						className='text-md mt-5 flex items-center justify-center rounded-lg border-none bg-[#F53C3C] px-7 py-5 font-semibold leading-7 text-white outline-none'
-					>
-						Delete My Account
-					</Button>
+						className='text-md mt-5 rounded-lg border-none px-7 py-5 font-semibold leading-7'
+						customColor='[#F53C3C]'
+						customTextColor='white'
+						text='Delete My Account'
+					/>
 				</Form>
 			</Panel>
 		</Collapse>

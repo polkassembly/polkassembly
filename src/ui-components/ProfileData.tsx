@@ -5,7 +5,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, message } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ImageComponent from '~src/components/ImageComponent';
 import copyToClipboard from '~src/util/copyToClipboard';
 import dayjs from 'dayjs';
@@ -27,15 +27,13 @@ import ImageIcon from './ImageIcon';
 const ZERO_BN = new BN(0);
 interface IProfileData {
 	className?: string;
-	address?: any;
+	address: string;
 }
 
-const ProfileData: FC<IProfileData> = (props) => {
-	const { className, address } = props;
+const ProfileData = ({ address, className }: IProfileData) => {
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [proposalCount, setProposalCount] = useState(0);
 	const [discussionCount, setDiscussionCount] = useState(0);
-
 	const [messageApi, contextHolder] = message.useMessage();
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();

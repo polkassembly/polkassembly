@@ -8,12 +8,10 @@ import NavigateNextIcon from '~assets/icons/navigate-next.svg';
 import NavigatePrevIcon from '~assets/icons/navigate-prev.svg';
 import { usePostDataContext } from '~src/context';
 import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
-import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import { checkIsOnChainPost } from '~src/global/proposalType';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
-	loading: () => <Skeleton active />,
 	ssr: false
 });
 

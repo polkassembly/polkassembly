@@ -20,7 +20,6 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
-import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 interface Props {
@@ -93,7 +92,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
-	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
 
 	useEffect(() => {
 		if (!window) return;
@@ -139,10 +137,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 	};
 
 	useEffect(() => {
-		setIsSelectedAddressMultisig(false);
-		if (address) {
-			checkIsAddressMultisig(address).then((isMulti) => setIsSelectedAddressMultisig(isMulti));
-		}
 		if (!address) {
 			setOpenModal(true);
 		}
@@ -301,7 +295,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 					defaultTarget={rowData.filter((row) => row.delegatedTo !== address)[0]?.delegatedTo}
 					trackNum={trackDetails?.trackId}
 					conviction={rowData.filter((row) => row.delegatedTo !== address)[0]?.lockPeriod}
-					isMultisig={isSelectedAddressMultisig}
 					onConfirm={() => {
 						setStatus([ETrackDelegationStatus.UNDELEGATED]);
 						setShowTable(false);
@@ -312,7 +305,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 				open={openDelegateModal}
 				setOpen={setOpenDelegateModal}
 				trackNum={trackDetails?.trackId}
-				isMultisig={isSelectedAddressMultisig}
 				onConfirm={(balance: string, delegatedTo: string, lockPeriod: number) => {
 					setStatus([ETrackDelegationStatus.DELEGATED]);
 					setRowData([{ action: 'Undelegate', balance, delegatedFrom: address, delegatedOn: new Date(), delegatedTo, index: 1, lockPeriod }]);

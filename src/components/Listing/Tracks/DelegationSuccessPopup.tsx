@@ -59,7 +59,6 @@ const DelegationSuccessPopup = ({
 	ayeVoteValue,
 	nayVoteValue,
 	abstainVoteValue,
-	isMultisig,
 	redirect = false,
 	isVote
 }: Props) => {
@@ -93,10 +92,10 @@ const DelegationSuccessPopup = ({
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
 				<h2 className='mt-4 text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
 					<ImageIcon
-						src={isMultisig ? '/assets/multi-vote-initiated.svg' : '/assets/delegation-tracks/success-delegate.svg'}
+						src={'/assets/delegation-tracks/success-delegate.svg'}
 						alt='multi vote initiated icon'
 					/>
-					{title ? title : isDelegate ? (isMultisig ? `${title}` : `${title} successfully`) : isMultisig ? `${title}` : 'Undelegated successfully'}
+					{title ? title : isDelegate ? `${title} successfully` : 'Undelegated successfully'}
 				</h2>
 				{isDelegate && (
 					<div className='flex flex-col items-center justify-center gap-[14px]'>
@@ -156,7 +155,7 @@ const DelegationSuccessPopup = ({
 						<div className='flex flex-col items-start justify-center gap-[10px]'>
 							{address && (
 								<div className='flex gap-3 text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
-									{isVote ? 'With' : 'To'} {isMultisig ? ' multisig' : 'address'}:
+									{isVote ? 'With' : 'To'} {'address'}:
 									<span className='font-medium'>
 										<Address
 											address={address}
@@ -192,21 +191,6 @@ const DelegationSuccessPopup = ({
 							{!isNaN(Number(conviction)) && (
 								<div className='flex gap-[30px] text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
 									Conviction:<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction === 0 ? 0.1 : conviction}x</span>
-								</div>
-							)}
-							{isMultisig && (
-								<div className='flex h-[21px] gap-[35px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-									Vote Link:{' '}
-									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<a
-											className='text-pink_primary'
-											href='https://app.polkasafe.xyz/transactions'
-											target='_blank'
-											rel='noreferrer'
-										>
-											Polkasafe
-										</a>
-									</span>
 								</div>
 							)}
 							{tracks && (

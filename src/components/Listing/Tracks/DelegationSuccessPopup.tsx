@@ -5,8 +5,6 @@
 import React, { useEffect } from 'react';
 import { Modal } from 'antd';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-// import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
@@ -61,7 +59,6 @@ const DelegationSuccessPopup = ({
 	ayeVoteValue,
 	nayVoteValue,
 	abstainVoteValue,
-	isMultisig,
 	redirect = false,
 	isVote
 }: Props) => {
@@ -93,20 +90,12 @@ const DelegationSuccessPopup = ({
 			maskClosable={false}
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
-				{isMultisig ? (
+				<h2 className='mt-4 text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
 					<ImageIcon
-						src='/assets/multi-vote-initiated.svg'
+						src={'/assets/delegation-tracks/success-delegate.svg'}
 						alt='multi vote initiated icon'
 					/>
-				) : (
-					// <SuccessIcon />
-					<ImageIcon
-						src='/assets/delegation-tracks/success-delegate.svg'
-						alt='success delegate icon'
-					/>
-				)}
-				<h2 className='mt-4 text-[20px] font-semibold tracking-[0.0015em]'>
-					{title ? title : isDelegate ? (isMultisig ? `${title}` : `${title} successfully`) : isMultisig ? `${title}` : 'Undelegated successfully'}
+					{title ? title : isDelegate ? `${title} successfully` : 'Undelegated successfully'}
 				</h2>
 				{isDelegate && (
 					<div className='flex flex-col items-center justify-center gap-[14px]'>
@@ -165,8 +154,8 @@ const DelegationSuccessPopup = ({
 						)}
 						<div className='flex flex-col items-start justify-center gap-[10px]'>
 							{address && (
-								<div className='flex gap-3 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
-									{isVote ? 'With' : 'To'} {isMultisig ? ' multisig' : 'address'}:
+								<div className='flex gap-3 text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
+									{isVote ? 'With' : 'To'} {'address'}:
 									<span className='font-medium'>
 										<Address
 											address={address}
@@ -200,27 +189,12 @@ const DelegationSuccessPopup = ({
 								</div>
 							)}
 							{!isNaN(Number(conviction)) && (
-								<div className='flex gap-[30px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
-									Conviction:<span className='font-medium text-bodyBlue'>{conviction === 0 ? 0.1 : conviction}x</span>
-								</div>
-							)}
-							{isMultisig && (
-								<div className='flex h-[21px] gap-[35px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-									Vote Link:{' '}
-									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<a
-											className='text-pink_primary'
-											href='https://app.polkasafe.xyz/transactions'
-											target='_blank'
-											rel='noreferrer'
-										>
-											Polkasafe
-										</a>
-									</span>
+								<div className='flex gap-[30px] text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
+									Conviction:<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction === 0 ? 0.1 : conviction}x</span>
 								</div>
 							)}
 							{tracks && (
-								<div className='flex gap-[35px] text-sm text-bodyBlue dark:text-blue-dark-high'>
+								<div className='flex gap-[35px] text-sm text-bodyBlue dark:text-blue-dark-medium'>
 									Track(s):
 									<span>
 										<div
@@ -229,7 +203,10 @@ const DelegationSuccessPopup = ({
 											}`}
 										>
 											{tracks.map((track, index) => (
-												<div key={index}>
+												<div
+													key={index}
+													className='dark:text-blue-dark-high'
+												>
 													{track} #{networkTrackInfo[network][track.toString()].trackId}
 												</div>
 											))}

@@ -411,10 +411,10 @@ export type PjsCalendarItem = PjsCalendarItemDuration & {
 };
 
 export enum ETrackDelegationStatus {
-	All = 'all',
-	Delegated = 'delegated',
-	Received_Delegation = 'received_delegation',
-	Undelegated = 'undelegated'
+	ALL = 'all',
+	DELEGATED = 'delegated',
+	RECEIVED_DELEGATION = 'received_delegation',
+	UNDELEGATED = 'undelegated'
 }
 
 export interface IDelegation {

@@ -10,9 +10,10 @@ import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
-import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 import styled from 'styled-components';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IPreimagesListing } from '~src/types';
 

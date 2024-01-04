@@ -8,9 +8,10 @@ import Link from 'next/link';
 import React, { FC } from 'react';
 
 import { poppins } from 'pages/_app';
-import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;

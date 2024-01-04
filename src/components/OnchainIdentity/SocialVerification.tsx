@@ -259,11 +259,13 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 					closeModal(true);
 					setOpen(true);
 				}
+				setFieldLoading({ ...fieldLoading, [fieldName]: false });
 			}
 			setFieldLoading({ ...fieldLoading, [fieldName]: false });
 		}
 
 		startLoading({ isLoading: false, message: '' });
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	};
 

@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider, Form, Modal } from 'antd';
 import React, { FC, useState } from 'react';
+import { Alert, Divider, Form, Modal } from 'antd';
 import { useDispatch } from 'react-redux';
 import { handleTokenChange } from 'src/services/auth.service';
 import { NotificationStatus, Wallet } from 'src/types';
@@ -13,6 +13,7 @@ import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import { ChangeResponseType } from '~src/auth/types';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import WalletButtons from '~src/components/Login/WalletButtons';
 import { APPNAME } from '~src/global/appName';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -194,33 +195,31 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 			open={open}
 			className='mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			footer={
-				!currentUser.id ? null : (
-					<div className='flex items-center justify-end'>
-						{[
-							<Button
-								disabled={!proxyAddress || !proxiedAddress || loading}
-								key='sign'
-								htmlType='submit'
-								onClick={() => {
-									form.submit();
-								}}
-								loading={loading}
-								className={`flex items-center justify-center rounded-md border border-solid border-pink_primary bg-pink_primary px-7 py-3 text-lg font-medium leading-none text-white outline-none ${
-									!proxyAddress || !proxiedAddress || loading ? 'bg-gray-300' : ''
-								}`}
-							>
-								Sign
-							</Button>,
-							<Button
-								key='cancel'
-								onClick={dismissModal}
-								className='flex items-center justify-center rounded-md border border-solid border-pink_primary bg-white px-7 py-3 text-lg font-medium leading-none text-pink_primary outline-none dark:bg-section-dark-overlay'
-							>
-								Cancel
-							</Button>
-						]}
-					</div>
-				)
+				<div className='flex items-center justify-end'>
+					{[
+						<CustomButton
+							disabled={accountsNotFound}
+							key='sign'
+							htmlType='submit'
+							onClick={() => {
+								form.submit();
+							}}
+							loading={loading}
+							variant='primary'
+							fontSize='lg'
+							className={`px-7 py-3 ${accountsNotFound ? 'bg-gray-300' : ''}`}
+							text='Sign'
+						/>,
+						<CustomButton
+							key='cancel'
+							onClick={dismissModal}
+							variant='default'
+							fontSize='lg'
+							className={`px-7 py-3 ${accountsNotFound ? 'bg-gray-300' : ''}`}
+							text='Cancel'
+						/>
+					]}
+				</div>
 			}
 		>
 			{!currentUser.id ? (

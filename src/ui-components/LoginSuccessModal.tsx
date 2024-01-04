@@ -6,7 +6,7 @@ import AuthForm from 'src/ui-components/AuthForm';
 // import ConfirmationIcon from '~assets/icons/Confirmation.svg';
 // import { Alert, Button, Divider, Form } from 'antd';
 // import ConfirmationIcon from '~assets/icons/Confirmation.svg';
-import { Alert, Button, Divider, Form } from 'antd';
+import { Alert, Divider, Form } from 'antd';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';
 import { MailIcon, WhiteMailIcon } from '~src/ui-components/CustomIcons';
@@ -21,6 +21,7 @@ import { IAddProfileResponse } from '~src/auth/types';
 import { handleTokenChange } from '~src/services/auth.service';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
 import Input from '~src/basic-components/Input';
 
@@ -204,14 +205,14 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							className='-mt-2 dark:bg-separatorDark'
 						/>
 						<div className='mb-6 flex px-8'>
-							<Button
-								size='large'
+							<CustomButton
 								loading={loading}
 								htmlType='submit'
-								className='ml-auto w-[144px] rounded-md border-none bg-pink_primary text-white outline-none'
-							>
-								Next
-							</Button>
+								variant='primary'
+								buttonSize='sm'
+								className='ml-auto'
+								text='Next'
+							/>
 						</div>
 					</div>
 				</AuthForm>
@@ -309,24 +310,23 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 						/>
 						<div className='mb-6 flex justify-end gap-x-5 px-8'>
 							{!email && !firstPassword && (
-								<Button
-									size='large'
+								<CustomButton
 									onClick={handleOptionalSkip}
-									className='w-[144px] rounded-md border border-solid border-pink_primary text-pink_primary outline-none dark:bg-transparent'
-								>
-									Skip
-								</Button>
+									variant='default'
+									buttonSize='sm'
+									text='Skip'
+								/>
 							)}
 							{(email || firstPassword) && (
-								<Button
+								<CustomButton
 									loading={loading}
 									disabled={!email || !firstPassword}
-									size='large'
 									htmlType='submit'
-									className={`${!email || !firstPassword ? 'opacity-50' : ''} w-[144px] rounded-md border-none bg-pink_primary text-white outline-none`}
-								>
-									Done
-								</Button>
+									variant='primary'
+									className={`${!email || !firstPassword ? 'opacity-50' : ''}`}
+									buttonSize='sm'
+									text='Done'
+								/>
 							)}
 						</div>
 					</div>

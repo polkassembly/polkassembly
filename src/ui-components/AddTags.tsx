@@ -11,7 +11,6 @@ import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import { useTheme } from 'next-themes';
 import { NoTagFoundIcon } from './CustomIcons';
-import styled from 'styled-components';
 import Input from '~src/basic-components/Input';
 
 interface Props {
@@ -142,7 +141,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 			>
 				<Dropdown
 					disabled={tags.length === 5 || disabled}
-					overlayClassName={`dark:bg-section-dark-overlay overlay-class dark:border-separatorDark dark:rounded-lg dark:text-white [&>ul]:w-[126px] ${
+					overlayClassName={`dark:bg-section-dark-overlay  dark:border-separatorDark dark:rounded-lg dark:text-white [&>ul]:w-[126px] ${
 						theme == 'dark'
 							? '[&>ul]:bg-section-dark-garyBackground [&>ul>li]:text-white [&>ul>.ant-dropdown-menu-item-selected]:bg-section-dark-garyBackground [&>ul>.ant-dropdown-menu-item-selected]:text-pink_primary hover:[&>ul>li]:bg-section-dark-garyBackground hover:[&>ul>li]:text-pink_secondary'
 							: ''
@@ -212,9 +211,4 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 		</div>
 	);
 };
-export default styled(AddTags)`
-	.overlay-class {
-		width: 126px !important;
-		min-width: 0px !important;
-	}
-`;
+export default AddTags;

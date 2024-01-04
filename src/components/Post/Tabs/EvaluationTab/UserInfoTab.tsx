@@ -21,8 +21,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 		postData: { proposer, beneficiaries }
 	} = usePostDataContext();
 	let postAddr: any = [];
-	postAddr = isProposerTab ? [proposer] : beneficiaries?.map((beneficiary) => beneficiary.address);
-
+	postAddr = isProposerTab ? [proposer] : beneficiaries?.map((beneficiary: any) => (typeof beneficiary.address === 'string' ? beneficiary?.address : beneficiary?.address?.value));
 	return (
 		<div className={`${className}`}>
 			<Collapse
@@ -48,7 +47,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 								/>
 							)}
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
-								{isProposerTab ? 'Proposer' : 'Beneficiary(ies)'}
+								{isProposerTab ? 'Proposer' : postAddr.length > 1 ? 'Beneficiaries' : 'Beneficiary'}
 							</h3>
 						</div>
 					}
@@ -56,15 +55,15 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 				>
 					<div>
 						{postAddr?.map((addr: any, index: number) => (
-							<React.Fragment key={index}>
-								{<ProfileData address={addr} />}
+							<>
+								<ProfileData address={addr} />
 								{!isProposerTab && postAddr.length > 1 && index !== postAddr.length - 1 && (
 									<Divider
 										style={{ background: '#D2D8E0', flexGrow: 1 }}
 										className='mt-3 dark:bg-separatorDark'
 									/>
 								)}
-							</React.Fragment>
+							</>
 						))}
 					</div>
 				</Panel>

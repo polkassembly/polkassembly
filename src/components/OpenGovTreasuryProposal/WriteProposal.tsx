@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Form, FormInstance, Radio, Spin } from 'antd';
+import { Alert, Form, FormInstance, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
 import { ISteps } from '.';
@@ -15,6 +15,7 @@ import _ from 'lodash';
 import styled from 'styled-components';
 import ContentForm from '../ContentForm';
 import { useNetworkSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 
 interface Props {
@@ -260,7 +261,25 @@ const WriteProposal = ({
 								<label className='mb-0.5'>
 									Title <span className='text-nay_red'>*</span>
 								</label>
-								<Form.Item name='title'>
+								<Form.Item
+									name='title'
+									rules={
+										isDiscussionLinked
+											? []
+											: [
+													{
+														message: 'Title should not exceed 150 characters.',
+														validator(rule, value, callback) {
+															if (callback && value?.length > 150) {
+																callback(rule?.message?.toString());
+															} else {
+																callback();
+															}
+														}
+													}
+											  ]
+									}
+								>
 									<Input
 										name='title'
 										className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
@@ -311,15 +330,15 @@ const WriteProposal = ({
 						</div>
 					)}
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
-						<Button
+						<CustomButton
 							htmlType='submit'
-							className={`h-[40px] w-[155px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary ${
-								(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50'
-							}`}
+							text='Next'
+							variant='primary'
+							height={40}
+							width={155}
+							className={`${(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50'}`}
 							disabled={!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)}
-						>
-							Next
-						</Button>
+						/>
 					</div>
 				</Form>
 			</Spin>

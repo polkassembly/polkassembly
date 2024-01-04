@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CalendarFilled } from '@ant-design/icons';
-import { Calendar as StyledCalendar, List, Spin, Tooltip } from 'antd';
+import { Calendar as StyledCalendar, List, Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -27,6 +27,7 @@ import {
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import Tooltip from '~src/basic-components/Tooltip';
 
 dayjs.extend(localizedFormat);
 interface Props {
@@ -438,7 +439,7 @@ const UpcomingEvents = ({ className }: Props) => {
 				dataSource={calendarEvents.sort((a, b) => (a?.end_time?.getTime() || a?.start_time?.getTime()) - (b?.end_time?.getTime() || b?.start_time?.getTime())).reverse()}
 				renderItem={(item) => {
 					return (
-						<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-blue-light-high dark:text-blue-dark-high dark:text-blue-dark-high`}>
+						<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-blue-light-high dark:text-blue-dark-high`}>
 							<a
 								{...(item.url ? { href: item.url } : {})}
 								target='_blank'

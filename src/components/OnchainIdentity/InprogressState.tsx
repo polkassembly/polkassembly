@@ -4,13 +4,13 @@
 import React, { useEffect } from 'react';
 import { ESetIdentitySteps, ISocials } from '.';
 import { poppins } from 'pages/_app';
-import { Button, Modal } from 'antd';
-// import SuccessIcon from '~assets/icons/identity-success.svg';
+import { Modal } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { ESocials } from '~src/types';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
@@ -79,17 +79,18 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 					</div>
 				</div>
 
-				<Button
+				<CustomButton
 					onClick={() => {
 						close(true);
 						handleVerified();
 						changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 						openPreModal(true);
 					}}
-					className='mt-4 h-[40px] w-full rounded-[4px] border-none bg-pink_primary text-sm tracking-wide text-white'
-				>
-					Verified successfully
-				</Button>
+					className='w-full'
+					height={40}
+					variant='primary'
+					text='Verified successfully'
+				/>
 			</>
 		</Modal>
 	);

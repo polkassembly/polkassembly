@@ -2,23 +2,21 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Skeleton } from 'antd';
-
+import { Alert, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useApiContext } from '~src/context';
 import { IDelegate } from '~src/types';
-
 import Web3 from 'web3';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
@@ -123,7 +121,10 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 								className='h-[44px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							/>
 
-							<Button
+							<CustomButton
+								variant='default'
+								className={`ml-1 mr-1 justify-around gap-2 px-4 py-1 ${disabled && 'opacity-50'}`}
+								height={40}
 								onClick={handleClick}
 								disabled={
 									!address ||
@@ -132,13 +133,10 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 									getEncodedAddress(address, network) === delegationDashboardAddress ||
 									disabled
 								}
-								className={`ml-1 mr-1 flex h-[40px] items-center justify-around gap-2 rounded-md bg-pink_primary px-4 py-1 dark:border-pink_primary dark:bg-[#33071E] ${
-									disabled && 'opacity-50'
-								}`}
 							>
 								<DelegatesProfileIcon />
 								<span className='text-sm font-medium text-white'>Delegate</span>
-							</Button>
+							</CustomButton>
 						</div>
 					</div>
 

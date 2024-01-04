@@ -1,11 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Form, Modal } from 'antd';
+import { Form, Modal } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import Input from '~src/basic-components/Input';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ContentForm from '~src/components/ContentForm';
 import { usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';
@@ -93,16 +94,14 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 					key='save'
 					className='flex items-center justify-end'
 				>
-					<Button
+					<CustomButton
+						variant='primary'
 						loading={formDisabled}
 						disabled={formDisabled}
 						onClick={() => form.submit()}
-						className={`'border-none capitalize' rounded-[4px] bg-pink_primary px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-white outline-none ${
-							formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-						}`}
-					>
-						Save
-					</Button>
+						className={`px-4 py-1 capitalize ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+						text='Save'
+					/>
 				</div>
 			]}
 			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'

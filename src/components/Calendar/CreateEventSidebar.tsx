@@ -6,7 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import type { DatePickerProps } from 'antd';
 import { RadioChangeEvent } from 'antd';
-import { Button, DatePicker, Form, Radio } from 'antd';
+import { DatePicker, Form, Radio } from 'antd';
 import { dayjs } from 'dayjs-init';
 import React, { useState } from 'react';
 import SidebarRight from 'src/components/SidebarRight';
@@ -16,6 +16,7 @@ import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 
 interface Props {
@@ -200,8 +201,9 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<label className='input-label'>Start Date</label>
 							<Form.Item validateStatus={errorsFound.includes('eventStartDateTime') ? 'error' : ''}>
 								<DatePicker
+									popupClassName='z-[9999]'
 									onChange={onEventStartDateChange}
-									value={eventStartDateTime && dayjs(eventStartDateTime, 'DD-MM-YYYY')}
+									value={eventStartDateTime && dayjs(eventStartDateTime)}
 									disabled={loading}
 									format='DD-MM-YYYY'
 								/>
@@ -212,8 +214,9 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 							<label className='input-label'>End Date</label>
 							<Form.Item validateStatus={errorsFound.includes('eventEndDateTime') ? 'error' : ''}>
 								<DatePicker
+									popupClassName='z-[9999]'
 									onChange={onEventEndDateChange}
-									value={eventEndDateTime && dayjs(eventEndDateTime, 'DD-MM-YYYY')}
+									value={eventEndDateTime && dayjs(eventEndDateTime)}
 									disabled={loading || eventStartDateTime === null}
 									format='DD-MM-YYYY'
 									disabledDate={(current) => {
@@ -253,21 +256,22 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 						</div>
 					)}
 
-					<div className='form-actions'>
-						<Button
+					<div className='form-actions gap-x-2'>
+						<CustomButton
+							text='Cancel'
+							variant='default'
 							onClick={closeCreateEventSidebar}
 							disabled={loading}
-							className='dark:bg-transparent dark:text-white'
-						>
-							Cancel
-						</Button>
-						<Button
-							className='ml-1 rounded-md  bg-pink_primary text-white transition-colors duration-300 hover:bg-pink_secondary'
+							buttonSize='sm'
+						/>
+						<CustomButton
+							text='Create Event'
+							variant='primary'
 							onClick={handleCreateEvent}
 							loading={loading}
-						>
-							Create Event
-						</Button>
+							width={160}
+							height={40}
+						/>
 					</div>
 				</Form>
 			</div>

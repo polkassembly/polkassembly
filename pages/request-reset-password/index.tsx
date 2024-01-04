@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Form, Row } from 'antd';
+import { Form, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -13,6 +13,7 @@ import * as validation from 'src/util/validation';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
@@ -111,14 +112,14 @@ const RequestResetPassword: FC<Props> = (props) => {
 						</div>
 
 						<div className='flex items-center justify-center'>
-							<Button
+							<CustomButton
+								text='Request reset'
 								disabled={loading}
 								htmlType='submit'
-								size='large'
-								className='w-56 rounded-md border-none bg-pink_primary text-white outline-none'
-							>
-								Request reset
-							</Button>
+								width={224}
+								height={40}
+								variant='primary'
+							/>
 						</div>
 						{error && <FilteredError text={error} />}
 					</AuthForm>

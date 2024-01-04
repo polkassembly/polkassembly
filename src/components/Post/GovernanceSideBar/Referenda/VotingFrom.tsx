@@ -2,12 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Button, Form, FormInstance, Select } from 'antd';
+import { Form, FormInstance, Select } from 'antd';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import { ReactNode } from 'react-markdown/lib/ast-to-react';
 import DownIcon from '~assets/icons/down-icon.svg';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',
@@ -115,13 +116,14 @@ const VotingForm = ({
 				</>
 			)}
 			<div className='-ml-6 -mr-6 mt-[-1px] flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] pt-5 dark:border-[#3B444F]'>
-				<Button
-					className={`mr-[24px] h-[40px] w-[134px] rounded-[4px] border-0 bg-pink_primary font-semibold text-[white] ${disabled && 'opacity-50'}`}
+				<CustomButton
 					htmlType='submit'
 					disabled={disabled}
-				>
-					Confirm
-				</Button>
+					text='Confirm'
+					variant='primary'
+					buttonSize='xs'
+					className={`mr-6 ${disabled && 'opacity-50'} font-semibold`}
+				/>
 			</div>
 		</Form>
 	);

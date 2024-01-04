@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Button, Form, Row } from 'antd';
+import { Alert, Form, Row } from 'antd';
 import { Rule } from 'antd/lib/form';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -18,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Header from '../Header';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 
 interface IPasswordProps {
@@ -303,18 +304,17 @@ const Profile = () => {
 								]}
 							/>
 
-							<Button
+							<CustomButton
 								loading={loading}
-								size='small'
 								htmlType='button'
 								onClick={() => {
 									setIsChange(false);
 									setPasswords(initialPasswordsState);
 								}}
-								className='m-0 flex items-center border-none bg-none p-0 text-sm leading-6 tracking-wide text-pink_primary outline-none md:mt-10'
-							>
-								Cancel Change
-							</Button>
+								className='m-0 border-none p-0'
+								variant='default'
+								text='Cancel Change'
+							/>
 						</article>
 					) : (
 						<article className='flex w-full flex-col gap-x-4 md:flex-row'>
@@ -338,31 +338,28 @@ const Profile = () => {
 									}
 								]}
 							/>
-							<Button
-								size='small'
+							<CustomButton
 								htmlType='button'
 								onClick={() => {
 									setIsChange(true);
 									setCurrentPassword('');
 								}}
-								className='m-0 flex items-center border-none bg-none p-0 text-sm leading-6 tracking-wide text-pink_primary outline-none md:mt-10'
-							>
-								Change
-							</Button>
+								className='m-0 border-none p-0'
+								variant='default'
+								text='Change'
+							/>
 						</article>
 					))}
 
-				<Button
+				<CustomButton
 					loading={loading}
 					disabled={isSubmitDisabled}
-					size='large'
 					htmlType='submit'
-					className={`${
-						!isSubmitDisabled ? 'bg-pink_primary' : 'bg-icon_grey'
-					} mt-5 flex items-center justify-center rounded-lg border-none bg-pink_primary px-14 py-3 text-lg font-semibold leading-7 text-white outline-none`}
-				>
-					Save
-				</Button>
+					fontSize='lg'
+					className={`${!isSubmitDisabled ? 'bg-pink_primary' : 'bg-icon_grey'} mt-05 border-none px-14 py-3 font-semibold`}
+					variant='default'
+					text='Save'
+				/>
 			</Form>
 		</Row>
 	);

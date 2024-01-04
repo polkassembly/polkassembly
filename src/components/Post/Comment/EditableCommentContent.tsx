@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Form, MenuProps, Tooltip } from 'antd';
+import { Button, Form, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
@@ -56,6 +56,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface IEditableCommentContentProps {
 	userId: number;

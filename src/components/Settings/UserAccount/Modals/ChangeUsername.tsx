@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Button, Divider, Form, Modal } from 'antd';
+import { Divider, Form, Modal } from 'antd';
 import ChangeUserIcon from '~assets/icons/change-username.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { NotificationStatus } from '~src/types';
@@ -13,6 +13,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 
 const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean; onConfirm?: () => void; onCancel: () => void; username: string }) => {
@@ -147,20 +148,23 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 							<Divider className='my-4 mt-0' />
 						</div>
 						<div className='flex justify-end gap-4'>
-							<Button
+							<CustomButton
+								text='Cancel'
 								key='1'
+								variant='default'
 								onClick={onCancel}
-								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#FFFFFF] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-section-dark-overlay'
-							>
-								Cancel
-							</Button>
-							<Button
+								buttonSize='xs'
+								className='px-[36px] py-[4px] capitalize'
+							/>
+							<CustomButton
 								loading={loading}
 								htmlType='submit'
-								className='h-10 rounded-[6px] border border-solid border-pink_primary bg-[#E5007A] px-[36px] py-[4px] text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
-							>
-								Save
-							</Button>
+								text='Save'
+								key='2'
+								variant='default'
+								buttonSize='xs'
+								className='px-[36px] py-[4px] capitalize'
+							/>
 						</div>
 					</div>
 				</Form>

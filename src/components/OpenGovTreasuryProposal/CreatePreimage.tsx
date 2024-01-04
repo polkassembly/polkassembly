@@ -40,11 +40,13 @@ import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useDispatch } from 'react-redux';
+import { setBeneficiaries } from '~src/redux/treasuryProposal';
 import Input from '~src/basic-components/Input';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
@@ -78,9 +80,6 @@ interface Props {
 	availableBalance: BN;
 	setAvailableBalance: (pre: BN) => void;
 	isUpdatedAvailableBalance: boolean;
-	showIdentityInfoCardForBeneficiary: boolean;
-	showIdentityInfoCardForProposer: boolean;
-	showMultisigInfoCard: boolean;
 }
 
 interface IAdvancedDetails {
@@ -110,13 +109,13 @@ const CreatePreimage = ({
 	availableBalance,
 	setAvailableBalance,
 	isUpdatedAvailableBalance,
-	showMultisigInfoCard,
-	showIdentityInfoCardForBeneficiary,
-	showIdentityInfoCardForProposer,
 	form
 }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
+	const { showIdentityInfoCardForBeneficiary, showIdentityInfoCardForProposer, showMultisigInfoCard, isIdentityCardLoading, isMultisigCardLoading } = useTreasuryProposalSelector();
+	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const [preimageCreated, setPreimageCreated] = useState<boolean>(false);
 	const [preimageLinked, setPreimageLinked] = useState<boolean>(false);
@@ -133,7 +132,6 @@ const CreatePreimage = ({
 	});
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
-	const currentUser = useUserDetailsSelector();
 
 	const checkPreimageHash = (preimageLength: number | null, preimageHash: string) => {
 		if (!preimageHash || preimageLength === null) return false;
@@ -231,7 +229,9 @@ const CreatePreimage = ({
 			},
 			type: EBeneficiaryAddressesActionType.REPLACE_STATE
 		});
-
+		if (createPreimageForm?.beneficiaryAddresses?.length) {
+			dispatch(setBeneficiaries(createPreimageForm?.beneficiaryAddresses?.map((addr: any) => addr.address) || []));
+		}
 		setEnactment(createPreimageForm?.enactment || { key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 		setSelectedTrack(createPreimageForm?.selectedTrack || '');
 
@@ -546,6 +546,8 @@ const CreatePreimage = ({
 						type: EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE
 					});
 
+					dispatch(setBeneficiaries([newBeneficiaryAddress.address]));
+
 					setFundingAmount(balance);
 					onChangeLocalStorageSet({ beneficiaryAddresses: [newBeneficiaryAddress] || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
 					setSteps({ percent: 100, step: 1 });
@@ -605,6 +607,8 @@ const CreatePreimage = ({
 						},
 						type: EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE
 					});
+
+					dispatch(setBeneficiaries([newBeneficiaryAddress.address]));
 
 					setFundingAmount(balance);
 					setPreimageLength(data.length);
@@ -681,6 +685,17 @@ const CreatePreimage = ({
 			},
 			type: EBeneficiaryAddressesActionType.UPDATE_ADDRESS
 		});
+
+		dispatch(
+			setBeneficiaries(
+				beneficiaryAddresses.map((addr, inx) => {
+					if (index === inx) {
+						return address;
+					}
+					return addr.address;
+				})
+			)
+		);
 
 		setPreimageCreated(false);
 		setPreimageLinked(false);
@@ -769,6 +784,7 @@ const CreatePreimage = ({
 			type: EBeneficiaryAddressesActionType.REMOVE_ALL
 		});
 
+		dispatch(setBeneficiaries([]));
 		form.resetFields();
 
 		setInputAmountValue('0');
@@ -995,7 +1011,7 @@ const CreatePreimage = ({
 								/>
 							)}
 
-							{showMultisigInfoCard && (
+							{showMultisigInfoCard && !isMultisigCardLoading && (
 								<Alert
 									className='mt-2 rounded-[4px] text-[13px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									showIcon
@@ -1019,7 +1035,7 @@ const CreatePreimage = ({
 									type='info'
 								/>
 							)}
-							{showIdentityInfoCardForBeneficiary && network.includes('polkadot') && (
+							{showIdentityInfoCardForBeneficiary && !isIdentityCardLoading && network.includes('polkadot') && (
 								<Alert
 									className='icon-fix mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-blue-dark-high'
 									showIcon

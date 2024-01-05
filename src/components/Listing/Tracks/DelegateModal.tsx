@@ -489,7 +489,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										<Popover
 											defaultOpen={true}
 											content={content}
-											placement='topLeft'
+											placement='top'
 											zIndex={1056}
 										>
 											<Checkbox

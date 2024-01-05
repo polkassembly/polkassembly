@@ -487,9 +487,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
 									{trackArr?.length ? (
 										<Popover
-											defaultOpen={true}
 											content={content}
-											placement='topLeft'
+											placement='top'
 											zIndex={1056}
 										>
 											<Checkbox

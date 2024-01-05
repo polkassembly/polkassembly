@@ -174,7 +174,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 					);
 				})}
 			</div>
-			<div className={`${className} flex items-center justify-center px-4 py-4`}>
+			<div className={`${className} mb-1 flex items-center justify-center px-4 py-4`}>
 				<Pagination
 					defaultCurrent={1}
 					current={postsPage}

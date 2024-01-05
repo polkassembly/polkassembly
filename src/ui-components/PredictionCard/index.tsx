@@ -117,7 +117,7 @@ const PredictionCard = () => {
 				</h1>
 				<a
 					className='font-mediums inline-block rounded-2xl border border-solid border-[#F02A4E] bg-white/40 px-3 py-1 text-xs text-[#F02A4E]'
-					href='https://app.zeitgeist.pm/markets/307'
+					href='https://app.zeitgeist.pm/markets/345'
 					target='_blank'
 					rel='noreferrer'
 				>

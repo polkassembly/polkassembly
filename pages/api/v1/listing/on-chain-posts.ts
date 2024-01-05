@@ -449,6 +449,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				type_in: subsquidProposalType
 			};
 
+			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
+				postsVariables.status_in = proposalStatus;
+			}
 			if (proposalType === ProposalType.OPEN_GOV) {
 				strProposalType = 'referendums_v2';
 				if (proposalType == ProposalType.OPEN_GOV) {
@@ -466,9 +469,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
 					postsVariables.trackNumber_in = numTrackNo;
 				}
-			}
-			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
-				postsVariables.status_in = proposalStatus;
 			}
 
 			if (postIds && postIds.length > 0) {

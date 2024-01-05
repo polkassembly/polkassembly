@@ -117,6 +117,22 @@ const QuickView = ({
 		}
 		setOpen(false);
 	};
+	const handleSocials = () => {
+		setIdentityArr([
+			{
+				isVerified: (!!identity?.twitter && isGood) || false,
+				key: ESocialType.TWITTER,
+				value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || ''
+			},
+			{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' },
+			{
+				isVerified: (!!identity?.email && isGood) || false,
+				key: ESocialType.EMAIL,
+				value: identity?.email || socials?.find((social) => social.type === ESocialType.EMAIL)?.link || ''
+			},
+			{ isVerified: (!!identity?.riot && isGood) || false, key: ESocialType.RIOT, value: identity?.riot || socials?.find((social) => social.type === ESocialType.RIOT)?.link || '' }
+		]);
+	};
 	const handleKiltSocialFields = (verified: boolean, key: ESocialType, value: string) => {
 		switch (key) {
 			case ESocialType.EMAIL:
@@ -141,7 +157,6 @@ const QuickView = ({
 
 						for (const social of res) {
 							if (social?.credential?.claim?.contents) {
-								console.log(social);
 								Object.entries(social?.credential?.claim?.contents).map(([key, value]) => {
 									socialsArr.push(handleKiltSocialFields(true, key as ESocialType, value as string) as ISocialsType);
 									if (key === 'Username' && social?.metadata?.label === 'KILT Discord Credential') {
@@ -182,7 +197,12 @@ const QuickView = ({
 		handleKiltSocials();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isKiltNameExists, api, apiReady, network]);
+	useEffect(() => {
+		if (isKiltNameExists || !api || !apiReady || network === 'kilt') return;
 
+		handleSocials();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [identity]);
 	return (
 		<div
 			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2 dark:border-none`}
@@ -345,7 +365,7 @@ const QuickView = ({
 					<div className='flex w-full items-center'>
 						<CustomButton
 							onClick={handleTipping}
-							variant='default'
+							variant='primary'
 							text='Tip'
 							height={32}
 							className={`w-full p-5 ${(!id || !enableTipping) && 'cursor-not-allowed opacity-50'}`}

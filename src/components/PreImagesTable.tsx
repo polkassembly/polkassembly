@@ -5,7 +5,7 @@
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
 import { ApiPromise } from '@polkadot/api';
-import { Button, Modal, Table as AntdTable, Tooltip, message } from 'antd';
+import { Modal, Table as AntdTable, Tooltip, message } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -14,8 +14,8 @@ import NameLabel from 'src/ui-components/NameLabel';
 import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 import styled from 'styled-components';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
-// import { useApiContext } from '~src/context';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { IPreimagesListing, NotificationStatus } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -298,14 +298,13 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					onCancel={() => setModalArgs(null)}
 					className={'dark:[&>.ant-modal-content]:bg-section-dark-overlay '}
 					footer={[
-						<Button
-							className='dark:bg-transparent dark:text-white'
+						<CustomButton
+							variant='default'
+							text='Close'
 							key='back'
 							onClick={() => setModalArgs(null)}
-						>
-							{' '}
-							Close{' '}
-						</Button>
+							className='border-none dark:bg-transparent dark:text-white'
+						/>
 					]}
 				>
 					{modalArgs && (

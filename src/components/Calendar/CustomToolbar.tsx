@@ -276,8 +276,6 @@ function CustomToolbar(props: any) {
 										<DownOutlined className='align-middle text-pink_primary' />
 									</Space>
 								</Dropdown>
-
-								{/* {!props.small && <Button basic className='create-event-btn' onClick={() => props.setSidebarCreateEvent(true)}>Create Event</Button>} */}
 							</div>
 						</div>
 						<div className='flex w-full justify-end'>

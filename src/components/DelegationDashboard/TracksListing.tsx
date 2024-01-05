@@ -5,12 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { Radio, Table } from 'antd';
 
 import styled from 'styled-components';
-
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext } from '~src/context';
 import { GetColumns } from './Coloumn';
-import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
-
 import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import { ETrackDelegationStatus } from '~src/types';
@@ -18,8 +15,9 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import { IDelegation } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
+import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -42,12 +40,14 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
-	const [status, setStatusValue] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.All);
-	const [delegatedCount, setDelegatedCount] = useState<number>(0);
-	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
-	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
-	const [allCount, setAllCount] = useState<number>(0);
-	const [showTable, setShowTable] = useState<boolean>(false);
+	const [status, setStatusValue] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.ALL);
+	const [statusCounts, setStatusCounts] = useState<{ all: number; delegated: number; received_delegation: number; undelegated: number }>({
+		all: 0,
+		delegated: 0,
+		received_delegation: 0,
+		undelegated: 0
+	});
+	const [showTable, setShowTable] = useState<boolean | null>(true);
 	const router = useRouter();
 	const [rowsData, setRowsData] = useState<ITrackDataType[]>([]);
 	const [data, setData] = useState<ITrackDataType[]>([]);
@@ -55,8 +55,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 
 	const filterTrackDataByTrackNumber = (trackNo: number) => {
 		if (network) {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const data: any = Object.entries(networkTrackInfo?.[network]).find(([key, value]) => {
+			const data: any = Object.entries(networkTrackInfo?.[network]).find(([, value]) => {
 				if (!value?.fellowshipOrigin) {
 					return value?.trackId === trackNo;
 				}
@@ -68,35 +67,34 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const filterByStatus = (currentStatus: ETrackDelegationStatus) => {
 		setLoading(true);
 
-		if (currentStatus === ETrackDelegationStatus.All) {
+		if (currentStatus === ETrackDelegationStatus.ALL) {
 			setRowsData(data);
-		}
-		if (currentStatus === ETrackDelegationStatus.Received_Delegation) {
-			const filteredData = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Received_Delegation));
+		} else {
+			const filteredData = data.filter((row) => row.status?.includes(currentStatus));
 			const rows = filteredData.map((item, index) => {
 				return { ...item, index: index + 1 };
 			});
 			setRowsData(rows);
 		}
-		if (currentStatus === ETrackDelegationStatus.Undelegated) {
-			const filteredData = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Undelegated));
-			const rows = filteredData.map((item, index) => {
-				return { ...item, index: index + 1 };
-			});
-
-			setRowsData(rows);
-		}
-		if (currentStatus === ETrackDelegationStatus.Delegated) {
-			const filteredData = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Delegated));
-
-			const rows = filteredData.map((item, index) => {
-				return { ...item, index: index + 1 };
-			});
-
-			setRowsData(rows);
-		}
-
 		setLoading(false);
+	};
+
+	const handleStatusCounts = (data: ITrackDataType[]) => {
+		let receivedDelegationStatusCount = 0;
+		let undelegatedStatusCount = 0;
+		for (const item of data) {
+			if (item.status?.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) {
+				receivedDelegationStatusCount += 1;
+			} else if (item.status?.includes(ETrackDelegationStatus.UNDELEGATED)) {
+				undelegatedStatusCount += 1;
+			}
+		}
+		setStatusCounts({
+			all: data?.length || 0,
+			delegated: data?.length - (receivedDelegationStatusCount + undelegatedStatusCount),
+			received_delegation: receivedDelegationStatusCount,
+			undelegated: undelegatedStatusCount
+		});
 	};
 
 	const getData = async () => {
@@ -111,10 +109,10 @@ const DashboardTrackListing = ({ className }: Props) => {
 
 				return {
 					active_proposals: track?.active_proposals_count,
-					delegated_by: track?.status?.includes(ETrackDelegationStatus.Received_Delegation)
+					delegated_by: track?.status?.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)
 						? track?.delegations.filter((row: IDelegation) => row?.to === delegationDashboardAddress)
 						: null, //rece
-					delegated_to: track?.status?.includes(ETrackDelegationStatus.Delegated) ? track?.delegations.filter((row: IDelegation) => row?.to !== delegationDashboardAddress) : null,
+					delegated_to: track?.status?.includes(ETrackDelegationStatus.DELEGATED) ? track?.delegations.filter((row: IDelegation) => row?.to !== delegationDashboardAddress) : null,
 					description: trackData[1]?.description,
 					index: index + 1,
 					status: track?.status,
@@ -125,7 +123,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 
 			setData(rows);
 			setRowsData(rows);
-			setAllCount(rows?.length);
+			handleStatusCounts(rows);
+			if (rows.length > 0) setShowTable(true);
 			setLoading(false);
 		} else {
 			console.log(error);
@@ -136,51 +135,10 @@ const DashboardTrackListing = ({ className }: Props) => {
 		if (delegationDashboardAddress) {
 			getData();
 		}
-
-		setStatusValue(ETrackDelegationStatus.All);
+		setStatusValue(ETrackDelegationStatus.ALL);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [delegationDashboardAddress, api, apiReady]);
-
-	useEffect(() => {
-		if (data) {
-			const receivedDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Received_Delegation));
-			setReceivedDelegationCount(receivedDelegations?.length);
-			const delegateDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Delegated));
-			setDelegatedCount(delegateDelegations?.length);
-			const undelegateDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Undelegated));
-			setUndelegatedCount(undelegateDelegations?.length);
-		}
-	}, [data]);
-
-	const handleShowTable = (status: ETrackDelegationStatus) => {
-		if (status === ETrackDelegationStatus.All) {
-			setShowTable(true);
-		} else if (status === ETrackDelegationStatus.Delegated) {
-			if (delegatedCount !== 0) {
-				setShowTable(true);
-			} else {
-				setShowTable(false);
-			}
-		} else if (status === ETrackDelegationStatus.Undelegated) {
-			if (undelegatedCount !== 0) {
-				setShowTable(true);
-			} else {
-				setShowTable(false);
-			}
-		} else if (status === ETrackDelegationStatus.Received_Delegation) {
-			if (receivedDelegationCount !== 0) {
-				setShowTable(true);
-			} else {
-				setShowTable(false);
-			}
-		}
-	};
-
-	useEffect(() => {
-		handleShowTable(status);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status]);
 
 	return (
 		<div className={className}>
@@ -192,53 +150,28 @@ const DashboardTrackListing = ({ className }: Props) => {
 				Tracks
 				<Radio.Group
 					buttonStyle='solid'
-					defaultValue={'all'}
+					defaultValue={ETrackDelegationStatus.ALL}
 					onChange={(e) => {
 						setStatusValue(e.target.value);
 						filterByStatus(e.target.value);
+						setShowTable(!!statusCounts[e.target.value as ETrackDelegationStatus]);
 					}}
 					value={status}
-					className='ml-[24px] flex flex-shrink-0 max-md:flex-col '
+					className='ml-6 flex flex-shrink-0 max-md:flex-col'
 				>
-					<Radio
-						disabled={loading}
-						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] dark:text-blue-dark-high ${
-							ETrackDelegationStatus.All === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'
-						}`}
-						value={ETrackDelegationStatus.All}
-					>
-						All ({allCount})
-					</Radio>
-					<Radio
-						disabled={loading}
-						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] dark:text-blue-dark-high ${
-							ETrackDelegationStatus.Delegated === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'
-						}`}
-						value={ETrackDelegationStatus.Delegated}
-					>
-						Delegated ({delegatedCount})
-					</Radio>
-					<Radio
-						disabled={loading}
-						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] dark:text-blue-dark-high ${
-							ETrackDelegationStatus.Undelegated === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'
-						}`}
-						value={ETrackDelegationStatus.Undelegated}
-					>
-						Undelegated ({undelegatedCount})
-					</Radio>
-					<Radio
-						disabled={loading}
-						className={`px-[12px] py-[6px] text-xs text-[#243A57B2] dark:text-blue-dark-high ${
-							ETrackDelegationStatus.Received_Delegation === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'
-						}`}
-						value={ETrackDelegationStatus.Received_Delegation}
-					>
-						Received delegation ({receivedDelegationCount})
-					</Radio>
+					{Object.entries(statusCounts).map(([key, value]) => (
+						<Radio
+							key={key}
+							disabled={loading}
+							className={`px-3 py-2 text-xs text-bodyBlue dark:text-blue-dark-high ${ETrackDelegationStatus.ALL === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'}`}
+							value={key as ETrackDelegationStatus}
+						>
+							{key.charAt(0).toUpperCase() + key.split('_').join(' ').slice(1, key.length)} ({value})
+						</Radio>
+					))}
 				</Radio.Group>
 			</div>
-			{showTable && status && delegationDashboardAddress && (
+			{showTable && !!status && !!delegationDashboardAddress && (
 				<Table
 					className='column'
 					columns={GetColumns(status)}
@@ -255,9 +188,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 					}}
 				/>
 			)}
-
-			{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
+			{status === ETrackDelegationStatus.DELEGATED && !statusCounts.delegated && (
+				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-24 text-[258px] dark:bg-section-dark-overlay'>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
 						<DelegateDelegationIcon />
 						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegated Tracks</h4>
@@ -268,8 +200,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 								disabled={!api || !apiReady}
 								variant='default'
 								onClick={() => {
-									setStatusValue(ETrackDelegationStatus.Undelegated);
-									filterByStatus(ETrackDelegationStatus.Undelegated);
+									setStatusValue(ETrackDelegationStatus.UNDELEGATED);
+									filterByStatus(ETrackDelegationStatus.UNDELEGATED);
+									setShowTable(!!statusCounts[ETrackDelegationStatus.UNDELEGATED]);
 								}}
 							>
 								<DelegatedProfileIcon className='mr-[7px]' />
@@ -279,36 +212,20 @@ const DashboardTrackListing = ({ className }: Props) => {
 					</div>
 				</div>
 			)}
-
-			{status === ETrackDelegationStatus.Undelegated && undelegatedCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
-					{/* <UnDelegatedIcon /> */}
+			{((status === ETrackDelegationStatus.UNDELEGATED && !statusCounts.undelegated) ||
+				(status === ETrackDelegationStatus.RECEIVED_DELEGATION && !statusCounts.received_delegation)) && (
+				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-24 text-[258px] dark:bg-section-dark-overlay'>
 					<ImageIcon
-						src='/assets/icons/undelegated.svg'
-						alt='undelegated icon'
+						src={status === ETrackDelegationStatus.UNDELEGATED ? '/assets/icons/undelegated.svg' : '/assets/icons/received-delegation.svg'}
+						alt='status icon'
 						imgWrapperClassName='w-[258px] h-[258px] flex items-center justify-center'
 					/>
 					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
-						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Undelegated Tracks</h4>
+						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>{status === ETrackDelegationStatus.UNDELEGATED ? 'No Undelegated Tracks' : 'No Delegation Received'}</h4>
 						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
-							All tracks have been delegated. Undelegate a track to view here
-						</div>
-					</div>
-				</div>
-			)}
-
-			{status === ETrackDelegationStatus.Received_Delegation && receivedDelegationCount === 0 && (
-				<div className='flex h-[550px] flex-col items-center rounded-b-[14px] bg-white pt-[56px] text-[258px] dark:bg-section-dark-overlay'>
-					{/* <ReceivedDelegationIcon /> */}
-					<ImageIcon
-						src='/assets/icons/received-delegation.svg'
-						alt='received delegation icon'
-						imgWrapperClassName='w-[258px] h-[258px] flex items-center justify-center'
-					/>
-					<div className='mt-5 text-center text-bodyBlue dark:text-white'>
-						<h4 className='mt-0 text-base font-medium tracking-[0.005em]'>No Delegation Received</h4>
-						<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
-							You have not received delegations for any of the tracks
+							{status === ETrackDelegationStatus.UNDELEGATED
+								? 'All tracks have been delegated. Undelegate a track to view here'
+								: 'You have not received delegations for any of the tracks'}
 						</div>
 					</div>
 				</div>
@@ -340,8 +257,5 @@ export default styled(DashboardTrackListing)`
 		.column .ant-table-thead > tr > th:nth-child(2) {
 			text-align: center;
 		}
-	}
-	.flex-resolve {
-		border: 1px solid red;
 	}
 `;

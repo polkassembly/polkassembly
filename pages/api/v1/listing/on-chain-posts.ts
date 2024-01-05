@@ -141,7 +141,6 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 	if (proposer_address.startsWith('0x')) {
 		return proposer_address;
 	}
-
 	return (proposer_address && getEncodedAddress(proposer_address, network)) || proposer_address;
 }
 

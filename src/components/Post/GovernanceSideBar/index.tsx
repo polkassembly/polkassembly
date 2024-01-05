@@ -931,7 +931,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			{
 				<div className={className}>
 					<Form>
-						<PredictionCard />
+						{postType === ProposalType.REFERENDUM_V2 && postIndex == 385 && <PredictionCard />}
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}

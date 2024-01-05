@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Skeleton } from 'antd';
+import { Divider, Skeleton, Tooltip } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { CheckCircleFilled } from '@ant-design/icons';
 import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
@@ -28,6 +28,7 @@ import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[us
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
+import VerifiedInfo from './VerifiedInfo';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -306,10 +307,18 @@ const Details: FC<IDetailsProps> = (props) => {
 							{newUsername}
 						</h2>
 						{isGood && onChainIdentity.judgements.length > 0 && (
-							<CheckCircleFilled
-								style={{ color: 'green' }}
-								className='mt-[7px] h-[20px] rounded-[50%] border-solid border-[#910365] bg-white dark:bg-section-dark-overlay'
-							/>
+							<Tooltip
+								arrow
+								color='#fff'
+								overlayClassName='verification-tooltip'
+								title={<VerifiedInfo />}
+								// open
+							>
+								<CheckCircleFilled
+									style={{ color: 'green' }}
+									className='mt-[7px] h-[20px] rounded-[50%] border-solid border-[#910365] bg-white dark:bg-section-dark-overlay'
+								/>
+							</Tooltip>
 						)}
 					</div>
 					<div className='mt- flex items-center gap-x-5 text-xl text-navBlue md:gap-x-3'>

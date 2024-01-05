@@ -49,7 +49,7 @@ const Container = styled.div`
 const PredictionCard = () => {
 	const [YesPercentage, setYesPercentage] = useState(0);
 	const [predictCount, setPredictCount] = useState(0);
-	const [longCount, setLongCount] = useState(0);
+	const [yesCount, setyesCount] = useState(0);
 	const [endDate, setEndDate] = useState('');
 
 	useEffect(() => {
@@ -57,7 +57,7 @@ const PredictionCard = () => {
 			const data = await fetch('https://processor.rpc-0.zeitgeist.pm/graphql', {
 				body: JSON.stringify({
 					query: `
-						query MarketDetails($marketId: Int = 307) {
+						query MarketDetails($marketId: Int = 345) {
 							markets(where: {marketId_eq: $marketId}) {
 								period {
 									end
@@ -86,7 +86,7 @@ const PredictionCard = () => {
 
 			setEndDate(convertTimestampToDate(timestamp));
 			setPredictCount(data.marketStats[0].participants);
-			setLongCount(data.markets[0].assets[1].price);
+			setyesCount(data.markets[0].assets[0].price);
 		}
 		getPredictionsData();
 	}, []);
@@ -100,8 +100,8 @@ const PredictionCard = () => {
 	}
 
 	useEffect(() => {
-		setYesPercentage(Math.round((longCount / 1) * 100));
-	}, [longCount, predictCount]);
+		setYesPercentage(Math.round((yesCount / 1) * 100));
+	}, [yesCount, predictCount]);
 
 	return (
 		<Container>
@@ -127,7 +127,7 @@ const PredictionCard = () => {
 			<div className='w-full'>
 				<div className='relative h-5 w-full bg-white/40 transition-all'>
 					<div className='absolute flex h-full w-full items-center justify-between px-3.5 text-xs font-medium text-[#243A57]'>
-						<span>Long</span>
+						<span>yes</span>
 						<span className='transition-all'>{YesPercentage}%</span>
 					</div>
 					<div

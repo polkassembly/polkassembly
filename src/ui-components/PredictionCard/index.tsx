@@ -2,10 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { trackEvent } from 'analytics';
 import { Tooltip, Avatar } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import InfoIcon from '~assets/info.svg';
+
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const Container = styled.div`
 	border-radius: 14px;
@@ -47,6 +50,8 @@ const Container = styled.div`
 `;
 
 const PredictionCard = () => {
+	const currentUser = useUserDetailsSelector();
+
 	const [YesPercentage, setYesPercentage] = useState(0);
 	const [predictCount, setPredictCount] = useState(0);
 	const [yesCount, setyesCount] = useState(0);
@@ -120,6 +125,12 @@ const PredictionCard = () => {
 					href='https://app.zeitgeist.pm/markets/345'
 					target='_blank'
 					rel='noreferrer'
+					onClick={() =>
+						trackEvent('prediction_button_clicked', 'clicked_post_prediction_button', {
+							userId: currentUser?.id || '',
+							userName: currentUser?.username || ''
+						})
+					}
 				>
 					Predict
 				</a>

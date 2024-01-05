@@ -353,7 +353,6 @@ const Post: FC<IPostProps> = (props) => {
 			)}
 		</>
 	);
-
 	const getOnChainTabs = () => {
 		const tabs: any[] = [
 			{

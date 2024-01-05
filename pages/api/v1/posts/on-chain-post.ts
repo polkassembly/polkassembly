@@ -878,6 +878,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			history: [],
 			identity: postData?.identity || null,
 			last_edited_at: undefined,
+			marketMetadata: postData?.marketMetadata || null,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
 			motion_method: proposalArguments?.method,

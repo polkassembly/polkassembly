@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Alert, Button, Form, Modal, Spin } from 'antd';
+import { Alert, Form, Modal, Spin } from 'antd';
 
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -12,7 +12,6 @@ import { ApiContext } from 'src/context/ApiContext';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
@@ -26,9 +25,9 @@ import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
-import usePolkasafe from '~src/hooks/usePolkasafe';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -40,9 +39,9 @@ interface Props {
 	setOpen: (pre: boolean) => void;
 	conviction: number;
 	balance: BN;
-	isMultisig?: boolean;
+	onConfirm?: () => void;
 }
-const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, isMultisig }: Props) => {
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, onConfirm }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const router = useRouter();
@@ -56,9 +55,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-
-	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
-	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
 
 	useEffect(() => {
 		if (!network) return;
@@ -102,6 +98,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			status: NotificationStatus.SUCCESS
 		});
 		setLoading(false);
+		onConfirm?.();
 		setOpenSuccessPopup(true);
 		setOpen(false);
 	};
@@ -160,35 +157,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
 
-		if (isMultisig) {
-			const unDelegationByMultisig = async (tx: any) => {
-				try {
-					setLoading(true);
-					await connect();
-					const { error } = await client.customTransactionAsMulti(defaultAddress, tx);
-					if (error) {
-						throw new Error(error.error);
-					}
-					queueNotification({
-						header: 'Success!',
-						message: 'Undelegate will be successful once approved by other signatories.',
-						status: NotificationStatus.SUCCESS
-					});
-
-					setLoading(false);
-					setOpenSuccessPopup(true);
-					setOpen(false);
-				} catch (error) {
-					onFailed(error.message);
-				} finally {
-					setLoading(false);
-				}
-			};
-			setLoading(true);
-			await unDelegationByMultisig(delegateTxn);
-			return;
-		}
-
 		await executeTx({ address: defaultAddress, api, apiReady, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
@@ -210,23 +178,24 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				onCancel={() => setOpen(false)}
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
-						<Button
+						<CustomButton
 							key='back'
+							text='Cancel'
+							buttonSize='xs'
+							variant='default'
 							disabled={loading}
-							className='h-10 w-[134px] rounded-[4px] border-pink_primary text-pink_primary dark:bg-section-dark-overlay dark:text-white'
 							onClick={() => setOpen(false)}
-						>
-							Cancel
-						</Button>
-						<Button
+						/>
+						,
+						<CustomButton
 							htmlType='submit'
 							key='submit'
-							className='h-10 w-[134px] rounded-[4px] border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:bg-[#33071E] dark:text-pink_primary'
+							text='Undelegate'
+							buttonSize='xs'
+							variant='primary'
 							disabled={loading}
 							onClick={handleSubmit}
-						>
-							Undelegate
-						</Button>
+						/>
 					</div>
 				}
 			>
@@ -310,12 +279,10 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				</Spin>
 			</Modal>
 			<DelegationSuccessPopup
-				redirect={true}
 				open={openSuccessPopup}
 				setOpen={setOpenSuccessPopup}
 				balance={balance}
-				isMultisig={isMultisig}
-				title={isMultisig ? 'Undelegation with Polkasafe initiated' : 'Undelegated Successfully'}
+				title='Undelegated Successfully'
 			/>
 		</>
 	);

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useEffect, useState } from 'react';
-import { Button, Spin, Timeline, TimelineItemProps } from 'antd';
+import { Spin, Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
 import { EmailIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { ESetIdentitySteps, ISocials } from '.';
@@ -14,6 +14,7 @@ import BN from 'bn.js';
 import InprogressState from './InprogressState';
 import { useRouter } from 'next/router';
 import { useApiContext } from '~src/context';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	className?: string;
@@ -64,16 +65,19 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 								Verified
 							</span>
 						) : (
-							<Button
+							<CustomButton
 								onClick={onVerify}
-								className={`h-[30px] rounded-[4px] border-none bg-pink_primary text-xs font-medium tracking-wide text-white ${
+								className={`text-xs ${
 									[VerificationStatus.VERFICATION_EMAIL_SENT, VerificationStatus.PLEASE_VERIFY_TWITTER]?.includes(status as VerificationStatus) ? 'w-[120px]' : 'w-[68px]'
 								}`}
+								height={30}
+								width={144}
+								variant='primary'
 							>
 								{status === VerificationStatus.VERFICATION_EMAIL_SENT || (fieldName === ESocials.TWITTER && status === VerificationStatus.PLEASE_VERIFY_TWITTER)
 									? 'Confirm'
 									: 'Verify'}
-							</Button>
+							</CustomButton>
 						)}
 					</div>
 					{!verified && <span className='text-xs'>{description}</span>}
@@ -294,19 +298,19 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 				items={items}
 			/>
 			<div className='-ml-10 -mr-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
-				<Button
+				<CustomButton
+					text='Cancel'
 					onClick={onCancel}
-					className='h-[40px] w-[134px] rounded-[4px] border-[1px] border-pink_primary text-sm tracking-wide text-pink_primary dark:bg-transparent'
-				>
-					Cancel
-				</Button>
-				<Button
+					buttonSize='xs'
+					variant='default'
+				/>
+				<CustomButton
+					text='Proceed'
 					onClick={handleJudgement}
 					disabled={handleProceedDisabled()}
-					className={`h-[40px] w-[134px] rounded-[4px] border-none bg-pink_primary text-sm tracking-wide text-white ${handleProceedDisabled() && 'opacity-50'}`}
-				>
-					Proceed
-				</Button>
+					buttonSize='xs'
+					variant='primary'
+				/>
 			</div>
 			<InprogressState
 				open={open}

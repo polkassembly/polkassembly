@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Card, Col, Row, Dropdown } from 'antd';
+import { Col, Row, Dropdown } from 'antd';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
 import { chainProperties, network } from 'src/global/networkConstants';
@@ -13,6 +13,7 @@ import DownOutlined from '~assets/search/dropdown-down.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Card from '~src/basic-components/Cards/Card';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -208,7 +209,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 						/>
 						<span className='text-xs font-semibold capitalize leading-[18px] tracking-[0.02em] text-blue-light-high dark:text-blue-dark-high'>{network}</span>
 					</div>
-					<span className='text-[#485F7D] dark:text-blue-dark-medium'>
+					<span className='text-lightBlue dark:text-blue-dark-medium'>
 						<ArrowDownIcon />
 					</span>
 				</a>
@@ -221,14 +222,14 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 					}}
 				>
 					<Image
-						className='h-[20px] w-[20px] rounded-full'
+						className='h-[20px] w-[20px] rounded-full dark:border-[1px] dark:border-solid dark:border-separatorDark'
 						src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
 						alt='Logo'
 					/>
 					<span className='hidden text-xs font-semibold capitalize leading-[18px] tracking-[0.02em] text-blue-light-high dark:text-blue-dark-high lg:ml-[9.25px] lg:mr-[13.35px] lg:flex lg:items-center lg:justify-center'>
 						{network}
 					</span>
-					<span className='hidden text-[#485F7D] dark:text-blue-dark-medium lg:flex lg:items-center lg:justify-center'>
+					<span className='hidden text-lightBlue dark:text-blue-dark-medium lg:flex lg:items-center lg:justify-center'>
 						<ArrowDownIcon />
 					</span>
 				</a>

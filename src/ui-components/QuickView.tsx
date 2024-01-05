@@ -11,14 +11,12 @@ import Address from './Address';
 import dayjs from 'dayjs';
 import SocialLink from './SocialLinks';
 import { socialLinks } from '~src/components/UserProfile/Details';
-import { Button, Tooltip, message } from 'antd';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ESocialType, ISocial } from '~src/auth/types';
 import ImageComponent from 'src/components/ImageComponent';
 import Link from 'next/link';
 import { network as AllNetworks } from '~src/global/networkConstants';
-
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
@@ -29,6 +27,9 @@ import { useDispatch } from 'react-redux';
 import { setReceiver } from '~src/redux/Tipping';
 import { getKiltDidSocialEndpoints } from '~src/util/kiltDid';
 import { useApiContext } from '~src/context';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Tooltip from '~src/basic-components/Tooltip';
+import { message } from 'antd';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -116,6 +117,22 @@ const QuickView = ({
 		}
 		setOpen(false);
 	};
+	const handleSocials = () => {
+		setIdentityArr([
+			{
+				isVerified: (!!identity?.twitter && isGood) || false,
+				key: ESocialType.TWITTER,
+				value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || ''
+			},
+			{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' },
+			{
+				isVerified: (!!identity?.email && isGood) || false,
+				key: ESocialType.EMAIL,
+				value: identity?.email || socials?.find((social) => social.type === ESocialType.EMAIL)?.link || ''
+			},
+			{ isVerified: (!!identity?.riot && isGood) || false, key: ESocialType.RIOT, value: identity?.riot || socials?.find((social) => social.type === ESocialType.RIOT)?.link || '' }
+		]);
+	};
 	const handleKiltSocialFields = (verified: boolean, key: ESocialType, value: string) => {
 		switch (key) {
 			case ESocialType.EMAIL:
@@ -140,7 +157,6 @@ const QuickView = ({
 
 						for (const social of res) {
 							if (social?.credential?.claim?.contents) {
-								console.log(social);
 								Object.entries(social?.credential?.claim?.contents).map(([key, value]) => {
 									socialsArr.push(handleKiltSocialFields(true, key as ESocialType, value as string) as ISocialsType);
 									if (key === 'Username' && social?.metadata?.label === 'KILT Discord Credential') {
@@ -181,7 +197,12 @@ const QuickView = ({
 		handleKiltSocials();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isKiltNameExists, api, apiReady, network]);
+	useEffect(() => {
+		if (isKiltNameExists || !api || !apiReady || network === 'kilt') return;
 
+		handleSocials();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [identity]);
 	return (
 		<div
 			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2 dark:border-none`}
@@ -342,14 +363,13 @@ const QuickView = ({
 					title={!id ? 'Login to tip' : 'No Web3 Wallet Detected'}
 				>
 					<div className='flex w-full items-center'>
-						<Button
+						<CustomButton
 							onClick={handleTipping}
-							className={`flex h-[32px] w-full items-center justify-center gap-0 rounded-[4px] border-pink_primary bg-[#FFEAF4] p-5 text-sm font-medium tracking-wide text-pink_primary ${
-								(!id || !enableTipping) && 'cursor-not-allowed opacity-50'
-							} dark:bg-[#33071E]`}
-						>
-							Tip
-						</Button>
+							variant='primary'
+							text='Tip'
+							height={32}
+							className={`w-full p-5 ${(!id || !enableTipping) && 'cursor-not-allowed opacity-50'}`}
+						/>
 					</div>
 				</Tooltip>
 			)}

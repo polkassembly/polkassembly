@@ -5,8 +5,9 @@
 import { Result } from 'antd';
 import Link from 'next/link';
 import React, { FC } from 'react';
+import ImageIcon from '../ImageIcon';
 
-import NothingFoundSVG from '~assets/nothing-found.svg';
+// import NothingFoundSVG from '~assets/nothing-found.svg';
 
 interface IFallbackProps {
 	onReset: () => void;
@@ -18,7 +19,11 @@ const Fallback: FC<IFallbackProps> = (props) => {
 			<Result
 				icon={
 					<div className='mx-auto h-auto w-1/2 max-w-[900px]'>
-						<NothingFoundSVG />
+						{/* <NothingFoundSVG /> */}
+						<ImageIcon
+							src='/assets/nothing-found.svg'
+							alt='nothing found icon'
+						/>
 					</div>
 				}
 				title='Unfortunately something has gone wrong. Please try again.'

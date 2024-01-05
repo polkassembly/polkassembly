@@ -5,9 +5,9 @@
 import React from 'react';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from './Beneficiary';
-import { Popover } from 'antd';
 import { BeneficiaryIcon, BeneficiaryGreyIcon } from '../CustomIcons';
 import { useTheme } from 'next-themes';
+import Popover from '~src/basic-components/Popover';
 
 interface Props {
 	className?: string;
@@ -37,6 +37,7 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 									<Beneficiary
 										key={index}
 										beneficiary={beneficiary}
+										inPostHeading={inPostHeading}
 									/>
 								))}
 							</div>

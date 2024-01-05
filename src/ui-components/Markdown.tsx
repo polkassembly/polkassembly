@@ -24,8 +24,12 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		font-size: 14px;
 		margin-bottom: 0;
 		overflow-wrap: break-word;
-		overflow-x: auto;
+		max-width: 100%;
 		color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+
+		* {
+			max-width: 100% !important;
+		}
 
 		.hide-image img {
 			display: none !important;
@@ -42,6 +46,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		}
 
 		p,
+		span,
 		blockquote,
 		ul,
 		ol,
@@ -191,7 +196,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 
 	return (
 		<StyledMarkdown
-			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white`}
+			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
 			rehypePlugins={[rehypeRaw, remarkGfm]}
 			linkTarget='_blank'
 			theme={theme}

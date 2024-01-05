@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Button, Spin } from 'antd';
+import { Spin } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import BlockCountdown from 'src/components/BlockCountdown';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -12,9 +12,8 @@ import { IPollVote, Vote } from 'src/types';
 import AyeNayButtons from 'src/ui-components/AyeNayButtons';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
-import HelperTooltip from 'src/ui-components/HelperTooltip';
 import styled from 'styled-components';
-
+import InfoIcon from '~assets/info.svg';
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
@@ -22,6 +21,8 @@ import { ProposalType } from '~src/global/proposalType';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface IGeneralSignalsProps {
 	className?: string;
@@ -194,7 +195,12 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 			>
 				<h3 className='flex items-center'>
 					<span className='dashboard-heading mr-2 dark:text-white'>Poll Signals</span>{' '}
-					<HelperTooltip text='This represents the off-chain votes of Polkassembly users including council members' />
+					<Tooltip
+						title='This represents the off-chain votes of Polkassembly users including council members'
+						color='#E5007A'
+					>
+						<InfoIcon />
+					</Tooltip>
 				</h3>
 
 				<div className='my-6 flex'>
@@ -248,12 +254,12 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 							<span className='mr-5'>
 								Poll ended.{' '}
 								{canEdit ? (
-									<Button
-										className='info dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'
+									<CustomButton
 										onClick={extendsPoll}
-									>
-										Extend Poll
-									</Button>
+										text='Extend Poll'
+										className='info'
+										variant='primary'
+									/>
 								) : (
 									''
 								)}
@@ -262,13 +268,13 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 
 						<div>
 							{ownVote && canVote && (
-								<Button
-									size='middle'
-									className='info text-muted cancelVoteLink dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'
+								<CustomButton
 									onClick={cancelVote}
+									className='info text-muted cancelVoteLink'
+									variant='primary'
 								>
 									Cancel <span className='capitalize'>&nbsp;{ownVote.toLowerCase()}&nbsp;</span> vote
-								</Button>
+								</CustomButton>
 							)}
 						</div>
 					</div>

@@ -35,14 +35,22 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	}
 
 	const postData = doc.data();
-	if (postData?.summary) {
-		return res.status(200).json({ summary: postData?.summary });
+	if (postData?.max_150_char_summary) {
+		return res.status(200).json({ summary: postData?.max_150_char_summary });
 	}
 
-	const summary = await fetchContentSummary(postData?.content as string, proposalType as any);
-	await postRef.set({ summary }, { merge: true });
+	const max_150_char_summary = await fetchContentSummary(
+		postData?.content as string,
+		proposalType as any,
+		process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
+	);
 
-	return res.status(200).json({ summary });
+	if (!max_150_char_summary) {
+		return res.status(200).json({ summary: '' });
+	}
+	await postRef.set({ max_150_char_summary }, { merge: true });
+
+	return res.status(200).json({ summary: max_150_char_summary });
 };
 
 export default withErrorHandling(handler);

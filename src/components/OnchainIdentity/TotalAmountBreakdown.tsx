@@ -7,11 +7,11 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { ESetIdentitySteps, ITxFee, IVerifiedFields } from '.';
-import { Alert, Button } from 'antd';
+import { Alert } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
+// import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
@@ -19,6 +19,8 @@ import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 import { ILoading, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -139,10 +141,14 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				/>
 			)}
 
-			<span className='-mt-6 flex items-center justify-center text-[350px]'>
-				<AmountBreakdownModalIcon />
-			</span>
-			<ul className='-mt-6 flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>
+			{/* <AmountBreakdownModalIcon /> */}
+			<ImageIcon
+				alt='amount breakdown identity icon'
+				src='/assets/icons/amount-breakdown-identity.svg'
+				imgClassName='h-[210px] w-[350px]'
+				imgWrapperClassName='py-10 flex items-center justify-center '
+			/>
+			<ul className='flex flex-col gap-2 pl-4 text-sm tracking-[0.001em] text-bodyBlue dark:text-blue-dark-high'>
 				<li>Polkadot offers on-chain identities that verify users&apos;s credentials through appointed registrars, instilling greater trust and support. </li>
 				<li>
 					Once successfully verified, users receive a green checkmark, symbolising their trusted status. This verified status symbol enhances trustworthiness when requesting funds
@@ -207,7 +213,8 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				)}
 			</div>
 			<div className='-mx-6 mt-6 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
-				<Button
+				<CustomButton
+					text="Let's Begin"
 					loading={loading}
 					onClick={() => {
 						// GAEvent for let's begin button clicked
@@ -217,10 +224,10 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 						});
 						changeStep(ESetIdentitySteps.SET_IDENTITY_FORM);
 					}}
-					className='h-[40px] w-full rounded-[4px] border-pink_primary bg-pink_primary text-sm tracking-wide text-white'
-				>
-					Let&apos;s Begin
-				</Button>
+					height={40}
+					className='w-full'
+					variant='primary'
+				/>
 				<button
 					onClick={handleRequestJudgement}
 					className='mt-2 h-[40px] w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay'

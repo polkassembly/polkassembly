@@ -6,7 +6,7 @@
 import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Skeleton, Space } from 'antd';
+import { Divider, Skeleton, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
@@ -44,6 +44,7 @@ import { trackEvent } from 'analytics';
 import StakeIcon from '~assets/stake-icon.svg';
 import DelegateIcon from '~assets/delegate-icon.svg';
 import { delegationSupportedNetworks } from '../DelegationDashboard';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -292,19 +293,20 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		<Header
 			className={`${className} shadow-md ${
 				sidedrawer && !isMobile ? 'z-[500]' : isMobile ? 'z-[1010]' : 'z-[1000]'
-			} navbar-container sticky top-0 flex h-[60px]  max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
+			} navbar-container sticky top-0 flex h-[60px] max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
 		>
 			<span
 				onClick={() => {
 					setSidedrawer(!sidedrawer);
 				}}
 			>
-				<Dashboard className='dashboard-container mr-5 mt-1 text-2xl lg:hidden' />
+				<Dashboard className='dashboard-container mr-3 mt-1 text-2xl lg:hidden' />
 			</span>
-			<nav className='flex h-[60px] max-h-[60px] w-full items-center justify-between'>
+			<div className='ml-[84px] hidden lg:block'></div>
+			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
 				<div className='flex items-center'>
 					<Link
-						className='logo-size flex'
+						className='logo-size flex lg:hidden'
 						href={'/'}
 					>
 						{theme === 'dark' && isMobile ? (
@@ -319,7 +321,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 					<div className='type-container flex items-center gap-1'>
 						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
-						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
@@ -334,16 +336,17 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
 						{!id ? (
 							<div className='flex items-center lg:gap-x-2'>
-								<Button
-									id='login-btn'
-									className='flex h-[22px] w-[60px] items-center justify-center rounded-[2px] bg-pink_primary tracking-[0.00125em] text-white hover:text-white dark:border-none md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
+								<CustomButton
+									variant='primary'
+									height={22}
+									width={60}
+									text='Login'
+									className='rounded-[2px] md:rounded-[4px] lg:h-[32px] lg:w-[74px] lg:text-sm lg:font-medium lg:leading-[21px]'
 									onClick={() => {
 										setSidedrawer(false);
 										setLoginOpen(true);
 									}}
-								>
-									Login
-								</Button>
+								/>
 							</div>
 						) : (
 							<AuthDropdown>
@@ -366,7 +369,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div className='mr-0 lg:mr-10'>
+						<div className='mr-2 lg:mr-0'>
 							<MenuDropdown>
 								<OptionMenu className='mt-[6px] text-2xl' />
 							</MenuDropdown>

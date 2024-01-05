@@ -29,6 +29,14 @@ const Modal = styled(AntdModal)`
 	.ant-modal-content {
 		padding-top: 12px;
 	}
+	.ant-modal-content {
+		padding: 8px 10px;
+	}
+	@media (min-width: 420px) {
+		.ant-modal-content {
+			padding: 20px 24px;
+		}
+	}
 `;
 
 const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalType, thresholdData, tally, ayeNayAbstainCounts }) => {
@@ -36,12 +44,12 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 		<Modal
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
-					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
+				<div className='text-[18px] dark:bg-section-dark-overlay'>
+					<h3 className='align-center mb-0 flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 						<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Voting Data</span>
 					</h3>
-					<Divider className='my-2 mb-5 text-[#D2D8E0] dark:border-separatorDark' />
+					<Divider className='my-2 mb-2 text-[#D2D8E0] dark:border-separatorDark min-[450px]:mb-5' />
 				</div>
 			}
 			open={open}

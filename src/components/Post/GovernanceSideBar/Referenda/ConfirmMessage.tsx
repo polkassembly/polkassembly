@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import React, { memo, useEffect, useState } from 'react';
 import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
 import { usePostDataContext } from '~src/context';
 import { useCurvesInformationSelector, useNetworkSelector } from '~src/redux/selectors';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const getDays = (hrs: number) => {
 	const days = Math.floor(hrs / 24);
@@ -100,7 +100,11 @@ const ConfirmMessage = () => {
 				<p className='m-0 text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
 					Proposal estimated to pass in
 					<span className='ml-1 text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>
-						{getDays(estimateHour) ? `${getDays(estimateHour)} days` : ''} {getExtraHrs(estimateHour) ? `, ${getExtraHrs(estimateHour)} hrs` : ''}
+						{[
+							getDays(estimateHour) ? `${getDays(estimateHour)} days` : '',
+							getExtraHrs(estimateHour) && getDays(estimateHour) ? ', ' : '',
+							getExtraHrs(estimateHour) ? `${getExtraHrs(estimateHour)} hrs` : ''
+						].join('')}
 					</span>
 				</p>
 			</div>

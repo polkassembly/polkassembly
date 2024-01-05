@@ -4,7 +4,7 @@
 
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Form, Modal, Spin } from 'antd';
+import { Alert, Form, Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { poppins } from 'pages/_app';
@@ -28,6 +28,7 @@ import { gov2ReferendumStatus } from '~src/global/statuses';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -242,22 +243,21 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 				</div>
 			}
 			footer={
-				<div className='border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
-					<Button
+				<div className='flex items-center justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
+					<CustomButton
 						onClick={() => setOpenModal(false)}
-						className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm  font-medium tracking-wider text-pink_primary dark:bg-transparent'
-					>
-						Back
-					</Button>
-					<Button
+						buttonSize='xs'
+						variant='default'
+						text='Back'
+					/>
+					<CustomButton
 						onClick={handleSubmit}
 						disabled={!accounts.length || availableBalance.lte(amount)}
-						className={`h-[40px] w-[134px] rounded-[4px] bg-pink_primary text-sm font-medium tracking-wider text-white ${
-							!accounts.length || (availableBalance.lte(amount) && 'opacity-50')
-						} dark:border-none dark:text-blue-dark-high`}
-					>
-						Continue
-					</Button>
+						buttonSize='xs'
+						variant='primary'
+						text='Continue'
+						className={`${!accounts.length || (availableBalance.lte(amount) && 'opacity-50')}`}
+					/>
 				</div>
 			}
 		>

@@ -4,7 +4,7 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin, Tooltip } from 'antd';
+import { Divider, Modal as AntdModal, PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
 import { IVotesCount, LoadingStatusType } from 'src/types';
@@ -28,6 +28,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 import { ApiPromise } from '@polkadot/api';
+import Tooltip from '~src/basic-components/Tooltip';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -113,7 +114,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const decisionOptions = [
 		{
 			label: (
-				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-green-700 max-[450px]:text-xs min-[450px]:mt-0'>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-green-700 max-[449px]:text-xs min-[450px]:mt-0'>
 					<LikeFilled /> <span>Ayes({formatNumber(ayeNayAbstainCounts?.ayes)})</span>
 				</div>
 			),
@@ -121,7 +122,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		},
 		{
 			label: (
-				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-red-600  max-[450px]:text-xs min-[450px]:mt-0'>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-red-600  max-[449px]:text-xs min-[450px]:mt-0'>
 					<DislikeFilled /> <span>Nays({formatNumber(ayeNayAbstainCounts?.nays)})</span>
 				</div>
 			),
@@ -132,7 +133,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	if (voteType === VoteType.REFERENDUM_V2) {
 		decisionOptions.push({
 			label: (
-				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-blue-400 max-[450px]:text-xs min-[450px]:mt-0'>
+				<div className='text-md mt-[9px] flex items-center justify-center gap-1 rounded-[20px] text-blue-400 max-[449px]:text-xs min-[450px]:mt-0'>
 					<MinusCircleFilled /> <span>Abstain({formatNumber(ayeNayAbstainCounts?.abstain)})</span>
 				</div>
 			),
@@ -259,7 +260,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					<div className='flex w-full flex-col justify-between'>
 						<div className='w-full'>
 							{!isUsedInVotedModal && (
-								<div className='mb-8 flex w-full items-center justify-center'>
+								<div className='mb-4 flex w-full items-center justify-center min-[450px]:mb-8'>
 									<Segmented
 										block
 										className='w-full rounded-[10px] px-1 py-2 min-[450px]:rounded-[30px] min-[450px]:px-3'
@@ -273,8 +274,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									/>
 								</div>
 							)}
-							<VoteContainer className='flex flex-col px-0 text-xs text-sidebarBlue'>
-								<div className='mb-2 flex w-[552px] items-center px-2 text-xs font-semibold'>
+							<VoteContainer className='px-0 text-xs text-sidebarBlue'>
+								<div className='mb-2 flex w-min items-center px-2 text-xs font-semibold'>
 									{!isUsedInVotedModal ? (
 										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
 									) : (
@@ -331,7 +332,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 								</div>
 								{!isUsedInVotedModal ? (
-									<div className='max-h-[360px]'>
+									<div className='max-h-[360px] w-min'>
 										{votesRes &&
 											decision &&
 											!!votesRes[decision]?.votes?.length &&
@@ -354,7 +355,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
 									</div>
 								) : (
-									<div className='max-h-[360px]'>
+									<div className='max-h-[360px] w-min'>
 										{combinedVotes &&
 											!!combinedVotes.length &&
 											combinedVotes.map((voteData: any, index: number) => (
@@ -381,7 +382,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						</div>
 						{!isUsedInVotedModal && (
 							<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
-								<p className='m-0 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
+								<p className='m-0 mb-2 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
 								<Pagination
 									theme={theme}
 									size='small'

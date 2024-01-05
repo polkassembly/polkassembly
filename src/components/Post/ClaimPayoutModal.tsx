@@ -5,13 +5,14 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { Alert, Button, Modal, Spin } from 'antd';
+import { Alert, Modal, Spin } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
 import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import executeTx from '~src/util/executeTx';
 
@@ -121,12 +122,13 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 
 	return (
 		<div className={className}>
-			<Button
-				className='inline rounded-md border-pink_primary bg-pink_primary text-base text-white hover:border-pink_primary hover:bg-pink_secondary'
+			<CustomButton
 				onClick={() => setShowModal(true)}
-			>
-				Claim Payout
-			</Button>
+				variant='primary'
+				text='Claim Payout'
+				className='inline'
+				height={40}
+			/>
 			<Modal
 				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'
@@ -134,15 +136,15 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={[
-					<Button
-						className='border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary'
+					<CustomButton
 						key='second'
 						onClick={handleSignAndSubmit}
 						loading={isLoading}
 						disabled={extensionNotAvailable || !apiReady}
-					>
-						Sign &amp; Submit
-					</Button>
+						variant='primary'
+						text='Sign & Submit'
+						height={40}
+					/>
 				]}
 			>
 				<Spin

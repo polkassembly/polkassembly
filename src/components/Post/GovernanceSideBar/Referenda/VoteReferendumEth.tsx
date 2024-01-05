@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Button, Form, Modal, Segmented, Spin, Alert } from 'antd';
+import { Form, Modal, Segmented, Spin, Alert } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -37,6 +37,7 @@ import { useDispatch } from 'react-redux';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -375,12 +376,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	return (
 		<div className={className}>
-			<Button
-				className='mb-3 flex w-[100%] items-center justify-center rounded-[4px] border-pink_primary bg-pink_primary p-6 text-lg text-white hover:border-pink_primary hover:bg-pink_secondary'
+			<CustomButton
+				variant='primary'
+				fontSize='lg'
+				className='mb-3 w-[100%] p-6'
 				onClick={() => setShowModal(true)}
 			>
-				{lastVote ? 'Cast Vote Now' : 'Cast Vote Again'}
-			</Button>
+				{!lastVote ? 'Cast Vote Now' : 'Cast Vote Again'}
+			</CustomButton>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={showModal}

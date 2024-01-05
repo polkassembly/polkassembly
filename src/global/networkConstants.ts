@@ -172,7 +172,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: polkadotLogo,
-		rpcEndpoint: 'wss://rpc.polkadot.io',
+		rpcEndpoint: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156',
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,
@@ -183,6 +183,10 @@ export const chainProperties: types.ChainPropType = {
 		externalLinks: 'https://polkadot.api.subscan.io',
 		gTag: 'G-JMMMFDX405',
 		rpcEndpoints: [
+			{
+				label: 'via On-finality (recommended)',
+				key: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156'
+			},
 			{
 				label: 'via On-finality',
 				key: 'wss://polkadot.api.onfinality.io/public-ws'

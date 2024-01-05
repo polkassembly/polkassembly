@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, Button, Divider, Form, Modal, Spin } from 'antd';
+import { Alert, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
@@ -17,7 +17,6 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
-import ConnectAddressIcon from '~assets/icons/connect-address.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from './QueueNotification';
@@ -37,6 +36,8 @@ import { useDispatch } from 'react-redux';
 import AvailableWallets from './AvailableWallet';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import ImageIcon from './ImageIcon';
 
 interface Props {
 	className?: string;
@@ -395,7 +396,7 @@ const AddressConnectModal = ({
 				</div>
 			}
 			footer={
-				<Button
+				<CustomButton
 					onClick={handleSubmit}
 					disabled={
 						!accounts ||
@@ -403,7 +404,10 @@ const AddressConnectModal = ({
 						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
 					}
-					className={`mt-4 h-[40px] w-[134px] rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white ${
+					width={155}
+					height={40}
+					variant='primary'
+					className={`mt-4 ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||
 						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
@@ -413,7 +417,7 @@ const AddressConnectModal = ({
 					}`}
 				>
 					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
-				</Button>
+				</CustomButton>
 			}
 			closable={closable}
 			onCancel={() => setOpen(false)}
@@ -426,7 +430,12 @@ const AddressConnectModal = ({
 				<div className='flex flex-col'>
 					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
-							<ConnectAddressIcon />
+							{/* <ConnectAddressIcon /> */}
+							<ImageIcon
+								src='/assets/icons/connect-address.svg'
+								imgWrapperClassName='ml-10 -mt-4'
+								alt='connect address Icon'
+							/>
 							<span className='mt-6 text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 								Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
 							</span>
@@ -615,5 +624,9 @@ export default styled(AddressConnectModal)`
 	.ant-alert-with-description .ant-alert-icon {
 		font-size: 14px !important;
 		margin-top: 7px;
+	}
+	.ant-modal .ant-modal-footer {
+		display: flex;
+		justify-content: end !important;
 	}
 `;

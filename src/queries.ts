@@ -202,8 +202,8 @@ query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset
 }
 `;
 
-export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
-  proposals(where: {type_eq: $type_eq, index_in: $index_in}, limit: $limit) {
+export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!]) {
+  proposals(where: {type_eq: $type_eq, index_in: $index_in, status_in: $status_in}, limit: $limit) {
     proposer
     curator
     createdAt
@@ -1044,8 +1044,7 @@ query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $v
 }
 `;
 
-export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `
-query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: String = "") {
+export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: String = "") {
   votingDelegations(orderBy: createdAt_DESC, where: {track_eq: $track_eq, endedAtBlock_isNull: true, AND: {from_eq: $address, OR: {to_eq: $address}}}) {
     track
     to
@@ -1979,3 +1978,10 @@ export const GET_AYE_NAY_TOTAL_COUNT = `query getAyeNayTotalCount($type_eq: Prop
     totalCount
   }
 }`;
+
+export const TOTAL_PROPOSALS_COUNT_BY_ADDRESSES = `query ProposalsCountByProposerAddresses($proposer_in: [String!]) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $proposer_in}) {
+    totalCount
+  }
+}
+`;

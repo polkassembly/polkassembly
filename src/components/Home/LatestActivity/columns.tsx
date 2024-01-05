@@ -11,8 +11,8 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 
 import { IPostsRowData } from './PostsTable';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
-import { Tooltip } from 'antd';
 import { noTitle } from '~src/global/noTitle';
+import Tooltip from '~src/basic-components/Tooltip';
 
 const Index: any = {
 	dataIndex: 'post_id',

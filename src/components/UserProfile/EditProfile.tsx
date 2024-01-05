@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Divider, Modal } from 'antd';
+import { Divider, Modal } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
@@ -23,6 +23,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IEditProfileModalProps {
 	id?: number | null;
@@ -30,6 +31,7 @@ interface IEditProfileModalProps {
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
 	openModal?: boolean;
 	setOpenModal?: (pre: boolean) => void;
+	fromDelegation?: boolean;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {
@@ -44,7 +46,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { data, id, setProfileDetails, openModal, setOpenModal } = props;
+	const { data, id, setProfileDetails, openModal, setOpenModal, fromDelegation = false } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
@@ -187,7 +189,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			});
 			setProfile(getDefaultProfile());
 			handleTokenChange(data?.token, { ...userDetailsContext, picture: image }, dispatch);
-			router.push(`/user/${username}`);
+			if (!fromDelegation) {
+				router.push(`/user/${username}`);
+			}
 		}
 
 		setLoading(false);
@@ -207,47 +211,51 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				title={<div className='text-xl font-semibold text-[#1D2632] dark:bg-section-dark-overlay dark:text-white'>Edit Profile</div>}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				footer={
-					<div className='-mx-6 -mb-5 px-6 pb-4'>
-						<Divider className='mb-4 mt-6' />
+					<div className='flex-mb-5 -mx-6 px-6 pb-4'>
+						<Divider className='mb-4 mt-6 flex' />
 						{[
-							<Button
-								key='cancel'
-								onClick={() => {
-									setOpenModal && setOpenModal(false);
-									setOpen(false);
-								}}
-								disabled={loading}
-								size='middle'
-								className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary text-sm font-medium text-pink_primary dark:bg-section-dark-overlay'
+							<div
+								key='buttons'
+								className='flex justify-end'
 							>
-								Cancel
-							</Button>,
-							<Button
-								key='update profile'
-								disabled={loading}
-								loading={loading}
-								onClick={async () => {
-									try {
-										await updateProfileData();
+								<CustomButton
+									variant='default'
+									key='cancel'
+									onClick={() => {
+										setOpenModal && setOpenModal(false);
+										setOpen(false);
+									}}
+									disabled={loading}
+									className='font-medium'
+									buttonSize='xs'
+									text='Cancel'
+								/>
+								<CustomButton
+									variant='primary'
+									key='update profile'
+									disabled={loading}
+									loading={loading}
+									onClick={async () => {
+										try {
+											await updateProfileData();
 
-										//GAEvent to track user profile edit
-										trackEvent('user_profile_updated', 'user_profile_edit', {
-											userId: currentUser?.id || '',
-											username: username || currentUser.username || ''
-										});
-									} catch (error) {
-										setErrorCheck((prevState) => ({
-											...prevState,
-											basicInformationError: error?.message || error,
-											socialInformationError: error?.socialInformationError
-										}));
-									}
-								}}
-								size='middle'
-								className='h-[40px] w-[134px] rounded-[4px] border border-solid border-pink_primary bg-pink_primary text-sm font-medium text-white'
-							>
-								Save
-							</Button>
+											//GAEvent to track user profile edit
+											trackEvent('user_profile_updated', 'user_profile_edit', {
+												userId: currentUser?.id || '',
+												username: username || currentUser.username || ''
+											});
+										} catch (error) {
+											setErrorCheck((prevState) => ({
+												...prevState,
+												basicInformationError: error?.message || error,
+												socialInformationError: error?.socialInformationError
+											}));
+										}
+									}}
+									buttonSize='xs'
+									text='Save'
+								/>
+							</div>
 						]}
 					</div>
 				}

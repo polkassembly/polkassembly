@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Form, Modal, Spin } from 'antd';
+import { Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { ApiContext } from '~src/context/ApiContext';
 import BN from 'bn.js';
@@ -25,6 +25,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const ZERO_BN = new BN(0);
 
@@ -372,7 +373,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				<div className='mt-6'>
 					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>Your verification is pending. Are you sure you want to exit verification process? </span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
-						<Button
+						<CustomButton
 							onClick={() => {
 								setIsExitModal(false);
 								setOpen(false);
@@ -380,19 +381,21 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 								setLoading({ ...loading, isLoading: false });
 								router.replace('?setidentity=true', '/opengov');
 							}}
-							className='h-[38px] w-[145px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
-						>
-							Yes, Exit
-						</Button>
-						<Button
+							text='Yes, Exit'
+							height={38}
+							width={145}
+							variant='default'
+						/>
+						<CustomButton
 							onClick={() => {
 								setIsExitModal(false);
 								setOpen(true);
 							}}
-							className={'h-[40px] w-[215px] rounded-[4px] border-pink_primary bg-pink_primary text-sm font-medium tracking-[0.05em] text-white'}
-						>
-							No, continue verification
-						</Button>
+							text='No, continue verification'
+							height={38}
+							width={215}
+							variant='primary'
+						/>
 					</div>
 				</div>
 			</Modal>

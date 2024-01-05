@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Form, Tooltip } from 'antd';
+import { Button, Form, MenuProps } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useCallback, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { EReportType, NotificationStatus } from 'src/types';
@@ -31,6 +32,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { IComment } from './Comment';
 import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
+import ThreeDotsIcon from '~assets/icons/three-dots.svg';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
 	userId: number;
@@ -523,6 +526,76 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 		setLoading(false);
 	};
 
+	const items: MenuProps['items'] = [
+		isEditable
+			? {
+					key: 1,
+					label: (
+						<Button
+							className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
+							disabled={loading}
+							onClick={toggleEdit}
+						>
+							{loading ? (
+								<span className='flex items-center text-xs'>
+									<LoadingOutlined className='mr-1' /> Editing
+								</span>
+							) : (
+								<span className='flex items-center text-xs'>
+									<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> Edit
+								</span>
+							)}
+						</Button>
+					)
+			  }
+			: null,
+		id === userId
+			? {
+					key: 2,
+					label: (
+						<Button
+							className={'flex items-center border-none bg-transparent pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
+							onClick={deleteReply}
+						>
+							<DeleteOutlined />
+							<span className='m-0 p-1'>Delete</span>
+						</Button>
+					)
+			  }
+			: allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network)
+			? {
+					key: 2,
+					label: (
+						<ReportButton
+							isDeleteModal={true}
+							proposalType={(reply.post_type as any) || postType}
+							className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${poppins.variable} ${poppins.className}`}
+							type={EReportType.REPLY}
+							onSuccess={removeReplyContent}
+							commentId={commentId}
+							replyId={replyId}
+							postId={(reply.post_index as any) || postIndex}
+						/>
+					)
+			  }
+			: null,
+		id && id !== userId && !isEditing
+			? {
+					key: 3,
+					label: (
+						<ReportButton
+							className='text-xs text-pink_primary dark:text-blue-dark-helper'
+							proposalType={postType}
+							postId={postIndex}
+							commentId={commentId}
+							type='reply'
+							replyId={replyId}
+						/>
+					)
+			  }
+			: null
+	];
+
 	useEffect(() => {
 		canEditComment();
 	}, [canEditComment]);
@@ -582,57 +655,6 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 								isReactionOnReply={isReactionOnReply}
 							/>
 							<div className='reply-buttons-container item-center flex flex-wrap gap-3'>
-								{isEditable && (
-									<Button
-										className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
-										disabled={loading}
-										onClick={toggleEdit}
-									>
-										{loading ? (
-											<span className='flex items-center text-xs'>
-												<LoadingOutlined className='mr-1' /> Editing
-											</span>
-										) : (
-											<span className='flex items-center text-xs'>
-												<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> Edit
-											</span>
-										)}
-									</Button>
-								)}
-								{id === userId ? (
-									<Button
-										className={'flex items-center border-none bg-transparent pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
-										onClick={deleteReply}
-									>
-										<DeleteOutlined />
-										<span className='m-0 p-1'>Delete</span>
-									</Button>
-								) : (
-									allowed_roles?.includes('moderator') &&
-									['polkadot', 'kusama'].includes(network) && (
-										<ReportButton
-											isDeleteModal={true}
-											proposalType={(reply.post_type as any) || postType}
-											className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${poppins.variable} ${poppins.className}`}
-											type={EReportType.REPLY}
-											onSuccess={removeReplyContent}
-											commentId={commentId}
-											replyId={replyId}
-											postId={(reply.post_index as any) || postIndex}
-										/>
-									)
-								)}
-								{id !== userId && id && !isEditing && (
-									<ReportButton
-										className='text-xs text-pink_primary dark:text-blue-dark-helper'
-										proposalType={postType}
-										postId={postIndex}
-										commentId={commentId}
-										type='reply'
-										replyId={replyId}
-									/>
-								)}
-
 								{id ? (
 									reply.reply_source === 'subsquare' ? (
 										<Tooltip
@@ -674,6 +696,15 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 									</div>
 								)}
 							</div>
+							<Dropdown
+								theme={theme}
+								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}
+								overlayClassName='sentiment-dropdown z-[1056]'
+								placement='bottomRight'
+								menu={{ items }}
+							>
+								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100 dark:text-blue-dark-helper' />
+							</Dropdown>
 						</div>
 						{isReplying && (
 							<Form

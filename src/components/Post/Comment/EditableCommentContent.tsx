@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Form, MenuProps, Tooltip } from 'antd';
+import { Button, Form, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
@@ -55,6 +55,8 @@ import { checkIsProposer } from '../utils/checkIsProposer';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { useTheme } from 'next-themes';
+import { trackEvent } from 'analytics';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -86,7 +88,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
-
 	const [replyForm] = Form.useForm();
 	const [form] = Form.useForm();
 
@@ -518,7 +519,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					label: (
 						<div
 							className={`items-center text-[10px] leading-4 text-slate-400 shadow-none  ${poppins.variable} ${poppins.className}`}
-							onClick={toggleEdit}
+							onClick={() => {
+								toggleEdit();
+								trackEvent('comment_edit_button_clicked', 'clicked_edit_comment_cta', {
+									commentId: commentId,
+									userId: userId || '',
+									userName: userName || ''
+								});
+							}}
 						>
 							<span className='flex items-center'>
 								<EditIcon className='mr-1' />
@@ -564,6 +572,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							className={`ml-[-1.8px] flex items-center text-[10px] leading-4 text-slate-400 shadow-none ${poppins.variable} ${poppins.className} border-none`}
 							onClick={() => {
 								deleteComment();
+								trackEvent('comment_delete_button_clicked', 'clicked_delete_comment_cta', {
+									commentId: commentId,
+									userId: userId || '',
+									userName: userName || ''
+								});
 							}}
 						>
 							<DeleteIcon className='mr-1' />

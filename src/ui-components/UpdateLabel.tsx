@@ -2,10 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Tooltip } from 'antd';
 import { dayjs } from 'dayjs-init';
 import React from 'react';
 import styled from 'styled-components';
+import Tooltip from '~src/basic-components/Tooltip';
 
 interface Props {
 	className?: string;

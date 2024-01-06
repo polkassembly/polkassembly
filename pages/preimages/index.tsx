@@ -53,6 +53,9 @@ const Pagination = styled(AntdPagination)`
 	.anticon-left {
 		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
+	.ant-pagination-item-ellipsis {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+	}
 `;
 
 interface IPreImagesProps {

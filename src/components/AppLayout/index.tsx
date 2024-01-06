@@ -706,7 +706,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			}
 		}
 	};
-	if ((AllNetworks.MOONBEAM, AllNetworks.PICASSO).includes(network)) {
+	if ([AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
 		gov2Items = gov2Items.concat(
 			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
 		);

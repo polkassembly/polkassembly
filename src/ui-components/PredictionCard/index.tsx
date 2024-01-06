@@ -117,7 +117,7 @@ const PredictionCard = () => {
 						color='#243A57'
 						title='Will this proposal pass or fail?'
 					>
-						<InfoIcon className='text-xl text-[#243A57]' />
+						<InfoIcon className='text-xl text-bodyBlue' />
 					</Tooltip>
 				</h1>
 				<a
@@ -137,7 +137,7 @@ const PredictionCard = () => {
 			</div>
 			<div className='w-full'>
 				<div className='relative h-5 w-full bg-white/40 transition-all'>
-					<div className='absolute flex h-full w-full items-center justify-between px-3.5 text-xs font-medium text-[#243A57]'>
+					<div className='absolute flex h-full w-full items-center justify-between px-3.5 text-xs font-medium text-bodyBlue'>
 						<span>yes</span>
 						<span className='transition-all'>{YesPercentage}%</span>
 					</div>
@@ -148,10 +148,10 @@ const PredictionCard = () => {
 				</div>
 			</div>
 			<div className='flex items-center justify-between'>
-				<div className='flex items-center gap-0.5 text-xs text-[#485F7D]'>
-					Ends: <span className='font-medium text-[#243A57]'>{endDate}</span>
+				<div className='flex items-center gap-0.5 text-xs text-lightBlue'>
+					Ends: <span className='font-medium text-bodyBlue'>{endDate}</span>
 				</div>
-				<p className='flex items-center gap-1 text-xs font-medium text-[#485F7D]'>
+				<p className='flex items-center gap-1 text-xs font-medium text-lightBlue'>
 					<Avatar.Group size='small'>
 						<Avatar
 							style={{

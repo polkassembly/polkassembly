@@ -931,13 +931,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const RenderLastVote =
 		address === loginAddress ? lastVote ? <LastVoteInfoLocalState {...lastVote} /> : onChainLastVote !== null ? <LastVoteInfoOnChain {...onChainLastVote} /> : null : null;
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
-
 	return (
 		<>
 			{
 				<div className={className}>
 					<Form>
-						{postType === ProposalType.REFERENDUM_V2 && postIndex == 385 && <PredictionCard />}
+						{postType === ProposalType.REFERENDUM_V2 && postIndex == 385 && network === 'polkadot' && <PredictionCard />}
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}

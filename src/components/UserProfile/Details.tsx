@@ -314,7 +314,6 @@ const Details: FC<IDetailsProps> = (props) => {
 								color='#fff'
 								overlayClassName='verification-tooltip'
 								title={<VerifiedInfo isCurrentUser={isCurrentUser} />}
-								// open
 							>
 								<VerifiedIcon className='-ml-1 mt-2.5 scale-90' />
 							</Tooltip>

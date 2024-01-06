@@ -10,6 +10,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { useNetworkSelector } from '~src/redux/selectors';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
@@ -47,14 +48,18 @@ const VerifiedInfo = ({ isCurrentUser }: Props) => {
 			<div className='mt-2'>
 				<div className='m-0 flex h-[18px] items-center gap-x-1 whitespace-nowrap p-0 text-xs font-normal text-bodyBlue'>
 					This account is verified
-					<span className='m-0 flex cursor-pointer gap-x-1 whitespace-nowrap p-0 font-normal text-pink_primary underline'>
+					<Link
+						href='https://docs.polkassembly.io/polkassembly-101/polkassembly-setup/verify-your-identity'
+						target='_blank'
+						className='m-0 flex cursor-pointer gap-x-1 whitespace-nowrap p-0 font-normal text-pink_primary underline'
+					>
 						Learn More
 						<ImageIcon
 							src='/assets/icons/redirect.svg'
 							alt='calenderIcon'
 							className=''
 						/>
-					</span>
+					</Link>
 				</div>
 			</div>
 			{/* <div className='mt-2'>

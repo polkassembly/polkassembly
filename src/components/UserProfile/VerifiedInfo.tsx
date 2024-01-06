@@ -57,7 +57,7 @@ const VerifiedInfo = ({ isCurrentUser }: Props) => {
 					</span>
 				</div>
 			</div>
-			<div className='mt-2'>
+			{/* <div className='mt-2'>
 				<div className='m-0 flex items-center whitespace-nowrap p-0 text-xs font-normal text-lightBlue'>
 					Verified Since:
 					<ImageIcon
@@ -67,7 +67,7 @@ const VerifiedInfo = ({ isCurrentUser }: Props) => {
 					/>
 					<p className='m-0 ml-1 p-0'>27th Jun 2024</p>
 				</div>
-			</div>
+			</div> */}
 
 			{/* revert isCurrentUser before pushing */}
 			{onchainIdentitySupportedNetwork.includes(network) && !isCurrentUser && (

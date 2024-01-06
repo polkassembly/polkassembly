@@ -316,7 +316,7 @@ const Details: FC<IDetailsProps> = (props) => {
 								title={<VerifiedInfo isCurrentUser={isCurrentUser} />}
 								// open
 							>
-								<VerifiedIcon className='-ml-1 mt-2 scale-90' />
+								<VerifiedIcon className='-ml-1 mt-2.5 scale-90' />
 							</Tooltip>
 						)}
 					</div>

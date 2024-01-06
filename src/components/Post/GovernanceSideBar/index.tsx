@@ -73,6 +73,7 @@ import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
+import PredictionCard from '~src/ui-components/PredictionCard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 
@@ -930,12 +931,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const RenderLastVote =
 		address === loginAddress ? lastVote ? <LastVoteInfoLocalState {...lastVote} /> : onChainLastVote !== null ? <LastVoteInfoOnChain {...onChainLastVote} /> : null : null;
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
-
 	return (
 		<>
 			{
 				<div className={className}>
 					<Form>
+						{postType === ProposalType.REFERENDUM_V2 && postIndex == 385 && network === 'polkadot' && <PredictionCard />}
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}

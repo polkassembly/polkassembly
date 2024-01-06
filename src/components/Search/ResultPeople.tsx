@@ -6,6 +6,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import { ProfileDetails } from '~src/auth/types';
+import styled from 'styled-components';
 
 interface IUser {
 	username: string;
@@ -23,6 +24,7 @@ interface Props {
 	setPeoplePage: (pre: any) => void;
 	peoplePage: { page: number; totalPeople: number };
 	searchInput: string;
+	theme?: string;
 }
 
 const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Props) => {
@@ -47,7 +49,7 @@ const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Prop
 					</a>
 				))}
 			</div>
-			<div className='flex items-center justify-center px-4 pt-4'>
+			<div className={`${className} mb-1 flex items-center justify-center px-4 pt-4`}>
 				<Pagination
 					defaultCurrent={1}
 					current={peoplePage?.page}
@@ -66,4 +68,23 @@ const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Prop
 		</>
 	) : null;
 };
-export default ResultPeople;
+export default styled(ResultPeople)`
+	.ant-pagination-item-active {
+		background-color: transparent !important;
+	}
+	.ant-pagination-item a {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')} !important;
+	}
+	.ant-pagination .ant-pagination-prev button,
+	.ant-pagination .ant-pagination-next button {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+	}
+	.ant-pagination-item-active a {
+		color: #e5007a !important;
+	}
+	.ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
+	.ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		opacity: 0.5;
+	}
+`;

@@ -61,20 +61,20 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 	return (
 		<div className={`${className} delegation-dashboard`}>
-			<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw]'>
+			<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-3xl max-lg:absolute max-lg:left-0 max-lg:top-20 max-lg:w-[99.3vw]'>
 				<ProfileBalances />
 			</div>
-			<h2 className=' mb-6 mt-5 text-[24px] font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation dashboard</h2>
+			<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation dashboard</h2>
 			<DelegationProfile
 				address={userDetails?.delegationDashboardAddress}
 				username={userDetails?.username || ''}
-				className='px-[34px] py-[24px]'
+				className='px-8 py-6'
 			/>
 			<div>
-				{userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (
+				{!!userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (
 					<DashboardTrackListing
 						theme={theme}
-						className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] mt-8 rounded-[14px] bg-white dark:bg-section-dark-overlay'
+						className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] mt-8 rounded-xl bg-white dark:bg-section-dark-overlay'
 						address={String(userDetails.delegationDashboardAddress)}
 					/>
 				) : (

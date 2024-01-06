@@ -46,7 +46,7 @@ const VerifiedInfo = ({ isCurrentUser }: Props) => {
 				<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Verified Account</p>
 			</div>
 			<div className='mt-2'>
-				<div className='m-0 flex h-[18px] items-center gap-x-1 whitespace-nowrap p-0 text-xs font-normal text-bodyBlue'>
+				<div className='m-0 flex h-[18px] items-center gap-x-1 whitespace-nowrap p-0 text-xs font-normal text-bodyBlue dark:text-lightGreyTextColor'>
 					This account is verified
 					<Link
 						href='https://docs.polkassembly.io/polkassembly-101/polkassembly-setup/verify-your-identity'
@@ -63,7 +63,7 @@ const VerifiedInfo = ({ isCurrentUser }: Props) => {
 				</div>
 			</div>
 			{/* <div className='mt-2'>
-				<div className='m-0 flex items-center whitespace-nowrap p-0 text-xs font-normal text-lightBlue'>
+				<div className='m-0 flex items-center whitespace-nowrap p-0 text-xs font-normal text-lightBlue dark:text-lightGreyTextColor'>
 					Verified Since:
 					<ImageIcon
 						src='/assets/icons/greyCalendar.svg'
@@ -76,8 +76,8 @@ const VerifiedInfo = ({ isCurrentUser }: Props) => {
 
 			{/* revert isCurrentUser before pushing */}
 			{onchainIdentitySupportedNetwork.includes(network) && !isCurrentUser && (
-				<div className='mt-2 flex h-[34px] w-full items-center justify-center rounded-md bg-[#F7F8F9] px-[10px] py-4'>
-					<div className='m-0 flex items-center justify-center whitespace-nowrap p-0 text-xs font-normal text-lightBlue'>
+				<div className='mt-2 flex h-[34px] w-full items-center justify-center rounded-md bg-[#F7F8F9] px-[10px] py-4 dark:bg-lightGreyTextColor'>
+					<div className='m-0 flex items-center justify-center whitespace-nowrap p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-high'>
 						To get a tick on your profile
 						<CustomButton
 							variant='default'
